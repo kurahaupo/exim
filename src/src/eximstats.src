@@ -145,7 +145,7 @@
 #             Added caching to speed up the calculation of timezone offsets.
 #
 # 2003-02-07  V1.25 Steve Campbell
-#             Optimised the usage of mktime() in the seconds subroutine.
+#             Optimized the usage of mktime() in the seconds subroutine.
 #             Removed the now redundant '-cache' option.
 #             html2txt() now explicitly matches HTML tags.
 #             Implemented a new sorting algorithm - the top_n_sort() routine.

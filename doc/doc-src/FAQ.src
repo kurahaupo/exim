@@ -6074,7 +6074,7 @@ A5014: The RFC for the SIZE option says:
        and that is what Exim is trying to implement. This is entirely
        independent from \check_spool_space\, which says \*don't accept any mail
        if there is less than so much space in the spool partition*\, though the
-       code is optimised to do both checks at the same time if required.
+       code is optimized to do both checks at the same time if required.
        However, you can suppress the SIZE check if you want to, by unsetting
        \smtp_check_spool_space\.
 

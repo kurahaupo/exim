@@ -18,7 +18,7 @@ exim -M $msg1
 #
 #
 # Repeat without pipelining, just as a baseline check.
-# The optimisation, that does another message attempt immediately on the open
+# The optimization, that does another message attempt immediately on the open
 # connection, is only there for the pipelined case at present.  So we must
 # kick the message three times for three separate connections.
 # (A possible enhancement, if anyone cares.  "first_addr" in

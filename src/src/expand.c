@@ -4463,7 +4463,7 @@ Arguments:
    honour_dollar  TRUE if $ is to be expanded,
                   FALSE if it's just another character
    skipping       TRUE for recursive calls when the value isn't actually going
-                  to be used (to allow for optimisation)
+                  to be used (to allow for optimization)
   left           if not NULL, a pointer to the first character after the
                  expansion is placed here (typically used with brace_ends)
   resetok_p	 if not NULL, pointer to flag - write FALSE if unsafe to reset
@@ -4779,7 +4779,7 @@ while (*s)
         case 2:
         case 3: goto EXPAND_FAILED;
         }
-      /*XXX no skipping-optimisation? */
+      /*XXX no skipping-optimization? */
 
       yield = string_append(yield, 3,
 			US"Authentication-Results: ", sub_arg[0], US"; none");
@@ -4866,7 +4866,7 @@ while (*s)
         case 2:
         case 3: goto EXPAND_FAILED;
         }
-      /*XXX no skipping-optimisation? */
+      /*XXX no skipping-optimization? */
 
       if (!sub_arg[1])			/* One argument */
 	{

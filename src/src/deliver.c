@@ -1168,7 +1168,7 @@ if (*queue_name)
 
 /* You might think that the return path must always be set for a successful
 delivery; indeed, I did for some time, until this statement crashed. The case
-when it is not set is for a delivery to /dev/null which is optimised by not
+when it is not set is for a delivery to /dev/null which is optimized by not
 being run at all. */
 
 if (used_return_path && LOGGING(return_path_on_delivery))
@@ -6935,7 +6935,7 @@ while (addr_new)           /* Loop until all addresses dealt with */
 
     /* If the router has same_domain_copy_routing set, we are permitted to copy
     the routing for any other addresses with the same domain. This is an
-    optimisation to save repeated DNS lookups for "standard" remote domain
+    optimization to save repeated DNS lookups for "standard" remote domain
     routing. The option is settable only on routers that generate host lists.
     We play it very safe, and do the optimization only if the address is routed
     to a remote transport, there are no header changes, and the domain was not

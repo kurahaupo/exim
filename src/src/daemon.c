@@ -323,7 +323,7 @@ count of *other* connections, not including this one. */
 if (max_for_this_host > 0 && smtp_accept_count >= max_for_this_host)
   {
   int host_accept_count = 0;
-  int other_host_count = 0;    /* keep a count of non matches to optimise */
+  int other_host_count = 0;    /* keep a count of non matches to optimize */
 
   for (int i = 0; i < smtp_accept_max; ++i)
     if (smtp_slots[i].host_address)
