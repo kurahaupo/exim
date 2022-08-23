@@ -2980,7 +2980,7 @@ badparse:
   *log_msgptr = string_sprintf("failed to parse '%s'", arg);
   return ERROR;
 badopt:
-  *log_msgptr = string_sprintf("unrecognised option '%s' in '%s'", ele, arg);
+  *log_msgptr = string_sprintf("unrecognized option '%s' in '%s'", ele, arg);
   return ERROR;
 }
 
@@ -3354,7 +3354,7 @@ for (; cb; cb = cb->next)
 		}
 	    else
 	      {
-	      *log_msgptr = string_sprintf("unrecognised DSCP value in \"control=%s\"", arg);
+	      *log_msgptr = string_sprintf("unrecognized DSCP value in \"control=%s\"", arg);
 	      return ERROR;
 	      }
 	    }

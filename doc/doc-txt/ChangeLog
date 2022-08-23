@@ -8163,7 +8163,7 @@ Exim version 4.21
     CONFIGURE_FILE_USE_EUID in the Local/Makefile. It now does this, but it
     will work only if exicyclog is run under the appropriate euid.
 
-58. Following a discussion on the list, the rules by which Exim recognises line
+58. Following a discussion on the list, the rules by which Exim recognizes line
     endings on incoming messages have been changed. The -dropcr and drop_cr
     options are now no-ops, retained only for backwards compatibility. The
     following line terminators are recognized: LF CRLF CR. However, special

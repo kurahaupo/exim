@@ -506,7 +506,7 @@ for (;;)
 #ifndef COMPILE_UTILITY
     if ((idx = search_findtype(var, s - var)) < 0)
       {
-      DEBUG(D_any) debug_printf("Unrecognised quoter %.*s\n", (int)(s - var), var+1);
+      DEBUG(D_any) debug_printf("Unrecognized quoter %.*s\n", (int)(s - var), var+1);
       goto SPOOL_FORMAT_ERROR;
       }
     proto_mem = store_get_quoted(1, GET_TAINTED, idx);

@@ -675,11 +675,11 @@ newline	tab\134backslash ~tilde\177DEL\200\201.
 > "1111111111111111111" true      EXPECT: true
 > "9"                   true      EXPECT: true
 > " "                   false     EXPECT: false
-> Failed: unrecognised boolean value "text"
-> Failed: unrecognised boolean value "text"
-> Failed: unrecognised boolean value "-text"
-> Failed: unrecognised boolean value "text"
-> Failed: unrecognised boolean value "text"
+> Failed: unrecognized boolean value "text"
+> Failed: unrecognized boolean value "text"
+> Failed: unrecognized boolean value "-text"
+> Failed: unrecognized boolean value "text"
+> Failed: unrecognized boolean value "text"
 > "00"                  false     EXPECT: false
 > "!true"               false     EXPECT: false
 > "!false"              true      EXPECT: true
@@ -823,7 +823,7 @@ xyz
 > Failed: "${tod_log" is not a known operator (or a } is missing in a variable reference)
 > Failed: missing } at end of string
 > Failed: missing } at end of string
-> Failed: hmac algorithm "xxx" is not recognised
+> Failed: hmac algorithm "xxx" is not recognized
 > Failed: each subcondition inside an "and{...}" condition must be in its own {}
 > Failed: unknown condition "xya" inside "and{...}" condition
 > Failed: condition name expected, but found "${lookup{x}lsear" inside "and{...}" condition

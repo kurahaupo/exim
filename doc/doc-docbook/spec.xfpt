@@ -2848,7 +2848,7 @@ available to admin users.
 
 .new
 The word &"set"& at the start of a line, followed by a single space,
-is recognised specially as defining a value for a variable.
+is recognized specially as defining a value for a variable.
 The syntax is otherwise the same as the ACL modifier &"set ="&.
 .wen
 
@@ -3034,7 +3034,7 @@ options shall cause Exim to exit after producing the requested output.
 .cmdopt -bI:dscp
 .cindex "DSCP" "values"
 This option causes Exim to emit an alphabetically sorted list of all
-recognised DSCP names.
+recognized DSCP names.
 
 .cmdopt -bI:sieve
 .cindex "Sieve filter" "capabilities"
@@ -9694,7 +9694,7 @@ a modifier of the type label; if so the expansion
 result is a list (newline-separated by default).
 The separator may be changed by another modifier of
 a right angle-bracket followed immediately by the new separator.
-Recognised RDN type labels include "CN", "O", "OU" and "DC".
+Recognized RDN type labels include "CN", "O", "OU" and "DC".
 
 The field selectors marked as "time" above
 take an optional modifier of "int"
@@ -10419,7 +10419,7 @@ Example:
 ${readsocket{/socket/name}{request string}{3s:shutdown=no}}
 .endd
 
-The following option names are recognised:
+The following option names are recognized:
 .ilist
 &*cache*&
 Defines if the result data can be cached for use by a later identical
@@ -16782,7 +16782,7 @@ names lose the leading &"SSL_OP_"& and are lower-cased.
 Note that adjusting the options can have severe impact upon the security of
 SSL as used by Exim.  It is possible to disable safety checks and shoot
 yourself in the foot in various unpleasant ways.  This option should not be
-adjusted lightly.  An unrecognised item will be detected at startup, by
+adjusted lightly.  An unrecognized item will be detected at startup, by
 invoking Exim with the &%-bV%& flag.
 
 The option affects Exim operating both as a server and as a client.

@@ -3411,7 +3411,7 @@ switch(cond_type = identify_operator(&s, &opname))
       boolvalue = TRUE;
     else
       {
-      expand_string_message = string_sprintf("unrecognised boolean "
+      expand_string_message = string_sprintf("unrecognized boolean "
        "value \"%s\"", t);
       return NULL;
       }
@@ -5826,7 +5826,7 @@ while (*s)
       else
 	{
 	expand_string_message =
-	  string_sprintf("hmac algorithm \"%s\" is not recognised", sub[0]);
+	  string_sprintf("hmac algorithm \"%s\" is not recognized", sub[0]);
 	goto EXPAND_FAILED;
 	}
 
@@ -7290,7 +7290,7 @@ NOT_ITEM: ;
 
 	  if (m == HASH_BADTYPE || !exim_sha_init(&h, m))
 	    {
-	    expand_string_message = US"unrecognised sha2 variant";
+	    expand_string_message = US"unrecognized sha2 variant";
 	    goto EXPAND_FAILED;
 	    }
 
@@ -7318,7 +7318,7 @@ NOT_ITEM: ;
 
 	if (m == HASH_BADTYPE || !exim_sha_init(&h, m))
 	  {
-	  expand_string_message = US"unrecognised sha3 variant";
+	  expand_string_message = US"unrecognized sha3 variant";
 	  goto EXPAND_FAILED;
 	  }
 

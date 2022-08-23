@@ -3824,7 +3824,7 @@ A0612: Actually, it adds a line starting with \"From"\ followed by a space.
        send messages to Courier's \^deliverquota^\ program. The line was
        retained with the message, and caused problems for MS Exchange 2000 when
        retrieving messages with its built-in POP collector. Specifically, it
-       caused Exchange to not be able to recognise message attachments.
+       caused Exchange to not be able to recognize message attachments.
 
 
 Q0613: I have set \fallback_hosts\ on my \%smtp%\ transport, but after the error

@@ -870,7 +870,7 @@ usage, the asterisks must be given.
 
 If the input line starts with ':<cmd>:', this prefix is removed and the
 line is processed by the runtest script before sending. The following
-commands are recognised:
+commands are recognized:
 
 - "eval": process the reset of the line with Perl's string eval()
   function. This can be used to send arbitrary data by encoding it as

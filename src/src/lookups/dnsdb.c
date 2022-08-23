@@ -103,8 +103,8 @@ no separator. With neither of these options specified, only the first item
 is output.  Similarly for "SPF" records, but the default for joining multiple
 items in one SPF record is the empty string, for direct concatenation.
 
-(c) Options, all comma-terminated, in any order.  Any unrecognised option
-terminates option processing.  Recognised options are:
+(c) Options, all comma-terminated, in any order.  Any unrecognized option
+terminates option processing.  Recognized options are:
 
 - 'defer_FOO':  set the defer behaviour to FOO.  The possible behaviours are:
 'strict', where any defer causes the whole lookup to defer; 'lax', where a defer

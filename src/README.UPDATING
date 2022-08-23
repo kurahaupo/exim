@@ -703,7 +703,7 @@ Version 4.21
    TMPDIR="/tmp"), Exim checks for the presence of an environment variable
    called TMPDIR, and if it finds it is different, it changes its value.
 
-5. Following a discussion on the list, the rules by which Exim recognises line
+5. Following a discussion on the list, the rules by which Exim recognizes line
    endings on incoming messages have been changed. The -dropcr and drop_cr
    options are now no-ops, retained only for backwards compatibility. The
    following line terminators are recognized: LF CRLF CR. However, special

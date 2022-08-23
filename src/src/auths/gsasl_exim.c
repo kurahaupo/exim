@@ -794,7 +794,7 @@ switch (prop)
     break;
 
   default:
-    HDEBUG(D_auth) debug_printf(" Unrecognised callback: %d\n", prop);
+    HDEBUG(D_auth) debug_printf(" Unrecognized callback: %d\n", prop);
     cbrc = GSASL_NO_CALLBACK;
   }
 

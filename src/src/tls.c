@@ -130,7 +130,7 @@ Return boolean success.
 The word "system" fails, which is on the safe side as we don't know what
 directory it implies nor if the TLS library handles a watch for us.
 
-The string "system,cache" is recognised and explicitly accepted without
+The string "system,cache" is recognized and explicitly accepted without
 setting a watch.  This permits the system CA bundle to be cached even though
 we have no way to tell when it gets modified by an update.
 The call chain for OpenSSL uses a (undocumented) call into the library

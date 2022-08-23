@@ -243,7 +243,7 @@ if (length)
   }
 
 /* Shut down the sending side of the socket. This helps some servers to
-recognise that it is their turn to do some work. Just in case some
+recognize that it is their turn to do some work. Just in case some
 system doesn't have this function, make it conditional. */
 
 #ifdef SHUT_WR

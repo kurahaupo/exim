@@ -25,9 +25,9 @@ Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-Test quoted-printable =3D    
+Test quoted-printable =3D
 Space at end of line=40
-Continued line =    
+Continued line =
 with this text.
 
 --T4sUOijqQbZv57TR
@@ -64,7 +64,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
--- 
+--
 
 --T4sUOijqQbZv57TR--
 .
@@ -155,7 +155,7 @@ quit
 ****
 #
 #
-# This one has a some unrecognised params
+# This one has a some unrecognized params
 #
 exim -odi -bs
 ehlo test.ex

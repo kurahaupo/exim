@@ -1105,7 +1105,7 @@ RESET_AFTER_EXTRA_LINE_READ:
 
     # ========= Exim lookups ==================
     # Lookups have a char which depends on the number of lookup types compiled in,
-    # in stderr output.  Replace with a "0".  Recognising this while avoiding
+    # in stderr output.  Replace with a "0".  Recognizing this while avoiding
     # other output is fragile; perhaps the debug output should be revised instead.
     s%^\s+(:?closing )?\K[0-?]TESTSUITE/aux-fixed/%0TESTSUITE/aux-fixed/%g;
 

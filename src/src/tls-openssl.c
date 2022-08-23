@@ -4923,7 +4923,7 @@ for (uschar * s = exp; *s; /**/)
   item_parsed = tls_openssl_one_option_parse(string_copyn(s, end-s), &item);
   if (!item_parsed)
     {
-    DEBUG(D_tls) debug_printf("openssl option setting unrecognised: \"%s\"\n", s);
+    DEBUG(D_tls) debug_printf("openssl option setting unrecognized: \"%s\"\n", s);
     return FALSE;
     }
   DEBUG(D_tls) debug_printf("openssl option, %s %08lx: %08lx (%s)\n",

@@ -1964,7 +1964,7 @@ for (hashtype = 0; hashtype < nelem(pdkim_hashes); hashtype++)
 if (hashtype >= nelem(pdkim_hashes))
   {
   log_write(0, LOG_MAIN|LOG_PANIC,
-    "DKIM: unrecognised hashname '%s'", hashname);
+    "DKIM: unrecognized hashname '%s'", hashname);
   return NULL;
   }
 

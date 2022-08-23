@@ -1318,7 +1318,7 @@ switch(request)
   case CMDINFO_HELP:
     fprintf(stream,
 "The -bI: flag takes a string indicating which information to provide.\n"
-"If the string is not recognised, you'll get this help (on stderr).\n"
+"If the string is not recognized, you'll get this help (on stderr).\n"
 "\n"
 "  exim -bI:help    this information\n"
 "  exim -bI:dscp    list of known dscp value keywords\n"
