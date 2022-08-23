@@ -153,7 +153,7 @@ return TRUE;
 
 
 #ifdef TCP_FASTOPEN
-/* Try to record if TFO was attmepted and if it was successfully used.  */
+/* Try to record if TFO was attempted and if it was successfully used.  */
 
 static void
 tfo_out_check(int sock)

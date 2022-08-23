@@ -15,7 +15,7 @@
 #include "queuefile.h"
 
 #ifndef EXIM_HAVE_OPENAT
-# error queuefile transport reqires openat() support
+# error queuefile transport requires openat() support
 #endif
 
 /* Options specific to the appendfile transport. They must be in alphabetic

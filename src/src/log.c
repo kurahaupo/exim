@@ -730,7 +730,7 @@ while ((t = string_nextinlist(&tt, &sep, log_buffer, LOG_BUFFER_SIZE)))
 /* Close mainlog, unless we do not see a chance to open the file mainlog later
 again.  This will happen if we log from a transport process (which has dropped
 privs); something we traditionally avoid, but the introduction of taint-tracking
-and resulting detection of errors is makinng harder. */
+and resulting detection of errors is making this harder. */
 
 void
 mainlog_close(void)

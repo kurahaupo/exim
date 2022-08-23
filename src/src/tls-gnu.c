@@ -244,7 +244,7 @@ typedef struct exim_gnutls_state {
 } exim_gnutls_state_st;
 
 static const exim_gnutls_state_st exim_gnutls_state_init = {
-  /* all elements not explicitly intialised here get 0/NULL/FALSE */
+  /* all elements not explicitly initialised here get 0/NULL/FALSE */
   .fd_in =		-1,
   .fd_out =		-1,
 };
@@ -261,7 +261,7 @@ XXX But see gnutls_session_get_ptr()
 */
 
 static exim_gnutls_state_st state_server = {
-  /* all elements not explicitly intialised here get 0/NULL/FALSE */
+  /* all elements not explicitly initialised here get 0/NULL/FALSE */
   .fd_in =		-1,
   .fd_out =		-1,
 };
@@ -3234,7 +3234,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
     ) if (rr->type == T_TLSA && rr->size > 3)
   {
   const uschar * p = rr->data;
-/*XXX need somehow to mark rr and its data as tainted.  Doues this mean copying it? */
+/*XXX need somehow to mark rr and its data as tainted.  Does this mean copying it? */
   uint8_t usage = p[0], sel = p[1], type = p[2];
 
   DEBUG(D_tls)

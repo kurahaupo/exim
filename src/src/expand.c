@@ -15,7 +15,7 @@
 typedef unsigned esi_flags;
 #define ESI_NOFLAGS		0
 #define ESI_BRACE_ENDS		BIT(0)	/* expansion should stop at } */
-#define ESI_HONOR_DOLLAR	BIT(1)	/* $ is meaningfull */
+#define ESI_HONOR_DOLLAR	BIT(1)	/* $ is meaningful */
 #define ESI_SKIPPING		BIT(2)	/* value will not be needed */
 
 /* Recursively called function */

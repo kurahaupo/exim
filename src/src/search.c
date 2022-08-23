@@ -242,7 +242,7 @@ if (mac_islookup(search_type, lookup_absfilequery))
       return query;
       }
 
-  /* If no filename from options, use old-tyle space-sep prefix on query */
+  /* If no filename from options, use old-style space-sep prefix on query */
   if (*query == '/')
     {
     uschar * s = query;

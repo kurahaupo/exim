@@ -69,7 +69,7 @@ extern uschar *redis_servers;          /* List of servers and connect info */
 #endif
 
 #ifdef LOOKUP_SQLITE
-extern uschar *sqlite_dbfile;	       /* Filname for database */
+extern uschar *sqlite_dbfile;	       /* Filename for database */
 extern int     sqlite_lock_timeout;    /* Internal lock waiting timeout */
 #endif
 
@@ -125,7 +125,7 @@ extern tls_support tls_out;
 #ifndef DISABLE_TLS
 extern BOOL    gnutls_compat_mode;     /* Less security, more compatibility */
 extern BOOL    gnutls_allow_auto_pkcs11; /* Let GnuTLS autoload PKCS11 modules */
-extern uschar *hosts_require_alpn;     /* Mandatory ALPN successful nogitiation */
+extern uschar *hosts_require_alpn;     /* Mandatory ALPN successful negotiation */
 extern uschar *openssl_options;        /* OpenSSL compatibility options */
 extern const pcre2_code *regex_STARTTLS;     /* For recognizing STARTTLS settings */
 extern uschar *tls_alpn;	       /* ALPN names acceptable */

@@ -3331,7 +3331,7 @@ while (!done)
   uschar *id = &pipeheader[0];
   uschar *subid = &pipeheader[1];
   uschar *ptr = big_buffer;
-  size_t required = PIPE_HEADER_SIZE; /* first the pipehaeder, later the data */
+  size_t required = PIPE_HEADER_SIZE; /* first the pipe header, later the data */
   ssize_t got;
 
   DEBUG(D_deliver) debug_printf(

@@ -486,8 +486,8 @@ if (oncelog && *oncelog && to)
       goto END_OFF;
       }
 
-    exim_datum_init(&key_datum);        /* Some DBM libraries need datums */
-    exim_datum_init(&result_datum);     /* to be cleared */
+    exim_datum_init(&key_datum);        /* Some DBM libraries need each */
+    exim_datum_init(&result_datum);     /* datum to be cleared. */
     exim_datum_data_set(&key_datum, (void *) to);
     exim_datum_size_set(&key_datum, Ustrlen(to) + 1);
 
@@ -735,8 +735,8 @@ if (cache_fd >= 0)
 else if (dbm_file)
   {
   EXIM_DATUM key_datum, value_datum;
-  exim_datum_init(&key_datum);          /* Some DBM libraries need to have */
-  exim_datum_init(&value_datum);        /* cleared datums. */
+  exim_datum_init(&key_datum);          /* Some DBM libraries need each */
+  exim_datum_init(&value_datum);        /* datum to be cleared. */
   exim_datum_data_set(&key_datum, to);
   exim_datum_size_set(&key_datum, Ustrlen(to) + 1);
 

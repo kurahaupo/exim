@@ -9,8 +9,8 @@
 #			< SYN,ACK
 #    ACK		>
 #    Client Hello	>
-#			< Server Hello, Change Ciph, Extensions, Cert, Cert Verify, Finished
-#    Change Ciph,Finsh	>
+#			< Server Hello, Change Cipher, Extensions, Cert, Cert Verify, Finished
+#  Change Cipher,Finish	>
 #			< Banner
 #    EHLO		>
 #			< EHLO resp
@@ -19,11 +19,11 @@
 #
 # GnuTLS splits both the server records and the client response pair over two TCP segments:
 #    Client Hello	>
-#			< Server Hello, Change Ciph
-#    Change Ciph	>
+#			< Server Hello, Change Cipher
+#    Change Cipher	>
 #			< Extensins, Cert, Cert Verify, Finished
 #    Finished		>
-# (otherwise the same).  The extra segments are piplined and do not incur an extra roundtrip time.
+# (otherwise the same).  The extra segments are pipelined and do not incur an extra roundtrip time.
 #
 # To see that pipelining:
 # sudo tc qdisc add dev lo root netem delay 50ms  /  sudo tc qdisc delete dev lo root
@@ -33,7 +33,7 @@
 # and before the 3rd-ACK.  We still can't merge the 3rd-ACK with the second Client record set,
 # but it does ack the initial Server data.
 #
-# To see the TFO((R):
+# To see the TFO(R):
 # First clear any previously-obtained cookie:
 #sudo perl
 #open(INFO, "-|", "/usr/bin/uname -s");

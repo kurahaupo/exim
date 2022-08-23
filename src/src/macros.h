@@ -830,7 +830,7 @@ enum { SCH_NONE, SCH_AUTH, SCH_DATA, SCH_BDAT,
 enum {
   HOST_FIND_FAILED,     /* failed to find the host */
   HOST_FIND_AGAIN,      /* could not resolve at this time */
-  HOST_FIND_SECURITY,   /* dnssec required but not acheived */
+  HOST_FIND_SECURITY,   /* dnssec required but not achieved */
   HOST_FOUND,           /* found host */
   HOST_FOUND_LOCAL,     /* found, but MX points to local host */
   HOST_IGNORED          /* found but ignored - used internally only */

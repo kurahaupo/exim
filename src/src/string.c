@@ -911,7 +911,7 @@ if (!*s) return NULL;
 sep_is_special = iscntrl(sep);
 
 /* Handle the case when a buffer is provided. */
-/*XXX need to also deal with qouted-requirements mismatch */
+/*XXX need to also deal with quoted-requirements mismatch */
 
 if (buffer)
   {

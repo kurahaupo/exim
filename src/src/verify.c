@@ -1489,7 +1489,7 @@ cutthrough_finaldot(void)
 uschar res;
 HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP>> .\n");
 
-/* Assume data finshed with new-line */
+/* Assume data finished with new-line */
 if(  !cutthrough_puts(US".", 1)
   || !cutthrough_put_nl()
   || !cutthrough_flush_send()

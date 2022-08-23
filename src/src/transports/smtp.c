@@ -4550,7 +4550,7 @@ if (!sx->ok)
     else
       {
 #ifndef DISABLE_PIPE_CONNECT
-      /* If we were early-pipelinng and the actual EHLO response did not match
+      /* If we were early-pipelining and the actual EHLO response did not match
       the cached value we assumed, we could have detected it and passed a
       custom errno through to here.  It would be nice to RSET and retry right
       away, but to reliably do that we eould need an extra synch point before

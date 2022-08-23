@@ -259,7 +259,7 @@ return auth_check_serv_cond(ablock);
 int
 auth_cram_md5_client(
   auth_instance *ablock,                 /* authenticator block */
-  void * sx,				 /* smtp connextion */
+  void * sx,				 /* smtp connection */
   int timeout,                           /* command timeout */
   uschar *buffer,                        /* for reading response */
   int buffsize)                          /* size of buffer */

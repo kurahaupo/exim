@@ -371,7 +371,7 @@ if (!instance_only)
   *r = '\0';
 
 done:
-/* debug_printf("%s: finshed\n", __FUNCTION__); */
+/* debug_printf("%s: finished\n", __FUNCTION__); */
 return NULL;
 }
 

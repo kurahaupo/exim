@@ -239,7 +239,7 @@ if (cb->flags & MCS_AT_SPECIAL && pattern[0] == '@')
       return FAIL;
 
     if (expand_setup >= 0) expand_nmax = expand_setup;	/* commit $0, the matched subject */
-    if (valueptr) *valueptr = pattern;	/* "value" gets the patterm */
+    if (valueptr) *valueptr = pattern;	/* "value" gets the pattern */
     return OK;
 
     /*** The above line used to be the following line, but this is incorrect,

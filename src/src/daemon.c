@@ -749,7 +749,7 @@ else
     if (smtp_slots[i].pid <= 0)
       {
       smtp_slots[i].pid = pid;
-      /* Connection closes come asyncronously, so we cannot stack this store */
+      /* Connection closes come asynchronously, so we cannot stack this store */
       if (smtp_accept_max_per_host)
         smtp_slots[i].host_address = string_copy_malloc(sender_host_address);
       smtp_accept_count++;
@@ -1197,7 +1197,7 @@ len = daemon_notifier_sockname(&sa_un);
 
 #ifdef EXIM_HAVE_ABSTRACT_UNIX_SOCKETS
 DEBUG(D_any) debug_printf(" @%s\n", sa_un.sun_path+1);
-#else			/* filesystem-visible and persistent; will neeed removal */
+#else			/* filesystem-visible and persistent; will need removal */
 DEBUG(D_any) debug_printf(" %s\n", sa_un.sun_path);
 #endif
 

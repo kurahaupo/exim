@@ -92,8 +92,8 @@ dbmdb_find(void * handle, const uschar * filename, const uschar * keystring,
 EXIM_DB *d = (EXIM_DB *)handle;
 EXIM_DATUM key, data;
 
-exim_datum_init(&key);               /* Some DBM libraries require datums to */
-exim_datum_init(&data);              /* be cleared before use. */
+exim_datum_init(&key);               /* Some DBM libraries require each */
+exim_datum_init(&data);              /* datum to be cleared before use. */
 length++;
 exim_datum_data_set(&key,
   memcpy(store_get(length, keystring), keystring, length)); /* key can have embedded NUL */

@@ -59,7 +59,7 @@ The following different types of store are recognized:
   would be avoided.
 
   Intermediate layers (eg. the string functions) can test for taint, and use this
-  for ensurinng that results have proper state.  For example the
+  for ensuring that results have proper state.  For example the
   string_vformat_trc() routing supporting the string_sprintf() interface will
   recopy a string being built into a tainted allocation if it meets a %s for a
   tainted argument.  Any intermediate-layer function that (can) return a new
@@ -805,7 +805,7 @@ int newlength, count;
 int oldmalloc = pool_malloc;
 #endif
 
-if (!b) return;	/* exim_dumpdb gets this, becuse it has never used tainted mem */
+if (!b) return;	/* exim_dumpdb gets this, because it has never used tainted mem */
 
 /* Last store operation was not a get */
 

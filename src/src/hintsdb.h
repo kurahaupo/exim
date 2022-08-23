@@ -479,7 +479,7 @@ exim_datum_free(EXIM_DATUM * d)
 /********************* gdbm interface definitions **********************/
 
 #elif defined USE_GDBM
-/*XXX TODO: exim's locfile not needed */
+/*XXX TODO: exim's lockfile not needed */
 
 # include <gdbm.h>
 

@@ -825,7 +825,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
   else
   /* VERIFICATION --------------------------------------------------------- */
-  /* Be careful that the header sig included a bodyash */
+  /* Be careful that the header sig included a bodyhash */
 
     if (sig->bodyhash.data && sig->bodyhash.len == b->bh.len
        && memcmp(b->bh.data, sig->bodyhash.data, b->bh.len) == 0)
@@ -1509,7 +1509,7 @@ have a hash to do for ARC. */
 
 pdkim_finish_bodyhash(ctx);
 
-/* Sort and filter the recived signatures */
+/* Sort and filter the received signatures */
 
 if (!(ctx->flags & PDKIM_MODE_SIGN))
   ctx->sig = sort_sig_methods(ctx->sig);

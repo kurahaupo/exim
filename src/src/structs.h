@@ -528,7 +528,7 @@ typedef struct address_item_propagated {
   uschar *errors_address;         /* where to send errors (NULL => sender) */
   header_line *extra_headers;     /* additional headers */
   uschar *remove_headers;         /* list of those to remove */
-  void   *variables;		  /* router-vasriables */
+  void   *variables;		  /* router-variables */
 
   BOOL    ignore_error:1;	  /* ignore delivery error */
 #ifdef SUPPORT_I18N

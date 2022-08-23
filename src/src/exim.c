@@ -859,7 +859,7 @@ of chown()/fchown().  See src/functions.h for more explanation */
 int
 exim_chown_failure(int fd, const uschar *name, uid_t owner, gid_t group)
 {
-int saved_errno = errno;  /* from the preceeding chown call */
+int saved_errno = errno;  /* from the preceding chown call */
 #if 1
 log_write(0, LOG_MAIN|LOG_PANIC,
   __FILE__ ":%d: chown(%s, %d:%d) failed (%s)."
@@ -2962,7 +2962,7 @@ on the second character (the one after '-'), to save some effort. */
 	case 'P': smtp_peer_options |= OPTION_PIPE; break;
 
 #ifdef SUPPORT_SOCKS
-    /* -MCp: Socks proxy in use; nearside IP, port, external IP, port */
+    /* -MCp: Socks proxy in use: local IP, local port, remote IP, remote port */
 	case 'p': proxy_session = TRUE;
 		  if (++i < argc)
 		    {

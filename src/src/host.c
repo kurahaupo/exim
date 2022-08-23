@@ -2186,7 +2186,7 @@ Arguments:
 
 Returns:       HOST_FIND_FAILED     couldn't find A record
                HOST_FIND_AGAIN      try again later
-	       HOST_FIND_SECURITY   dnssec required but not acheived
+	       HOST_FIND_SECURITY   dnssec required but not achieved
                HOST_FOUND           found AAAA and/or A record(s)
                HOST_IGNORED         found, but all IPs ignored
 */
@@ -2483,7 +2483,7 @@ Returns:                HOST_FIND_FAILED  Failed to find the host or domain;
                                           if there was a syntax error,
                                           host_find_failed_syntax is set.
                         HOST_FIND_AGAIN   Could not resolve at this time
-			HOST_FIND_SECURITY dnsssec required but not acheived
+			HOST_FIND_SECURITY dnsssec required but not achieved
                         HOST_FOUND        Host found
                         HOST_FOUND_LOCAL  The lowest MX record points to this
                                           machine, if MX records were found, or

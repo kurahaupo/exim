@@ -498,7 +498,7 @@ return g;
 int
 auth_cyrus_sasl_client(
   auth_instance *ablock,                 /* authenticator block */
-  void * sx,			 	 /* connexction */
+  void * sx,			 	 /* connection */
   int timeout,                           /* command timeout */
   uschar *buffer,                        /* for reading response */
   int buffsize)                          /* size of buffer */
