@@ -2328,7 +2328,7 @@ sub generate_parser {
 
             # Create the bin if its not already defined.
             unless (exists $rcpt_times_bin{$protocol}) {
-              initialise_rcpt_times($protocol);
+              initialize_rcpt_times($protocol);
             }
           }
 
@@ -3367,7 +3367,7 @@ sub parse_old_eximstat_reports {
       }
       else {
         unless (exists $rcpt_times_bin{$3}) {
-          initialise_rcpt_times($3);
+          initialize_rcpt_times($3);
         }
         $bin_aref = $rcpt_times_bin{$3};
         $times_aref = \@rcpt_times;
@@ -3862,10 +3862,10 @@ sub parse_time_list {
 
 
 #######################################################################
-# initialise_rcpt_times($protocol);
-# Initialise an array of rcpt_times to 0 for the specified protocol.
+# initialize_rcpt_times($protocol);
+# Initialize an array of rcpt_times to 0 for the specified protocol.
 #######################################################################
-sub initialise_rcpt_times {
+sub initialize_rcpt_times {
   my($protocol) = @_;
   for (my $i = 0; $i <= $#rcpt_times; ++$i) {
     $rcpt_times_bin{$protocol}[$i] = 0;
@@ -4049,7 +4049,7 @@ while (@ARGV > 0 && substr($ARGV[0], 0, 1) eq '-') {
   }
 
 
-# Initialise the queue/delivery/rcpt time counters.
+# Initialize the queue/delivery/rcpt time counters.
 for (my $i = 0; $i <= $#queue_times; $i++) {
   $qt_all_bin[$i] = 0;
   $qt_remote_bin[$i] = 0;
@@ -4058,7 +4058,7 @@ for (my $i = 0; $i <= $#delivery_times; $i++) {
   $dt_all_bin[$i] = 0;
   $dt_remote_bin[$i] = 0;
 }
-initialise_rcpt_times('all');
+initialize_rcpt_times('all');
 
 
 # Compute the number of slots for the histogram
