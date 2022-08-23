@@ -115,7 +115,7 @@ of a command-name, TAB, and then any parameters, each separated by a TAB.
 A parameter can be param=value or a bool, just param.
 
 This function modifies the original str in-place, inserting NUL characters.
-It initialises ptrs entries, setting all to NULL and only setting
+It initializes ptrs entries, setting all to NULL and only setting
 non-NULL N entries, where N is the return value, the number of fields seen
 (one more than the number of tabs).
 

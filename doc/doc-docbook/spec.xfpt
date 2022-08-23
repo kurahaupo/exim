@@ -15647,7 +15647,7 @@ given no MX presence but a CNAME to an A, of the CNAME.
 .option dns_dnssec_ok main integer -1
 .cindex "DNS" "resolver options"
 .cindex "DNS" "DNSSEC"
-If this option is set to a non-negative number then Exim will initialise the
+If this option is set to a non-negative number then Exim will initialize the
 DNS resolver library to either use or not use DNSSEC, overriding the system
 default. A value of 0 coerces DNSSEC off, a value of 1 coerces DNSSEC on.
 
@@ -15731,7 +15731,7 @@ record in the authoritative section is used instead.
 .cindex "DNS" "resolver options"
 .cindex "DNS" "EDNS0"
 .cindex "DNS" "OpenBSD
-If this option is set to a non-negative number then Exim will initialise the
+If this option is set to a non-negative number then Exim will initialize the
 DNS resolver library to either use or not use EDNS0 extensions, overriding
 the system default. A value of 0 coerces EDNS0 off, a value of 1 coerces EDNS0
 on.
@@ -40523,7 +40523,7 @@ discussed in the next section. However, in most installations, root privilege
 is required for two things:
 
 .ilist
-To set up a socket connected to the standard SMTP port (25) when initialising
+To set up a socket connected to the standard SMTP port (25) when initializing
 the listening daemon. If Exim is run from &'inetd'&, this privileged action is
 not required.
 .next

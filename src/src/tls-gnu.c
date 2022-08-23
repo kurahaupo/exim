@@ -244,7 +244,7 @@ typedef struct exim_gnutls_state {
 } exim_gnutls_state_st;
 
 static const exim_gnutls_state_st exim_gnutls_state_init = {
-  /* all elements not explicitly initialised here get 0/NULL/FALSE */
+  /* all elements not explicitly initialized here get 0/NULL/FALSE */
   .fd_in =		-1,
   .fd_out =		-1,
 };
@@ -261,12 +261,12 @@ XXX But see gnutls_session_get_ptr()
 */
 
 static exim_gnutls_state_st state_server = {
-  /* all elements not explicitly initialised here get 0/NULL/FALSE */
+  /* all elements not explicitly initialized here get 0/NULL/FALSE */
   .fd_in =		-1,
   .fd_out =		-1,
 };
 
-/* dh_params are initialised once within the lifetime of a process using TLS;
+/* dh_params are initialized once within the lifetime of a process using TLS;
 if we used TLS in a long-lived daemon, we'd have to reconsider this.  But we
 don't want to repeat this. */
 
@@ -276,7 +276,7 @@ static int ssl_session_timeout = 7200;	/* Two hours */
 
 static const uschar * const exim_default_gnutls_priority = US"NORMAL";
 
-/* Guard library core initialisation */
+/* Guard library core initialization */
 
 static BOOL exim_gnutls_base_init_done = FALSE;
 
@@ -412,7 +412,7 @@ return tls_error(prefix, US strerror(err), host, errstr);
 
 
 /* ------------------------------------------------------------------------ */
-/* Initialisation */
+/* Initialization */
 
 #ifndef DISABLE_OCSP
 
@@ -495,7 +495,7 @@ tls_per_lib_daemon_tick(void)
 {
 }
 
-/* Daemon one-time initialisation */
+/* Daemon one-time initialization */
 
 static void
 tls_per_lib_daemon_init(void)
@@ -740,7 +740,7 @@ uschar *exp_tls_dhparam;
 BOOL use_file_in_spool = FALSE;
 host_item *host = NULL; /* dummy for macros */
 
-DEBUG(D_tls) debug_printf("Initialising GnuTLS server params\n");
+DEBUG(D_tls) debug_printf("Initializing GnuTLS server params\n");
 
 if ((rc = gnutls_dh_params_init(&dh_server_params)))
   return tls_error_gnu(NULL, US"gnutls_dh_params_init", rc, errstr);
@@ -989,10 +989,10 @@ if (TRUE) goto err;
 #endif
 
 DEBUG(D_tls) debug_printf("TLS: generating selfsigned server cert\n");
-where = US"initialising pkey";
+where = US"initializing pkey";
 if ((rc = gnutls_x509_privkey_init(&pkey))) goto err;
 
-where = US"initialising cert";
+where = US"initializing cert";
 if ((rc = gnutls_x509_crt_init(&cert))) goto err;
 
 where = US"generating pkey";	/* Hangs on 2.12.23 */
@@ -2051,7 +2051,7 @@ if (host)
   memcpy(state, &exim_gnutls_state_init, sizeof(exim_gnutls_state_init));
   state->lib_state = ob->tls_preload;
   state->tlsp = tlsp;
-  DEBUG(D_tls) debug_printf("initialising GnuTLS client session\n");
+  DEBUG(D_tls) debug_printf("initializing GnuTLS client session\n");
   rc = gnutls_init(&state->session, GNUTLS_CLIENT);
 
   state->tls_certificate =	ob->tls_certificate;
@@ -2068,7 +2068,7 @@ else
 
   state = &state_server;
   state->tlsp = tlsp;
-  DEBUG(D_tls) debug_printf("initialising GnuTLS server session\n");
+  DEBUG(D_tls) debug_printf("initializing GnuTLS server session\n");
   rc = gnutls_init(&state->session, GNUTLS_SERVER);
 
   state->tls_certificate =	tls_certificate;
@@ -2977,7 +2977,7 @@ if (tls_in.active.sock >= 0)
 /* Initialize the library. If it fails, it will already have logged the error
 and sent an SMTP response. */
 
-DEBUG(D_tls) debug_printf("initialising GnuTLS as a server\n");
+DEBUG(D_tls) debug_printf("initializing GnuTLS as a server\n");
 
   {
 #ifdef MEASURE_TIMING
@@ -3449,7 +3449,7 @@ BOOL request_ocsp = require_ocsp ? TRUE
   : verify_check_given_host(CUSS &ob->hosts_request_ocsp, host) == OK;
 #endif
 
-DEBUG(D_tls) debug_printf("initialising GnuTLS as a client on fd %d\n", cctx->sock);
+DEBUG(D_tls) debug_printf("initializing GnuTLS as a client on fd %d\n", cctx->sock);
 
 #ifdef SUPPORT_DANE
 /* If dane is flagged, have either request or require dane for this host, and
@@ -4219,7 +4219,7 @@ uschar * dummy_errstr;
 
 if (exim_gnutls_base_init_done)
   log_write(0, LOG_MAIN|LOG_PANIC,
-      "already initialised GnuTLS, Exim developer bug");
+      "already initialized GnuTLS, Exim developer bug");
 
 #if defined(HAVE_GNUTLS_PKCS11) && !defined(GNUTLS_AUTO_PKCS11_MANUAL)
 if (!gnutls_allow_auto_pkcs11)

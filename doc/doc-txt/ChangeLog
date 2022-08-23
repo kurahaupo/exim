@@ -519,7 +519,7 @@ Exim version 4.94
 -----------------
 
 JH/01 Avoid costly startup code when not strictly needed.  This reduces time
-      for some exim process initialisations.  It does mean that the logging
+      for some exim process initializations.  It does mean that the logging
       of TLS configuration problems is only done for the daemon startup.
 
 JH/02 Early-pipelining support code is now included unless disabled in Makefile.
@@ -557,7 +557,7 @@ JH/11 Bug 2494: Unset the default for dmarc_tld_file.  Previously a naiive
       should both provide the file and set the option.
       Also enforce no DMARC verification for command-line sourced messages.
 
-JH/12 Fix an uninitialised flag in early-pipelining.  Previously connections
+JH/12 Fix an uninitialized flag in early-pipelining.  Previously connections
       could, depending on the platform, hang at the STARTTLS response.
 
 JH/13 Bug 2498: Reset a counter used for ARC verify before handling another
@@ -1226,7 +1226,7 @@ JH/16 Fix bug in DKIM verify: a buffer overflow could corrupt the malloc
       metadata, resulting in a crash in free().
 
 PP/01 Fix broken Heimdal GSSAPI authenticator integration.
-      Broken in f2ed27cf5, missing an equals sign for specified-initialisers.
+      Broken in f2ed27cf5, missing an equals sign for specified-initializers.
       Broken also in d185889f4, with init system revamp.
 
 JH/17 Bug 2113: Fix conversation closedown with the Avast malware scanner.
@@ -1324,7 +1324,7 @@ HS/03 Malware Avast: Better match the Avast multiline protocol. Add
       denied, license issues). Other scanner errors (like decompression
       bombs) do not cause a paniclog entry.
 
-JH/36 Fix reinitialisation of DKIM logging variable between messages.
+JH/36 Fix reinitialization of DKIM logging variable between messages.
       Previously it was possible to log spurious information in receive log
       lines.
 
@@ -1480,7 +1480,7 @@ JH/22 Retire historical build files to an "unsupported" subdir.  These are
 JH/23 DKIM: enforce the DNS pubkey record "h" permitted-hashes optional field,
       if present.  Previously it was ignored.
 
-JH/24 Start using specified-initialisers in C structure init coding.  This is
+JH/24 Start using specified-initializers in C structure init coding.  This is
       a C99 feature (it's 2017, so now considered safe).
 
 JH/25 Use one-bit bitfields for flags in the "addr" data structure.  Previously
@@ -2534,7 +2534,7 @@ GF/01 DCC debug and logging tidyup
 
 TF/03 Avoid unnecessary rebuilds of lookup-related code.
 
-PP/14 Fix OCSP reinitialisation in SNI handling for Exim/TLS as server.
+PP/14 Fix OCSP reinitialization in SNI handling for Exim/TLS as server.
       Bug spotted by Jeremy Harris; was flawed since initial commit.
       Would have resulted in OCSP responses post-SNI triggering an Exim
       NULL dereference and crash.
@@ -2722,7 +2722,7 @@ JH/01 Bugzilla 660 - Multi-valued attributes from ldap now parseable as a
 
 JH/02 Refactored ACL "verify =" logic to table-driven dispatch.
 
-PP/15 LDAP: Check for errors of TLS initialisation, to give correct
+PP/15 LDAP: Check for errors of TLS initialization, to give correct
       diagnostics.
       Report and patch from Dmitry Banschikov.
 
@@ -2941,7 +2941,7 @@ PP/11 match_* no longer expand right-hand-side by default.
       New compile-time build option, EXPAND_LISTMATCH_RHS.
       New expansion conditions, "inlist", "inlisti".
 
-PP/12 fix uninitialised greeting string from PP/03 (smtps client support).
+PP/12 fix uninitialized greeting string from PP/03 (smtps client support).
 
 PP/13 shell and compiler warnings fixes for RC1-RC4 changes.
 
@@ -3261,7 +3261,7 @@ MH/01 Treat the transport option dkim_domain as a colon separated
       list, not as a single string, and sign the message with each element,
       omitting multiple occurences of the same signer.
 
-NM/07 Null terminate DKIM strings, Null initialise DKIM variable
+NM/07 Null terminate DKIM strings, Null initialize DKIM variable
       Bugzilla 985, 986.  Patch by Simon Arlott
 
 NM/08 Bugzilla 967. dnsdb DNS TXT record bug fix (DKIM-related)

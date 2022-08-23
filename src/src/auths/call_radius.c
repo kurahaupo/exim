@@ -176,7 +176,7 @@ switch (result)
 
 if (!(h = rad_auth_open()))
   {
-  *errptr = string_sprintf("RADIUS: can't initialise libradius");
+  *errptr = string_sprintf("RADIUS: can't initialize libradius");
   return ERROR;
   }
 if (rad_config(h, RADIUS_CONFIG_FILE) != 0 ||

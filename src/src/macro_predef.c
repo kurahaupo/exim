@@ -99,7 +99,7 @@ for (int i = 0; i < nopt; i++)  if (*(s = US opts[i].name) && *s != '*')
 static void
 features(void)
 {
-/* Probably we could work out a static initialiser for wherever
+/* Probably we could work out a static initializer for wherever
 macros are stored, but this will do for now. Some names are awkward
 due to conflicts with other common macros. */
 

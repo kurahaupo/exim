@@ -1790,7 +1790,7 @@ extern char **environ;
 (void)gettimeofday(&timestamp_startup, NULL);
 #endif
 
-store_init();	/* Initialise the memory allocation susbsystem */
+store_init();	/* Initialize the memory allocation subsystem */
 pcre_init();	/* Set up memory handling for pcre */
 
 /* If the Exim user and/or group and/or the configuration file owner/group were
@@ -4012,9 +4012,9 @@ if (filter_test & FTEST_USER)
     exim_fail("exim: failed to open %s: %s\n", filter_test_ufile,
       strerror(errno));
 
-/* Initialise lookup_list
+/* Initialize lookup_list
 If debugging, already called above via version reporting.
-In either case, we initialise the list of available lookups while running
+In either case, we initialize the list of available lookups while running
 as root.  All dynamically modules are loaded from a directory which is
 hard-coded into the binary and is code which, if not a module, would be
 part of Exim already.  Ability to modify the content of the directory
@@ -4885,7 +4885,7 @@ if (list_config)
   }
 
 
-/* Initialise subsystems as required. */
+/* Initialize subsystems as required. */
 
 tcp_init();
 

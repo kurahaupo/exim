@@ -349,7 +349,7 @@ static const uschar *sid_ctx = US"exim";
 
 Simple case: client, `client_ctx`
  As a client, we can be doing a callout or cut-through delivery while receiving
- a message.  So we have a client context, which should have options initialised
+ a message.  So we have a client context, which should have options initialized
  from the SMTP Transport.  We may also concurrently want to make TLS connections
  to utility daemons, so client-contexts are allocated and passed around in call
  args rather than using a gobal.
@@ -362,7 +362,7 @@ Server:
  A client might not send SNI, so we need a fallback, and an initial setup too.
  So as a server, we start out using `server_ctx`.
  If SNI is sent by the client, then we as server, mid-negotiation, try to clone
- `server_sni` from `server_ctx` and then initialise settings by re-expanding
+ `server_sni` from `server_ctx` and then initialize settings by re-expanding
  configuration.
 */
 
@@ -702,7 +702,7 @@ decision, instead of a knee-jerk reaction.
 
 Longer-term, we should look at supporting both various named curves and
 external files generated with "openssl ecparam", much as we do for init_dh().
-We should also support "none" as a value, to explicitly avoid initialisation.
+We should also support "none" as a value, to explicitly avoid initialization.
 
 Patches welcome.
 
@@ -2067,7 +2067,7 @@ tk_hmac_init(
     {
     DEBUG(D_tls) debug_printf("EVP_MAC_CTX_set_params: %s\n",
       ERR_reason_error_string(ERR_get_error()));
-    return 0; /* error in mac initialisation */
+    return 0; /* error in mac initialization */
     }
 }
 #endif
@@ -3006,7 +3006,7 @@ return TRUE;
 repeated after a Server Name Indication.
 
 Arguments:
-  sctx          SSL_CTX* to initialise
+  sctx          SSL_CTX* to initialize
   certs         certs file, expanded
   crl           CRL file or NULL
   host          NULL in a server; the remote host in a client
@@ -3371,7 +3371,7 @@ state_server.lib_state.lib_ssl = ssl;
  * The SSL_clear() call is to let an existing SSL* be reused, typically after
  * session shutdown.  In this case, we have a brand new object and there's no
  * obvious reason to immediately clear it.  I'm guessing that this was
- * originally added because of incomplete initialisation which the clear fixed,
+ * originally added because of incomplete initialization which the clear fixed,
  * in some historic release.
  */
 

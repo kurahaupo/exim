@@ -223,8 +223,8 @@ pp->yield_length = -1;
 pp->store_block_order = 12; /* log2(allocation_size) ie. 4kB */
 }
 
-/* Initialisation, for things fragile with parameter channges when using
-static initialisers. */
+/* Initialization, for things fragile with parameter channges when using
+static initializers. */
 
 void
 store_init(void)

@@ -596,7 +596,7 @@ Version 4.82
     Unless you really know what you are doing, leave it alone.
 
  4. If not built with DISABLE_DNSSEC, Exim now has the main option
-    dns_dnssec_ok; if set to 1 then Exim will initialise the resolver library
+    dns_dnssec_ok; if set to 1 then Exim will initialize the resolver library
     to send the DO flag to your recursive resolver.  If you have a recursive
     resolver, which can set the Authenticated Data (AD) flag in results, Exim
     can now detect this.  Exim does not perform validation itself, instead
@@ -658,7 +658,7 @@ Version 4.82
     those situations to know they want the feature.  More commonly, it means
     that GUI user modules get loaded and are broken by the setuid Exim being
     unable to access files specified in environment variables and passed
-    through, thus breakage.  So we explicitly inhibit the PKCS11 initialisation
+    through, thus breakage.  So we explicitly inhibit the PKCS11 initialization
     unless this new option is set.
 
     Some older OS's with earlier versions of GnuTLS might not have pkcs11 ability,

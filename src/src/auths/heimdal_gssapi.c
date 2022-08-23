@@ -140,7 +140,7 @@ if (!ob->server_service || !*ob->server_service)
 if ((krc = krb5_init_context(&context)))
   {
   int kerr = errno;
-  HDEBUG(D_auth) debug_printf("heimdal: failed to initialise krb5 context: %s\n",
+  HDEBUG(D_auth) debug_printf("heimdal: failed to initialize krb5 context: %s\n",
       strerror(kerr));
   return;
   }
@@ -248,7 +248,7 @@ uschar requested_qop;
 store_reset_point = store_mark();
 
 HDEBUG(D_auth)
-  debug_printf("heimdal: initialising auth context for %s\n", ablock->name);
+  debug_printf("heimdal: initializing auth context for %s\n", ablock->name);
 
 /* Construct our gss_name_t gserver describing ourselves */
 tmp1 = expand_string(ob->server_service);

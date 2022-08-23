@@ -1358,7 +1358,7 @@ while (count-- > 0)
 
 	if (addr->more_errno >> 8 == 52  &&  yield & 3)
 	  {
-	  if (!sx->RCPT_452)		/* initialised at MAIL-ack above */
+	  if (!sx->RCPT_452)		/* initialized at MAIL-ack above */
 	    {
 	    DEBUG(D_transport)
 	      debug_printf("%s: seen first 452 too-many-rcpts\n", __FUNCTION__);

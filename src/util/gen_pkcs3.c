@@ -240,7 +240,7 @@ main(int argc, char *argv[])
 #if OPENSSL_VERSION_NUMBER >= 0x1010000f
   // NULL okay for q; yes, the optional value is in the middle.
   if (DH_set0_pqg(dh, p, q, g) != 1) {
-    die_openssl_err("initialising DH pqg values failed");
+    die_openssl_err("initializing DH pqg values failed");
   }
 #else
   dh->p = p;

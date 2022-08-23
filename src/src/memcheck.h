@@ -204,7 +204,7 @@ typedef
    /* For safety on 64-bit platforms we assign the results to private
       unsigned long variables, then assign these to the lvalues the user
       specified, which works no matter what type 'leaked', 'dubious', etc
-      are.  We also initialise '_qzz_leaked', etc because
+      are.  We also initialize '_qzz_leaked', etc because
       VG_USERREQ__COUNT_LEAKS doesn't mark the values returned as
       defined. */                                                        \
    {unsigned long _qzz_res;                                              \
@@ -226,7 +226,7 @@ typedef
    /* For safety on 64-bit platforms we assign the results to private
       unsigned long variables, then assign these to the lvalues the user
       specified, which works no matter what type 'leaked', 'dubious', etc
-      are.  We also initialise '_qzz_leaked', etc because
+      are.  We also initialize '_qzz_leaked', etc because
       VG_USERREQ__COUNT_LEAKS doesn't mark the values returned as
       defined. */                                                        \
    {unsigned long _qzz_res;                                              \

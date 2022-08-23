@@ -187,13 +187,13 @@ if (!ob->server_mech)
   ob->server_mech = string_copy(ablock->public_name);
 
 /* Can get multiple session contexts from one library context, so just
-initialise the once. */
+initialize the once. */
 
 if (!gsasl_ctx)
   {
   if ((rc = gsasl_init(&gsasl_ctx)) != GSASL_OK)
     log_write(0, LOG_PANIC_DIE|LOG_CONFIG_FOR, "%s authenticator:  "
-	      "couldn't initialise GNU SASL library: %s (%s)",
+	      "couldn't initialize GNU SASL library: %s (%s)",
 	      ablock->name, gsasl_strerror_name(rc), gsasl_strerror(rc));
 
   gsasl_callback_set(gsasl_ctx, main_callback);
@@ -392,7 +392,7 @@ struct callback_exim_state cb_state;
 int rc, auth_result, exim_error, exim_error_override;
 
 HDEBUG(D_auth)
-  debug_printf("GNU SASL: initialising session for %s, mechanism %s\n",
+  debug_printf("GNU SASL: initializing session for %s, mechanism %s\n",
       ablock->name, ob->server_mech);
 
 #ifndef DISABLE_TLS
@@ -854,7 +854,7 @@ BOOL initial = TRUE;
 int rc, yield = FAIL;
 
 HDEBUG(D_auth)
-  debug_printf("GNU SASL: initialising session for %s, mechanism %s\n",
+  debug_printf("GNU SASL: initializing session for %s, mechanism %s\n",
       ablock->name, ob->server_mech);
 
 *buffer = 0;
