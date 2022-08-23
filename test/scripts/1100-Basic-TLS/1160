@@ -35,16 +35,19 @@
 #
 # To see the TFO((R):
 # First clear any previously-obtained cookie:
-#sudo perl
-#open(INFO, "-|", "/usr/bin/uname -s");
-#$_ = <INFO>;
-#if (/^FreeBSD/) {
-#system("sysctl net.inet.tcp.fastopen.client_enable=0"); system("sysctl net.inet.tcp.fastopen.client_enable=1");
-#} else {
-#system ("[ -e /proc/sys/net/ipv4/tcp_fastopen_blackhole_timeout_sec ] && echo 0 > /proc/sys/net/ipv4/tcp_fastopen_blackhole_timeout_sec");
-#system ("ip tcp_metrics delete 127.0.0.1");
-#}
-#
+#sudo sh
+#case $(uname -s) in
+# FreeBSD*)
+#   sysctl net.inet.tcp.fastopen.client_enable=0
+#   sysctl net.inet.tcp.fastopen.client_enable=1 ;;
+# Linux*)
+#   bhto=/proc/sys/net/ipv4/tcp_fastopen_blackhole_timeout_sec
+#   [ -e "$bhto" ] && echo 0 > "$bhto"
+#   ip tcp_metrics delete 127.0.0.1 ;;
+# *)
+#   echo Sorry you are on your own ;;
+#esac
+#exit
 #****
 #
 #
