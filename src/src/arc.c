@@ -289,7 +289,7 @@ while ((c = *s))
     case 'c':
       switch (*s)
 	{
-	case '=':			/* c= AMS canonicalisation */
+	case '=':			/* c= AMS canonicalization */
 	  if (arc_insert_tagvalue(al, offsetof(arc_line, c), &s)) return US"c tag dup";
 
 	  /* substructure: head/body   (eg. relaxed/simple)) */
@@ -1464,7 +1464,7 @@ for (arc_set * as = Ustrcmp(status, US"fail") == 0
      as; as = as->next)
   {
   arc_line * l;
-  /* Accumulate AAR then AMS then AS.  Relaxed canonicalisation
+  /* Accumulate AAR then AMS then AS.  Relaxed canonicalization
   is required per standard. */
 
   badline_str = US"aar";

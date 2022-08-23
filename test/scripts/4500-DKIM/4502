@@ -1,4 +1,4 @@
-# DKIM verify, relaxed canonicalisation
+# DKIM verify, relaxed canonicalization
 #
 exim -DSERVER=server -bd -oX PORT_D
 ****

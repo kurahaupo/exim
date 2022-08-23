@@ -1,4 +1,4 @@
-# DKIM verify, simple canonicalisation
+# DKIM verify, simple canonicalization
 #
 exim -DSERVER=server -DMSIZE='rsa=512 ed25519=250' -bd -oX PORT_D
 ****
