@@ -586,7 +586,7 @@ while (exim_tvcmp(&now_tv, prev_tv) <= 0)
 
 /* Exim runs with umask(0) so that files created with open() have the mode that
 is specified in the open() call. However, there are some files, typically in
-the spool directory, that are created with fopen(). They end up world-writeable
+the spool directory, that are created with fopen(). They end up world-writable
 if no precautions are taken. Although the spool directory is not accessible to
 the world, this is an untidiness. So this is a wrapper function for fopen()
 that sorts out the mode of the created file.
@@ -1967,7 +1967,7 @@ message_id[0] = 0;
 /* Set the umask to zero so that any files Exim creates using open() are
 created with the modes that it specifies. NOTE: Files created with fopen() have
 a problem, which was not recognized till rather late (February 2006). With this
-umask, such files will be world writeable. (They are all content scanning files
+umask, such files will be world writable. (They are all content scanning files
 in the spool directory, which isn't world-accessible, so this is not a
 disaster, but it's untidy.) I don't want to change this overall setting,
 however, because it will interact badly with the open() calls. Instead, there's
@@ -2540,9 +2540,9 @@ on the second character (the one after '-'), to save some effort. */
                  #ifdef CONFIGURE_GROUP
                  && statbuf.st_gid != config_gid   /* group not the special one */
                  #endif
-                 && (statbuf.st_mode & 020) != 0   /* group writeable */
+                 && (statbuf.st_mode & 020) != 0   /* group writable */
                    ) ||                            /* or */
-                (statbuf.st_mode & 2) != 0)        /* world writeable */
+                (statbuf.st_mode & 2) != 0)        /* world writable */
               {
               f.trusted_config = FALSE;
               fclose(trust_list);
@@ -2777,7 +2777,7 @@ on the second character (the one after '-'), to save some effort. */
         if (i+1 < argc) argrest = argv[++i]; else { badarg = TRUE; break; }
       (void) exim_str_fail_toolong(argrest, EXIM_DISPLAYMAIL_MAX, "-f");
       if (!*argrest)
-        *(sender_address = store_get(1, GET_UNTAINTED)) = '\0';  /* Ensure writeable memory */
+        *(sender_address = store_get(1, GET_UNTAINTED)) = '\0';  /* Ensure writable memory */
       else
         {
         uschar * temp = argrest + Ustrlen(argrest) - 1;

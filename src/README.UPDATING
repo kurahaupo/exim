@@ -383,7 +383,7 @@ Exim version 4.73
  * Exim will no longer accept a configuration file owned by the Exim
    run-time user, unless that account is explicitly the value in
    CONFIGURE_OWNER, which we discourage.  Exim now checks to ensure that
-   files are not writeable by other accounts.
+   files are not writable by other accounts.
 
  * The ALT_CONFIG_ROOT_ONLY build option is no longer optional and is forced
    on; the Exim user can, by default, no longer use -C/-D and retain privilege.

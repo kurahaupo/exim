@@ -662,7 +662,7 @@ FIXED_NEVER_USERS=root
 
 # CONFIGURE_OWNER=
 
-# If the configuration file is group-writeable, Exim insists by default that it
+# If the configuration file is group-writable, Exim insists by default that it
 # is owned by root. You can specify one additional permitted group owner here.
 
 # CONFIGURE_GROUP=

@@ -3101,7 +3101,7 @@ it reaches the end of the configuration section. The file is then left open so
 that the remaining configuration data can subsequently be read if needed for
 this run of Exim.
 
-The configuration file must be owned either by root or exim, and be writeable
+The configuration file must be owned either by root or exim, and be writable
 only by root or uid/gid exim. The values for Exim's uid and gid can be changed
 in the config file, so the test is done on the compiled in values. A slight
 anomaly, to be carefully documented.
@@ -3264,9 +3264,9 @@ if (f.trusted_config && Ustrcmp(filename, US"/dev/null"))
 #ifdef CONFIGURE_GROUP
        && statbuf.st_gid != config_gid		/* group not the special one */
 #endif
-       && (statbuf.st_mode & 020) != 0		/* group writeable  */
+       && (statbuf.st_mode & 020) != 0		/* group writable  */
      ||						/* or */
-       (statbuf.st_mode & 2) != 0		/* world writeable  */
+       (statbuf.st_mode & 2) != 0		/* world writable  */
      )
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "Exim configuration file %s has the "
       "wrong owner, group, or mode", big_buffer);

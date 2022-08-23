@@ -3962,7 +3962,7 @@ for (; cb; cb = cb->next)
 #endif
 	 )
         store_pool = POOL_PERM;
-#ifndef DISABLE_DKIM	/* Overwriteable dkim result variables */
+#ifndef DISABLE_DKIM	/* Overwritable dkim result variables */
       if (Ustrcmp(cb->u.varname, "dkim_verify_status") == 0)
 	dkim_verify_status = string_copy(arg);
       else if (Ustrcmp(cb->u.varname, "dkim_verify_reason") == 0)

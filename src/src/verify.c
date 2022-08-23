@@ -1674,7 +1674,7 @@ uschar **failure_ptr = options & vopt_is_recipient
 uschar *ko_prefix, *cr;
 uschar *address = vaddr->address;
 uschar *save_sender;
-uschar null_sender[] = { 0 };             /* Ensure writeable memory */
+uschar null_sender[] = { 0 };             /* Ensure writable memory */
 
 /* Clear, just in case */
 
