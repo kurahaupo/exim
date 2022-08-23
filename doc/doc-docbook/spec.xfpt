@@ -30260,7 +30260,7 @@ crypto" as the default.  Note though that while GnuTLS lets the string control
 which versions of TLS/SSL will be negotiated, OpenSSL does not and you're
 limited to ciphersuite constraints.
 
-If DANE is requested and useable (see above) the following transport options are ignored:
+If DANE is requested and usable (see above) the following transport options are ignored:
 .code
   hosts_require_tls
   tls_verify_hosts

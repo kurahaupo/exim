@@ -305,7 +305,7 @@ start = time(NULL);
   if (!num_servers)
     {
     log_write(0, LOG_MAIN|LOG_PANIC,
-       "%s no useable spamd server addresses in spamd_address configuration option.",
+       "%s no usable spamd server addresses in spamd_address configuration option.",
        loglabel);
     goto defer;
     }
