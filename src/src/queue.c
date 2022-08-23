@@ -1508,7 +1508,7 @@ return yield;
 *       Check the queue_only_file condition      *
 *************************************************/
 
-/* The queue_only_file option forces certain kinds of queueing if a given file
+/* The queue_only_file option forces certain kinds of queuing if a given file
 exists.
 
 Arguments:  none

@@ -3964,7 +3964,7 @@ tslen = Ustrlen(timestamp);
 memcpy(received_header->text + received_header->slen - tslen - 1,
   timestamp, tslen);
 
-/* In MUA wrapper mode, ignore queueing actions set by ACL or local_scan() */
+/* In MUA wrapper mode, ignore queuing actions set by ACL or local_scan() */
 
 if (mua_wrapper)
   {

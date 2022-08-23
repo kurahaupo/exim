@@ -3451,7 +3451,7 @@ for (; cb; cb = cb->next)
 	      { p += 17; f.queue_smtp = TRUE; }
 	    else
 	      break;
-	  cancel_cutthrough_connection(TRUE, US"queueing forced");
+	  cancel_cutthrough_connection(TRUE, US"queuing forced");
 	  break;
 
 	case CONTROL_SUBMISSION:

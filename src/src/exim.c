@@ -5472,9 +5472,9 @@ following configuration settings are forced here:
   (3) No parallel remote delivery
   (4) Unprivileged delivery
 
-We don't force overall queueing options because there are several of them;
-instead, queueing is avoided below when mua_wrapper is set. However, we do need
-to override any SMTP queueing. */
+We don't force overall queuing options because there are several of them;
+instead, queuing is avoided below when mua_wrapper is set. However, we do need
+to override any SMTP queuing. */
 
 if (mua_wrapper)
   {
@@ -5971,19 +5971,19 @@ for (BOOL more = TRUE; more; )
       if (queue_only_load_latch) session_local_queue_only = TRUE;
       }
 
-  /* If running as an MUA wrapper, all queueing options and freezing options
+  /* If running as an MUA wrapper, all queuing options and freezing options
   are ignored. */
 
   if (mua_wrapper)
     local_queue_only = f.queue_only_policy = f.deliver_freeze = FALSE;
 
-  /* Log the queueing here, when it will get a message id attached, but
+  /* Log the queuing here, when it will get a message id attached, but
   not if queue_only is set (case 0). Case 1 doesn't happen here (too many
   connections). */
 
   if (local_queue_only)
     {
-    cancel_cutthrough_connection(TRUE, US"no delivery; queueing");
+    cancel_cutthrough_connection(TRUE, US"no delivery; queuing");
     switch(queue_only_reason)
       {
       case 2:
@@ -6001,7 +6001,7 @@ for (BOOL more = TRUE; more; )
     }
 
   else if (f.queue_only_policy || f.deliver_freeze)
-    cancel_cutthrough_connection(TRUE, US"no delivery; queueing");
+    cancel_cutthrough_connection(TRUE, US"no delivery; queuing");
 
   /* Else do the delivery unless the ACL or local_scan() called for queue only
   or froze the message. Always deliver in a separate process. A fork failure is

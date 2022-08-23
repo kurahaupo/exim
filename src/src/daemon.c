@@ -447,7 +447,7 @@ if (pid == 0)
     else if (*nah) smtp_active_hostname = nah;
     }
 
-  /* Initialize the queueing flags */
+  /* Initialize the queuing flags */
 
   queue_check_only();
   session_local_queue_only = queue_only;
@@ -651,7 +651,7 @@ if (pid == 0)
       if (queue_only_load_latch) session_local_queue_only = TRUE;
       }
 
-    /* Log the queueing here, when it will get a message id attached, but
+    /* Log the queuing here, when it will get a message id attached, but
     not if queue_only is set (case 0). */
 
     if (local_queue_only) switch(queue_only_reason)
