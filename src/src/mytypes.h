@@ -80,6 +80,8 @@ systems where "char" is actually signed, I've converted Exim to use entirely
 unsigned chars, except in a few special places such as arguments that are
 almost always literal strings. */
 
+#if !defined CHAR_MIN || CHAR_MIN < 0
+/* only use casts when needed */
 #define CS   (char *)
 #define CCS  (const char *)
 #define CSS  (char **)
@@ -88,6 +90,17 @@ almost always literal strings. */
 #define USS  (unsigned char **)
 #define CUSS (const unsigned char **)
 #define CCSS (const char **)
+#else
+/* char is already unsigned, don't cast */
+#define CS
+#define CCS
+#define CSS
+#define US
+#define CUS
+#define USS
+#define CUSS
+#define CCSS
+#endif
 
 /* The C library string functions expect "char *" arguments. Use macros to
 avoid having to write a cast each time. We do this for string and file
@@ -108,7 +121,7 @@ functions that are called quite often; for other calls to external libraries
 # define Uopen2(s,n)        exim_open2(CCS(s),(n)|O_BINARY)
 #else								/* be opened as binary  */
 # define Uopen(s,n,m)       exim_open(CCS(s),n,m)		/* to avoid problems    */
-# define Uopen2(s,n)        exim_open2(CCS(s),n)	
+# define Uopen2(s,n)        exim_open2(CCS(s),n)
 #endif								/* with CRLF endings.   */
 #define Uread(f,b,l)       read(f,CS(b),l)
 #define Urename(s,t)       rename(CCS(s),CCS(t))
