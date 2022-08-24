@@ -99,13 +99,13 @@ options_transports(void)
 {
 uschar buf[64];
 
-options_from_list(optionlist_transports, nelem(optionlist_transports), US"TRANSPORTS", NULL);
+options_from_list(optionlist_transports, nelem(optionlist_transports), US("TRANSPORTS"), NULL);
 
 for (transport_info * ti = transports_available; ti->driver_name[0]; ti++)
   {
-  spf(buf, sizeof(buf), US"_DRIVER_TRANSPORT_%T", ti->driver_name);
+  spf(buf, sizeof(buf), US("_DRIVER_TRANSPORT_%T"), ti->driver_name);
   builtin_macro_create(buf);
-  options_from_list(ti->options, (unsigned)*ti->options_count, US"TRANSPORT", ti->driver_name);
+  options_from_list(ti->options, (unsigned)*ti->options_count, US("TRANSPORT"), ti->driver_name);
   }
 }
 
@@ -143,7 +143,7 @@ the work. */
 void
 transport_init(void)
 {
-readconf_driver_init(US"transport",
+readconf_driver_init(US("transport"),
   (driver_instance **)(&transports),     /* chain anchor */
   (driver_info *)transports_available,   /* available drivers */
   sizeof(transport_info),                /* size of info block */
@@ -680,7 +680,7 @@ ppp->next = *pplist;
 *pplist = ppp;
 ppp->ptr = pp;
 
-if (!*first && !write_chunk(tctx, US",\n ", 3)) return FALSE;
+if (!*first && !write_chunk(tctx, US(",\n "), 3)) return FALSE;
 *first = FALSE;
 return write_chunk(tctx, pp->address, Ustrlen(pp->address));
 }
@@ -822,7 +822,7 @@ up any other headers. An empty string or a forced expansion failure are
 noops. An added header string from a transport may not end with a newline;
 add one if it does not. */
 
-if (tblock && (list = CUS tblock->add_headers))
+if (tblock && (list = CUS(tblock->add_headers)))
   {
   int sep = '\n';
   uschar * s;
@@ -834,7 +834,7 @@ if (tblock && (list = CUS tblock->add_headers))
       if (len > 0)
 	{
 	if (!sendfn(tctx, s, len)) return FALSE;
-	if (s[len-1] != '\n' && !sendfn(tctx, US"\n", 1))
+	if (s[len-1] != '\n' && !sendfn(tctx, US("\n"), 1))
 	  return FALSE;
 	DEBUG(D_transport)
 	  {
@@ -850,7 +850,7 @@ if (tblock && (list = CUS tblock->add_headers))
 
 /* Separate headers from body with a blank line */
 
-return sendfn(tctx, US"\n", 1);
+return sendfn(tctx, US("\n"), 1);
 }
 
 
@@ -972,7 +972,7 @@ if (!(tctx->options & topt_no_headers))
     struct aci *dlist = NULL;
     rmark reset_point = store_mark();
 
-    if (!write_chunk(tctx, US"Envelope-to: ", 13)) goto bad;
+    if (!write_chunk(tctx, US("Envelope-to: "), 13)) goto bad;
 
     /* Pick up from all the addresses. The plist and dlist variables are
     anchors for lists of addresses already handled; they have to be defined at
@@ -984,7 +984,7 @@ if (!(tctx->options & topt_no_headers))
 
     /* Add a final newline and reset the store used for tracking duplicates */
 
-    if (!write_chunk(tctx, US"\n", 1)) goto bad;
+    if (!write_chunk(tctx, US("\n"), 1)) goto bad;
     store_reset(reset_point);
     }
 
@@ -994,9 +994,9 @@ if (!(tctx->options & topt_no_headers))
     {
     uschar * s = tod_stamp(tod_full);
 
-    if (  !write_chunk(tctx, US"Delivery-date: ", 15)
+    if (  !write_chunk(tctx, US("Delivery-date: "), 15)
        || !write_chunk(tctx, s, Ustrlen(s))
-       || !write_chunk(tctx, US"\n", 1)) goto bad;
+       || !write_chunk(tctx, US("\n"), 1)) goto bad;
     }
 
   /* Then the message's headers. Don't write any that are flagged as "old";
@@ -1157,8 +1157,8 @@ f.spool_file_wireformat = FALSE;
 
 if (tctx->options & topt_end_dot)
   {
-  smtp_debug_cmd(US".", 0);
-  if (!write_chunk(tctx, US".\n", 2))
+  smtp_debug_cmd(US("."), 0);
+  if (!write_chunk(tctx, US(".\n"), 2))
     return FALSE;
   }
 
@@ -1240,8 +1240,8 @@ write_pid = (pid_t)(-1);
   {
   int bits = fcntl(tctx->u.fd, F_GETFD);
   (void) fcntl(tctx->u.fd, F_SETFD, bits | FD_CLOEXEC);
-  filter_pid = child_open(USS transport_filter_argv, NULL, 077,
-			  &fd_write, &fd_read, FALSE, US"transport-filter");
+  filter_pid = child_open(USS(transport_filter_argv), NULL, 077,
+			  &fd_write, &fd_read, FALSE, US("transport-filter"));
   (void) fcntl(tctx->u.fd, F_SETFD, bits & ~FD_CLOEXEC);
   }
 if (filter_pid < 0) goto TIDY_UP;      /* errno set */
@@ -1255,7 +1255,7 @@ via a(nother) pipe. While writing to the filter, we do not do the CRLF,
 smtp dots, or check string processing. */
 
 if (pipe(pfd) != 0) goto TIDY_UP;      /* errno set */
-if ((write_pid = exim_fork(US"tpt-filter-writer")) == 0)
+if ((write_pid = exim_fork(US("tpt-filter-writer"))) == 0)
   {
   BOOL rc;
   (void)close(fd_read);
@@ -1427,10 +1427,10 @@ if (yield)
   f.spool_file_wireformat = FALSE;
   if (  tctx->options & topt_end_dot
      && ( last_filter_was_NL
-        ? !write_chunk(tctx, US".\n", 2)
-	: !write_chunk(tctx, US"\n.\n", 3)
+        ? !write_chunk(tctx, US(".\n"), 2)
+	: !write_chunk(tctx, US("\n.\n"), 3)
      )  )
-    { smtp_debug_cmd(US".", 0); yield = FALSE; }
+    { smtp_debug_cmd(US("."), 0); yield = FALSE; }
 
   /* Write out any remaining data in the buffer. */
 
@@ -1493,7 +1493,7 @@ Returns:    nothing
 void
 transport_update_waiting(host_item *hostlist, uschar *tpname)
 {
-const uschar *prevname = US"";
+const uschar *prevname = US("");
 open_db dbblock;
 open_db *dbm_file;
 
@@ -1546,7 +1546,7 @@ for (host_item * host = hostlist; host; host = host->next)
   for (int i = host_record->sequence - 1; i >= 0 && !already; i--)
     {
     dbdata_wait *cont;
-    sprintf(CS buffer, "%.200s:%d", host->name, i);
+    sprintf(CS(buffer), "%.200s:%d", host->name, i);
     if ((cont = dbfn_read(dbm_file, buffer)))
       {
       int clen = cont->count * MESSAGE_ID_LENGTH;
@@ -1572,7 +1572,7 @@ for (host_item * host = hostlist; host; host = host->next)
 
   if (host_record->count >= WAIT_NAME_MAX)
     {
-    sprintf(CS buffer, "%.200s:%d", host->name, host_record->sequence);
+    sprintf(CS(buffer), "%.200s:%d", host->name, host_record->sequence);
     dbfn_write(dbm_file, buffer, host_record, sizeof(dbdata_wait) + host_length);
 #ifndef DISABLE_QUEUE_RAMP
     if (f.queue_2stage && queue_fast_ramp && !queue_run_in_order)
@@ -1754,7 +1754,7 @@ while (1)
     uschar * mid = msgq[i].message_id;
 
     set_subdir_str(subdir, mid, 0);
-    if (Ustat(spool_fname(US"input", subdir, mid, US"-D"), &statbuf) != 0)
+    if (Ustat(spool_fname(US("input"), subdir, mid, US("-D")), &statbuf) != 0)
       msgq[i].bKeep = FALSE;
     else if (!oicf_func || oicf_func(mid, oicf_data))
       {
@@ -1806,7 +1806,7 @@ while (1)
 
     for (int i = host_record->sequence - 1; i >= 0 && !newr; i--)
       {
-      sprintf(CS buffer, "%.200s:%d", hostname, i);
+      sprintf(CS(buffer), "%.200s:%d", hostname, i);
       newr = dbfn_read(dbm_file, buffer);
       }
 
@@ -1900,18 +1900,18 @@ if (proxy_session)		    i += 5;
 /* Set up the calling arguments; use the standard function for the basics,
 but we have a number of extras that may be added. */
 
-argv = CUSS child_exec_exim(CEE_RETURN_ARGV, TRUE, &i, FALSE, 0);
+argv = CUSS(child_exec_exim(CEE_RETURN_ARGV, TRUE, &i, FALSE, 0));
 
-if (f.smtp_authenticated)			argv[i++] = US"-MCA";
-if (smtp_peer_options & OPTION_CHUNKING)	argv[i++] = US"-MCK";
-if (smtp_peer_options & OPTION_DSN)		argv[i++] = US"-MCD";
-if (smtp_peer_options & OPTION_PIPE)		argv[i++] = US"-MCP";
-if (smtp_peer_options & OPTION_SIZE)		argv[i++] = US"-MCS";
+if (f.smtp_authenticated)			argv[i++] = US("-MCA");
+if (smtp_peer_options & OPTION_CHUNKING)	argv[i++] = US("-MCK");
+if (smtp_peer_options & OPTION_DSN)		argv[i++] = US("-MCD");
+if (smtp_peer_options & OPTION_PIPE)		argv[i++] = US("-MCP");
+if (smtp_peer_options & OPTION_SIZE)		argv[i++] = US("-MCS");
 #ifndef DISABLE_TLS
 if (smtp_peer_options & OPTION_TLS)
   if (tls_out.active.sock >= 0 || continue_proxy_cipher)
     {
-    argv[i++] = US"-MCt";
+    argv[i++] = US("-MCt");
     argv[i++] = sending_ip_address;
     argv[i++] = string_sprintf("%d", sending_port);
     argv[i++] = tls_out.active.sock >= 0 ? tls_out.cipher : continue_proxy_cipher;
@@ -1920,20 +1920,20 @@ if (smtp_peer_options & OPTION_TLS)
       {
       argv[i++] =
 #ifdef SUPPORT_DANE
-        tls_out.dane_verified ? US"-MCr" :
+        tls_out.dane_verified ? US("-MCr") :
 #endif
-        US"-MCs";
+        US("-MCs");
       argv[i++] = tls_out.sni;
       }
     }
   else
-    argv[i++] = US"-MCT";
+    argv[i++] = US("-MCT");
 #endif
 
 #ifdef EXPERIMENTAL_ESMTP_LIMITS
 if (continue_limit_rcpt || continue_limit_rcptdom)
   {
-  argv[i++] = US"-MCL";
+  argv[i++] = US("-MCL");
   argv[i++] = string_sprintf("%u", continue_limit_mail);
   argv[i++] = string_sprintf("%u", continue_limit_rcpt);
   argv[i++] = string_sprintf("%u", continue_limit_rcptdom);
@@ -1942,7 +1942,7 @@ if (continue_limit_rcpt || continue_limit_rcptdom)
 
 if (queue_run_pid != (pid_t)0)
   {
-  argv[i++] = US"-MCQ";
+  argv[i++] = US("-MCQ");
   argv[i++] = string_sprintf("%d", queue_run_pid);
   argv[i++] = string_sprintf("%d", queue_run_pipe);
   }
@@ -1950,7 +1950,7 @@ if (queue_run_pid != (pid_t)0)
 #ifdef SUPPORT_SOCKS
 if (proxy_session)
   {
-  argv[i++] = US"-MCp";
+  argv[i++] = US("-MCp");
   argv[i++] = proxy_local_address;
   argv[i++] = string_sprintf("%d", proxy_local_port);
   argv[i++] = proxy_external_address;
@@ -1958,10 +1958,10 @@ if (proxy_session)
   }
 #endif
 
-argv[i++] = US"-MC";
-argv[i++] = US transport_name;
-argv[i++] = US hostname;
-argv[i++] = US hostaddress;
+argv[i++] = US("-MC");
+argv[i++] = US(transport_name);
+argv[i++] = US(hostname);
+argv[i++] = US(hostaddress);
 argv[i++] = string_sprintf("%d", continue_sequence + 1);
 argv[i++] = id;
 argv[i++] = NULL;
@@ -1977,7 +1977,7 @@ if (socket_fd != 0)
 DEBUG(D_exec) debug_print_argv(argv);
 exim_nullstd();                          /* Ensure std{out,err} exist */
 /* argv[0] should be untainted, from child_exec_exim() */
-execv(CS argv[0], (char *const *)argv);
+execv(CS(argv[0]), (char *const *)argv);
 
 DEBUG(D_any) debug_printf("execv failed: %s\n", strerror(errno));
 _exit(errno);         /* Note: must be _exit(), NOT exit() */
@@ -2018,14 +2018,14 @@ continue_limit_rcpt = peer_limit_rcpt;
 continue_limit_rcptdom = peer_limit_rcptdom;
 #endif
 
-if ((pid = exim_fork(US"continued-transport-interproc")) == 0)
+if ((pid = exim_fork(US("continued-transport-interproc"))) == 0)
   {
   /* Disconnect entirely from the parent process. If we are running in the
   test harness, wait for a bit to allow the previous process time to finish,
   write the log, etc., so that the output is always in the same order for
   automatic comparison. */
 
-  if ((pid = exim_fork(US"continued-transport")) != 0)
+  if ((pid = exim_fork(US("continued-transport"))) != 0)
     _exit(EXIT_SUCCESS);
   testharness_pause_ms(1000);
 
@@ -2138,7 +2138,7 @@ for (; *s && argcount < max_args; argcount++)
     if (*(s += n) == '\'') s++;
     }
   else
-    argv[argcount] = string_dequote(CUSS &s);
+    argv[argcount] = string_dequote(CUSS(&s));
   Uskip_whitespace(&s);
   }
 
@@ -2273,7 +2273,7 @@ if (expand_arguments)
 	  if (*(s += n) == '\'') s++;
 	  }
         else
-	  address_pipe_argv[address_pipe_argcount++] = string_dequote(CUSS &s);
+	  address_pipe_argv[address_pipe_argcount++] = string_dequote(CUSS(&s));
 	Uskip_whitespace(&s);			/* strip space after arg */
         }
 

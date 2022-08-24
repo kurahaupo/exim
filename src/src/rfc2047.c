@@ -235,7 +235,7 @@ while (mimeword)
   #if HAVE_ICONV
   *q1 = 0;
   if (target && strcmpic(target, mimeword+2) != 0)
-    if ((icd = iconv_open(CS target, CS(mimeword+2))) == (iconv_t)-1)
+    if ((icd = iconv_open(CS(target), CS(mimeword+2))) == (iconv_t)-1)
       *error = string_sprintf("iconv_open(\"%s\", \"%s\") failed: %s%s",
         target, mimeword+2, strerror(errno),
         (errno == EINVAL)? " (maybe unsupported conversion)" : "");
@@ -256,7 +256,7 @@ while (mimeword)
 
     if (icd != (iconv_t)(-1))
       {
-      (void)iconv(icd, (ICONV_ARG2_TYPE)(&dptr), &dlen, CSS &outptr, &outleft);
+      (void)iconv(icd, (ICONV_ARG2_TYPE)(&dptr), &dlen, CSS(&outptr), &outleft);
 
       /* If outptr has been adjusted, there is some output. Set up to add it to
       the output buffer. The function will have adjusted dptr and dlen. If

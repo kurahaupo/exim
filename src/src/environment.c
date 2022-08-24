@@ -42,7 +42,7 @@ if (!keep_environment || *keep_environment == '\0')
 else if (Ustrcmp(keep_environment, "*") != 0)
   {
   rmark reset_point = store_mark();
-  if (environ) for (uschar ** p = USS environ; *p; /* see below */)
+  if (environ) for (uschar ** p = USS(environ); *p; /* see below */)
     {
     /* It's considered broken if we do not find the '=', according to
     Florian Weimer. For now we ignore such strings. unsetenv() would complain,
@@ -53,10 +53,10 @@ else if (Ustrcmp(keep_environment, "*") != 0)
       {
       uschar * name = string_copyn(*p, eqp - *p);
 
-      if (OK != match_isinlist(name, CUSS &keep_environment,
+      if (OK != match_isinlist(name, CUSS(&keep_environment),
           0, NULL, NULL, MCL_NOEXPAND, FALSE, NULL))
         if (os_unsetenv(name) < 0) return FALSE;
-        else p = USS environ; /* RESTART from the beginning */
+        else p = USS(environ); /* RESTART from the beginning */
       else p++;
       }
     }
@@ -71,7 +71,7 @@ if (add_environment)
   while ((p = string_nextinlist(&envlist, &sep, NULL, 0)))
     {
     DEBUG(D_expand) debug_printf("adding %s\n", p);
-    putenv(CS p);
+    putenv(CS(p));
     }
   }
 #ifndef DISABLE_TLS

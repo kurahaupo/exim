@@ -33,7 +33,7 @@ int
 auth_check_serv_cond(auth_instance *ablock)
 {
   return auth_check_some_cond(ablock,
-      US"server_condition", ablock->server_condition, OK);
+      US("server_condition"), ablock->server_condition, OK);
 }
 
 
@@ -107,13 +107,13 @@ available as an error text for the user. */
 
 if (*cond == 0 ||
     Ustrcmp(cond, "0") == 0 ||
-    strcmpic(cond, US"no") == 0 ||
-    strcmpic(cond, US"false") == 0)
+    strcmpic(cond, US("no")) == 0 ||
+    strcmpic(cond, US("false")) == 0)
   return FAIL;
 
 if (Ustrcmp(cond, "1") == 0 ||
-    strcmpic(cond, US"yes") == 0 ||
-    strcmpic(cond, US"true") == 0)
+    strcmpic(cond, US("yes")) == 0 ||
+    strcmpic(cond, US("true")) == 0)
   return OK;
 
 auth_defer_msg = cond;

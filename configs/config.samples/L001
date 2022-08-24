@@ -23,8 +23,8 @@
  * otherwise you get stuck with the compile-time defaults
  */
 
-static uschar *uvscan_binary = US"/usr/local/uvscan/uvscan";
-static uschar *data_directory = US"/usr/local/uvscan";
+static uschar *uvscan_binary = US("/usr/local/uvscan/uvscan");
+static uschar *data_directory = US("/usr/local/uvscan");
 
 optionlist local_scan_options[] = { /* alphabetical order */
 	{ "data_directory", opt_stringptr, &data_directory },

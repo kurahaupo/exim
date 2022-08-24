@@ -294,41 +294,41 @@ for (i = 0, var = out_sqlda->sqlvar; i < out_sqlda->sqld; i++, var++)
   switch (var->sqltype & ~1)
     {
     case SQL_VARYING:
-	var->sqldata = CS store_get(sizeof(char) * var->sqllen + 2, GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(char) * var->sqllen + 2, GET_UNTAINTED));
 	break;
     case SQL_TEXT:
-	var->sqldata = CS store_get(sizeof(char) * var->sqllen, GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(char) * var->sqllen, GET_UNTAINTED));
 	break;
     case SQL_SHORT:
-	var->sqldata = CS  store_get(sizeof(short), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(short), GET_UNTAINTED));
 	break;
     case SQL_LONG:
-	var->sqldata = CS  store_get(sizeof(ISC_LONG), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(ISC_LONG), GET_UNTAINTED));
 	break;
 #ifdef SQL_INT64
     case SQL_INT64:
-	var->sqldata = CS  store_get(sizeof(ISC_INT64), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(ISC_INT64), GET_UNTAINTED));
 	break;
 #endif
     case SQL_FLOAT:
-	var->sqldata = CS  store_get(sizeof(float), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(float), GET_UNTAINTED));
 	break;
     case SQL_DOUBLE:
-	var->sqldata = CS  store_get(sizeof(double), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(double), GET_UNTAINTED));
 	break;
 #ifdef SQL_TIMESTAMP
     case SQL_DATE:
-	var->sqldata = CS  store_get(sizeof(ISC_QUAD), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(ISC_QUAD), GET_UNTAINTED));
 	break;
 #else
     case SQL_TIMESTAMP:
-	var->sqldata = CS  store_get(sizeof(ISC_TIMESTAMP), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(ISC_TIMESTAMP), GET_UNTAINTED));
 	break;
     case SQL_TYPE_DATE:
-	var->sqldata = CS  store_get(sizeof(ISC_DATE), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(ISC_DATE), GET_UNTAINTED));
 	break;
     case SQL_TYPE_TIME:
-	var->sqldata = CS  store_get(sizeof(ISC_TIME), GET_UNTAINTED);
+	var->sqldata = CS(store_get(sizeof(ISC_TIME), GET_UNTAINTED));
 	break;
   #endif
     }
@@ -362,14 +362,14 @@ while (isc_dsql_fetch(status, &stmth, out_sqlda->version, out_sqlda) != 100L)
     }
 
   if (result)
-    result = string_catn(result, US "\n", 1);
+    result = string_catn(result, US("\n"), 1);
 
   /* Find the number of fields returned. If this is one, we don't add field
      names to the data. Otherwise we do. */
   if (out_sqlda->sqld == 1)
     {
     if (out_sqlda->sqlvar[0].sqlind == NULL || *out_sqlda->sqlvar[0].sqlind != -1)     /* NULL value yields nothing */
-      result = string_catn(result, US buffer,
+      result = string_catn(result, US(buffer),
 		       fetch_field(buffer, sizeof(buffer),
 				   &out_sqlda->sqlvar[0]));
     }
@@ -379,29 +379,29 @@ while (isc_dsql_fetch(status, &stmth, out_sqlda->version, out_sqlda) != 100L)
       {
       int len = fetch_field(buffer, sizeof(buffer), &out_sqlda->sqlvar[i]);
 
-      result = string_catn(result, US out_sqlda->sqlvar[i].aliasname,
+      result = string_catn(result, US(out_sqlda->sqlvar[i].aliasname),
 		     out_sqlda->sqlvar[i].aliasname_length);
-      result = string_catn(result, US "=", 1);
+      result = string_catn(result, US("="), 1);
 
       /* Quote the value if it contains spaces or is empty */
 
       if (*out_sqlda->sqlvar[i].sqlind == -1)       /* NULL value */
-	result = string_catn(result, US "\"\"", 2);
+	result = string_catn(result, US("\"\""), 2);
 
       else if (buffer[0] == 0 || Ustrchr(buffer, ' ') != NULL)
 	{
-	result = string_catn(result, US "\"", 1);
+	result = string_catn(result, US("\""), 1);
 	for (int j = 0; j < len; j++)
 	  {
 	  if (buffer[j] == '\"' || buffer[j] == '\\')
-	      result = string_cat(result, US "\\", 1);
-	  result = string_cat(result, US buffer + j, 1);
+	      result = string_cat(result, US("\\"), 1);
+	  result = string_cat(result, US(buffer) + j, 1);
 	  }
-	result = string_catn(result, US "\"", 1);
+	result = string_catn(result, US("\""), 1);
 	}
       else
-	result = string_catn(result, US buffer, len);
-      result = string_catn(result, US " ", 1);
+	result = string_catn(result, US(buffer), len);
+      result = string_catn(result, US(" "), 1);
       }
   }
 
@@ -412,7 +412,7 @@ always leaves enough room for a terminating zero. */
 if (!result)
   {
   yield = FAIL;
-  *errmsg = US "Interbase: no data found";
+  *errmsg = US("Interbase: no data found");
   }
 else
   gstring_release_unused(result);
@@ -469,7 +469,7 @@ while ((server = string_nextinlist(&list, &sep, NULL, 0)))
   }
 
 if (!ibase_servers)
-  *errmsg = US "no Interbase servers defined (ibase_servers option)";
+  *errmsg = US("no Interbase servers defined (ibase_servers option)");
 
 return DEFER;
 }
@@ -540,7 +540,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"ibase",			/* lookup name */
+  .name = US("ibase"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = ibase_open,			/* open function */
   .check NULL,				/* no check function */

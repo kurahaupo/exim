@@ -439,7 +439,7 @@ struct cdb_state * cdbp = handle;
 #ifdef HAVE_MMAP
 if (cdbp->cdb_map)
   {
-  munmap(CS cdbp->cdb_map, cdbp->filelen);
+  munmap(CS(cdbp->cdb_map), cdbp->filelen);
   if (cdbp->cdb_map == cdbp->cdb_offsets)
      cdbp->cdb_offsets = NULL;
   }
@@ -469,7 +469,7 @@ return g;
 
 
 lookup_info cdb_lookup_info = {
-  .name = US"cdb",			/* lookup name */
+  .name = US("cdb"),			/* lookup name */
   .type = lookup_absfile,		/* absolute file name */
   .open = cdb_open,			/* open function */
   .check = cdb_check,			/* check function */

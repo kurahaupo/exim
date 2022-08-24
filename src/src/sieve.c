@@ -120,24 +120,24 @@ that callers don't get surprised.
 List *MUST* end with a NULL.  Which at least makes ifdef-vs-comma easier. */
 
 const uschar *exim_sieve_extension_list[] = {
-  CUS"comparator-i;ascii-numeric",
-  CUS"copy",
+  CUS("comparator-i;ascii-numeric"),
+  CUS("copy"),
 #ifdef ENCODED_CHARACTER
-  CUS"encoded-character",
+  CUS("encoded-character"),
 #endif
 #ifdef ENOTIFY
-  CUS"enotify",
+  CUS("enotify"),
 #endif
-  CUS"envelope",
+  CUS("envelope"),
 #ifdef ENVELOPE_AUTH
-  CUS"envelope-auth",
+  CUS("envelope-auth"),
 #endif
-  CUS"fileinto",
+  CUS("fileinto"),
 #ifdef SUBADDRESS
-  CUS"subaddress",
+  CUS("subaddress"),
 #endif
 #ifdef VACATION
-  CUS"vacation",
+  CUS("vacation"),
 #endif
   NULL
 };
@@ -293,7 +293,7 @@ for (int pass = 0; pass <= 1; pass++)
         dst->length+=3;
       else
         {		/* encoded char */
-        new += sprintf(CS new,"=%02X",ch);
+        new += sprintf(CS(new),"=%02X",ch);
         }
       line+=3;
       }
@@ -340,7 +340,7 @@ if (address->length>0)
   }
 else
   {
-  filter->errmsg=CUS "empty address";
+  filter->errmsg=CUS("empty address");
   return -1;
   }
 }
@@ -424,7 +424,7 @@ string_item *new;
 
 if (Ustrncmp(uri,"mailto:",7))
   {
-  filter->errmsg=US "Unknown URI scheme";
+  filter->errmsg=US("Unknown URI scheme");
   return 0;
   }
 
@@ -442,7 +442,7 @@ if (*uri && *uri!='?')
       to.length = g->ptr;
       if (uri_decode(&to)==-1)
         {
-        filter->errmsg=US"Invalid URI encoding";
+        filter->errmsg=US("Invalid URI encoding");
         return -1;
         }
       new = store_get(sizeof(string_item), GET_UNTAINTED);
@@ -454,7 +454,7 @@ if (*uri && *uri!='?')
       }
     else
       {
-      filter->errmsg = US"Missing addr-spec in URI";
+      filter->errmsg = US("Missing addr-spec in URI");
       return -1;
       }
     if (*uri=='%') uri+=3;
@@ -475,7 +475,7 @@ if (*uri=='?')
       hname.length = g->ptr;
       if (uri_decode(&hname)==-1)
         {
-        filter->errmsg=US"Invalid URI encoding";
+        filter->errmsg=US("Invalid URI encoding");
         return -1;
         }
       }
@@ -484,7 +484,7 @@ if (*uri=='?')
       ++uri;
     else
       {
-      filter->errmsg=US"Missing equal after hname";
+      filter->errmsg=US("Missing equal after hname");
       return -1;
       }
     /* match hvalue */
@@ -497,11 +497,11 @@ if (*uri=='?')
       hname.length = g->ptr;
       if (uri_decode(&hvalue)==-1)
         {
-        filter->errmsg=US"Invalid URI encoding";
+        filter->errmsg=US("Invalid URI encoding");
         return -1;
         }
       }
-    if (hname.length==2 && strcmpic(hname.character, US"to")==0)
+    if (hname.length==2 && strcmpic(hname.character, US("to"))==0)
       {
       new=store_get(sizeof(string_item), GET_UNTAINTED);
       new->text = store_get(hvalue.length+1, hvalue.character);
@@ -510,19 +510,19 @@ if (*uri=='?')
       new->next=*recipient;
       *recipient=new;
       }
-    else if (hname.length==4 && strcmpic(hname.character, US"body")==0)
+    else if (hname.length==4 && strcmpic(hname.character, US("body"))==0)
       *body=hvalue;
-    else if (hname.length==7 && strcmpic(hname.character, US"subject")==0)
+    else if (hname.length==7 && strcmpic(hname.character, US("subject"))==0)
       *subject=hvalue;
     else
       {
       static struct String ignore[]=
         {
-        {US"date",4},
-        {US"from",4},
-        {US"message-id",10},
-        {US"received",8},
-        {US"auto-submitted",14}
+        {US("date"),4},
+        {US("from"),4},
+        {US("message-id"),10},
+        {US("received"),8},
+        {US("auto-submitted"),14}
         };
       static struct String *end=ignore+sizeof(ignore)/sizeof(ignore[0]);
       struct String *i;
@@ -536,9 +536,9 @@ if (*uri=='?')
 
 	g = string_catn(NULL, header->character, header->length);
         g = string_catn(g, hname.character, hname.length);
-        g = string_catn(g, CUS ": ", 2);
+        g = string_catn(g, CUS(": "), 2);
         g = string_catn(g, hvalue.character, hvalue.length);
-        g = string_catn(g, CUS "\n", 1);
+        g = string_catn(g, CUS("\n"), 1);
 
 	header->character = string_from_gstring(g);
 	header->length = g->ptr;
@@ -550,7 +550,7 @@ if (*uri=='?')
   }
 if (*uri)
   {
-  filter->errmsg=US"Syntactically invalid URI";
+  filter->errmsg=US("Syntactically invalid URI");
   return -1;
   }
 return 1;
@@ -866,7 +866,7 @@ switch (mt)
       case COMP_ASCII_NUMERIC:
         if (!filter->require_iascii_numeric)
           {
-          filter->errmsg=CUS "missing previous require \"comparator-i;ascii-numeric\";";
+          filter->errmsg=CUS("missing previous require \"comparator-i;ascii-numeric\";");
           return -1;
           }
         if (eq_asciinumeric(needle,haystack,EQ)) r=1;
@@ -889,7 +889,7 @@ switch (mt)
 	  if (eq_asciicase(needle,&h,1)) { r=1; break; }
         break;
       default:
-        filter->errmsg=CUS "comparator does not offer specified matchtype";
+        filter->errmsg=CUS("comparator does not offer specified matchtype");
         return -1;
       }
     break;
@@ -901,19 +901,19 @@ switch (mt)
       case COMP_OCTET:
         if ((r=eq_glob(needle,haystack,0,1))==-1)
           {
-          filter->errmsg=CUS "syntactically invalid pattern";
+          filter->errmsg=CUS("syntactically invalid pattern");
           return -1;
           }
         break;
       case COMP_EN_ASCII_CASEMAP:
         if ((r=eq_glob(needle,haystack,1,1))==-1)
           {
-          filter->errmsg=CUS "syntactically invalid pattern";
+          filter->errmsg=CUS("syntactically invalid pattern");
           return -1;
           }
         break;
       default:
-        filter->errmsg=CUS "comparator does not offer specified matchtype";
+        filter->errmsg=CUS("comparator does not offer specified matchtype");
         return -1;
       }
     break;
@@ -995,19 +995,19 @@ while (l)
   switch (*h)
     {
     case '\0':
-      quoted = string_catn(quoted, CUS "\\0", 2);
+      quoted = string_catn(quoted, CUS("\\0"), 2);
       break;
     case '$':
     case '{':
     case '}':
-      quoted = string_catn(quoted, CUS "\\", 1);
+      quoted = string_catn(quoted, CUS("\\"), 1);
     default:
       quoted = string_catn(quoted, h, 1);
     }
   ++h;
   --l;
   }
-quoted = string_catn(quoted, CUS "", 1);
+quoted = string_catn(quoted, CUS(""), 1);
 return string_from_gstring(quoted);
 }
 
@@ -1100,7 +1100,7 @@ while (*r)
   }
 while (t>s && (*(t-1)==' ' || *(t-1)=='\t')) --t;
 *t='\0';
-value->character=rfc2047_decode(s,check_rfc2047_length,US"utf-8",'\0',&value->length,&errmsg);
+value->character=rfc2047_decode(s,check_rfc2047_length,US("utf-8"),'\0',&value->length,&errmsg);
 }
 
 
@@ -1140,7 +1140,7 @@ while (*filter->pc)
     }
   else ++filter->pc;
   }
-filter->errmsg=CUS "missing end of comment";
+filter->errmsg=CUS("missing end of comment");
 return -1;
 }
 
@@ -1172,7 +1172,7 @@ static int parse_comment(struct Sieve *filter)
     }
     else ++filter->pc;
   }
-  filter->errmsg=CUS "missing end of comment";
+  filter->errmsg=CUS("missing end of comment");
   return -1;
 }
 
@@ -1392,7 +1392,7 @@ while (src<end)
   uschar *brace;
 
   if (
-      strncmpic(src,US "${hex:",6)==0
+      strncmpic(src,US("${hex:"),6)==0
       && (brace=Ustrchr(src+6,'}'))!=(uschar*)0
       && (hex_decode(src+6,brace,(uschar*)0))>=0
      )
@@ -1401,7 +1401,7 @@ while (src<end)
     src=brace+1;
     }
   else if (
-           strncmpic(src,US "${unicode:",10)==0
+           strncmpic(src,US("${unicode:"),10)==0
            && (brace=Ustrchr(src+10,'}'))!=(uschar*)0
           )
     {
@@ -1409,7 +1409,7 @@ while (src<end)
       {
       case -2:
         {
-        filter->errmsg=CUS "unicode character out of range";
+        filter->errmsg=CUS("unicode character out of range");
         return -1;
         }
       case -1:
@@ -1486,7 +1486,7 @@ if (*filter->pc=='"') /* quoted string */
 	data->length = g->ptr;
 	}
       else
-	data->character = US"\0";
+	data->character = US("\0");
       /* that way, there will be at least one character allocated */
 
 #ifdef ENCODED_CHARACTER
@@ -1508,7 +1508,7 @@ if (*filter->pc=='"') /* quoted string */
 #else
       if (*filter->pc=='\n')
         {
-        g = string_catn(g, US"\r", 1);
+        g = string_catn(g, US("\r"), 1);
         ++filter->line;
         }
 #endif
@@ -1516,10 +1516,10 @@ if (*filter->pc=='"') /* quoted string */
       filter->pc++;
       }
     }
-  filter->errmsg=CUS "missing end of string";
+  filter->errmsg=CUS("missing end of string");
   return -1;
   }
-else if (Ustrncmp(filter->pc,CUS "text:",5)==0) /* multiline string */
+else if (Ustrncmp(filter->pc,CUS("text:"),5)==0) /* multiline string */
   {
   filter->pc+=5;
   /* skip optional white space followed by hashed comment or CRLF */
@@ -1543,7 +1543,7 @@ else if (Ustrncmp(filter->pc,CUS "text:",5)==0) /* multiline string */
     }
   else
     {
-    filter->errmsg=CUS "syntax error";
+    filter->errmsg=CUS("syntax error");
     return -1;
     }
   while (*filter->pc)
@@ -1554,7 +1554,7 @@ else if (Ustrncmp(filter->pc,CUS "text:",5)==0) /* multiline string */
     if (*filter->pc=='\n') /* end of line */
 #endif
       {
-      g = string_catn(g, CUS "\r\n", 2);
+      g = string_catn(g, CUS("\r\n"), 2);
 #ifdef RFC_EOL
       filter->pc+=2;
 #else
@@ -1573,7 +1573,7 @@ else if (Ustrncmp(filter->pc,CUS "text:",5)==0) /* multiline string */
 	  data->length = g->ptr;
 	  }
 	else
-	  data->character = US"\0";
+	  data->character = US("\0");
 	/* that way, there will be at least one character allocated */
 
 #ifdef RFC_EOL
@@ -1591,7 +1591,7 @@ else if (Ustrncmp(filter->pc,CUS "text:",5)==0) /* multiline string */
         }
       else if (*filter->pc=='.' && *(filter->pc+1)=='.') /* remove dot stuffing */
         {
-        g = string_catn(g, CUS ".", 1);
+        g = string_catn(g, CUS("."), 1);
         filter->pc+=2;
         }
       }
@@ -1601,7 +1601,7 @@ else if (Ustrncmp(filter->pc,CUS "text:",5)==0) /* multiline string */
       filter->pc++;
       }
     }
-  filter->errmsg=CUS "missing end of multi line string";
+  filter->errmsg=CUS("missing end of multi line string");
   return -1;
   }
 else return 0;
@@ -1628,7 +1628,7 @@ static int parse_identifier(struct Sieve *filter, const uschar *id)
 {
   size_t idlen=Ustrlen(id);
 
-  if (strncmpic(US filter->pc,US id,idlen)==0)
+  if (strncmpic(US(filter->pc),US(id),idlen)==0)
   {
     uschar next=filter->pc[idlen];
 
@@ -1688,7 +1688,7 @@ if (*filter->pc>='0' && *filter->pc<='9')
   }
 else
   {
-  filter->errmsg=CUS "missing number";
+  filter->errmsg=CUS("missing number");
   return -1;
   }
 }
@@ -1742,7 +1742,7 @@ if (*filter->pc=='[') /* string list */
       if (dataLength==0) break;
       else
         {
-        filter->errmsg=CUS "missing string";
+        filter->errmsg=CUS("missing string");
         goto error;
         }
       }
@@ -1762,7 +1762,7 @@ if (*filter->pc=='[') /* string list */
     }
   else
     {
-    filter->errmsg=CUS "missing closing bracket";
+    filter->errmsg=CUS("missing closing bracket");
     goto error;
     }
   }
@@ -1789,7 +1789,7 @@ else /* single string */
     }
   }
 error:
-filter->errmsg=CUS "missing string list";
+filter->errmsg=CUS("missing string list");
 return -1;
 }
 
@@ -1815,21 +1815,21 @@ Returns:      1                success
 static int parse_addresspart(struct Sieve *filter, enum AddressPart *a)
 {
 #ifdef SUBADDRESS
-if (parse_identifier(filter,CUS ":user")==1)
+if (parse_identifier(filter,CUS(":user"))==1)
   {
   if (!filter->require_subaddress)
     {
-    filter->errmsg=CUS "missing previous require \"subaddress\";";
+    filter->errmsg=CUS("missing previous require \"subaddress\";");
     return -1;
     }
   *a=ADDRPART_USER;
   return 1;
   }
-else if (parse_identifier(filter,CUS ":detail")==1)
+else if (parse_identifier(filter,CUS(":detail"))==1)
   {
   if (!filter->require_subaddress)
     {
-    filter->errmsg=CUS "missing previous require \"subaddress\";";
+    filter->errmsg=CUS("missing previous require \"subaddress\";");
     return -1;
     }
   *a=ADDRPART_DETAIL;
@@ -1837,17 +1837,17 @@ else if (parse_identifier(filter,CUS ":detail")==1)
   }
 else
 #endif
-if (parse_identifier(filter,CUS ":localpart")==1)
+if (parse_identifier(filter,CUS(":localpart"))==1)
   {
   *a=ADDRPART_LOCALPART;
   return 1;
   }
-else if (parse_identifier(filter,CUS ":domain")==1)
+else if (parse_identifier(filter,CUS(":domain"))==1)
   {
   *a=ADDRPART_DOMAIN;
   return 1;
   }
-else if (parse_identifier(filter,CUS ":all")==1)
+else if (parse_identifier(filter,CUS(":all"))==1)
   {
   *a=ADDRPART_ALL;
   return 1;
@@ -1877,14 +1877,14 @@ static int parse_comparator(struct Sieve *filter, enum Comparator *c)
 {
 struct String comparator_name;
 
-if (parse_identifier(filter,CUS ":comparator")==0) return 0;
+if (parse_identifier(filter,CUS(":comparator"))==0) return 0;
 if (parse_white(filter)==-1) return -1;
 switch (parse_string(filter,&comparator_name))
   {
   case -1: return -1;
   case 0:
     {
-    filter->errmsg=CUS "missing comparator";
+    filter->errmsg=CUS("missing comparator");
     return -1;
     }
   default:
@@ -1913,7 +1913,7 @@ switch (parse_string(filter,&comparator_name))
       }
     else
       {
-      filter->errmsg=CUS "invalid comparator";
+      filter->errmsg=CUS("invalid comparator");
       match=-1;
       }
     return match;
@@ -1940,17 +1940,17 @@ Returns:      1                success
 
 static int parse_matchtype(struct Sieve *filter, enum MatchType *m)
 {
-  if (parse_identifier(filter,CUS ":is")==1)
+  if (parse_identifier(filter,CUS(":is"))==1)
   {
     *m=MATCH_IS;
     return 1;
   }
-  else if (parse_identifier(filter,CUS ":contains")==1)
+  else if (parse_identifier(filter,CUS(":contains"))==1)
   {
     *m=MATCH_CONTAINS;
     return 1;
   }
-  else if (parse_identifier(filter,CUS ":matches")==1)
+  else if (parse_identifier(filter,CUS(":matches"))==1)
   {
     *m=MATCH_MATCHES;
     return 1;
@@ -1993,7 +1993,7 @@ if (*filter->pc=='(')
     switch (parse_test(filter,&cond,exec))
       {
       case -1: return -1;
-      case 0: filter->errmsg=CUS "missing test"; return -1;
+      case 0: filter->errmsg=CUS("missing test"); return -1;
       default: ++*n; if (cond) ++*num_true; break;
       }
     if (parse_white(filter)==-1) return -1;
@@ -2007,7 +2007,7 @@ if (*filter->pc=='(')
     }
   else
     {
-    filter->errmsg=CUS "missing closing paren";
+    filter->errmsg=CUS("missing closing paren");
     return -1;
     }
   }
@@ -2034,7 +2034,7 @@ static int
 parse_test(struct Sieve *filter, int *cond, int exec)
 {
 if (parse_white(filter)==-1) return -1;
-if (parse_identifier(filter,CUS "address"))
+if (parse_identifier(filter,CUS("address")))
   {
   /*
   address-test = "address" { [address-part] [comparator] [match-type] }
@@ -2058,7 +2058,7 @@ if (parse_identifier(filter,CUS "address"))
       if (m==-1) return -1;
       if (ap)
         {
-        filter->errmsg=CUS "address part already specified";
+        filter->errmsg=CUS("address part already specified");
         return -1;
         }
       else ap=1;
@@ -2068,7 +2068,7 @@ if (parse_identifier(filter,CUS "address"))
       if (m==-1) return -1;
       if (co)
         {
-        filter->errmsg=CUS "comparator already specified";
+        filter->errmsg=CUS("comparator already specified");
         return -1;
         }
       else co=1;
@@ -2078,7 +2078,7 @@ if (parse_identifier(filter,CUS "address"))
       if (m==-1) return -1;
       if (mt)
         {
-        filter->errmsg=CUS "match type already specified";
+        filter->errmsg=CUS("match type already specified");
         return -1;
         }
       else mt=1;
@@ -2088,13 +2088,13 @@ if (parse_identifier(filter,CUS "address"))
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&hdr))!=1)
     {
-    if (m==0) filter->errmsg=CUS "header string list expected";
+    if (m==0) filter->errmsg=CUS("header string list expected");
     return -1;
     }
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&key))!=1)
     {
-    if (m==0) filter->errmsg=CUS "key string list expected";
+    if (m==0) filter->errmsg=CUS("key string list expected");
     return -1;
     }
   *cond=0;
@@ -2113,7 +2113,7 @@ if (parse_identifier(filter,CUS "address"))
       && !eq_asciicase(h,&str_resent_to,0)
       )
       {
-      filter->errmsg=CUS "invalid header field";
+      filter->errmsg=CUS("invalid header field");
       return -1;
       }
     if (exec)
@@ -2121,7 +2121,7 @@ if (parse_identifier(filter,CUS "address"))
       /* We are only interested in addresses below, so no MIME decoding */
       if (!(header_value = expand_string(string_sprintf("$rheader_%s",quote(h)))))
         {
-        filter->errmsg=CUS "header string expansion failed";
+        filter->errmsg=CUS("header string expansion failed");
         return -1;
         }
       f.parse_allow_group = TRUE;
@@ -2174,7 +2174,7 @@ if (parse_identifier(filter,CUS "address"))
     }
   return 1;
   }
-else if (parse_identifier(filter,CUS "allof"))
+else if (parse_identifier(filter,CUS("allof")))
   {
   /*
   allof-test   = "allof" <tests: test-list>
@@ -2185,11 +2185,11 @@ else if (parse_identifier(filter,CUS "allof"))
   switch (parse_testlist(filter,&n,&num_true,exec))
     {
     case -1: return -1;
-    case 0: filter->errmsg=CUS "missing test list"; return -1;
+    case 0: filter->errmsg=CUS("missing test list"); return -1;
     default: *cond=(n==num_true); return 1;
     }
   }
-else if (parse_identifier(filter,CUS "anyof"))
+else if (parse_identifier(filter,CUS("anyof")))
   {
   /*
   anyof-test   = "anyof" <tests: test-list>
@@ -2200,11 +2200,11 @@ else if (parse_identifier(filter,CUS "anyof"))
   switch (parse_testlist(filter,&n,&num_true,exec))
     {
     case -1: return -1;
-    case 0: filter->errmsg=CUS "missing test list"; return -1;
+    case 0: filter->errmsg=CUS("missing test list"); return -1;
     default: *cond=(num_true>0); return 1;
     }
   }
-else if (parse_identifier(filter,CUS "exists"))
+else if (parse_identifier(filter,CUS("exists")))
   {
   /*
   exists-test = "exists" <header-names: string-list>
@@ -2216,7 +2216,7 @@ else if (parse_identifier(filter,CUS "exists"))
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&hdr))!=1)
     {
-    if (m==0) filter->errmsg=CUS "header string list expected";
+    if (m==0) filter->errmsg=CUS("header string list expected");
     return -1;
     }
   if (exec)
@@ -2229,7 +2229,7 @@ else if (parse_identifier(filter,CUS "exists"))
       header_def = expand_string(string_sprintf("${if def:header_%s {true}{false}}",quote(h)));
       if (!header_def)
         {
-        filter->errmsg=CUS "header string expansion failed";
+        filter->errmsg=CUS("header string expansion failed");
         return -1;
         }
       if (Ustrcmp(header_def,"false")==0) *cond=0;
@@ -2237,7 +2237,7 @@ else if (parse_identifier(filter,CUS "exists"))
     }
   return 1;
   }
-else if (parse_identifier(filter,CUS "false"))
+else if (parse_identifier(filter,CUS("false")))
   {
   /*
   false-test = "false"
@@ -2246,7 +2246,7 @@ else if (parse_identifier(filter,CUS "false"))
   *cond=0;
   return 1;
   }
-else if (parse_identifier(filter,CUS "header"))
+else if (parse_identifier(filter,CUS("header")))
   {
   /*
   header-test = "header" { [comparator] [match-type] }
@@ -2267,7 +2267,7 @@ else if (parse_identifier(filter,CUS "header"))
       if (m==-1) return -1;
       if (co)
         {
-        filter->errmsg=CUS "comparator already specified";
+        filter->errmsg=CUS("comparator already specified");
         return -1;
         }
       else co=1;
@@ -2277,7 +2277,7 @@ else if (parse_identifier(filter,CUS "header"))
       if (m==-1) return -1;
       if (mt)
         {
-        filter->errmsg=CUS "match type already specified";
+        filter->errmsg=CUS("match type already specified");
         return -1;
         }
       else mt=1;
@@ -2287,13 +2287,13 @@ else if (parse_identifier(filter,CUS "header"))
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&hdr))!=1)
     {
-    if (m==0) filter->errmsg=CUS "header string list expected";
+    if (m==0) filter->errmsg=CUS("header string list expected");
     return -1;
     }
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&key))!=1)
     {
-    if (m==0) filter->errmsg=CUS "key string list expected";
+    if (m==0) filter->errmsg=CUS("key string list expected");
     return -1;
     }
   *cond=0;
@@ -2301,7 +2301,7 @@ else if (parse_identifier(filter,CUS "header"))
     {
     if (!is_header(h))
       {
-      filter->errmsg=CUS "invalid header field";
+      filter->errmsg=CUS("invalid header field");
       return -1;
       }
     if (exec)
@@ -2313,7 +2313,7 @@ else if (parse_identifier(filter,CUS "header"))
       header_def = expand_string(string_sprintf("${if def:header_%s {true}{false}}",quote(h)));
       if (!header_value.character || !header_def)
         {
-        filter->errmsg=CUS "header string expansion failed";
+        filter->errmsg=CUS("header string expansion failed");
         return -1;
         }
       for (struct String * k = key; k->length != -1; ++k)
@@ -2327,17 +2327,17 @@ else if (parse_identifier(filter,CUS "header"))
     }
   return 1;
   }
-else if (parse_identifier(filter,CUS "not"))
+else if (parse_identifier(filter,CUS("not")))
   {
   if (parse_white(filter)==-1) return -1;
   switch (parse_test(filter,cond,exec))
     {
     case -1: return -1;
-    case 0: filter->errmsg=CUS "missing test"; return -1;
+    case 0: filter->errmsg=CUS("missing test"); return -1;
     default: *cond=!*cond; return 1;
     }
   }
-else if (parse_identifier(filter,CUS "size"))
+else if (parse_identifier(filter,CUS("size")))
   {
   /*
   relop = ":over" / ":under"
@@ -2348,11 +2348,11 @@ else if (parse_identifier(filter,CUS "size"))
   int overNotUnder;
 
   if (parse_white(filter)==-1) return -1;
-  if (parse_identifier(filter,CUS ":over")) overNotUnder=1;
-  else if (parse_identifier(filter,CUS ":under")) overNotUnder=0;
+  if (parse_identifier(filter,CUS(":over"))) overNotUnder=1;
+  else if (parse_identifier(filter,CUS(":under"))) overNotUnder=0;
   else
     {
-    filter->errmsg=CUS "missing :over or :under";
+    filter->errmsg=CUS("missing :over or :under");
     return -1;
     }
   if (parse_white(filter)==-1) return -1;
@@ -2360,12 +2360,12 @@ else if (parse_identifier(filter,CUS "size"))
   *cond=(overNotUnder ? (message_size>limit) : (message_size<limit));
   return 1;
   }
-else if (parse_identifier(filter,CUS "true"))
+else if (parse_identifier(filter,CUS("true")))
   {
   *cond=1;
   return 1;
   }
-else if (parse_identifier(filter,CUS "envelope"))
+else if (parse_identifier(filter,CUS("envelope")))
   {
   /*
   envelope-test = "envelope" { [comparator] [address-part] [match-type] }
@@ -2386,7 +2386,7 @@ else if (parse_identifier(filter,CUS "envelope"))
 
   if (!filter->require_envelope)
     {
-    filter->errmsg=CUS "missing previous require \"envelope\";";
+    filter->errmsg=CUS("missing previous require \"envelope\";");
     return -1;
     }
   for (;;)
@@ -2397,7 +2397,7 @@ else if (parse_identifier(filter,CUS "envelope"))
       if (m==-1) return -1;
       if (co)
         {
-        filter->errmsg=CUS "comparator already specified";
+        filter->errmsg=CUS("comparator already specified");
         return -1;
         }
       else co=1;
@@ -2407,7 +2407,7 @@ else if (parse_identifier(filter,CUS "envelope"))
       if (m==-1) return -1;
       if (ap)
         {
-        filter->errmsg=CUS "address part already specified";
+        filter->errmsg=CUS("address part already specified");
         return -1;
         }
       else ap=1;
@@ -2417,7 +2417,7 @@ else if (parse_identifier(filter,CUS "envelope"))
       if (m==-1) return -1;
       if (mt)
         {
-        filter->errmsg=CUS "match type already specified";
+        filter->errmsg=CUS("match type already specified");
         return -1;
         }
       else mt=1;
@@ -2427,33 +2427,33 @@ else if (parse_identifier(filter,CUS "envelope"))
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&env))!=1)
     {
-    if (m==0) filter->errmsg=CUS "envelope string list expected";
+    if (m==0) filter->errmsg=CUS("envelope string list expected");
     return -1;
     }
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&key))!=1)
     {
-    if (m==0) filter->errmsg=CUS "key string list expected";
+    if (m==0) filter->errmsg=CUS("key string list expected");
     return -1;
     }
   *cond=0;
   for (struct String * e = env; e->length != -1 && !*cond; ++e)
     {
-    const uschar *envelopeExpr=CUS 0;
-    uschar *envelope=US 0;
+    const uschar *envelopeExpr=CUS(0);
+    uschar *envelope=US(0);
 
     if (eq_asciicase(e,&str_from,0))
       {
       switch (addressPart)
         {
-        case ADDRPART_ALL: envelopeExpr=CUS "$sender_address"; break;
+        case ADDRPART_ALL: envelopeExpr=CUS("$sender_address"); break;
 #ifdef SUBADDRESS
         case ADDRPART_USER:
 #endif
-        case ADDRPART_LOCALPART: envelopeExpr=CUS "${local_part:$sender_address}"; break;
-        case ADDRPART_DOMAIN: envelopeExpr=CUS "${domain:$sender_address}"; break;
+        case ADDRPART_LOCALPART: envelopeExpr=CUS("${local_part:$sender_address}"); break;
+        case ADDRPART_DOMAIN: envelopeExpr=CUS("${domain:$sender_address}"); break;
 #ifdef SUBADDRESS
-        case ADDRPART_DETAIL: envelopeExpr=CUS 0; break;
+        case ADDRPART_DETAIL: envelopeExpr=CUS(0); break;
 #endif
         }
       }
@@ -2461,13 +2461,13 @@ else if (parse_identifier(filter,CUS "envelope"))
       {
       switch (addressPart)
         {
-        case ADDRPART_ALL: envelopeExpr=CUS "$local_part_prefix$local_part$local_part_suffix@$domain"; break;
+        case ADDRPART_ALL: envelopeExpr=CUS("$local_part_prefix$local_part$local_part_suffix@$domain"); break;
 #ifdef SUBADDRESS
         case ADDRPART_USER: envelopeExpr=filter->useraddress; break;
         case ADDRPART_DETAIL: envelopeExpr=filter->subaddress; break;
 #endif
-        case ADDRPART_LOCALPART: envelopeExpr=CUS "$local_part_prefix$local_part$local_part_suffix"; break;
-        case ADDRPART_DOMAIN: envelopeExpr=CUS "$domain"; break;
+        case ADDRPART_LOCALPART: envelopeExpr=CUS("$local_part_prefix$local_part$local_part_suffix"); break;
+        case ADDRPART_DOMAIN: envelopeExpr=CUS("$domain"); break;
         }
       }
 #ifdef ENVELOPE_AUTH
@@ -2475,28 +2475,28 @@ else if (parse_identifier(filter,CUS "envelope"))
       {
       switch (addressPart)
         {
-        case ADDRPART_ALL: envelopeExpr=CUS "$authenticated_sender"; break;
+        case ADDRPART_ALL: envelopeExpr=CUS("$authenticated_sender"); break;
 #ifdef SUBADDRESS
         case ADDRPART_USER:
 #endif
-        case ADDRPART_LOCALPART: envelopeExpr=CUS "${local_part:$authenticated_sender}"; break;
-        case ADDRPART_DOMAIN: envelopeExpr=CUS "${domain:$authenticated_sender}"; break;
+        case ADDRPART_LOCALPART: envelopeExpr=CUS("${local_part:$authenticated_sender}"); break;
+        case ADDRPART_DOMAIN: envelopeExpr=CUS("${domain:$authenticated_sender}"); break;
 #ifdef SUBADDRESS
-        case ADDRPART_DETAIL: envelopeExpr=CUS 0; break;
+        case ADDRPART_DETAIL: envelopeExpr=CUS(0); break;
 #endif
         }
       }
 #endif
     else
       {
-      filter->errmsg=CUS "invalid envelope string";
+      filter->errmsg=CUS("invalid envelope string");
       return -1;
       }
     if (exec && envelopeExpr)
       {
-      if (!(envelope=expand_string(US envelopeExpr)))
+      if (!(envelope=expand_string(US(envelopeExpr))))
         {
-        filter->errmsg=CUS "header string expansion failed";
+        filter->errmsg=CUS("header string expansion failed");
         return -1;
         }
       for (struct String * k = key; k->length != -1; ++k)
@@ -2512,7 +2512,7 @@ else if (parse_identifier(filter,CUS "envelope"))
   return 1;
   }
 #ifdef ENOTIFY
-else if (parse_identifier(filter,CUS "valid_notify_method"))
+else if (parse_identifier(filter,CUS("valid_notify_method")))
   {
   /*
   valid_notify_method = "valid_notify_method"
@@ -2524,13 +2524,13 @@ else if (parse_identifier(filter,CUS "valid_notify_method"))
 
   if (!filter->require_enotify)
     {
-    filter->errmsg=CUS "missing previous require \"enotify\";";
+    filter->errmsg=CUS("missing previous require \"enotify\";");
     return -1;
     }
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&uris))!=1)
     {
-    if (m==0) filter->errmsg=CUS "URI string list expected";
+    if (m==0) filter->errmsg=CUS("URI string list expected");
     return -1;
     }
   if (exec)
@@ -2554,7 +2554,7 @@ else if (parse_identifier(filter,CUS "valid_notify_method"))
     }
   return 1;
   }
-else if (parse_identifier(filter,CUS "notify_method_capability"))
+else if (parse_identifier(filter,CUS("notify_method_capability")))
   {
   /*
   notify_method_capability = "notify_method_capability" [COMPARATOR] [MATCH-TYPE]
@@ -2572,7 +2572,7 @@ else if (parse_identifier(filter,CUS "notify_method_capability"))
 
   if (!filter->require_enotify)
     {
-    filter->errmsg=CUS "missing previous require \"enotify\";";
+    filter->errmsg=CUS("missing previous require \"enotify\";");
     return -1;
     }
   for (;;)
@@ -2583,7 +2583,7 @@ else if (parse_identifier(filter,CUS "notify_method_capability"))
       if (m==-1) return -1;
       if (co)
         {
-        filter->errmsg=CUS "comparator already specified";
+        filter->errmsg=CUS("comparator already specified");
         return -1;
         }
       else co=1;
@@ -2593,7 +2593,7 @@ else if (parse_identifier(filter,CUS "notify_method_capability"))
       if (m==-1) return -1;
       if (mt)
         {
-        filter->errmsg=CUS "match type already specified";
+        filter->errmsg=CUS("match type already specified");
         return -1;
         }
       else mt=1;
@@ -2602,19 +2602,19 @@ else if (parse_identifier(filter,CUS "notify_method_capability"))
     }
     if ((m=parse_string(filter,&uri))!=1)
       {
-      if (m==0) filter->errmsg=CUS "missing notification URI string";
+      if (m==0) filter->errmsg=CUS("missing notification URI string");
       return -1;
       }
     if (parse_white(filter)==-1) return -1;
     if ((m=parse_string(filter,&capa))!=1)
       {
-      if (m==0) filter->errmsg=CUS "missing notification capability string";
+      if (m==0) filter->errmsg=CUS("missing notification capability string");
       return -1;
       }
     if (parse_white(filter)==-1) return -1;
     if ((m=parse_stringlist(filter,&keys))!=1)
       {
-      if (m==0) filter->errmsg=CUS "missing key string list";
+      if (m==0) filter->errmsg=CUS("missing key string list");
       return -1;
       }
     if (exec)
@@ -2679,7 +2679,7 @@ if (*filter->pc=='{')
     }
   else
     {
-    filter->errmsg=CUS "expecting command or closing brace";
+    filter->errmsg=CUS("expecting command or closing brace");
     return -1;
     }
   }
@@ -2709,7 +2709,7 @@ static int parse_semicolon(struct Sieve *filter)
   }
   else
   {
-    filter->errmsg=CUS "missing semicolon";
+    filter->errmsg=CUS("missing semicolon");
     return -1;
   }
 }
@@ -2735,7 +2735,7 @@ parse_commands(struct Sieve *filter, int exec, address_item **generated)
 while (*filter->pc)
   {
   if (parse_white(filter)==-1) return -1;
-  if (parse_identifier(filter,CUS "if"))
+  if (parse_identifier(filter,CUS("if")))
     {
     /*
     if-command = "if" test block *( "elsif" test block ) [ else block ]
@@ -2748,7 +2748,7 @@ while (*filter->pc)
     if ((m=parse_test(filter,&cond,exec))==-1) return -1;
     if (m==0)
       {
-      filter->errmsg=CUS "missing test";
+      filter->errmsg=CUS("missing test");
       return -1;
       }
     if ((filter_test != FTEST_NONE && debug_selector != 0) ||
@@ -2760,21 +2760,21 @@ while (*filter->pc)
     if (m==-1 || m==2) return m;
     if (m==0)
       {
-      filter->errmsg=CUS "missing block";
+      filter->errmsg=CUS("missing block");
       return -1;
       }
     unsuccessful = !cond;
     for (;;) /* elsif test block */
       {
       if (parse_white(filter)==-1) return -1;
-      if (parse_identifier(filter,CUS "elsif"))
+      if (parse_identifier(filter,CUS("elsif")))
         {
         if (parse_white(filter)==-1) return -1;
         m=parse_test(filter,&cond,exec && unsuccessful);
         if (m==-1 || m==2) return m;
         if (m==0)
           {
-          filter->errmsg=CUS "missing test";
+          filter->errmsg=CUS("missing test");
           return -1;
           }
         if ((filter_test != FTEST_NONE && debug_selector != 0) ||
@@ -2786,7 +2786,7 @@ while (*filter->pc)
         if (m==-1 || m==2) return m;
         if (m==0)
           {
-          filter->errmsg=CUS "missing block";
+          filter->errmsg=CUS("missing block");
           return -1;
           }
         if (exec && unsuccessful && cond) unsuccessful = 0;
@@ -2795,18 +2795,18 @@ while (*filter->pc)
       }
     /* else block */
     if (parse_white(filter)==-1) return -1;
-    if (parse_identifier(filter,CUS "else"))
+    if (parse_identifier(filter,CUS("else")))
       {
       m=parse_block(filter,exec && unsuccessful, generated);
       if (m==-1 || m==2) return m;
       if (m==0)
         {
-        filter->errmsg=CUS "missing block";
+        filter->errmsg=CUS("missing block");
         return -1;
         }
       }
     }
-  else if (parse_identifier(filter,CUS "stop"))
+  else if (parse_identifier(filter,CUS("stop")))
     {
     /*
     stop-command     =  "stop" { stop-options } ";"
@@ -2820,7 +2820,7 @@ while (*filter->pc)
       return 2;
       }
     }
-  else if (parse_identifier(filter,CUS "keep"))
+  else if (parse_identifier(filter,CUS("keep")))
     {
     /*
     keep-command     =  "keep" { keep-options } ";"
@@ -2830,11 +2830,11 @@ while (*filter->pc)
     if (parse_semicolon(filter)==-1) return -1;
     if (exec)
       {
-      add_addr(generated,US"inbox",1,0,0,0);
+      add_addr(generated,US("inbox"),1,0,0,0);
       filter->keep = 0;
       }
     }
-  else if (parse_identifier(filter,CUS "discard"))
+  else if (parse_identifier(filter,CUS("discard")))
     {
     /*
     discard-command  =  "discard" { discard-options } ";"
@@ -2844,7 +2844,7 @@ while (*filter->pc)
     if (parse_semicolon(filter)==-1) return -1;
     if (exec) filter->keep=0;
     }
-  else if (parse_identifier(filter,CUS "redirect"))
+  else if (parse_identifier(filter,CUS("redirect")))
     {
     /*
     redirect-command =  "redirect" redirect-options "string" ";"
@@ -2859,11 +2859,11 @@ while (*filter->pc)
     for (;;)
       {
       if (parse_white(filter)==-1) return -1;
-      if (parse_identifier(filter,CUS ":copy")==1)
+      if (parse_identifier(filter,CUS(":copy"))==1)
         {
         if (!filter->require_copy)
           {
-          filter->errmsg=CUS "missing previous require \"copy\";";
+          filter->errmsg=CUS("missing previous require \"copy\";");
           return -1;
           }
           copy=1;
@@ -2873,12 +2873,12 @@ while (*filter->pc)
     if (parse_white(filter)==-1) return -1;
     if ((m=parse_string(filter,&recipient))!=1)
       {
-      if (m==0) filter->errmsg=CUS "missing redirect recipient string";
+      if (m==0) filter->errmsg=CUS("missing redirect recipient string");
       return -1;
       }
-    if (strchr(CCS recipient.character,'@')==(char*)0)
+    if (strchr(CCS(recipient.character),'@')==(char*)0)
       {
-      filter->errmsg=CUS "unqualified recipient address";
+      filter->errmsg=CUS("unqualified recipient address");
       return -1;
       }
     if (exec)
@@ -2888,7 +2888,7 @@ while (*filter->pc)
       }
     if (parse_semicolon(filter)==-1) return -1;
     }
-  else if (parse_identifier(filter,CUS "fileinto"))
+  else if (parse_identifier(filter,CUS("fileinto")))
     {
     /*
     fileinto-command =  "fileinto" { fileinto-options } string ";"
@@ -2905,17 +2905,17 @@ while (*filter->pc)
     maxage = maxmessages = maxstorage = 0;
     if (!filter->require_fileinto)
       {
-      filter->errmsg=CUS "missing previous require \"fileinto\";";
+      filter->errmsg=CUS("missing previous require \"fileinto\";");
       return -1;
       }
     for (;;)
       {
       if (parse_white(filter)==-1) return -1;
-      if (parse_identifier(filter,CUS ":copy")==1)
+      if (parse_identifier(filter,CUS(":copy"))==1)
         {
         if (!filter->require_copy)
           {
-          filter->errmsg=CUS "missing previous require \"copy\";";
+          filter->errmsg=CUS("missing previous require \"copy\";");
           return -1;
           }
           copy=1;
@@ -2925,7 +2925,7 @@ while (*filter->pc)
     if (parse_white(filter)==-1) return -1;
     if ((m=parse_string(filter,&folder))!=1)
       {
-      if (m==0) filter->errmsg=CUS "missing fileinto folder string";
+      if (m==0) filter->errmsg=CUS("missing fileinto folder string");
       return -1;
       }
     m=0; s=folder.character;
@@ -2938,7 +2938,7 @@ while (*filter->pc)
       }
     if (m)
       {
-      filter->errmsg=CUS "invalid folder";
+      filter->errmsg=CUS("invalid folder");
       return -1;
       }
     if (exec)
@@ -2949,7 +2949,7 @@ while (*filter->pc)
     if (parse_semicolon(filter)==-1) return -1;
     }
 #ifdef ENOTIFY
-  else if (parse_identifier(filter,CUS "notify"))
+  else if (parse_identifier(filter,CUS("notify")))
     {
     /*
     notify-command =  "notify" { notify-options } <method: string> ";"
@@ -2975,7 +2975,7 @@ while (*filter->pc)
 
     if (!filter->require_enotify)
       {
-      filter->errmsg=CUS "missing previous require \"enotify\";";
+      filter->errmsg=CUS("missing previous require \"enotify\";");
       return -1;
       }
     from.character=(uschar*)0;
@@ -2992,48 +2992,48 @@ while (*filter->pc)
     body.length=-1;
     body.character=(uschar*)0;
     envelope_from = sender_address && sender_address[0]
-     ? expand_string(US"$local_part_prefix$local_part$local_part_suffix@$domain") : US "";
+     ? expand_string(US("$local_part_prefix$local_part$local_part_suffix@$domain")) : US("");
     if (!envelope_from)
       {
-      filter->errmsg=CUS "expansion failure for envelope from";
+      filter->errmsg=CUS("expansion failure for envelope from");
       return -1;
       }
     for (;;)
       {
       if (parse_white(filter)==-1) return -1;
-      if (parse_identifier(filter,CUS ":from")==1)
+      if (parse_identifier(filter,CUS(":from"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if ((m=parse_string(filter,&from))!=1)
           {
-          if (m==0) filter->errmsg=CUS "from string expected";
+          if (m==0) filter->errmsg=CUS("from string expected");
           return -1;
           }
         }
-      else if (parse_identifier(filter,CUS ":importance")==1)
+      else if (parse_identifier(filter,CUS(":importance"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if ((m=parse_string(filter,&importance))!=1)
           {
-          if (m==0) filter->errmsg=CUS "importance string expected";
+          if (m==0) filter->errmsg=CUS("importance string expected");
           return -1;
           }
         if (importance.length!=1 || importance.character[0]<'1' || importance.character[0]>'3')
           {
-          filter->errmsg=CUS "invalid importance";
+          filter->errmsg=CUS("invalid importance");
           return -1;
           }
         }
-      else if (parse_identifier(filter,CUS ":options")==1)
+      else if (parse_identifier(filter,CUS(":options"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         }
-      else if (parse_identifier(filter,CUS ":message")==1)
+      else if (parse_identifier(filter,CUS(":message"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if ((m=parse_string(filter,&message))!=1)
           {
-          if (m==0) filter->errmsg=CUS "message string expected";
+          if (m==0) filter->errmsg=CUS("message string expected");
           return -1;
           }
         }
@@ -3042,7 +3042,7 @@ while (*filter->pc)
     if (parse_white(filter)==-1) return -1;
     if ((m=parse_string(filter,&method))!=1)
       {
-      if (m==0) filter->errmsg=CUS "missing method string";
+      if (m==0) filter->errmsg=CUS("missing method string");
       return -1;
       }
     if (parse_semicolon(filter)==-1) return -1;
@@ -3053,10 +3053,10 @@ while (*filter->pc)
       if (message.length==-1) message=subject;
       if (message.length==-1) expand_header(&message,&str_subject);
       expand_header(&auto_submitted_value,&str_auto_submitted);
-      auto_submitted_def=expand_string(US"${if def:header_auto-submitted {true}{false}}");
+      auto_submitted_def=expand_string(US("${if def:header_auto-submitted {true}{false}}"));
       if (!auto_submitted_value.character || !auto_submitted_def)
         {
-        filter->errmsg=CUS "header string expansion failed";
+        filter->errmsg=CUS("header string expansion failed");
         return -1;
         }
         if (Ustrcmp(auto_submitted_def,"true")!=0 || Ustrcmp(auto_submitted_value.character,"no")==0)
@@ -3086,12 +3086,12 @@ while (*filter->pc)
             int pid, fd;
 
             if ((pid = child_open_exim2(&fd, envelope_from, envelope_from,
-			US"sieve-notify")) >= 1)
+			US("sieve-notify"))) >= 1)
               {
               FILE * f = fdopen(fd, "wb");
 
               fprintf(f,"From: %s\n", from.length == -1
-		? expand_string(US"$local_part_prefix$local_part$local_part_suffix@$domain")
+		? expand_string(US("$local_part_prefix$local_part$local_part_suffix@$domain"))
 		: from.character);
               for (string_item * p = recipient; p; p=p->next)
 	       	fprintf(f, "To: %s\n",p->text);
@@ -3099,12 +3099,12 @@ while (*filter->pc)
               if (header.length > 0) fprintf(f, "%s", header.character);
               if (message.length==-1)
                 {
-                message.character=US"Notification";
+                message.character=US("Notification");
                 message.length=Ustrlen(message.character);
                 }
               if (message.length != -1)
 		fprintf(f, "Subject: %s\n", parse_quote_2047(message.character,
-		  message.length, US"utf-8", TRUE));
+		  message.length, US("utf-8"), TRUE));
               fprintf(f,"\n");
               if (body.length > 0) fprintf(f, "%s\n", body.character);
               fflush(f);
@@ -3113,7 +3113,7 @@ while (*filter->pc)
               }
             }
           if ((filter_test != FTEST_NONE && debug_selector != 0) || debug_selector & D_filter)
-            debug_printf("Notification to `%s': '%s'.\n",method.character,message.length!=-1 ? message.character : CUS "");
+            debug_printf("Notification to `%s': '%s'.\n",method.character,message.length!=-1 ? message.character : CUS(""));
 #endif
           }
         else
@@ -3127,7 +3127,7 @@ while (*filter->pc)
     }
 #endif
 #ifdef VACATION
-  else if (parse_identifier(filter,CUS "vacation"))
+  else if (parse_identifier(filter,CUS("vacation")))
     {
     /*
     vacation-command =  "vacation" { vacation-options } <reason: string> ";"
@@ -3151,14 +3151,14 @@ while (*filter->pc)
 
     if (!filter->require_vacation)
       {
-      filter->errmsg=CUS "missing previous require \"vacation\";";
+      filter->errmsg=CUS("missing previous require \"vacation\";");
       return -1;
       }
     if (exec)
       {
       if (filter->vacation_ran)
         {
-        filter->errmsg=CUS "trying to execute vacation more than once";
+        filter->errmsg=CUS("trying to execute vacation more than once");
         return -1;
         }
       filter->vacation_ran=1;
@@ -3176,39 +3176,39 @@ while (*filter->pc)
     for (;;)
       {
       if (parse_white(filter)==-1) return -1;
-      if (parse_identifier(filter,CUS ":days")==1)
+      if (parse_identifier(filter,CUS(":days"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if (parse_number(filter,&days)==-1) return -1;
         if (days<VACATION_MIN_DAYS) days=VACATION_MIN_DAYS;
         else if (days>VACATION_MAX_DAYS) days=VACATION_MAX_DAYS;
         }
-      else if (parse_identifier(filter,CUS ":subject")==1)
+      else if (parse_identifier(filter,CUS(":subject"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if ((m=parse_string(filter,&subject))!=1)
           {
-          if (m==0) filter->errmsg=CUS "subject string expected";
+          if (m==0) filter->errmsg=CUS("subject string expected");
           return -1;
           }
         }
-      else if (parse_identifier(filter,CUS ":from")==1)
+      else if (parse_identifier(filter,CUS(":from"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if ((m=parse_string(filter,&from))!=1)
           {
-          if (m==0) filter->errmsg=CUS "from string expected";
+          if (m==0) filter->errmsg=CUS("from string expected");
           return -1;
           }
         if (check_mail_address(filter,&from)!=1)
           return -1;
         }
-      else if (parse_identifier(filter,CUS ":addresses")==1)
+      else if (parse_identifier(filter,CUS(":addresses"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if ((m=parse_stringlist(filter,&addresses))!=1)
           {
-          if (m==0) filter->errmsg=CUS "addresses string list expected";
+          if (m==0) filter->errmsg=CUS("addresses string list expected");
           return -1;
           }
         for (struct String * a = addresses; a->length != -1; ++a)
@@ -3222,14 +3222,14 @@ while (*filter->pc)
           aliases=new;
           }
         }
-      else if (parse_identifier(filter,CUS ":mime")==1)
+      else if (parse_identifier(filter,CUS(":mime"))==1)
         reason_is_mime=1;
-      else if (parse_identifier(filter,CUS ":handle")==1)
+      else if (parse_identifier(filter,CUS(":handle"))==1)
         {
         if (parse_white(filter)==-1) return -1;
         if ((m=parse_string(filter,&from))!=1)
           {
-          if (m==0) filter->errmsg=CUS "handle string expected";
+          if (m==0) filter->errmsg=CUS("handle string expected");
           return -1;
           }
         }
@@ -3238,7 +3238,7 @@ while (*filter->pc)
     if (parse_white(filter)==-1) return -1;
     if ((m=parse_string(filter,&reason))!=1)
       {
-      if (m==0) filter->errmsg=CUS "missing reason string";
+      if (m==0) filter->errmsg=CUS("missing reason string");
       return -1;
       }
     if (reason_is_mime)
@@ -3249,7 +3249,7 @@ while (*filter->pc)
 	  s<end && (*s&0x80)==0; ) s++;
       if (s<end)
         {
-        filter->errmsg=CUS "MIME reason string contains 8bit text";
+        filter->errmsg=CUS("MIME reason string contains 8bit text");
         return -1;
         }
       }
@@ -3280,14 +3280,14 @@ while (*filter->pc)
 	  gstring * key = NULL;
           if (subject.length!=-1) key =string_catn(key, subject.character, subject.length);
           if (from.length!=-1) key = string_catn(key, from.character, from.length);
-          key = string_catn(key, reason_is_mime?US"1":US"0", 1);
+          key = string_catn(key, reason_is_mime?US("1"):US("0"), 1);
           key = string_catn(key, reason.character, reason.length);
 	  md5_end(&base, key->s, key->ptr, digest);
           }
         else
 	  md5_end(&base, handle.character, handle.length, digest);
 
-        for (int i = 0; i < 16; i++) sprintf(CS (hexdigest+2*i), "%02X", digest[i]);
+        for (int i = 0; i < 16; i++) sprintf(CS(hexdigest+2*i), "%02X", digest[i]);
 
         if ((filter_test != FTEST_NONE && debug_selector != 0) || (debug_selector & D_filter) != 0)
           debug_printf("Sieve: mail was personal, vacation file basename: %s\n", hexdigest);
@@ -3295,7 +3295,7 @@ while (*filter->pc)
         if (filter_test == FTEST_NONE)
           {
           once = string_cat (NULL, filter->vacation_directory);
-          once = string_catn(once, US"/", 1);
+          once = string_catn(once, US("/"), 1);
           once = string_catn(once, hexdigest, 33);
 
           /* process subject */
@@ -3304,10 +3304,10 @@ while (*filter->pc)
             {
             uschar *subject_def;
 
-            subject_def = expand_string(US"${if def:header_subject {true}{false}}");
+            subject_def = expand_string(US("${if def:header_subject {true}{false}}"));
             if (subject_def && Ustrcmp(subject_def,"true")==0)
               {
-	      gstring * g = string_catn(NULL, US"Auto: ", 6);
+	      gstring * g = string_catn(NULL, US("Auto: "), 6);
 
               expand_header(&subject,&str_subject);
               g = string_catn(g, subject.character, subject.length);
@@ -3316,7 +3316,7 @@ while (*filter->pc)
               }
             else
               {
-              subject.character=US"Automated reply";
+              subject.character=US("Automated reply");
               subject.length=Ustrlen(subject.character);
               }
             }
@@ -3332,11 +3332,11 @@ while (*filter->pc)
           memset(addr->reply,0,sizeof(reply_item)); /* XXX */
           addr->reply->to = string_copy(sender_address);
           if (from.length==-1)
-            addr->reply->from = expand_string(US"$local_part@$domain");
+            addr->reply->from = expand_string(US("$local_part@$domain"));
           else
             addr->reply->from = from.character;
 	  /* deconst cast safe as we pass in a non-const item */
-          addr->reply->subject = US parse_quote_2047(subject.character, subject.length, US"utf-8", TRUE);
+          addr->reply->subject = US(parse_quote_2047(subject.character, subject.length, US("utf-8"), TRUE));
           addr->reply->oncelog = string_from_gstring(once);
           addr->reply->once_repeat=days*86400;
 
@@ -3363,7 +3363,7 @@ while (*filter->pc)
             {
             struct String qp = { .character = NULL, .length = 0 };  /* Keep compiler happy (PH) */
 
-            addr->reply->headers = US"MIME-Version: 1.0\n"
+            addr->reply->headers = US("MIME-Version: 1.0\n")
                                    "Content-Type: text/plain;\n"
                                    "\tcharset=\"utf-8\"\n"
                                    "Content-Transfer-Encoding: quoted-printable";
@@ -3438,7 +3438,7 @@ if (exec && filter->vacation_directory && filter_test == FTEST_NONE)
   if (  !(oncelogdir = exim_opendir(filter->vacation_directory))
      && errno != ENOENT)
     {
-    filter->errmsg = CUS "unable to open vacation directory";
+    filter->errmsg = CUS("unable to open vacation directory");
     return -1;
     }
 
@@ -3457,7 +3457,7 @@ if (exec && filter->vacation_directory && filter_test == FTEST_NONE)
     }
   }
 
-while (parse_identifier(filter,CUS "require"))
+while (parse_identifier(filter,CUS("require")))
   {
   /*
   require-command = "require" <capabilities: string-list>
@@ -3469,7 +3469,7 @@ while (parse_identifier(filter,CUS "require"))
   if (parse_white(filter)==-1) return -1;
   if ((m=parse_stringlist(filter,&cap))!=1)
     {
-    if (m==0) filter->errmsg=CUS "capability string list expected";
+    if (m==0) filter->errmsg=CUS("capability string list expected");
     return -1;
     }
   for (struct String * check = cap; check->character; ++check)
@@ -3487,7 +3487,7 @@ while (parse_identifier(filter,CUS "require"))
       {
       if (!filter->enotify_mailto_owner)
         {
-        filter->errmsg=CUS "enotify disabled";
+        filter->errmsg=CUS("enotify disabled");
         return -1;
         }
         filter->require_enotify=1;
@@ -3501,7 +3501,7 @@ while (parse_identifier(filter,CUS "require"))
       {
       if (filter_test == FTEST_NONE && !filter->vacation_directory)
         {
-        filter->errmsg=CUS "vacation disabled";
+        filter->errmsg=CUS("vacation disabled");
         return -1;
         }
       filter->require_vacation=1;
@@ -3514,7 +3514,7 @@ while (parse_identifier(filter,CUS "require"))
     else if (eq_octet(check,&str_comparator_iascii_numeric,0)) filter->require_iascii_numeric=1;
     else
       {
-      filter->errmsg=CUS "unknown capability";
+      filter->errmsg=CUS("unknown capability");
       return -1;
       }
     }
@@ -3523,7 +3523,7 @@ while (parse_identifier(filter,CUS "require"))
   if (parse_commands(filter,exec,generated)==-1) return -1;
   if (*filter->pc)
     {
-    filter->errmsg=CUS "syntax error";
+    filter->errmsg=CUS("syntax error");
     return -1;
     }
   return 1;
@@ -3588,7 +3588,7 @@ else if (!(sieve.enotify_mailto_owner = expand_cstring(enotify_mailto_owner)))
   }
 
 sieve.useraddress = useraddress
-  ? useraddress : CUS "$local_part_prefix$local_part$local_part_suffix";
+  ? useraddress : CUS("$local_part_prefix$local_part$local_part_suffix");
 sieve.subaddress = subaddress;
 
 #ifdef COMPILE_SYNTAX_CHECKER
@@ -3598,13 +3598,13 @@ if (parse_start(&sieve, 1, generated) == 1)
 #endif
   if (sieve.keep)
     {
-    add_addr(generated, US"inbox", 1, 0, 0, 0);
-    msg = US"Implicit keep";
+    add_addr(generated, US("inbox"), 1, 0, 0, 0);
+    msg = US("Implicit keep");
     r = FF_DELIVERED;
     }
   else
     {
-    msg = US"No implicit keep";
+    msg = US("No implicit keep");
     r = FF_DELIVERED;
     }
 else
@@ -3614,7 +3614,7 @@ else
   r = FF_ERROR;
   *error = msg;
 #else
-  add_addr(generated,US"inbox",1,0,0,0);
+  add_addr(generated,US("inbox"),1,0,0,0);
   r = FF_DELIVERED;
 #endif
   }

@@ -30,8 +30,8 @@ if (!filename || !*filename)
   filename = sqlite_dbfile;
   }
 if (!filename || *filename != '/')
-  *errmsg = US"absolute file name expected for \"sqlite\" lookup";
-else if ((ret = sqlite3_open(CCS filename, &db)) != 0)
+  *errmsg = US("absolute file name expected for \"sqlite\" lookup");
+else if ((ret = sqlite3_open(CCS(filename), &db)) != 0)
   {
   *errmsg = (void *)sqlite3_errmsg(db);
   sqlite3_close(db);
@@ -59,7 +59,7 @@ gstring * res = *(gstring **)arg;
 /* For second and subsequent results, insert \n */
 
 if (res)
-  res = string_catn(res, US"\n", 1);
+  res = string_catn(res, US("\n"), 1);
 
 if (argc > 1)
   {
@@ -67,12 +67,12 @@ if (argc > 1)
   for (int i = 0; i < argc; i++)
     {
     uschar * value = US(argv[i] ? argv[i] : "<NULL>");
-    res = lf_quote(US azColName[i], value, Ustrlen(value), res);
+    res = lf_quote(US(azColName[i]), value, Ustrlen(value), res);
     }
   }
 
 else
-  res = string_cat(res, argv[0] ? US argv[0] : US "<NULL>");
+  res = string_cat(res, argv[0] ? US(argv[0]) : US("<NULL>"));
 
 /* always return a non-null gstring, even for a zero-length string result */
 *(gstring **)arg = res ? res : string_get(1);
@@ -88,7 +88,7 @@ sqlite_find(void * handle, const uschar * filename, const uschar * query,
 int ret;
 gstring * res = NULL;
 
-ret = sqlite3_exec(handle, CS query, sqlite_callback, &res, CSS errmsg);
+ret = sqlite3_exec(handle, CS(query), sqlite_callback, &res, CSS(errmsg));
 if (ret != SQLITE_OK)
   {
   debug_printf_indent("sqlite3_exec failed: %s\n", *errmsg);
@@ -179,7 +179,7 @@ return g;
 }
 
 static lookup_info _lookup_info = {
-  .name = US"sqlite",			/* lookup name */
+  .name = US("sqlite"),			/* lookup name */
   .type = lookup_absfilequery,		/* query-style lookup, starts with file name */
   .open = sqlite_open,			/* open function */
   .check = NULL,			/* no check function */

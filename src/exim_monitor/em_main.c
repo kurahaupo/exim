@@ -213,7 +213,7 @@ void hideAction(Widget w, XtPointer client_data, XtPointer call_data)
 actioned_message[0] = 0;
 dialog_ref_widget = w;
 dialog_action = da_hide;
-create_dialog(US"Hide addresses ending with", US"");
+create_dialog(US("Hide addresses ending with"), US(""));
 }
 
 void unhideAction(Widget w, XtPointer client_data, XtPointer call_data)
@@ -568,7 +568,7 @@ printf("\nExim Monitor version %s (compiled %s) initializing\n",
 
 /* Initialize various things from the environment and arguments. */
 
-init(argc, USS argv);
+init(argc, USS(argv));
 
 /* Set up the SIGCHLD handler */
 
@@ -576,7 +576,7 @@ signal(SIGCHLD, sigchld_handler);
 
 /* Get the buffer for storing the string for the log display. */
 
-log_display_buffer = US store_malloc(log_buffer_size);
+log_display_buffer = US(store_malloc(log_buffer_size));
 log_display_buffer[0] = 0;
 
 /* Initialize the data structures for the stripcharts */
@@ -600,10 +600,10 @@ if (log_file[0] != 0)
   {
   /* Do *not* use "%s" here, we need the %D datestamp in the log_file to
   be expanded! */
-  (void)string_format(log_file_open, sizeof(log_file_open), CS log_file, NULL);
+  (void)string_format(log_file_open, sizeof(log_file_open), CS(log_file), NULL);
   log_datestamping = string_datestamp_offset >= 0;
 
-  LOG = fopen(CS log_file_open, "r");
+  LOG = fopen(CS(log_file_open), "r");
 
   if (LOG == NULL)
     {
@@ -670,19 +670,19 @@ state of other modifiers. Thanks to Kevin Ryde for this information, and for
 the function above that discovers which modifier is Num Lock, because it turns
 out that it varies from server to server. */
 
-sprintf(CS big_buffer,
+sprintf(CS(big_buffer),
   "!%s:            menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
    !Lock %s:       menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
   ", menu_event, menu_event);
 
 numlock = numlock_modifiers(X_display, modbuf); /* Get Num Lock modifier(s) */
 
-if (numlock != NULL) sprintf(CS big_buffer + Ustrlen(big_buffer),
+if (numlock != NULL) sprintf(CS(big_buffer) + Ustrlen(big_buffer),
   "!%s %s:         menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
    !Lock %s %s:    menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
   ", numlock, menu_event, numlock, menu_event);
 
-sprintf(CS big_buffer + Ustrlen(big_buffer),
+sprintf(CS(big_buffer) + Ustrlen(big_buffer),
   "<Btn1Down>:     select-start()\n\
    <Btn1Motion>:   extend-adjust()\n\
    <Btn1Up>:       extend-end(PRIMARY,CUT_BUFFER0)\n\
@@ -695,7 +695,7 @@ sprintf(CS big_buffer + Ustrlen(big_buffer),
    Ctrl<Key>S:     search(forward)\n\
   ");
 
-queue_trans = XtParseTranslationTable(CS big_buffer);
+queue_trans = XtParseTranslationTable(CS(big_buffer));
 
 text_trans = XtParseTranslationTable(
   "<Btn1Down>:     select-start()\n\
@@ -794,7 +794,7 @@ if (log_file[0] != 0)
 
   if (log_font != NULL)
     {
-    XFontStruct *f = XLoadQueryFont(X_display, CS log_font);
+    XFontStruct *f = XLoadQueryFont(X_display, CS(log_font));
     if (f != NULL) xs_SetValues(log_widget, 1, "font", f);
     }
 
@@ -831,7 +831,7 @@ xs_SetValues(queue_widget, 4,
 
 if (queue_font != NULL)
   {
-  XFontStruct *f = XLoadQueryFont(X_display, CS queue_font);
+  XFontStruct *f = XLoadQueryFont(X_display, CS(queue_font));
   if (f != NULL) xs_SetValues(queue_widget, 1, "font", f);
   }
 

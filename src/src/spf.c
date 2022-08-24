@@ -16,14 +16,14 @@
 /* must be kept in numeric order */
 static spf_result_id spf_result_id_list[] = {
   /* name		value */
-  { US"invalid",	0},
-  { US"neutral",	1 },
-  { US"pass",		2 },
-  { US"fail",		3 },
-  { US"softfail",	4 },
-  { US"none",		5 },
-  { US"temperror",	6 }, /* RFC 4408 defined */
-  { US"permerror",	7 }  /* RFC 4408 defined */
+  { US("invalid"),	0},
+  { US("neutral"),	1 },
+  { US("pass"),		2 },
+  { US("fail"),		3 },
+  { US("softfail"),	4 },
+  { US("none"),		5 },
+  { US("temperror"),	6 }, /* RFC 4408 defined */
+  { US("permerror"),	7 }  /* RFC 4408 defined */
 };
 
 SPF_server_t    *spf_server = NULL;
@@ -59,7 +59,7 @@ SPF_dns_rr_t * spfrr;
 unsigned found = 0;
 
 SPF_dns_rr_t srr = {
-  .domain = CS domain,			/* query information */
+  .domain = CS(domain),			/* query information */
   .domain_buf_len = 0,
   .rr_type = rr_type,
 
@@ -86,7 +86,7 @@ if (rr_type == T_SPF)
   return spfrr;
   }
 
-switch (dns_rc = dns_lookup(dnsa, US domain, rr_type, NULL))
+switch (dns_rc = dns_lookup(dnsa, US(domain), rr_type, NULL))
   {
   case DNS_SUCCEED:	srr.herrno = NETDB_SUCCESS;	break;
   case DNS_AGAIN:	srr.herrno = TRY_AGAIN;		break;
@@ -135,7 +135,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
 	gstring * g = NULL;
 	uschar chunk_len;
 
-	if (strncmpic(rr->data+1, US SPF_VER_STR, 6) != 0)
+	if (strncmpic(rr->data+1, US(SPF_VER_STR), 6) != 0)
 	  {
 	  HDEBUG(D_host_lookup) debug_printf("not an spf record: %.*s\n",
 	    (int) s[0], s+1);
@@ -253,7 +253,7 @@ if (!(spf_server = SPF_server_new_dns(dc, debug)))
 if (!(s = expand_string(spf_smtp_comment_template)))
   log_write(0, LOG_MAIN|LOG_PANIC_DIE, "expansion of spf_smtp_comment_template failed");
 
-SPF_server_set_explanation(spf_server, CCS s, &spf_response);
+SPF_server_set_explanation(spf_server, CCS(s), &spf_response);
 if (SPF_response_errcode(spf_response) != SPF_E_SUCCESS)
   log_write(0, LOG_MAIN|LOG_PANIC_DIE, "%s", SPF_strerror(SPF_response_errcode(spf_response)));
 
@@ -276,7 +276,7 @@ DEBUG(D_receive)
 
 if (!spf_server && !spf_init()) return FALSE;
 
-if (SPF_server_set_rec_dom(spf_server, CS primary_hostname))
+if (SPF_server_set_rec_dom(spf_server, CS(primary_hostname)))
   {
   DEBUG(D_receive) debug_printf("spf: SPF_server_set_rec_dom(\"%s\") failed.\n",
     primary_hostname);
@@ -286,8 +286,8 @@ if (SPF_server_set_rec_dom(spf_server, CS primary_hostname))
 
 spf_request = SPF_request_new(spf_server);
 
-if (  SPF_request_set_ipv4_str(spf_request, CS spf_remote_addr)
-   && SPF_request_set_ipv6_str(spf_request, CS spf_remote_addr)
+if (  SPF_request_set_ipv4_str(spf_request, CS(spf_remote_addr))
+   && SPF_request_set_ipv6_str(spf_request, CS(spf_remote_addr))
    )
   {
   DEBUG(D_receive)
@@ -298,7 +298,7 @@ if (  SPF_request_set_ipv4_str(spf_request, CS spf_remote_addr)
   return FALSE;
   }
 
-if (SPF_request_set_helo_dom(spf_request, CS spf_helo_domain))
+if (SPF_request_set_helo_dom(spf_request, CS(spf_helo_domain)))
   {
   DEBUG(D_receive) debug_printf("spf: SPF_set_helo_dom(\"%s\") failed.\n",
     spf_helo_domain);
@@ -347,7 +347,7 @@ if (!(spf_server && spf_request))
   /* no global context, assume temp error and skip to evaluation */
   rc = SPF_RESULT_PERMERROR;
 
-else if (SPF_request_set_env_from(spf_request, CS spf_envelope_sender))
+else if (SPF_request_set_env_from(spf_request, CS(spf_envelope_sender)))
   /* Invalid sender address. This should be a real rare occurrence */
   rc = SPF_RESULT_PERMERROR;
 
@@ -356,17 +356,17 @@ else
   /* get SPF result */
   if (action == SPF_PROCESS_FALLBACK)
     {
-    SPF_request_query_fallback(spf_request, &spf_response, CS spf_guess);
+    SPF_request_query_fallback(spf_request, &spf_response, CS(spf_guess));
     spf_result_guessed = TRUE;
     }
   else
     SPF_request_query_mailfrom(spf_request, &spf_response);
 
   /* set up expansion items */
-  spf_header_comment     = US SPF_response_get_header_comment(spf_response);
-  spf_received           = US SPF_response_get_received_spf(spf_response);
-  spf_result             = US SPF_strresult(SPF_response_result(spf_response));
-  spf_smtp_comment       = US SPF_response_get_smtp_comment(spf_response);
+  spf_header_comment     = US(SPF_response_get_header_comment(spf_response));
+  spf_received           = US(SPF_response_get_received_spf(spf_response));
+  spf_result             = US(SPF_strresult(SPF_response_result(spf_response)));
+  spf_smtp_comment       = US(SPF_response_get_smtp_comment(spf_response));
 
   rc = SPF_response_result(spf_response);
 
@@ -402,18 +402,18 @@ authres_spf(gstring * g)
 uschar * s;
 if (!spf_result) return g;
 
-g = string_append(g, 2, US";\n\tspf=", spf_result);
+g = string_append(g, 2, US(";\n\tspf="), spf_result);
 if (spf_result_guessed)
-  g = string_cat(g, US" (best guess record for domain)");
+  g = string_cat(g, US(" (best guess record for domain)"));
 
-s = expand_string(US"$sender_address_domain");
+s = expand_string(US("$sender_address_domain"));
 if (s && *s)
-  return string_append(g, 2, US" smtp.mailfrom=", s);
+  return string_append(g, 2, US(" smtp.mailfrom="), s);
 
 s = sender_helo_name;
 return s && *s
-  ? string_append(g, 2, US" smtp.helo=", s)
-  : string_cat(g, US" smtp.mailfrom=<>");
+  ? string_append(g, 2, US(" smtp.helo="), s)
+  : string_cat(g, US(" smtp.mailfrom=<>"));
 }
 
 

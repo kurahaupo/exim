@@ -34,7 +34,7 @@ if (!s)
   {
   log_write(0, LOG_MAIN|LOG_PANIC,
     "Failed to expand dsn_from (using default): %s", expand_string_message);
-  s = expand_string(US DEFAULT_DSN_FROM);
+  s = expand_string(US(DEFAULT_DSN_FROM));
   }
 fprintf(f, "From: %s\n", s);
 }
@@ -68,12 +68,12 @@ if (!message_id)
       }
 
 for (h = header_list; h; h = h->next)
-  if (h->type != htype_old && strncmpic(US"References:", h->text, 11) == 0)
+  if (h->type != htype_old && strncmpic(US("References:"), h->text, 11) == 0)
     break;
 
 if (!h)
   for (h = header_list; h; h = h->next)
-    if (h->type != htype_old && strncmpic(US"In-Reply-To:", h->text, 12) == 0)
+    if (h->type != htype_old && strncmpic(US("In-Reply-To:"), h->text, 12) == 0)
       break;
 
 /* We limit the total length of references.  Although there is no fixed
@@ -163,15 +163,15 @@ if (  ident == ERRMESS_DMARC_FORENSIC
    && *s2
    )
   pid = child_open_exim2(&fd, s2, bounce_sender_authentication,
-		US"moan_send_message");
+		US("moan_send_message"));
 else
   {
   s = NULL;
-  pid = child_open_exim(&fd, US"moan_send_message");
+  pid = child_open_exim(&fd, US("moan_send_message"));
   }
 
 #else
-pid = child_open_exim(&fd, US"moan_send_message");
+pid = child_open_exim(&fd, US("moan_send_message"));
 #endif
 
 if (pid < 0)
@@ -311,7 +311,7 @@ switch(ident)
     bounce_return_message = TRUE;
     bounce_return_body    = FALSE;
     fprintf(fp, "Subject: DMARC Forensic Report for %s from IP %s\n\n",
-	  eblock ? eblock->text2 : US"Unknown",
+	  eblock ? eblock->text2 : US("Unknown"),
           sender_host_address);
     fprintf(fp,
       "A message claiming to be from you has failed the published DMARC\n"
@@ -348,10 +348,10 @@ if (bounce_return_message)
     if (size_limit > 0 && size_limit < message_size)
       {
       int x = size_limit;
-      uschar *k = US"";
+      uschar *k = US("");
       if ((x & 1023) == 0)
         {
-        k = US"K";
+        k = US("K");
         x >>= 10;
         }
       fprintf(fp, "\n"
@@ -372,7 +372,7 @@ if (bounce_return_message)
 
   while (headers)
     {
-    if (headers->text != NULL) fprintf(fp, "%s", CS headers->text);
+    if (headers->text != NULL) fprintf(fp, "%s", CS(headers->text));
     headers = headers->next;
     }
 
@@ -388,9 +388,9 @@ if (bounce_return_message)
     BOOL enddot = f.dot_ends && message_file == stdin;
     uschar * buf = store_get(bounce_return_linesize_limit+2, GET_TAINTED);
 
-    if (firstline) fprintf(fp, "%s", CS firstline);
+    if (firstline) fprintf(fp, "%s", CS(firstline));
 
-    while (fgets(CS buf, bounce_return_linesize_limit+2, message_file))
+    while (fgets(CS(buf), bounce_return_linesize_limit+2, message_file))
       {
       int len;
 
@@ -410,11 +410,11 @@ if (bounce_return_message)
       if (size_limit > 0 && len > size_limit - written)
 	{
 	buf[size_limit - written] = '\0';
-	fputs(CS buf, fp);
+	fputs(CS(buf), fp);
 	break;
 	}
 
-      fputs(CS buf, fp);
+      fputs(CS(buf), fp);
       }
     }
 #ifdef SUPPORT_DMARC
@@ -424,7 +424,7 @@ if (bounce_return_message)
     /*XXX limit line length here? */
     /* This doesn't print newlines, disable until can parse and fix
      * output to be legible.  */
-    fprintf(fp, "%s", expand_string(US"$message_body"));
+    fprintf(fp, "%s", expand_string(US("$message_body")));
     }
 #endif
   }
@@ -435,7 +435,7 @@ that is receiving the message. Wait for it to finish, without a timeout. */
 status = child_close(pid, 0);  /* Waits for child to close */
 if (status != 0)
   {
-  uschar *msg = US"Child mail process returned status";
+  uschar *msg = US("Child mail process returned status");
   if (status == -257)
     log_write(0, LOG_MAIN, "%s %d: errno=%d: %s", msg, status, errno,
       strerror(errno));
@@ -481,7 +481,7 @@ moan_to_sender(int ident, error_block *eblock, header_line *headers,
   FILE *message_file, BOOL check_sender)
 {
 uschar *firstline = NULL;
-uschar *msg = US"Error while reading message with no usable sender address";
+uschar *msg = US("Error while reading message with no usable sender address");
 
 if (message_reference)
   msg = string_sprintf("%s (R=%s)", msg, message_reference);
@@ -587,7 +587,7 @@ moan_tell_someone(uschar *who, address_item *addr,
 FILE *f;
 va_list ap;
 int fd;
-int pid = child_open_exim(&fd, US"moan_tell_someone");
+int pid = child_open_exim(&fd, US("moan_tell_someone"));
 
 if (pid < 0)
   {
@@ -765,7 +765,7 @@ while ((item = string_nextinlist(&listptr, &sep, NULL, 0)))
   }
 
 DEBUG(D_any) debug_printf("errors_copy check returned %s\n",
-  (yield == NULL)? US"NULL" : yield);
+  (yield == NULL)? US("NULL") : yield);
 
 expand_nmax = -1;
 return yield;
@@ -822,7 +822,7 @@ if (!(s = expand_string(syntax_errors_to)))
 /* If we can't create a process to send the message, just forget about
 it. */
 
-pid = child_open_exim(&fd, US"moan_skipped_syntax_errors");
+pid = child_open_exim(&fd, US("moan_skipped_syntax_errors"));
 
 if (pid < 0)
   {

@@ -50,8 +50,8 @@ dcc_process(uschar **listptr)
 int sep = 0;
 const uschar *list = *listptr;
 FILE *data_file;
-uschar *dcc_default_ip_option = US"127.0.0.1";
-uschar *dcc_helo_option = US"localhost";
+uschar *dcc_default_ip_option = US("127.0.0.1");
+uschar *dcc_helo_option = US("localhost");
 uschar *xtra_hdrs = NULL;
 uschar *override_client_ip  = NULL;
 
@@ -65,7 +65,7 @@ uschar sockpath[128];
 uschar sockip[40], client_ip[40];
 gstring *dcc_headers;
 gstring *sendbuf;
-uschar *dcc_return_text = US"''";
+uschar *dcc_return_text = US("''");
 struct header_line *mail_headers;
 uschar *dcc_acl_options;
 gstring *dcc_xtra_hdrs;
@@ -75,7 +75,7 @@ gstring *dcc_header_str;
 if ((dcc_acl_options = string_nextinlist(&list, &sep, NULL, 0)))
   {
   /* parse 1st option */
-  if (  strcmpic(dcc_acl_options, US"false") == 0
+  if (  strcmpic(dcc_acl_options, US("false")) == 0
      || Ustrcmp(dcc_acl_options, "0") == 0)
     return FAIL;	/* explicitly no matching */
   }
@@ -94,7 +94,7 @@ for (int i = 0; i < 2; i++)
   uschar message_subdir[2];
   set_subdir_str(message_subdir, message_id, i);
   if ((data_file = Ufopen(
-	  spool_fname(US"input", message_subdir, message_id, US"-D"), "rb")))
+	  spool_fname(US("input"), message_subdir, message_id, US("-D")), "rb")))
     break;
   }
 
@@ -114,7 +114,7 @@ if (dccifd_address)
   if (dccifd_address[0] == '/')
     Ustrncpy(sockpath, dccifd_address, sizeof(sockpath));
   else
-    if( sscanf(CS dccifd_address, "%s %u", sockip, &portnr) != 2)
+    if( sscanf(CS(dccifd_address), "%s %u", sockip, &portnr) != 2)
       {
       log_write(0, LOG_MAIN,
 	"DCC: warning - invalid dccifd address: '%s'", dccifd_address);
@@ -127,7 +127,7 @@ if (dccifd_address)
 /* We don't support any other option than 'header' so just copy that */
 dcc_headers = string_cat(NULL, dccifd_options);
 /* if $acl_m_dcc_override_client_ip is set use it */
-if (((override_client_ip = expand_string(US"$acl_m_dcc_override_client_ip")) != NULL) &&
+if (((override_client_ip = expand_string(US("$acl_m_dcc_override_client_ip"))) != NULL) &&
      (override_client_ip[0] != '\0'))
   {
   Ustrncpy(client_ip, override_client_ip, sizeof(client_ip)-1);
@@ -149,7 +149,7 @@ else
     debug_printf("DCC: Client IP (default): %s\n", client_ip);
   }
 /* build options block */
-dcc_headers = string_append(dcc_headers, 5, US"\n", client_ip, US"\nHELO ", dcc_helo_option, US"\n");
+dcc_headers = string_append(dcc_headers, 5, US("\n"), client_ip, US("\nHELO "), dcc_helo_option, US("\n"));
 
 /* initialize the other variables */
 mail_headers = header_list;
@@ -157,8 +157,8 @@ mail_headers = header_list;
 retval = DEFER;
 
 /* send a null return path as "<>". */
-dcc_headers = string_cat (dcc_headers, *sender_address ? sender_address : US"<>");
-dcc_headers = string_catn(dcc_headers, US"\n", 1);
+dcc_headers = string_cat (dcc_headers, *sender_address ? sender_address : US("<>"));
+dcc_headers = string_catn(dcc_headers, US("\n"), 1);
 
 /**************************************
  * Now creating the socket connection *
@@ -167,10 +167,10 @@ dcc_headers = string_catn(dcc_headers, US"\n", 1);
 /* If sockip contains an ip, we use a tcp socket, otherwise a UNIX socket */
 if(Ustrcmp(sockip, ""))
   {
-  ipaddress = gethostbyname(CS sockip);
-  bzero(CS  &serv_addr_in, sizeof(serv_addr_in));
+  ipaddress = gethostbyname(CS(sockip));
+  bzero(CS(&serv_addr_in), sizeof(serv_addr_in));
   serv_addr_in.sin_family = AF_INET;
-  bcopy(CS ipaddress->h_addr, CS &serv_addr_in.sin_addr.s_addr, ipaddress->h_length);
+  bcopy(CS(ipaddress->h_addr), CS(&serv_addr_in.sin_addr.s_addr), ipaddress->h_length);
   serv_addr_in.sin_port = htons(portnr);
   if ((sockfd = socket(AF_INET, SOCK_STREAM,0)) < 0)
     {
@@ -197,7 +197,7 @@ else
   /* connecting to the dccifd UNIX socket */
   bzero(&serv_addr, sizeof(serv_addr));
   serv_addr.sun_family = AF_UNIX;
-  Ustrncpy(US serv_addr.sun_path, sockpath, sizeof(serv_addr.sun_path));
+  Ustrncpy(US(serv_addr.sun_path), sockpath, sizeof(serv_addr.sun_path));
   if ((sockfd = socket(AF_UNIX, SOCK_STREAM,0)) < 0)
     {
     DEBUG(D_acl)
@@ -231,7 +231,7 @@ for (int i = 0; i < recipients_count; i++)
   dcc_headers = string_append(dcc_headers, 2, recipients_list[i].address, "\n");
   }
 /* send a blank line between options and message */
-dcc_headers = string_catn(dcc_headers, US"\n", 1);
+dcc_headers = string_catn(dcc_headers, US("\n"), 1);
 /* Now we send the input buffer */
 (void) string_from_gstring(dcc_headers);
 DEBUG(D_acl)
@@ -253,7 +253,7 @@ while((mail_headers=mail_headers->next))
   sendbuf = string_catn(sendbuf, mail_headers->text, mail_headers->slen);
 
 /* a blank line separates header from body */
-sendbuf = string_catn(sendbuf, US"\r\n", 2);
+sendbuf = string_catn(sendbuf, US("\r\n"), 2);
 (void) string_from_gstring(sendbuf);
 gstring_release_unused(sendbuf);
 DEBUG(D_acl)
@@ -353,15 +353,15 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	    case 'A':
 	      DEBUG(D_acl)
 		debug_printf("DCC: Overall result = A\treturning OK\n");
-	      dcc_return_text = US"Mail accepted by DCC";
-	      dcc_result = US"A";
+	      dcc_return_text = US("Mail accepted by DCC");
+	      dcc_result = US("A");
 	      retval = OK;
 	      break;
 	    case 'R':
 	      DEBUG(D_acl)
 		debug_printf("DCC: Overall result = R\treturning FAIL\n");
-	      dcc_return_text = US"Rejected by DCC";
-	      dcc_result = US"R";
+	      dcc_return_text = US("Rejected by DCC");
+	      dcc_result = US("R");
 	      retval = FAIL;
 	      if(sender_host_name)
 		log_write(0, LOG_MAIN, "H=%s [%s] F=<%s>: rejected by DCC",
@@ -373,31 +373,31 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	    case 'S':
 	      DEBUG(D_acl)
 		debug_printf("DCC: Overall result  = S\treturning OK\n");
-	      dcc_return_text = US"Not all recipients accepted by DCC";
+	      dcc_return_text = US("Not all recipients accepted by DCC");
 	      /* Since we're in an ACL we want a global result so we accept for all */
-	      dcc_result = US"A";
+	      dcc_result = US("A");
 	      retval = OK;
 	      break;
 	    case 'G':
 	      DEBUG(D_acl)
 		debug_printf("DCC: Overall result  = G\treturning FAIL\n");
-	      dcc_return_text = US"Greylisted by DCC";
-	      dcc_result = US"G";
+	      dcc_return_text = US("Greylisted by DCC");
+	      dcc_result = US("G");
 	      retval = FAIL;
 	      break;
 	    case 'T':
 	      DEBUG(D_acl)
 		debug_printf("DCC: Overall result = T\treturning DEFER\n");
-	      dcc_return_text = US"Temporary error with DCC";
-	      dcc_result = US"T";
+	      dcc_return_text = US("Temporary error with DCC");
+	      dcc_result = US("T");
 	      retval = DEFER;
 	      log_write(0,LOG_MAIN,"Temporary error with DCC: %s\n", big_buffer);
 	      break;
 	    default:
 	      DEBUG(D_acl)
 		debug_printf("DCC: Overall result = something else\treturning DEFER\n");
-	      dcc_return_text = US"Unknown DCC response";
-	      dcc_result = US"T";
+	      dcc_return_text = US("Unknown DCC response");
+	      dcc_result = US("T");
 	      retval = DEFER;
 	      log_write(0,LOG_MAIN,"Unknown DCC response: %s\n", big_buffer);
 	      break;
@@ -438,7 +438,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
     }
   }
 /* We have read everything from the socket. make sure the header ends with "\n" */
-dcc_header_str = string_catn(dcc_header_str, US"\n", 1);
+dcc_header_str = string_catn(dcc_header_str, US("\n"), 1);
 
 (void) string_from_gstring(dcc_header_str);
 /* Now let's sum up what we've got. */
@@ -465,11 +465,11 @@ else
 /* check if we should add additional headers passed in acl_m_dcc_add_header */
 if (dcc_direct_add_header)
   {
-  if (((xtra_hdrs = expand_string(US"$acl_m_dcc_add_header")) != NULL) && (xtra_hdrs[0] != '\0'))
+  if (((xtra_hdrs = expand_string(US("$acl_m_dcc_add_header"))) != NULL) && (xtra_hdrs[0] != '\0'))
     {
     dcc_xtra_hdrs = string_cat(NULL, xtra_hdrs);
     if (dcc_xtra_hdrs->s[dcc_xtra_hdrs->ptr - 1] != '\n')
-      dcc_xtra_hdrs = string_catn(dcc_xtra_hdrs, US"\n", 1);
+      dcc_xtra_hdrs = string_catn(dcc_xtra_hdrs, US("\n"), 1);
     header_add(' ', "%s", string_from_gstring(dcc_xtra_hdrs));
     DEBUG(D_acl)
       debug_printf("DCC: adding additional headers in $acl_m_dcc_add_header: %.*s", dcc_xtra_hdrs->ptr, dcc_xtra_hdrs->s);

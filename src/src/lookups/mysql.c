@@ -188,7 +188,7 @@ if (!cn)
   uschar *p;
   uschar *socket = NULL;
   int port = 0;
-  uschar *group = US"exim";
+  uschar *group = US("exim");
 
   if ((p = Ustrchr(sdata[0], '[')))
     {
@@ -233,11 +233,11 @@ if (!cn)
 
   mysql_handle = store_get(sizeof(MYSQL), GET_UNTAINTED);
   mysql_init(mysql_handle);
-  mysql_options(mysql_handle, MYSQL_READ_DEFAULT_GROUP, CS group);
+  mysql_options(mysql_handle, MYSQL_READ_DEFAULT_GROUP, CS(group));
   if (mysql_real_connect(mysql_handle,
       /*  host        user         passwd     database */
-      CS sdata[0], CS sdata[2], CS sdata[3], CS sdata[1],
-      port, CS socket, CLIENT_MULTI_RESULTS) == NULL)
+      CS(sdata[0]), CS(sdata[2]), CS(sdata[3]), CS(sdata[1]),
+      port, CS(socket), CLIENT_MULTI_RESULTS) == NULL)
     {
     *errmsg = string_sprintf("MYSQL connection failed: %s",
       mysql_error(mysql_handle));
@@ -264,7 +264,7 @@ else
 
 /* Run the query */
 
-if (mysql_query(mysql_handle, CS query) != 0)
+if (mysql_query(mysql_handle, CS(query)) != 0)
   {
   *errmsg = string_sprintf("MYSQL: query failed: %s\n",
     mysql_error(mysql_handle));
@@ -311,17 +311,17 @@ while ((mysql_row_data = mysql_fetch_row(mysql_result)))
   unsigned long * lengths = mysql_fetch_lengths(mysql_result);
 
   if (result)
-    result = string_catn(result, US"\n", 1);
+    result = string_catn(result, US("\n"), 1);
 
   if (num_fields != 1)
     for (int i = 0; i < num_fields; i++)
-      result = lf_quote(US fields[i].name, US mysql_row_data[i], lengths[i],
+      result = lf_quote(US(fields[i].name), US(mysql_row_data[i]), lengths[i],
 			result);
 
   else if (mysql_row_data[0] != NULL)    /* NULL value yields nothing */
       result = lengths[0] == 0 && !result
 	? string_get(1)		/* for 0-len string result ensure non-null gstring */
-        : string_catn(result, US mysql_row_data[0], lengths[0]);
+        : string_catn(result, US(mysql_row_data[0]), lengths[0]);
   }
 
 /* more results? -1 = no, >0 = error, 0 = yes (keep looping)
@@ -346,7 +346,7 @@ always leaves enough room for a terminating zero. */
 if (!result)
   {
   yield = FAIL;
-  *errmsg = US"MYSQL: no data found";
+  *errmsg = US("MYSQL: no data found");
   }
 
 /* Get here by goto from various error checks and from the case where no data
@@ -391,7 +391,7 @@ mysql_find(void * handle, const uschar * filename, const uschar * query,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
   const uschar * opts)
 {
-return lf_sqlperform(US"MySQL", US"mysql_servers", mysql_servers, query,
+return lf_sqlperform(US("MySQL"), US("mysql_servers"), mysql_servers, query,
   result, errmsg, do_cache, opts, perform_mysql_search);
 }
 
@@ -482,7 +482,7 @@ return g;
 /* These are the lookup_info blocks for this driver */
 
 static lookup_info mysql_lookup_info = {
-  .name = US"mysql",			/* lookup name */
+  .name = US("mysql"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = mysql_open,			/* open function */
   .check = NULL,			/* no check function */

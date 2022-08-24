@@ -85,10 +85,10 @@ for (int i = 0; i < num_msg; i++)
     case PAM_PROMPT_ECHO_OFF:
       if (!(arg = string_nextinlist(&pam_args, &sep, NULL, 0)))
 	{
-	arg = US"";
+	arg = US("");
 	pam_arg_ended = TRUE;
 	}
-      reply[i].resp = strdup(CCS arg); /* Use libc malloc, PAM frees resp directly*/
+      reply[i].resp = strdup(CCS(arg)); /* Use libc malloc, PAM frees resp directly*/
       reply[i].resp_retcode = PAM_SUCCESS;
       break;
 
@@ -162,7 +162,7 @@ if (user == NULL || user[0] == 0) return FAIL;
 DEBUG(D_auth)
   debug_printf("Running PAM authentication for user \"%s\"\n", user);
 
-pam_error = pam_start ("exim", CS user, &pamc, &pamh);
+pam_error = pam_start ("exim", CS(user), &pamc, &pamh);
 
 /* Do the authentication - the pam_authenticate() will call pam_converse() to
 get the data it wants. After successful authentication we call pam_acct_mgmt()
@@ -188,7 +188,7 @@ if (pam_error == PAM_SUCCESS)
   return OK;
   }
 
-*errptr = US pam_strerror(pamh, pam_error);
+*errptr = US(pam_strerror(pamh, pam_error));
 DEBUG(D_auth) debug_printf("PAM error: %s\n", *errptr);
 
 if (pam_error == PAM_USER_UNKNOWN ||

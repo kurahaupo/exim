@@ -70,7 +70,7 @@ int main (int argc, char ** argv)
 
        spa_build_auth_request (&request, username, domain);
 
-       spa_bits_to_base64 (msgbuf, US &request,
+       spa_bits_to_base64 (msgbuf, US(&request),
                spa_request_length(&request));
 
        printf ("SPA Login request for username=%s:\n   %s\n",
@@ -85,15 +85,15 @@ int main (int argc, char ** argv)
 
        challenge_str = argv [3];
 
-       if (spa_base64_to_bits (CS &challenge, sizeof(challenge),
-                CCS (challenge_str))<0)
+       if (spa_base64_to_bits (CS(&challenge), sizeof(challenge),
+                CCS(challenge_str))<0)
        {
                 printf("bad base64 data in challenge: %s\n", challenge_str);
                 exit (1);
        }
 
        spa_build_auth_response (&challenge, &response, username, password);
-       spa_bits_to_base64 (msgbuf, US &response,
+       spa_bits_to_base64 (msgbuf, US(&response),
                spa_request_length(&response));
 
        printf ("SPA Response to challenge:\n   %s\n for " \
@@ -203,7 +203,7 @@ extern int DEBUGLEVEL;
 #  define CAREFUL_ALIGNMENT 1
 # endif
 
-# define CVAL(buf,pos) ((US (buf))[pos])
+# define CVAL(buf,pos) ((US(buf))[pos])
 # define PVAL(buf,pos) ((unsigned)CVAL(buf,pos))
 # define SCVAL(buf,pos,val) (CVAL(buf,pos) = (val))
 
@@ -231,10 +231,10 @@ extern int DEBUGLEVEL;
 */
 
 /* get single value from an SMB buffer */
-#  define SVAL(buf,pos) (*(uint16x *)(CS (buf) + (pos)))
-#  define IVAL(buf,pos) (*(uint32x *)(CS (buf) + (pos)))
-#  define SVALS(buf,pos) (*(int16x *)(CS (buf) + (pos)))
-#  define IVALS(buf,pos) (*(int32x *)(CS (buf) + (pos)))
+#  define SVAL(buf,pos) (*(uint16x *)(CS(buf) + (pos)))
+#  define IVAL(buf,pos) (*(uint32x *)(CS(buf) + (pos)))
+#  define SVALS(buf,pos) (*(int16x *)(CS(buf) + (pos)))
+#  define IVALS(buf,pos) (*(int32x *)(CS(buf) + (pos)))
 
 /* store single value in an SMB buffer */
 #  define SSVAL(buf,pos,val) SVAL(buf,pos)=((uint16x)(val))
@@ -298,7 +298,7 @@ extern int DEBUGLEVEL;
        { RW_PCVAL(read,inbuf,outbuf,len) \
        DEBUG_X(5,("%s%04x %s: ", \
              tab_depth(depth), base,string)); \
-    if (charmode) print_asc(5, US (outbuf), (len)); else \
+    if (charmode) print_asc(5, US(outbuf), (len)); else \
        for (int idx = 0; idx < len; idx++) { DEBUG_X(5,("%02x ", (outbuf)[idx])); } \
        DEBUG_X(5,("\n")); }
 
@@ -306,7 +306,7 @@ extern int DEBUGLEVEL;
        { RW_PSVAL(read,big_endian,inbuf,outbuf,len) \
        DEBUG_X(5,("%s%04x %s: ", \
              tab_depth(depth), base,string)); \
-    if (charmode) print_asc(5, US (outbuf), 2*(len)); else \
+    if (charmode) print_asc(5, US(outbuf), 2*(len)); else \
        for (int idx = 0; idx < len; idx++) { DEBUG_X(5,("%04x ", (outbuf)[idx])); } \
        DEBUG_X(5,("\n")); }
 
@@ -314,7 +314,7 @@ extern int DEBUGLEVEL;
        { RW_PIVAL(read,big_endian,inbuf,outbuf,len) \
        DEBUG_X(5,("%s%04x %s: ", \
              tab_depth(depth), base,string)); \
-    if (charmode) print_asc(5, US (outbuf), 4*(len)); else \
+    if (charmode) print_asc(5, US(outbuf), 4*(len)); else \
        for (int idx = 0; idx < len; idx++) { DEBUG_X(5,("%08x ", (outbuf)[idx])); } \
        DEBUG_X(5,("\n")); }
 
@@ -847,18 +847,18 @@ uschar p14[15], p21[21];
 
 memset (p21, '\0', 21);
 memset (p14, '\0', 14);
-StrnCpy (CS  p14, CS  passwd, 14);
+StrnCpy (CS(p14), CS(passwd), 14);
 
-strupper (CS  p14);
+strupper (CS(p14));
 E_P16 (p14, p21);
 
 SMBOWFencrypt (p21, c8, p24);
 
 #ifdef DEBUG_PASSWORD
 DEBUG_X (100, ("spa_smb_encrypt: lm#, challenge, response\n"));
-dump_data (100, CS  p21, 16);
-dump_data (100, CS  c8, 8);
-dump_data (100, CS  p24, 24);
+dump_data (100, CS(p21), 16);
+dump_data (100, CS(c8), 8);
+dump_data (100, CS(p24), 24);
 #endif
 }
 
@@ -908,7 +908,7 @@ int len;
 int16x wpwd[129];
 
 /* Password cannot be longer than 128 characters */
-len = strlen (CS  passwd);
+len = strlen (CS(passwd));
 if (len > 128)
   len = 128;
 /* Password must be converted to NT unicode */
@@ -917,7 +917,7 @@ wpwd[len] = 0;               /* Ensure string is null terminated */
 /* Calculate length in bytes */
 len = _my_wcslen (wpwd) * sizeof (int16x);
 
-mdfour (p16, US wpwd, len);
+mdfour (p16, US(wpwd), len);
 }
 
 /* Does both the NT and LM owfs of a user's password */
@@ -931,12 +931,12 @@ safe_strcpy (passwd, pwd, sizeof (passwd) - 1);
 
 /* Calculate the MD4 hash (NT compatible) of the password */
 memset (nt_p16, '\0', 16);
-E_md4hash (US passwd, nt_p16);
+E_md4hash (US(passwd), nt_p16);
 
 #ifdef DEBUG_PASSWORD
 DEBUG_X (100, ("nt_lm_owf_gen: pwd, nt#\n"));
 dump_data (120, passwd, strlen (passwd));
-dump_data (100, CS  nt_p16, 16);
+dump_data (100, CS(nt_p16), 16);
 #endif
 
 /* Mangle the passwords into Lanman format */
@@ -946,12 +946,12 @@ strupper (passwd);
 /* Calculate the SMB (lanman) hash functions of the password */
 
 memset (p16, '\0', 16);
-E_P16 (US passwd, US p16);
+E_P16 (US(passwd), US(p16));
 
 #ifdef DEBUG_PASSWORD
 DEBUG_X (100, ("nt_lm_owf_gen: pwd, lm#\n"));
 dump_data (120, passwd, strlen (passwd));
-dump_data (100, CS  p16, 16);
+dump_data (100, CS(p16), 16);
 #endif
 /* clear out local copy of user's password (just being paranoid). */
 memset (passwd, '\0', sizeof (passwd));
@@ -982,9 +982,9 @@ memset (p21 + 8, 0xbd, 8);
 E_P24 (p21, ntlmchalresp, p24);
 #ifdef DEBUG_PASSWORD
 DEBUG_X (100, ("NTLMSSPOWFencrypt: p21, c8, p24\n"));
-dump_data (100, CS  p21, 21);
-dump_data (100, CS  ntlmchalresp, 8);
-dump_data (100, CS  p24, 24);
+dump_data (100, CS(p21), 21);
+dump_data (100, CS(ntlmchalresp), 8);
+dump_data (100, CS(p24), 24);
 #endif
 }
 
@@ -1003,9 +1003,9 @@ SMBOWFencrypt (p21, c8, p24);
 
 #ifdef DEBUG_PASSWORD
 DEBUG_X (100, ("spa_smb_nt_encrypt: nt#, challenge, response\n"));
-dump_data (100, CS  p21, 16);
-dump_data (100, CS  c8, 8);
-dump_data (100, CS  p24, 24);
+dump_data (100, CS(p21), 16);
+dump_data (100, CS(c8), 8);
+dump_data (100, CS(p24), 24);
 #endif
 }
 
@@ -1232,7 +1232,7 @@ else \
 char *p = string; \
 int len = 0; \
 if (p) len = strlen(p); \
-spa_bytes_add(ptr, header, (US p), len); \
+spa_bytes_add(ptr, header, (US(p)), len); \
 }
 
 #define spa_unicode_add_string(ptr, header, string) \
@@ -1252,12 +1252,12 @@ spa_bytes_add(ptr, header, b, len*2); \
 #define GetUnicodeString(structPtr, header) \
 unicodeToString(((char*)structPtr) + IVAL(&structPtr->header.offset,0) , SVAL(&structPtr->header.len,0)/2)
 #define GetString(structPtr, header) \
-toString(((CS structPtr) + IVAL(&structPtr->header.offset,0)), SVAL(&structPtr->header.len,0))
+toString(((CS(structPtr)) + IVAL(&structPtr->header.offset,0)), SVAL(&structPtr->header.len,0))
 
 #ifdef notdef
 
 #define DumpBuffer(fp, structPtr, header) \
-dumpRaw(fp,(US structPtr)+IVAL(&structPtr->header.offset,0),SVAL(&structPtr->header.len,0))
+dumpRaw(fp,(US(structPtr))+IVAL(&structPtr->header.offset,0),SVAL(&structPtr->header.len,0))
 
 
 static void
@@ -1449,8 +1449,8 @@ if (p)
   *p = '\0';
   }
 
-spa_smb_encrypt (US password, challenge->challengeData, lmRespData);
-spa_smb_nt_encrypt (US password, challenge->challengeData, ntRespData);
+spa_smb_encrypt (US(password), challenge->challengeData, lmRespData);
+spa_smb_nt_encrypt (US(password), challenge->challengeData, ntRespData);
 
 response->bufIndex = 0;
 memcpy (response->ident, "NTLMSSP\0\0\0", 8);
@@ -1493,11 +1493,11 @@ if (p)
   }
 
 else domain = d = strdup((cf & 0x1)?
-  CCS GetUnicodeString(challenge, uDomain) :
-  CCS GetString(challenge, uDomain));
+  CCS(GetUnicodeString(challenge, uDomain)) :
+  CCS(GetString(challenge, uDomain)));
 
-spa_smb_encrypt (US password, challenge->challengeData, lmRespData);
-spa_smb_nt_encrypt (US password, challenge->challengeData, ntRespData);
+spa_smb_encrypt (US(password), challenge->challengeData, lmRespData);
+spa_smb_nt_encrypt (US(password), challenge->challengeData, ntRespData);
 
 response->bufIndex = 0;
 memcpy (response->ident, "NTLMSSP\0\0\0", 8);

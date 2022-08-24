@@ -160,10 +160,10 @@ struct stat statbuf;
 uschar * tname;
 uschar * fname;
 
-tname = spool_fname(US"input", message_subdir, US"hdr.", message_id);
+tname = spool_fname(US("input"), message_subdir, US("hdr."), message_id);
 
 if ((fd = spool_open_temp(tname)) < 0)
-  return spool_write_error(where, errmsg, US"open", NULL, NULL);
+  return spool_write_error(where, errmsg, US("open"), NULL, NULL);
 fp = fdopen(fd, "wb");
 DEBUG(D_receive|D_deliver) debug_printf("Writing spool header file: %s\n", tname);
 
@@ -186,19 +186,19 @@ fprintf(fp, "-received_time_complete %d.%06d\n",
 /* If there is information about a sending host, remember it. The HELO
 data can be set for local SMTP as well as remote. */
 
-if (sender_helo_name) spool_var_write(fp, US"helo_name", sender_helo_name);
+if (sender_helo_name) spool_var_write(fp, US("helo_name"), sender_helo_name);
 
 if (sender_host_address)
   {
   if (is_tainted(sender_host_address)) putc('-', fp);
   fprintf(fp, "-host_address [%s]:%d\n", sender_host_address, sender_host_port);
   if (sender_host_name)
-    spool_var_write(fp, US"host_name", sender_host_name);
+    spool_var_write(fp, US("host_name"), sender_host_name);
   }
 if (sender_host_authenticated)
-  spool_var_write(fp, US"host_auth", sender_host_authenticated);
+  spool_var_write(fp, US("host_auth"), sender_host_authenticated);
 if (sender_host_auth_pubname)
-  spool_var_write(fp, US"host_auth_pubname", sender_host_auth_pubname);
+  spool_var_write(fp, US("host_auth_pubname"), sender_host_auth_pubname);
 
 /* Also about the interface a message came in on */
 
@@ -209,19 +209,19 @@ if (interface_address)
   }
 
 if (smtp_active_hostname != primary_hostname)
-  spool_var_write(fp, US"active_hostname", smtp_active_hostname);
+  spool_var_write(fp, US("active_hostname"), smtp_active_hostname);
 
 /* Likewise for any ident information; for local messages this is
 likely to be the same as originator_login, but will be different if
 the originator was root, forcing a different ident. */
 
 if (sender_ident)
-  spool_var_write(fp, US"ident", sender_ident);
+  spool_var_write(fp, US("ident"), sender_ident);
 
 /* Ditto for the received protocol */
 
 if (received_protocol)
-  spool_var_write(fp, US"received_protocol", received_protocol);
+  spool_var_write(fp, US("received_protocol"), received_protocol);
 
 /* Preserve any ACL variables that are set. */
 
@@ -245,9 +245,9 @@ fprintf(fp, "-max_received_linelength %d\n", max_received_linelength);
 if (body_zerocount > 0) fprintf(fp, "-body_zerocount %d\n", body_zerocount);
 
 if (authenticated_id)
-  spool_var_write(fp, US"auth_id", authenticated_id);
+  spool_var_write(fp, US("auth_id"), authenticated_id);
 if (authenticated_sender)
-  spool_var_write(fp, US"auth_sender", zap_newlines(authenticated_sender));
+  spool_var_write(fp, US("auth_sender"), zap_newlines(authenticated_sender));
 
 if (f.allow_unqualified_recipient) fprintf(fp, "-allow_unqualified_recipient\n");
 if (f.allow_unqualified_sender) fprintf(fp, "-allow_unqualified_sender\n");
@@ -259,40 +259,40 @@ if (host_lookup_failed) fprintf(fp, "-host_lookup_failed\n");
 if (f.sender_local) fprintf(fp, "-local\n");
 if (f.local_error_message) fprintf(fp, "-localerror\n");
 #ifdef HAVE_LOCAL_SCAN
-if (local_scan_data) spool_var_write(fp, US"local_scan", local_scan_data);
+if (local_scan_data) spool_var_write(fp, US("local_scan"), local_scan_data);
 #endif
 #ifdef WITH_CONTENT_SCAN
-if (spam_bar)       spool_var_write(fp, US"spam_bar",       spam_bar);
-if (spam_score)     spool_var_write(fp, US"spam_score",     spam_score);
-if (spam_score_int) spool_var_write(fp, US"spam_score_int", spam_score_int);
+if (spam_bar)       spool_var_write(fp, US("spam_bar"),       spam_bar);
+if (spam_score)     spool_var_write(fp, US("spam_score"),     spam_score);
+if (spam_score_int) spool_var_write(fp, US("spam_score_int"), spam_score_int);
 #endif
 if (f.deliver_manual_thaw) fprintf(fp, "-manual_thaw\n");
 if (f.sender_set_untrusted) fprintf(fp, "-sender_set_untrusted\n");
 
 #ifdef EXPERIMENTAL_BRIGHTMAIL
-if (bmi_verdicts) spool_var_write(fp, US"bmi_verdicts", bmi_verdicts);
+if (bmi_verdicts) spool_var_write(fp, US("bmi_verdicts"), bmi_verdicts);
 #endif
 
 #ifndef DISABLE_TLS
 if (tls_in.certificate_verified) fprintf(fp, "-tls_certificate_verified\n");
-if (tls_in.cipher) spool_var_write(fp, US"tls_cipher", tls_in.cipher);
+if (tls_in.cipher) spool_var_write(fp, US("tls_cipher"), tls_in.cipher);
 if (tls_in.peercert)
   {
   if (tls_export_cert(big_buffer, big_buffer_size, tls_in.peercert))
-    fprintf(fp, "--tls_peercert %s\n", CS big_buffer);
+    fprintf(fp, "--tls_peercert %s\n", CS(big_buffer));
   }
-if (tls_in.peerdn)       spool_var_write(fp, US"tls_peerdn", string_printing(tls_in.peerdn));
-if (tls_in.sni)		 spool_var_write(fp, US"tls_sni",    string_printing(tls_in.sni));
+if (tls_in.peerdn)       spool_var_write(fp, US("tls_peerdn"), string_printing(tls_in.peerdn));
+if (tls_in.sni)		 spool_var_write(fp, US("tls_sni"),    string_printing(tls_in.sni));
 if (tls_in.ourcert)
   {
   if (tls_export_cert(big_buffer, big_buffer_size, tls_in.ourcert))
-    fprintf(fp, "-tls_ourcert %s\n", CS big_buffer);
+    fprintf(fp, "-tls_ourcert %s\n", CS(big_buffer));
   }
 if (tls_in.ocsp)	 fprintf(fp, "-tls_ocsp %d\n",   tls_in.ocsp);
 # ifndef DISABLE_TLS_RESUME
 fprintf(fp, "-tls_resumption %c\n", 'A' + tls_in.resumption);
 # endif
-if (tls_in.ver) spool_var_write(fp, US"tls_ver", tls_in.ver);
+if (tls_in.ver) spool_var_write(fp, US("tls_ver"), tls_in.ver);
 #endif
 
 #ifdef SUPPORT_I18N
@@ -328,10 +328,10 @@ for (int i = 0; i < recipients_count; i++)
     fprintf(fp, "%s\n", address);
   else
     {
-    const uschar *errors_to = r->errors_to ? zap_newlines(r->errors_to) : CUS"";
+    const uschar *errors_to = r->errors_to ? zap_newlines(r->errors_to) : CUS("");
     /* for DSN SUPPORT extend exim 4 spool in a compatible way by
     adding new values upfront and add flag 0x02 */
-    const uschar *orcpt = r->orcpt ? zap_newlines(r->orcpt) : CUS"";
+    const uschar *orcpt = r->orcpt ? zap_newlines(r->orcpt) : CUS("");
 
     fprintf(fp, "%s %s %d,%d %s %d,%d#3\n", address, orcpt, Ustrlen(orcpt),
       r->dsn_flags, errors_to, Ustrlen(errors_to), r->pno);
@@ -351,7 +351,7 @@ to get the actual size of the headers. */
 
 fflush(fp);
 if (fstat(fd, &statbuf))
-  return spool_write_error(where, errmsg, US"fstat", tname, fp);
+  return spool_write_error(where, errmsg, US("fstat"), tname, fp);
 size_correction = statbuf.st_size;
 
 /* Finally, write out the message's headers. To make it easier to read them
@@ -372,30 +372,30 @@ for (header_line * h = header_list; h; h = h->next)
 /* Flush and check for any errors while writing */
 
 if (fflush(fp) != 0 || ferror(fp))
-  return spool_write_error(where, errmsg, US"write", tname, fp);
+  return spool_write_error(where, errmsg, US("write"), tname, fp);
 
 /* Force the file's contents to be written to disk. Note that fflush()
 just pushes it out of C, and fclose() doesn't guarantee to do the write
 either. That's just the way Unix works... */
 
 if (EXIMfsync(fileno(fp)) < 0)
-  return spool_write_error(where, errmsg, US"sync", tname, fp);
+  return spool_write_error(where, errmsg, US("sync"), tname, fp);
 
 /* Get the size of the file, and close it. */
 
 if (fstat(fd, &statbuf) != 0)
-  return spool_write_error(where, errmsg, US"fstat", tname, NULL);
+  return spool_write_error(where, errmsg, US("fstat"), tname, NULL);
 if (fclose(fp) != 0)
-  return spool_write_error(where, errmsg, US"close", tname, NULL);
+  return spool_write_error(where, errmsg, US("close"), tname, NULL);
 
 /* Rename the file to its correct name, thereby replacing any previous
 incarnation. */
 
-fname = spool_fname(US"input", message_subdir, id, US"-H");
+fname = spool_fname(US("input"), message_subdir, id, US("-H"));
 DEBUG(D_receive|D_deliver) debug_printf("Renaming spool header file: %s\n", fname);
 
 if (Urename(tname, fname) < 0)
-  return spool_write_error(where, errmsg, US"rename", tname, NULL);
+  return spool_write_error(where, errmsg, US("rename"), tname, NULL);
 
 /* Linux (and maybe other OS?) does not automatically sync a directory after
 an operation like rename. We therefore have to do it forcibly ourselves in
@@ -409,20 +409,20 @@ these cases. One hack on top of another... but that's life. */
 
 #ifdef NEED_SYNC_DIRECTORY
 
-tname = spool_fname(US"input", message_subdir, US".", US"");
+tname = spool_fname(US("input"), message_subdir, US("."), US(""));
 
 # ifndef O_DIRECTORY
 #  define O_DIRECTORY 0
 # endif
 
 if ((fd = Uopen(tname, O_RDONLY|O_DIRECTORY, 0)) < 0)
-  return spool_write_error(where, errmsg, US"directory open", fname, NULL);
+  return spool_write_error(where, errmsg, US("directory open"), fname, NULL);
 
 if (EXIMfsync(fd) < 0 && errno != EINVAL)
-  return spool_write_error(where, errmsg, US"directory sync", fname, NULL);
+  return spool_write_error(where, errmsg, US("directory sync"), fname, NULL);
 
 if (close(fd) < 0)
-  return spool_write_error(where, errmsg, US"directory close", fname, NULL);
+  return spool_write_error(where, errmsg, US("directory close"), fname, NULL);
 
 #endif  /* NEED_SYNC_DIRECTORY */
 
@@ -555,20 +555,20 @@ rule of waiting for a -H file before doing anything. When moving messages off
 the mail spool, the -D file should be open and locked at the time, thus keeping
 Exim's hands off. */
 
-if (!make_link(US"msglog", dest_qname, subdir, id, US"", from, to, TRUE) ||
-    !make_link(US"input",  dest_qname, subdir, id, US"-D", from, to, FALSE) ||
-    !make_link(US"input",  dest_qname, subdir, id, US"-H", from, to, FALSE))
+if (!make_link(US("msglog"), dest_qname, subdir, id, US(""), from, to, TRUE) ||
+    !make_link(US("input"),  dest_qname, subdir, id, US("-D"), from, to, FALSE) ||
+    !make_link(US("input"),  dest_qname, subdir, id, US("-H"), from, to, FALSE))
   return FALSE;
 
-if (!break_link(US"input",  subdir, id, US"-H", from, FALSE) ||
-    !break_link(US"input",  subdir, id, US"-D", from, FALSE) ||
-    !break_link(US"msglog", subdir, id, US"", from, TRUE))
+if (!break_link(US("input"),  subdir, id, US("-H"), from, FALSE) ||
+    !break_link(US("input"),  subdir, id, US("-D"), from, FALSE) ||
+    !break_link(US("msglog"), subdir, id, US(""), from, TRUE))
   return FALSE;
 
 log_write(0, LOG_MAIN, "moved from %s%s%s%sinput, %smsglog to %s%s%s%sinput, %smsglog",
-   *queue_name?"(":"", *queue_name?queue_name:US"", *queue_name?") ":"",
+   *queue_name?"(":"", *queue_name?queue_name:US(""), *queue_name?") ":"",
    from, from,
-   *dest_qname?"(":"", *dest_qname?dest_qname:US"", *dest_qname?") ":"",
+   *dest_qname?"(":"", *dest_qname?dest_qname:US(""), *dest_qname?") ":"",
    to, to);
 
 return TRUE;

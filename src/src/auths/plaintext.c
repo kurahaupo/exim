@@ -112,7 +112,7 @@ authentication attempt. Otherwise, split it into items as above. */
 while (  (s = string_nextinlist(&prompts, &sep, NULL, 0))
       && expand_nmax < EXPAND_MAXN)
   if (number++ > expand_nmax)
-    if ((rc = auth_prompt(CUS s)) != OK)
+    if ((rc = auth_prompt(CUS(s))) != OK)
       return rc;
 
 /* We now have a number of items of data in $auth1, $auth2, etc (and also, for

@@ -61,8 +61,8 @@ int
 rda_is_filter(const uschar *s)
 {
 Uskip_whitespace(&s);			/* Skips initial blank lines */
-if (match_tag(s, CUS"# exim filter"))		return FILTER_EXIM;
-else if (match_tag(s, CUS"# sieve filter"))	return FILTER_SIEVE;
+if (match_tag(s, CUS("# exim filter")))		return FILTER_EXIM;
+else if (match_tag(s, CUS("# sieve filter")))	return FILTER_SIEVE;
 else						return FILTER_FORWARD;
 }
 
@@ -109,7 +109,7 @@ sigalrm_seen = FALSE;
 if (saved_errno == ENOENT)
   {
   uschar * slash = Ustrrchr(s, '/');
-  Ustrcpy(slash+1, US".");
+  Ustrcpy(slash+1, US("."));
 
   ALARM(30);
   rc = Ustat(s, &statbuf);
@@ -375,7 +375,7 @@ if (*filtertype != FILTER_FORWARD)
 
   if (!(options & RDO_FILTER))
     {
-    *error = US"filtering not enabled";
+    *error = US("filtering not enabled");
     return FF_ERROR;
     }
 
@@ -388,7 +388,7 @@ if (*filtertype != FILTER_FORWARD)
     {
     if ((options & RDO_EXIM_FILTER) != 0)
       {
-      *error = US"Exim filtering not enabled";
+      *error = US("Exim filtering not enabled");
       return FF_ERROR;
       }
     frc = filter_interpret(data, options, generated, error);
@@ -397,7 +397,7 @@ if (*filtertype != FILTER_FORWARD)
     {
     if (options & RDO_SIEVE_FILTER)
       {
-      *error = US"Sieve filtering not enabled";
+      *error = US("Sieve filtering not enabled");
       return FF_ERROR;
       }
     frc = sieve_interpret(data, options, sieve_vacation_directory,
@@ -552,7 +552,7 @@ int yield, status;
 BOOL had_disaster = FALSE;
 pid_t pid;
 uschar *data;
-uschar *readerror = US"";
+uschar *readerror = US("");
 void (*oldsignal)(int);
 
 DEBUG(D_route) debug_printf("rda_interpret (%s): '%s'\n",
@@ -615,7 +615,7 @@ with the parent process. */
 oldsignal = signal(SIGCHLD, SIG_DFL);
 search_tidyup();
 
-if ((pid = exim_fork(US"router-interpret")) == 0)
+if ((pid = exim_fork(US("router-interpret"))) == 0)
   {
   header_line *waslast = header_last;   /* Save last header */
   int fd_flags = -1;
@@ -961,8 +961,8 @@ if (had_disaster)
   *error = string_sprintf("internal problem in %s: failure to transfer "
     "data from subprocess: status=%04x%s%s%s", rname,
     status, readerror,
-    *error ? US": error=" : US"",
-    *error ? *error : US"");
+    *error ? US(": error=") : US(""),
+    *error ? *error : US(""));
   log_write(0, LOG_MAIN|LOG_PANIC, "%s", *error);
   }
 else if (status != 0)
@@ -979,7 +979,7 @@ return yield;
 /* Come here if the data indicates removal of a header that we can't find */
 
 DISASTER_NO_HEADER:
-readerror = US" readerror=bad header identifier";
+readerror = US(" readerror=bad header identifier");
 had_disaster = TRUE;
 yield = FF_ERROR;
 goto WAIT_EXIT;

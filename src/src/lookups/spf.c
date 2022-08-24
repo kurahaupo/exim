@@ -48,7 +48,7 @@ if ((dc = SPF_dns_exim_new(debug)))
 
 if (!spf_server)
   {
-  *errmsg = US"SPF_dns_exim_nnew() failed";
+  *errmsg = US("SPF_dns_exim_nnew() failed");
   return NULL;
   }
 return (void *) spf_server;
@@ -73,7 +73,7 @@ SPF_response_t *spf_response = NULL;
 
 if (!(spf_request = SPF_request_new(spf_server)))
   {
-  *errmsg = US"SPF_request_new() failed";
+  *errmsg = US("SPF_request_new() failed");
   return FAIL;
   }
 
@@ -84,14 +84,14 @@ switch (4)
 #endif
   {
   case 4:
-    if (!SPF_request_set_ipv4_str(spf_request, CS filename))
+    if (!SPF_request_set_ipv4_str(spf_request, CS(filename)))
       break;
     *errmsg = string_sprintf("invalid IPv4 address '%s'", filename);
     return FAIL;
 #if HAVE_IPV6
 
   case 6:
-    if (!SPF_request_set_ipv6_str(spf_request, CS filename))
+    if (!SPF_request_set_ipv6_str(spf_request, CS(filename)))
       break;
     *errmsg = string_sprintf("invalid IPv6 address '%s'", filename);
     return FAIL;
@@ -102,14 +102,14 @@ switch (4)
 #endif
   }
 
-if (SPF_request_set_env_from(spf_request, CS keystring))
+if (SPF_request_set_env_from(spf_request, CS(keystring)))
     {
   *errmsg = string_sprintf("invalid envelope from address '%s'", keystring);
   return FAIL;
 }
 
 SPF_request_query_mailfrom(spf_request, &spf_response);
-*result = string_copy(US SPF_strresult(SPF_response_result(spf_response)));
+*result = string_copy(US(SPF_strresult(SPF_response_result(spf_response))));
 
 DEBUG(D_lookup) spf_response_debug(spf_response);
 
@@ -138,7 +138,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"spf",			/* lookup name */
+  .name = US("spf"),			/* lookup name */
   .type = 0,				/* not absfile, not query style */
   .open = spf_open,			/* open function */
   .check = NULL,			/* no check function */

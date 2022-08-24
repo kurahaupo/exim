@@ -123,14 +123,14 @@ while (fscanf(f, "%4s%4s%4s%4s%4s%4s%4s%4s %02x %02x %02x %02x %20s\n",
   next = store_malloc(sizeof(ip_address_item));
   next->next = NULL;
   next->port = 0;
-  sprintf(CS next->address, "%s:%s:%s:%s:%s:%s:%s:%s",
+  sprintf(CS(next->address), "%s:%s:%s:%s:%s:%s:%s:%s",
          addr6p[0], addr6p[1], addr6p[2], addr6p[3],
          addr6p[4], addr6p[5], addr6p[6], addr6p[7]);
 
   /* Normalize the representation */
 
-  inet_pton(AF_INET6, CS next->address, &addr.sin6_addr);
-  inet_ntop(AF_INET6, &addr.sin6_addr, CS next->address, sizeof(next->address));
+  inet_pton(AF_INET6, CS(next->address), &addr.sin6_addr);
+  inet_ntop(AF_INET6, &addr.sin6_addr, CS(next->address), sizeof(next->address));
 
   if (yield == NULL) yield = last = next; else
     {

@@ -148,7 +148,7 @@ for (BOOL this_is_eol, last_was_eol = TRUE;
     uschar *t = s++;
     while (*s && *s != '\"')
       {
-      *t++ = *s == '\\' ? string_interpret_escape(CUSS &s) : *s;
+      *t++ = *s == '\\' ? string_interpret_escape(CUSS(&s)) : *s;
       s++;
       }
     linekeylength = t - buffer;
@@ -427,7 +427,7 @@ return g;
 
 
 static lookup_info iplsearch_lookup_info = {
-  .name = US"iplsearch",		/* lookup name */
+  .name = US("iplsearch"),		/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */
@@ -439,7 +439,7 @@ static lookup_info iplsearch_lookup_info = {
 };
 
 static lookup_info lsearch_lookup_info = {
-  .name = US"lsearch",			/* lookup name */
+  .name = US("lsearch"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */
@@ -451,7 +451,7 @@ static lookup_info lsearch_lookup_info = {
 };
 
 static lookup_info nwildlsearch_lookup_info = {
-  .name = US"nwildlsearch",		/* lookup name */
+  .name = US("nwildlsearch"),		/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */
@@ -463,7 +463,7 @@ static lookup_info nwildlsearch_lookup_info = {
 };
 
 static lookup_info wildlsearch_lookup_info = {
-  .name = US"wildlsearch",		/* lookup name */
+  .name = US("wildlsearch"),		/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */

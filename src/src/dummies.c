@@ -78,7 +78,7 @@ va_start(ap, format);
 if (!string_vformat(g, 0, format, ap))
   {
   char * s = "**** debug string overflowed buffer ****\n";
-  char * p = CS g->s + g->ptr;
+  char * p = CS(g->s) + g->ptr;
   int maxlen = g->size - (int)strlen(s) - 3;
   if (p > g->s + maxlen) p = g->s + maxlen;
   if (p > g->s && p[-1] != '\n') *p++ = '\n';

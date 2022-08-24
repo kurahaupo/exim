@@ -141,7 +141,7 @@ int save_retrans = dns_retrans;
 int save_retry =   dns_retry;
 int type;
 int failrc = FAIL;
-const uschar *outsep = CUS"\n";
+const uschar *outsep = CUS("\n");
 const uschar *outsep2 = NULL;
 uschar *equals, *domain, *found;
 
@@ -168,7 +168,7 @@ if (*keystring == '>')
     }
   else if (*keystring == ';')
     {
-    outsep2 = US"";
+    outsep2 = US("");
     keystring++;
     }
   while (isspace(*keystring)) keystring++;
@@ -178,56 +178,56 @@ if (*keystring == '>')
 
 for (;;)
   {
-  if (strncmpic(keystring, US"defer_", 6) == 0)
+  if (strncmpic(keystring, US("defer_"), 6) == 0)
     {
     keystring += 6;
-    if (strncmpic(keystring, US"strict", 6) == 0)
+    if (strncmpic(keystring, US("strict"), 6) == 0)
       { defer_mode = DEFER; keystring += 6; }
-    else if (strncmpic(keystring, US"lax", 3) == 0)
+    else if (strncmpic(keystring, US("lax"), 3) == 0)
       { defer_mode = PASS; keystring += 3; }
-    else if (strncmpic(keystring, US"never", 5) == 0)
+    else if (strncmpic(keystring, US("never"), 5) == 0)
       { defer_mode = OK; keystring += 5; }
     else
       {
-      *errmsg = US"unsupported dnsdb defer behaviour";
+      *errmsg = US("unsupported dnsdb defer behaviour");
       rc = DEFER;
       goto out;
       }
     }
-  else if (strncmpic(keystring, US"dnssec_", 7) == 0)
+  else if (strncmpic(keystring, US("dnssec_"), 7) == 0)
     {
     keystring += 7;
-    if (strncmpic(keystring, US"strict", 6) == 0)
+    if (strncmpic(keystring, US("strict"), 6) == 0)
       { dnssec_mode = DEFER; keystring += 6; }
-    else if (strncmpic(keystring, US"lax", 3) == 0)
+    else if (strncmpic(keystring, US("lax"), 3) == 0)
       { dnssec_mode = PASS; keystring += 3; }
-    else if (strncmpic(keystring, US"never", 5) == 0)
+    else if (strncmpic(keystring, US("never"), 5) == 0)
       { dnssec_mode = OK; keystring += 5; }
     else
       {
-      *errmsg = US"unsupported dnsdb dnssec behaviour";
+      *errmsg = US("unsupported dnsdb dnssec behaviour");
       rc = DEFER;
       goto out;
       }
     }
-  else if (strncmpic(keystring, US"retrans_", 8) == 0)
+  else if (strncmpic(keystring, US("retrans_"), 8) == 0)
     {
     int timeout_sec;
     if ((timeout_sec = readconf_readtime(keystring += 8, ',', FALSE)) <= 0)
       {
-      *errmsg = US"unsupported dnsdb timeout value";
+      *errmsg = US("unsupported dnsdb timeout value");
       rc = DEFER;
       goto out;
       }
     dns_retrans = timeout_sec;
     while (*keystring != ',') keystring++;
     }
-  else if (strncmpic(keystring, US"retry_", 6) == 0)
+  else if (strncmpic(keystring, US("retry_"), 6) == 0)
     {
     int retries;
-    if ((retries = (int)strtol(CCS keystring + 6, CSS &keystring, 0)) < 0)
+    if ((retries = (int)strtol(CCS(keystring) + 6, CSS(&keystring), 0)) < 0)
       {
-      *errmsg = US"unsupported dnsdb retry count";
+      *errmsg = US("unsupported dnsdb retry count");
       rc = DEFER;
       goto out;
       }
@@ -239,7 +239,7 @@ for (;;)
   while (isspace(*keystring)) keystring++;
   if (*keystring++ != ',')
     {
-    *errmsg = US"dnsdb modifier syntax error";
+    *errmsg = US("dnsdb modifier syntax error");
     rc = DEFER;
     goto out;
     }
@@ -260,7 +260,7 @@ if ((equals = Ustrchr(keystring, '=')) != NULL)
 
   for (i = 0; i < nelem(type_names); i++)
     if (len == Ustrlen(type_names[i]) &&
-        strncmpic(keystring, US type_names[i], len) == 0)
+        strncmpic(keystring, US(type_names[i]), len) == 0)
       {
       type = type_values[i];
       break;
@@ -268,7 +268,7 @@ if ((equals = Ustrchr(keystring, '=')) != NULL)
 
   if (i >= nelem(type_names))
     {
-    *errmsg = US"unsupported DNS record type";
+    *errmsg = US("unsupported DNS record type");
     rc = DEFER;
     goto out;
     }
@@ -305,8 +305,8 @@ SRV and TLSA record parts are space-separated by default. */
 
 if (!outsep2) switch(type)
   {
-  case T_SPF:                         outsep2 = US"";  break;
-  case T_SRV: case T_MX: case T_TLSA: outsep2 = US" "; break;
+  case T_SPF:                         outsep2 = US("");  break;
+  case T_SRV: case T_MX: case T_TLSA: outsep2 = US(" "); break;
   }
 
 /* Now scan the list and do a lookup for each item */
@@ -346,14 +346,14 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
       {
       if (searchtype == T_ADDRESSES) searchtype = T_AAAA;
       else if (searchtype == T_AAAA) searchtype = T_A;
-      rc = dns_special_lookup(dnsa, domain, searchtype, CUSS &found);
+      rc = dns_special_lookup(dnsa, domain, searchtype, CUSS(&found));
       }
     else
 #endif
-      rc = dns_special_lookup(dnsa, domain, type, CUSS &found);
+      rc = dns_special_lookup(dnsa, domain, type, CUSS(&found));
 
     lookup_dnssec_authenticated = dnssec_mode==OK ? NULL
-      : dns_is_secure(dnsa) ? US"yes" : US"no";
+      : dns_is_secure(dnsa) ? US("yes") : US("no");
 
     if (rc == DNS_NOMATCH || rc == DNS_NODATA) continue;
     if (  rc != DNS_SUCCEED
@@ -399,7 +399,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
       if (type == T_TXT || type == T_SPF)
         {
         if (outsep2 == NULL)	/* output only the first item of data */
-          yield = string_catn(yield, US (rr->data+1), (rr->data)[0]);
+          yield = string_catn(yield, US(rr->data+1), (rr->data)[0]);
         else
           {
           /* output all items */
@@ -409,7 +409,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
             uschar chunk_len = (rr->data)[data_offset++];
             if (outsep2[0] != '\0' && data_offset != 1)
               yield = string_catn(yield, outsep2, 1);
-            yield = string_catn(yield, US ((rr->data)+data_offset), chunk_len);
+            yield = string_catn(yield, US((rr->data)+data_offset), chunk_len);
             data_offset += chunk_len;
             }
           }
@@ -420,18 +420,18 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
         uint16_t payload_length;
         uschar s[MAX_TLSA_EXPANDED_SIZE];
 	uschar * sp = s;
-        uschar * p = US rr->data;
+        uschar * p = US(rr->data);
 
         usage = *p++;
         selector = *p++;
         matching_type = *p++;
         /* What's left after removing the first 3 bytes above */
         payload_length = rr->size - 3;
-        sp += sprintf(CS s, "%d%c%d%c%d%c", usage, *outsep2,
+        sp += sprintf(CS(s), "%d%c%d%c%d%c", usage, *outsep2,
 		selector, *outsep2, matching_type, *outsep2);
         /* Now append the cert/identifier, one hex char at a time */
 	while (payload_length-- > 0 && sp-s < (MAX_TLSA_EXPANDED_SIZE - 4))
-          sp += sprintf(CS sp, "%02x", *p++);
+          sp += sprintf(CS(sp), "%02x", *p++);
 
         yield = string_cat(yield, s);
         }
@@ -439,7 +439,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
         {
         int priority, weight, port;
         uschar s[264];
-        uschar * p = US rr->data;
+        uschar * p = US(rr->data);
 
 	switch (type)
 	  {
@@ -450,7 +450,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
 	  case T_MX:
 	    GETSHORT(priority, p);
-	    sprintf(CS s, "%d%c", priority, *outsep2);
+	    sprintf(CS(s), "%d%c", priority, *outsep2);
 	    yield = string_cat(yield, s);
 	    break;
 
@@ -458,7 +458,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	    GETSHORT(priority, p);
 	    GETSHORT(weight, p);
 	    GETSHORT(port, p);
-	    sprintf(CS s, "%d%c%d%c%d%c", priority, *outsep2,
+	    sprintf(CS(s), "%d%c%d%c%d%c", priority, *outsep2,
 			      weight, *outsep2, port, *outsep2);
 	    yield = string_cat(yield, s);
 	    break;
@@ -532,7 +532,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	  p += rc;
 	  GETLONG(serial, p); GETLONG(refresh, p);
 	  GETLONG(retry,  p); GETLONG(expire,  p); GETLONG(minimum, p);
-	  sprintf(CS s, "%c%lu%c%lu%c%lu%c%lu%c%lu",
+	  sprintf(CS(s), "%c%lu%c%lu%c%lu%c%lu%c%lu",
 	    *outsep2, serial, *outsep2, refresh,
 	    *outsep2, retry,  *outsep2, expire,  *outsep2, minimum);
 	  yield = string_cat(yield, s);
@@ -591,7 +591,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"dnsdb",			/* lookup name */
+  .name = US("dnsdb"),			/* lookup name */
   .type = lookup_querystyle,		/* query style */
   .open = dnsdb_open,			/* open function */
   .check = NULL,			/* check function */

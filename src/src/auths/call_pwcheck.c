@@ -41,7 +41,7 @@ uschar *pw = Ustrrchr(s, ':');
 
 if (pw == NULL)
   {
-  *errptr = US"pwcheck: malformed input - missing colon";
+  *errptr = US("pwcheck: malformed input - missing colon");
   return ERROR;
   }
 
@@ -50,7 +50,7 @@ if (pw == NULL)
 DEBUG(D_auth)
   debug_printf("Running pwcheck authentication for user \"%s\"\n", s);
 
-switch (pwcheck_verify_password(CS s, CS pw, CCSS &reply))
+switch (pwcheck_verify_password(CS(s), CS(pw), CCSS(&reply)))
   {
   case PWCHECK_OK:
   DEBUG(D_auth) debug_printf("pwcheck: success (%s)\n", reply);
@@ -94,8 +94,8 @@ auth_call_saslauthd(const uschar *username, const uschar *password,
 {
 uschar *reply = NULL;
 
-if (service == NULL) service = US"";
-if (realm == NULL) realm = US"";
+if (service == NULL) service = US("");
+if (realm == NULL) realm = US("");
 
 DEBUG(D_auth)
   debug_printf("Running saslauthd authentication for user \"%s\" \n", username);

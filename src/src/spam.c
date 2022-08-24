@@ -24,7 +24,7 @@ int spam_ok = 0;
 int spam_rc = 0;
 uschar *prev_spamd_address_work = NULL;
 
-static const uschar * loglabel = US"spam acl condition:";
+static const uschar * loglabel = US("spam acl condition:");
 
 
 static int
@@ -50,10 +50,10 @@ const uschar * name;
 
 /*XXX more clever parsing could discard embedded spaces? */
 
-if (sscanf(CCS param, "pri=%u", &spamd->priority))
+if (sscanf(CCS(param), "pri=%u", &spamd->priority))
   return 0; /* OK */
 
-if (sscanf(CCS param, "weight=%u", &spamd->weight))
+if (sscanf(CCS(param), "weight=%u", &spamd->weight))
   {
   if (spamd->weight == 0) /* this server disabled: skip it */
     return 1;
@@ -67,13 +67,13 @@ if (Ustrncmp(param, "time=", 5) == 0)
   unsigned int time_start, time_end;
   const uschar * end_string;
 
-  name = US"time";
+  name = US("time");
   s = param+5;
   if ((end_string = Ustrchr(s, '-')))
     {
     end_string++;
-    if (  sscanf(CS end_string, "%u.%u.%u", &end_h,   &end_m,   &end_s)   == 0
-       || sscanf(CS s,          "%u.%u.%u", &start_h, &start_m, &start_s) == 0
+    if (  sscanf(CS(end_string), "%u.%u.%u", &end_h,   &end_m,   &end_s)   == 0
+       || sscanf(CS(s),          "%u.%u.%u", &start_h, &start_m, &start_s) == 0
        )
       goto badval;
     }
@@ -105,7 +105,7 @@ if (Ustrcmp(param, "variant=rspamd") == 0)
 if (Ustrncmp(param, "tmo=", 4) == 0)
   {
   int sec = readconf_readtime((s = param+4), '\0', FALSE);
-  name = US"timeout";
+  name = US("timeout");
   if (sec < 0)
     goto badval;
   spamd->timeout = sec;
@@ -115,7 +115,7 @@ if (Ustrncmp(param, "tmo=", 4) == 0)
 if (Ustrncmp(param, "retry=", 6) == 0)
   {
   int sec = readconf_readtime((s = param+6), '\0', FALSE);
-  name = US"retry";
+  name = US("retry");
   if (sec < 0)
     goto badval;
   spamd->retry = sec;
@@ -209,11 +209,11 @@ if (!(user_name = string_nextinlist(&list, &sep, NULL, 0)))
   }
 
 /* if username is "0" or "false", do not scan */
-if (Ustrcmp(user_name, "0") == 0 || strcmpic(user_name, US"false") == 0)
+if (Ustrcmp(user_name, "0") == 0 || strcmpic(user_name, US("false")) == 0)
   return FAIL;
 
 /* if there is an additional option, check if it is "true" */
-if (strcmpic(list,US"true") == 0)
+if (strcmpic(list,US("true")) == 0)
   /* in that case, always return true later */
   override = 1;
 
@@ -360,15 +360,15 @@ if (sd->is_rspamd)
   for (int i = 0; i < recipients_count; i++)
     req_str = string_append(req_str, 3,
       "Rcpt: <", recipients_list[i].address, ">\r\n");
-  if ((s = expand_string(US"$sender_helo_name")) && *s)
+  if ((s = expand_string(US("$sender_helo_name"))) && *s)
     req_str = string_append(req_str, 3, "Helo: ", s, "\r\n");
-  if ((s = expand_string(US"$sender_host_name")) && *s)
+  if ((s = expand_string(US("$sender_host_name"))) && *s)
     req_str = string_append(req_str, 3, "Hostname: ", s, "\r\n");
   if (sender_host_address)
     req_str = string_append(req_str, 3, "IP: ", sender_host_address, "\r\n");
-  if ((s = expand_string(US"$authenticated_id")) && *s)
+  if ((s = expand_string(US("$authenticated_id"))) && *s)
     req_str = string_append(req_str, 3, "User: ", s, "\r\n");
-  req_str = string_catn(req_str, US"\r\n", 2);
+  req_str = string_catn(req_str, US("\r\n"), 2);
   wrote = send(spamd_cctx.sock, req_str->s, req_str->ptr, 0);
   }
 else
@@ -486,7 +486,7 @@ if (i <= 0 && errno != 0)
 if (sd->is_rspamd)
   {				/* rspamd variant of reply */
   int r;
-  if (  (r = sscanf(CS spamd_buffer,
+  if (  (r = sscanf(CS(spamd_buffer),
 	  "RSPAMD/%7s 0 EX_OK\r\nMetric: default; %7s %lf / %lf / %lf\r\n%n",
 	  spamd_version, spamd_short_result, &spamd_score, &spamd_threshold,
 	  &spamd_reject_score, &spamd_report_offset)) != 5
@@ -513,12 +513,12 @@ else
   {				/* spamassassin */
   /* dig in the spamd output and put the report in a multiline header,
   if requested */
-  if (sscanf(CS spamd_buffer,
+  if (sscanf(CS(spamd_buffer),
        "SPAMD/%7s 0 EX_OK\r\nContent-length: %*u\r\n\r\n%lf/%lf\r\n%n",
        spamd_version,&spamd_score,&spamd_threshold,&spamd_report_offset) != 3)
     {
       /* try to fall back to pre-2.50 spamd output */
-      if (sscanf(CS spamd_buffer,
+      if (sscanf(CS(spamd_buffer),
 	   "SPAMD/%7s 0 EX_OK\r\nSpam: %*s ; %lf / %lf\r\n\r\n%n",
 	   spamd_version,&spamd_score,&spamd_threshold,&spamd_report_offset) != 3)
 	{
@@ -529,7 +529,7 @@ else
     }
 
   Ustrcpy(spam_action_buffer,
-    spamd_score >= spamd_threshold ? US"reject" : US"no action");
+    spamd_score >= spamd_threshold ? US("reject") : US("no action"));
   }
 
 /* Create report. Since this is a multiline string,

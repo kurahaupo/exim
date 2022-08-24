@@ -24,7 +24,7 @@ auth_read_input(const uschar * data)
 {
 if (Ustrcmp(data, "=") == 0)
   {
-  auth_vars[0] = expand_nstring[++expand_nmax] = US"";
+  auth_vars[0] = expand_nstring[++expand_nmax] = US("");
   expand_nlength[expand_nmax] = 0;
   }
 else
@@ -140,7 +140,7 @@ auth_client_item(void * sx, auth_instance * ablock, const uschar ** inout,
 int len, clear_len;
 uschar * ss, * clear;
 
-ss = US expand_cstring(*inout);
+ss = US(expand_cstring(*inout));
 if (ss == *inout) ss = string_copy(ss);
 
 /* Forced expansion failure is not an error; authentication is abandoned. On
@@ -153,7 +153,7 @@ if (!ss)
   if (!(flags & AUTH_ITEM_FIRST))
     {
     if (smtp_write_command(sx, SCMD_FLUSH, "*\r\n") >= 0)
-      (void) smtp_read_response(sx, US buffer, buffsize, '2', timeout);
+      (void) smtp_read_response(sx, US(buffer), buffsize, '2', timeout);
     }
   if (f.expand_string_forcedfail)
     {
@@ -189,11 +189,11 @@ unembellished. */
 if (flags & AUTH_ITEM_FIRST)
   {
   if (smtp_write_command(sx, SCMD_FLUSH, "AUTH %s%s%s\r\n",
-       ablock->public_name, len == 0 ? "" : " ", b64encode(CUS ss, len)) < 0)
+       ablock->public_name, len == 0 ? "" : " ", b64encode(CUS(ss), len)) < 0)
     return FAIL_SEND;
   }
 else
-  if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", b64encode(CUS ss, len)) < 0)
+  if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", b64encode(CUS(ss), len)) < 0)
     return FAIL_SEND;
 
 /* If we receive a success response from the server, authentication
@@ -218,7 +218,7 @@ exchange and return ERROR. */
 if (flags & AUTH_ITEM_LAST)
   {
   if (smtp_write_command(sx, SCMD_FLUSH, "*\r\n") >= 0)
-    (void)smtp_read_response(sx, US buffer, buffsize, '2', timeout);
+    (void)smtp_read_response(sx, US(buffer), buffsize, '2', timeout);
   string_format(buffer, buffsize, "Too few items in client_send in %s "
     "authenticator", ablock->name);
   return ERROR;
@@ -240,14 +240,14 @@ if (clear_len < 0)
   if (!(flags & AUTH_ITEM_IGN64))
     {
     if (smtp_write_command(sx, SCMD_FLUSH, "*\r\n") >= 0)
-      (void)smtp_read_response(sx, US buffer, buffsize, '2', timeout);
+      (void)smtp_read_response(sx, US(buffer), buffsize, '2', timeout);
     string_format(buffer, buffsize, "Invalid base64 string in server "
       "response \"%s\"", save_bad);
     return CANCELLED;
     }
   DEBUG(D_auth) debug_printf("bad b64 decode for '%s';"
        " ignoring due to client_ignore_invalid_base64\n", save_bad);
-  clear = string_copy(US"");
+  clear = string_copy(US(""));
   clear_len = 0;
   }
 

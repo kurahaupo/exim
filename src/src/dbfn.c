@@ -87,13 +87,13 @@ make the directory as well, just in case. We won't be doing this many times
 unnecessarily, because usually the lock file will be there. If the directory
 exists, there is no error. */
 
-snprintf(CS dirname, sizeof(dirname), "%s/db", spool_directory);
-snprintf(CS filename, sizeof(filename), "%s/%s.lockfile", dirname, name);
+snprintf(CS(dirname), sizeof(dirname), "%s/db", spool_directory);
+snprintf(CS(filename), sizeof(filename), "%s/%s.lockfile", dirname, name);
 
 priv_drop_temp(exim_uid, exim_gid);
 if ((dbblock->lockfd = Uopen(filename, O_RDWR, EXIMDB_LOCKFILE_MODE)) < 0)
   {
-  (void)directory_make(spool_directory, US"db", EXIMDB_DIRECTORY_MODE, panic);
+  (void)directory_make(spool_directory, US("db"), EXIMDB_DIRECTORY_MODE, panic);
   dbblock->lockfd = Uopen(filename, O_RDWR|O_CREAT, EXIMDB_LOCKFILE_MODE);
   }
 priv_restore();
@@ -144,7 +144,7 @@ databases - often this is caused by non-matching db.h and the library. To make
 it easy to pin this down, there are now debug statements on either side of the
 open call. */
 
-snprintf(CS filename, sizeof(filename), "%s/%s", dirname, name);
+snprintf(CS(filename), sizeof(filename), "%s/%s", dirname, name);
 
 priv_drop_temp(exim_uid, exim_gid);
 dbblock->dbptr = exim_dbopen(filename, dirname, flags, EXIMDB_MODE);
@@ -169,8 +169,8 @@ if (!dbblock->dbptr)
         filename));
   else
     DEBUG(D_hints_lookup)
-      debug_printf_indent("%s\n", CS string_open_failed("DB file %s",
-          filename));
+      debug_printf_indent("%s\n", CS(string_open_failed("DB file %s",
+          filename)));
   (void)close(dbblock->lockfd);
   errno = save_errno;
   DEBUG(D_hints_lookup) acl_level--;
@@ -398,7 +398,7 @@ exim_datum_init(&key_datum);         /* Some DBM libraries require the datum */
 exim_datum_init(&value_datum);       /* to be cleared before use. */
 
 yield = exim_dbscan(dbblock->dbptr, &key_datum, &value_datum, start, *cursor)
-  ? US exim_datum_data_get(&key_datum) : NULL;
+  ? US(exim_datum_data_get(&key_datum)) : NULL;
 
 /* Some dbm require a termination */
 
@@ -425,7 +425,7 @@ int current = -1;
 int showtime = 0;
 int i;
 dbdata_wait *dbwait = NULL;
-uschar **argv = USS cargv;
+uschar **argv = USS(cargv);
 uschar buffer[256];
 uschar structbuffer[1024];
 
@@ -570,7 +570,7 @@ while (Ufgets(buffer, 256, stdin) != NULL)
     while (count-- > 0)
       dbwait = (dbdata_wait *)dbfn_read_with_length(dbblock+ current, key, NULL);
     stop = clock();
-    printf("%s\n", (dbwait == NULL)? "<not found>" : CS dbwait->text);
+    printf("%s\n", (dbwait == NULL)? "<not found>" : CS(dbwait->text));
     }
 
   else if (Ustrncmp(cmd, "delete", 6) == 0)

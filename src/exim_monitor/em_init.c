@@ -121,31 +121,31 @@ argv = argv;
 
 /* Deal with simple values in the environment. */
 
-if ((s = US getenv("ACTION_OUTPUT")))
+if ((s = Ugetenv("ACTION_OUTPUT")))
   {
   if (Ustrcmp(s, "no") == 0) action_output = FALSE;
   if (Ustrcmp(s, "yes") == 0) action_output = TRUE;
   }
 
-if ((s = US getenv("ACTION_QUEUE_UPDATE")))
+if ((s = Ugetenv("ACTION_QUEUE_UPDATE")))
   {
   if (Ustrcmp(s, "no") == 0) action_queue_update = FALSE;
   if (Ustrcmp(s, "yes") == 0) action_queue_update = TRUE;
   }
 
-s = US getenv("BODY_MAX");
+s = Ugetenv("BODY_MAX");
 if (s && (x = Uatoi(s)) != 0) body_max = x;
 
-if ((s = US getenv("EXIM_PATH")))
+if ((s = Ugetenv("EXIM_PATH")))
   exim_path = string_copy(s);
 
-if ((s = US getenv("EXIMON_EXIM_CONFIG")))
+if ((s = Ugetenv("EXIMON_EXIM_CONFIG")))
   alternate_config = string_copy(s);
 
-if ((s = US getenv("LOG_BUFFER")))
+if ((s = Ugetenv("LOG_BUFFER")))
   {
   uschar c[1];
-  if (sscanf(CS s, "%d%c", &x, c) > 0)
+  if (sscanf(CS(s), "%d%c", &x, c) > 0)
     {
     if (c[0] == 'K' || c[0] == 'k') x *= 1024;
     if (x < 1024) x = 1024;
@@ -153,81 +153,81 @@ if ((s = US getenv("LOG_BUFFER")))
     }
   }
 
-s = US getenv("LOG_DEPTH");
+s = Ugetenv("LOG_DEPTH");
 if (s && (x = Uatoi(s)) != 0) log_depth = x;
 
-if ((s = US getenv("LOG_FILE_NAME")))
+if ((s = Ugetenv("LOG_FILE_NAME")))
   log_file = string_copy(s);
 
-if ((s = US getenv("LOG_FONT")))
+if ((s = Ugetenv("LOG_FONT")))
   log_font = string_copy(s);
 
-s = US getenv("LOG_WIDTH");
+s = Ugetenv("LOG_WIDTH");
 if (s && (x = Uatoi(s)) != 0) log_width = x;
 
-if ((s = US getenv("MENU_EVENT")))
+if ((s = Ugetenv("MENU_EVENT")))
   menu_event = string_copy(s);
 
-s = US getenv("MIN_HEIGHT");
+s = Ugetenv("MIN_HEIGHT");
 if (s && (x = Uatoi(s)) > 0) min_height = x;
 
-s = US getenv("MIN_WIDTH");
+s = Ugetenv("MIN_WIDTH");
 if (s && (x = Uatoi(s)) > 0) min_width = x;
 
-if ((s = US getenv("QUALIFY_DOMAIN")))
+if ((s = Ugetenv("QUALIFY_DOMAIN")))
   qualify_domain = string_copy(s);
 else
-  qualify_domain = US"";  /* Don't want NULL */
+  qualify_domain = US("");  /* Don't want NULL */
 
-s = US getenv("QUEUE_DEPTH");
+s = Ugetenv("QUEUE_DEPTH");
 if (s && (x = Uatoi(s)) != 0) queue_depth = x;
 
-if ((s = US getenv("QUEUE_FONT")))
+if ((s = Ugetenv("QUEUE_FONT")))
   queue_font = string_copy(s);
 
-s = US getenv("QUEUE_INTERVAL");
+s = Ugetenv("QUEUE_INTERVAL");
 if (s && (x = Uatoi(s)) != 0) queue_update = x;
 
-s = US getenv("QUEUE_MAX_ADDRESSES");
+s = Ugetenv("QUEUE_MAX_ADDRESSES");
 if (s && (x = Uatoi(s)) != 0) queue_max_addresses = x;
 
-s = US getenv("QUEUE_WIDTH");
+s = Ugetenv("QUEUE_WIDTH");
 if (s && (x = Uatoi(s)) != 0) queue_width = x;
 
-if ((s = US getenv("SPOOL_DIRECTORY")))
+if ((s = Ugetenv("SPOOL_DIRECTORY")))
   spool_directory = string_copy(s);
 
-s = US getenv("START_SMALL");
+s = Ugetenv("START_SMALL");
 if (s && Ustrcmp(s, "yes") == 0) start_small = 1;
 
-s = US getenv("TEXT_DEPTH");
+s = Ugetenv("TEXT_DEPTH");
 if (s && (x = Uatoi(s)) != 0) text_depth = x;
 
-if ((s = US getenv("WINDOW_TITLE")))
+if ((s = Ugetenv("WINDOW_TITLE")))
   window_title = string_copy(s);
 
 /* Deal with stripchart configuration. First see if we are monitoring
 the size of a partition, then deal with log stripcharts in a separate
 function */
 
-s = US getenv("SIZE_STRIPCHART");
+s = Ugetenv("SIZE_STRIPCHART");
 if (s && *s)
   {
   stripchart_number++;
   stripchart_varstart++;
   size_stripchart = string_copy(s);
-  s = US getenv("SIZE_STRIPCHART_NAME");
+  s = Ugetenv("SIZE_STRIPCHART_NAME");
   if (s != NULL && *s != 0) size_stripchart_name = string_copy(s);
   }
 
-if ((s = US getenv("LOG_STRIPCHARTS")))
+if ((s = Ugetenv("LOG_STRIPCHARTS")))
   decode_stripchart_config(s);
 
-s = US getenv("STRIPCHART_INTERVAL");
+s = Ugetenv("STRIPCHART_INTERVAL");
 if (s && (x = Uatoi(s)) != 0) stripchart_update = x;
 
-s = US getenv("QUEUE_STRIPCHART_NAME");
-queue_stripchart_name = s ? string_copy(s) : US"queue";
+s = Ugetenv("QUEUE_STRIPCHART_NAME");
+queue_stripchart_name = s ? string_copy(s) : US("queue");
 
 /* Compile the regex for matching yyyy-mm-dd at the start of a string. */
 

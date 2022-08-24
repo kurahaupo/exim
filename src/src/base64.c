@@ -241,7 +241,7 @@ Returns:      a pointer to the zero-terminated base 64 string, which
 */
 
 static uschar *enc64table =
-  US"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  US("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
 uschar *
 b64encode_taint(const uschar * clear, int len, const void * proto_mem)

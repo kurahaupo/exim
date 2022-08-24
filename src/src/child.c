@@ -88,7 +88,7 @@ if (clmacro_count > 0)
   n += clmacro_count;
   }
 if (f.config_changed)
-  { argv[n++] = US"-C"; argv[n++] = config_main_filename; }
+  { argv[n++] = US("-C"); argv[n++] = config_main_filename; }
 
 /* These values are added only for non-minimal cases. If debug_selector is
 precisely D_v, we have to assume this was started by a non-admin user, and
@@ -100,7 +100,7 @@ if (!minimal)
   {
   if (debug_selector == D_v)
     {
-    if (!kill_v) argv[n++] = US"-v";
+    if (!kill_v) argv[n++] = US("-v");
     }
   else
     {
@@ -118,22 +118,22 @@ if (!minimal)
       }
     }
   if (debug_pretrigger_buf)
-    { argv[n++] = US"-dp"; argv[n++] = string_sprintf("0x%x", debug_pretrigger_bsize); }
+    { argv[n++] = US("-dp"); argv[n++] = string_sprintf("0x%x", debug_pretrigger_bsize); }
   if (dtrigger_selector != 0)
     argv[n++] = string_sprintf("-dt=0x%x", dtrigger_selector);
   DEBUG(D_any)
     {
-    argv[n++] = US"-MCd";
-    argv[n++] = US process_purpose;
+    argv[n++] = US("-MCd");
+    argv[n++] = US(process_purpose);
     }
-  if (!f.testsuite_delays)	argv[n++] = US"-odd";
-  if (f.dont_deliver)		argv[n++] = US"-N";
-  if (f.queue_smtp)		argv[n++] = US"-odqs";
-  if (f.synchronous_delivery)	argv[n++] = US"-odi";
+  if (!f.testsuite_delays)	argv[n++] = US("-odd");
+  if (f.dont_deliver)		argv[n++] = US("-N");
+  if (f.queue_smtp)		argv[n++] = US("-odqs");
+  if (f.synchronous_delivery)	argv[n++] = US("-odi");
   if (connection_max_messages >= 0)
     argv[n++] = string_sprintf("-oB%d", connection_max_messages);
   if (*queue_name)
-    { argv[n++] = US"-MCG"; argv[n++] = queue_name; }
+    { argv[n++] = US("-MCG"); argv[n++] = queue_name; }
   }
 
 /* Now add in any others that are in the call. Remember which they were,
@@ -162,9 +162,9 @@ if (exec_type == CEE_RETURN_ARGV)
 failure. We know that there will always be at least one extra option in the
 call when exec() is done here, so it can be used to add to the panic data. */
 
-DEBUG(D_exec) debug_print_argv(CUSS argv);
+DEBUG(D_exec) debug_print_argv(CUSS(argv));
 exim_nullstd();                            /* Make sure std{in,out,err} exist */
-execv(CS argv[0], (char *const *)argv);
+execv(CS(argv[0]), (char *const *)argv);
 
 log_write(0,
   LOG_MAIN | (exec_type == CEE_EXEC_EXIT ? LOG_PANIC : LOG_PANIC_DIE),
@@ -206,7 +206,7 @@ Returns:          pid of the created process or -1 if anything has gone wrong
 pid_t
 child_open_exim_function(int * fdptr, const uschar * purpose)
 {
-return child_open_exim2_function(fdptr, US"<>", bounce_sender_authentication,
+return child_open_exim2_function(fdptr, US("<>"), bounce_sender_authentication,
   purpose);
 }
 
@@ -256,11 +256,11 @@ if (pid == 0)
     {
     if (sender_authentication)
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 9,
-        US "-odi", US"-t", US"-oem", US"-oi", US"-f", sender, US"-oMas",
+        US("-odi"), US("-t"), US("-oem"), US("-oi"), US("-f"), sender, US("-oMas"),
         sender_authentication, message_id_option);
     else
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 7,
-        US "-odi", US"-t", US"-oem", US"-oi", US"-f", sender,
+        US("-odi"), US("-t"), US("-oem"), US("-oi"), US("-f"), sender,
         message_id_option);
     /* Control does not return here. */
     }
@@ -268,11 +268,11 @@ if (pid == 0)
     {
     if (sender_authentication)
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 8,
-        US"-t", US"-oem", US"-oi", US"-f", sender, US"-oMas",
+        US("-t"), US("-oem"), US("-oi"), US("-f"), sender, US("-oMas"),
         sender_authentication, message_id_option);
     else
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 6,
-        US"-t", US"-oem", US"-oi", US"-f", sender, message_id_option);
+        US("-t"), US("-oem"), US("-oi"), US("-f"), sender, message_id_option);
     /* Control does not return here. */
     }
   }
@@ -422,8 +422,8 @@ if (pid == 0)
 
   /* Now do the exec */
 
-  if (envp) execve(CS argv[0], (char *const *)argv, (char *const *)envp);
-  else execv(CS argv[0], (char *const *)argv);
+  if (envp) execve(CS(argv[0]), (char *const *)argv, (char *const *)envp);
+  else execv(CS(argv[0]), (char *const *)argv);
 
   /* Failed to execv. Signal this failure using EX_EXECFAILED. We are
   losing the actual errno we got back, because there is no way to return
@@ -487,7 +487,7 @@ pid_t
 child_open_function(uschar **argv, uschar **envp, int newumask, int *infdptr,
   int *outfdptr, BOOL make_leader, const uschar * purpose)
 {
-return child_open_uid(CUSS argv, CUSS envp, newumask, NULL, NULL,
+return child_open_uid(CUSS(argv), CUSS(envp), newumask, NULL, NULL,
   infdptr, outfdptr, NULL, make_leader, purpose);
 }
 

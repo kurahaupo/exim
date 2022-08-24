@@ -51,10 +51,10 @@ inet_ntoa(struct in_addr sa)
 {
 static uschar addr[20];
 sprintf(addr, "%d.%d.%d.%d",
-        (US &sa.s_addr)[0],
-        (US &sa.s_addr)[1],
-        (US &sa.s_addr)[2],
-        (US &sa.s_addr)[3]);
+        (US(&sa.s_addr))[0],
+        (US(&sa.s_addr))[1],
+        (US(&sa.s_addr))[2],
+        (US(&sa.s_addr))[3]);
   return addr;
 }
 #endif
@@ -188,7 +188,7 @@ DEBUG(D_host_lookup)
 /* Handle unqualified "localhost" */
 
 if (Ustrcmp(name, "localhost") == 0)
-  lname = af == AF_INET ? US"127.0.0.1" : US"::1";
+  lname = af == AF_INET ? US("127.0.0.1") : US("::1");
 
 /* Handle a literal IP address */
 
@@ -200,11 +200,11 @@ if ((ipa = string_is_ip_address(lname, NULL)) != 0)
     yield = store_get(sizeof(struct hostent), GET_UNTAINTED);
     alist = store_get(2 * sizeof(char *), GET_UNTAINTED);
     adds  = store_get(alen, GET_UNTAINTED);
-    yield->h_name = CS name;
+    yield->h_name = CS(name);
     yield->h_aliases = NULL;
     yield->h_addrtype = af;
     yield->h_length = alen;
-    yield->h_addr_list = CSS alist;
+    yield->h_addr_list = CSS(alist);
     *alist++ = adds;
     for (int n = host_aton(lname, x), i = 0; i < n; i++)
       {
@@ -255,11 +255,11 @@ else
   alist = store_get((count + 1) * sizeof(char *), GET_UNTAINTED);
   adds  = store_get(count *alen, GET_UNTAINTED);
 
-  yield->h_name = CS name;
+  yield->h_name = CS(name);
   yield->h_aliases = NULL;
   yield->h_addrtype = af;
   yield->h_length = alen;
-  yield->h_addr_list = CSS alist;
+  yield->h_addr_list = CSS(alist);
 
   for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
        rr;
@@ -489,8 +489,8 @@ else if (sender_helo_name[0] == '[' &&
   int offset = 1;
   uschar *helo_ip;
 
-  if (strncmpic(sender_helo_name + 1, US"IPv6:", 5) == 0) offset += 5;
-  if (strncmpic(sender_helo_name + 1, US"IPv4:", 5) == 0) offset += 5;
+  if (strncmpic(sender_helo_name + 1, US("IPv6:"), 5) == 0) offset += 5;
+  if (strncmpic(sender_helo_name + 1, US("IPv4:"), 5) == 0) offset += 5;
 
   helo_ip = string_copyn(sender_helo_name + offset, len - offset - 1);
 
@@ -528,21 +528,21 @@ if (!sender_host_name)
   if (sender_ident || show_helo || portptr)
     {
     int firstptr;
-    g = string_catn(g, US" (", 2);
+    g = string_catn(g, US(" ("), 2);
     firstptr = g->ptr;
 
     if (portptr)
-      g = string_append(g, 2, US"port=", portptr + 1);
+      g = string_append(g, 2, US("port="), portptr + 1);
 
     if (show_helo)
       g = string_append(g, 2,
-        firstptr == g->ptr ? US"helo=" : US" helo=", sender_helo_name);
+        firstptr == g->ptr ? US("helo=") : US(" helo="), sender_helo_name);
 
     if (sender_ident)
       g = string_append(g, 2,
-        firstptr == g->ptr ? US"ident=" : US" ident=", sender_ident);
+        firstptr == g->ptr ? US("ident=") : US(" ident="), sender_ident);
 
-    g = string_catn(g, US")", 1);
+    g = string_catn(g, US(")"), 1);
     }
 
   rcvhost = string_from_gstring(g);
@@ -613,11 +613,11 @@ host_and_ident(BOOL useflag)
 {
 if (!sender_fullhost)
   string_format_nt(big_buffer, big_buffer_size, "%s%s", useflag ? "U=" : "",
-     sender_ident ? sender_ident : US"unknown");
+     sender_ident ? sender_ident : US("unknown"));
 else
   {
-  uschar * flag = useflag ? US"H=" : US"";
-  uschar * iface = US"";
+  uschar * flag = useflag ? US("H=") : US("");
+  uschar * iface = US("");
   if (LOGGING(incoming_interface) && interface_address)
     iface = string_sprintf(" I=[%s]:%d", interface_address, interface_port);
   if (sender_ident)
@@ -750,10 +750,10 @@ ip_address_item *running_interfaces = NULL;
 if (!local_interface_data)
   {
   void *reset_item = store_mark();
-  ip_address_item *dlist = host_build_ifacelist(CUS local_interfaces,
-    US"local_interfaces");
-  ip_address_item *xlist = host_build_ifacelist(CUS extra_local_interfaces,
-    US"extra_local_interfaces");
+  ip_address_item *dlist = host_build_ifacelist(CUS(local_interfaces),
+    US("local_interfaces"));
+  ip_address_item *xlist = host_build_ifacelist(CUS(extra_local_interfaces),
+    US("extra_local_interfaces"));
   ip_address_item *ipa;
 
   if (!dlist) dlist = xlist;
@@ -841,21 +841,21 @@ if (type < 0)
   if (family == AF_INET6)
     {
     struct sockaddr_in6 *sk = (struct sockaddr_in6 *)arg;
-    yield = US inet_ntop(family, &(sk->sin6_addr), CS addr_buffer,
-      sizeof(addr_buffer));
+    yield = US(inet_ntop(family, &(sk->sin6_addr), CS(addr_buffer),
+      sizeof(addr_buffer)));
     if (portptr) *portptr = ntohs(sk->sin6_port);
     }
   else
     {
     struct sockaddr_in *sk = (struct sockaddr_in *)arg;
-    yield = US inet_ntop(family, &(sk->sin_addr), CS addr_buffer,
-      sizeof(addr_buffer));
+    yield = US(inet_ntop(family, &(sk->sin_addr), CS(addr_buffer),
+      sizeof(addr_buffer)));
     if (portptr) *portptr = ntohs(sk->sin_port);
     }
   }
 else
   {
-  yield = US inet_ntop(type, arg, CS addr_buffer, sizeof(addr_buffer));
+  yield = US(inet_ntop(type, arg, CS(addr_buffer), sizeof(addr_buffer)));
   }
 
 /* If the result is a mapped IPv4 address, show it in V4 format. */
@@ -868,11 +868,11 @@ if (Ustrncmp(yield, "::ffff:", 7) == 0) yield += 7;
 
 if (type < 0)
   {
-  yield = US inet_ntoa(((struct sockaddr_in *)arg)->sin_addr);
+  yield = US(inet_ntoa(((struct sockaddr_in *)arg)->sin_addr));
   if (portptr) *portptr = ntohs(((struct sockaddr_in *)arg)->sin_port);
   }
 else
-  yield = US inet_ntoa(*((struct in_addr *)arg));
+  yield = US(inet_ntoa(*((struct in_addr *)arg)));
 #endif
 
 /* If there is no buffer, put the string into some new store. */
@@ -973,7 +973,7 @@ if (Ustrchr(address, ':') != NULL)
     int insert_count = v6count - ci;
     for (i = v6count-1; i > nulloffset + insert_count; i--)
       component[i] = component[i - insert_count];
-    while (i > nulloffset) component[i--] = US"";
+    while (i > nulloffset) component[i--] = US("");
     }
 
   /* Now turn the components into binary in pairs and bung them
@@ -990,7 +990,7 @@ if (Ustrchr(address, ':') != NULL)
 
 /* Handle IPv4 address */
 
-(void)sscanf(CS address, "%d.%d.%d.%d", x, x+1, x+2, x+3);
+(void)sscanf(CS(address), "%d.%d.%d.%d", x, x+1, x+2, x+3);
 bin[v4offset] = ((uint)x[0] << 24) + (x[1] << 16) + (x[2] << 8) + x[3];
 return v4offset+1;
 }
@@ -1069,13 +1069,13 @@ if (count == 1)
   {
   j = binary[0];
   for (int i = 24; i >= 0; i -= 8)
-    tt += sprintf(CS tt, "%d.", (j >> i) & 255);
+    tt += sprintf(CS(tt), "%d.", (j >> i) & 255);
   }
 else
   for (int i = 0; i < 4; i++)
     {
     j = binary[i];
-    tt += sprintf(CS tt, "%04x%c%04x%c", (j >> 16) & 0xffff, sep, j & 0xffff, sep);
+    tt += sprintf(CS(tt), "%04x%c%04x%c", (j >> 16) & 0xffff, sep, j & 0xffff, sep);
     }
 
 tt--;   /* lose final separator */
@@ -1083,7 +1083,7 @@ tt--;   /* lose final separator */
 if (mask < 0)
   *tt = 0;
 else
-  tt += sprintf(CS tt, "/%d", mask);
+  tt += sprintf(CS(tt), "/%d", mask);
 
 return tt - buffer;
 }
@@ -1109,7 +1109,7 @@ uschar * d = NULL;	/* shut insufficiently "clever" compiler up */
 for (i = 0; i < 4; i++)
   {			/* expand to text */
   j = binary[i];
-  c += sprintf(CS c, "%x:%x:", (j >> 16) & 0xffff, j & 0xffff);
+  c += sprintf(CS(c), "%x:%x:", (j >> 16) & 0xffff, j & 0xffff);
   }
 
 for (c = buffer, k = -1, i = 0; i < 8; i++)
@@ -1313,7 +1313,7 @@ for (h = host; h != last->next; h = h->next)
     int rc;
     const uschar *save = deliver_domain;
     deliver_domain = h->name;   /* set $domain */
-    rc = match_isinlist(string_copylc(h->name), CUSS &hosts_treat_as_local, 0,
+    rc = match_isinlist(string_copylc(h->name), CUSS(&hosts_treat_as_local), 0,
       &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL);
     deliver_domain = save;
     if (rc == OK) goto FOUND_LOCAL;
@@ -1444,38 +1444,38 @@ if (slow_lookup_log) time_msec = get_time_in_ms();
 if (Ustrchr(sender_host_address, ':') != NULL)
   {
   struct in6_addr addr6;
-  if (inet_pton(AF_INET6, CS sender_host_address, &addr6) != 1)
+  if (inet_pton(AF_INET6, CS(sender_host_address), &addr6) != 1)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "unable to parse \"%s\" as an "
       "IPv6 address", sender_host_address);
   #if HAVE_GETIPNODEBYADDR
-  hosts = getipnodebyaddr(CS &addr6, sizeof(addr6), AF_INET6, &h_errno);
+  hosts = getipnodebyaddr(CS(&addr6), sizeof(addr6), AF_INET6, &h_errno);
   #else
-  hosts = gethostbyaddr(CS &addr6, sizeof(addr6), AF_INET6);
+  hosts = gethostbyaddr(CS(&addr6), sizeof(addr6), AF_INET6);
   #endif
   }
 else
   {
-  if (inet_pton(AF_INET, CS sender_host_address, &addr) != 1)
+  if (inet_pton(AF_INET, CS(sender_host_address), &addr) != 1)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "unable to parse \"%s\" as an "
       "IPv4 address", sender_host_address);
   #if HAVE_GETIPNODEBYADDR
-  hosts = getipnodebyaddr(CS &addr, sizeof(addr), AF_INET, &h_errno);
+  hosts = getipnodebyaddr(CS(&addr), sizeof(addr), AF_INET, &h_errno);
   #else
-  hosts = gethostbyaddr(CS &addr, sizeof(addr), AF_INET);
+  hosts = gethostbyaddr(CS(&addr), sizeof(addr), AF_INET);
   #endif
   }
 
 /* Do lookup on IPv4 system */
 
 #else
-addr.s_addr = (S_ADDR_TYPE)inet_addr(CS sender_host_address);
+addr.s_addr = (S_ADDR_TYPE)inet_addr(CS(sender_host_address));
 hosts = gethostbyaddr(CS(&addr), sizeof(addr), AF_INET);
 #endif
 
 if (  slow_lookup_log
    && (time_msec = get_time_in_ms() - time_msec) > slow_lookup_log
    )
-  log_long_lookup(US"gethostbyaddr", sender_host_address, time_msec);
+  log_long_lookup(US("gethostbyaddr"), sender_host_address, time_msec);
 
 /* Failed to look up the host. */
 
@@ -1504,7 +1504,7 @@ Put it in permanent memory. */
   int old_pool = store_pool;
   store_pool = POOL_TAINT_PERM;		/* names are tainted */
 
-  sender_host_name = string_copylc(US hosts->h_name);
+  sender_host_name = string_copylc(US(hosts->h_name));
 
   /* If the host has aliases, build a copy of the alias list */
 
@@ -1513,12 +1513,12 @@ Put it in permanent memory. */
     int count = 1;  /* need 1 more for terminating NULL */
     uschar **ptr;
 
-    for (uschar ** aliases = USS hosts->h_aliases; *aliases; aliases++) count++;
+    for (uschar ** aliases = USS(hosts->h_aliases); *aliases; aliases++) count++;
     store_pool = POOL_PERM;
     ptr = sender_host_aliases = store_get(count * sizeof(uschar *), GET_UNTAINTED);
     store_pool = POOL_TAINT_PERM;
 
-    for (uschar ** aliases = USS hosts->h_aliases; *aliases; aliases++)
+    for (uschar ** aliases = USS(hosts->h_aliases); *aliases; aliases++)
       *ptr++ = string_copylc(*aliases);
     *ptr = NULL;
     }
@@ -1602,7 +1602,7 @@ the order specified by the host_lookup_order option. */
 
 while ((ordername = string_nextinlist(&list, &sep, NULL, 0)))
   {
-  if (strcmpic(ordername, US"bydns") == 0)
+  if (strcmpic(ordername, US("bydns")) == 0)
     {
     uschar * name = dns_build_reverse(sender_host_address);
 
@@ -1652,7 +1652,7 @@ while ((ordername = string_nextinlist(&list, &sep, NULL, 0)))
         truncated and dn_expand may fail. */
 
         if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen,
-             US (rr->data), (DN_EXPAND_ARG4_TYPE)(s), ssize) < 0)
+             US(rr->data), (DN_EXPAND_ARG4_TYPE)(s), ssize) < 0)
           {
           log_write(0, LOG_MAIN, "host name alias list truncated for %s",
             sender_host_address);
@@ -1698,7 +1698,7 @@ while ((ordername = string_nextinlist(&list, &sep, NULL, 0)))
 
   /* Do a lookup using gethostbyaddr() - or equivalent */
 
-  else if (strcmpic(ordername, US"byaddr") == 0)
+  else if (strcmpic(ordername, US("byaddr")) == 0)
     {
     HDEBUG(D_host_lookup)
       debug_printf("IP address lookup using gethostbyaddr()\n");
@@ -1720,7 +1720,7 @@ if (!sender_host_name)
   if (host_checking || !f.log_testing_mode)
     log_write(L_host_lookup_failed, LOG_MAIN, "no host name found for IP "
       "address %s", sender_host_address);
-  host_lookup_msg = US" (failed to find host name from IP address)";
+  host_lookup_msg = US(" (failed to find host name from IP address)");
   host_lookup_failed = TRUE;
   return FAIL;
   }
@@ -1753,7 +1753,7 @@ for (uschar * hname = sender_host_name; hname; hname = *aliases++)
   BOOL ok = FALSE;
   host_item h = { .next = NULL, .name = hname, .mx = MX_NONE, .address = NULL };
   dnssec_domains d =
-    { .request = sender_host_dnssec ? US"*" : NULL, .require = NULL };
+    { .request = sender_host_dnssec ? US("*") : NULL, .require = NULL };
 
   if (  (rc = host_find_bydns(&h, NULL, HOST_FIND_BY_A | HOST_FIND_BY_AAAA,
 	  NULL, NULL, NULL, &d, NULL, NULL)) == HOST_FOUND
@@ -1910,7 +1910,7 @@ lookups here (except when testing standalone). */
   #else
   if (  disable_ipv6
      ||    dns_ipv4_lookup
-	&& match_isinlist(host->name, CUSS &dns_ipv4_lookup, 0,
+	&& match_isinlist(host->name, CUSS(&dns_ipv4_lookup), 0,
 	    &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK)
   #endif
 
@@ -1954,9 +1954,9 @@ for (int i = 1; i <= times;
   else
     {
     #if HAVE_GETIPNODEBYNAME
-    hostdata = getipnodebyname(CS host->name, af, 0, &error_num);
+    hostdata = getipnodebyname(CS(host->name), af, 0, &error_num);
     #else
-    hostdata = gethostbyname2(CS host->name, af);
+    hostdata = gethostbyname2(CS(host->name), af);
     error_num = h_errno;
     #endif
     }
@@ -1966,28 +1966,28 @@ for (int i = 1; i <= times;
     hostdata = host_fake_gethostbyname(host->name, af, &error_num);
   else
     {
-    hostdata = gethostbyname(CS host->name);
+    hostdata = gethostbyname(CS(host->name));
     error_num = h_errno;
     }
   #endif   /* HAVE_IPV6 */
 
   if (   slow_lookup_log
       && (time_msec = get_time_in_ms() - time_msec) > slow_lookup_log)
-    log_long_lookup(US"gethostbyname", host->name, time_msec);
+    log_long_lookup(US("gethostbyname"), host->name, time_msec);
 
   if (!hostdata)
     {
     uschar * error;
     switch (error_num)
       {
-      case HOST_NOT_FOUND: error = US"HOST_NOT_FOUND";	break;
-      case TRY_AGAIN:      error = US"TRY_AGAIN";   temp_error = TRUE; break;
-      case NO_RECOVERY:    error = US"NO_RECOVERY"; temp_error = TRUE; break;
-      case NO_DATA:        error = US"NO_DATA";		break;
+      case HOST_NOT_FOUND: error = US("HOST_NOT_FOUND");	break;
+      case TRY_AGAIN:      error = US("TRY_AGAIN");   temp_error = TRUE; break;
+      case NO_RECOVERY:    error = US("NO_RECOVERY"); temp_error = TRUE; break;
+      case NO_DATA:        error = US("NO_DATA");		break;
     #if NO_DATA != NO_ADDRESS
-      case NO_ADDRESS:     error = US"NO_ADDRESS";	break;
+      case NO_ADDRESS:     error = US("NO_ADDRESS");	break;
     #endif
-      default: error = US"?"; break;
+      default: error = US("?"); break;
       }
 
     DEBUG(D_host_lookup) debug_printf("%s(af=%s) returned %d (%s)\n",
@@ -2011,7 +2011,7 @@ for (int i = 1; i <= times;
   the fully_qualified_name pointer. */
 
   if (hostdata->h_name[0] && Ustrcmp(host->name, hostdata->h_name) != 0)
-    host->name = string_copy_dnsdomain(US hostdata->h_name);
+    host->name = string_copy_dnsdomain(US(hostdata->h_name));
   if (fully_qualified_name) *fully_qualified_name = host->name;
 
   /* Get the list of addresses. IPv4 and IPv6 addresses can be distinguished
@@ -2020,7 +2020,7 @@ for (int i = 1; i <= times;
 
   ipv4_addr = hostdata->h_length == sizeof(struct in_addr);
 
-  for (uschar ** addrlist = USS hostdata->h_addr_list; *addrlist; addrlist++)
+  for (uschar ** addrlist = USS(hostdata->h_addr_list); *addrlist; addrlist++)
     {
     uschar *text_address =
       host_ntoa(ipv4_addr? AF_INET:AF_INET6, *addrlist, NULL, NULL);
@@ -2118,7 +2118,7 @@ HDEBUG(D_host_lookup)
     );
   for (const host_item * h = host; h != last->next; h = h->next)
     debug_printf("  name=%s address=%s\n", h->name,
-      h->address ? h->address : US"<null>");
+      h->address ? h->address : US("<null>"));
   }
 
 /* Return the found status. */
@@ -2134,7 +2134,7 @@ RETURN_AGAIN:
   int rc;
   const uschar *save = deliver_domain;
   deliver_domain = host->name;  /* set $domain */
-  rc = match_isinlist(host->name, CUSS &dns_again_means_nonexist, 0,
+  rc = match_isinlist(host->name, CUSS(&dns_again_means_nonexist), 0,
     &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL);
   deliver_domain = save;
   if (rc == OK)
@@ -2239,7 +2239,7 @@ On an IPv4 system, go round the loop once only, looking only for A records. */
     if (  disable_ipv6
        || !(whichrrs & HOST_FIND_BY_AAAA)
        ||    dns_ipv4_lookup
-          && match_isinlist(host->name, CUSS &dns_ipv4_lookup, 0,
+          && match_isinlist(host->name, CUSS(&dns_ipv4_lookup), 0,
 	      &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK
        )
       i = 0;    /* look up A records only */
@@ -2264,7 +2264,7 @@ for (; i >= 0; i--)
 
   int rc = dns_lookup_timerwrap(dnsa, host->name, type, fully_qualified_name);
   lookup_dnssec_authenticated = !dnssec_request ? NULL
-    : dns_is_secure(dnsa) ? US"yes" : US"no";
+    : dns_is_secure(dnsa) ? US("yes") : US("no");
 
   DEBUG(D_dns)
     if (  (dnssec_request || dnssec_require)
@@ -2319,7 +2319,7 @@ for (; i >= 0; i--)
 	{
 	DEBUG(D_host_lookup) debug_printf("%s A cancel DNSSEC\n", host->name);
 	host->dnssec = DS_NO;
-	lookup_dnssec_authenticated = US"no";
+	lookup_dnssec_authenticated = US("no");
 	}
       }
     }
@@ -2383,7 +2383,7 @@ for (; i >= 0; i--)
 
 	for (next = host;; next = next->next)
 	  {
-	  if (Ustrcmp(CS da->address, next->address) == 0) break;
+	  if (Ustrcmp(CS(da->address), next->address) == 0) break;
 	  if (next == thishostlast) { next = NULL; break; }
 	  }
 	if (next != NULL) continue;  /* With loop for next address */
@@ -2504,11 +2504,11 @@ int yield;
 dns_answer * dnsa = store_get_dns_answer();
 dns_scan dnss;
 BOOL dnssec_require = dnssec_d
-  && match_isinlist(host->name, CUSS &dnssec_d->require,
+  && match_isinlist(host->name, CUSS(&dnssec_d->require),
 		  0, &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK;
 BOOL dnssec_request = dnssec_require
     || (  dnssec_d
-       && match_isinlist(host->name, CUSS &dnssec_d->request,
+       && match_isinlist(host->name, CUSS(&dnssec_d->request),
 		    0, &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK);
 dnssec_status_t dnssec;
 
@@ -2544,7 +2544,7 @@ if (whichrrs & HOST_FIND_BY_SRV)
   dnssec = DS_UNK;
   lookup_dnssec_authenticated = NULL;
   rc = dns_lookup_timerwrap(dnsa, temp_fully_qualified_name, ind_type,
-	CUSS &temp_fully_qualified_name);
+	CUSS(&temp_fully_qualified_name));
 
   DEBUG(D_dns)
     if ((dnssec_request || dnssec_require)
@@ -2555,9 +2555,9 @@ if (whichrrs & HOST_FIND_BY_SRV)
   if (dnssec_request)
     {
     if (dns_is_secure(dnsa))
-      { dnssec = DS_YES; lookup_dnssec_authenticated = US"yes"; }
+      { dnssec = DS_YES; lookup_dnssec_authenticated = US("yes"); }
     else
-      { dnssec = DS_NO; lookup_dnssec_authenticated = US"no"; }
+      { dnssec = DS_NO; lookup_dnssec_authenticated = US("no"); }
     }
 
   if (temp_fully_qualified_name != g->s && fully_qualified_name != NULL)
@@ -2575,7 +2575,7 @@ if (whichrrs & HOST_FIND_BY_SRV)
   if (rc == DNS_FAIL || rc == DNS_AGAIN)
     {
 #ifndef STAND_ALONE
-    if (match_isinlist(host->name, CUSS &srv_fail_domains, 0,
+    if (match_isinlist(host->name, CUSS(&srv_fail_domains), 0,
 	&domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) != OK)
 #endif
       { yield = HOST_FIND_AGAIN; goto out; }
@@ -2608,11 +2608,11 @@ if (rc != DNS_SUCCEED  &&  whichrrs & HOST_FIND_BY_MX)
     if (dns_is_secure(dnsa))
       {
       DEBUG(D_host_lookup) debug_printf("%s (MX resp) DNSSEC\n", host->name);
-      dnssec = DS_YES; lookup_dnssec_authenticated = US"yes";
+      dnssec = DS_YES; lookup_dnssec_authenticated = US("yes");
       }
     else
       {
-      dnssec = DS_NO; lookup_dnssec_authenticated = US"no";
+      dnssec = DS_NO; lookup_dnssec_authenticated = US("no");
       }
 
   switch (rc)
@@ -2626,7 +2626,7 @@ if (rc != DNS_SUCCEED  &&  whichrrs & HOST_FIND_BY_MX)
       DEBUG(D_host_lookup)
 	debug_printf("dnssec fail on MX for %.256s", host->name);
 #ifndef STAND_ALONE
-      if (match_isinlist(host->name, CUSS &mx_fail_domains, 0,
+      if (match_isinlist(host->name, CUSS(&mx_fail_domains), 0,
 	  &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) != OK)
 	{ yield = HOST_FIND_SECURITY; goto out; }
 #endif
@@ -2636,7 +2636,7 @@ if (rc != DNS_SUCCEED  &&  whichrrs & HOST_FIND_BY_MX)
     case DNS_FAIL:
     case DNS_AGAIN:
 #ifndef STAND_ALONE
-      if (match_isinlist(host->name, CUSS &mx_fail_domains, 0,
+      if (match_isinlist(host->name, CUSS(&mx_fail_domains), 0,
 	  &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) != OK)
 #endif
 	{ yield = HOST_FIND_AGAIN; goto out; }
@@ -2685,8 +2685,8 @@ if (rc != DNS_SUCCEED)
         debug_printf("fully qualified name = %s\n", *fully_qualified_name);
       for (host_item * h = host; h != last->next; h = h->next)
         debug_printf("%s %s mx=%d sort=%d %s\n", h->name,
-          h->address ? h->address : US"<null>", h->mx, h->sort_key,
-          h->status >= hstatus_unusable ? US"*" : US"");
+          h->address ? h->address : US("<null>"), h->mx, h->sort_key,
+          h->status >= hstatus_unusable ? US("*") : US(""));
       }
 
   yield = rc;
@@ -3099,8 +3099,8 @@ DEBUG(D_host_lookup)
   for (h = host; h != last->next; h = h->next)
     {
     debug_printf("  %s %s MX=%d %s", h->name,
-      !h->address ? US"<null>" : h->address, h->mx,
-      h->dnssec == DS_YES ? US"DNSSEC " : US"");
+      !h->address ? US("<null>") : h->address, h->mx,
+      h->dnssec == DS_YES ? US("DNSSEC ") : US(""));
     if (h->port != PORT_NONE) debug_printf("port=%d ", h->port);
     if (h->status >= hstatus_unusable) debug_printf("*");
     debug_printf("\n");
@@ -3134,7 +3134,7 @@ int rc;
 BOOL sec;
 
 /* TLSA lookup string */
-(void)sprintf(CS buffer, "_%d._tcp.%.256s", host->port, host->name);
+(void)sprintf(CS(buffer), "_%d._tcp.%.256s", host->port, host->name);
 
 rc = dns_lookup_timerwrap(dnsa, buffer, T_TLSA, &fullname);
 sec = dns_is_secure(dnsa);
@@ -3157,13 +3157,13 @@ switch (rc)
 	  if (rr->type == T_TLSA && rr->size > 3)
 	    {
 	    uint16_t payload_length = rr->size - 3;
-	    uschar s[MAX_TLSA_EXPANDED_SIZE], * sp = s, * p = US rr->data;
+	    uschar s[MAX_TLSA_EXPANDED_SIZE], * sp = s, * p = US(rr->data);
 
-	    sp += sprintf(CS sp, "%d ", *p++); /* usage */
-	    sp += sprintf(CS sp, "%d ", *p++); /* selector */
-	    sp += sprintf(CS sp, "%d ", *p++); /* matchtype */
+	    sp += sprintf(CS(sp), "%d ", *p++); /* usage */
+	    sp += sprintf(CS(sp), "%d ", *p++); /* selector */
+	    sp += sprintf(CS(sp), "%d ", *p++); /* matchtype */
 	    while (payload_length-- > 0 && sp-s < (MAX_TLSA_EXPANDED_SIZE - 4))
-	      sp += sprintf(CS sp, "%02x", *p++);
+	      sp += sprintf(CS(sp), "%02x", *p++);
 
 	    debug_printf(" %s\n", s);
 	    }
@@ -3204,11 +3204,11 @@ BOOL qualify_single = TRUE;
 BOOL search_parents = FALSE;
 BOOL request_dnssec = FALSE;
 BOOL require_dnssec = FALSE;
-uschar **argv = USS cargv;
+uschar **argv = USS(cargv);
 uschar buffer[256];
 
 disable_ipv6 = FALSE;
-primary_hostname = US"";
+primary_hostname = US("");
 store_init();
 store_pool = POOL_MAIN;
 debug_selector = D_host_lookup|D_interface;
@@ -3296,7 +3296,7 @@ while (Ufgets(buffer, 256, stdin) != NULL)
 
     rc = byname
       ? host_find_byname(&h, NULL, flags, &fully_qualified_name, TRUE)
-      : host_find_bydns(&h, NULL, flags, US"smtp", NULL, NULL,
+      : host_find_bydns(&h, NULL, flags, US("smtp"), NULL, NULL,
 			&d, &fully_qualified_name, NULL);
 
     switch (rc)
@@ -3346,7 +3346,7 @@ while (Ufgets(buffer, 256, stdin) != NULL)
   sender_host_address = buffer;
   sender_host_name = NULL;
   sender_host_aliases = NULL;
-  host_lookup_msg = US"";
+  host_lookup_msg = US("");
   host_lookup_failed = FALSE;
   if (host_name_lookup() == FAIL)  /* Debug causes printing */
     printf("Lookup failed:%s\n", host_lookup_msg);

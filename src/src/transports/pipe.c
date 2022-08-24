@@ -88,8 +88,8 @@ BOOL pipe_transport_entry(transport_instance *tblock, address_item *addr) {retur
 /* Default private options block for the pipe transport. */
 
 pipe_transport_options_block pipe_transport_option_defaults = {
-  .path =	US"/bin:/usr/bin",
-  .temp_errors = US mac_expanded_string(EX_TEMPFAIL) ":"
+  .path =	US("/bin:/usr/bin"),
+  .temp_errors = US(mac_expanded_string(EX_TEMPFAIL)) ":"
 		   mac_expanded_string(EX_CANTCREAT),
   .umask =	022,
   .max_output = 20480,
@@ -227,8 +227,8 @@ headers are also escaped. */
 
 if (ob->use_bsmtp)
   {
-  ob->check_string = US".";
-  ob->escape_string = US"..";
+  ob->check_string = US(".");
+  ob->escape_string = US("..");
   ob->options |= topt_escape_headers;
   }
 
@@ -238,8 +238,8 @@ default values for them. */
 else
   {
   if (ob->message_prefix == NULL) ob->message_prefix =
-    US"From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n";
-  if (ob->message_suffix == NULL) ob->message_suffix = US"\n";
+    US("From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n");
+  if (ob->message_suffix == NULL) ob->message_suffix = US("\n");
   }
 
 /* The restrict_to_path  and use_shell options are incompatible */
@@ -372,7 +372,7 @@ if (argv[0][0] != '/')
   while ((p = string_nextinlist(&listptr, &sep, NULL, 0)))
     {
     struct stat statbuf;
-    sprintf(CS big_buffer, "%.256s/%.256s", p, argv[0]);
+    sprintf(CS(big_buffer), "%.256s/%.256s", p, argv[0]);
     if (Ustat(big_buffer, &statbuf) == 0)
       {
       argv[0] = string_copy(big_buffer);
@@ -419,8 +419,8 @@ const uschar **argv;
 
 *argvptr = argv = store_get((4)*sizeof(uschar *), GET_UNTAINTED);
 
-argv[0] = US"/bin/sh";
-argv[1] = US"-c";
+argv[0] = US("/bin/sh");
+argv[1] = US("-c");
 
 /* We have to take special action to handle the special "variable" called
 $pipe_addresses, which is not recognized by the normal expansion function. */
@@ -455,7 +455,7 @@ if (expand_arguments)
 	debug_printf("tainted element '%s' from $pipe_addresses\n", ad->address);
 
       /*XXX string_append_listele() ? */
-      if (ad != addr) g = string_catn(g, US" ", 1);
+      if (ad != addr) g = string_catn(g, US(" "), 1);
       g = string_cat(g, ad->address);
       }
 
@@ -486,7 +486,7 @@ else
   argv[2] = cmd;
   }
 
-argv[3] = US 0;
+argv[3] = US(0);
 return TRUE;
 }
 
@@ -520,7 +520,7 @@ const uschar **argv;
 uschar *envp[50];
 const uschar *envlist = ob->environment;
 uschar *cmd, *ss;
-uschar *eol = ob->use_crlf ? US"\r\n" : US"\n";
+uschar *eol = ob->use_crlf ? US("\r\n") : US("\n");
 transport_ctx tctx = {
   .tblock = tblock,
   .addr = addr,
@@ -635,13 +635,13 @@ envp[envcount++] = string_sprintf("RECIPIENT=%#s%#s%#s@%#s",
   deliver_domain);
 envp[envcount++] = string_sprintf("QUALIFY_DOMAIN=%s", qualify_domain_sender);
 envp[envcount++] = string_sprintf("SENDER=%s", sender_address);
-envp[envcount++] = US"SHELL=/bin/sh";
+envp[envcount++] = US("SHELL=/bin/sh");
 
 if (addr->host_list)
   envp[envcount++] = string_sprintf("HOST=%s", addr->host_list->name);
 
 if (f.timestamps_utc)
-  envp[envcount++] = US"TZ=UTC";
+  envp[envcount++] = US("TZ=UTC");
 else if (timezone_string && timezone_string[0])
   envp[envcount++] = string_sprintf("TZ=%s", timezone_string);
 
@@ -704,8 +704,8 @@ reading of the output pipe. */
 uid/gid and current directory. Request that the new process be a process group
 leader, so we can kill it and all its children on a timeout. */
 
-if ((pid = child_open(USS argv, envp, ob->umask, &fd_in, &fd_out, TRUE,
-			US"pipe-tpt-cmd")) < 0)
+if ((pid = child_open(USS(argv), envp, ob->umask, &fd_in, &fd_out, TRUE,
+			US("pipe-tpt-cmd"))) < 0)
   {
   addr->transport_return = DEFER;
   addr->message = string_sprintf(
@@ -717,7 +717,7 @@ tctx.u.fd = fd_in;
 
 /* Now fork a process to handle the output that comes down the pipe. */
 
-if ((outpid = exim_fork(US"pipe-tpt-output")) < 0)
+if ((outpid = exim_fork(US("pipe-tpt-output"))) < 0)
   {
   addr->basic_errno = errno;
   addr->transport_return = DEFER;
@@ -751,7 +751,7 @@ if (outpid == 0)
       DEBUG(D_transport) debug_printf("Too much output from pipe - killed\n");
       if (addr->return_file >= 0)
 	{
-        uschar *message = US"\n\n*** Too much output - remainder discarded ***\n";
+        uschar *message = US("\n\n*** Too much output - remainder discarded ***\n");
         rc = Ustrlen(message);
         if(write(addr->return_file, message, rc) != rc)
           DEBUG(D_transport) debug_printf("Problem writing to return_file\n");
@@ -900,7 +900,7 @@ if (!written_ok)
       addr->more_errno,
       (addr->more_errno == EX_EXECFAILED)? ": unable to execute command" : "");
     else if (errno == ERRNO_WRITEINCOMPLETE)
-      addr->message = US"Failed repeatedly to write data";
+      addr->message = US("Failed repeatedly to write data");
     else
       addr->message = string_sprintf("Error %d", errno);
     return FALSE;
@@ -914,7 +914,7 @@ above timed out. */
 if ((rc = child_close(pid, timeout)) != 0)
   {
   uschar * tmsg = addr->message
-    ? string_sprintf(" (preceded by %s)", addr->message) : US"";
+    ? string_sprintf(" (preceded by %s)", addr->message) : US("");
 
   /* The process did not complete in time; kill its process group and fail
   the delivery. It appears to be necessary to kill the output process too, as
@@ -1066,30 +1066,30 @@ if ((rc = child_close(pid, timeout)) != 0)
       ss = (rc > 128)?
         string_sprintf("(could mean shell command ended by signal %d (%s))",
           rc-128, os_strsignal(rc-128)) :
-        US os_strexit(rc);
+        US(os_strexit(rc));
 
       if (*ss)
         {
-        g = string_catn(g, US" ", 1);
+        g = string_catn(g, US(" "), 1);
         g = string_cat (g, ss);
         }
 
       /* Now add the command and arguments */
 
-      g = string_catn(g, US" from command:", 14);
+      g = string_catn(g, US(" from command:"), 14);
 
       for (int i = 0; i < sizeof(argv)/sizeof(int *) && argv[i] != NULL; i++)
         {
         BOOL quote = FALSE;
-        g = string_catn(g, US" ", 1);
+        g = string_catn(g, US(" "), 1);
         if (Ustrpbrk(argv[i], " \t") != NULL)
           {
           quote = TRUE;
-          g = string_catn(g, US"\"", 1);
+          g = string_catn(g, US("\""), 1);
           }
         g = string_cat(g, argv[i]);
         if (quote)
-          g = string_catn(g, US"\"", 1);
+          g = string_catn(g, US("\""), 1);
         }
 
       /* Add previous filter timeout message, if present. */
@@ -1115,7 +1115,7 @@ of the pipe command. We don't want to expose these to the world, so we set up
 something bland to return to the sender. */
 
 if (addr->transport_return != OK)
-  addr->user_message = US"local delivery failed";
+  addr->user_message = US("local delivery failed");
 
 return FALSE;
 }

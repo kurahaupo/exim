@@ -50,8 +50,8 @@ uschar *bmi_verdicts           = NULL;
 
 int     body_max = 20000;
 
-uschar *exim_path              = US BIN_DIRECTORY "/exim"
-                        "\0<---------------Space to patch exim_path->";
+uschar *exim_path              = US(BIN_DIRECTORY "/exim"
+                        "\0<---------------Space to patch exim_path->");
 
 int     eximon_initialized = FALSE;
 
@@ -66,7 +66,7 @@ ino_t   log_inode;
 long int log_position;
 int     log_width = 600;
 
-uschar *menu_event = US"Shift<Btn1Down>";
+uschar *menu_event = US("Shift<Btn1Down>");
 int     menu_is_up = FALSE;
 int     min_height = 162;
 int     min_width  = 103;
@@ -100,7 +100,7 @@ int     stripchart_varstart = 1;
 int     text_depth = 200;
 int     tick_queue_accumulator = 999999;
 
-uschar *window_title = US"exim monitor";
+uschar *window_title = US("exim monitor");
 
 
 /***********************************************************/
@@ -139,7 +139,7 @@ uschar *dkim_cur_signer          = NULL;
 uschar *dkim_signers             = NULL;
 uschar *dkim_signing_domain      = NULL;
 uschar *dkim_signing_selector    = NULL;
-uschar *dkim_verify_signers      = US"$dkim_signers";
+uschar *dkim_verify_signers      = US("$dkim_signers");
 unsigned dkim_collect_input      = 0;
 BOOL    dkim_disable_verify      = FALSE;
 #endif
@@ -192,7 +192,7 @@ uid_t   originator_uid;
 
 uschar *primary_hostname       = NULL;
 
-uschar *queue_name             = US"";
+uschar *queue_name             = US("");
 
 int     received_count         = 0;
 uschar *received_protocol      = NULL;
@@ -216,7 +216,7 @@ BOOL    sender_set_untrusted   = FALSE;
 uschar *smtp_active_hostname   = NULL;
 
 BOOL    split_spool_directory  = FALSE;
-uschar *spool_directory        = US SPOOL_DIRECTORY;
+uschar *spool_directory        = US(SPOOL_DIRECTORY);
 int     string_datestamp_offset=-1;
 int     string_datestamp_length= 0;
 int     string_datestamp_type  = -1;
@@ -231,8 +231,8 @@ tree_node *tree_duplicates     = NULL;
 tree_node *tree_nonrecipients  = NULL;
 tree_node *tree_unusable       = NULL;
 
-uschar *version_date           = US"?";
-uschar *version_string         = US"?";
+uschar *version_date           = US("?");
+uschar *version_string         = US("?");
 
 int     warning_count          = 0;
 

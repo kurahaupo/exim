@@ -180,7 +180,7 @@ X509 * x;
 STACK_OF(X509) * sk;
 
 if (!(sk = sk_X509_new_null())) return NULL;
-if (!(bp = BIO_new_file(CS file, "r"))) return NULL;
+if (!(bp = BIO_new_file(CS(file), "r"))) return NULL;
 while ((x = PEM_read_bio_X509(bp, NULL, 0, NULL)))
   sk_X509_push(sk, x);
 BIO_free(bp);
@@ -261,12 +261,12 @@ int
 tls_start(int sock, SSL **ssl, SSL_CTX *ctx)
 {
 int rc;
-static const unsigned char *sid_ctx = US"exim";
+static const unsigned char *sid_ctx = US("exim");
 
 RAND_load_file("client.c", -1);   /* Not *very* random! */
 
 *ssl = SSL_new (ctx);
-SSL_set_session_id_context(*ssl, sid_ctx, strlen(CS sid_ctx));
+SSL_set_session_id_context(*ssl, sid_ctx, strlen(CS(sid_ctx)));
 SSL_set_fd (*ssl, sock);
 SSL_set_connect_state(*ssl);
 
@@ -365,7 +365,7 @@ struct stat statbuf;
 /* Initialize the data structures for holding the parameters */
 
 ret = gnutls_dh_params_init(&dh_params);
-if (ret < 0) gnutls_error(US"init dh_params", ret);
+if (ret < 0) gnutls_error(US("init dh_params"), ret);
 
 /* Open the cache file for reading and if successful, read it and set up the
 parameters. */
@@ -380,19 +380,19 @@ if (fd < 0)
 if (fstat(fd, &statbuf) < 0)
   {
   (void)close(fd);
-  return gnutls_error(US"TLS cache stat failed", 0);
+  return gnutls_error(US("TLS cache stat failed"), 0);
   }
 
 m.size = statbuf.st_size;
 m.data = malloc(m.size);
 if (m.data == NULL)
-  return gnutls_error(US"memory allocation failed", 0);
+  return gnutls_error(US("memory allocation failed"), 0);
 if (read(fd, m.data, m.size) != m.size)
-  return gnutls_error(US"TLS cache read failed", 0);
+  return gnutls_error(US("TLS cache read failed"), 0);
 (void)close(fd);
 
 ret = gnutls_dh_params_import_pkcs3(dh_params, &m, GNUTLS_X509_FMT_PEM);
-if (ret < 0) return gnutls_error(US"DH params import", ret);
+if (ret < 0) return gnutls_error(US("DH params import"), ret);
 free(m.data);
 }
 
@@ -415,7 +415,7 @@ tls_init(uschar *certificate, uschar *privatekey)
 int rc;
 
 rc = gnutls_global_init();
-if (rc < 0) gnutls_error(US"gnutls_global_init", rc);
+if (rc < 0) gnutls_error(US("gnutls_global_init"), rc);
 
 /* Read D-H parameters from the cache file. */
 
@@ -424,15 +424,15 @@ init_dh();
 /* Create the credentials structure */
 
 rc = gnutls_certificate_allocate_credentials(&x509_cred);
-if (rc < 0) gnutls_error(US"certificate_allocate_credentials", rc);
+if (rc < 0) gnutls_error(US("certificate_allocate_credentials"), rc);
 
 /* Set the certificate and private keys */
 
 if (certificate != NULL)
   {
-  rc = gnutls_certificate_set_x509_key_file(x509_cred, CS certificate,
-    CS privatekey, GNUTLS_X509_FMT_PEM);
-  if (rc < 0) gnutls_error(US"gnutls_certificate", rc);
+  rc = gnutls_certificate_set_x509_key_file(x509_cred, CS(certificate),
+    CS(privatekey), GNUTLS_X509_FMT_PEM);
+  if (rc < 0) gnutls_error(US("gnutls_certificate"), rc);
   }
 
 /* Associate the parameters with the x509 credentials structure. */
@@ -544,9 +544,9 @@ do_file(srv_ctx * srv, FILE * f, int timeout,
 {
 unsigned char outbuffer[1024 * 20];
 
-while (fgets(CS outbuffer, sizeof(outbuffer), f) != NULL)
+while (fgets(CS(outbuffer), sizeof(outbuffer), f) != NULL)
   {
-  int n = (int)strlen(CS outbuffer);
+  int n = (int)strlen(CS(outbuffer));
   int crlf = 1;
   int rc;
 
@@ -555,7 +555,7 @@ while (fgets(CS outbuffer, sizeof(outbuffer), f) != NULL)
 
   /* Expect incoming */
 
-  if (  strncmp(CS outbuffer, "???", 3) == 0
+  if (  strncmp(CS(outbuffer), "???", 3) == 0
      && (outbuffer[3] == ' ' || outbuffer[3] == '*' || outbuffer[3] == '?')
      )
     {
@@ -610,7 +610,7 @@ nextinput:
 #ifdef HAVE_GNUTLS
 	retry1:
 	  DEBUG { printf("call gnutls_record_recv\n"); fflush(stdout); }
-	  rc = gnutls_record_recv(tls_session, CS inbufferp, bsiz - (inbufferp - inbuffer) - 1);
+	  rc = gnutls_record_recv(tls_session, CS(inbufferp), bsiz - (inbufferp - inbuffer) - 1);
 	  if (rc < 0)
 	    {
 	    DEBUG { printf("gnutls_record_recv: %s\n", gnutls_strerror(rc)); fflush(stdout); }
@@ -684,7 +684,7 @@ nextinput:
       if (*inptr == '\n') inptr++;
       }
 
-    if (strncmp(CS lineptr, CS outbuffer + 4, n - 4) != 0)
+    if (strncmp(CS(lineptr), CS(outbuffer) + 4, n - 4) != 0)
       if (resp_optional)
 	{
 	inptr = lineptr;	/* consume scriptline, not inputline */
@@ -748,7 +748,7 @@ nextinput:
 	    {
 	  retry2:
 	    DEBUG { printf("call gnutls_record_recv\n"); fflush(stdout); }
-	    rc = gnutls_record_recv(tls_session, CS inbuffer, bsiz - 1);
+	    rc = gnutls_record_recv(tls_session, CS(inbuffer), bsiz - 1);
 	    if (rc < 0)
 	      {
 	      DEBUG { printf("gnutls_record_recv: %s\n", gnutls_strerror(rc)); fflush(stdout); }
@@ -818,15 +818,15 @@ nextinput:
 
   /* Wait for a bit before proceeding */
 
-  else if (strncmp(CS outbuffer, "+++ ", 4) == 0)
+  else if (strncmp(CS(outbuffer), "+++ ", 4) == 0)
     {
     printf("%s\n", outbuffer);
-    sleep(atoi(CS outbuffer + 4));
+    sleep(atoi(CS(outbuffer) + 4));
     }
 
   /* Stack new input file */
 
-  else if (strncmp(CS outbuffer, "<<< ", 4) == 0)
+  else if (strncmp(CS(outbuffer), "<<< ", 4) == 0)
     {
     FILE * new_f;
     if (!(new_f = fopen((const char *)outbuffer+4 , "r")))
@@ -844,7 +844,7 @@ nextinput:
     {
     unsigned char * out = outbuffer;
 
-    if (strncmp(CS outbuffer, ">>> ", 4) == 0)
+    if (strncmp(CS(outbuffer), ">>> ", 4) == 0)
       {
       crlf = 0;
       out += 4;
@@ -862,8 +862,8 @@ nextinput:
 
     /* Shutdown TLS */
 
-    if (strcmp(CS out, "stoptls") == 0 ||
-        strcmp(CS out, "STOPTLS") == 0)
+    if (strcmp(CS(out), "stoptls") == 0 ||
+        strcmp(CS(out), "STOPTLS") == 0)
       {
       if (!srv->tls_active)
         {
@@ -890,14 +890,14 @@ nextinput:
 
     /* Remember that we sent STARTTLS */
 
-    srv->sent_starttls = (strcmp(CS out, "starttls") == 0 ||
-                     strcmp(CS out, "STARTTLS") == 0);
+    srv->sent_starttls = (strcmp(CS(out), "starttls") == 0 ||
+                     strcmp(CS(out), "STARTTLS") == 0);
 
     /* Fudge: if the command is "starttls_wait", we send the starttls bit,
     but we haven't set the flag, so that there is no negotiation. This is for
     testing the server's timeout. */
 
-    if (strcmp(CS out, "starttls_wait") == 0)
+    if (strcmp(CS(out), "starttls_wait") == 0)
       {
       out[8] = 0;
       n = 8;
@@ -907,7 +907,7 @@ nextinput:
     printf(">>> %s\n", out);
     if (crlf)
       {
-      strcpy(CS out + n, "\r\n");
+      strcpy(CS(out) + n, "\r\n");
       n += 2;
       }
 
@@ -922,7 +922,7 @@ nextinput:
         rc = SSL_write (srv->ssl, out, n);
       #endif
       #ifdef HAVE_GNUTLS
-        if ((rc = gnutls_record_send(tls_session, CS out, n)) < 0)
+        if ((rc = gnutls_record_send(tls_session, CS(out), n)) < 0)
           {
           printf("GnuTLS write error: %s\n", gnutls_strerror(rc));
           exit(76);
@@ -1239,7 +1239,7 @@ if (rc < 0)
 #ifdef TCP_QUICKACK
   {
   int off = 0;
-  (void) setsockopt(srv.sock, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+  (void) setsockopt(srv.sock, IPPROTO_TCP, TCP_QUICKACK, US(&off), sizeof(off));
   }
 #endif
 
@@ -1289,7 +1289,7 @@ SSL_CTX_set_info_callback(srv.ctx, (void (*)())info_callback);
 #ifdef HAVE_GNUTLS
 if (certfile != NULL) printf("Certificate file = %s\n", certfile);
 if (keyfile != NULL) printf("Key file = %s\n", keyfile);
-tls_init(US certfile, US keyfile);
+tls_init(US(certfile), US(keyfile));
 tls_session = tls_session_init();
 #ifdef HAVE_OCSP
 if (ocsp_stapling)

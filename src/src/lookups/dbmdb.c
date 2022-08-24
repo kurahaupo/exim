@@ -54,17 +54,17 @@ rc = lf_check_file(-1, filename, S_IFREG, modemask, owners, owngroups,
 #else
   {
   uschar filebuffer[256];
-  (void)sprintf(CS filebuffer, "%.250s.db", filename);
+  (void)sprintf(CS(filebuffer), "%.250s.db", filename);
   rc = lf_check_file(-1, filebuffer, S_IFREG, modemask, owners, owngroups,
     "dbm", errmsg);
   if (rc < 0)        /* stat() failed */
     {
-    (void)sprintf(CS filebuffer, "%.250s.dir", filename);
+    (void)sprintf(CS(filebuffer), "%.250s.dir", filename);
     rc = lf_check_file(-1, filebuffer, S_IFREG, modemask, owners, owngroups,
       "dbm", errmsg);
     if (rc == 0)     /* x.dir was OK */
       {
-      (void)sprintf(CS filebuffer, "%.250s.pag", filename);
+      (void)sprintf(CS(filebuffer), "%.250s.pag", filename);
       rc = lf_check_file(-1, filebuffer, S_IFREG, modemask, owners, owngroups,
         "dbm", errmsg);
       }
@@ -179,7 +179,7 @@ while ((key_item = string_nextinlist(&key_elems, &sep, key_p, bufleft)) != NULL)
     {
     /* The string_nextinlist() will stop at buffer size, but we should always
     have at least 1 character extra, so some assumption has failed. */
-    *errmsg = string_copy(US"Ran out of buffer space for joining elements");
+    *errmsg = string_copy(US("Ran out of buffer space for joining elements"));
     return DEFER;
     }
   key_p += key_item_len;
@@ -187,7 +187,7 @@ while ((key_item = string_nextinlist(&key_elems, &sep, key_p, bufleft)) != NULL)
 
 if (key_p == key_buffer)
   {
-  *errmsg = string_copy(US"empty list key");
+  *errmsg = string_copy(US("empty list key"));
   return FAIL;
   }
 
@@ -239,7 +239,7 @@ return g;
 
 
 lookup_info dbm_lookup_info = {
-  .name = US"dbm",			/* lookup name */
+  .name = US("dbm"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dbmdb_open,			/* open function */
   .check = dbmdb_check,			/* check function */
@@ -251,7 +251,7 @@ lookup_info dbm_lookup_info = {
 };
 
 lookup_info dbmz_lookup_info = {
-  .name = US"dbmnz",			/* lookup name */
+  .name = US("dbmnz"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dbmdb_open,			/* sic */     /* open function */
   .check = dbmdb_check,			/* sic */     /* check function */
@@ -263,7 +263,7 @@ lookup_info dbmz_lookup_info = {
 };
 
 lookup_info dbmjz_lookup_info = {
-  .name = US"dbmjz",			/* lookup name */
+  .name = US("dbmjz"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dbmdb_open,			/* sic */     /* open function */
   .check = dbmdb_check,			/* sic */     /* check function */

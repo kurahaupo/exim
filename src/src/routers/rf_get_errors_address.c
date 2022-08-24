@@ -62,7 +62,7 @@ if (s == NULL)
 if (*s == 0)
   {
   addr->prop.ignore_error = TRUE;   /* For locally detected errors */
-  *errors_to = US"";                   /* Return path for SMTP */
+  *errors_to = US("");                   /* Return path for SMTP */
   return OK;
   }
 

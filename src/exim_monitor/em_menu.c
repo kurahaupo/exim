@@ -136,7 +136,7 @@ menu_is_up = FALSE;
 static void
 msglogAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-Widget text = text_create(US client_data, text_depth);
+Widget text = text_create(US(client_data), text_depth);
 uschar * fname = NULL;
 FILE * f = NULL;
 
@@ -144,9 +144,9 @@ FILE * f = NULL;
 
 for (int i = 0; i < (spool_is_split ? 2:1); i++)
   {
-  message_subdir[0] = i != 0 ? (US client_data)[5] : 0;
-  fname = spool_fname(US"msglog", message_subdir, US client_data, US"");
-  if ((f = fopen(CS fname, "r")))
+  message_subdir[0] = i != 0 ? (US(client_data))[5] : 0;
+  fname = spool_fname(US("msglog"), message_subdir, US(client_data), US(""));
+  if ((f = fopen(US(fname), "r")))
     break;
   }
 
@@ -169,15 +169,15 @@ else
 static void
 bodyAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-Widget text = text_create(US client_data, text_depth);
+Widget text = text_create(US(client_data), text_depth);
 FILE *f = NULL;
 
 for (int i = 0; i < (spool_is_split? 2:1); i++)
   {
   uschar * fname;
-  message_subdir[0] = i != 0 ? (US client_data)[5] : 0;
-  fname = spool_fname(US"input", message_subdir, US client_data, US"-D");
-  if ((f = fopen(CS fname, "r")))
+  message_subdir[0] = i != 0 ? (US(client_data))[5] : 0;
+  fname = spool_fname(US("input"), message_subdir, US(client_data), US("-D"));
+  if ((f = fopen(US(fname), "r")))
     break;
   }
 
@@ -194,7 +194,7 @@ else
     count += Ustrlen(buffer);
     if (count > body_max)
       {
-      text_show(text, US"\n*** Message length exceeds BODY_MAX ***\n");
+      text_show(text, US("\n*** Message length exceeds BODY_MAX ***\n"));
       break;
       }
     }
@@ -219,9 +219,9 @@ ActOnMessage(uschar *id, uschar *action, uschar *address_arg)
 int pid;
 int pipe_fd[2];
 int delivery = Ustrcmp(action + Ustrlen(action) - 2, "-M") == 0;
-uschar *quote = US"";
-uschar *at = US"";
-uschar *qualify = US"";
+uschar *quote = US("");
+uschar *at = US("");
+uschar *qualify = US("");
 uschar buffer[256];
 queue_item *qq;
 Widget text = NULL;
@@ -231,19 +231,19 @@ qualify domain, qualify it. (But don't qualify '<>'.)*/
 
 if (address_arg[0] != 0)
   {
-  quote = US"\'";
+  quote = US("\'");
   if (Ustrchr(address_arg, '@') == NULL &&
       Ustrcmp(address_arg, "<>") != 0 &&
       qualify_domain != NULL &&
       qualify_domain[0] != 0)
     {
-    at = US"@";
+    at = US("@");
     qualify = qualify_domain;
     }
   }
-sprintf(CS buffer, "%s %s %s %s %s %s%s%s%s%s", exim_path,
-  (alternate_config == NULL)? US"" : US"-C",
-  (alternate_config == NULL)? US"" : alternate_config,
+sprintf(US(buffer), "%s %s %s %s %s %s%s%s%s%s", exim_path,
+  (alternate_config == NULL)? US("") : US("-C"),
+  (alternate_config == NULL)? US("") : alternate_config,
   action, id, quote, address_arg, at, qualify, quote);
 
 /* If we know we are going to need the window, create it now. */
@@ -265,7 +265,7 @@ if (pipe(pipe_fd) != 0)
     text = text_create(id, text_depth);
     text_showf(text, "%s\n", buffer);
     }
-  text_show(text, US"*** Failed to create pipe ***\n");
+  text_show(text, US("*** Failed to create pipe ***\n"));
   return;
   }
 
@@ -295,7 +295,7 @@ if (!delivery)
   dup2(pipe_fd[1], 2);
   close(pipe_fd[1]);
 
-  rc = system(CS buffer);
+  rc = system(US(buffer));
 
   close(1);
   close(2);
@@ -363,7 +363,7 @@ if ((pid = fork()) == 0)
   dup2(pipe_fd[1], 2);
   close(pipe_fd[1]);
 
-  system(CS buffer);
+  system(US(buffer));
 
   close(1);
   close(2);
@@ -379,7 +379,7 @@ if (pid < 0) text_showf(text, "Failed to fork: %s\n", strerror(errno)); else
 
   if (p == NULL)
     {
-    text_show(text, US"Run out of store\n");
+    text_show(text, US("Run out of store\n"));
     return;
     }
 
@@ -403,7 +403,7 @@ if (pid < 0) text_showf(text, "Failed to fork: %s\n", strerror(errno)); else
 static void
 deliverAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-v -M", US"");
+ActOnMessage(US(client_data), US("-v -M"), US(""));
 }
 
 /*************************************************
@@ -413,7 +413,7 @@ ActOnMessage(US client_data, US"-v -M", US"");
 static void
 freezeAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mf", US"");
+ActOnMessage(US(client_data), US("-Mf"), US(""));
 }
 
 /*************************************************
@@ -423,7 +423,7 @@ ActOnMessage(US client_data, US"-Mf", US"");
 static void
 thawAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mt", US"");
+ActOnMessage(US(client_data), US("-Mt"), US(""));
 }
 
 /*************************************************
@@ -437,7 +437,7 @@ start-up time. If the string is empty, do nothing. */
 XtActionProc
 dialogAction(Widget w, XEvent *event, String *ss, Cardinal *c)
 {
-uschar *s = US XawDialogGetValueString(dialog_widget);
+uschar *s = US(XawDialogGetValueString(dialog_widget));
 
 XtPopdown((Widget)dialog_shell);
 XtDestroyWidget((Widget)dialog_shell);
@@ -535,9 +535,9 @@ addrecipAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
 Ustrncpy(actioned_message, client_data, 24);
 actioned_message[23] = '\0';
-action_required = US"-Mar";
+action_required = US("-Mar");
 dialog_ref_widget = menushell;
-create_dialog(US"Recipient address to add?", US"");
+create_dialog(US("Recipient address to add?"), US(""));
 }
 
 /*************************************************
@@ -549,9 +549,9 @@ markdelAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
 Ustrncpy(actioned_message, client_data, 24);
 actioned_message[23] = '\0';
-action_required = US"-Mmd";
+action_required = US("-Mmd");
 dialog_ref_widget = menushell;
-create_dialog(US"Recipient address to mark delivered?", US"");
+create_dialog(US("Recipient address to mark delivered?"), US(""));
 }
 
 /*************************************************
@@ -561,7 +561,7 @@ create_dialog(US"Recipient address to mark delivered?", US"");
 static void
 markalldelAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mmad", US"");
+ActOnMessage(US(client_data), US("-Mmad"), US(""));
 }
 
 /*************************************************
@@ -577,10 +577,10 @@ uschar *sender;
 Ustrncpy(actioned_message, client_data, 24);
 actioned_message[23] = '\0';
 q = find_queue(actioned_message, queue_noop, 0);
-sender = !q ? US"" : q->sender[0] == 0 ? US"<>" : q->sender;
-action_required = US"-Mes";
+sender = !q ? US("") : q->sender[0] == 0 ? US("<>") : q->sender;
+action_required = US("-Mes");
 dialog_ref_widget = menushell;
-create_dialog(US"New sender address?", sender);
+create_dialog(US("New sender address?"), sender);
 }
 
 /*************************************************
@@ -590,7 +590,7 @@ create_dialog(US"New sender address?", sender);
 static void
 giveupAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-v -Mg", US"");
+ActOnMessage(US(client_data), US("-v -Mg"), US(""));
 }
 
 /*************************************************
@@ -600,7 +600,7 @@ ActOnMessage(US client_data, US"-v -Mg", US"");
 static void
 removeAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mrm", US"");
+ActOnMessage(US(client_data), US("-Mrm"), US(""));
 }
 
 /*************************************************
@@ -611,7 +611,7 @@ static void
 headersAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
 uschar buffer[256];
-Widget text = text_create(US client_data, text_depth);
+Widget text = text_create(US(client_data), text_depth);
 rmark reset_point;
 
 /* Remember the point in the dynamic store so we can recover to it afterwards.
@@ -619,13 +619,13 @@ Then use Exim's function to read the header. */
 
 reset_point = store_mark();
 
-sprintf(CS buffer, "%s-H", US client_data);
+sprintf(US(buffer), "%s-H", US(client_data));
 if (spool_read_header(buffer, TRUE, FALSE) != spool_read_OK)
   {
   if (errno == ERRNO_SPOOLFORMAT)
     {
     struct stat statbuf;
-    sprintf(CS big_buffer, "%s/input/%s", spool_directory, buffer);
+    sprintf(US(big_buffer), "%s/input/%s", spool_directory, buffer);
     if (Ustat(big_buffer, &statbuf) == 0)
       text_showf(text, "Format error in spool file %s: size=%lu\n", buffer,
         (unsigned long)statbuf.st_size);
@@ -642,13 +642,13 @@ if (sender_address)
 
 if (recipients_list)
   {
-  text_show(text, US"Recipients:\n");
+  text_show(text, US("Recipients:\n"));
   for (int i = 0; i < recipients_count; i++)
     text_showf(text, "  %s %s\n",
       tree_search(tree_nonrecipients, recipients_list[i].address)
         ? "*" : " ",
       recipients_list[i].address);
-  text_show(text, US"\n");
+  text_show(text, US("\n"));
   }
 
 for (header_line * next, * h = header_list; h; h = next)
@@ -723,7 +723,7 @@ XawTextDisplayCaret(text, TRUE);
 
 if (queue_font != NULL)
   {
-  XFontStruct *f = XLoadQueryFont(X_display, CS queue_font);
+  XFontStruct *f = XLoadQueryFont(X_display, US(queue_font));
   if (f != NULL) xs_SetValues(text, 1, "font", f);
   }
 

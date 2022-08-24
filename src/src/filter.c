@@ -356,7 +356,7 @@ while (*++ptr && *ptr != '\"' && *ptr != '\n')
         }
       }
 
-    *bp++ = string_interpret_escape(CUSS &ptr);
+    *bp++ = string_interpret_escape(CUSS(&ptr));
     }
   }
 
@@ -389,7 +389,7 @@ get_number(const uschar *s, BOOL *ok)
 {
 int value, count;
 *ok = FALSE;
-if (sscanf(CS s, "%i%n", &value, &count) != 1) return 0;
+if (sscanf(CS(s), "%i%n", &value, &count) != 1) return 0;
 if (tolower(s[count]) == 'k') { value *= 1024; count++; }
 if (tolower(s[count]) == 'm') { value *= 1024*1024; count++; }
 while (isspace((s[count]))) count++;
@@ -436,7 +436,7 @@ for (;;)
 
   if (!*ptr)
     {
-    *error_pointer = US"\"then\" missing at end of filter file";
+    *error_pointer = US("\"then\" missing at end of filter file");
     break;
     }
 
@@ -578,14 +578,14 @@ for (;;)
       /* Handle "does|is [not]", preserving the pointer after "is" in
       case it isn't that, but the form "is <string>". */
 
-      if (strcmpic(buffer, US"does") == 0 || strcmpic(buffer, US"is") == 0)
+      if (strcmpic(buffer, US("does")) == 0 || strcmpic(buffer, US("is")) == 0)
         {
         if (buffer[0] == 'i') { c->type = cond_is; isptr = ptr; }
         if (buffer[0] == 'I') { c->type = cond_IS; isptr = ptr; }
 
         ptr = nextword(ptr, buffer, sizeof(buffer), TRUE);
         if (*error_pointer) break;
-        if (strcmpic(buffer, US"not") == 0)
+        if (strcmpic(buffer, US("not")) == 0)
           {
           c->testfor = !c->testfor;
           if (isptr) isptr = ptr;
@@ -864,12 +864,12 @@ white space here. */
 
 if (Ustrncmp(ptr, "if(", 3) == 0)
   {
-  Ustrcpy(buffer, US"if");
+  Ustrcpy(buffer, US("if"));
   ptr += 2;
   }
 else if (Ustrncmp(ptr, "elif(", 5) == 0)
   {
-  Ustrcpy(buffer, US"elif");
+  Ustrcpy(buffer, US("elif"));
   ptr += 4;
   }
 else
@@ -989,7 +989,7 @@ switch (command)
       if (command == logwrite_command)
         {
         int len = Ustrlen(buffer);
-        if (len == 0 || buffer[len-1] != '\n') Ustrcat(buffer, US"\n");
+        if (len == 0 || buffer[len-1] != '\n') Ustrcat(buffer, US("\n"));
         }
 
       argument.u = string_copy(buffer);
@@ -1092,7 +1092,7 @@ switch (command)
   if (*saveptr != '\"' && (!*buffer || Ustrcmp(buffer, "text") != 0))
     {
     ptr = saveptr;
-    fmsg = US"";
+    fmsg = US("");
     }
   else
     {
@@ -1236,7 +1236,7 @@ switch (command)
 
     if (Ustrcmp(buffer, "return") == 0)
       {
-      new->args[mailarg_index_return].u = US"";  /* not NULL => TRUE */
+      new->args[mailarg_index_return].u = US("");  /* not NULL => TRUE */
       ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
       if (Ustrcmp(buffer, "message") != 0)
         {
@@ -1253,7 +1253,7 @@ switch (command)
 
     if (Ustrcmp(buffer, "expand") == 0)
       {
-      new->args[mailarg_index_expand].u = US"";  /* not NULL => TRUE */
+      new->args[mailarg_index_expand].u = US("");  /* not NULL => TRUE */
       ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
       if (Ustrcmp(buffer, "file") != 0)
         {
@@ -1292,17 +1292,17 @@ switch (command)
     {
     if (!new->args[mailarg_index_file].u)
       {
-      new->args[mailarg_index_file].u = string_copy(US".vacation.msg");
-      new->args[mailarg_index_expand].u = US"";   /* not NULL => TRUE */
+      new->args[mailarg_index_file].u = string_copy(US(".vacation.msg"));
+      new->args[mailarg_index_expand].u = US("");   /* not NULL => TRUE */
       }
     if (!new->args[mailarg_index_log].u)
-      new->args[mailarg_index_log].u = string_copy(US".vacation.log");
+      new->args[mailarg_index_log].u = string_copy(US(".vacation.log"));
     if (!new->args[mailarg_index_once].u)
-      new->args[mailarg_index_once].u = string_copy(US".vacation");
+      new->args[mailarg_index_once].u = string_copy(US(".vacation"));
     if (!new->args[mailarg_index_once_repeat].u)
-      new->args[mailarg_index_once_repeat].u = string_copy(US"7d");
+      new->args[mailarg_index_once_repeat].u = string_copy(US("7d"));
     if (!new->args[mailarg_index_subject].u)
-      new->args[mailarg_index_subject].u = string_copy(US"On vacation");
+      new->args[mailarg_index_subject].u = string_copy(US("On vacation"));
     }
 
   /* Join the address on to the chain of generated addresses */
@@ -1400,7 +1400,7 @@ if (conditional)
   expect_endif--;
   if (had_else_endif == had_neither)
     {
-    *error_pointer = US"\"endif\" missing at end of filter file";
+    *error_pointer = US("\"endif\" missing at end of filter file");
     return FALSE;
     }
   }
@@ -1763,10 +1763,10 @@ while (commands)
 
       if (s != NULL && !f.system_filtering)
 	{
-	uschar *ownaddress = expand_string(US"$local_part@$domain");
+	uschar *ownaddress = expand_string(US("$local_part@$domain"));
 	if (strcmpic(ownaddress, s) != 0)
 	  {
-	  *error_pointer = US"errors_to must point to the caller's address";
+	  *error_pointer = US("errors_to must point to the caller's address");
 	  return FF_ERROR;
 	  }
 	}
@@ -1781,7 +1781,7 @@ while (commands)
 	  expargs[0],
 	  commands->noerror? " (noerror)" : "",
 	  (s != NULL)? " errors_to " : "",
-	  (s != NULL)? s : US"");
+	  (s != NULL)? s : US(""));
 	}
 
       /* Real case. */
@@ -1793,13 +1793,13 @@ while (commands)
 	  expargs[0],
 	  commands->noerror? " (noerror)" : "",
 	  (s != NULL)? " errors_to " : "",
-	  (s != NULL)? s : US"");
+	  (s != NULL)? s : US(""));
 
 	/* Create the new address and add it to the chain, setting the
 	af_ignore_error flag if necessary, and the errors address, which can be
 	set in a system filter and to the local address in user filters. */
 
-	addr = deliver_make_addr(US expargs[0], TRUE);  /* TRUE => copy s, so deconst ok */
+	addr = deliver_make_addr(US(expargs[0]), TRUE);  /* TRUE => copy s, so deconst ok */
 	addr->prop.errors_address = !s ? NULL : string_copy(s); /* Default is NULL */
 	if (commands->noerror) addr->prop.ignore_error = TRUE;
 	addr->next = *generated;
@@ -1840,7 +1840,7 @@ while (commands)
 	af_pfr and af_file flags, the af_ignore_error flag if necessary, and the
 	mode value. */
 
-	addr = deliver_make_addr(US s, TRUE);  /* TRUE => copy s, so deconst ok */
+	addr = deliver_make_addr(US(s), TRUE);  /* TRUE => copy s, so deconst ok */
 	setflag(addr, af_pfr);
 	setflag(addr, af_file);
 	if (commands->noerror) addr->prop.ignore_error = TRUE;
@@ -1870,7 +1870,7 @@ while (commands)
 	each command argument is expanded in the transport after the command
 	has been split up into separate arguments. */
 
-	addr = deliver_make_addr(US s, TRUE);  /* TRUE => copy s, so deconst ok */
+	addr = deliver_make_addr(US(s), TRUE);  /* TRUE => copy s, so deconst ok */
 	setflag(addr, af_pfr);
 	setflag(addr, af_expand_pipe);
 	if (commands->noerror) addr->prop.ignore_error = TRUE;
@@ -1888,7 +1888,7 @@ while (commands)
 	  uschar ** ss = store_get(sizeof(uschar *) * (ecount + 3), GET_UNTAINTED);
 
 	  addr->pipe_expandn = ss;
-	  if (!filter_thisaddress) filter_thisaddress = US"";
+	  if (!filter_thisaddress) filter_thisaddress = US("");
 	  *ss++ = string_copy(filter_thisaddress);
 	  for (int i = 0; i <= expand_nmax; i++)
 	    *ss++ = string_copyn(expand_nstring[i], expand_nlength[i]);
@@ -1934,7 +1934,7 @@ while (commands)
 	DEBUG(D_filter)
 	  debug_printf_indent("filter log command aborted: euid=%ld\n",
 	  (long int)geteuid());
-	*error_pointer = US"logwrite command forbidden";
+	*error_pointer = US("logwrite command forbidden");
 	return FF_ERROR;
 	}
       else if ((filter_options & RDO_REALLOG) != 0)
@@ -1946,7 +1946,7 @@ while (commands)
 	  {
 	  if (!log_filename)
 	    {
-	    *error_pointer = US"attempt to obey \"logwrite\" command "
+	    *error_pointer = US("attempt to obey \"logwrite\" command ")
 	      "without a previous \"logfile\"";
 	    return FF_ERROR;
 	    }
@@ -2021,23 +2021,23 @@ while (commands)
       ensure printing characters so as not to mess up log files. */
 
     case defer_command:
-      ff_name = US"defer";
+      ff_name = US("defer");
       ff_ret = FF_DEFER;
       goto DEFERFREEZEFAIL;
 
     case fail_command:
-      ff_name = US"fail";
+      ff_name = US("fail");
       ff_ret = FF_FAIL;
       goto DEFERFREEZEFAIL;
 
     case freeze_command:
-      ff_name = US"freeze";
+      ff_name = US("freeze");
       ff_ret = FF_FREEZE;
 
     DEFERFREEZEFAIL:
-      *error_pointer = fmsg = US string_printing(Ustrlen(expargs[0]) > 1024
+      *error_pointer = fmsg = US(string_printing(Ustrlen(expargs[0]) > 1024
 	? string_sprintf("%.1000s ... (truncated)", expargs[0])
-	: string_copy(expargs[0]));
+	: string_copy(expargs[0])));
       for(uschar * s = fmsg; *s; s++)
 	if (!s[1] && *s == '\n') { *s = '\0'; break; }	/* drop trailing newline */
 
@@ -2183,7 +2183,7 @@ while (commands)
 	  const uschar *to = commands->args[mailarg_index_to].u;
 	  indent();
 	  printf("%sail to: %s%s%s\n", (commands->seen)? "Seen m" : "M",
-	    to ? to : US"<default>",
+	    to ? to : US("<default>"),
 	    commands->command == vacation_command ? " (vacation)" : "",
 	    commands->noerror ? " (noerror)" : "");
 	  for (i = 1; i < MAILARGS_STRING_COUNT; i++)
@@ -2208,7 +2208,7 @@ while (commands)
 	  const uschar *to = commands->args[mailarg_index_to].u;
 	  gstring * log_addr = NULL;
 
-	  if (!to) to = expand_string(US"$reply_address");
+	  if (!to) to = expand_string(US("$reply_address"));
 	  while (isspace(*to)) to++;
 
 	  for (tt = to; *tt; tt++)     /* Get rid of newlines */
@@ -2266,7 +2266,7 @@ while (commands)
 
 	    if (recipient)
 	      {
-	      log_addr = string_catn(log_addr, log_addr ? US"," : US">", 1);
+	      log_addr = string_catn(log_addr, log_addr ? US(",") : US(">"), 1);
 	      log_addr = string_cat (log_addr, recipient);
 	      }
 
@@ -2274,7 +2274,7 @@ while (commands)
 
 	    if (log_addr && log_addr->ptr > 256)
 	      {
-	      log_addr = string_catn(log_addr, US", ...", 5);
+	      log_addr = string_catn(log_addr, US(", ..."), 5);
 	      break;
 	      }
 
@@ -2288,7 +2288,7 @@ while (commands)
 	    addr = deliver_make_addr(string_from_gstring(log_addr), FALSE);
 	  else
 	    {
-	    addr = deliver_make_addr(US ">**bad-reply**", FALSE);
+	    addr = deliver_make_addr(US(">**bad-reply**"), FALSE);
 	    setflag(addr, af_bad_reply);
 	    }
 
@@ -2326,7 +2326,7 @@ while (commands)
 	  for (i = 1; i < mailargs_string_passed; i++)
 	    {
 	    const uschar *ss = commands->args[i].u;
-	    *(USS((US addr->reply) + reply_offsets[i])) =
+	    *(USS((US(addr->reply)) + reply_offsets[i])) =
 	      ss ? string_copy(ss) : NULL;
 	    }
 	  }
@@ -2390,24 +2390,24 @@ for (h = header_list; h; h = h->next)
   {
   if (h->type == htype_old) continue;
 
-  if (strncmpic(h->text, US"List-", 5) == 0)
+  if (strncmpic(h->text, US("List-"), 5) == 0)
     {
     uschar * s = h->text + 5;
-    if (strncmpic(s, US"Id:", 3) == 0 ||
-        strncmpic(s, US"Help:", 5) == 0 ||
-        strncmpic(s, US"Subscribe:", 10) == 0 ||
-        strncmpic(s, US"Unsubscribe:", 12) == 0 ||
-        strncmpic(s, US"Post:", 5) == 0 ||
-        strncmpic(s, US"Owner:", 6) == 0 ||
-        strncmpic(s, US"Archive:", 8) == 0)
+    if (strncmpic(s, US("Id:"), 3) == 0 ||
+        strncmpic(s, US("Help:"), 5) == 0 ||
+        strncmpic(s, US("Subscribe:"), 10) == 0 ||
+        strncmpic(s, US("Unsubscribe:"), 12) == 0 ||
+        strncmpic(s, US("Post:"), 5) == 0 ||
+        strncmpic(s, US("Owner:"), 6) == 0 ||
+        strncmpic(s, US("Archive:"), 8) == 0)
       return FALSE;
     }
 
-  else if (strncmpic(h->text, US"Auto-submitted:", 15) == 0)
+  else if (strncmpic(h->text, US("Auto-submitted:"), 15) == 0)
     {
     uschar * s = h->text + 15;
     Uskip_whitespace(&s);
-    if (strncmpic(s, US"no", 2) != 0) return FALSE;
+    if (strncmpic(s, US("no"), 2) != 0) return FALSE;
     s += 2;
     Uskip_whitespace(&s);
     if (*s) return FALSE;
@@ -2417,9 +2417,9 @@ for (h = header_list; h; h = h->next)
 /* Set up "my" address */
 
 self = string_sprintf("%s@%s", deliver_localpart, deliver_domain);
-self_from = rewrite_one(self, rewrite_from, NULL, FALSE, US"",
+self_from = rewrite_one(self, rewrite_from, NULL, FALSE, US(""),
   global_rewrite_rules);
-self_to   = rewrite_one(self, rewrite_to, NULL, FALSE, US"",
+self_to   = rewrite_one(self, rewrite_to, NULL, FALSE, US(""),
   global_rewrite_rules);
 
 
@@ -2432,13 +2432,13 @@ suffixed version of the local part in the tests. */
 if (deliver_localpart_prefix || deliver_localpart_suffix)
   {
   psself = string_sprintf("%s%s%s@%s",
-    deliver_localpart_prefix ? deliver_localpart_prefix : US"",
+    deliver_localpart_prefix ? deliver_localpart_prefix : US(""),
     deliver_localpart,
-    deliver_localpart_suffix ? deliver_localpart_suffix : US"",
+    deliver_localpart_suffix ? deliver_localpart_suffix : US(""),
     deliver_domain);
-  psself_from = rewrite_one(psself, rewrite_from, NULL, FALSE, US"",
+  psself_from = rewrite_one(psself, rewrite_from, NULL, FALSE, US(""),
     global_rewrite_rules);
-  psself_to   = rewrite_one(psself, rewrite_to, NULL, FALSE, US"",
+  psself_to   = rewrite_one(psself, rewrite_to, NULL, FALSE, US(""),
     global_rewrite_rules);
   if (psself_from == NULL) psself_from = psself;
   if (psself_to == NULL) psself_to = psself;
@@ -2450,24 +2450,24 @@ if (deliver_localpart_prefix || deliver_localpart_suffix)
 
 yield =
   (
-  header_match(US"to:", TRUE, TRUE, aliases, to_count, self, self_to, psself,
+  header_match(US("to:"), TRUE, TRUE, aliases, to_count, self, self_to, psself,
                psself_to) ||
     (scan_cc &&
        (
-       header_match(US"cc:", TRUE, TRUE, aliases, to_count, self, self_to,
+       header_match(US("cc:"), TRUE, TRUE, aliases, to_count, self, self_to,
                              psself, psself_to)
        ||
-       header_match(US"bcc:", TRUE, TRUE, aliases, to_count, self, self_to,
+       header_match(US("bcc:"), TRUE, TRUE, aliases, to_count, self, self_to,
                               psself, psself_to)
        )
     )
   ) &&
 
-  header_match(US"from:", TRUE, FALSE, aliases, from_count, "^server@",
+  header_match(US("from:"), TRUE, FALSE, aliases, from_count, "^server@",
     "^daemon@", "^root@", "^listserv@", "^majordomo@", "^.*?-request@",
     "^owner-[^@]+@", self, self_from, psself, psself_from) &&
 
-  header_match(US"precedence:", FALSE, FALSE, NULL, 3, "bulk","list","junk") &&
+  header_match(US("precedence:"), FALSE, FALSE, NULL, 3, "bulk","list","junk") &&
 
   (sender_address == NULL || sender_address[0] != 0);
 
@@ -2545,29 +2545,29 @@ if (read_command_list(&ptr, &lastcmdptr, FALSE))
 
 if (filter_test != FTEST_NONE || (debug_selector & D_filter) != 0)
   {
-  uschar *s = US"";
+  uschar *s = US("");
   switch(yield)
     {
     case FF_DEFER:
-      s = US"Filtering ended by \"defer\".";
+      s = US("Filtering ended by \"defer\".");
       break;
 
     case FF_FREEZE:
-      s = US"Filtering ended by \"freeze\".";
+      s = US("Filtering ended by \"freeze\".");
       break;
 
     case FF_FAIL:
-      s = US"Filtering ended by \"fail\".";
+      s = US("Filtering ended by \"fail\".");
       break;
 
     case FF_DELIVERED:
-      s = US"Filtering set up at least one significant delivery "
+      s = US("Filtering set up at least one significant delivery ")
 	     "or other action.\n"
 	     "No other deliveries will occur.";
       break;
 
     case FF_NOTDELIVERED:
-      s = US"Filtering did not set up a significant delivery.\n"
+      s = US("Filtering did not set up a significant delivery.\n")
 	     "Normal delivery will occur.";
       break;
 
@@ -2576,7 +2576,7 @@ if (filter_test != FTEST_NONE || (debug_selector & D_filter) != 0)
       break;
     }
 
-  if (filter_test != FTEST_NONE) printf("%s\n", CS s);
+  if (filter_test != FTEST_NONE) printf("%s\n", CS(s));
     else debug_printf_indent("%s\n", s);
   }
 

@@ -56,8 +56,8 @@ manualroute_router_options_block manualroute_router_option_defaults = {
   -1,           /* host_all_ignored code (unset) */
   -1,           /* host_find_failed code (unset) */
   FALSE,        /* hosts_randomize */
-  US"defer",    /* host_all_ignored */
-  US"freeze",   /* host_find_failed */
+  US("defer"),    /* host_all_ignored */
+  US("freeze"),   /* host_find_failed */
   NULL,         /* route_data */
   NULL          /* route_list */
 };
@@ -66,12 +66,12 @@ manualroute_router_options_block manualroute_router_option_defaults = {
 /* Names and values for host_find_failed and host_all_ignored.  */
 
 static uschar *hff_names[] = {
-  US"ignore",  /* MUST be first - not valid for host_all_ignored */
-  US"decline",
-  US"defer",
-  US"fail",
-  US"freeze",
-  US"pass" };
+  US("ignore"),  /* MUST be first - not valid for host_all_ignored */
+  US("decline"),
+  US("defer"),
+  US("fail"),
+  US("freeze"),
+  US("pass") };
 
 static int hff_codes[] = { hff_ignore, hff_decline, hff_defer, hff_fail,
   hff_freeze, hff_pass };
@@ -270,14 +270,14 @@ if (ob->route_list)
     /* Check the current domain; if it matches, break the loop */
 
     if ((rc = match_isinlist(addr->domain, &domain, UCHAR_MAX+1,
-           &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, CUSS &lookup_value)) == OK)
+           &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, CUSS(&lookup_value))) == OK)
       break;
 
     /* If there was a problem doing the check, defer */
 
     if (rc == DEFER)
       {
-      addr->message = US"lookup defer in route_list";
+      addr->message = US("lookup defer in route_list");
       return DEFER;
       }
     }
@@ -472,7 +472,7 @@ if (!transport && verify == v_none)
     {
     log_write(0, LOG_MAIN, "Error in %s router: no transport defined",
       rblock->name);
-    addr->message = US"error in router: transport missing";
+    addr->message = US("error in router: transport missing");
     return DEFER;
     }
 

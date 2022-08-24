@@ -170,7 +170,7 @@ if ((node = tree_search(tree_unusable, host_key)))
 /* Open the retry database, giving up if there isn't one. Otherwise, search for
 the retry records, and then close the database again. */
 
-if (!(dbm_file = dbfn_open(US"retry", O_RDONLY, &dbblock, FALSE, TRUE)))
+if (!(dbm_file = dbfn_open(US("retry"), O_RDONLY, &dbblock, FALSE, TRUE)))
   {
   DEBUG(D_deliver|D_retry|D_hints_lookup)
     debug_printf("no retry data available\n");
@@ -580,7 +580,7 @@ for (int i = 0; i < 3; i++)
         reached their retry next try time. */
 
         if (!dbm_file)
-          dbm_file = dbfn_open(US"retry", O_RDWR, &dbblock, TRUE, TRUE);
+          dbm_file = dbfn_open(US("retry"), O_RDWR, &dbblock, TRUE, TRUE);
 
         if (!dbm_file)
           {
@@ -629,8 +629,8 @@ for (int i = 0; i < 3; i++)
           {
           DEBUG(D_retry) debug_printf("No configured retry item for %s%s%s\n",
             rti->key,
-            rti->flags & rf_host ? US" or " : US"",
-            rti->flags & rf_host ? addr->domain : US"");
+            rti->flags & rf_host ? US(" or ") : US(""),
+            rti->flags & rf_host ? addr->domain : US(""));
           if (addr == endaddr) timedout_count++;
           continue;
           }
@@ -649,10 +649,10 @@ for (int i = 0; i < 3; i++)
         much point in keeping a huge message here, anyway. */
 
         message = rti->basic_errno > 0
-	  ? US strerror(rti->basic_errno)
+	  ? US(strerror(rti->basic_errno))
 	  : rti->message
-	  ? US string_printing(rti->message)
-	  : US"unknown error";
+	  ? US(string_printing(rti->message))
+	  : US("unknown error");
         message_length = Ustrlen(message);
         if (message_length > EXIM_DB_RLIMIT) message_length = EXIM_DB_RLIMIT;
 
@@ -891,15 +891,15 @@ for (int i = 0; i < 3; i++)
           setflag(addr, af_retry_timedout);
           addr->message = addr->message
             ? string_sprintf("%s: retry timeout exceeded", addr->message)
-	    : US"retry timeout exceeded";
+	    : US("retry timeout exceeded");
           addr->user_message = addr->user_message
 	    ? string_sprintf("%s: retry timeout exceeded", addr->user_message)
-	    : US"retry timeout exceeded";
+	    : US("retry timeout exceeded");
           log_write(0, LOG_MAIN, "** %s%s%s%s: retry timeout exceeded",
             addr->address,
-            addr->parent ? US" <" : US"",
-            addr->parent ? addr->parent->address : US"",
-            addr->parent ? US">" : US"");
+            addr->parent ? US(" <") : US(""),
+            addr->parent ? addr->parent->address : US(""),
+            addr->parent ? US(">") : US(""));
 
           if (addr == endaddr) break;
           }

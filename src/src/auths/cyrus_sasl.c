@@ -57,8 +57,8 @@ int auth_cyrus_sasl_options_count =
 /* Default private options block for the cyrus_sasl authentication method. */
 
 auth_cyrus_sasl_options_block auth_cyrus_sasl_option_defaults = {
-  US"smtp",         /* server_service */
-  US"$primary_hostname", /* server_hostname */
+  US("smtp"),         /* server_service */
+  US("$primary_hostname"), /* server_hostname */
   NULL,             /* server_realm */
   NULL              /* server_mech */
 };
@@ -132,7 +132,7 @@ if (!(expanded_hostname = expand_string(ob->server_hostname)))
 
 realm_expanded = NULL;
 if (  ob->server_realm
-   && !(realm_expanded = CS expand_string(ob->server_realm)))
+   && !(realm_expanded = CS(expand_string(ob->server_realm))))
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't expand server_realm [%s]: %s",
       ablock->name, ob->server_realm, expand_string_message);
@@ -147,12 +147,12 @@ if ((rc = sasl_server_init(cbs, "exim")) != SASL_OK)
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't initialise Cyrus SASL library.", ablock->name);
 
-if ((rc = sasl_server_new(CS ob->server_service, CS expanded_hostname,
+if ((rc = sasl_server_new(CS(ob->server_service), CS(expanded_hostname),
                    realm_expanded, NULL, NULL, NULL, 0, &conn)) != SASL_OK)
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't initialise Cyrus SASL server connection.", ablock->name);
 
-if ((rc = sasl_listmech(conn, NULL, "", ":", "", CCSS &list, &len, &i)) != SASL_OK)
+if ((rc = sasl_listmech(conn, NULL, "", ":", "", CCSS(&list), &len, &i)) != SASL_OK)
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't get Cyrus SASL mechanism list.", ablock->name);
 
@@ -222,7 +222,7 @@ HDEBUG(D_auth) debug = string_copy(data);
 
 hname = expand_string(ob->server_hostname);
 if (hname && ob->server_realm)
-  realm_expanded = CS expand_string(ob->server_realm);
+  realm_expanded = CS(expand_string(ob->server_realm));
 if (!hname  ||  !realm_expanded  && ob->server_realm)
   {
   auth_defer_msg = expand_string_message;
@@ -239,11 +239,11 @@ if (inlen)
 
 if ((rc = sasl_server_init(cbs, "exim")) != SASL_OK)
   {
-  auth_defer_msg = US"couldn't initialise Cyrus SASL library";
+  auth_defer_msg = US("couldn't initialise Cyrus SASL library");
   return DEFER;
   }
 
-rc = sasl_server_new(CS ob->server_service, CS hname, realm_expanded, NULL,
+rc = sasl_server_new(CS(ob->server_service), CS(hname), realm_expanded, NULL,
   NULL, NULL, 0, &conn);
 
 HDEBUG(D_auth)
@@ -252,7 +252,7 @@ HDEBUG(D_auth)
 
 if (rc != SASL_OK )
   {
-  auth_defer_msg = US"couldn't initialise Cyrus SASL connection";
+  auth_defer_msg = US("couldn't initialise Cyrus SASL connection");
   sasl_done();
   return DEFER;
   }
@@ -263,7 +263,7 @@ if (tls_in.cipher)
     {
     HDEBUG(D_auth) debug_printf("Cyrus SASL EXTERNAL SSF set %d failed: %s\n",
         tls_in.bits, sasl_errstring(rc, NULL, NULL));
-    auth_defer_msg = US"couldn't set Cyrus SASL EXTERNAL SSF";
+    auth_defer_msg = US("couldn't set Cyrus SASL EXTERNAL SSF");
     sasl_done();
     return DEFER;
     }
@@ -295,14 +295,14 @@ for (int i = 0; i < 2; ++i)
   if (i)
     {
     propnum = SASL_IPREMOTEPORT;
-    label = CUS"peer";
+    label = CUS("peer");
     address_port = string_sprintf("%s;%d",
 				  sender_host_address, sender_host_port);
     }
   else
     {
     propnum = SASL_IPLOCALPORT;
-    label = CUS"local";
+    label = CUS("local");
     address_port = string_sprintf("%s;%d", interface_address, interface_port);
     }
 
@@ -326,8 +326,8 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
     {
     firsttime = 0;
     HDEBUG(D_auth) debug_printf("Calling sasl_server_start(%s,\"%s\")\n", ob->server_mech, debug);
-    rc = sasl_server_start(conn, CS ob->server_mech, inlen ? CS input : NULL, inlen,
-           CCSS &output, &outlen);
+    rc = sasl_server_start(conn, CS(ob->server_mech), inlen ? CS(input) : NULL, inlen,
+           CCSS(&output), &outlen);
     }
   else
     {
@@ -358,7 +358,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       }
 
     HDEBUG(D_auth) debug_printf("Calling sasl_server_step(\"%s\")\n", debug);
-    rc = sasl_server_step(conn, CS input, inlen, CCSS &output, &outlen);
+    rc = sasl_server_step(conn, CS(input), inlen, CCSS(&output), &outlen);
     }
 
   if (rc == SASL_BADPROT)

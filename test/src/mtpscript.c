@@ -20,9 +20,17 @@ complicated version that does it over a socket. */
 #include <unistd.h>
 
 #ifndef CS
-# define CS (char *)
+#if defined __GNUC__ || __STDC_VERSION__ >= 199901L
+/* safer casts: check the source types */
+static inline char * CS (unsigned char *p) { return (void*)p; }
+#elif !defined CHAR_MIN || CHAR_MIN < 0
+/* only use casts when needed */
+# define CS   (char *)
+#else
+/* char is already unsigned, don't cast */
+# define CS(S) (char *)(S)
 #endif
-
+#endif
 
 static FILE *log;
 
@@ -90,9 +98,9 @@ signal(SIGALRM, sigalrm_handler);
 
 /* Read the script, and do what it says. */
 
-while (fgets(CS sbuffer, sizeof(sbuffer), script) != NULL)
+while (fgets(CS(sbuffer), sizeof(sbuffer), script) != NULL)
   {
-  int n = (int)strlen(CS sbuffer);
+  int n = (int)strlen(CS(sbuffer));
   while (n > 0 && isspace(sbuffer[n-1])) n--;
   sbuffer[n] = 0;
 
@@ -111,9 +119,9 @@ while (fgets(CS sbuffer, sizeof(sbuffer), script) != NULL)
   before continuing. Do not write this to the log, as it may not get
   written at the right place in a log that's being shared. */
 
-  else if (strncmp(CS sbuffer, "*sleep ", 7) == 0)
+  else if (strncmp(CS(sbuffer), "*sleep ", 7) == 0)
     {
-    sleep(atoi(CS sbuffer+7));
+    sleep(atoi(CS(sbuffer)+7));
     }
 
   /* Otherwise the script line is the start of an input line we are expecting
@@ -123,7 +131,7 @@ while (fgets(CS sbuffer, sizeof(sbuffer), script) != NULL)
 
   else
     {
-    int data = strcmp(CS sbuffer, ".") == 0;
+    int data = strcmp(CS(sbuffer), ".") == 0;
 
     fprintf(log, "%s\n", sbuffer);
     fflush(log);
@@ -134,23 +142,23 @@ while (fgets(CS sbuffer, sizeof(sbuffer), script) != NULL)
       {
       int n;
       alarm(5);
-      if (fgets(CS ibuffer, sizeof(ibuffer), stdin) == NULL)
+      if (fgets(CS(ibuffer), sizeof(ibuffer), stdin) == NULL)
         {
         fprintf(log, "%sxpected EOF read from client\n",
-          (strncmp(CS sbuffer, "*eof", 4) == 0)? "E" : "Une");
+          (strncmp(CS(sbuffer), "*eof", 4) == 0)? "E" : "Une");
         goto END_OFF;
         }
       alarm(0);
-      n = (int)strlen(CS ibuffer);
+      n = (int)strlen(CS(ibuffer));
       while (n > 0 && isspace(ibuffer[n-1])) n--;
       ibuffer[n] = 0;
       fprintf(log, "<<< %s\n", ibuffer);
-      if (!data || strcmp(CS ibuffer, ".") == 0) break;
+      if (!data || strcmp(CS(ibuffer), ".") == 0) break;
       }
 
     /* Check received what was expected */
 
-    if (strncmp(CS sbuffer, CS ibuffer, (int)strlen(CS sbuffer)) != 0)
+    if (strncmp(CS(sbuffer), CS(ibuffer), (int)strlen(CS(sbuffer))) != 0)
       {
       fprintf(log, "Comparison failed - bailing out\n");
       goto END_OFF;

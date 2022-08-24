@@ -35121,15 +35121,19 @@ This header file defines a number of variables and other values, and the
 prototype for the function itself. Exim is coded to use unsigned char values
 almost exclusively, and one of the things this header defines is a shorthand
 for &`unsigned char`& called &`uschar`&.
-It also makes available the following macro definitions, to simplify casting character
-strings and pointers to character strings:
+It also makes available the following inline functions, to simplify converting
+character strings and pointers to character strings:
 .code
-#define CS   (char *)
-#define CCS  (const char *)
-#define CSS  (char **)
-#define US   (unsigned char *)
-#define CUS  (const unsigned char *)
-#define USS  (unsigned char **)
+ typedef unsigned char uschar;
+
+ char         * CS (uschar       *p) { return (void*)p; }
+ char        ** CSS(uschar      **p) { return (void*)p; }
+ uschar       * US (char         *p) { return (void*)p; }
+ uschar      ** USS(char        **p) { return (void*)p; }
+ char   const *CCS (uschar const *p) { return (void*)p; }
+ char   const**CCSS(uschar const**p) { return (void*)p; }
+ uschar const *CUS (char   const *p) { return (void*)p; }
+ uschar const**CUSS(char   const**p) { return (void*)p; }
 .endd
 The function prototype for &[local_scan()]& is:
 .code
@@ -35222,7 +35226,7 @@ variable called &%local_scan_options_count%& that contains the number of
 entries in the table. Here is a short example, showing two kinds of option:
 .code
 static int my_integer_option = 42;
-static uschar *my_string_option = US"a default string";
+static uschar *my_string_option = US("a default string");
 
 optionlist local_scan_options[] = {
   { "my_integer", opt_int,       &my_integer_option },
@@ -35577,7 +35581,7 @@ option controls where the header is added. If it is true, addition is at the
 top; otherwise at the bottom. Thus, to add a header after all the &'Received:'&
 headers, or at the top if there are no &'Received:'& headers, you could use
 .code
-header_add_at_position(TRUE, US"Received", TRUE,
+header_add_at_position(TRUE, US("Received"), TRUE,
   ' ', "X-xxx: ...");
 .endd
 Normally, there is always at least one non-deleted &'Received:'& header, but
@@ -35598,7 +35602,7 @@ a string comparison, because white space is permitted between the name and the
 colon. If the &%notdel%& argument is true, a false return is forced for all
 &"deleted"& headers; otherwise they are not treated specially. For example:
 .code
-if (header_testname(h, US"X-Spam", 6, TRUE)) ...
+if (header_testname(h, US("X-Spam"), 6, TRUE)) ...
 .endd
 .vitem &*uschar&~*lss_b64encode(uschar&~*cleartext,&~int&~length)*&
 .cindex "base64 encoding" "functions for &[local_scan()]& use"
@@ -35674,9 +35678,9 @@ described with the structure of &%recipient_item%& above), because it pre-dates
 the addition of that field to the structure. However, it is easy to add such a
 value afterwards. For example:
 .code
- receive_add_recipient(US"monitor@mydom.example", -1);
+ receive_add_recipient(US("monitor@mydom.example"), -1);
  recipients_list[recipients_count-1].errors_to =
-   US"postmaster@mydom.example";
+   US("postmaster@mydom.example");
 .endd
 
 .vitem &*BOOL&~receive_remove_recipient(uschar&~*recipient)*&

@@ -73,7 +73,7 @@ if (log_widget == NULL) return;
 /* Initialize the text block structure */
 
 b.firstPos = 0;
-b.ptr = CS buffer;
+b.ptr = CS(buffer);
 b.format = FMT8BIT;
 
 /* We want to know whether the window has been scrolled back or not,
@@ -98,7 +98,7 @@ if (newtop != top)
 /* Format the text that is to be written. */
 
 va_start(ap, s);
-vsprintf(CS buffer, s, ap);
+vsprintf(CS(buffer), s, ap);
 va_end(ap);
 length = Ustrlen(buffer);
 
@@ -271,18 +271,18 @@ if (LOG != NULL)
       }
     else
       {
-      id = US"";
+      id = US("");
       show_log("%s", buffer);
       }
     pcre2_match_data_free(md);
 
     /* Deal with frozen and unfrozen messages */
 
-    if (strstric(buffer, US"frozen", FALSE) != NULL)
+    if (strstric(buffer, US("frozen"), FALSE) != NULL)
       {
       queue_item *qq = find_queue(id, queue_noop, 0);
       if (qq)
-        qq->frozen = strstric(buffer, US"unfrozen", FALSE) == NULL;
+        qq->frozen = strstric(buffer, US("unfrozen"), FALSE) == NULL;
       }
 
     /* Notice defer messages, and add the destination if it
@@ -367,7 +367,7 @@ if (log_datestamping)
   /* Do *not* use "%s" here, we need the %D datestamp in the log_file string to
   be expanded.  The trailing NULL arg is to quieten preprocessors that need at
   least one arg for a variadic set in a macro. */
-  string_format(log_file_wanted, sizeof(log_file_wanted), CS log_file, NULL);
+  string_format(log_file_wanted, sizeof(log_file_wanted), CS(log_file), NULL);
   if (Ustrcmp(log_file_wanted, log_file_open) != 0)
     {
     if (LOG != NULL)
@@ -390,7 +390,7 @@ if (LOG == NULL ||
   is renamed and before the new one exists. Therefore do a
   trial open first to be sure. */
 
-  if ((TEST = fopen(CS log_file_open, "r")) != NULL)
+  if ((TEST = fopen(CS(log_file_open), "r")) != NULL)
     {
     if (LOG != NULL) fclose(LOG);
     LOG = TEST;

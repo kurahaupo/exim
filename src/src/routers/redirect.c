@@ -396,14 +396,14 @@ while (generated)
       {
       address_pipe = next->address;
       if (rf_get_transport(ob->pipe_transport_name, &ob->pipe_transport,
-          next, rblock->name, US"pipe_transport"))
+          next, rblock->name, US("pipe_transport")))
         next->transport = ob->pipe_transport;
       address_pipe = NULL;
       }
     else if (next->address[0] == '>')
       {
       if (rf_get_transport(ob->reply_transport_name, &ob->reply_transport,
-          next, rblock->name, US"reply_transport"))
+          next, rblock->name, US("reply_transport")))
         next->transport = ob->reply_transport;
       }
     else  /* must be file or directory */
@@ -414,12 +414,12 @@ while (generated)
         {
         if (rf_get_transport(ob->directory_transport_name,
             &(ob->directory_transport), next, rblock->name,
-            US"directory_transport"))
+            US("directory_transport")))
           next->transport = ob->directory_transport;
         }
       else
         if (rf_get_transport(ob->file_transport_name, &ob->file_transport,
-            next, rblock->name, US"file_transport"))
+            next, rblock->name, US("file_transport")))
           next->transport = ob->file_transport;
 
       address_file = NULL;
@@ -439,7 +439,7 @@ while (generated)
       next->address,
       testflag(next, af_pfr)? "pipe, file, or autoreply\n  " : "",
       next->prop.errors_address,
-      (next->transport == NULL)? US"NULL" : next->transport->name);
+      (next->transport == NULL)? US("NULL") : next->transport->name);
 
     if (testflag(next, af_uid_set))
       debug_printf("  uid=%ld ", (long int)(next->uid));
@@ -503,7 +503,7 @@ redirect_router_options_block *ob =
   (redirect_router_options_block *)(rblock->options_block);
 address_item *generated = NULL;
 const uschar *save_qualify_domain_recipient = qualify_domain_recipient;
-uschar *discarded = US"discarded";
+uschar *discarded = US("discarded");
 address_item_propagated addr_prop;
 error_block *eblock = NULL;
 ugid_block ugid;
@@ -603,7 +603,7 @@ switch (frc)
   case FF_BLACKHOLE:
     DEBUG(D_route) debug_printf("address :blackhole:d\n");
     generated = NULL;
-    discarded = US":blackhole:";
+    discarded = US(":blackhole:");
     frc = FF_DELIVERED;
     break;
 
@@ -624,7 +624,7 @@ switch (frc)
 
     SORT_MESSAGE:
     if (!addr->message)
-      addr->message = yield == FAIL ? US"forced rejection" : US"forced defer";
+      addr->message = yield == FAIL ? US("forced rejection") : US("forced defer");
     else
       {
       uschar * matched;
@@ -650,7 +650,7 @@ switch (frc)
       if ((xrc = sort_errors_and_headers(rblock, addr, verify, &addr_prop))
 	!= OK) return xrc;
       add_generated(rblock, addr_new, addr, generated, &addr_prop, &ugid, pw);
-      if (addr->message == NULL) addr->message = US"frozen by filter";
+      if (addr->message == NULL) addr->message = US("frozen by filter");
       addr->special_action = SPECIAL_FREEZE;
       addr->child_count = 9999;
       return DEFER;
@@ -722,7 +722,7 @@ if (eblock != NULL)
 
   if (filtertype != FILTER_FORWARD || generated == NULL)
     {
-    addr->message = US"syntax error in redirection data";
+    addr->message = US("syntax error in redirection data");
     return DECLINE;
     }
   }
@@ -783,7 +783,7 @@ else
     rblock->name,
     next->address,
     (addr_prop.errors_address != NULL)? "  errors to " : "",
-    (addr_prop.errors_address != NULL)? addr_prop.errors_address : US"",
+    (addr_prop.errors_address != NULL)? addr_prop.errors_address : US(""),
     (addr_prop.errors_address != NULL)? "\n" : "");
   }
 

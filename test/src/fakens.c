@@ -100,7 +100,7 @@ typedef unsigned char uschar;
 #define US   (unsigned char *)
 
 #define Ustrcat(s,t)       strcat(CS(s),CCS(t))
-#define Ustrchr(s,n)       US strchr(CCS(s),n)
+#define Ustrchr(s,n)       US(strchr(CCS(s),n))
 #define Ustrcmp(s,t)       strcmp(CCS(s),CCS(t))
 #define Ustrcpy(s,t)       strcpy(CS(s),CCS(t))
 #define Ustrlen(s)         (int)strlen(CCS(s))
@@ -148,16 +148,16 @@ know about AAAA and SRV at all. */
 #endif
 
 static tlist type_list[] = {
-  { US"A",       ns_t_a },
-  { US"NS",      ns_t_ns },
-  { US"CNAME",   ns_t_cname },
-  { US"SOA",     ns_t_soa },
-  { US"PTR",     ns_t_ptr },
-  { US"MX",      ns_t_mx },
-  { US"TXT",     ns_t_txt },
-  { US"AAAA",    ns_t_aaaa },
-  { US"SRV",     ns_t_srv },
-  { US"TLSA",    ns_t_tlsa },
+  { US("A"),       ns_t_a },
+  { US("NS"),      ns_t_ns },
+  { US("CNAME"),   ns_t_cname },
+  { US("SOA"),     ns_t_soa },
+  { US("PTR"),     ns_t_ptr },
+  { US("MX"),      ns_t_mx },
+  { US("TXT"),     ns_t_txt },
+  { US("AAAA"),    ns_t_aaaa },
+  { US("SRV"),     ns_t_srv },
+  { US("TLSA"),    ns_t_tlsa },
   { NULL,        0 }
 };
 
@@ -183,7 +183,7 @@ uschar *yield;
 char buffer[256];
 va_list ap;
 va_start(ap, format);
-vsprintf(buffer, CS format, ap);
+vsprintf(buffer, CS(format), ap);
 va_end(ap);
 yield = (uschar *)malloc(Ustrlen(buffer) + 1);
 Ustrcpy(yield, buffer);
@@ -348,7 +348,7 @@ rrdomain[0] = 0;                 /* No previous domain */
 
 /* Scan for RRs */
 
-while (fgets(CS buffer, sizeof(buffer), f) != NULL)
+while (fgets(CS(buffer), sizeof(buffer), f) != NULL)
   {
   uschar *rdlptr;
   uschar *p, *ep, *pp;
@@ -366,7 +366,7 @@ while (fgets(CS buffer, sizeof(buffer), f) != NULL)
   while (isspace(*p)) p++;
   if (*p == 0 || *p == ';') continue;
 
-  if (Ustrncmp(p, US"PASS ON NOT FOUND", 17) == 0)
+  if (Ustrncmp(p, US("PASS ON NOT FOUND"), 17) == 0)
     {
     pass_on_not_found = TRUE;
     continue;
@@ -379,27 +379,27 @@ while (fgets(CS buffer, sizeof(buffer), f) != NULL)
   p = buffer;
   for (;;)
     {
-    if (Ustrncmp(p, US"DNSSEC ", 7) == 0)       /* tagged as secure */
+    if (Ustrncmp(p, US("DNSSEC "), 7) == 0)       /* tagged as secure */
       {
       rr_sec = TRUE;
       p += 7;
       }
-    if (Ustrncmp(p, US"NXDOMAIN ", 9) == 0)     /* ignore record content */
+    if (Ustrncmp(p, US("NXDOMAIN "), 9) == 0)     /* ignore record content */
       {
       rr_ignore = TRUE;
       p += 9;
       }
-    else if (Ustrncmp(p, US"AA ", 3) == 0)      /* tagged as authoritative */
+    else if (Ustrncmp(p, US("AA "), 3) == 0)      /* tagged as authoritative */
       {
       rr_aa = TRUE;
       p += 3;
       }
-    else if (Ustrncmp(p, US"DELAY=", 6) == 0)   /* delay before response */
+    else if (Ustrncmp(p, US("DELAY="), 6) == 0)   /* delay before response */
       {
       for (p += 6; *p >= '0' && *p <= '9'; p++) delay = delay*10 + *p - '0';
       if (isspace(*p)) p++;
       }
-    else if (Ustrncmp(p, US"TTL=", 4) == 0)     /* TTL for record */
+    else if (Ustrncmp(p, US("TTL="), 4) == 0)     /* TTL for record */
       {
       ttl = 0;
       for (p += 4; *p >= '0' && *p <= '9'; p++) ttl = ttl*10 + *p - '0';
@@ -506,7 +506,7 @@ while (fgets(CS buffer, sizeof(buffer), f) != NULL)
     case ns_t_soa:
       p = Ustrtok(p, " ");
       ep = p + Ustrlen(p);
-      if (ep[-1] != '.') sprintf(CS ep, "%s.", zone);
+      if (ep[-1] != '.') sprintf(CS(ep), "%s.", zone);
       pk = packname(p, pk);                     /* primary ns */
       p = Ustrtok(NULL, " ");
       pk = packname(p , pk);                    /* responsible mailbox */
@@ -520,18 +520,18 @@ while (fgets(CS buffer, sizeof(buffer), f) != NULL)
       break;
 
     case ns_t_a:
-      inet_pton(AF_INET, CCS p, pk);                /* FIXME: error checking */
+      inet_pton(AF_INET, CCS(p), pk);                /* FIXME: error checking */
       pk += 4;
       break;
 
     case ns_t_aaaa:
-      inet_pton(AF_INET6, CCS p, pk);               /* FIXME: error checking */
+      inet_pton(AF_INET6, CCS(p), pk);               /* FIXME: error checking */
       pk += 16;
       break;
 
     case ns_t_mx:
       pk = shortfield(&p, pk);
-      if (ep[-1] != '.') sprintf(CS ep, "%s.", zone);
+      if (ep[-1] != '.') sprintf(CS(ep), "%s.", zone);
       pk = packname(p, pk);
       break;
 
@@ -574,7 +574,7 @@ while (fgets(CS buffer, sizeof(buffer), f) != NULL)
     case ns_t_cname:
     case ns_t_ns:
     case ns_t_ptr:
-      if (ep[-1] != '.') sprintf(CS ep, "%s.", zone);
+      if (ep[-1] != '.') sprintf(CS(ep), "%s.", zone);
       pk = packname(p, pk);
       break;
     }
@@ -638,7 +638,7 @@ return 0;
 static int
 special_again(uschar * packet, uschar * domain)
 {
-int delay = atoi(CCS domain);  /* digits at the start of the name */
+int delay = atoi(CCS(domain));  /* digits at the start of the name */
 if (delay > 0) sleep(delay);
 return TRY_AGAIN;
 }
@@ -681,9 +681,9 @@ if (argc != 4)
 
 /* Find the zones */
 
-(void)sprintf(CS buffer, "%s/dnszones", argv[1]);
+(void)sprintf(CS(buffer), "%s/dnszones", argv[1]);
 
-if (!(d = opendir(CCS buffer)))
+if (!(d = opendir(CCS(buffer))))
   {
   fprintf(stderr, "fakens: failed to opendir %s: %s\n", buffer,
     strerror(errno));
@@ -692,20 +692,20 @@ if (!(d = opendir(CCS buffer)))
 
 while ((de = readdir(d)))
   {
-  uschar *name = US de->d_name;
+  uschar *name = US(de->d_name);
   if (Ustrncmp(name, "qualify.", 8) == 0)
     {
-    qualify = fcopystring(US "%s", name + 7);
+    qualify = fcopystring(US("%s"), name + 7);
     continue;
     }
   if (Ustrncmp(name, "db.", 3) != 0) continue;
   if (Ustrncmp(name + 3, "ip4.", 4) == 0)
-    zones[zonecount].zone = fcopystring(US "%s.in-addr.arpa", name + 6);
+    zones[zonecount].zone = fcopystring(US("%s.in-addr.arpa"), name + 6);
   else if (Ustrncmp(name + 3, "ip6.", 4) == 0)
-    zones[zonecount].zone = fcopystring(US "%s.ip6.arpa", name + 6);
+    zones[zonecount].zone = fcopystring(US("%s.ip6.arpa"), name + 6);
   else
-    zones[zonecount].zone = fcopystring(US "%s", name + 2);
-  zones[zonecount++].zonefile = fcopystring(US "%s", name);
+    zones[zonecount].zone = fcopystring(US("%s"), name + 2);
+  zones[zonecount++].zonefile = fcopystring(US("%s"), name);
   }
 (void)closedir(d);
 
@@ -760,7 +760,7 @@ if (zonefile == NULL)
   return PASS_ON;
   }
 
-(void)sprintf(CS buffer, "%s/dnszones/%s", argv[1], zonefile);
+(void)sprintf(CS(buffer), "%s/dnszones/%s", argv[1], zonefile);
 
 /* Initialize the start of the response packet. */
 
@@ -769,7 +769,7 @@ pk += 12;
 
 /* Open the zone file. */
 
-if (!(f = fopen(CS buffer, "r")))
+if (!(f = fopen(CS(buffer), "r")))
   {
   fprintf(stderr, "fakens: failed to open %s: %s\n", buffer, strerror(errno));
   return NO_RECOVERY;
@@ -794,9 +794,9 @@ records, otherwise it contains the SOA record.  Mimic that.
 
 if (strcmp(qtype, "SOA") != 0 && strcmp(qtype, "NS") != 0)
   if (count)
-    find_records(f, zone, zone[0] == '.' ? zone+1 : zone, US"NS", 2, &pk, &count, NULL, NULL);
+    find_records(f, zone, zone[0] == '.' ? zone+1 : zone, US("NS"), 2, &pk, &count, NULL, NULL);
   else
-    find_records(f, zone, zone[0] == '.' ? zone+1 : zone, US"SOA", 3, &pk, &count, NULL, NULL);
+    find_records(f, zone, zone[0] == '.' ? zone+1 : zone, US("SOA"), 3, &pk, &count, NULL, NULL);
 header->nscount = htons(count - ntohs(header->ancount));
 
 /* There is no need to return any additional records because Exim no longer

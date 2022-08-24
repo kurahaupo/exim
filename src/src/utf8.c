@@ -61,7 +61,7 @@ if (!string_is_utf8(utf8))
 any mixed-case annotation.  This does not really matter for a domain. */
   {
   uschar c;
-  for (s1 = s = US utf8; (c = *s1); s1++) if (!(c & 0x80) && isupper(c))
+  for (s1 = s = US(utf8); (c = *s1); s1++) if (!(c & 0x80) && isupper(c))
     {
     s = string_copy(utf8);
     for (s1 = s + (s1 - utf8); (c = *s1); s1++) if (!(c & 0x80) && isupper(c))
@@ -71,16 +71,16 @@ any mixed-case annotation.  This does not really matter for a domain. */
   }
 if ((rc = idn2_lookup_u8((const uint8_t *) s, &s1, IDN2_NFC_INPUT)) != IDN2_OK)
   {
-  if (err) *err = US idn2_strerror(rc);
+  if (err) *err = US(idn2_strerror(rc));
   return NULL;
   }
 #else
-s = US stringprep_utf8_nfkc_normalize(CCS utf8, -1);
-if (  (rc = idna_to_ascii_8z(CCS s, CSS &s1, IDNA_ALLOW_UNASSIGNED))
+s = US(stringprep_utf8_nfkc_normalize(CCS(utf8), -1));
+if (  (rc = idna_to_ascii_8z(CCS(s), CSS(&s1), IDNA_ALLOW_UNASSIGNED))
    != IDNA_SUCCESS)
   {
   free(s);
-  if (err) *err = US idna_strerror(rc);
+  if (err) *err = US(idna_strerror(rc));
   return NULL;
   }
 free(s);
@@ -114,10 +114,10 @@ return string_from_gstring(g);
 uschar * s1, * s;
 int rc;
 
-if (  (rc = idna_to_unicode_8z8z(CCS alabel, CSS &s1, IDNA_USE_STD3_ASCII_RULES))
+if (  (rc = idna_to_unicode_8z8z(CCS(alabel), CSS(&s1), IDNA_USE_STD3_ASCII_RULES))
    != IDNA_SUCCESS)
   {
-  if (err) *err = US idna_strerror(rc);
+  if (err) *err = US(idna_strerror(rc));
   return NULL;
   }
 s = string_copy(s1);
@@ -142,10 +142,10 @@ int rc;
 
 if (!string_is_utf8(utf8)) return string_copy(utf8);
 
-p = (punycode_uint *) stringprep_utf8_to_ucs4(CCS utf8, -1, &ucs4_len);
+p = (punycode_uint *) stringprep_utf8_to_ucs4(CCS(utf8), -1, &ucs4_len);
 if (!p || !ucs4_len)
   {
-  if (err) *err = US"l_u2a: bad UTF-8 input";
+  if (err) *err = US("l_u2a: bad UTF-8 input");
   return NULL;
   }
 p_len = ucs4_len*4;	/* this multiplier is pure guesswork */
@@ -153,11 +153,11 @@ res = store_get(p_len+5, utf8);
 
 res[0] = 'x'; res[1] = 'n'; res[2] = res[3] = '-';
 
-if ((rc = punycode_encode(ucs4_len, p, NULL, &p_len, CS res+4)) != PUNYCODE_SUCCESS)
+if ((rc = punycode_encode(ucs4_len, p, NULL, &p_len, CS(res)+4)) != PUNYCODE_SUCCESS)
   {
   DEBUG(D_expand) debug_printf("l_u2a: bad '%s'\n", punycode_strerror(rc));
   free(p);
-  if (err) *err = US punycode_strerror(rc);
+  if (err) *err = US(punycode_strerror(rc));
   return NULL;
   }
 p_len += 4;
@@ -180,13 +180,13 @@ alabel += 4;
 p_len = Ustrlen(alabel);
 p = store_get((p_len+1) * sizeof(*p), alabel);
 
-if ((rc = punycode_decode(p_len, CCS alabel, &p_len, p, NULL)) != PUNYCODE_SUCCESS)
+if ((rc = punycode_decode(p_len, CCS(alabel), &p_len, p, NULL)) != PUNYCODE_SUCCESS)
   {
-  if (err) *err = US punycode_strerror(rc);
+  if (err) *err = US(punycode_strerror(rc));
   return NULL;
   }
 
-s = US stringprep_ucs4_to_utf8(p, p_len, NULL, &p_len);
+s = US(stringprep_ucs4_to_utf8(p, p_len, NULL, &p_len));
 res = string_copyn(s, p_len);
 free(s);
 return res;
@@ -199,7 +199,7 @@ string_localpart_alabel_to_utf8(const uschar * alabel, uschar ** err)
 if (string_is_alabel(alabel))
   return string_localpart_alabel_to_utf8_(alabel, err);
 
-if (err) *err = US"bad alabel prefix";
+if (err) *err = US("bad alabel prefix");
 return NULL;
 }
 

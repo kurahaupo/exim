@@ -21,8 +21,8 @@
 void
 params_dkim(void)
 {
-builtin_macro_create_var(US"_DKIM_SIGN_HEADERS", US PDKIM_DEFAULT_SIGN_HEADERS);
-builtin_macro_create_var(US"_DKIM_OVERSIGN_HEADERS", US PDKIM_OVERSIGN_HEADERS);
+builtin_macro_create_var(US("_DKIM_SIGN_HEADERS"), US(PDKIM_DEFAULT_SIGN_HEADERS));
+builtin_macro_create_var(US("_DKIM_OVERSIGN_HEADERS"), US(PDKIM_OVERSIGN_HEADERS));
 }
 # else	/*!MACRO_PREDEF*/
 
@@ -75,7 +75,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
       }
 
     /* Check if this looks like a DKIM record */
-    if (Ustrncmp(g->s, "v=", 2) != 0 || strncasecmp(CS g->s, "v=dkim", 6) == 0)
+    if (Ustrncmp(g->s, "v=", 2) != 0 || strncasecmp(CS(g->s), "v=dkim", 6) == 0)
       {
       store_free_dns_answer(dnsa);
       gstring_release_unused(g);
@@ -169,7 +169,7 @@ if (!sig) return;
 
 if (  !dkim_verify_overall
    && dkim_verify_status
-      ? Ustrcmp(dkim_verify_status, US"pass") == 0
+      ? Ustrcmp(dkim_verify_status, US("pass")) == 0
       : sig->verify_status == PDKIM_VERIFY_PASS
    )
   dkim_verify_overall = string_copy(sig->domain);
@@ -184,13 +184,13 @@ if (  dkim_verify_status
    )  )
   {			/* overridden by ACL */
   sig->verify_ext_status = -1;
-  if (Ustrcmp(dkim_verify_status, US"fail") == 0)
+  if (Ustrcmp(dkim_verify_status, US("fail")) == 0)
     sig->verify_status = PDKIM_VERIFY_POLICY | PDKIM_VERIFY_FAIL;
-  else if (Ustrcmp(dkim_verify_status, US"invalid") == 0)
+  else if (Ustrcmp(dkim_verify_status, US("invalid")) == 0)
     sig->verify_status = PDKIM_VERIFY_POLICY | PDKIM_VERIFY_INVALID;
-  else if (Ustrcmp(dkim_verify_status, US"none") == 0)
+  else if (Ustrcmp(dkim_verify_status, US("none")) == 0)
     sig->verify_status = PDKIM_VERIFY_POLICY | PDKIM_VERIFY_NONE;
-  else if (Ustrcmp(dkim_verify_status, US"pass") == 0)
+  else if (Ustrcmp(dkim_verify_status, US("pass")) == 0)
     sig->verify_status = PDKIM_VERIFY_POLICY | PDKIM_VERIFY_PASS;
   else
     sig->verify_status = -1;
@@ -199,10 +199,10 @@ if (  dkim_verify_status
 if (!LOGGING(dkim_verbose)) return;
 
 
-logmsg = string_catn(NULL, US"DKIM: ", 6);
-if (!(s = sig->domain)) s = US"<UNSET>";
+logmsg = string_catn(NULL, US("DKIM: "), 6);
+if (!(s = sig->domain)) s = US("<UNSET>");
 logmsg = string_append(logmsg, 2, "d=", s);
-if (!(s = sig->selector)) s = US"<UNSET>";
+if (!(s = sig->selector)) s = US("<UNSET>");
 logmsg = string_append(logmsg, 2, " s=", s);
 logmsg = string_fmt_append(logmsg, " c=%s/%s a=%s b=" SIZE_T_FMT,
 	  sig->canon_headers == PDKIM_CANON_SIMPLE ? "simple" : "relaxed",
@@ -219,72 +219,72 @@ if (sig->bodylength > -1) logmsg = string_fmt_append(logmsg, " l=%lu",
 
 if (sig->verify_status & PDKIM_VERIFY_POLICY)
   logmsg = string_append(logmsg, 5,
-	    US" [", dkim_verify_status, US" - ", dkim_verify_reason, US"]");
+	    US(" ["), dkim_verify_status, US(" - "), dkim_verify_reason, US("]"));
 else
   switch (sig->verify_status)
     {
     case PDKIM_VERIFY_NONE:
-      logmsg = string_cat(logmsg, US" [not verified]");
+      logmsg = string_cat(logmsg, US(" [not verified]"));
       break;
 
     case PDKIM_VERIFY_INVALID:
-      logmsg = string_cat(logmsg, US" [invalid - ");
+      logmsg = string_cat(logmsg, US(" [invalid - "));
       switch (sig->verify_ext_status)
 	{
 	case PDKIM_VERIFY_INVALID_PUBKEY_UNAVAILABLE:
 	  logmsg = string_cat(logmsg,
-			US"public key record (currently?) unavailable]");
+			US("public key record (currently?) unavailable]"));
 	  break;
 
 	case PDKIM_VERIFY_INVALID_BUFFER_SIZE:
-	  logmsg = string_cat(logmsg, US"overlong public key record]");
+	  logmsg = string_cat(logmsg, US("overlong public key record]"));
 	  break;
 
 	case PDKIM_VERIFY_INVALID_PUBKEY_DNSRECORD:
 	case PDKIM_VERIFY_INVALID_PUBKEY_IMPORT:
-	  logmsg = string_cat(logmsg, US"syntax error in public key record]");
+	  logmsg = string_cat(logmsg, US("syntax error in public key record]"));
 	  break;
 
 	case PDKIM_VERIFY_INVALID_SIGNATURE_ERROR:
-	  logmsg = string_cat(logmsg, US"signature tag missing or invalid]");
+	  logmsg = string_cat(logmsg, US("signature tag missing or invalid]"));
 	  break;
 
 	case PDKIM_VERIFY_INVALID_DKIM_VERSION:
-	  logmsg = string_cat(logmsg, US"unsupported DKIM version]");
+	  logmsg = string_cat(logmsg, US("unsupported DKIM version]"));
 	  break;
 
 	default:
-	  logmsg = string_cat(logmsg, US"unspecified problem]");
+	  logmsg = string_cat(logmsg, US("unspecified problem]"));
 	}
       break;
 
     case PDKIM_VERIFY_FAIL:
-      logmsg = string_cat(logmsg, US" [verification failed - ");
+      logmsg = string_cat(logmsg, US(" [verification failed - "));
       switch (sig->verify_ext_status)
 	{
 	case PDKIM_VERIFY_FAIL_BODY:
 	  logmsg = string_cat(logmsg,
-	       US"body hash mismatch (body probably modified in transit)]");
+	       US("body hash mismatch (body probably modified in transit)]"));
 	  break;
 
 	case PDKIM_VERIFY_FAIL_MESSAGE:
 	  logmsg = string_cat(logmsg,
-		US"signature did not verify "
+		US("signature did not verify ")
 		"(headers probably modified in transit)]");
 	  break;
 
 	case PDKIM_VERIFY_INVALID_PUBKEY_KEYSIZE:
 	  logmsg = string_cat(logmsg,
-		US"signature invalid (key too short)]");
+		US("signature invalid (key too short)]"));
 	  break;
 
 	default:
-	  logmsg = string_cat(logmsg, US"unspecified reason]");
+	  logmsg = string_cat(logmsg, US("unspecified reason]"));
 	}
       break;
 
     case PDKIM_VERIFY_PASS:
-      logmsg = string_cat(logmsg, US" [verification succeeded]");
+      logmsg = string_cat(logmsg, US(" [verification succeeded]"));
       break;
     }
 
@@ -391,8 +391,8 @@ dkim_exim_acl_run(uschar * id, gstring ** res_ptr,
 uschar * cmp_val;
 int rc = -1;
 
-dkim_verify_status = US"none";
-dkim_verify_reason = US"";
+dkim_verify_status = US("none");
+dkim_verify_reason = US("");
 dkim_cur_signer = id;
 
 if (f.dkim_disable_verify || !id || !dkim_verify_ctx)
@@ -401,7 +401,7 @@ if (f.dkim_disable_verify || !id || !dkim_verify_ctx)
 /* Find signatures to run ACL on */
 
 for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
-  if (  (cmp_val = Ustrchr(id, '@') != NULL ? US sig->identity : US sig->domain)
+  if (  (cmp_val = Ustrchr(id, '@') != NULL ? US(sig->identity) : US(sig->domain))
      && strcmpic(cmp_val, id) == 0
      )
     {
@@ -414,8 +414,8 @@ for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
     dkim_exim_expand_query() below). */
 
     dkim_cur_sig = sig;
-    dkim_signing_domain = US sig->domain;
-    dkim_signing_selector = US sig->selector;
+    dkim_signing_domain = US(sig->domain);
+    dkim_signing_selector = US(sig->selector);
     dkim_key_length = sig->keybits;
 
     /* These two return static strings, so we can compare the addr
@@ -443,23 +443,23 @@ dkim_exim_expand_defaults(int what)
 {
 switch (what)
   {
-  case DKIM_ALGO:		return US"";
-  case DKIM_BODYLENGTH:		return US"9999999999999";
-  case DKIM_CANON_BODY:		return US"";
-  case DKIM_CANON_HEADERS:	return US"";
-  case DKIM_COPIEDHEADERS:	return US"";
-  case DKIM_CREATED:		return US"0";
-  case DKIM_EXPIRES:		return US"9999999999999";
-  case DKIM_HEADERNAMES:	return US"";
-  case DKIM_IDENTITY:		return US"";
-  case DKIM_KEY_GRANULARITY:	return US"*";
-  case DKIM_KEY_SRVTYPE:	return US"*";
-  case DKIM_KEY_NOTES:		return US"";
-  case DKIM_KEY_TESTING:	return US"0";
-  case DKIM_NOSUBDOMAINS:	return US"0";
-  case DKIM_VERIFY_STATUS:	return US"none";
-  case DKIM_VERIFY_REASON:	return US"";
-  default:			return US"";
+  case DKIM_ALGO:		return US("");
+  case DKIM_BODYLENGTH:		return US("9999999999999");
+  case DKIM_CANON_BODY:		return US("");
+  case DKIM_CANON_HEADERS:	return US("");
+  case DKIM_COPIEDHEADERS:	return US("");
+  case DKIM_CREATED:		return US("0");
+  case DKIM_EXPIRES:		return US("9999999999999");
+  case DKIM_HEADERNAMES:	return US("");
+  case DKIM_IDENTITY:		return US("");
+  case DKIM_KEY_GRANULARITY:	return US("*");
+  case DKIM_KEY_SRVTYPE:	return US("*");
+  case DKIM_KEY_NOTES:		return US("");
+  case DKIM_KEY_TESTING:	return US("0");
+  case DKIM_NOSUBDOMAINS:	return US("0");
+  case DKIM_VERIFY_STATUS:	return US("none");
+  case DKIM_VERIFY_REASON:	return US("");
+  default:			return US("");
   }
 }
 
@@ -483,22 +483,22 @@ switch (what)
   case DKIM_CANON_BODY:
     switch (dkim_cur_sig->canon_body)
       {
-      case PDKIM_CANON_RELAXED:	return US"relaxed";
+      case PDKIM_CANON_RELAXED:	return US("relaxed");
       case PDKIM_CANON_SIMPLE:
-      default:			return US"simple";
+      default:			return US("simple");
       }
 
   case DKIM_CANON_HEADERS:
     switch (dkim_cur_sig->canon_headers)
       {
-      case PDKIM_CANON_RELAXED:	return US"relaxed";
+      case PDKIM_CANON_RELAXED:	return US("relaxed");
       case PDKIM_CANON_SIMPLE:
-      default:			return US"simple";
+      default:			return US("simple");
       }
 
   case DKIM_COPIEDHEADERS:
     return dkim_cur_sig->copiedheaders
-      ? US dkim_cur_sig->copiedheaders : dkim_exim_expand_defaults(what);
+      ? US(dkim_cur_sig->copiedheaders) : dkim_exim_expand_defaults(what);
 
   case DKIM_CREATED:
     return dkim_cur_sig->created > 0
@@ -516,67 +516,67 @@ switch (what)
 
   case DKIM_IDENTITY:
     return dkim_cur_sig->identity
-      ? US dkim_cur_sig->identity : dkim_exim_expand_defaults(what);
+      ? US(dkim_cur_sig->identity) : dkim_exim_expand_defaults(what);
 
   case DKIM_KEY_GRANULARITY:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->granularity
-      ? US dkim_cur_sig->pubkey->granularity
+      ? US(dkim_cur_sig->pubkey->granularity)
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
   case DKIM_KEY_SRVTYPE:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->srvtype
-      ? US dkim_cur_sig->pubkey->srvtype
+      ? US(dkim_cur_sig->pubkey->srvtype)
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
   case DKIM_KEY_NOTES:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->notes
-      ? US dkim_cur_sig->pubkey->notes
+      ? US(dkim_cur_sig->pubkey->notes)
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
   case DKIM_KEY_TESTING:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->testing
-      ? US"1"
+      ? US("1")
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
   case DKIM_NOSUBDOMAINS:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->no_subdomaining
-      ? US"1"
+      ? US("1")
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
   case DKIM_VERIFY_STATUS:
     switch (dkim_cur_sig->verify_status)
       {
-      case PDKIM_VERIFY_INVALID:	return US"invalid";
-      case PDKIM_VERIFY_FAIL:		return US"fail";
-      case PDKIM_VERIFY_PASS:		return US"pass";
+      case PDKIM_VERIFY_INVALID:	return US("invalid");
+      case PDKIM_VERIFY_FAIL:		return US("fail");
+      case PDKIM_VERIFY_PASS:		return US("pass");
       case PDKIM_VERIFY_NONE:
-      default:				return US"none";
+      default:				return US("none");
       }
 
   case DKIM_VERIFY_REASON:
     switch (dkim_cur_sig->verify_ext_status)
       {
       case PDKIM_VERIFY_INVALID_PUBKEY_UNAVAILABLE:
-						return US"pubkey_unavailable";
-      case PDKIM_VERIFY_INVALID_PUBKEY_DNSRECORD:return US"pubkey_dns_syntax";
-      case PDKIM_VERIFY_INVALID_PUBKEY_IMPORT:	return US"pubkey_der_syntax";
-      case PDKIM_VERIFY_INVALID_PUBKEY_KEYSIZE:	return US"pubkey_too_short";
-      case PDKIM_VERIFY_FAIL_BODY:		return US"bodyhash_mismatch";
-      case PDKIM_VERIFY_FAIL_MESSAGE:		return US"signature_incorrect";
+						return US("pubkey_unavailable");
+      case PDKIM_VERIFY_INVALID_PUBKEY_DNSRECORD:return US("pubkey_dns_syntax");
+      case PDKIM_VERIFY_INVALID_PUBKEY_IMPORT:	return US("pubkey_der_syntax");
+      case PDKIM_VERIFY_INVALID_PUBKEY_KEYSIZE:	return US("pubkey_too_short");
+      case PDKIM_VERIFY_FAIL_BODY:		return US("bodyhash_mismatch");
+      case PDKIM_VERIFY_FAIL_MESSAGE:		return US("signature_incorrect");
       }
 
   default:
-    return US"";
+    return US("");
   }
 }
 
@@ -625,7 +625,7 @@ store_pool = POOL_MAIN;
 
 if ((s = dkim->dkim_domain) && !(dkim_domain = expand_cstring(s)))
   /* expansion error, do not send message. */
-  { errwhen = US"dkim_domain"; goto expand_bad; }
+  { errwhen = US("dkim_domain"); goto expand_bad; }
 
 /* Set $dkim_domain expansion variable to each unique domain in list. */
 
@@ -642,7 +642,7 @@ if (dkim_domain)
   appears in the expanded list. */
 
   dkim_signing_domain = string_copylc(dkim_signing_domain);
-  if (match_isinlist(dkim_signing_domain, CUSS &seen_doms,
+  if (match_isinlist(dkim_signing_domain, CUSS(&seen_doms),
       0, NULL, NULL, MCL_STRING, TRUE, NULL) == OK)
     continue;
 
@@ -652,7 +652,7 @@ if (dkim_domain)
   for this domain. */
 
   if (!(dkim_sel = expand_string(dkim->dkim_selector)))
-    { errwhen = US"dkim_selector"; goto expand_bad; }
+    { errwhen = US("dkim_selector"); goto expand_bad; }
 
   while ((dkim_signing_selector = string_nextinlist(&dkim_sel, &sel_sep,
 	  NULL, 0)))
@@ -669,9 +669,9 @@ if (dkim_domain)
     /* Get canonicalization to use */
 
     dkim_canon_expanded = dkim->dkim_canon
-      ? expand_string(dkim->dkim_canon) : US"relaxed";
+      ? expand_string(dkim->dkim_canon) : US("relaxed");
     if (!dkim_canon_expanded)	/* expansion error, do not send message. */
-      { errwhen = US"dkim_canon"; goto expand_bad; }
+      { errwhen = US("dkim_canon"); goto expand_bad; }
 
     if (Ustrcmp(dkim_canon_expanded, "relaxed") == 0)
       pdkim_canon = PDKIM_CANON_RELAXED;
@@ -687,13 +687,13 @@ if (dkim_domain)
 
     if (  dkim->dkim_sign_headers
        && !(dkim_sign_headers_expanded = expand_string(dkim->dkim_sign_headers)))
-      { errwhen = US"dkim_sign_header"; goto expand_bad; }
+      { errwhen = US("dkim_sign_header"); goto expand_bad; }
     /* else pass NULL, which means default header list */
 
     /* Get private key to use. */
 
     if (!(dkim_private_key_expanded = expand_string(dkim->dkim_private_key)))
-      { errwhen = US"dkim_private_key"; goto expand_bad; }
+      { errwhen = US("dkim_private_key"); goto expand_bad; }
 
     if (  Ustrlen(dkim_private_key_expanded) == 0
        || Ustrcmp(dkim_private_key_expanded, "0") == 0
@@ -707,20 +707,20 @@ if (dkim_domain)
       goto bad;
 
     if (!(dkim_hash_expanded = expand_string(dkim->dkim_hash)))
-      { errwhen = US"dkim_hash"; goto expand_bad; }
+      { errwhen = US("dkim_hash"); goto expand_bad; }
 
     if (dkim->dkim_identity)
       if (!(dkim_identity_expanded = expand_string(dkim->dkim_identity)))
-	{ errwhen = US"dkim_identity"; goto expand_bad; }
+	{ errwhen = US("dkim_identity"); goto expand_bad; }
       else if (!*dkim_identity_expanded)
 	dkim_identity_expanded = NULL;
 
     if (dkim->dkim_timestamps)
       if (!(dkim_timestamps_expanded = expand_string(dkim->dkim_timestamps)))
-	{ errwhen = US"dkim_timestamps"; goto expand_bad; }
+	{ errwhen = US("dkim_timestamps"); goto expand_bad; }
       else
 	xval = (tval = (unsigned long) time(NULL))
-	      + strtoul(CCS dkim_timestamps_expanded, NULL, 10);
+	      + strtoul(CCS(dkim_timestamps_expanded), NULL, 10);
 
     if (!(sig = pdkim_init_sign(&dkim_sign_ctx, dkim_signing_domain,
 			  dkim_signing_selector,
@@ -732,8 +732,8 @@ if (dkim_domain)
     dkim_private_key_expanded[0] = '\0';
 
     pdkim_set_optional(sig,
-			CS dkim_sign_headers_expanded,
-			CS dkim_identity_expanded,
+			CS(dkim_sign_headers_expanded),
+			CS(dkim_identity_expanded),
 			pdkim_canon,
 			pdkim_canon, -1, tval, xval);
 
@@ -790,7 +790,7 @@ else
     sigbuf = string_get(1);	/* return a zero-len string */
     }
   else for (sigbuf = NULL; sig; sig = sig->next)
-    sigbuf = string_append(sigbuf, 2, US sig->signature_header, US"\r\n");
+    sigbuf = string_append(sigbuf, 2, US(sig->signature_header), US("\r\n"));
   }
 
 CLEANUP:
@@ -825,33 +825,33 @@ DEBUG(D_acl) start = g->ptr;
 
 for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
   {
-  g = string_catn(g, US";\n\tdkim=", 8);
+  g = string_catn(g, US(";\n\tdkim="), 8);
 
   if (sig->verify_status & PDKIM_VERIFY_POLICY)
     g = string_append(g, 5,
-      US"policy (", dkim_verify_status, US" - ", dkim_verify_reason, US")");
+      US("policy ("), dkim_verify_status, US(" - "), dkim_verify_reason, US(")"));
   else switch(sig->verify_status)
     {
-    case PDKIM_VERIFY_NONE:    g = string_cat(g, US"none"); break;
+    case PDKIM_VERIFY_NONE:    g = string_cat(g, US("none")); break;
     case PDKIM_VERIFY_INVALID:
       switch (sig->verify_ext_status)
 	{
 	case PDKIM_VERIFY_INVALID_PUBKEY_UNAVAILABLE:
-          g = string_cat(g, US"tmperror (pubkey unavailable)\n\t\t"); break;
+          g = string_cat(g, US("tmperror (pubkey unavailable)\n\t\t")); break;
         case PDKIM_VERIFY_INVALID_BUFFER_SIZE:
-          g = string_cat(g, US"permerror (overlong public key record)\n\t\t"); break;
+          g = string_cat(g, US("permerror (overlong public key record)\n\t\t")); break;
         case PDKIM_VERIFY_INVALID_PUBKEY_DNSRECORD:
         case PDKIM_VERIFY_INVALID_PUBKEY_IMPORT:
-          g = string_cat(g, US"neutral (public key record import problem)\n\t\t");
+          g = string_cat(g, US("neutral (public key record import problem)\n\t\t"));
           break;
         case PDKIM_VERIFY_INVALID_SIGNATURE_ERROR:
-          g = string_cat(g, US"neutral (signature tag missing or invalid)\n\t\t");
+          g = string_cat(g, US("neutral (signature tag missing or invalid)\n\t\t"));
           break;
         case PDKIM_VERIFY_INVALID_DKIM_VERSION:
-          g = string_cat(g, US"neutral (unsupported DKIM version)\n\t\t");
+          g = string_cat(g, US("neutral (unsupported DKIM version)\n\t\t"));
           break;
         default:
-          g = string_cat(g, US"permerror (unspecified problem)\n\t\t"); break;
+          g = string_cat(g, US("permerror (unspecified problem)\n\t\t")); break;
 	}
       break;
     case PDKIM_VERIFY_FAIL:
@@ -859,27 +859,27 @@ for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
 	{
 	case PDKIM_VERIFY_FAIL_BODY:
           g = string_cat(g,
-	    US"fail (body hash mismatch; body probably modified in transit)\n\t\t");
+	    US("fail (body hash mismatch; body probably modified in transit)\n\t\t"));
 	  break;
         case PDKIM_VERIFY_FAIL_MESSAGE:
           g = string_cat(g,
-	    US"fail (signature did not verify; headers probably modified in transit)\n\t\t");
+	    US("fail (signature did not verify; headers probably modified in transit)\n\t\t"));
 	  break;
         case PDKIM_VERIFY_INVALID_PUBKEY_KEYSIZE:	/* should this really be "polcy"? */
           g = string_fmt_append(g, "fail (public key too short: %u bits)\n\t\t", sig->keybits);
           break;
         default:
-          g = string_cat(g, US"fail (unspecified reason)\n\t\t");
+          g = string_cat(g, US("fail (unspecified reason)\n\t\t"));
 	  break;
 	}
       break;
-    case PDKIM_VERIFY_PASS:    g = string_cat(g, US"pass"); break;
-    default:                   g = string_cat(g, US"permerror"); break;
+    case PDKIM_VERIFY_PASS:    g = string_cat(g, US("pass")); break;
+    default:                   g = string_cat(g, US("permerror")); break;
     }
-  if (sig->domain)   g = string_append(g, 2, US" header.d=", sig->domain);
-  if (sig->identity) g = string_append(g, 2, US" header.i=", sig->identity);
-  if (sig->selector) g = string_append(g, 2, US" header.s=", sig->selector);
-  g = string_append(g, 2, US" header.a=", dkim_sig_to_a_tag(sig));
+  if (sig->domain)   g = string_append(g, 2, US(" header.d="), sig->domain);
+  if (sig->identity) g = string_append(g, 2, US(" header.i="), sig->identity);
+  if (sig->selector) g = string_append(g, 2, US(" header.s="), sig->selector);
+  g = string_append(g, 2, US(" header.a="), dkim_sig_to_a_tag(sig));
   }
 
 DEBUG(D_acl)

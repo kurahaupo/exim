@@ -49,7 +49,7 @@ static inline EXIM_DB *
 exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
   unsigned mode)
 {
-return tdb_open(CS name, 0, TDB_DEFAULT, flags, mode);
+return tdb_open(CS(name), 0, TDB_DEFAULT, flags, mode);
 }
 
 /* EXIM_DBGET - returns TRUE if successful, FALSE otherwise */
@@ -116,7 +116,7 @@ exim_dbclose__(EXIM_DB * db)
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return US(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }
@@ -227,13 +227,13 @@ EXIM_DB * dbp;
 DB * b;
 if (  db_env_create(&dbp, 0) != 0
    || (dbp->set_errcall(dbp, dbfn_bdb_error_callback), 0)
-   || dbp->open(dbp, CS dirname, DB_CREATE|DB_INIT_MPOOL|DB_PRIVATE, 0) != 0
+   || dbp->open(dbp, CS(dirname), DB_CREATE|DB_INIT_MPOOL|DB_PRIVATE, 0) != 0
    )
   return NULL;
 if (db_create(&b, dbp, 0) == 0)
   {
   dbp->app_private = b;
-  if (b->open(b, NULL, CS name, NULL,
+  if (b->open(b, NULL, CS(name), NULL,
 	      flags == O_RDONLY ? DB_UNKNOWN : DB_HASH,
 	      flags == O_RDONLY ? DB_RDONLY : DB_CREATE,
 	      mode) == 0
@@ -367,7 +367,7 @@ exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
 EXIM_DB * dbp;
 return db_create(&dbp, NULL, 0) == 0
   && (  dbp->set_errcall(dbp, dbfn_bdb_error_callback),
-	dbp->open(dbp, CS name, NULL,
+	dbp->open(dbp, CS(name), NULL,
 	  flags == O_RDONLY ? DB_UNKNOWN : DB_HASH,
 	  flags == O_RDONLY ? DB_RDONLY : DB_CREATE,
 	  mode)
@@ -432,17 +432,17 @@ exim_dbclose__(EXIM_DB * dbp)
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return US(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }
 
 static inline uschar *
 exim_datum_size_get(EXIM_DATUM * dp)
-{ return US dp->size; }
+{ return US(dp->size); }
 static inline void
 exim_datum_size_set(EXIM_DATUM * dp, uschar * s)
-{ dp->size = CS s; }
+{ dp->size = CS(s); }
 
 /* The whole datum structure contains other fields that must be cleared
 before use, but we don't have to free anything after reading data. */
@@ -510,7 +510,7 @@ EXIM_DB * dbp = malloc(sizeof(EXIM_DB));	/*XXX why not exim mem-mgmt? */
 if (dbp)
   {
   dbp->lkey.dptr = NULL;
-  dbp->gdbm = gdbm_open(CS name, 0,
+  dbp->gdbm = gdbm_open(CS(name), 0,
     flags & O_CREAT ? GDBM_WRCREAT
     : flags & (O_RDWR|O_WRONLY) ? GDBM_WRITER
     : GDBM_READER,
@@ -585,7 +585,7 @@ free(dbp);
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return US(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }
@@ -652,8 +652,8 @@ exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
   unsigned mode)
 {
 struct stat st;
-if (!(flags & O_CREAT) || lstat(CCS name, &st) != 0 && errno == ENOENT)
-  return dbm_open(CS name, flags, mode);
+if (!(flags & O_CREAT) || lstat(CCS(name), &st) != 0 && errno == ENOENT)
+  return dbm_open(CS(name), flags, mode);
 #ifndef COMPILE_UTILITY
 debug_printf("%s %d errno %s\n", __FUNCTION__, __LINE__, strerror(errno));
 #endif
@@ -717,7 +717,7 @@ exim_dbclose__(EXIM_DB * dbp)
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return US(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }

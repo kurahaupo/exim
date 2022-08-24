@@ -89,7 +89,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
   the ordering from host_build_hostlist. */
 
   len = Ustrlen(h->name);
-  if (len > 3 && strcmpic(h->name + len - 3, US"/mx") == 0)
+  if (len > 3 && strcmpic(h->name + len - 3, US("/mx")) == 0)
     {
     int whichrrs = lookup_type & LK_IPV4_ONLY
       ? HOST_FIND_BY_MX | HOST_FIND_IPV4_ONLY

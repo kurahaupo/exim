@@ -184,28 +184,28 @@ static int nonpool_malloc;
 
 #ifndef COMPILE_UTILITY
 static const uschar * pooluse[N_PAIRED_POOLS] = {
-[POOL_MAIN] =		US"main",
-[POOL_PERM] =		US"perm",
-[POOL_CONFIG] =		US"config",
-[POOL_SEARCH] =		US"search",
-[POOL_MESSAGE] =	US"message",
-[POOL_TAINT_MAIN] =	US"main",
-[POOL_TAINT_PERM] =	US"perm",
-[POOL_TAINT_CONFIG] =	US"config",
-[POOL_TAINT_SEARCH] =	US"search",
-[POOL_TAINT_MESSAGE] =	US"message",
+[POOL_MAIN] =		US("main"),
+[POOL_PERM] =		US("perm"),
+[POOL_CONFIG] =		US("config"),
+[POOL_SEARCH] =		US("search"),
+[POOL_MESSAGE] =	US("message"),
+[POOL_TAINT_MAIN] =	US("main"),
+[POOL_TAINT_PERM] =	US("perm"),
+[POOL_TAINT_CONFIG] =	US("config"),
+[POOL_TAINT_SEARCH] =	US("search"),
+[POOL_TAINT_MESSAGE] =	US("message"),
 };
 static const uschar * poolclass[N_PAIRED_POOLS] = {
-[POOL_MAIN] =		US"untainted",
-[POOL_PERM] =		US"untainted",
-[POOL_CONFIG] =		US"untainted",
-[POOL_SEARCH] =		US"untainted",
-[POOL_MESSAGE] =	US"untainted",
-[POOL_TAINT_MAIN] =	US"tainted",
-[POOL_TAINT_PERM] =	US"tainted",
-[POOL_TAINT_CONFIG] =	US"tainted",
-[POOL_TAINT_SEARCH] =	US"tainted",
-[POOL_TAINT_MESSAGE] =	US"tainted",
+[POOL_MAIN] =		US("untainted"),
+[POOL_PERM] =		US("untainted"),
+[POOL_CONFIG] =		US("untainted"),
+[POOL_SEARCH] =		US("untainted"),
+[POOL_MESSAGE] =	US("untainted"),
+[POOL_TAINT_MAIN] =	US("tainted"),
+[POOL_TAINT_PERM] =	US("tainted"),
+[POOL_TAINT_CONFIG] =	US("tainted"),
+[POOL_TAINT_SEARCH] =	US("tainted"),
+[POOL_TAINT_MESSAGE] =	US("tainted"),
 };
 #endif
 
@@ -239,8 +239,8 @@ for (pooldesc * pp = paired_pools; pp < paired_pools + N_PAIRED_POOLS; pp++)
 static BOOL
 is_pointer_in_block(const storeblock * b, const void * p)
 {
-uschar * bc = US b + ALIGNED_SIZEOF_STOREBLOCK;
-return US p >= bc && US p < bc + b->length;
+uschar * bc = US(b) + ALIGNED_SIZEOF_STOREBLOCK;
+return US(p) >= bc && US(p) < bc + b->length;
 }
 
 static pooldesc *
@@ -462,7 +462,7 @@ if (size > pp->yield_length)
   pp->current_block = newblock;
   pp->yield_length = newblock->length;
   pp->next_yield =
-    (void *)(CS pp->current_block + ALIGNED_SIZEOF_STOREBLOCK);
+    (void *)(CS(pp->current_block) + ALIGNED_SIZEOF_STOREBLOCK);
   (void) VALGRIND_MAKE_MEM_NOACCESS(pp->next_yield, pp->yield_length);
   }
 
@@ -474,7 +474,7 @@ pp->store_last_get = pp->next_yield;
 (void) VALGRIND_MAKE_MEM_UNDEFINED(pp->store_last_get, size);
 /* Update next pointer and number of bytes left in the current block. */
 
-pp->next_yield = (void *)(CS pp->next_yield + size);
+pp->next_yield = (void *)(CS(pp->next_yield) + size);
 pp->yield_length -= size;
 return pp->store_last_get;
 }
@@ -729,7 +729,7 @@ if (oldsize < 0 || newsize < oldsize || newsize >= INT_MAX/2)
 if (rounded_oldsize % alignment != 0)
   rounded_oldsize += alignment - (rounded_oldsize % alignment);
 
-if (CS ptr + rounded_oldsize != CS (pp->next_yield) ||
+if (CS(ptr) + rounded_oldsize != CS(pp->next_yield) ||
     inc > pp->yield_length + rounded_oldsize - oldsize)
   return FALSE;
 
@@ -756,7 +756,7 @@ DEBUG(D_memory)
 #endif  /* COMPILE_UTILITY */
 
 if (newsize % alignment != 0) newsize += alignment - (newsize % alignment);
-pp->next_yield = CS ptr + newsize;
+pp->next_yield = CS(ptr) + newsize;
 pp->yield_length -= newsize - rounded_oldsize;
 (void) VALGRIND_MAKE_MEM_UNDEFINED(ptr + oldsize, inc);
 return TRUE;
@@ -799,7 +799,7 @@ internal_store_reset(void * ptr, int pool, const char *func, int linenumber)
 storeblock * bb;
 pooldesc * pp = paired_pools + pool;
 storeblock * b = pp->current_block;
-char * bc = CS b + ALIGNED_SIZEOF_STOREBLOCK;
+char * bc = CS(b) + ALIGNED_SIZEOF_STOREBLOCK;
 int newlength, count;
 #ifndef COMPILE_UTILITY
 int oldmalloc = pool_malloc;
@@ -814,12 +814,12 @@ pp->store_last_get = NULL;
 /* See if the place is in the current block - as it often will be. Otherwise,
 search for the block in which it lies. */
 
-if (CS ptr < bc || CS ptr > bc + b->length)
+if (CS(ptr) < bc || CS(ptr) > bc + b->length)
   {
   for (b =  pp->chainbase; b; b = b->next)
     {
-    bc = CS b + ALIGNED_SIZEOF_STOREBLOCK;
-    if (CS ptr >= bc && CS ptr <= bc + b->length) break;
+    bc = CS(b) + ALIGNED_SIZEOF_STOREBLOCK;
+    if (CS(ptr) >= bc && CS(ptr) <= bc + b->length) break;
     }
   if (!b)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "internal error: store_reset(%p) "
@@ -829,7 +829,7 @@ if (CS ptr < bc || CS ptr > bc + b->length)
 /* Back up, rounding to the alignment if necessary. When testing, flatten
 the released memory. */
 
-newlength = bc + b->length - CS ptr;
+newlength = bc + b->length - CS(ptr);
 #ifndef COMPILE_UTILITY
 if (debug_store)
   {
@@ -842,7 +842,7 @@ if (debug_store)
   }
 #endif
 (void) VALGRIND_MAKE_MEM_NOACCESS(ptr, newlength);
-pp->next_yield = CS ptr + (newlength % alignment);
+pp->next_yield = CS(ptr) + (newlength % alignment);
 count = pp->yield_length;
 count = (pp->yield_length = newlength - (newlength % alignment)) - count;
 pp->current_block = b;
@@ -862,7 +862,7 @@ if (  pp->yield_length < STOREPOOL_MIN_SIZE
     assert_no_variables(b, b->length + ALIGNED_SIZEOF_STOREBLOCK,
 			func, linenumber);
 #endif
-  (void) VALGRIND_MAKE_MEM_NOACCESS(CS b + ALIGNED_SIZEOF_STOREBLOCK,
+  (void) VALGRIND_MAKE_MEM_NOACCESS(CS(b) + ALIGNED_SIZEOF_STOREBLOCK,
 		b->length - ALIGNED_SIZEOF_STOREBLOCK);
   }
 
@@ -957,7 +957,7 @@ if ((pp = pool_current_for_pointer(ptr)))
   /* Back up, rounding to the alignment if necessary. When testing, flatten
   the released memory. */
 
-  newlength = (CS b + ALIGNED_SIZEOF_STOREBLOCK) + b->length - CS ptr;
+  newlength = (CS(b) + ALIGNED_SIZEOF_STOREBLOCK) + b->length - CS(ptr);
 #ifndef COMPILE_UTILITY
   if (debug_store)
     {
@@ -970,7 +970,7 @@ if ((pp = pool_current_for_pointer(ptr)))
     }
 #endif
   (void) VALGRIND_MAKE_MEM_NOACCESS(ptr, newlength);
-  pp->next_yield = CS ptr + (newlength % alignment);
+  pp->next_yield = CS(ptr) + (newlength % alignment);
   count = pp->yield_length;
   count = (pp->yield_length = newlength - (newlength % alignment)) - count;
 
@@ -1054,7 +1054,7 @@ store_release_3(void * block, pooldesc * pp, const char * func, int linenumber)
 for (storeblock * b =  pp->chainbase; b; b = b->next)
   {
   storeblock * bb = b->next;
-  if (bb && CS block == CS bb + ALIGNED_SIZEOF_STOREBLOCK)
+  if (bb && CS(block) == CS(bb) + ALIGNED_SIZEOF_STOREBLOCK)
     {
     int siz = bb->length + ALIGNED_SIZEOF_STOREBLOCK;
     b->next = bb->next;
@@ -1166,7 +1166,7 @@ if (!(yield = malloc(size)))
 #ifndef COMPILE_UTILITY
 DEBUG(D_any) *(size_t *)yield = size;
 #endif
-yield = US yield + sizeof(size_t);
+yield = US(yield) + sizeof(size_t);
 
 if ((nonpool_malloc += size) > max_nonpool_malloc)
   max_nonpool_malloc = nonpool_malloc;
@@ -1213,7 +1213,7 @@ Returns:      nothing
 static void
 internal_store_free(void * block, const char * func, int linenumber)
 {
-uschar * p = US block - sizeof(size_t);
+uschar * p = US(block) - sizeof(size_t);
 #ifndef COMPILE_UTILITY
 DEBUG(D_any) nonpool_malloc -= *(size_t *)p;
 DEBUG(D_memory) debug_printf("----Free %6p %5ld bytes\t%-20s %4d\n",

@@ -27,7 +27,7 @@ Returns:         OK/FAIL/DEFER
 int
 lss_match_domain(uschar *domain, uschar *list)
 {
-return match_isinlist(CUS domain, CUSS &list, 0, &domainlist_anchor, NULL, MCL_DOMAIN,
+return match_isinlist(CUS(domain), CUSS(&list), 0, &domainlist_anchor, NULL, MCL_DOMAIN,
   TRUE, NULL);
 }
 
@@ -49,7 +49,7 @@ Returns:         OK/FAIL/DEFER
 int
 lss_match_local_part(uschar *local_part, uschar *list, BOOL caseless)
 {
-return match_isinlist(CUS local_part, CUSS &list, 0, &localpartlist_anchor, NULL,
+return match_isinlist(CUS(local_part), CUSS(&list), 0, &localpartlist_anchor, NULL,
   MCL_LOCALPART, caseless, NULL);
 }
 
@@ -71,7 +71,7 @@ Returns:         OK/FAIL/DEFER
 int
 lss_match_address(uschar *address, uschar *list, BOOL caseless)
 {
-return match_address_list(CUS address, caseless, TRUE, CUSS &list, NULL, -1, 0, NULL);
+return match_address_list(CUS(address), caseless, TRUE, CUSS(&list), NULL, -1, 0, NULL);
 }
 
 
@@ -95,7 +95,7 @@ Returns:         OK/FAIL/DEFER
 int
 lss_match_host(uschar *host_name, uschar *host_address, uschar *list)
 {
-return verify_check_this_host(CUSS &list, NULL, host_name, host_address, NULL);
+return verify_check_this_host(CUSS(&list), NULL, host_name, host_address, NULL);
 }
 
 
@@ -117,7 +117,7 @@ Returns:      a pointer to the zero-terminated base 64 string, which
 uschar *
 lss_b64encode(uschar * clear, int len)
 {
-return b64encode(CUS clear, len);
+return b64encode(CUS(clear), len);
 }
 
 /*

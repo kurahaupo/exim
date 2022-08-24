@@ -205,7 +205,7 @@ extern void    smtp_printf(const char *, BOOL, ...) PRINTF_FUNCTION(1,3);
 extern void    smtp_vprintf(const char *, BOOL, va_list);
 
 #define string_sprintf(fmt, ...) \
-	string_sprintf_trc(fmt, US __FUNCTION__, __LINE__, __VA_ARGS__)
+	string_sprintf_trc(fmt, US(__FUNCTION__), __LINE__, __VA_ARGS__)
 extern uschar *string_sprintf_trc(const char *, const uschar *, unsigned, ...) ALMOST_PRINTF(1,4);
 
 #define store_get(size, proto_mem) \
@@ -224,9 +224,9 @@ with the original name. */
 # define string_copy(s) string_copy_function(s)
 # define string_copyn(s, n) string_copyn_function((s), (n))
 # define string_copy_taint(s, t) string_copy_taint_function((s), (t))
-# define child_open_exim(p)        child_open_exim_function((p), US"from local_scan")
-# define child_open_exim2(p, s, a) child_open_exim2_function((p), (s), (a), US"from local_scan")
-# define child_open(a,e,u,i,o,l) child_open_function((a),(e),(u),(i),(o),(l),US"from local_scan")
+# define child_open_exim(p)        child_open_exim_function((p), US("from local_scan"))
+# define child_open_exim2(p, s, a) child_open_exim2_function((p), (s), (a), US("from local_scan"))
+# define child_open(a,e,u,i,o,l) child_open_function((a),(e),(u),(i),(o),(l),US("from local_scan"))
 
 extern uschar * string_copy_function(const uschar *);
 extern uschar * string_copyn_function(const uschar *, int n);

@@ -42,13 +42,13 @@ testdb_find(void * handle, const uschar * filename, const uschar * query,
 {
 if (Ustrcmp(query, "fail") == 0)
   {
-  *errmsg = US"testdb lookup forced FAIL";
+  *errmsg = US("testdb lookup forced FAIL");
   DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
   return FAIL;
   }
 if (Ustrcmp(query, "defer") == 0)
   {
-  *errmsg = US"testdb lookup forced DEFER";
+  *errmsg = US("testdb lookup forced DEFER");
   DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
   return DEFER;
   }
@@ -79,7 +79,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"testdb",			/* lookup name */
+  .name = US("testdb"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = testdb_open,			/* open function */
   .check = NULL,			/* check function */

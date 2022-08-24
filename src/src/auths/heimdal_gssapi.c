@@ -72,9 +72,9 @@ int auth_heimdal_gssapi_options_count =
 
 /* Defaults for the authenticator-specific options. */
 auth_heimdal_gssapi_options_block auth_heimdal_gssapi_option_defaults = {
-  US"$primary_hostname",    /* server_hostname */
+  US("$primary_hostname"),    /* server_hostname */
   NULL,                     /* server_keytab */
-  US"smtp",                 /* server_service */
+  US("smtp"),                 /* server_service */
 };
 
 
@@ -147,7 +147,7 @@ if ((krc = krb5_init_context(&context)))
 
 if (ob->server_keytab)
   {
-  k_keytab_typed_name = CCS string_sprintf("file:%s", expand_string(ob->server_keytab));
+  k_keytab_typed_name = CCS(string_sprintf("file:%s", expand_string(ob->server_keytab)));
   HDEBUG(D_auth) debug_printf("heimdal: using keytab %s\n", k_keytab_typed_name);
   if ((krc = krb5_kt_resolve(context, k_keytab_typed_name, &keytab)))
     {
@@ -260,13 +260,13 @@ maj_stat = gss_import_name(&min_stat,
     &gbufdesc, GSS_C_NT_HOSTBASED_SERVICE, &gserver);
 if (GSS_ERROR(maj_stat))
   return exim_gssapi_error_defer(store_reset_point, maj_stat, min_stat,
-      "gss_import_name(%s)", CS gbufdesc.value);
+      "gss_import_name(%s)", CS(gbufdesc.value));
 
 /* Use a specific keytab, if specified */
 if (ob->server_keytab) 
   {
   keytab = expand_string(ob->server_keytab);
-  maj_stat = gsskrb5_register_acceptor_identity(CCS keytab);
+  maj_stat = gsskrb5_register_acceptor_identity(CCS(keytab));
   if (GSS_ERROR(maj_stat))
     return exim_gssapi_error_defer(store_reset_point, maj_stat, min_stat,
 	"registering keytab \"%s\"", keytab);
@@ -322,7 +322,7 @@ while (step < 4)
 	  }
 
 	HDEBUG(D_auth) debug_printf("gssapi: missing initial response, nudging.\n");
-	if ((error_out = auth_get_data(&from_client, US"", 0)) != OK)
+	if ((error_out = auth_get_data(&from_client, US(""), 0)) != OK)
 	  goto ERROR_OUT;
 	handled_empty_ir = TRUE;
 	continue;
@@ -333,7 +333,7 @@ while (step < 4)
       break;
 
     case 1:
-      gbufdesc_in.length = b64decode(from_client, USS &gbufdesc_in.value);
+      gbufdesc_in.length = b64decode(from_client, USS(&gbufdesc_in.value));
       if (gclient)
         {
 	maj_stat = gss_release_name(&min_stat, &gclient);
@@ -418,7 +418,7 @@ while (step < 4)
       break;
 
     case 3:
-      gbufdesc_in.length = b64decode(from_client, USS &gbufdesc_in.value);
+      gbufdesc_in.length = b64decode(from_client, USS(&gbufdesc_in.value));
       maj_stat = gss_unwrap(&min_stat,
 	  gcontext,
 	  &gbufdesc_in,       /* data from client */
@@ -442,7 +442,7 @@ while (step < 4)
 	goto ERROR_OUT;
 	}
 
-      requested_qop = (CS gbufdesc_out.value)[0];
+      requested_qop = CS(gbufdesc_out.value)[0];
       if (!(requested_qop & 0x01))
         {
 	HDEBUG(D_auth)
@@ -466,7 +466,7 @@ while (step < 4)
         {
 	expand_nlength[2] = gbufdesc_out.length - 4;
 	auth_vars[1] = expand_nstring[2] =
-	  string_copyn((US gbufdesc_out.value) + 4, expand_nlength[2]);
+	  string_copyn(US(gbufdesc_out.value) + 4, expand_nlength[2]);
 	expand_nmax = 2;
 	}
 
@@ -562,11 +562,11 @@ do {
       major, GSS_C_GSS_CODE, GSS_C_NO_OID, &msgcontext, &status_string);
 
   if (!auth_defer_msg)
-    auth_defer_msg = string_copy(US status_string.value);
+    auth_defer_msg = string_copy(US(status_string.value));
 
   HDEBUG(D_auth) debug_printf("heimdal %s: %.*s\n",
       string_from_gstring(g), (int)status_string.length,
-      CS status_string.value);
+      CS(status_string.value));
   gss_release_buffer(&min_stat, &status_string);
 
   } while (msgcontext != 0);

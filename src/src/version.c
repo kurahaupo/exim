@@ -37,9 +37,9 @@ The reason that version_cnumber_format isn't just written inline in the
 sprintf() call is the gcc -Wall warns about a \0 in a format string. */
 
 version_cnumber = cnumber_buffer;
-version_cnumber_format = US"%d\0<<eximcnumber>>";
-sprintf(CS version_cnumber, CS version_cnumber_format, cnumber);
-version_string = US EXIM_VERSION_STR "\0<<eximversion>>";
+version_cnumber_format = US("%d\0<<eximcnumber>>");
+sprintf(CS(version_cnumber), CS(version_cnumber_format), cnumber);
+version_string = US(EXIM_VERSION_STR "\0<<eximversion>>");
 
 #ifdef EXIM_BUILD_DATE_OVERRIDE
 /* Reproducible build support; build tooling should have given us something looking like
@@ -51,7 +51,7 @@ version_date[0] = 0;
 Ustrncat(version_date, EXIM_BUILD_DATE_OVERRIDE, sizeof(date_buffer));
 
 #else
-Ustrcpy(today, US __DATE__);
+Ustrcpy(today, US(__DATE__));
 if (today[4] == ' ') today[4] = '0';
 today[3] = today[6] = '-';
 
@@ -60,8 +60,8 @@ version_date[0] = 0;
 Ustrncat(version_date, today+4, 3);
 Ustrncat(version_date, today, 4);
 Ustrncat(version_date, today+7, 4);
-Ustrcat(version_date, US" ");
-Ustrcat(version_date, US __TIME__);
+Ustrcat(version_date, US(" "));
+Ustrcat(version_date, US(__TIME__));
 #endif
 }
 

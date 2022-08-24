@@ -80,7 +80,7 @@ table name. */
 while (p > query && p[-1] != ',') p--;
 if (p <= query)
   {
-  *errmsg = US"NIS+ query malformed";
+  *errmsg = US("NIS+ query malformed");
   error_error = DEFER;
   goto NISPLUS_EXIT;
   }
@@ -89,7 +89,7 @@ if (p <= query)
 check that we got back a table, and set up pointers so the field
 names can be scanned. */
 
-nrt = nis_lookup(CS p, EXPAND_NAME | NO_CACHE);
+nrt = nis_lookup(CS(p), EXPAND_NAME | NO_CACHE);
 if (nrt->status != NIS_SUCCESS)
   {
   *errmsg = string_sprintf("NIS+ error accessing %s table: %s", p,
@@ -109,7 +109,7 @@ ta = &tno->zo_data.objdata_u.ta_data;
 /* Now look up the entry in the table, check that we got precisely one
 object and that it is a table entry. */
 
-nre = nis_list(CS query, EXPAND_NAME, NULL, NULL);
+nre = nis_list(CS(query), EXPAND_NAME, NULL, NULL);
 if (nre->status != NIS_SUCCESS)
   {
   *errmsg = string_sprintf("NIS+ error accessing entry %s: %s",
@@ -144,13 +144,13 @@ for (int i = 0; i < eo->en_cols.en_cols_len; i++)
   table_col *tc = ta->ta_cols.ta_cols_val + i;
   entry_col *ec = eo->en_cols.en_cols_val + i;
   int len = ec->ec_value.ec_value_len;
-  uschar *value = US ec->ec_value.ec_value_val;
+  uschar *value = US(ec->ec_value.ec_value_val);
 
   /* The value may be NULL for a zero-length field. Turn this into an
   empty string for consistency. Remove trailing whitespace and zero
   bytes. */
 
-  if (!value) value = US"";
+  if (!value) value = US("");
   else
     while (len > 0 && (value[len-1] == 0 || isspace(value[len-1])))
       len--;
@@ -159,26 +159,26 @@ for (int i = 0; i < eo->en_cols.en_cols_len; i++)
 
   if (!field_name)
     {
-    yield = string_cat (yield, US tc->tc_name);
-    yield = string_catn(yield, US"=", 1);
+    yield = string_cat (yield, US(tc->tc_name));
+    yield = string_catn(yield, US("="), 1);
 
     /* Quote the value if it contains spaces or is empty */
 
     if (value[0] == 0 || Ustrchr(value, ' ') != NULL)
       {
-      yield = string_catn(yield, US"\"", 1);
+      yield = string_catn(yield, US("\""), 1);
       for (int j = 0; j < len; j++)
         {
         if (value[j] == '\"' || value[j] == '\\')
-          yield = string_catn(yield, US"\\", 1);
+          yield = string_catn(yield, US("\\"), 1);
         yield = string_catn(yield, value+j, 1);
         }
-      yield = string_catn(yield, US"\"", 1);
+      yield = string_catn(yield, US("\""), 1);
       }
     else
       yield = string_catn(yield, value, len);
 
-    yield = string_catn(yield, US" ", 1);
+    yield = string_catn(yield, US(" "), 1);
     }
 
   /* When the specified field is found, grab its data and finish */
@@ -273,7 +273,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"nisplus",			/* lookup name */
+  .name = US("nisplus"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = nisplus_open,			/* open function */
   .check = NULL,			/* check function */

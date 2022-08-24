@@ -11,6 +11,8 @@ OBJ = auth-spa.o call_pam.o call_pwcheck.o \
       plaintext.o pwcheck.o \
       spa.o tls.o xtextdecode.o xtextencode.o
 
+CFLAGS += -fsigned-char
+
 auths.a:         $(OBJ)
 		 @$(RM_COMMAND) -f auths.a
 		 @echo "$(AR) auths.a"

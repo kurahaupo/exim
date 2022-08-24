@@ -169,7 +169,7 @@ for (cn = pgsql_connections; cn; cn = cn->next)
 
 if (!cn)
   {
-  uschar *port = US"";
+  uschar *port = US("");
 
   /* For a Unix domain socket connection, the path is in parentheses */
 
@@ -237,7 +237,7 @@ if (!cn)
 
   pg_conn=PQsetdbLogin(
     /*  host      port  options tty   database       user       passwd */
-    CS server, CS port,  NULL, NULL, CS sdata[0], CS sdata[1], CS sdata[2]);
+    CS(server), CS(port),  NULL, NULL, CS(sdata[0]), CS(sdata[1]), CS(sdata[2]));
 
   if(PQstatus(pg_conn) == CONNECTION_BAD)
     {
@@ -279,7 +279,7 @@ else
 
 /* Run the query */
 
-pg_result = PQexec(pg_conn, CS query);
+pg_result = PQexec(pg_conn, CS(query));
 switch(PQresultStatus(pg_result))
   {
   case PGRES_EMPTY_QUERY:
@@ -289,7 +289,7 @@ switch(PQresultStatus(pg_result))
     high level code to not cache this query, and clean the current cache for
     this handle by setting *do_cache zero. */
 
-    result = string_cat(result, US PQcmdTuples(pg_result));
+    result = string_cat(result, US(PQcmdTuples(pg_result)));
     *do_cache = 0;
     DEBUG(D_lookup) debug_printf_indent("PGSQL: command does not return any data "
       "but was successful. Rows affected: %s\n", string_from_gstring(result));
@@ -325,16 +325,16 @@ row, we insert '\n' between them. */
 for (int i = 0; i < num_tuples; i++)
   {
   if (result)
-    result = string_catn(result, US"\n", 1);
+    result = string_catn(result, US("\n"), 1);
 
   if (num_fields == 1)
     result = string_catn(result,
-	US PQgetvalue(pg_result, i, 0), PQgetlength(pg_result, i, 0));
+	US(PQgetvalue(pg_result, i, 0)), PQgetlength(pg_result, i, 0));
   else
     for (int j = 0; j < num_fields; j++)
       {
-      uschar *tmp = US PQgetvalue(pg_result, i, j);
-      result = lf_quote(US PQfname(pg_result, j), tmp, Ustrlen(tmp), result);
+      uschar *tmp = US(PQgetvalue(pg_result, i, j));
+      result = lf_quote(US(PQfname(pg_result, j)), tmp, Ustrlen(tmp), result);
       }
   if (!result) result = string_get(1);
   }
@@ -344,7 +344,7 @@ for (int i = 0; i < num_tuples; i++)
 if (!result)
   {
   yield = FAIL;
-  *errmsg = US"PGSQL: no data found";
+  *errmsg = US("PGSQL: no data found");
   }
 
 /* Get here by goto from various error checks. */
@@ -388,7 +388,7 @@ pgsql_find(void * handle, const uschar * filename, const uschar * query,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
   const uschar * opts)
 {
-return lf_sqlperform(US"PostgreSQL", US"pgsql_servers", pgsql_servers, query,
+return lf_sqlperform(US("PostgreSQL"), US("pgsql_servers"), pgsql_servers, query,
   result, errmsg, do_cache, opts, perform_pgsql_search);
 }
 
@@ -485,7 +485,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"pgsql",			/* lookup name */
+  .name = US("pgsql"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = pgsql_open,			/* open function */
   .check = NULL,			/* no check function */

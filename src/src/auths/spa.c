@@ -124,7 +124,7 @@ ablock->server = ob->spa_serverpassword != NULL;
 
 /* For interface, see auths/README */
 
-#define CVAL(buf,pos) ((US (buf))[pos])
+#define CVAL(buf,pos) (US(buf)[pos])
 #define PVAL(buf,pos) ((unsigned)CVAL(buf,pos))
 #define SVAL(buf,pos) (PVAL(buf,pos)|PVAL(buf,(pos)+1)<<8)
 #define IVAL(buf,pos) (SVAL(buf,pos)|SVAL(buf,(pos)+2)<<16)
@@ -146,10 +146,10 @@ unsigned off;
 /* send a 334, MS Exchange style, and grab the client's request,
 unless we already have it via an initial response. */
 
-if (!*data && auth_get_no64_data(&data, US"NTLM supported") != OK)
+if (!*data && auth_get_no64_data(&data, US("NTLM supported")) != OK)
   return FAIL;
 
-if (spa_base64_to_bits(CS &request, sizeof(request), CCS data) < 0)
+if (spa_base64_to_bits(CS(&request), sizeof(request), CCS(data)) < 0)
   {
   DEBUG(D_auth) debug_printf("auth_spa_server(): bad base64 data in "
     "request: %s\n", data);
@@ -159,13 +159,13 @@ if (spa_base64_to_bits(CS &request, sizeof(request), CCS data) < 0)
 /* create a challenge and send it back */
 
 spa_build_auth_challenge(&request, &challenge);
-spa_bits_to_base64(msgbuf, US &challenge, spa_request_length(&challenge));
+spa_bits_to_base64(msgbuf, US(&challenge), spa_request_length(&challenge));
 
 if (auth_get_no64_data(&data, msgbuf) != OK)
   return FAIL;
 
 /* dump client response */
-if (spa_base64_to_bits(CS &response, sizeof(response), CCS data) < 0)
+if (spa_base64_to_bits(CS(&response), sizeof(response), CCS(data)) < 0)
   {
   DEBUG(D_auth) debug_printf("auth_spa_server(): bad base64 data in "
     "response: %s\n", data);
@@ -193,7 +193,7 @@ that causes failure if the size of msgbuf is exceeded. ****/
 
   if (  (off = IVAL(&responseptr->uUser.offset,0)) >= sizeof(SPAAuthResponse)
      || len >= sizeof(responseptr->buffer)/2
-     || (p = (CS responseptr) + off) + len*2 >= CS (responseptr+1)
+     || (p = (CS(responseptr)) + off) + len*2 >= CS(responseptr+1)
      )
     {
     DEBUG(D_auth)
@@ -253,7 +253,7 @@ if (off >= sizeof(SPAAuthResponse) - 24)
     debug_printf("auth_spa_server(): bad ntRespData spec in response\n");
   return FAIL;
   }
-s = (US responseptr) + off;
+s = (US(responseptr)) + off;
 
 if (memcmp(ntRespData, s, 24) == 0)
   return auth_check_serv_cond(ablock);	/* success. we have a winner. */
@@ -291,7 +291,7 @@ char *username, *password;
 
 *buffer = 0;    /* Default no message when cancelled */
 
-if (!(username = CS expand_string(ob->spa_username)))
+if (!(username = CS(expand_string(ob->spa_username)))
   {
   if (f.expand_string_forcedfail) return CANCELLED;
   string_format(buffer, buffsize, "expansion of \"%s\" failed in %s "
@@ -300,7 +300,7 @@ if (!(username = CS expand_string(ob->spa_username)))
   return ERROR;
   }
 
-if (!(password = CS expand_string(ob->spa_password)))
+if (!(password = CS(expand_string(ob->spa_password)))
   {
   if (f.expand_string_forcedfail) return CANCELLED;
   string_format(buffer, buffsize, "expansion of \"%s\" failed in %s "
@@ -310,7 +310,7 @@ if (!(password = CS expand_string(ob->spa_password)))
   }
 
 if (ob->spa_domain)
-  if (!(domain = CS expand_string(ob->spa_domain)))
+  if (!(domain = CS(expand_string(ob->spa_domain)))
     {
     if (f.expand_string_forcedfail) return CANCELLED;
     string_format(buffer, buffsize, "expansion of \"%s\" failed in %s "
@@ -325,13 +325,13 @@ if (smtp_write_command(sx, SCMD_FLUSH, "AUTH %s\r\n", ablock->public_name) < 0)
   return FAIL_SEND;
 
 /* wait for the 3XX OK message */
-if (!smtp_read_response(sx, US buffer, buffsize, '3', timeout))
+if (!smtp_read_response(sx, US(buffer), buffsize, '3', timeout))
   return FAIL;
 
 DSPA("\n\n%s authenticator: using domain %s\n\n", ablock->name, domain);
 
-spa_build_auth_request(&request, CS username, domain);
-spa_bits_to_base64(US msgbuf, US &request, spa_request_length(&request));
+spa_build_auth_request(&request, CS(username), domain);
+spa_bits_to_base64(US(msgbuf), US(&request), spa_request_length(&request));
 
 DSPA("\n\n%s authenticator: sending request (%s)\n\n", ablock->name, msgbuf);
 
@@ -340,15 +340,15 @@ if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", msgbuf) < 0)
   return FAIL_SEND;
 
 /* wait for the auth challenge */
-if (!smtp_read_response(sx, US buffer, buffsize, '3', timeout))
+if (!smtp_read_response(sx, US(buffer), buffsize, '3', timeout))
   return FAIL;
 
 /* convert the challenge into the challenge struct */
 DSPA("\n\n%s authenticator: challenge (%s)\n\n", ablock->name, buffer + 4);
-spa_base64_to_bits(CS (&challenge), sizeof(challenge), CCS (buffer + 4));
+spa_base64_to_bits(CS(&challenge), sizeof(challenge), CCS(buffer + 4));
 
-spa_build_auth_response(&challenge, &response, CS username, CS password);
-spa_bits_to_base64(US msgbuf, US &response, spa_request_length(&response));
+spa_build_auth_response(&challenge, &response, CS(username), CS(password));
+spa_bits_to_base64(US(msgbuf), US(&response), spa_request_length(&response));
 DSPA("\n\n%s authenticator: challenge response (%s)\n\n", ablock->name, msgbuf);
 
 /* send the challenge response */
@@ -359,7 +359,7 @@ if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", msgbuf) < 0)
 has succeeded. There may be more data to send, but is there any point
 in provoking an error here? */
 
-if (smtp_read_response(sx, US buffer, buffsize, '2', timeout))
+if (smtp_read_response(sx, US(buffer), buffsize, '2', timeout))
   return OK;
 
 /* Not a success response. If errno != 0 there is some kind of transmission

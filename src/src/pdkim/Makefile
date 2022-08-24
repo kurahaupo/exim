@@ -3,6 +3,8 @@
 
 OBJ = pdkim.o signing.o
 
+CFLAGS += -fsigned-char
+
 pdkim.a:         $(OBJ)
 		 @$(RM_COMMAND) -f pdkim.a
 		 @echo "$(AR) pdkim.a"

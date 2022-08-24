@@ -58,7 +58,7 @@ if (addr->transport && addr->transport->info->local)
     setflag(addr, af_uid_set);
     setflag(addr, af_gid_set);
     setflag(addr, af_home_expanded);
-    addr->home_dir = string_copy(US pw->pw_dir);
+    addr->home_dir = string_copy(US(pw->pw_dir));
     }
 
   if (!rf_get_ugid(rblock, addr, &ugid)) return FALSE;
@@ -97,7 +97,7 @@ DEBUG(D_route)
   {
   debug_printf("queued for %s transport: local_part = %s\ndomain = %s\n"
     "  errors_to=%s\n",
-    addr->transport ? addr->transport->name : US"<unset>",
+    addr->transport ? addr->transport->name : US("<unset>"),
     addr->local_part, addr->domain, addr->prop.errors_address);
   debug_printf("  domain_data=%s local_part_data=%s\n", addr->prop.domain_data,
     addr->prop.localpart_data);

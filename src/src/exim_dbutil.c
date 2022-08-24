@@ -146,12 +146,12 @@ options(int argc, uschar * argv[], uschar * name, const uschar * opts)
 int opt;
 
 opterr = 0;
-while ((opt = getopt(argc, (char * const *)argv, CCS opts)) != -1)
+while ((opt = getopt(argc, (char * const *)argv, CCS(opts))) != -1)
   switch (opt)
   {
   case 'k':	keyonly = TRUE; break;
   case 'z':	utc = TRUE; break;
-  default:	usage(name, US" [-z] [-k]");
+  default:	usage(name, US(" [-z] [-k]"));
   }
 }
 
@@ -211,9 +211,9 @@ return time_buffer;
 uschar *
 print_cache(int value)
 {
-return value == ccache_accept ? US"accept" :
-       value == ccache_reject ? US"reject" :
-       US"unknown";
+return value == ccache_accept ? US("accept") :
+       value == ccache_reject ? US("reject") :
+       US("unknown");
 }
 
 
@@ -295,8 +295,8 @@ ensures that Exim has exclusive use of the database before it even tries to
 open it. If there is a database, there should be a lock file in existence. */
 
 #ifdef COMPILE_UTILITY
-if (  asprintf(CSS &dirname, "%s/db", spool_directory) < 0
-   || asprintf(CSS &filename, "%s/%s.lockfile", dirname, name) < 0)
+if (  asprintf(CSS(&dirname), "%s/db", spool_directory) < 0
+   || asprintf(CSS(&filename), "%s/%s.lockfile", dirname, name) < 0)
   return NULL;
 #else
 dirname = string_sprintf("%s/db", spool_directory);
@@ -338,7 +338,7 @@ if (rc < 0)
 exclusive access to the database, so we can go ahead and open it. */
 
 #ifdef COMPILE_UTILITY
-if (asprintf(CSS &filename, "%s/%s", dirname, name) < 0) return NULL;
+if (asprintf(CSS(&filename), "%s/%s", dirname, name) < 0) return NULL;
 #else
 filename = string_sprintf("%s/%s", dirname, name);
 #endif
@@ -532,7 +532,7 @@ exim_datum_init(&key_datum);         /* Some DBM libraries require the datum */
 exim_datum_init(&value_datum);       /* to be cleared before use. */
 
 yield = exim_dbscan(dbblock->dbptr, &key_datum, &value_datum, start, *cursor)
-  ? US exim_datum_data_get(&key_datum) : NULL;
+  ? US(exim_datum_data_get(&key_datum)) : NULL;
 
 /* Some dbm require a termination */
 
@@ -556,15 +556,15 @@ int yield = 0;
 open_db dbblock;
 open_db *dbm;
 EXIM_CURSOR *cursor;
-uschar **argv = USS cargv;
+uschar **argv = USS(cargv);
 uschar keybuffer[1024];
 
 store_init();
-options(argc, argv, US"dumpdb", US"kz");
+options(argc, argv, US("dumpdb"), US("kz"));
 
 /* Check the arguments, and open the database */
 
-dbdata_type = check_args(argc, argv, US"dumpdb", US" [-z] [-k]");
+dbdata_type = check_args(argc, argv, US("dumpdb"), US(" [-z] [-k]"));
 argc -= optind; argv += optind;
 spool_directory = argv[0];
 
@@ -608,7 +608,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
   else if (!(value = dbfn_read_with_length(dbm, keybuffer, &length)))
     fprintf(stderr, "**** Entry \"%s\" was in the key scan, but the record "
                     "was not found in the file - something is wrong!\n",
-      CS keybuffer);
+      CS(keybuffer));
   else
     /* Note: don't use print_time more than once in one statement, since
     it uses a single buffer. */
@@ -636,7 +636,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
 	  {
 	  fprintf(stderr,
 	    "**** Data for %s corrupted\n  count=%d=0x%x max=%d\n",
-	    CS keybuffer, wait->count, wait->count, WAIT_NAME_MAX);
+	    CS(keybuffer), wait->count, wait->count, WAIT_NAME_MAX);
 	  wait->count = WAIT_NAME_MAX;
 	  yield = count_bad = 1;
 	  }
@@ -651,7 +651,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
 	    {
 	    fprintf(stderr,
 	      "**** Data for %s corrupted: bad character in message id\n",
-	      CS keybuffer);
+	      CS(keybuffer));
 	    for (int j = 0; j < MESSAGE_ID_LENGTH; j++)
 	      fprintf(stderr, "%02x ", name[j]);
 	    fprintf(stderr, "\n");
@@ -780,20 +780,20 @@ int
 main(int argc, char **cargv)
 {
 int dbdata_type;
-uschar **argv = USS cargv;
+uschar **argv = USS(cargv);
 uschar buffer[256];
 uschar name[256];
 rmark reset_point;
 uschar * aname;
 
 store_init();
-options(argc, argv, US"fixdb", US"z");
+options(argc, argv, US("fixdb"), US("z"));
 name[0] = 0;  /* No name set */
 
 /* Sort out the database type, verify what we are working on and then process
 user requests */
 
-dbdata_type = check_args(argc, argv, US"fixdb", US" [-z]");
+dbdata_type = check_args(argc, argv, US("fixdb"), US(" [-z]"));
 argc -= optind; argv += optind;
 spool_directory = argv[0];
 aname = argv[1];
@@ -832,12 +832,12 @@ for(; (reset_point = store_mark()); store_reset(reset_point))
       printf("No previous record name is set\n");
       continue;
       }
-    (void)sscanf(CS buffer, "%s %s", field, value);
+    (void)sscanf(CS(buffer), "%s %s", field, value);
     }
   else
     {
     name[0] = 0;
-    (void)sscanf(CS buffer, "%s %s %s", name, field, value);
+    (void)sscanf(CS(buffer), "%s %s %s", name, field, value);
     }
 
   /* Handle an update request */
@@ -1026,7 +1026,7 @@ for(; (reset_point = store_mark()); store_reset(reset_point))
   else
     {
     int count_bad = 0;
-    printf("%s\n", CS print_time(((dbdata_generic *)record)->time_stamp));
+    printf("%s\n", CS(print_time(((dbdata_generic *)record)->time_stamp)));
     switch(dbdata_type)
       {
       case type_retry:
@@ -1156,7 +1156,7 @@ rmark reset_point;
 open_db dbblock;
 open_db *dbm;
 EXIM_CURSOR *cursor;
-uschar **argv = USS cargv;
+uschar **argv = USS(cargv);
 uschar buffer[256];
 uschar *key;
 
@@ -1176,8 +1176,8 @@ for (i = 1; i < argc; i++)
     while (*s != 0)
       {
       int value, count;
-      if (!isdigit(*s)) usage(US"tidydb", US" [-t <time>]");
-      (void)sscanf(CS s, "%d%n", &value, &count);
+      if (!isdigit(*s)) usage(US("tidydb"), US(" [-t <time>]"));
+      (void)sscanf(CS(s), "%d%n", &value, &count);
       s += count;
       switch (*s)
         {
@@ -1187,12 +1187,12 @@ for (i = 1; i < argc; i++)
         case 'm': value *= 60;
         case 's': s++;
         break;
-        default: usage(US"tidydb", US" [-t <time>]");
+        default: usage(US("tidydb"), US(" [-t <time>]"));
         }
       maxkeep += value;
       }
     }
-  else usage(US"tidydb", US" [-t <time>]");
+  else usage(US("tidydb"), US(" [-t <time>]"));
   }
 
 /* Adjust argument values and process arguments */
@@ -1200,7 +1200,7 @@ for (i = 1; i < argc; i++)
 argc -= --i;
 argv += i;
 
-dbdata_type = check_args(argc, argv, US"tidydb", US" [-t <time>]");
+dbdata_type = check_args(argc, argv, US("tidydb"), US(" [-t <time>]"));
 
 /* Compute the oldest keep time, verify what we are doing, and open the
 database */
@@ -1214,7 +1214,7 @@ if (!(dbm = dbfn_open(argv[2], O_RDWR, &dbblock, FALSE, TRUE)))
 
 /* Prepare for building file names */
 
-sprintf(CS buffer, "%s/input/", argv[1]);
+sprintf(CS(buffer), "%s/input/", argv[1]);
 path_len = Ustrlen(buffer);
 
 
@@ -1339,7 +1339,7 @@ for (; keychain && (reset_point = store_mark()); store_reset(reset_point))
           {
           uschar newkey[256];
           dbdata_generic *newvalue;
-          sprintf(CS newkey, "%s:%d", key, wait->sequence - 1);
+          sprintf(CS(newkey), "%s:%d", key, wait->sequence - 1);
           newvalue = dbfn_read_with_length(dbm, newkey, NULL);
           if (newvalue != NULL)
             {

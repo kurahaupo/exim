@@ -323,7 +323,7 @@ if (!cn)
          (ub4)OCI_LM_DEF) != 0)
     {
     *errmsg = oracle_error(oracle_handle, oracle_handle->rc,
-      US"connection failed");
+      US("connection failed"));
     *defer_break = FALSE;
     goto ORACLE_EXIT_NO_VALS;
     }
@@ -407,13 +407,13 @@ while (cda->rc != NO_DATA_FOUND)  /* Loop for each row */
   else for (int i = 0; i < num_fields; i++)
     {
     int slen;
-    uschar *s = US desc[i].buf;
+    uschar *s = US(desc[i].buf);
 
     while (*s != 0 && isspace(*s)) s++;
     slen = Ustrlen(s);
     while (slen > 0 && isspace(s[slen-1])) slen--;
     result = string_catn(result, s, slen);
-    result = string_catn(result, US"=", 1);
+    result = string_catn(result, US("="), 1);
 
     /* int and float type won't ever need escaping. Otherwise, quote the value
     if it contains spaces or is empty. */
@@ -607,7 +607,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"oracle",			/* lookup name */
+  .name = US("oracle"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = oracle_open,			/* open function */
   .check = NULL,			/* check function */

@@ -17,10 +17,10 @@ void
 features_crypto(void)
 {
 # ifdef SIGN_HAVE_ED25519
-  builtin_macro_create(US"_CRYPTO_SIGN_ED25519");
+  builtin_macro_create(US("_CRYPTO_SIGN_ED25519"));
 # endif
 # ifdef EXIM_HAVE_SHA3
-  builtin_macro_create(US"_CRYPTO_HASH_SHA3");
+  builtin_macro_create(US("_CRYPTO_HASH_SHA3"));
 # endif
 }
 #else
@@ -96,11 +96,11 @@ gnutls_x509_privkey_t x509_key;
 const uschar * where;
 int rc;
 
-if (  (where = US"internal init", rc = gnutls_x509_privkey_init(&x509_key))
+if (  (where = US("internal init"), rc = gnutls_x509_privkey_init(&x509_key))
    || (rc = gnutls_privkey_init(&sign_ctx->key))
-   || (where = US"privkey PEM-block import",
+   || (where = US("privkey PEM-block import"),
        rc = gnutls_x509_privkey_import(x509_key, &k, GNUTLS_X509_FMT_PEM))
-   || (where = US"internal privkey transfer",
+   || (where = US("internal privkey transfer"),
        rc = gnutls_privkey_import_x509(sign_ctx->key, x509_key, 0))
    )
   return string_sprintf("%s: %s", where, gnutls_strerror(rc));
@@ -112,7 +112,7 @@ switch (rc = gnutls_privkey_get_pk_algorithm(sign_ctx->key, NULL))
   case GNUTLS_PK_EDDSA_ED25519:	sign_ctx->keytype = KEYTYPE_ED25519; break;
 #endif
   default: return rc < 0
-    ? CUS gnutls_strerror(rc)
+    ? CUS(gnutls_strerror(rc))
     : string_sprintf("Unhandled key type: %d '%s'", rc, gnutls_pk_get_name(rc));
   }
 
@@ -139,11 +139,11 @@ switch (hash)
   case HASH_SHA1:	dig = GNUTLS_DIG_SHA1; break;
   case HASH_SHA2_256:	dig = GNUTLS_DIG_SHA256; break;
   case HASH_SHA2_512:	dig = GNUTLS_DIG_SHA512; break;
-  default:		return US"nonhandled hash type";
+  default:		return US("nonhandled hash type");
   }
 
 if ((rc = gnutls_privkey_sign_data(sign_ctx->key, dig, 0, &k_data, &k_sig)))
-  return CUS gnutls_strerror(rc);
+  return CUS(gnutls_strerror(rc));
 
 /* Don't care about deinit for the key; shortlived process */
 
@@ -173,17 +173,17 @@ switch(fmt)
   {
   case KEYFMT_DER:
     if ((rc = gnutls_pubkey_import(verify_ctx->key, &k, GNUTLS_X509_FMT_DER)))
-      ret = US gnutls_strerror(rc);
+      ret = US(gnutls_strerror(rc));
     break;
 #ifdef SIGN_HAVE_ED25519
   case KEYFMT_ED25519_BARE:
     if ((rc = gnutls_pubkey_import_ecc_raw(verify_ctx->key,
 					  GNUTLS_ECC_CURVE_ED25519, &k, NULL)))
-      ret = US gnutls_strerror(rc);
+      ret = US(gnutls_strerror(rc));
     break;
 #endif
   default:
-    ret = US"pubkey format not handled";
+    ret = US("pubkey format not handled");
     break;
   }
 if (!ret && bits) gnutls_pubkey_get_pk_algorithm(verify_ctx->key, bits);
@@ -208,7 +208,7 @@ if (verify_ctx->keytype == KEYTYPE_ED25519)
   {
   if ((rc = gnutls_pubkey_verify_data2(verify_ctx->key,
 				      GNUTLS_SIGN_EDDSA_ED25519, 0, &k, &s)) < 0)
-    ret = US gnutls_strerror(rc);
+    ret = US(gnutls_strerror(rc));
   }
 else
 #endif
@@ -219,12 +219,12 @@ else
     case HASH_SHA1:	algo = GNUTLS_SIGN_RSA_SHA1;   break;
     case HASH_SHA2_256:	algo = GNUTLS_SIGN_RSA_SHA256; break;
     case HASH_SHA2_512:	algo = GNUTLS_SIGN_RSA_SHA512; break;
-    default:		return US"nonhandled hash type";
+    default:		return US("nonhandled hash type");
     }
 
   if ((rc = gnutls_pubkey_verify_hash2(verify_ctx->key, algo,
 	      GNUTLS_VERIFY_ALLOW_BROKEN, &k, &s)) < 0)
-    ret = US gnutls_strerror(rc);
+    ret = US(gnutls_strerror(rc));
   }
 
 gnutls_pubkey_deinit(verify_ctx->key);
@@ -286,11 +286,11 @@ debug_printf_indent("%s\n", __FUNCTION__);
 
 /* integer; move past the header */
 if ((rc = as_tag(der, 0, ASN1_TAG_INTEGER, &alen)) != ASN1_SUCCESS)
-  return US asn1_strerror(rc);
+  return US(asn1_strerror(rc));
 
 /* read to an MPI */
 if ((gerr = gcry_mpi_scan(mpi, GCRYMPI_FMT_STD, der->data, alen, NULL)))
-  return US gcry_strerror(gerr);
+  return US(gcry_strerror(gerr));
 
 /* move over the data */
 der->data += alen; der->len -= alen;
@@ -411,15 +411,15 @@ Useful cmds:
 
  */
 
-if (  !(s1 = Ustrstr(CS privkey_pem, "-----BEGIN RSA PRIVATE KEY-----"))
-   || !(s2 = Ustrstr(CS (s1+=31),    "-----END RSA PRIVATE KEY-----" ))
+if (  !(s1 = Ustrstr(CS(privkey_pem), "-----BEGIN RSA PRIVATE KEY-----"))
+   || !(s2 = Ustrstr(CS(s1+=31),      "-----END RSA PRIVATE KEY-----" ))
    )
-  return US"Bad PEM wrapper";
+  return US("Bad PEM wrapper");
 
 *s2 = '\0';
 
 if ((rc = b64decode(s1, &der.data) < 0))
-  return US"Bad PEM-DER b64 decode";
+  return US("Bad PEM-DER b64 decode");
 der.len = rc;
 
 /* untangle asn.1 */
@@ -432,7 +432,7 @@ if ((rc = as_tag(&der, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
 if ((rc = as_tag(&der, 0, ASN1_TAG_INTEGER, &alen)) != ASN1_SUCCESS)
   goto asn_err;
 if (alen != 1 || *der.data != 0)
-  return US"Bad version number";
+  return US("Bad version number");
 der.data++; der.len--;
 
 if (  (s1 = as_mpi(&der, &sign_ctx->n))
@@ -472,7 +472,7 @@ DEBUG(D_acl) debug_printf_indent("rsa_signing_init:\n");
 sign_ctx->keytype = KEYTYPE_RSA;
 return NULL;
 
-asn_err: return US asn1_strerror(rc);
+asn_err: return US(asn1_strerror(rc));
 }
 
 
@@ -502,7 +502,7 @@ switch (hash)
   {
   case HASH_SHA1:	sexp_hash = "(data(flags pkcs1)(hash sha1 %b))"; break;
   case HASH_SHA2_256:	sexp_hash = "(data(flags pkcs1)(hash sha256 %b))"; break;
-  default:		return US"nonhandled hash type";
+  default:		return US("nonhandled hash type");
   }
 
 #define SIGSPACE 128
@@ -520,16 +520,16 @@ if (  (gerr = gcry_sexp_build (&s_key, NULL,
 		sign_ctx->d, sign_ctx->p,
 		sign_ctx->q, sign_ctx->qp))
    || (gerr = gcry_sexp_build (&s_hash, NULL, sexp_hash,
-		(int) data->len, CS data->data))
+		(int) data->len, CS(data->data)))
    ||  (gerr = gcry_pk_sign (&s_sig, s_hash, s_key))
    )
-  return US gcry_strerror(gerr);
+  return US(gcry_strerror(gerr));
 
 /* gcry_sexp_dump(s_sig); */
 
 if (  !(s_sig = gcry_sexp_find_token(s_sig, "s", 0))
    )
-  return US"no sig result";
+  return US("no sig result");
 
 m_sig = gcry_sexp_nth_mpi(s_sig, 1, GCRYMPI_FMT_USG);
 
@@ -546,7 +546,7 @@ gerr = gcry_mpi_print(GCRYMPI_FMT_USG, sig->data, SIGSPACE, &sig->len, m_sig);
 if (gerr)
   {
   debug_printf_indent("signature conversion from MPI to buffer failed\n");
-  return US gcry_strerror(gerr);
+  return US(gcry_strerror(gerr));
   }
 #undef SIGSPACE
 
@@ -571,9 +571,9 @@ unsigned nbits;
 int rc;
 uschar * errstr;
 gcry_error_t gerr;
-uschar * stage = US"S1";
+uschar * stage = US("S1");
 
-if (fmt != KEYFMT_DER) return US"pubkey format not handled";
+if (fmt != KEYFMT_DER) return US("pubkey format not handled");
 
 /*
 sequence
@@ -595,7 +595,7 @@ if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
    != ASN1_SUCCESS) goto asn_err;
 
 /* sequence; skip the entire thing */
-DEBUG(D_acl) stage = US"S2";
+DEBUG(D_acl) stage = US("S2");
 if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, &alen))
    != ASN1_SUCCESS) goto asn_err;
 pubkey->data += alen; pubkey->len -= alen;
@@ -603,19 +603,19 @@ pubkey->data += alen; pubkey->len -= alen;
 
 /* bitstring: limit range to size of bitstring;
 move over header + content wrapper */
-DEBUG(D_acl) stage = US"BS";
+DEBUG(D_acl) stage = US("BS");
 if ((rc = as_tag(pubkey, 0, ASN1_TAG_BIT_STRING, &alen)) != ASN1_SUCCESS)
   goto asn_err;
 pubkey->len = alen;
 pubkey->data++; pubkey->len--;
 
 /* sequence; just move past the header */
-DEBUG(D_acl) stage = US"S3";
+DEBUG(D_acl) stage = US("S3");
 if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
    != ASN1_SUCCESS) goto asn_err;
 
 /* read two integers */
-DEBUG(D_acl) stage = US"MPI";
+DEBUG(D_acl) stage = US("MPI");
 nbits = pubkey->len;
 if ((errstr = as_mpi(pubkey, &verify_ctx->n))) return errstr;
 nbits = (nbits - pubkey->len) * 8;
@@ -637,7 +637,7 @@ return NULL;
 
 asn_err:
 DEBUG(D_acl) return string_sprintf("%s: %s", stage, asn1_strerror(rc));
-	     return US asn1_strerror(rc);
+	     return US(asn1_strerror(rc));
 }
 
 
@@ -663,25 +663,25 @@ switch (hash)
   {
   case HASH_SHA1:     sexp_hash = "(data(flags pkcs1)(hash sha1 %b))"; break;
   case HASH_SHA2_256: sexp_hash = "(data(flags pkcs1)(hash sha256 %b))"; break;
-  default:	      return US"nonhandled hash type";
+  default:	      return US("nonhandled hash type");
   }
 
-if (  (stage = US"pkey sexp build",
+if (  (stage = US("pkey sexp build"),
        gerr = gcry_sexp_build (&s_pkey, NULL, "(public-key(rsa(n%m)(e%m)))",
 		        verify_ctx->n, verify_ctx->e))
-   || (stage = US"data sexp build",
+   || (stage = US("data sexp build"),
        gerr = gcry_sexp_build (&s_hash, NULL, sexp_hash,
-		(int) data_hash->len, CS data_hash->data))
-   || (stage = US"sig mpi scan",
+		(int) data_hash->len, CS(data_hash->data)))
+   || (stage = US("sig mpi scan"),
        gerr = gcry_mpi_scan(&m_sig, GCRYMPI_FMT_USG, sig->data, sig->len, NULL))
-   || (stage = US"sig sexp build",
+   || (stage = US("sig sexp build"),
        gerr = gcry_sexp_build (&s_sig, NULL, "(sig-val(rsa(s%m)))", m_sig))
-   || (stage = US"verify",
+   || (stage = US("verify"),
        gerr = gcry_pk_verify (s_sig, s_hash, s_pkey))
    )
   {
   DEBUG(D_acl) debug_printf_indent("verify: error in stage '%s'\n", stage);
-  return US gcry_strerror(gerr);
+  return US(gcry_strerror(gerr));
   }
 
 if (s_sig) gcry_sexp_release (s_sig);
@@ -758,7 +758,7 @@ switch (hash)
   case HASH_SHA1:	md = EVP_sha1();   break;
   case HASH_SHA2_256:	md = EVP_sha256(); break;
   case HASH_SHA2_512:	md = EVP_sha512(); break;
-  default:		return US"nonhandled hash type";
+  default:		return US("nonhandled hash type");
   }
 
 #ifdef SIGN_HAVE_ED25519
@@ -794,7 +794,7 @@ if (  (ctx = EVP_MD_CTX_create())
 #endif
 
 if (ctx) EVP_MD_CTX_destroy(ctx);
-return US ERR_error_string(ERR_get_error(), NULL);
+return US(ERR_error_string(ERR_get_error(), NULL));
 }
 
 
@@ -814,17 +814,17 @@ switch(fmt)
   case KEYFMT_DER:
     /*XXX hmm, we never free this */
     if (!(verify_ctx->key = d2i_PUBKEY(NULL, &s, pubkey->len)))
-      ret = US ERR_error_string(ERR_get_error(), NULL);
+      ret = US(ERR_error_string(ERR_get_error(), NULL));
     break;
 #ifdef SIGN_HAVE_ED25519
   case KEYFMT_ED25519_BARE:
     if (!(verify_ctx->key = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL,
 							s, pubkey->len)))
-      ret = US ERR_error_string(ERR_get_error(), NULL);
+      ret = US(ERR_error_string(ERR_get_error(), NULL));
     break;
 #endif
   default:
-    ret = US"pubkey format not handled";
+    ret = US("pubkey format not handled");
     break;
   }
 
@@ -850,7 +850,7 @@ switch (hash)
   case HASH_SHA1:	md = EVP_sha1();   break;
   case HASH_SHA2_256:	md = EVP_sha256(); break;
   case HASH_SHA2_512:	md = EVP_sha512(); break;
-  default:		return US"nonhandled hash type";
+  default:		return US("nonhandled hash type");
   }
 
 #ifdef SIGN_HAVE_ED25519
@@ -890,7 +890,7 @@ else
     }
   }
 
-return US ERR_error_string(ERR_get_error(), NULL);
+return US(ERR_error_string(ERR_get_error(), NULL));
 }
 
 

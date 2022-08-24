@@ -18,21 +18,21 @@ uschar *mime_current_boundary = NULL;
 
 static mime_header mime_header_list[] = {
   /*	name			namelen		value */
-  { US"content-type:",              13, &mime_content_type },
-  { US"content-disposition:",       20, &mime_content_disposition },
-  { US"content-transfer-encoding:", 26, &mime_content_transfer_encoding },
-  { US"content-id:",                11, &mime_content_id },
-  { US"content-description:",       20, &mime_content_description }
+  { US("content-type:"),              13, &mime_content_type },
+  { US("content-disposition:"),       20, &mime_content_disposition },
+  { US("content-transfer-encoding:"), 26, &mime_content_transfer_encoding },
+  { US("content-id:"),                11, &mime_content_id },
+  { US("content-description:"),       20, &mime_content_description }
 };
 
 static int mime_header_list_size = nelem(mime_header_list);
 
 static mime_parameter mime_parameter_list[] = {
   /*	name	namelen	 value */
-  { US"name=",     5, &mime_filename },
-  { US"filename=", 9, &mime_filename },
-  { US"charset=",  8, &mime_charset  },
-  { US"boundary=", 9, &mime_boundary }
+  { US("name="),     5, &mime_filename },
+  { US("filename="), 9, &mime_filename },
+  { US("charset="),  8, &mime_charset  },
+  { US("boundary="), 9, &mime_boundary }
 };
 
 
@@ -50,8 +50,8 @@ mime_set_anomaly(int idx)
 struct anom {
   int level;
   const uschar * text;
-} anom[] = { {1, CUS"Broken Quoted-Printable encoding detected"},
-	     {2, CUS"Broken BASE64 encoding detected"} };
+} anom[] = { {1, CUS("Broken Quoted-Printable encoding detected")},
+	     {2, CUS("Broken BASE64 encoding detected")} };
 
 mime_anomaly_level = anom[idx].level;
 mime_anomaly_text =  anom[idx].text;
@@ -111,7 +111,7 @@ mime_decode_asis(FILE* in, FILE* out, uschar* boundary)
 ssize_t len, size = 0;
 uschar buffer[MIME_MAX_LINE_LENGTH];
 
-while(fgets(CS buffer, MIME_MAX_LINE_LENGTH, mime_stream) != NULL)
+while(fgets(CS(buffer), MIME_MAX_LINE_LENGTH, mime_stream) != NULL)
   {
   if (boundary != NULL
      && Ustrncmp(buffer, "--", 2) == 0
@@ -137,7 +137,7 @@ uschar ibuf[MIME_MAX_LINE_LENGTH], obuf[MIME_MAX_LINE_LENGTH];
 uschar *ipos, *opos;
 ssize_t len, size = 0;
 
-while (fgets(CS ibuf, MIME_MAX_LINE_LENGTH, in) != NULL)
+while (fgets(CS(ibuf), MIME_MAX_LINE_LENGTH, in) != NULL)
   {
   if (boundary != NULL
      && Ustrncmp(ibuf, "--", 2) == 0
@@ -207,7 +207,7 @@ else if (!fname)
     /* security break */
     if (file_nr >= 1024)
       break;
-    result = stat(CS mime_decoded_filename, &mystat);
+    result = stat(CS(mime_decoded_filename), &mystat);
     } while(result != -1);
   }
 
@@ -252,7 +252,7 @@ if ((option = string_nextinlist(&list, &sep, NULL, 0)))
     memset(&statbuf,0,sizeof(statbuf));
 
     /* assume either path or path+file name */
-    if ( (stat(CS option, &statbuf) == 0) && S_ISDIR(statbuf.st_mode) )
+    if ( (stat(CS(option), &statbuf) == 0) && S_ISDIR(statbuf.st_mode) )
       /* is directory, use it as decode_path */
       decode_file = mime_get_decode_file(option, NULL);
     else
@@ -470,24 +470,24 @@ return s;
 static uschar *
 rfc2231_to_2047(const uschar * fname, const uschar * charset, int * len)
 {
-gstring * val = string_catn(NULL, US"=?", 2);
+gstring * val = string_catn(NULL, US("=?"), 2);
 uschar c;
 
 if (charset)
   val = string_cat(val, charset);
-val = string_catn(val, US"?Q?", 3);
+val = string_catn(val, US("?Q?"), 3);
 
 while ((c = *fname))
   if (c == '%' && isxdigit(fname[1]) && isxdigit(fname[2]))
     {
-    val = string_catn(val, US"=", 1);
+    val = string_catn(val, US("="), 1);
     val = string_catn(val, ++fname, 2);
     fname += 2;
     }
   else
     val = string_catn(val, fname++, 1);
 
-val = string_catn(val, US"?=", 2);
+val = string_catn(val, US("?="), 2);
 *len = val->ptr;
 return string_from_gstring(val);
 }
@@ -528,7 +528,7 @@ while(1)
    */
   if (context) for (;;)
     {
-    if (!fgets(CS header, MIME_MAX_HEADER_SIZE, f))
+    if (!fgets(CS(header), MIME_MAX_HEADER_SIZE, f))
       {
       /* Hit EOF or read error. Ugh. */
       DEBUG(D_acl) debug_printf_indent("MIME: Hit EOF ...\n");
@@ -589,8 +589,8 @@ while(1)
 	  DEBUG(D_acl) debug_printf_indent("MIME:   considering paramlist '%s'\n", p);
 
 	  if (  !mime_filename
-	     && strncmpic(CUS"content-disposition:", header, 20) == 0
-	     && strncmpic(CUS"filename*", p, 9) == 0
+	     && strncmpic(CUS("content-disposition:"), header, 20) == 0
+	     && strncmpic(CUS("filename*"), p, 9) == 0
 	     )
 	    {					/* RFC 2231 filename */
 	    uschar * q;
@@ -632,7 +632,7 @@ while(1)
 		  p = q;
 
 		DEBUG(D_acl) debug_printf_indent("MIME:    charset %s fname '%s'\n",
-		  mime_filename_charset ? mime_filename_charset : US"<NULL>", p);
+		  mime_filename_charset ? mime_filename_charset : US("<NULL>"), p);
 
 		temp_string = rfc2231_to_2047(p, mime_filename_charset, &slen);
 		DEBUG(D_acl) debug_printf_indent("MIME:    2047-name %s\n", temp_string);
@@ -686,7 +686,7 @@ while(1)
 	  if (*p) p++;
 	  }				/* param scan on line */
 
-	if (strncmpic(CUS"content-disposition:", header, 20) == 0)
+	if (strncmpic(CUS("content-disposition:"), header, 20) == 0)
 	  {
 	  if (decoding_failed) mime_filename = mime_fname_rfc2231;
 
@@ -762,7 +762,7 @@ while(1)
       /* security break */
       if (file_nr >= 128)
 	goto NO_RFC822;
-      result = stat(CS (filename = string_from_gstring(g)), &mystat);
+      result = stat(CS(filename = string_from_gstring(g)), &mystat);
       }
 
     rfc822name = filename;

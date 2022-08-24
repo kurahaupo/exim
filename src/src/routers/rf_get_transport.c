@@ -73,7 +73,7 @@ if (expandable)
       "attempt to use tainted value '%s' from '%s' for transport", ss, tpname);
     addr->basic_errno = ERRNO_BADTRANSPORT;
     /* Avoid leaking info to an attacker */
-    addr->message = US"internal configuration error";
+    addr->message = US("internal configuration error");
     return FALSE;
     }
   }

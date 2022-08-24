@@ -241,7 +241,7 @@ uschar * errstr;
 const pcre2_code * cre;
 
 if (regex_cachesize >= REGEX_CACHESIZE_LIMIT)
-  errstr = US"regex cache size limit reached";
+  errstr = US("regex cache size limit reached");
 else if ((cre = regex_compile(req->re,
 	    req->caseless ? MCS_CASELESS | MCS_CACHEABLE : MCS_CACHEABLE,
 	    &errstr, pcre_gen_cmp_ctx)))

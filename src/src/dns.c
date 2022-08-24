@@ -55,7 +55,7 @@ name = string_copyn(domain, len);
 (void)string_format(utilname, sizeof(utilname), "%s/bin/fakens",
   config_main_directory);
 
-if (stat(CS utilname, &statbuf) >= 0)
+if (stat(CS(utilname), &statbuf) >= 0)
   {
   pid_t pid;
   int infd, outfd, rc;
@@ -70,7 +70,7 @@ if (stat(CS utilname, &statbuf) >= 0)
   argv[3] = dns_text_type(type);
   argv[4] = NULL;
 
-  pid = child_open(argv, NULL, 0000, &infd, &outfd, FALSE, US"fakens-search");
+  pid = child_open(argv, NULL, 0000, &infd, &outfd, FALSE, US("fakens-search"));
   if (pid < 0)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "failed to run fakens: %s",
       strerror(errno));
@@ -116,7 +116,7 @@ else
 
 DEBUG(D_dns) debug_printf("passing %s on to res_search()\n", domain);
 
-return res_search(CS domain, C_IN, type, answerptr, size);
+return res_search(CS(domain), C_IN, type, answerptr, size);
 }
 
 
@@ -244,10 +244,10 @@ if (Ustrchr(string, ':') == NULL)
     const uschar * ppp = p;
     while (ppp > string && ppp[-1] != '.') ppp--;
     g = string_catn(g, ppp, p - ppp);
-    g = string_catn(g, US".", 1);
+    g = string_catn(g, US("."), 1);
     p = ppp - 1;
     }
-  g = string_catn(g, US"in-addr.arpa", 12);
+  g = string_catn(g, US("in-addr.arpa"), 12);
   }
 
 /* Handle IPv6 address; convert to binary so as to fill out any
@@ -268,7 +268,7 @@ else
   for (int i = 3; i >= 0; i--)
     for (int j = 0; j < 32; j += 4)
       g = string_fmt_append(g, "%x.", (v6[i] >> j) & 15);
-  g = string_catn(g, US"ip6.arpa.", 9);
+  g = string_catn(g, US("ip6.arpa."), 9);
 
   /* Another way of doing IPv6 reverse lookups was proposed in conjunction
   with A6 records. However, it fell out of favour when they did. The
@@ -287,7 +287,7 @@ else
     sprintf(pp, "%08X", v6[i]);
     pp += 8;
     }
-  Ustrcpy(pp, US"].ip6.arpa.");
+  Ustrcpy(pp, US("].ip6.arpa."));
   **************************************************/
 
   }
@@ -571,19 +571,19 @@ dns_text_type(int t)
 {
 switch(t)
   {
-  case T_A:     return US"A";
-  case T_MX:    return US"MX";
-  case T_AAAA:  return US"AAAA";
-  case T_A6:    return US"A6";
-  case T_TXT:   return US"TXT";
-  case T_SPF:   return US"SPF";
-  case T_PTR:   return US"PTR";
-  case T_SOA:   return US"SOA";
-  case T_SRV:   return US"SRV";
-  case T_NS:    return US"NS";
-  case T_CNAME: return US"CNAME";
-  case T_TLSA:  return US"TLSA";
-  default:      return US"?";
+  case T_A:     return US("A");
+  case T_MX:    return US("MX");
+  case T_AAAA:  return US("AAAA");
+  case T_A6:    return US("A6");
+  case T_TXT:   return US("TXT");
+  case T_SPF:   return US("SPF");
+  case T_PTR:   return US("PTR");
+  case T_SOA:   return US("SOA");
+  case T_SRV:   return US("SRV");
+  case T_NS:    return US("NS");
+  case T_CNAME: return US("CNAME");
+  case T_TLSA:  return US("TLSA");
+  default:      return US("?");
   }
 }
 
@@ -601,7 +601,7 @@ res_state resp = os_get_dns_resolver_res();
 /*XX buf needs to be 255 +1 + (max(typetext) == 5) +1 + max(chars_for_long-max) +1
 We truncate the name here for safety... could use a dynamic string. */
 
-sprintf(CS buf, "%.255s-%s-%lx", name, dns_text_type(dns_type),
+sprintf(CS(buf), "%.255s-%s-%lx", name, dns_text_type(dns_type),
   (unsigned long) resp->options);
 }
 
@@ -882,7 +882,7 @@ domains, and interfaces to a fake nameserver for certain special zones. */
 h_errno = 0;
 dnsa->answerlen = f.running_in_test_harness
   ? fakens_search(name, type, dnsa->answer, sizeof(dnsa->answer))
-  : res_search(CCS name, C_IN, type, dnsa->answer, sizeof(dnsa->answer));
+  : res_search(CCS(name), C_IN, type, dnsa->answer, sizeof(dnsa->answer));
 
 if (dnsa->answerlen > (int) sizeof(dnsa->answer))
   {
@@ -907,7 +907,7 @@ if (dnsa->answerlen < 0) switch (h_errno)
 #ifndef STAND_ALONE
     save_domain = deliver_domain;
     deliver_domain = string_copy(name);  /* set $domain */
-    rc = match_isinlist(name, CUSS &dns_again_means_nonexist, 0,
+    rc = match_isinlist(name, CUSS(&dns_again_means_nonexist), 0,
       &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL);
     deliver_domain = save_domain;
     if (rc != OK)
@@ -1177,14 +1177,14 @@ switch (type)
 
     /* Use more appropriate search parameters if we are in the reverse DNS. */
 
-    if (strcmpic(namesuff, US".arpa") == 0)
-      if (namesuff - 8 > name && strcmpic(namesuff - 8, US".in-addr.arpa") == 0)
+    if (strcmpic(namesuff, US(".arpa")) == 0)
+      if (namesuff - 8 > name && strcmpic(namesuff - 8, US(".in-addr.arpa")) == 0)
 	{
 	namesuff -= 8;
 	tld = namesuff + 1;
 	limit = 3;
 	}
-      else if (namesuff - 4 > name && strcmpic(namesuff - 4, US".ip6.arpa") == 0)
+      else if (namesuff - 4 > name && strcmpic(namesuff - 4, US(".ip6.arpa")) == 0)
 	{
 	namesuff -= 4;
 	tld = namesuff + 1;
@@ -1289,12 +1289,12 @@ uschar * dnsa_lim = dnsa->answer + dnsa->answerlen;
 
 if (rr->type == T_A)
   {
-  uschar *p = US rr->data;
+  uschar *p = US(rr->data);
   if (p + 4 <= dnsa_lim)
     {
     /* the IP is not regarded as tainted */
     yield = store_get(sizeof(dns_address) + 20, GET_UNTAINTED);
-    (void)sprintf(CS yield->address, "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
+    (void)sprintf(CS(yield->address), "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
     yield->next = NULL;
     }
   }
@@ -1308,7 +1308,7 @@ else
     struct in6_addr in6;
     for (int i = 0; i < 16; i++) in6.s6_addr[i] = rr->data[i];
     yield = store_get(sizeof(dns_address) + 50, GET_UNTAINTED);
-    inet_ntop(AF_INET6, &in6, CS yield->address, 50);
+    inet_ntop(AF_INET6, &in6, CS(yield->address), 50);
     yield->next = NULL;
     }
   }

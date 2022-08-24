@@ -39,7 +39,7 @@ pcre_list * ri;
 
 /* precompile our regexes */
 while ((regex_string = string_nextinlist(&list, &sep, NULL, 0)))
-  if (strcmpic(regex_string, US"false") != 0 && Ustrcmp(regex_string, "0") != 0)
+  if (strcmpic(regex_string, US("false")) != 0 && Ustrcmp(regex_string, "0") != 0)
     {
     /* compile our regular expression */
     uschar * errstr;
@@ -82,7 +82,7 @@ for (pcre_list * ri = re_list_head; ri; ri = ri->next)
       PCRE2_UCHAR * cstr;
       PCRE2_SIZE cslen;
       pcre2_substring_get_bynumber(md, nn, &cstr, &cslen);	/* uses same ctx as md */
-      regex_vars[nn-1] = CUS cstr;
+      regex_vars[nn-1] = CUS(cstr);
       }
 
     return OK;
@@ -133,7 +133,7 @@ if (!(re_list_head = compile(*listptr, cacheable)))
 
 /* match each line against all regexes */
 linebuffer = store_get(32767, GET_TAINTED);
-while (fgets(CS linebuffer, 32767, mbox_file))
+while (fgets(CS(linebuffer), 32767, mbox_file))
   {
   if (  mime_stream && mime_current_boundary		/* check boundary */
      && Ustrncmp(linebuffer, "--", 2) == 0
@@ -183,7 +183,7 @@ if (!(re_list_head = compile(*listptr, cacheable)))
 /* check if the file is already decoded */
 if (!mime_decoded_filename)
   {				/* no, decode it first */
-  const uschar *empty = US"";
+  const uschar *empty = US("");
   mime_decode(&empty);
   if (!mime_decoded_filename)
     {				/* decoding failed */
@@ -194,7 +194,7 @@ if (!mime_decoded_filename)
   }
 
 /* open file */
-if (!(f = fopen(CS mime_decoded_filename, "rb")))
+if (!(f = fopen(CS(mime_decoded_filename), "rb")))
   {
   log_write(0, LOG_MAIN,
        "mime_regex acl condition warning - can't open '%s' for reading",

@@ -25,7 +25,7 @@ nis_open(const uschar * filename, uschar ** errmsg)
 char *nis_domain;
 if (yp_get_default_domain(&nis_domain) != 0)
   {
-  *errmsg = US"failed to get default NIS domain";
+  *errmsg = US("failed to get default NIS domain");
   return NULL;
   }
 return nis_domain;
@@ -50,8 +50,8 @@ int rc;
 uschar *nis_data;
 int nis_data_length;
 do_cache = do_cache;   /* Placate picky compilers */
-if ((rc = yp_match(CCS handle, CCS filename, CCS keystring, length,
-    CSS &nis_data, &nis_data_length)) == 0)
+if ((rc = yp_match(CCS(handle), CCS(filename), CCS(keystring), length,
+    CSS(&nis_data), &nis_data_length)) == 0)
   {
   *result = string_copy(nis_data);
   (*result)[nis_data_length] = 0;    /* remove final '\n' */
@@ -77,8 +77,8 @@ int rc;
 uschar *nis_data;
 int nis_data_length;
 do_cache = do_cache;   /* Placate picky compilers */
-if ((rc = yp_match(CCS handle, CCS filename, CCS keystring, length + 1,
-    CSS &nis_data, &nis_data_length)) == 0)
+if ((rc = yp_match(CCS(handle), CCS(filename), CCS(keystring), length + 1,
+    CSS(&nis_data), &nis_data_length)) == 0)
   {
   *result = string_copy(nis_data);
   (*result)[nis_data_length] = 0;    /* remove final '\n' */
@@ -108,7 +108,7 @@ return g;
 
 
 static lookup_info nis_lookup_info = {
-  .name = US"nis",			/* lookup name */
+  .name = US("nis"),			/* lookup name */
   .type = 0,				/* not abs file, not query style*/
   .open = nis_open,			/* open function */
   .check = NULL,			/* check function */
@@ -120,7 +120,7 @@ static lookup_info nis_lookup_info = {
 };
 
 static lookup_info nis0_lookup_info = {
-  .name = US"nis0",			/* lookup name */
+  .name = US("nis0"),			/* lookup name */
   .type = 0,				/* not absfile, not query style */
   .open = nis_open,			/* sic */         /* open function */
   .check = NULL,			/* check function */

@@ -139,7 +139,7 @@ for (int i = 0; i < 4; i++)
   uschar * end;
 
   if (i != 0 && *s++ != '.') return 0;
-  n = strtol(CCS s, CSS &end, 10);
+  n = strtol(CCS(s), CSS(&end), 10);
   if (n > 255 || n < 0 || end <= s || end > s+3) return 0;
   s = end;
   }
@@ -168,16 +168,16 @@ Returns:      pointer to the buffer
 uschar *
 string_format_size(int size, uschar *buffer)
 {
-if (size == 0) Ustrcpy(buffer, US"     ");
-else if (size < 1024) sprintf(CS buffer, "%5d", size);
+if (size == 0) Ustrcpy(buffer, US("     "));
+else if (size < 1024) sprintf(CS(buffer), "%5d", size);
 else if (size < 10*1024)
-  sprintf(CS buffer, "%4.1fK", (double)size / 1024.0);
+  sprintf(CS(buffer), "%4.1fK", (double)size / 1024.0);
 else if (size < 1024*1024)
-  sprintf(CS buffer, "%4dK", (size + 512)/1024);
+  sprintf(CS(buffer), "%4dK", (size + 512)/1024);
 else if (size < 10*1024*1024)
-  sprintf(CS buffer, "%4.1fM", (double)size / (1024.0 * 1024.0));
+  sprintf(CS(buffer), "%4.1fM", (double)size / (1024.0 * 1024.0));
 else
-  sprintf(CS buffer, "%4dM", (size + 512 * 1024)/(1024*1024));
+  sprintf(CS(buffer), "%4dM", (size + 512 * 1024)/(1024*1024));
 return buffer;
 }
 
@@ -232,7 +232,7 @@ int
 string_interpret_escape(const uschar **pp)
 {
 #ifdef COMPILE_UTILITY
-const uschar *hex_digits= CUS"0123456789abcdef";
+const uschar *hex_digits= CUS("0123456789abcdef");
 #endif
 int ch;
 const uschar *p = *pp;
@@ -336,7 +336,7 @@ for (t = s; *t; )
       case '\v': *tt++ = 'v'; break;
       case '\f': *tt++ = 'f'; break;
       case '\t': *tt++ = 't'; break;
-      default: sprintf(CS tt, "%03o", *t); tt += 3; break;
+      default: sprintf(CS(tt), "%03o", *t); tt += 3; break;
       }
     t++;
     }
@@ -808,7 +808,7 @@ return NULL;
 uschar *
 strstric(uschar * s, uschar * t, BOOL space_follows)
 {
-return US strstric_c(s, t, space_follows);
+return US(strstric_c(s, t, space_follows));
 }
 
 
@@ -917,7 +917,7 @@ if (buffer)
   {
   int p = 0;
   if (is_tainted(s) && !is_tainted(buffer))
-    die_tainted(US"string_nextinlist", func, line);
+    die_tainted(US("string_nextinlist"), func, line);
   for (; *s; s++)
     {
     if (*s == sep && (*(++s) != sep || sep_is_special)) break;
@@ -942,7 +942,7 @@ else
     if (*++s != sep || sep_is_special)
       {
       *listptr = s;
-      return string_copy(US"");
+      return string_copy(US(""));
       }
 
   /* Not an empty string; the first character is guaranteed to be a data
@@ -964,7 +964,7 @@ else
 	&& (g->ptr == 1 || g->s[g->ptr-2] != '\\') )
     g->ptr--;
   buffer = string_from_gstring(g);
-  gstring_release_unused_trc(g, CCS func, line);
+  gstring_release_unused_trc(g, CCS(func), line);
   }
 
 /* Update the current pointer and return the new string */
@@ -1337,7 +1337,7 @@ if (!(flags & SVFMT_TAINT_NOCHK) && is_incompatible(g->s, format))
   {
 #ifndef MACRO_PREDEF
   if (!(flags & SVFMT_REBUFFER))
-    die_tainted(US"string_vformat", func, line);
+    die_tainted(US("string_vformat"), func, line);
 #endif
 /* debug_printf("rebuf B\n"); */
   gstring_rebuffer(g, format);
@@ -1357,7 +1357,7 @@ while (*fp)
   const char *null = "NULL";		/* ) These variables */
   const char *item_start, *s;		/* ) are deliberately */
   char newformat[16];			/* ) not unsigned */
-  char * gp = CS g->s + g->ptr;		/* ) */
+  char * gp = CS(g->s) + g->ptr;		/* ) */
 
   /* Non-% characters just get copied verbatim */
 
@@ -1441,7 +1441,7 @@ while (*fp)
 	if (!(flags & SVFMT_EXTEND) || need >= size_limit) return NULL;
 	gstring_grow(g, width);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = CS(g->s) + g->ptr;
 	}
       strncpy(newformat, item_start, fp - item_start);
       newformat[fp - item_start] = 0;
@@ -1471,7 +1471,7 @@ while (*fp)
 	if (!(flags & SVFMT_EXTEND || need >= size_limit)) return NULL;
 	gstring_grow(g, 24);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = CS(g->s) + g->ptr;
 	}
       /* sprintf() saying "(nil)" for a null pointer seems unreliable.
       Handle it explicitly. */
@@ -1504,7 +1504,7 @@ while (*fp)
 	if (!(flags & SVFMT_EXTEND || need >= size_limit)) return NULL;
 	gstring_grow(g, precision+8);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = CS(g->s) + g->ptr;
 	}
       strncpy(newformat, item_start, fp - item_start);
       newformat[fp-item_start] = 0;
@@ -1537,7 +1537,7 @@ while (*fp)
       break;
 
     case 'D':                   /* Insert daily datestamp for log file names */
-      s = CS tod_stamp(tod_log_datestamp_daily);
+      s = CS(tod_stamp(tod_log_datestamp_daily));
       string_datestamp_offset = g->ptr;		/* Passed back via global */
       string_datestamp_length = Ustrlen(s);	/* Passed back via global */
       string_datestamp_type = tod_log_datestamp_daily;
@@ -1545,7 +1545,7 @@ while (*fp)
       goto INSERT_STRING;
 
     case 'M':                   /* Insert monthly datestamp for log file names */
-      s = CS tod_stamp(tod_log_datestamp_monthly);
+      s = CS(tod_stamp(tod_log_datestamp_monthly));
       string_datestamp_offset = g->ptr;		/* Passed back via global */
       string_datestamp_length = Ustrlen(s);	/* Passed back via global */
       string_datestamp_type = tod_log_datestamp_monthly;
@@ -1565,11 +1565,11 @@ while (*fp)
 	  {
 /* debug_printf("%s %d: untainted workarea, tainted %%s :- rebuffer\n", __FUNCTION__, __LINE__); */
 	  gstring_rebuffer(g, s);
-	  gp = CS g->s + g->ptr;
+	  gp = CS(g->s) + g->ptr;
 	  }
 #ifndef MACRO_PREDEF
 	else
-	  die_tainted(US"string_vformat", func, line);
+	  die_tainted(US("string_vformat"), func, line);
 #endif
 
     INSERT_STRING:              /* Come to from %D or %M above */
@@ -1612,7 +1612,7 @@ while (*fp)
 	{
 	gstring_grow(g, width);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = CS(g->s) + g->ptr;
 	}
 
       g->ptr += sprintf(gp, "%*.*s", width, precision, s);
@@ -1669,7 +1669,7 @@ string_open_failed_trc(const uschar * func, unsigned line,
 va_list ap;
 gstring * g = string_get(1024);
 
-g = string_catn(g, US"failed to open ", 15);
+g = string_catn(g, US("failed to open "), 15);
 
 /* Use the checked formatting routine to ensure that the buffer
 does not overflow. It should not, since this is called only for internally
@@ -1681,8 +1681,8 @@ va_start(ap, format);
 	SVFMT_REBUFFER, format, ap);
 va_end(ap);
 
-g = string_catn(g, US": ", 2);
-g = string_cat(g, US strerror(errno));
+g = string_catn(g, US(": "), 2);
+g = string_cat(g, US(strerror(errno)));
 
 if (errno == EACCES)
   {
@@ -1706,7 +1706,7 @@ pointers. Here it is. */
 int
 string_compare_by_pointer(const void *a, const void *b)
 {
-return Ustrcmp(* CUSS a, * CUSS b);
+return Ustrcmp(* CUSS(a), * CUSS(b));
 }
 #endif /* COMPILE_UTILITY */
 
@@ -1727,7 +1727,7 @@ uschar buffer[256];
 printf("Testing is_ip_address\n");
 store_init();
 
-while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
+while (fgets(CS(buffer), sizeof(buffer), stdin) != NULL)
   {
   int offset;
   buffer[Ustrlen(buffer) - 1] = 0;
@@ -1737,7 +1737,7 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
 
 printf("Testing string_nextinlist\n");
 
-while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
+while (fgets(CS(buffer), sizeof(buffer), stdin) != NULL)
   {
   uschar *list = buffer;
   uschar *lp1, *lp2;
@@ -1761,11 +1761,11 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
     if (item == NULL || item2 == NULL || Ustrcmp(item1, item2) != 0)
       {
       printf("***ERROR\nitem1=\"%s\"\nitem2=\"%s\"\n",
-        (item1 == NULL)? "NULL" : CS item1,
-        (item2 == NULL)? "NULL" : CS item2);
+        (item1 == NULL)? "NULL" : CS(item1),
+        (item2 == NULL)? "NULL" : CS(item2));
       break;
       }
-    else printf("  \"%s\"\n", CS item1);
+    else printf("  \"%s\"\n", CS(item1));
     }
   }
 
@@ -1773,7 +1773,7 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
 
 printf("Testing string_format\n");
 
-while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
+while (fgets(CS(buffer), sizeof(buffer), stdin) != NULL)
   {
   void *args[3];
   long long llargs[3];
@@ -1813,7 +1813,7 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
       else if (Ustrstr(outbuf, "ll") != NULL)
         {
         llflag = 1;
-        llargs[n++] = strtoull(CS outbuf, NULL, 10);
+        llargs[n++] = strtoull(CS(outbuf), NULL, 10);
         }
       else
         {
@@ -1838,17 +1838,17 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
     }
 
   if (!dflag && !llflag)
-    printf("%s\n", string_format(outbuf, sizeof(outbuf), CS format,
+    printf("%s\n", string_format(outbuf, sizeof(outbuf), CS(format),
       args[0], args[1], args[2])? "True" : "False");
 
   else if (dflag)
-    printf("%s\n", string_format(outbuf, sizeof(outbuf), CS format,
+    printf("%s\n", string_format(outbuf, sizeof(outbuf), CS(format),
       dargs[0], dargs[1], dargs[2])? "True" : "False");
 
-  else printf("%s\n", string_format(outbuf, sizeof(outbuf), CS format,
+  else printf("%s\n", string_format(outbuf, sizeof(outbuf), CS(format),
     llargs[0], llargs[1], llargs[2])? "True" : "False");
 
-  printf("%s\n", CS outbuf);
+  printf("%s\n", CS(outbuf));
   if (countset) printf("count=%d\n", count);
   }
 

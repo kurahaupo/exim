@@ -343,7 +343,7 @@ and the first word of the log selector. */
 /* Used in globals.c for initializing bit_table structures. T will be either
 D or L corresponding to the debug and log selector bits declared below. */
 
-#define BIT_TABLE(T,name) { US #name, T##i_##name }
+#define BIT_TABLE(T,name) { US(#name), T##i_##name }
 
 /* IOTA allows us to keep an implicit sequential count, like a simple enum,
 but we can have sequentially numbered identifiers which are not declared
@@ -1068,13 +1068,13 @@ should not be one active. */
 
 # define ALARM(seconds) \
     debug_selector & D_any \
-    ? (sigalarm_setter = CUS __FUNCTION__, alarm(seconds)) : alarm(seconds);
+    ? (sigalarm_setter = CUS(__FUNCTION__), alarm(seconds)) : alarm(seconds);
 # define ALARM_CLR(seconds) \
     debug_selector & D_any \
     ? (sigalarm_setter = NULL, alarm(seconds)) : alarm(seconds);
 #endif
 
-#define AUTHS_REGEX US"\\n250[\\s\\-]AUTH\\s+([\\-\\w \\t]+)(?:\\n|$)"
+#define AUTHS_REGEX US("\\n250[\\s\\-]AUTH\\s+([\\-\\w \\t]+)(?:\\n|$)")
 
 #define EARLY_PIPE_FEATURE_NAME "PIPECONNECT"
 #define EARLY_PIPE_FEATURE_LEN  11
@@ -1095,14 +1095,14 @@ should not be one active. */
 #define RESUME_USED		BIT(4)
 
 #define RESUME_DECODE_STRING \
-	  US"not requested or offered : 0x02 :client requested, no server ticket" \
+	  US("not requested or offered : 0x02 :client requested, no server ticket" \
     ": 0x04 : 0x05 : 0x06 :client offered session, no server action" \
     ": 0x08 :no client request: 0x0A :client requested new ticket, server provided" \
     ": 0x0C :client offered session, not used: 0x0E :client offered session, server only provided new ticket" \
     ": 0x10 :session resumed unasked: 0x12 :session resumed unasked" \
     ": 0x14 : 0x15 : 0x16 :session resumed" \
     ": 0x18 :session resumed unasked: 0x1A :session resumed unasked" \
-    ": 0x1C :session resumed: 0x1E :session resumed, also new ticket"
+    ": 0x1C :session resumed: 0x1E :session resumed, also new ticket")
 
 /* Flags for string_vformat */
 #define SVFMT_EXTEND		BIT(0)

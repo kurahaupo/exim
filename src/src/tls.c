@@ -109,11 +109,11 @@ expand_check(const uschar *s, const uschar *name, uschar **result, uschar ** err
 {
 if (!s)
   *result = NULL;
-else if (  !(*result = expand_string(US s)) /* need to clean up const more */
+else if (  !(*result = expand_string(US(s))) /* need to clean up const more */
 	&& !f.expand_string_forcedfail
 	)
   {
-  *errstr = US"Internal error";
+  *errstr = US("Internal error");
   log_write(0, LOG_MAIN|LOG_PANIC, "expansion of %s failed: %s", name,
     expand_string_message);
   return FALSE;
@@ -151,7 +151,7 @@ if (Ustrcmp(filename, "system,cache") == 0) return TRUE;
 if (!(s = Ustrrchr(filename, '/'))) return FALSE;
 
 for (unsigned loop = 20;
-     (len = readlink(CCS filename, CS buf, sizeof(buf))) >= 0; )
+     (len = readlink(CCS(filename), CS(buf), sizeof(buf))) >= 0; )
   {						/* a symlink */
   if (--loop == 0) { errno = ELOOP; return FALSE; }
   filename = buf[0] == '/'
@@ -167,7 +167,7 @@ s = string_copyn(filename, s - filename);	/* mem released by tls_set_watch */
 
 DEBUG(D_tls) debug_printf("watch dir '%s'\n", s);
 
-if (inotify_add_watch(tls_watch_fd, CCS s,
+if (inotify_add_watch(tls_watch_fd, CCS(s),
       IN_ONESHOT | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF
       | IN_MOVED_FROM | IN_MOVED_TO | IN_MOVE_SELF) >= 0)
   return TRUE;
@@ -190,20 +190,20 @@ if (Ustrcmp(filename, "system,cache") == 0) return TRUE;
 
 for (;;)
   {
-  if (kev_used > KEV_SIZE-2) { s = US"out of kev space"; goto bad; }
+  if (kev_used > KEV_SIZE-2) { s = US("out of kev space"); goto bad; }
   if (!(s = Ustrrchr(filename, '/'))) return FALSE;
   s = string_copyn(filename, s - filename);	/* mem released by tls_set_watch */
 
   /* The dir open will fail if there is a symlink on the path. Fine; it's too
   much effort to handle all possible cases; just refuse the preload. */
 
-  if ((fd2 = open(CCS s, O_RDONLY | O_NOFOLLOW)) < 0) { s = US"open dir"; goto bad; }
+  if ((fd2 = open(CCS(s), O_RDONLY | O_NOFOLLOW)) < 0) { s = US("open dir"); goto bad; }
 
-  if ((lstat(CCS filename, &sb)) < 0) { s = US"lstat"; goto bad; }
+  if ((lstat(CCS(filename), &sb)) < 0) { s = US("lstat"); goto bad; }
   if (!S_ISLNK(sb.st_mode))
     {
-    if ((fd1 = open(CCS filename, O_RDONLY | O_NOFOLLOW)) < 0)
-      { s = US"open file"; goto bad; }
+    if ((fd1 = open(CCS(filename), O_RDONLY | O_NOFOLLOW)) < 0)
+      { s = US("open file"); goto bad; }
     DEBUG(D_tls) debug_printf("watch file '%s':\t%d\n", filename, fd1);
     EV_SET(&kev[kev_used++],
 	(uintptr_t)fd1,
@@ -232,7 +232,7 @@ for (;;)
   Ustrncpy(t, s, 1022);
   j = Ustrlen(s);
   t[j++] = '/';
-  if ((i = readlink(CCS filename, (void *)(t+j), 1023-j)) < 0) { s = US"readlink"; goto bad; }
+  if ((i = readlink(CCS(filename), (void *)(t+j), 1023-j)) < 0) { s = US("readlink"); goto bad; }
   filename = t;
   *(t += i+j) = '\0';
   store_release_above(t+1);
@@ -245,7 +245,7 @@ if (kevent(tls_watch_fd, &kev[kev_used-cnt], cnt, &k_dummy, 1, &ts) >= 0)
 if (kevent(tls_watch_fd, &kev[kev_used-cnt], cnt, NULL, 0, NULL) >= 0)
   return TRUE;
 #endif
-s = US"kevent";
+s = US("kevent");
 
 bad:
 DEBUG(D_tls)
@@ -438,8 +438,8 @@ tls_per_lib_daemon_init();
 static uschar *
 to_tz(uschar * tz)
 {
-uschar * old = US getenv("TZ");
-(void) setenv("TZ", CCS tz, 1);
+uschar * old = US(getenv("TZ"));
+(void) setenv("TZ", CCS(tz), 1);
 tzset();
 return old;
 }
@@ -448,9 +448,9 @@ static void
 restore_tz(uschar * tz)
 {
 if (tz)
-  (void) setenv("TZ", CCS tz, 1);
+  (void) setenv("TZ", CCS(tz), 1);
 else
-  (void) os_unsetenv(US"TZ");
+  (void) os_unsetenv(US("TZ"));
 tzset();
 }
 
@@ -564,12 +564,12 @@ return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 void
 tls_modify_variables(tls_support * dest_tsp)
 {
-modify_variable(US"tls_bits",                 &dest_tsp->bits);
-modify_variable(US"tls_certificate_verified", &dest_tsp->certificate_verified);
-modify_variable(US"tls_cipher",               &dest_tsp->cipher);
-modify_variable(US"tls_peerdn",               &dest_tsp->peerdn);
+modify_variable(US("tls_bits"),                 &dest_tsp->bits);
+modify_variable(US("tls_certificate_verified"), &dest_tsp->certificate_verified);
+modify_variable(US("tls_cipher"),               &dest_tsp->cipher);
+modify_variable(US("tls_peerdn"),               &dest_tsp->peerdn);
 #ifdef USE_OPENSSL
-modify_variable(US"tls_sni",                  &dest_tsp->sni);
+modify_variable(US("tls_sni"),                  &dest_tsp->sni);
 #endif
 }
 
@@ -626,7 +626,7 @@ while ((ele = string_nextinlist(&mod, &insep, NULL, 0)))
 dn_to_list(dn);
 insep = ',';
 len = match ? Ustrlen(match) : -1;
-while ((ele = string_nextinlist(CUSS &dn, &insep, NULL, 0)))
+while ((ele = string_nextinlist(CUSS(&dn), &insep, NULL, 0)))
   if (  !match
      || Ustrncmp(ele, match, len) == 0 && ele[len] == '='
      )
@@ -669,13 +669,13 @@ Returns:
 BOOL
 tls_is_name_for_cert(const uschar * namelist, void * cert)
 {
-uschar * altnames = tls_cert_subject_altname(cert, US"dns");
+uschar * altnames = tls_cert_subject_altname(cert, US("dns"));
 uschar * subjdn;
 uschar * certname;
 int cmp_sep = 0;
 uschar * cmpname;
 
-if ((altnames = tls_cert_subject_altname(cert, US"dns")))
+if ((altnames = tls_cert_subject_altname(cert, US("dns"))))
   {
   int alt_sep = '\n';
   while ((cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0)))
@@ -722,7 +722,7 @@ the env variable.  If relative, prefix the spooldir.
 void
 tls_clean_env(void)
 {
-uschar * path = US getenv("SSLKEYLOGFILE");
+uschar * path = US(getenv("SSLKEYLOGFILE"));
 if (path)
   if (!*path)
     unsetenv("SSLKEYLOGFILE");
@@ -730,7 +730,7 @@ if (path)
     {
     DEBUG(D_tls)
       debug_printf("prepending spooldir to  env SSLKEYLOGFILE\n");
-    setenv("SSLKEYLOGFILE", CCS string_sprintf("%s/%s", spool_directory, path), 1);
+    setenv("SSLKEYLOGFILE", CCS(string_sprintf("%s/%s", spool_directory, path)), 1);
     }
   else if (Ustrncmp(path, spool_directory, Ustrlen(spool_directory)) != 0)
     {
@@ -779,7 +779,7 @@ else if (!nowarn && !tls_certificate)
 oldsignal = signal(SIGCHLD, SIG_DFL);
 
 fflush(NULL);
-if ((pid = exim_fork(US"cipher-validate")) < 0)
+if ((pid = exim_fork(US("cipher-validate"))) < 0)
   log_write(0, LOG_MAIN|LOG_PANIC_DIE, "fork failed for TLS check");
 
 if (pid == 0)
@@ -787,7 +787,7 @@ if (pid == 0)
   /* in some modes, will have dropped privilege already */
   if (!geteuid())
     exim_setugid(exim_uid, exim_gid, FALSE,
-        US"calling tls_validate_require_cipher");
+        US("calling tls_validate_require_cipher"));
 
   if ((errmsg = tls_validate_require_cipher()))
     log_write(0, LOG_PANIC_DIE|LOG_CONFIG,
@@ -832,10 +832,10 @@ exim_sha_init(h, HASH_SHA1);
 exim_sha_update_string(h, conn_args->host_lbserver);
 # ifdef SUPPORT_DANE
 if (conn_args->dane)
-  exim_sha_update(h,  CUS &conn_args->tlsa_dnsa, sizeof(dns_answer));
+  exim_sha_update(h,  CUS(&conn_args->tlsa_dnsa), sizeof(dns_answer));
 # endif
 exim_sha_update_string(h, conn_args->host->address);
-exim_sha_update(h,   CUS &conn_args->host->port, sizeof(conn_args->host->port));
+exim_sha_update(h,   CUS(&conn_args->host->port), sizeof(conn_args->host->port));
 exim_sha_update_string(h, conn_args->sending_ip_address);
 exim_sha_update_string(h, openssl_options);
 exim_sha_update_string(h, ob->tls_require_ciphers);

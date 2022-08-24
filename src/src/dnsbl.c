@@ -230,7 +230,7 @@ if (cb->rc == DNS_SUCCEED)
       if (!bitmask)
 	{
         while ((res = string_nextinlist(&ptr, &ipsep, NULL, 0)))
-          if (Ustrcmp(CS da->address, res) == 0)
+          if (Ustrcmp(CS(da->address), res) == 0)
 	    break;
 	}
 
@@ -292,13 +292,13 @@ if (cb->rc == DNS_SUCCEED)
         switch(match_type)
           {
           case 0:
-	    res = US"was no match"; break;
+	    res = US("was no match"); break;
           case MT_NOT:
-	    res = US"was an exclude match"; break;
+	    res = US("was an exclude match"); break;
           case MT_ALL:
-	    res = US"was an IP address that did not match"; break;
+	    res = US("was an IP address that did not match"); break;
           case MT_NOT|MT_ALL:
-	    res = US"were no IP addresses that did not match"; break;
+	    res = US("were no IP addresses that did not match"); break;
           }
         debug_printf("=> but we are not accepting this block class because\n");
         debug_printf("=> there %s for %s%c%s\n",
@@ -365,7 +365,7 @@ if (cb->rc == DNS_SUCCEED)
 	  int len = (rr->data)[0];
 	  if (len > 511) len = 127;
 	  store_pool = POOL_PERM;
-	  cb->text = string_copyn_taint(CUS (rr->data+1), len, GET_TAINTED);
+	  cb->text = string_copyn_taint(CUS(rr->data+1), len, GET_TAINTED);
 	  store_pool = old_pool;
 	  break;
 	  }
@@ -383,9 +383,9 @@ if (cb->rc != DNS_NOMATCH && cb->rc != DNS_NODATA)
   {
   log_write(L_dnslist_defer, LOG_MAIN,
     "DNS list lookup defer (probably timeout) for %s: %s", query,
-    defer_return == OK ?   US"assumed in list" :
-    defer_return == FAIL ? US"assumed not in list" :
-                            US"returned DEFER");
+    defer_return == OK ?   US("assumed in list") :
+    defer_return == FAIL ? US("assumed not in list") :
+                            US("returned DEFER"));
   yield = defer_return;
   goto out;
   }
@@ -497,9 +497,9 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
 
   if (domain[0] == '+')
     {
-    if      (strcmpic(domain, US"+include_unknown") == 0) defer_return = OK;
-    else if (strcmpic(domain, US"+exclude_unknown") == 0) defer_return = FAIL;
-    else if (strcmpic(domain, US"+defer_unknown") == 0)   defer_return = DEFER;
+    if      (strcmpic(domain, US("+include_unknown")) == 0) defer_return = OK;
+    else if (strcmpic(domain, US("+exclude_unknown")) == 0) defer_return = FAIL;
+    else if (strcmpic(domain, US("+defer_unknown")) == 0)   defer_return = DEFER;
     else
       log_write(0, LOG_MAIN|LOG_PANIC, "unknown item in dnslist (ignored): %s",
         domain);
@@ -611,7 +611,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
     uschar *keydomain;
     uschar keyrevadd[128];
 
-    while ((keydomain = string_nextinlist(CUSS &key, &keysep, NULL, 0)))
+    while ((keydomain = string_nextinlist(CUSS(&key), &keysep, NULL, 0)))
       {
       uschar *prepend = keydomain;
 

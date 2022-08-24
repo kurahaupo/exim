@@ -52,14 +52,25 @@ on all interfaces, unless the option -noipv6 is given. */
 #endif
 
 #ifndef CS
-# define CS (char *)
-# define CCS (const char *)
+#if defined __GNUC__ || __STDC_VERSION__ >= 199901L
+/* safer casts: check the source types */
+static inline char       * CS (unsigned char       *p) { return (void*)p; }
+static inline char const *CCS (unsigned char const *p) { return (void*)p; }
+#elif !defined CHAR_MIN || CHAR_MIN < 0
+/* only use casts when needed */
+# define CS(S)   ((char *)(S))
+# define CCS(S)  ((const char *)(S))
+#else
+/* char is already unsigned, don't cast */
+# define CS(S)   (S)
+# define CCS(S)  (S)
+#endif
 #endif
 
 
 typedef struct line {
   struct line *next;
-  unsigned len;
+  unsigned int len;
   char line[1];
 } line;
 
@@ -477,22 +488,22 @@ because that would cause it to wait for this process, which it doesn't yet want
 to do. The driving script adds the "++++" automatically - it doesn't actually
 appear in the test script. Within lines we interpret \xNN and \\ groups */
 
-while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
+while (fgets(CS(buffer), sizeof(buffer), stdin) != NULL)
   {
   line *next;
   char * d;
-  int n = (int)strlen(CS buffer);
+  int n = (int)strlen(CS(buffer));
 
   if (n > 1 && buffer[0] == '>' && buffer[1] == '>')
     linebuf = 0;
   while (n > 0 && isspace(buffer[n-1])) n--;
   buffer[n] = 0;
-  if (strcmp(CS buffer, "++++") == 0) break;
+  if (strcmp(CS(buffer), "++++") == 0) break;
   next = malloc(sizeof(line) + n);
   next->next = NULL;
   d = next->line;
     {
-    char * s = CS buffer;
+    char * s = CS(buffer);
     do
       {
       char ch;
@@ -585,7 +596,7 @@ for (count = 0; count < connection_count; count++)
   dup_accept_socket = dup(accept_socket);
 
   if (port > 0)
-    printf("\nConnection request from [%s]\n", host_ntoa(&accepted, CS buffer));
+    printf("\nConnection request from [%s]\n", host_ntoa(&accepted, CS(buffer)));
   else
     {
     printf("\nConnection request\n");
@@ -685,7 +696,7 @@ for (count = 0; count < connection_count; count++)
 	while (dlen > 0)
 	  {
 	  n = dlen < sizeof(buffer) ? dlen : sizeof(buffer);
-	  if ((n = read(dup_accept_socket, CS buffer, n)) == 0)
+	  if ((n = read(dup_accept_socket, CS(buffer), n)) == 0)
 	    {
 	    printf("Unexpected EOF read from client\n");
 	    s = s->next;
@@ -739,7 +750,7 @@ for (count = 0; count < connection_count; count++)
 	char c;
 
 	alarm(timeout);
-	n = read(dup_accept_socket, CS buffer+offset, s->len - offset);
+	n = read(dup_accept_socket, CS(buffer)+offset, s->len - offset);
 	if (content_length.in_use) content_length.left -= n;
 	if (n == 0)
 	  {
@@ -753,7 +764,7 @@ for (count = 0; count < connection_count; count++)
 	alarm(0);
 	n += offset;
 
-	printit(CS buffer, n);
+	printit(CS(buffer), n);
 
 	if (data) do
 	  {
@@ -775,7 +786,7 @@ for (count = 0; count < connection_count; count++)
 	  {
 	  int n;
 	  alarm(timeout);
-	  if (fgets(CS buffer+offset, sizeof(buffer)-offset, in) == NULL)
+	  if (fgets(CS(buffer)+offset, sizeof(buffer)-offset, in) == NULL)
 	    {
 	    printf("%sxpected EOF read from client\n",
 	      (strncmp(ss, "*eof", 4) == 0)? "E" : "Une");
@@ -783,15 +794,15 @@ for (count = 0; count < connection_count; count++)
 	    goto END_OFF;
 	    }
 	  alarm(0);
-	  n = strlen(CS buffer);
+	  n = strlen(CS(buffer));
 	  if (content_length.in_use) content_length.left -= (n - offset);
 	  while (n > 0 && isspace(buffer[n-1])) n--;
 	  buffer[n] = 0;
 	  printf("%s\n", buffer);
-	  if (!data || strcmp(CS buffer, ".") == 0) break;
+	  if (!data || strcmp(CS(buffer), ".") == 0) break;
 	  }
 
-	if (strncmp(ss, CS buffer, (int)strlen(ss)) != 0)
+	if (strncmp(ss, CS(buffer), (int)strlen(ss)) != 0)
 	  {
 	  printf("Comparison failed - bailing out\n");
 	  printf("Expected: %s\n", ss);
@@ -799,7 +810,7 @@ for (count = 0; count < connection_count; count++)
 	  }
 	}
 
-	if (sscanf(CCS buffer, "<Content-length: %d", &content_length.left))
+	if (sscanf(CCS(buffer), "<Content-length: %d", &content_length.left))
        	  content_length.in_use = TRUE;
 	if (content_length.in_use && content_length.left <= 0)
 	  shutdown(dup_accept_socket, SHUT_RD);

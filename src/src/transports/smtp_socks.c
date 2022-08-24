@@ -35,14 +35,14 @@ struct socks_err
   } socks_errs[] =
   {
     {NULL, 0},
-    {US"general SOCKS server failure",		EIO},
-    {US"connection not allowed by ruleset",	EACCES},
-    {US"Network unreachable",			ENETUNREACH},
-    {US"Host unreachable",			EHOSTUNREACH},
-    {US"Connection refused",			ECONNREFUSED},
-    {US"TTL expired",				ECANCELED},
-    {US"Command not supported",			EOPNOTSUPP},
-    {US"Address type not supported",		EAFNOSUPPORT}
+    {US("general SOCKS server failure"),		EIO},
+    {US("connection not allowed by ruleset"),	EACCES},
+    {US("Network unreachable"),			ENETUNREACH},
+    {US("Host unreachable"),			EHOSTUNREACH},
+    {US("Connection refused"),			ECONNREFUSED},
+    {US("TTL expired"),				ECANCELED},
+    {US("Command not supported"),			EOPNOTSUPP},
+    {US("Address type not supported"),		EAFNOSUPPORT}
   };
 
 typedef struct
@@ -63,8 +63,8 @@ socks_option_defaults(socks_opts * sob)
 {
 sob->proxy_host = NULL;
 sob->auth_type =  AUTH_NONE;
-sob->auth_name =  US"";
-sob->auth_pwd =   US"";
+sob->auth_name =  US("");
+sob->auth_pwd =   US("");
 sob->is_failed =  FALSE;
 sob->port =	  SOCKS_PORT;
 sob->timeout =	  SOCKS_TIMEOUT;
@@ -86,13 +86,13 @@ else if (Ustrncmp(opt, "name=", 5) == 0)
 else if (Ustrncmp(opt, "pass=", 5) == 0)
   sob->auth_pwd = opt + 5;
 else if (Ustrncmp(opt, "port=", 5) == 0)
-  sob->port = atoi(CCS opt + 5);
+  sob->port = atoi(CCS(opt) + 5);
 else if (Ustrncmp(opt, "tmo=", 4) == 0)
-  sob->timeout = atoi(CCS opt + 4);
+  sob->timeout = atoi(CCS(opt) + 4);
 else if (Ustrncmp(opt, "pri=", 4) == 0)
-  sob->priority = atoi(CCS opt + 4);
+  sob->priority = atoi(CCS(opt) + 4);
 else if (Ustrncmp(opt, "weight=", 7) == 0)
-  sob->weight = atoi(CCS opt + 7);
+  sob->weight = atoi(CCS(opt) + 7);
 return;
 }
 
@@ -127,7 +127,7 @@ switch(method)
     if (send(fd, s, len, 0) < 0)
       return FAIL;
 #ifdef TCP_QUICKACK
-    (void) setsockopt(fd, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+    (void) setsockopt(fd, IPPROTO_TCP, TCP_QUICKACK, US(&off), sizeof(off));
 #endif
     if (!fd_ready(fd, tmo) || read(fd, s, 2) != 2)
       return FAIL;
@@ -263,7 +263,7 @@ if (!sob) return -1;
 /* Set up the socks protocol method-selection message,
 for sending on connection */
 
-state = US"method select";
+state = US("method select");
 buf[0] = 5; buf[1] = 1; buf[2] = sob->auth_type;
 early_data.data = buf;
 early_data.len = 3;
@@ -313,7 +313,7 @@ HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SOCKS>> 05 01 %02x\n", sob-
 /* expect method response */
 
 #ifdef TCP_QUICKACK
-(void) setsockopt(fd, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+(void) setsockopt(fd, IPPROTO_TCP, TCP_QUICKACK, US(&off), sizeof(off));
 #endif
 
 if (  !fd_ready(fd, tmo)
@@ -352,7 +352,7 @@ if (  buf[0] != 5
     }
  }
 
-state = US"connect";
+state = US("connect");
 HDEBUG(D_transport|D_acl|D_v)
   {
   debug_printf_indent("  SOCKS>>");
@@ -399,7 +399,7 @@ proxy_err:
   struct socks_err * se =
     buf[1] > nelem(socks_errs) ? NULL : socks_errs + buf[1];
   HDEBUG(D_transport|D_acl|D_v)
-    debug_printf_indent("  proxy %s: %s\n", state, se ? se->reason : US"unknown error code received");
+    debug_printf_indent("  proxy %s: %s\n", state, se ? se->reason : US("unknown error code received"));
   errno = se ? se->errcode : EPROTO;
   }
 

@@ -39,7 +39,7 @@ whoson_find(void * handle, const uschar * filename, uschar * query, int length,
 {
 uschar buffer[80];
 
-switch (wso_query(CS query, CS buffer, sizeof(buffer)))
+switch (wso_query(CS(query), CS(buffer), sizeof(buffer)))
   {
   case 0:
   *result = string_copy(buffer);    /* IP in database; return name of user */
@@ -77,7 +77,7 @@ return g;
 }
 
 static lookup_info _lookup_info = {
-  .name = US"whoson",			/* lookup name */
+  .name = US("whoson"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = whoson_open,			/* open function */
   .check = NULL,			/* check function */

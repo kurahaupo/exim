@@ -186,7 +186,7 @@ spool_read_header that is to be preserved is copied into malloc store. */
 reset_point = store_mark();
 message_size = 0;
 message_subdir[0] = dir_char;
-sprintf(CS buffer, "%s-H", name);
+sprintf(CS(buffer), "%s-H", name);
 rc =  spool_read_header(buffer, FALSE, TRUE);
 save_errno = errno;
 
@@ -221,13 +221,13 @@ if (rc != spool_read_OK)
   if (save_errno == ERRNO_SPOOLFORMAT)
     {
     struct stat statbuf;
-    sprintf(CS big_buffer, "%s/input/%s", spool_directory, buffer);
+    sprintf(CS(big_buffer), "%s/input/%s", spool_directory, buffer);
     if (Ustat(big_buffer, &statbuf) == 0)
       msg = string_sprintf("*** Format error in spool file: size = " OFF_T_FMT " ***",
         statbuf.st_size);
-    else msg = US"*** Format error in spool file ***";
+    else msg = US("*** Format error in spool file ***");
     }
-  else msg = US"*** Cannot read spool file ***";
+  else msg = US("*** Cannot read spool file ***");
 
   if (rc == spool_read_hdrerror)
     {
@@ -250,13 +250,13 @@ if (f.sender_set_untrusted)
   if (sender_address[0] == 0)
     {
     q->sender = store_malloc(Ustrlen(originator_login) + 6);
-    sprintf(CS q->sender, "<> (%s)", originator_login);
+    sprintf(CS(q->sender), "<> (%s)", originator_login);
     }
   else
     {
     q->sender = store_malloc(Ustrlen(sender_address) +
       Ustrlen(originator_login) + 4);
-    sprintf(CS q->sender, "%s (%s)", sender_address, originator_login);
+    sprintf(CS(q->sender), "%s (%s)", sender_address, originator_login);
     }
   }
 else
@@ -267,7 +267,7 @@ else
 
 sender_address = NULL;
 
-snprintf(CS buffer, sizeof(buffer), "%s/input/%s/%s/%s-D",
+snprintf(CS(buffer), sizeof(buffer), "%s/input/%s/%s/%s-D",
   spool_directory, queue_name, message_subdir, name);
 if (Ustat(buffer, &statdata) == 0)
   q->size = message_size + statdata.st_size - SPOOL_DATA_START_OFFSET + 1;
@@ -479,7 +479,7 @@ uschar subdirs[64];
 subdirs[0] = 0;
 stripchart_total[0] = 0;
 
-sprintf(CS input_dir, "%s/input", spool_directory);
+sprintf(CS(input_dir), "%s/input", spool_directory);
 subptr = Ustrlen(input_dir);
 input_dir[subptr+2] = 0;               /* terminator for lengthened name */
 
@@ -503,7 +503,7 @@ for (i = 0; i < subdir_max; i++)
 
   while ((ent = readdir(dd)))
     {
-    uschar *name = US ent->d_name;
+    uschar *name = US(ent->d_name);
     int len = Ustrlen(name);
 
     /* If we find a single alphameric sub-directory on the first
@@ -618,12 +618,12 @@ uschar buffer[1024];
 
 message_subdir[0] = p->dir_char;
 
-snprintf(CS buffer, sizeof(buffer), "%s/input/%s/%s/%s-J",
+snprintf(CS(buffer), sizeof(buffer), "%s/input/%s/%s/%s-J",
   spool_directory, queue_name, message_subdir, p->name);
 
-if (!(jread = fopen(CS buffer, "r")))
+if (!(jread = fopen(CS(buffer), "r")))
   {
-  snprintf(CS buffer, sizeof(buffer), "%s/input/%s/%s/%s-H",
+  snprintf(CS(buffer), sizeof(buffer), "%s/input/%s/%s/%s-H",
     spool_directory, queue_name, message_subdir, p->name);
   if (Ustat(buffer, &statdata) < 0 || p->update_time == statdata.st_mtime)
     return;
@@ -633,7 +633,7 @@ if (!(jread = fopen(CS buffer, "r")))
 Arrange to recover the dynamic store afterwards. */
 
 reset_point = store_mark();
-sprintf(CS buffer, "%s-H", p->name);
+sprintf(CS(buffer), "%s-H", p->name);
 if (spool_read_header(buffer, FALSE, TRUE) != spool_read_OK)
   {
   store_reset(reset_point);
@@ -794,18 +794,18 @@ while (p != NULL)
       t, u,
       string_format_size(p->size, big_buffer),
       p->name,
-      (p->sender == NULL)? US"       " :
-        (p->sender[0] == 0)? US"<>     " : anon(p->sender));
+      (p->sender == NULL)? US("       ") :
+        (p->sender[0] == 0)? US("<>     ") : anon(p->sender));
 
     text_showf(queue_widget, "%s%s%s",
       (dd == NULL || dd->address[0] == '*')? "" : "<",
-      (dd == NULL)? US"" : anon(dd->address),
+      (dd == NULL)? US("") : anon(dd->address),
       (dd == NULL || dd->address[0] == '*')? "" : ">");
 
     if (dd != NULL && dd->parent != NULL && dd->parent->address[0] != '*')
       text_showf(queue_widget, " parent <%s>", anon(dd->parent->address));
 
-    text_show(queue_widget, US"\n");
+    text_show(queue_widget, US("\n"));
 
     if (dd != NULL) dd = dd->next;
     while (dd != NULL && count++ < queue_max_addresses)
@@ -814,7 +814,7 @@ while (p != NULL)
         anon(dd->address));
       if (dd->parent != NULL && dd->parent->address[0] != '*')
         text_showf(queue_widget, " parent <%s>", anon(dd->parent->address));
-      text_show(queue_widget, US"\n");
+      text_show(queue_widget, US("\n"));
       dd = dd->next;
       }
     if (dd != NULL)

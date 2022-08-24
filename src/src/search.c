@@ -156,7 +156,7 @@ if (Ustrncmp(name, "partial", 7) == 0)
     }
   else if (*ss++ == '-')
     {
-    *ptypeaff = US "*.";
+    *ptypeaff = US("*.");
     *afflen = 2;
     }
   else
@@ -403,15 +403,15 @@ store_pool = POOL_SEARCH;
 if (!search_reset_point) search_reset_point = store_mark();
 
 DEBUG(D_lookup) debug_printf_indent("search_open: %s \"%s\"\n", lk->name,
-  filename ? filename : US"NULL");
+  filename ? filename : US("NULL"));
 
 /* See if we already have this open for this type of search, and if so,
 pass back the tree block as the handle. The key for the tree node is the search
 type plus '0' concatenated with the file name. There may be entries in the tree
 with closed files if a lot of files have been opened. */
 
-sprintf(CS keybuffer, "%c%.254s", search_type + '0',
-  filename ? filename : US"");
+sprintf(CS(keybuffer), "%c%.254s", search_type + '0',
+  filename ? filename : US(""));
 
 if ((t = tree_search(search_tree, keybuffer)))
   {
@@ -532,7 +532,7 @@ int old_pool = store_pool;
 /* Lookups that return DEFER may not always set an error message. So that
 the callers don't have to test for NULL, set an empty string. */
 
-search_error_message = US"";
+search_error_message = US("");
 f.search_find_defer = FALSE;
 
 DEBUG(D_lookup) debug_printf_indent("internal_search_find: file=\"%s\"\n  "
@@ -561,7 +561,7 @@ if (  (t = tree_search(c->item_cache, keystring))
   data = e->data.ptr;
   DEBUG(D_lookup) debug_printf_indent("cached data used for lookup of %s%s%s\n",
     keystring,
-    filename ? US"\n  in " : US"", filename ? filename : US"");
+    filename ? US("\n  in ") : US(""), filename ? filename : US(""));
   }
 else
   {
@@ -575,9 +575,9 @@ else
 	e->expiry && e->expiry <= time(NULL) ? "out-of-date"
 	: cache_rd ? "wrong opts" : "no_rd option set");
     debug_printf_indent("%s lookup required for %s%s%s\n",
-      filename ? US"file" : US"database",
+      filename ? US("file") : US("database"),
       keystring,
-      filename ? US"\n  in " : US"", filename ? filename : US"");
+      filename ? US("\n  in ") : US(""), filename ? filename : US(""));
     if (!filename && is_tainted(keystring))
       {
       debug_printf_indent("                             ");
@@ -598,7 +598,7 @@ else
     if (!s) s = authenticator_current_name();	/* must be before transport */
     if (!s) s = transport_current_name();	/* must be before router */
     if (!s) s = router_current_name();	/* GCC ?: would be good, but not in clang */
-    if (!s) s = US"";
+    if (!s) s = US("");
 #ifdef enforce_quote_protection_notyet
     search_error_message = string_sprintf(
       "tainted search query is not properly quoted%s: %s%s",
@@ -616,7 +616,7 @@ else
 
       DEBUG(D_lookup) debug_printf_indent("search_type %d (%s) quoting %d (%s)\n",
 	search_type, lookup_list[search_type]->name,
-	q, is_real_quoter(q) ? lookup_list[q]->name : US"none");
+	q, is_real_quoter(q) ? lookup_list[q]->name : US("none"));
      }
 #endif
     }
@@ -727,7 +727,7 @@ DEBUG(D_lookup)
   if (partial < 0) affixlen = 99;   /* So that "NULL" prints */
   debug_printf_indent("search_find: file=\"%s\"\n  key=\"%s\" "
     "partial=%d affix=%.*s starflags=%x opts=%s%s%s\n",
-    filename ? filename : US"NULL",
+    filename ? filename : US("NULL"),
     keystring, partial, affixlen, affix, starflags,
     opts ? "\"" : "", opts, opts ? "\"" : "");
 
@@ -925,7 +925,7 @@ and the second is empty. */
 if (!yield  &&  starflags & (SEARCH_STAR|SEARCH_STARAT))
   {
   DEBUG(D_lookup) debug_printf_indent("trying to match *\n");
-  yield = internal_search_find(handle, filename, US"*", cache_rd, opts);
+  yield = internal_search_find(handle, filename, US("*"), cache_rd, opts);
   if (yield && expand_setup && *expand_setup >= 0)
     {
     *expand_setup += 1;

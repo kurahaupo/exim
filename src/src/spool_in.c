@@ -54,7 +54,7 @@ for (int i = 0; i < 2; i++)
   int save_errno;
 
   set_subdir_str(message_subdir, id, i);
-  fname = spool_fname(US"input", message_subdir, id, US"-D");
+  fname = spool_fname(US("input"), message_subdir, id, US("-D"));
   DEBUG(D_deliver) debug_printf_indent("Trying spool file %s\n", fname);
 
   /* We protect against symlink attacks both in not propagating the
@@ -77,8 +77,8 @@ for (int i = 0; i < 2; i++)
     if (i == 0) continue;
     if (!f.queue_running)
       log_write(0, LOG_MAIN, "Spool%s%s file %s-D not found",
-	*queue_name ? US" Q=" : US"",
-	*queue_name ? queue_name : US"",
+	*queue_name ? US(" Q=") : US(""),
+	*queue_name ? queue_name : US(""),
 	id);
     }
   else
@@ -390,7 +390,7 @@ for (int n = 0; n < 2; n++)
   if (!subdir_set)
     set_subdir_str(message_subdir, name, n);
 
-  if ((fp = Ufopen(spool_fname(US"input", message_subdir, name, US""), "rb")))
+  if ((fp = Ufopen(spool_fname(US("input"), message_subdir, name, US("")), "rb")))
     break;
   if (n != 0 || subdir_set || errno != ENOENT)
     return spool_read_notopen;
@@ -451,7 +451,7 @@ sender_address[n-3] = 0;
 
 /* time */
 if (Ufgets(big_buffer, big_buffer_size, fp) == NULL) goto SPOOL_READ_ERROR;
-if (sscanf(CS big_buffer, TIME_T_FMT " %d", &received_time.tv_sec, &warning_count) != 2)
+if (sscanf(CS(big_buffer), TIME_T_FMT " %d", &received_time.tv_sec, &warning_count) != 2)
   goto SPOOL_FORMAT_ERROR;
 received_time.tv_usec = 0;
 received_time_complete = received_time;
@@ -534,7 +534,7 @@ for (;;)
       if (endptr == NULL) goto SPOOL_FORMAT_ERROR;
       name = string_sprintf("%c%.*s", var[3],
         (int)(endptr - var - 5), var + 5);
-      if (sscanf(CS endptr, " %d", &count) != 1) goto SPOOL_FORMAT_ERROR;
+      if (sscanf(CS(endptr), " %d", &count) != 1) goto SPOOL_FORMAT_ERROR;
       node = acl_var_create(name);
       node->data.ptr = store_get(count + 1, proto_mem);
       if (fread(node->data.ptr, 1, count+1, fp) < count) goto SPOOL_READ_ERROR;
@@ -565,7 +565,7 @@ for (;;)
       unsigned index, count;
       uschar name[20];   /* Need plenty of space for %u format */
       tree_node * node;
-      if (  sscanf(CS var + 4, "%u %u", &index, &count) != 2
+      if (  sscanf(CS(var) + 4, "%u %u", &index, &count) != 2
 	 || index >= 20
 	 || count > 16384	/* arbitrary limit on variable size */
          )
@@ -579,7 +579,7 @@ for (;;)
       /* We sanity-checked the count, so disable the Coverity error */
       /* coverity[tainted_data] */
       if (fread(node->data.ptr, 1, count+1, fp) < count) goto SPOOL_READ_ERROR;
-      (US node->data.ptr)[count] = '\0';
+      (US(node->data.ptr))[count] = '\0';
       }
     break;
 
@@ -598,12 +598,12 @@ for (;;)
     if (Ustrcmp(p, "eliver_firsttime") == 0)
       f.deliver_firsttime = TRUE;
     else if (Ustrncmp(p, "sn_ret", 6) == 0)
-      dsn_ret= atoi(CS var + 7);
+      dsn_ret= atoi(CS(var) + 7);
     else if (Ustrncmp(p, "sn_envid", 8) == 0)
       dsn_envid = string_copy_taint(var + 10, proto_mem);
 #ifndef COMPILE_UTILITY
     else if (Ustrncmp(p, "ebug_selector ", 14) == 0)
-      debug_selector = strtol(CS var + 15, NULL, 0);
+      debug_selector = strtol(CS(var) + 15, NULL, 0);
     else if (Ustrncmp(p, "ebuglog_name ", 13) == 0)
       debug_logging_from_spool(var + 14);
 #endif
@@ -613,7 +613,7 @@ for (;;)
     if (Ustrncmp(p, "rozen", 5) == 0)
       {
       f.deliver_freeze = TRUE;
-      if (sscanf(CS var+6, TIME_T_FMT, &deliver_frozen_at) != 1)
+      if (sscanf(CS(var)+6, TIME_T_FMT, &deliver_frozen_at) != 1)
 	goto SPOOL_READ_ERROR;
       }
     break;
@@ -681,7 +681,7 @@ for (;;)
     else if (Ustrncmp(p, "eceived_time_usec", 17) == 0)
       {
       unsigned usec;
-      if (sscanf(CS var + 20, "%u", &usec) == 1)
+      if (sscanf(CS(var) + 20, "%u", &usec) == 1)
 	{
 	received_time.tv_usec = usec;
 	if (!received_time_complete.tv_sec) received_time_complete.tv_usec = usec;
@@ -690,7 +690,7 @@ for (;;)
     else if (Ustrncmp(p, "eceived_time_complete", 21) == 0)
       {
       unsigned sec, usec;
-      if (sscanf(CS var + 23, "%u.%u", &sec, &usec) == 2)
+      if (sscanf(CS(var) + 23, "%u.%u", &sec, &usec) == 2)
 	{
 	received_time_complete.tv_sec = sec;
 	received_time_complete.tv_usec = usec;
@@ -773,7 +773,7 @@ host_build_sender_fullhost();
 #ifndef COMPILE_UTILITY
 DEBUG(D_deliver)
   debug_printf_indent("sender_local=%d ident=%s\n", f.sender_local,
-    sender_ident ? sender_ident : US"unset");
+    sender_ident ? sender_ident : US("unset"));
 #endif  /* COMPILE_UTILITY */
 
 /* We now have the tree of addresses NOT to deliver to, or a line
@@ -792,7 +792,7 @@ buffer. It contains the count of recipients which follow on separate lines.
 Apply an arbitrary sanity check.*/
 
 if (Ufgets(big_buffer, big_buffer_size, fp) == NULL) goto SPOOL_READ_ERROR;
-if (sscanf(CS big_buffer, "%d", &rcount) != 1 || rcount > 16384)
+if (sscanf(CS(big_buffer), "%d", &rcount) != 1 || rcount > 16384)
   goto SPOOL_FORMAT_ERROR;
 
 #ifndef COMPILE_UTILITY
@@ -873,7 +873,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     if (*p == ' ')
       {
       *p++ = 0;
-      (void)sscanf(CS p, "%d,%d", &dummy, &pno);
+      (void)sscanf(CS(p), "%d,%d", &dummy, &pno);
       }
     }
 
@@ -885,7 +885,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - early Exim 4 spool file\n");
 #endif
     *p++ = 0;
-    (void)sscanf(CS p, "%d", &pno);
+    (void)sscanf(CS(p), "%d", &pno);
     }
 
   /* Handle current format Exim 4 spool files */
@@ -898,13 +898,13 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - Exim standard format spoolfile\n");
 #endif
 
-    (void)sscanf(CS p+1, "%d", &flags);
+    (void)sscanf(CS(p)+1, "%d", &flags);
 
     if (flags & 0x01)      /* one_time data exists */
       {
       int len;
       while (isdigit(*(--p)) || *p == ',' || *p == '-');
-      (void)sscanf(CS p+1, "%d,%d", &len, &pno);
+      (void)sscanf(CS(p)+1, "%d,%d", &len, &pno);
       *p = 0;
       if (len > 0)
         {
@@ -918,7 +918,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
       {
       int len;
       while (isdigit(*(--p)) || *p == ',' || *p == '-');
-      (void)sscanf(CS p+1, "%d,%d", &len, &dsn_flags);
+      (void)sscanf(CS(p)+1, "%d,%d", &len, &dsn_flags);
       *p = 0;
       if (len > 0)
         {
@@ -1064,7 +1064,7 @@ FILE * fp;
 int n;
 uschar * yield = NULL;
 
-if (!(fp = Ufopen(spool_fname(US"input", message_subdir, name, US""), "rb")))
+if (!(fp = Ufopen(spool_fname(US("input"), message_subdir, name, US("")), "rb")))
   return NULL;
 
 DEBUG(D_deliver) debug_printf_indent("reading spool file %s\n", name);

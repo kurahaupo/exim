@@ -75,7 +75,7 @@ ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
 {
 #ifdef IPV6_USE_INET_PTON
 
-  if (inet_pton(AF_INET6, CCS address, &saddr->sin6_addr) != 1)
+  if (inet_pton(AF_INET6, CCS(address), &saddr->sin6_addr) != 1)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "unable to parse \"%s\" as an "
       "IP address", address);
   saddr->sin6_family = AF_INET6;
@@ -88,7 +88,7 @@ ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
   hints.ai_family = AF_INET6;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_NUMERICHOST;
-  if ((rc = getaddrinfo(CCS address, NULL, &hints, &res)) != 0 || res == NULL)
+  if ((rc = getaddrinfo(CCS(address), NULL, &hints, &res)) != 0 || res == NULL)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "unable to parse \"%s\" as an "
       "IP address: %s", address,
       (rc == 0)? "NULL result returned" : gai_strerror(rc));
@@ -136,7 +136,7 @@ else
   sin->v4.sin_port = htons(port);
   sin->v4.sin_addr.s_addr = address[0] == 0
     ? (S_ADDR_TYPE)INADDR_ANY
-    : (S_ADDR_TYPE)inet_addr(CS address);
+    : (S_ADDR_TYPE)inet_addr(CS(address));
   return sizeof(sin->v4);
   }
 }
@@ -216,7 +216,7 @@ IPv6 support. */
   memset(&s_in4, 0, sizeof(s_in4));
   s_in4.sin_family = AF_INET;
   s_in4.sin_port = htons(port);
-  s_in4.sin_addr.s_addr = (S_ADDR_TYPE)inet_addr(CCS address);
+  s_in4.sin_addr.s_addr = (S_ADDR_TYPE)inet_addr(CCS(address));
   s_ptr = (struct sockaddr *)&s_in4;
   s_len = sizeof(s_in4);
   }
@@ -493,7 +493,7 @@ uschar hostname[256];
 unsigned int portlow, porthigh;
 
 /* extract host and port part */
-scan = sscanf(CS hostport, "%255s %u-%u", hostname, &portlow, &porthigh);
+scan = sscanf(CS(hostport), "%255s %u-%u", hostname, &portlow, &porthigh);
 if (scan != 3)
   {
   if (scan != 2)
@@ -516,13 +516,13 @@ struct sockaddr_un server;
 
 if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
   {
-  *errstr = US"can't open UNIX socket.";
+  *errstr = US("can't open UNIX socket.");
   return -1;
   }
 
 callout_address = string_copy(path);
 server.sun_family = AF_UNIX;
-Ustrncpy(US server.sun_path, path, sizeof(server.sun_path)-1);
+Ustrncpy(US(server.sun_path), path, sizeof(server.sun_path)-1);
 server.sun_path[sizeof(server.sun_path)-1] = '\0';
 if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0)
   {
@@ -568,7 +568,7 @@ ip_keepalive(int sock, const uschar *address, BOOL torf)
 {
 int fodder = 1;
 if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE,
-    US (&fodder), sizeof(fodder)) != 0)
+    US(&fodder), sizeof(fodder)) != 0)
   log_write(0, LOG_MAIN, "setsockopt(SO_KEEPALIVE) on connection %s %s "
     "failed: %s", torf? "to":"from", address, strerror(errno));
 }
@@ -718,29 +718,29 @@ struct dscp_name_tableentry {
 /* Keep both of these tables sorted! */
 static struct dscp_name_tableentry dscp_table[] = {
 #ifdef IPTOS_DSCP_AF11
-    { CUS"af11", IPTOS_DSCP_AF11 },
-    { CUS"af12", IPTOS_DSCP_AF12 },
-    { CUS"af13", IPTOS_DSCP_AF13 },
-    { CUS"af21", IPTOS_DSCP_AF21 },
-    { CUS"af22", IPTOS_DSCP_AF22 },
-    { CUS"af23", IPTOS_DSCP_AF23 },
-    { CUS"af31", IPTOS_DSCP_AF31 },
-    { CUS"af32", IPTOS_DSCP_AF32 },
-    { CUS"af33", IPTOS_DSCP_AF33 },
-    { CUS"af41", IPTOS_DSCP_AF41 },
-    { CUS"af42", IPTOS_DSCP_AF42 },
-    { CUS"af43", IPTOS_DSCP_AF43 },
-    { CUS"ef", IPTOS_DSCP_EF },
+    { CUS("af11"), IPTOS_DSCP_AF11 },
+    { CUS("af12"), IPTOS_DSCP_AF12 },
+    { CUS("af13"), IPTOS_DSCP_AF13 },
+    { CUS("af21"), IPTOS_DSCP_AF21 },
+    { CUS("af22"), IPTOS_DSCP_AF22 },
+    { CUS("af23"), IPTOS_DSCP_AF23 },
+    { CUS("af31"), IPTOS_DSCP_AF31 },
+    { CUS("af32"), IPTOS_DSCP_AF32 },
+    { CUS("af33"), IPTOS_DSCP_AF33 },
+    { CUS("af41"), IPTOS_DSCP_AF41 },
+    { CUS("af42"), IPTOS_DSCP_AF42 },
+    { CUS("af43"), IPTOS_DSCP_AF43 },
+    { CUS("ef"), IPTOS_DSCP_EF },
 #endif
 #ifdef IPTOS_LOWCOST
-    { CUS"lowcost", IPTOS_LOWCOST },
+    { CUS("lowcost"), IPTOS_LOWCOST },
 #endif
-    { CUS"lowdelay", IPTOS_LOWDELAY },
+    { CUS("lowdelay"), IPTOS_LOWDELAY },
 #ifdef IPTOS_MINCOST
-    { CUS"mincost", IPTOS_MINCOST },
+    { CUS("mincost"), IPTOS_MINCOST },
 #endif
-    { CUS"reliability", IPTOS_RELIABILITY },
-    { CUS"throughput", IPTOS_THROUGHPUT }
+    { CUS("reliability"), IPTOS_RELIABILITY },
+    { CUS("throughput"), IPTOS_THROUGHPUT }
 };
 static int dscp_table_size =
   sizeof(dscp_table) / sizeof(struct dscp_name_tableentry);
@@ -796,7 +796,7 @@ if (!dscp_name)
     debug_printf("[empty DSCP]\n");
   return FALSE;
   }
-dscp_lookup = expand_string(US dscp_name);
+dscp_lookup = expand_string(US(dscp_name));
 if (dscp_lookup == NULL || *dscp_lookup == '\0')
   return FALSE;
 

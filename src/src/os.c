@@ -13,8 +13,19 @@
 #endif
 
 #ifndef CS
-# define CS (char *)
-# define US (unsigned char *)
+#if defined __GNUC__ || __STDC_VERSION__ >= 199901L
+/* safer casts: check the source types */
+static inline char         * CS (uschar       *p) { return (void*)p; }
+static inline uschar       * US (char         *p) { return (void*)p; }
+#elif !defined CHAR_MIN || CHAR_MIN < 0
+/* only use casts when needed */
+# define CS(S)   ((char *)(S))
+# define US(S)   ((unsigned char *)(S))
+#else
+/* char is already unsigned, don't cast */
+# define CS(S)   (S)
+# define US(S)   (S)
+#endif
 #endif
 
 /* This source file contains "default" system-dependent functions which
@@ -419,7 +430,7 @@ if (avg_kd < 0)
   }
 
 if (lseek (avg_kd, avg_offset, 0) == -1L
-    || read (avg_kd, CS (&avg), sizeof (avg)) != sizeof(avg))
+    || read (avg_kd, CS(&avg), sizeof (avg)) != sizeof(avg))
   return -1;
 
 return (int)(((double)avg/FSCALE)*1000.0);
@@ -651,7 +662,7 @@ ifc.V_ifc_family = V_FAMILY_QUERY;
 ifc.V_ifc_flags = 0;
 #endif
 
-if (ioctl(vs, V_GIFCONF, CS &ifc) < 0)
+if (ioctl(vs, V_GIFCONF, CS(&ifc)) < 0)
   log_write(0, LOG_PANIC_DIE, "Unable to get interface configuration: %d %s",
     errno, strerror(errno));
 
@@ -686,7 +697,7 @@ find its length, and then recopy the correct length. */
 
 for (char * cp = buf; cp < buf + ifc.V_ifc_len; cp += len)
   {
-  memcpy(CS &ifreq, cp, sizeof(ifreq));
+  memcpy(CS(&ifreq), cp, sizeof(ifreq));
 
   #ifndef HAVE_SA_LEN
   len = sizeof(struct V_ifreq);
@@ -716,7 +727,7 @@ for (char * cp = buf; cp < buf + ifc.V_ifc_len; cp += len)
   interface hasn't been "plumbed" to any protocol (IPv4 or IPv6). Therefore,
   we now just treat this case as "down" as well. */
 
-  if (ioctl(vs, V_GIFFLAGS, CS &ifreq) < 0)
+  if (ioctl(vs, V_GIFFLAGS, CS(&ifreq)) < 0)
     {
     continue;
     /*************
@@ -732,7 +743,7 @@ for (char * cp = buf; cp < buf + ifc.V_ifc_len; cp += len)
   GIFFLAGS may have wrecked the data. */
 
   #ifndef SIOCGIFCONF_GIVES_ADDR
-  if (ioctl(vs, V_GIFADDR, CS &ifreq) < 0)
+  if (ioctl(vs, V_GIFADDR, CS(&ifreq)) < 0)
     log_write(0, LOG_PANIC_DIE, "Unable to get IP address for %s interface: "
       "%d %s", ifreq.V_ifr_name, errno, strerror(errno));
   addrp = &ifreq.V_ifr_addr;
@@ -779,13 +790,13 @@ ip_address_item *
 os_common_find_running_interfaces(void)
 {
 ip_address_item *yield = store_get(sizeof(address_item), GET_UNTAINTED);
-yield->address = US"127.0.0.1";
+yield->address = US("127.0.0.1");
 yield->port = 0;
 yield->next = NULL;
 
 #if HAVE_IPV6
 yield->next = store_get(sizeof(address_item), GET_UNTAINTED);
-yield->next->address = US"::1";
+yield->next->address = US("::1");
 yield->next->port = 0;
 yield->next->next = NULL;
 #endif
@@ -852,7 +863,7 @@ return &_res;
 int
 os_unsetenv(const unsigned char * name)
 {
-return unsetenv(CS name);
+return unsetenv(CS(name));
 }
 #endif
 
@@ -871,7 +882,7 @@ this, for all other systems we provide our own getcwd() */
 unsigned char *
 os_getcwd(unsigned char * buffer, size_t size)
 {
-return US  getcwd(CS buffer, size);
+return US(getcwd(CS(buffer), size));
 }
 #else
 #ifndef PATH_MAX
@@ -880,7 +891,7 @@ return US  getcwd(CS buffer, size);
 unsigned char *
 os_getcwd(unsigned char * buffer, size_t size)
 {
-char * b = CS buffer;
+char * b = CS(buffer);
 
 if (!size) size = PATH_MAX;
 if (!b && !(b = malloc(size))) return NULL;

@@ -73,7 +73,7 @@ if (!spool_mbox_ok)
   if it should become available in future. */
 
   temp_string = expand_string(
-    US"From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n"
+    US("From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n")
     "${if def:sender_address{X-Envelope-From: <${sender_address}>\n}}"
     "${if def:recipients{X-Envelope-To: ${recipients}\n}}");
 
@@ -118,7 +118,7 @@ if (!spool_mbox_ok)
     for (int i = 0; i < 2; i++)
       {
       set_subdir_str(message_subdir, message_id, i);
-      temp_string = spool_fname(US"input", message_subdir, message_id, US"-D");
+      temp_string = spool_fname(US("input"), message_subdir, message_id, US("-D"));
       if ((l_data_file = Ufopen(temp_string, "rb"))) break;
       }
     }
@@ -149,7 +149,7 @@ if (!spool_mbox_ok)
     if (!f.spool_file_wireformat || source_file_override)
       j = fread(buffer, 1, sizeof(buffer), l_data_file);
     else						/* needs CRLF -> NL */
-      if ((s = US fgets(CS buffer, sizeof(buffer), l_data_file)))
+      if ((s = US(fgets(CS(buffer), sizeof(buffer), l_data_file))))
 	{
 	uschar * p = s + Ustrlen(s) - 1;
 
@@ -219,25 +219,25 @@ if (spool_mbox_ok && !f.no_mbox_unspool)
     {
     debug_printf("Unable to opendir(%s): %s\n", mbox_path, strerror(errno));
     /* Just in case we still can: */
-    (void) rmdir(CS mbox_path);
+    (void) rmdir(CS(mbox_path));
     return;
     }
   /* loop thru dir & delete entries */
   for (struct dirent *entry; entry = readdir(tempdir); )
     {
-    uschar *name = US entry->d_name;
-    if (Ustrcmp(name, US".") == 0 || Ustrcmp(name, US"..") == 0) continue;
+    uschar *name = US(entry->d_name);
+    if (Ustrcmp(name, US(".")) == 0 || Ustrcmp(name, US("..")) == 0) continue;
 
     file_path = string_sprintf("%s/%s", mbox_path, name);
     debug_printf("unspool_mbox(): unlinking '%s'\n", file_path);
-    if (unlink(CS file_path) != 0)
+    if (unlink(CS(file_path)) != 0)
       log_write(0, LOG_MAIN|LOG_PANIC, "unlink(%s): %s", file_path, strerror(errno));
     }
 
   closedir(tempdir);
 
   /* remove directory */
-  if (rmdir(CS mbox_path) != 0)
+  if (rmdir(CS(mbox_path)) != 0)
     log_write(0, LOG_MAIN|LOG_PANIC, "rmdir(%s): %s", mbox_path, strerror(errno));
   store_reset(reset_point);
   }

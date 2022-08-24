@@ -116,10 +116,10 @@ copy_spool_files(transport_instance * tb, address_item * addr,
   const uschar * dstpath, int sdfd, int ddfd, BOOL link_file, int srcfd)
 {
 BOOL is_hdr_file = srcfd < 0;
-const uschar * suffix = srcfd < 0 ? US"H" : US"D";
+const uschar * suffix = srcfd < 0 ? US("H") : US("D");
 int dstfd;
 const uschar * filename = string_sprintf("%s-%s", message_id, suffix);
-const uschar * srcpath = spool_fname(US"input", message_subdir, message_id, suffix);
+const uschar * srcpath = spool_fname(US("input"), message_subdir, message_id, suffix);
 const uschar * s, * op;
 
 dstpath = string_sprintf("%s/%s-%s", dstpath, message_id, suffix);
@@ -129,10 +129,10 @@ if (link_file)
   DEBUG(D_transport) debug_printf("%s transport, linking %s => %s\n",
     tb->name, srcpath, dstpath);
 
-  if (linkat(sdfd, CCS filename, ddfd, CCS filename, 0) >= 0)
+  if (linkat(sdfd, CCS(filename), ddfd, CCS(filename), 0) >= 0)
     return TRUE;
 
-  op = US"linking";
+  op = US("linking");
   s = dstpath;
   }
 else					/* use data copy */
@@ -141,20 +141,20 @@ else					/* use data copy */
     tb->name, srcpath, dstpath);
 
   if (  (s = dstpath,
-	 (dstfd = exim_openat4(ddfd, CCS filename, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE))
+	 (dstfd = exim_openat4(ddfd, CCS(filename), O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE))
 	 < 0
 	)
      ||    is_hdr_file
-	&& (s = srcpath, (srcfd = exim_openat(sdfd, CCS filename, O_RDONLY)) < 0)
+	&& (s = srcpath, (srcfd = exim_openat(sdfd, CCS(filename), O_RDONLY)) < 0)
      )
-    op = US"opening";
+    op = US("opening");
 
   else
     if (s = dstpath, fchmod(dstfd, SPOOL_MODE) != 0)
-      op = US"setting perms on";
+      op = US("setting perms on");
     else
       if (!copy_spool_file(dstfd, srcfd))
-	op = US"creating";
+	op = US("creating");
       else
 	return TRUE;
   }
@@ -179,7 +179,7 @@ queuefile_transport_entry(transport_instance * tblock, address_item * addr)
 queuefile_transport_options_block * ob =
   (queuefile_transport_options_block *) tblock->options_block;
 BOOL can_link;
-uschar * sourcedir = spool_dname(US"input", message_subdir);
+uschar * sourcedir = spool_dname(US("input"), message_subdir);
 uschar * s, * dstdir;
 struct stat dstatbuf, sstatbuf;
 int ddfd = -1, sdfd = -1;

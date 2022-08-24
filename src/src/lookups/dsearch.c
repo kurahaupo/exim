@@ -169,7 +169,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US"dsearch",			/* lookup name */
+  .name = US("dsearch"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dsearch_open,			/* open function */
   .check = dsearch_check,		/* check function */

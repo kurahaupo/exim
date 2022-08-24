@@ -89,7 +89,7 @@ BOOL    allow_insecure_tainted_data;
 /* This is global because it's defined in the headers and compilers grumble
 if it is made static. */
 
-const uschar *hex_digits = CUS"0123456789abcdef";
+const uschar *hex_digits = CUS("0123456789abcdef");
 
 
 #ifdef STRERROR_FROM_ERRLIST
@@ -234,14 +234,14 @@ if (strlen(argv[arg+1]) > sizeof(temp_dbmname) - 20)
   exit(1);
   }
 
-Ustrcpy(temp_dbmname, US argv[arg+1]);
-Ustrcat(temp_dbmname, US".dbmbuild_temp");
+Ustrcpy(temp_dbmname, US(argv[arg+1]));
+Ustrcat(temp_dbmname, US(".dbmbuild_temp"));
 
 Ustrcpy(dirname, temp_dbmname);
 if ((bptr = Ustrrchr(dirname, '/')))
   *bptr = '\0';
 else
-  Ustrcpy(dirname, US".");
+  Ustrcpy(dirname, US("."));
 
 /* It is apparently necessary to open with O_RDWR for this to work
 with gdbm-1.7.3, though no reading is actually going to be done. */
@@ -258,7 +258,7 @@ if (!(d = exim_dbopen(temp_dbmname, dirname, O_RDWR|O_CREAT|O_EXCL, 0644)))
 assume .dir & .pag */
 
 #if !defined(USE_DB) && !defined(USE_TDB) && !defined(USE_GDBM)
-sprintf(CS real_dbmname, "%s.db", temp_dbmname);
+sprintf(CS(real_dbmname), "%s.db", temp_dbmname);
 is_db = Ustat(real_dbmname, &statbuf) == 0;
 #endif
 
@@ -460,7 +460,7 @@ if (yield == 0 || yield == 1)
 
   #if defined(USE_DB) || defined(USE_TDB) || defined(USE_GDBM)
   Ustrcpy(real_dbmname, temp_dbmname);
-  Ustrcpy(buffer, US argv[arg+1]);
+  Ustrcpy(buffer, US(argv[arg+1]));
   if (Urename(real_dbmname, buffer) != 0)
     {
     printf("Unable to rename %s as %s\n", real_dbmname, buffer);
@@ -472,8 +472,8 @@ if (yield == 0 || yield == 1)
 
   if (is_db)
     {
-    sprintf(CS real_dbmname, "%s.db", temp_dbmname);
-    sprintf(CS buffer, "%s.db", argv[arg+1]);
+    sprintf(CS(real_dbmname), "%s.db", temp_dbmname);
+    sprintf(CS(buffer), "%s.db", argv[arg+1]);
     if (Urename(real_dbmname, buffer) != 0)
       {
       printf("Unable to rename %s as %s\n", real_dbmname, buffer);
@@ -485,16 +485,16 @@ if (yield == 0 || yield == 1)
 
   else
     {
-    sprintf(CS real_dbmname, "%s.dir", temp_dbmname);
-    sprintf(CS buffer, "%s.dir", argv[arg+1]);
+    sprintf(CS(real_dbmname), "%s.dir", temp_dbmname);
+    sprintf(CS(buffer), "%s.dir", argv[arg+1]);
     if (Urename(real_dbmname, buffer) != 0)
       {
       printf("Unable to rename %s as %s\n", real_dbmname, buffer);
       return 1;
       }
 
-    sprintf(CS real_dbmname, "%s.pag", temp_dbmname);
-    sprintf(CS buffer, "%s.pag", argv[arg+1]);
+    sprintf(CS(real_dbmname), "%s.pag", temp_dbmname);
+    sprintf(CS(buffer), "%s.pag", argv[arg+1]);
     if (Urename(real_dbmname, buffer) != 0)
       {
       printf("Unable to rename %s as %s\n", real_dbmname, buffer);
@@ -517,14 +517,14 @@ else
 #else
   if (is_db)
     {
-    sprintf(CS real_dbmname, "%s.db", temp_dbmname);
+    sprintf(CS(real_dbmname), "%s.db", temp_dbmname);
     Uunlink(real_dbmname);
     }
   else
     {
-    sprintf(CS real_dbmname, "%s.dir", temp_dbmname);
+    sprintf(CS(real_dbmname), "%s.dir", temp_dbmname);
     Uunlink(real_dbmname);
-    sprintf(CS real_dbmname, "%s.pag", temp_dbmname);
+    sprintf(CS(real_dbmname), "%s.pag", temp_dbmname);
     Uunlink(real_dbmname);
     }
 #endif /* USE_DB || USE_TDB */

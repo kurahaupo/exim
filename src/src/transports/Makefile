@@ -4,6 +4,8 @@
 
 OBJ = appendfile.o autoreply.o lmtp.o pipe.o queuefile.o smtp.o smtp_socks.o tf_maildir.o
 
+CFLAGS += -fsigned-char
+
 transports.a:    $(OBJ)
 		 @$(RM_COMMAND) -f transports.a
 		 @echo "$(AR) transports.a"

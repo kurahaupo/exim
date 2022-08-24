@@ -65,12 +65,12 @@ for (i = 0; i < 4; i++)
 
   if (i == 0)
     {
-    mdir = CUS"";
+    mdir = CUS("");
     dir = path;
     }
   else
     {
-    mdir = CUS subdirs[i-1];
+    mdir = CUS(subdirs[i-1]);
     dir = mdir + 1;
     }
 
@@ -201,7 +201,7 @@ maildir_record_length(int fd, int size)
 {
 int len;
 uschar buffer[256];
-sprintf(CS buffer, "%d 1\n", size);
+sprintf(CS(buffer), "%d 1\n", size);
 len = Ustrlen(buffer);
 if (lseek(fd, 0, SEEK_END) >= 0)
   {
@@ -253,7 +253,7 @@ if (!(dir = exim_opendir(path)))
 
 for (struct dirent *ent; ent = readdir(dir); )
   {
-  uschar * s, * name = US ent->d_name;
+  uschar * s, * name = US(ent->d_name);
   struct stat statbuf;
 
   if (Ustrcmp(name, ".") == 0 || Ustrcmp(name, "..") == 0) continue;
@@ -538,7 +538,7 @@ else
   fd = Uopen(tempname, O_RDWR|O_CREAT|O_EXCL, ob->mode ? ob->mode : 0600);
   if (fd >= 0)
     {
-    (void)sprintf(CS buffer, OFF_T_FMT "S,%dC\n" OFF_T_FMT " %d\n",
+    (void)sprintf(CS(buffer), OFF_T_FMT "S,%dC\n" OFF_T_FMT " %d\n",
       ob->quota_value, ob->quota_filecount_value, size, filecount);
     len = Ustrlen(buffer);
     if (write(fd, buffer, len) != len || Urename(tempname, filename) < 0)

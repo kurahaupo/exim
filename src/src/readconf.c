@@ -414,7 +414,7 @@ fn_smtp_receive_timeout(const uschar * name, const uschar * str, unsigned flags)
 void
 options_main(void)
 {
-options_from_list(optionlist_config, nelem(optionlist_config), US"MAIN", NULL);
+options_from_list(optionlist_config, nelem(optionlist_config), US("MAIN"), NULL);
 }
 
 void
@@ -422,13 +422,13 @@ options_auths(void)
 {
 uschar buf[EXIM_DRIVERNAME_MAX];
 
-options_from_list(optionlist_auths, optionlist_auths_size, US"AUTHENTICATORS", NULL);
+options_from_list(optionlist_auths, optionlist_auths_size, US("AUTHENTICATORS"), NULL);
 
 for (struct auth_info * ai = auths_available; ai->driver_name[0]; ai++)
   {
-  spf(buf, sizeof(buf), US"_DRIVER_AUTHENTICATOR_%T", ai->driver_name);
+  spf(buf, sizeof(buf), US("_DRIVER_AUTHENTICATOR_%T"), ai->driver_name);
   builtin_macro_create(buf);
-  options_from_list(ai->options, (unsigned)*ai->options_count, US"AUTHENTICATOR", ai->driver_name);
+  options_from_list(ai->options, (unsigned)*ai->options_count, US("AUTHENTICATOR"), ai->driver_name);
 
   if (ai->macros_create) (ai->macros_create)();
   }
@@ -441,7 +441,7 @@ uschar buf[EXIM_DRIVERNAME_MAX];
 
 for (bit_table * bp = log_options; bp < log_options + log_options_count; bp++)
   {
-  spf(buf, sizeof(buf), US"_LOG_%T", bp->name);
+  spf(buf, sizeof(buf), US("_LOG_%T"), bp->name);
   builtin_macro_create(buf);
   }
 }
@@ -498,7 +498,7 @@ typedef struct syslog_fac_item {
 } syslog_fac_item;
 
 /* constants */
-static const uschar * const hidden = US"<value not displayable>";
+static const uschar * const hidden = US("<value not displayable>");
 
 /* Static variables */
 
@@ -545,12 +545,12 @@ in the line, and a stack manipulation setting which is:
 */
 
 static cond_item cond_list[] = {
-  { US"ifdef",    5, 0, 1,  1 },
-  { US"ifndef",   6, 1, 0,  1 },
-  { US"elifdef",  7, 2, 3,  0 },
-  { US"elifndef", 8, 3, 2,  0 },
-  { US"else",     4, 2, 2,  0 },
-  { US"endif",    5, 0, 0, -1 }
+  { US("ifdef"),    5, 0, 1,  1 },
+  { US("ifndef"),   6, 1, 0,  1 },
+  { US("elifdef"),  7, 2, 3,  0 },
+  { US("elifndef"), 8, 3, 2,  0 },
+  { US("else"),     4, 2, 2,  0 },
+  { US("endif"),    5, 0, 0, -1 }
 };
 
 static int cond_list_size = sizeof(cond_list)/sizeof(cond_item);
@@ -558,19 +558,19 @@ static int cond_list_size = sizeof(cond_list)/sizeof(cond_item);
 /* Table of syslog facility names and their values */
 
 static syslog_fac_item syslog_list[] = {
-  { US"mail",   LOG_MAIL },
-  { US"user",   LOG_USER },
-  { US"news",   LOG_NEWS },
-  { US"uucp",   LOG_UUCP },
-  { US"local0", LOG_LOCAL0 },
-  { US"local1", LOG_LOCAL1 },
-  { US"local2", LOG_LOCAL2 },
-  { US"local3", LOG_LOCAL3 },
-  { US"local4", LOG_LOCAL4 },
-  { US"local5", LOG_LOCAL5 },
-  { US"local6", LOG_LOCAL6 },
-  { US"local7", LOG_LOCAL7 },
-  { US"daemon", LOG_DAEMON }
+  { US("mail"),   LOG_MAIL },
+  { US("user"),   LOG_USER },
+  { US("news"),   LOG_NEWS },
+  { US("uucp"),   LOG_UUCP },
+  { US("local0"), LOG_LOCAL0 },
+  { US("local1"), LOG_LOCAL1 },
+  { US("local2"), LOG_LOCAL2 },
+  { US("local3"), LOG_LOCAL3 },
+  { US("local4"), LOG_LOCAL4 },
+  { US("local5"), LOG_LOCAL5 },
+  { US("local6"), LOG_LOCAL6 },
+  { US("local7"), LOG_LOCAL7 },
+  { US("daemon"), LOG_DAEMON }
 };
 
 static int syslog_list_size = sizeof(syslog_list)/sizeof(syslog_fac_item);
@@ -598,7 +598,7 @@ uschar *
 readconf_find_option(void *p)
 {
 for (int i = 0; i < nelem(optionlist_config); i++)
-  if (p == optionlist_config[i].v.value) return US optionlist_config[i].name;
+  if (p == optionlist_config[i].v.value) return US(optionlist_config[i].name);
 
 for (router_instance * r = routers; r; r = r->next)
   {
@@ -606,8 +606,8 @@ for (router_instance * r = routers; r; r = r->next)
   for (int i = 0; i < *ri->options_count; i++)
     {
     if ((ri->options[i].type & opt_mask) != opt_stringptr) continue;
-    if (p == CS (r->options_block) + ri->options[i].v.offset)
-      return US ri->options[i].name;
+    if (p == CS(r->options_block) + ri->options[i].v.offset)
+      return US(ri->options[i].name);
     }
   }
 
@@ -619,15 +619,15 @@ for (transport_instance * t = transports; t; t = t->next)
     optionlist * op = &ti->options[i];
     if ((op->type & opt_mask) != opt_stringptr) continue;
     if (p == (  op->type & opt_public
-	     ? CS t
-	     : CS t->options_block
+	     ? CS(t)
+	     : CS(t->options_block)
 	     )
 	     + op->v.offset)
-	return US op->name;
+	return US(op->name);
     }
   }
 
-return US"";
+return US("");
 }
 
 
@@ -1139,7 +1139,7 @@ s = big_buffer + startoffset;            /* First non-space character */
 if (config_lines)
   save_config_line(s);
 
-if (strncmpic(s, US"begin ", 6) == 0)
+if (strncmpic(s, US("begin "), 6) == 0)
   {
   s += 6;
   Uskip_whitespace(&s);
@@ -1235,7 +1235,7 @@ for (;;)
   double fraction;
 
   if (!isdigit(*s)) return -1;
-  (void)sscanf(CCS s, "%d%n", &value, &count);
+  (void)sscanf(CCS(s), "%d%n", &value, &count);
   s += count;
 
   switch (*s)
@@ -1249,7 +1249,7 @@ for (;;)
 
     case '.':
     if (!return_msec) return -1;
-    (void)sscanf(CCS s, "%lf%n", &fraction, &count);
+    (void)sscanf(CCS(s), "%lf%n", &fraction, &count);
     s += count;
     if (*s++ != 's') return -1;
     yield += (int)(fraction * 1000.0);
@@ -1286,7 +1286,7 @@ readconf_readfixed(const uschar *s, int terminator)
 int yield = 0;
 int value, count;
 if (!isdigit(*s)) return -1;
-(void)sscanf(CS  s, "%d%n", &value, &count);
+(void)sscanf(CS(s), "%d%n", &value, &count);
 s += count;
 yield = value * 1000;
 if (*s == '.')
@@ -1362,12 +1362,12 @@ get_set_flag(const uschar *name, optionlist *oltop, int last, void *data_block)
 {
 optionlist *ol;
 uschar name2[EXIM_DRIVERNAME_MAX];
-sprintf(CS name2, "*set_%.50s", name);
+sprintf(CS(name2), "*set_%.50s", name);
 if (!(ol = find_option(name2, oltop, last)))
   log_write(0, LOG_MAIN|LOG_PANIC_DIE,
     "Exim internal error: missing set flag for %s", name);
 return data_block
-  ? (BOOL *)(US data_block + ol->v.offset) : (BOOL *)ol->v.value;
+  ? (BOOL *)(US(data_block) + ol->v.offset) : (BOOL *)ol->v.value;
 }
 
 
@@ -1390,8 +1390,8 @@ Returns:     doesn't return; dies
 static void
 extra_chars_error(const uschar *s, const uschar *t1, const uschar *t2, const uschar *t3)
 {
-uschar *comment = US"";
-if (*s == '#') comment = US" (# is comment only at line start)";
+uschar *comment = US("");
+if (*s == '#') comment = US(" (# is comment only at line start)");
 log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
   "extra characters follow %s%s%s%s", t1, t2, t3, comment);
 }
@@ -1544,7 +1544,7 @@ if (s == ss+1 || s[-1] != '\"')
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
     "missing quote at end of string value for %s", name);
 
-if (*s != 0) extra_chars_error(s, US"string value for ", name, US"");
+if (*s != 0) extra_chars_error(s, US("string value for "), name, US(""));
 
 return yield;
 }
@@ -1630,7 +1630,7 @@ optionlist *ol, *ol2;
 struct passwd *pw;
 rmark reset_point;
 int intbase = 0;
-uschar *inttype = US"";
+uschar *inttype = US("");
 uschar *sptr;
 const uschar * s = buffer;
 uschar **str_target;
@@ -1682,7 +1682,7 @@ is set twice, is a disaster. */
 if (!(ol = find_option(name + offset, oltop, last)))
   {
   if (!unknown_txt) return FALSE;
-  log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, CS unknown_txt, name);
+  log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, CS(unknown_txt), name);
   }
 
 if ((ol->type & opt_set)  && !(ol->type & (opt_rep_con | opt_rep_str)))
@@ -1712,7 +1712,7 @@ true/false/yes/no, or, in the case of opt_expand_bool, a general string that
 ultimately expands to one of those values. */
 
 else if (*s && (offset != 0 || *s != '='))
-  extra_chars_error(s, US"boolean option ", name, US"");
+  extra_chars_error(s, US("boolean option "), name, US(""));
 
 /* Skip white space after = */
 
@@ -1768,8 +1768,8 @@ switch (type)
       control block and flags word. */
 
       case opt_stringptr:
-	str_target = data_block ? USS (US data_block + ol->v.offset)
-				: USS ol->v.value;
+	str_target = data_block ? USS(US(data_block) + ol->v.offset)
+				: USS(ol->v.value);
 	if (ol->type & opt_rep_con)
 	  {
 	  uschar * saved_condition;
@@ -1827,9 +1827,9 @@ switch (type)
 
       case opt_rewrite:
 	if (data_block)
-	  *USS (US data_block + ol->v.offset) = sptr;
+	  *USS(US(data_block) + ol->v.offset) = sptr;
 	else
-	  *USS ol->v.value = sptr;
+	  *USS(ol->v.value) = sptr;
 	freesptr = FALSE;
 	if (type == opt_rewrite)
 	  {
@@ -1839,9 +1839,9 @@ switch (type)
 	  rewrite_rule **chain;
 	  optionlist *ol3;
 
-	  sprintf(CS name2, "*%.50s_rules", name);
+	  sprintf(CS(name2), "*%.50s_rules", name);
 	  ol2 = find_option(name2, oltop, last);
-	  sprintf(CS name2, "*%.50s_flags", name);
+	  sprintf(CS(name2), "*%.50s_flags", name);
 	  ol3 = find_option(name2, oltop, last);
 
 	  if (!ol2 || !ol3)
@@ -1850,8 +1850,8 @@ switch (type)
 
 	  if (data_block)
 	    {
-	    chain = (rewrite_rule **)(US data_block + ol2->v.offset);
-	    flagptr = (int *)(US data_block + ol3->v.offset);
+	    chain = (rewrite_rule **)(US(data_block) + ol2->v.offset);
+	    flagptr = (int *)(US(data_block) + ol3->v.offset);
 	    }
 	  else
 	    {
@@ -1860,7 +1860,7 @@ switch (type)
 	    }
 
 	  /* This will trap if sptr is tainted. Not sure if that can happen */
-	  while ((p = string_nextinlist(CUSS &sptr, &sep, big_buffer, BIG_BUFFER_SIZE)))
+	  while ((p = string_nextinlist(CUSS(&sptr), &sep, big_buffer, BIG_BUFFER_SIZE)))
 	    {
 	    rewrite_rule *next = readconf_one_rewrite(p, flagptr, FALSE);
 	    *chain = next;
@@ -1880,15 +1880,15 @@ switch (type)
       of data. */
 
       case opt_expand_uid:
-	sprintf(CS name2, "*expand_%.50s", name);
+	sprintf(CS(name2), "*expand_%.50s", name);
 	if ((ol2 = find_option(name2, oltop, last)))
 	  {
 	  uschar *ss = (Ustrchr(sptr, '$') != NULL) ? sptr : NULL;
 
 	  if (data_block)
-	    *(USS(US data_block + ol2->v.offset)) = ss;
+	    *(USS(US(data_block) + ol2->v.offset)) = ss;
 	  else
-	    *(USS ol2->v.value) = ss;
+	    *(USS(ol2->v.value)) = ss;
 
 	  if (ss)
 	    {
@@ -1905,7 +1905,7 @@ switch (type)
 	if (!route_finduser(sptr, &pw, &uid))
 	  log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "user %s was not found", sptr);
 	if (data_block)
-	  *(uid_t *)(US data_block + ol->v.offset) = uid;
+	  *(uid_t *)(US(data_block) + ol->v.offset) = uid;
 	else
 	  *(uid_t *)ol->v.value = uid;
 
@@ -1918,7 +1918,7 @@ switch (type)
 	ignore. Also ignore if the value is already set. */
 
 	if (pw == NULL) break;
-	Ustrcpy(name+Ustrlen(name)-4, US"group");
+	Ustrcpy(name+Ustrlen(name)-4, US("group"));
 	ol2 = find_option(name, oltop, last);
 	if (ol2 && ((ol2->type & opt_mask) == opt_gid ||
 	    (ol2->type & opt_mask) == opt_expand_gid))
@@ -1927,7 +1927,7 @@ switch (type)
 	  if (!*set_flag)
 	    {
 	    if (data_block)
-	      *((gid_t *)(US data_block + ol2->v.offset)) = pw->pw_gid;
+	      *((gid_t *)(US(data_block) + ol2->v.offset)) = pw->pw_gid;
 	    else
 	      *((gid_t *)ol2->v.value) = pw->pw_gid;
 	    *set_flag = TRUE;
@@ -1942,15 +1942,15 @@ switch (type)
       of data. */
 
       case opt_expand_gid:
-	sprintf(CS name2, "*expand_%.50s", name);
+	sprintf(CS(name2), "*expand_%.50s", name);
 	if ((ol2 = find_option(name2, oltop, last)))
 	  {
 	  uschar *ss = (Ustrchr(sptr, '$') != NULL) ? sptr : NULL;
 
 	  if (data_block)
-	    *(USS(US data_block + ol2->v.offset)) = ss;
+	    *(USS(US(data_block) + ol2->v.offset)) = ss;
 	  else
-	    *(USS ol2->v.value) = ss;
+	    *(USS(ol2->v.value)) = ss;
 
 	  if (ss)
 	    {
@@ -1966,7 +1966,7 @@ switch (type)
 	if (!route_findgroup(sptr, &gid))
 	  log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "group %s was not found", sptr);
 	if (data_block)
-	  *((gid_t *)(US data_block + ol->v.offset)) = gid;
+	  *((gid_t *)(US(data_block) + ol->v.offset)) = gid;
 	else
 	  *((gid_t *)ol->v.value) = gid;
 	*(get_set_flag(name, oltop, last, data_block)) = TRUE;
@@ -1996,7 +1996,7 @@ switch (type)
 	list[ptr++] = (uid_t)(count - 1);
 
 	if (data_block)
-	  *((uid_t **)(US data_block + ol->v.offset)) = list;
+	  *((uid_t **)(US(data_block) + ol->v.offset)) = list;
 	else
 	  *((uid_t **)ol->v.value) = list;
 
@@ -2038,7 +2038,7 @@ switch (type)
 	list[ptr++] = (gid_t)(count - 1);
 
 	if (data_block)
-	  *((gid_t **)(US data_block + ol->v.offset)) = list;
+	  *((gid_t **)(US(data_block) + ol->v.offset)) = list;
 	else
 	  *((gid_t **)ol->v.value) = list;
 
@@ -2069,15 +2069,15 @@ switch (type)
   case opt_expand_bool:
     if (*s && Ustrchr(s, '$') != 0)
       {
-      sprintf(CS name2, "*expand_%.50s", name);
+      sprintf(CS(name2), "*expand_%.50s", name);
       if ((ol2 = find_option(name2, oltop, last)))
 	{
 	reset_point = store_mark();
 	sptr = read_string(s, name);
 	if (data_block)
-	  *(USS(US data_block + ol2->v.offset)) = sptr;
+	  *(USS(US(data_block) + ol2->v.offset)) = sptr;
 	else
-	  *(USS ol2->v.value) = sptr;
+	  *(USS(ol2->v.value)) = sptr;
 	freesptr = FALSE;
 	break;
 	}
@@ -2098,14 +2098,14 @@ switch (type)
     if (*s)
       {
       s = readconf_readname(name2, EXIM_DRIVERNAME_MAX, s);
-      if (strcmpic(name2, US"true") == 0 || strcmpic(name2, US"yes") == 0)
+      if (strcmpic(name2, US("true")) == 0 || strcmpic(name2, US("yes")) == 0)
 	boolvalue = TRUE;
-      else if (strcmpic(name2, US"false") == 0 || strcmpic(name2, US"no") == 0)
+      else if (strcmpic(name2, US("false")) == 0 || strcmpic(name2, US("no")) == 0)
 	boolvalue = FALSE;
       else log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
 	"\"%s\" is not a valid value for the \"%s\" option", name2, name);
       if (*s != 0) extra_chars_error(s, string_sprintf("\"%s\" ", name2),
-	US"for boolean option ", name);
+	US("for boolean option "), name);
       }
 
     /* Handle single-bit type. */
@@ -2114,7 +2114,7 @@ switch (type)
       {
       int bit = 1 << ((ol->type >> 16) & 31);
       int * ptr = data_block
-	? (int *)(US data_block + ol->v.offset)
+	? (int *)(US(data_block) + ol->v.offset)
 	: (int *)ol->v.value;
       if (boolvalue) *ptr |= bit; else *ptr &= ~bit;
       break;
@@ -2123,7 +2123,7 @@ switch (type)
     /* Handle full BOOL types */
 
     if (data_block)
-      *((BOOL *)(US data_block + ol->v.offset)) = boolvalue;
+      *((BOOL *)(US(data_block) + ol->v.offset)) = boolvalue;
     else
       *((BOOL *)ol->v.value) = boolvalue;
 
@@ -2131,10 +2131,10 @@ switch (type)
 
     if (type == opt_bool_verify)
       {
-      sprintf(CS name2, "%.50s_recipient", name + offset);
+      sprintf(CS(name2), "%.50s_recipient", name + offset);
       if ((ol2 = find_option(name2, oltop, last)))
 	if (data_block)
-	  *((BOOL *)(US data_block + ol2->v.offset)) = boolvalue;
+	  *((BOOL *)(US(data_block) + ol2->v.offset)) = boolvalue;
 	else
 	  *((BOOL *)ol2->v.value) = boolvalue;
       }
@@ -2143,10 +2143,10 @@ switch (type)
 
     else if (type == opt_bool_set)
       {
-      sprintf(CS name2, "*set_%.50s", name + offset);
+      sprintf(CS(name2), "*set_%.50s", name + offset);
       if ((ol2 = find_option(name2, oltop, last)))
 	if (data_block)
-	  *((BOOL *)(US data_block + ol2->v.offset)) = TRUE;
+	  *((BOOL *)(US(data_block) + ol2->v.offset)) = TRUE;
 	else
 	  *((BOOL *)ol2->v.value) = TRUE;
       }
@@ -2156,7 +2156,7 @@ switch (type)
 
   case opt_octint:
     intbase = 8;
-    inttype = US"octal ";
+    inttype = US("octal ");
 
   /*  Integer: a simple(ish) case; allow octal and hex formats, and
   suffixes K, M, G, and T.  The different types affect output, not input. */
@@ -2168,7 +2168,7 @@ switch (type)
       long int lvalue;
 
       errno = 0;
-      lvalue = strtol(CS s, CSS &endptr, intbase);
+      lvalue = strtol(CS(s), CSS(&endptr), intbase);
 
       if (endptr == s)
 	log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "%sinteger expected for %s",
@@ -2176,7 +2176,7 @@ switch (type)
 
       if (errno != ERANGE && *endptr)
 	{
-	uschar * mp = US"TtGgMmKk\0";	/* YyZzEePpTtGgMmKk */
+	uschar * mp = US("TtGgMmKk\0");	/* YyZzEePpTtGgMmKk */
 
 	if ((mp = Ustrchr(mp, *endptr)))
 	  {
@@ -2200,13 +2200,13 @@ switch (type)
 
       while (isspace(*endptr)) endptr++;
       if (*endptr)
-	extra_chars_error(endptr, inttype, US"integer value for ", name);
+	extra_chars_error(endptr, inttype, US("integer value for "), name);
 
       value = (int)lvalue;
      }
 
     if (data_block)
-      *(int *)(US data_block + ol->v.offset) = value;
+      *(int *)(US(data_block) + ol->v.offset) = value;
     else
       *(int *)ol->v.value = value;
     break;
@@ -2217,7 +2217,7 @@ switch (type)
     {
     uschar *endptr;
     errno = 0;
-    int_eximarith_t lvalue = strtol(CS s, CSS &endptr, intbase);
+    int_eximarith_t lvalue = strtol(CS(s), CSS(&endptr), intbase);
 
     if (endptr == s)
       log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "%sinteger expected for %s",
@@ -2225,7 +2225,7 @@ switch (type)
 
     if (errno != ERANGE && *endptr)
       {
-      uschar * mp = US"ZzEePpTtGgMmKk\0";	/* YyZzEePpTtGgMmKk */
+      uschar * mp = US("ZzEePpTtGgMmKk\0");	/* YyZzEePpTtGgMmKk */
 
       if ((mp = Ustrchr(mp, *endptr)))
 	{
@@ -2249,10 +2249,10 @@ switch (type)
 
     while (isspace(*endptr)) endptr++;
     if (*endptr != 0)
-      extra_chars_error(endptr, inttype, US"integer value for ", name);
+      extra_chars_error(endptr, inttype, US("integer value for "), name);
 
     if (data_block)
-      *(int_eximarith_t *)(US data_block + ol->v.offset) = lvalue;
+      *(int_eximarith_t *)(US(data_block) + ol->v.offset) = lvalue;
     else
       *(int_eximarith_t *)ol->v.value = lvalue;
     break;
@@ -2261,7 +2261,7 @@ switch (type)
   /*  Fixed-point number: held to 3 decimal places. */
 
   case opt_fixed:
-    if (sscanf(CS s, "%d%n", &value, &count) != 1)
+    if (sscanf(CS(s), "%d%n", &value, &count) != 1)
       log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
 	"fixed-point number expected for %s", name);
 
@@ -2291,10 +2291,10 @@ switch (type)
     while (isspace(s[count])) count++;
 
     if (s[count] != 0)
-      extra_chars_error(s+count, US"fixed-point value for ", name, US"");
+      extra_chars_error(s+count, US("fixed-point value for "), name, US(""));
 
     if (data_block)
-      *((int *)(US data_block + ol->v.offset)) = value;
+      *((int *)(US(data_block) + ol->v.offset)) = value;
     else
       *((int *)ol->v.value) = value;
     break;
@@ -2307,7 +2307,7 @@ switch (type)
       log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "invalid time value for %s",
 	name);
     if (data_block)
-      *((int *)(US data_block + ol->v.offset)) = value;
+      *((int *)(US(data_block) + ol->v.offset)) = value;
     else
       *((int *)ol->v.value) = value;
     break;
@@ -2320,7 +2320,7 @@ switch (type)
     {
     int count = 0;
     int * list = data_block
-      ? (int *)(US data_block + ol->v.offset)
+      ? (int *)(US(data_block) + ol->v.offset)
       : (int *)ol->v.value;
 
     if (*s != 0) for (count = 1; count <= list[0] - 2; count++)
@@ -2398,11 +2398,11 @@ t /= 24;
 d = t % 7;
 w = t/7;
 
-if (w > 0) p += sprintf(CS p, "%dw", w);
-if (d > 0) p += sprintf(CS p, "%dd", d);
-if (h > 0) p += sprintf(CS p, "%dh", h);
-if (m > 0) p += sprintf(CS p, "%dm", m);
-if (s > 0 || p == time_buffer) sprintf(CS p, "%ds", s);
+if (w > 0) p += sprintf(CS(p), "%dw", w);
+if (d > 0) p += sprintf(CS(p), "%dd", d);
+if (h > 0) p += sprintf(CS(p), "%dh", h);
+if (m > 0) p += sprintf(CS(p), "%dm", m);
+if (s > 0 || p == time_buffer) sprintf(CS(p), "%ds", s);
 
 return time_buffer;
 }
@@ -2458,9 +2458,9 @@ if (!ol)
 if (!f.admin_user && ol->type & opt_secure)
   {
   if (no_labels)
-    printf("%s\n", CCS hidden);
+    printf("%s\n", CCS(hidden));
   else
-    printf("%s = %s\n", name, CCS hidden);
+    printf("%s = %s\n", name, CCS(hidden));
   return TRUE;
   }
 
@@ -2471,16 +2471,16 @@ if (options_block)
   {
   if (!(ol->type & opt_public))
     options_block = (void *)(((driver_instance *)options_block)->options_block);
-  value = (void *)(US options_block + (long int)value);
+  value = (void *)(US(options_block) + (long int)value);
   }
 
 switch(ol->type & opt_mask)
   {
   case opt_stringptr:
   case opt_rewrite:        /* Show the text value */
-    s = *(USS value);
+    s = *(USS(value));
     if (!no_labels) printf("%s = ", name);
-    printf("%s\n", s ? string_printing2(s, SP_TAB) : US"");
+    printf("%s\n", s ? string_printing2(s, SP_TAB) : US(""));
     break;
 
   case opt_int:
@@ -2556,15 +2556,15 @@ switch(ol->type & opt_mask)
   case opt_expand_uid:
     if (! *get_set_flag(name, oltop, last, options_block))
       {
-      sprintf(CS name2, "*expand_%.50s", name);
+      sprintf(CS(name2), "*expand_%.50s", name);
       if ((ol2 = find_option(name2, oltop, last)))
 	{
 	if (options_block)
-	  s = *USS (US options_block + ol2->v.offset);
+	  s = *USS(US(options_block) + ol2->v.offset);
 	else
-	  s = *USS ol2->v.value;
+	  s = *USS(ol2->v.value);
 	if (!no_labels) printf("%s = ", name);
-	printf("%s\n", s ? string_printing(s) : US"");
+	printf("%s\n", s ? string_printing(s) : US(""));
 	break;
 	}
       }
@@ -2587,16 +2587,16 @@ switch(ol->type & opt_mask)
   case opt_expand_gid:
     if (! *get_set_flag(name, oltop, last, options_block))
       {
-      sprintf(CS name2, "*expand_%.50s", name);
+      sprintf(CS(name2), "*expand_%.50s", name);
       if (  (ol2 = find_option(name2, oltop, last))
 	 && (ol2->type & opt_mask) == opt_stringptr)
 	{
 	if (options_block)
-	  s = *USS (US options_block + ol2->v.offset);
+	  s = *USS(US(options_block) + ol2->v.offset);
 	else
-	  s = *USS ol2->v.value;
+	  s = *USS(ol2->v.value);
 	if (!no_labels) printf("%s = ", name);
-	printf("%s\n", s ? string_printing(s) : US"");
+	printf("%s\n", s ? string_printing(s) : US(""));
 	break;
 	}
       }
@@ -2623,7 +2623,7 @@ switch(ol->type & opt_mask)
       for (int i = 1; i <= (int)(uidlist[0]); i++)
 	{
 	uschar *name = NULL;
-	if ((pw = getpwuid(uidlist[i]))) name = US pw->pw_name;
+	if ((pw = getpwuid(uidlist[i]))) name = US(pw->pw_name);
 	if (sep != '\0') printf("%c", sep);
 	if (name) printf("%s", name);
 	else printf("%ld", (long int)(uidlist[i]));
@@ -2642,7 +2642,7 @@ switch(ol->type & opt_mask)
       for (int i = 1; i <= (int)(gidlist[0]); i++)
 	{
 	uschar *name = NULL;
-	if ((gr = getgrgid(gidlist[i]))) name = US gr->gr_name;
+	if ((gr = getgrgid(gidlist[i]))) name = US(gr->gr_name);
 	if (sep != '\0') printf("%c", sep);
 	if (name) printf("%s", name);
 	else printf("%ld", (long int)(gidlist[i]));
@@ -2673,13 +2673,13 @@ switch(ol->type & opt_mask)
     break;
 
   case opt_expand_bool:
-    sprintf(CS name2, "*expand_%.50s", name);
+    sprintf(CS(name2), "*expand_%.50s", name);
     if ((ol2 = find_option(name2, oltop, last)) && ol2->v.value)
       {
       if (options_block)
-	s = *USS (US options_block + ol2->v.offset);
+	s = *USS(US(options_block) + ol2->v.offset);
       else
-	s = *USS ol2->v.value;
+	s = *USS(ol2->v.value);
       if (s)
 	{
 	if (!no_labels) printf("%s = ", name);
@@ -2757,8 +2757,8 @@ if (!type)
     {
     tree_node *t;
     BOOL found = FALSE;
-    static uschar *types[] = { US"address", US"domain", US"host",
-      US"localpart" };
+    static uschar *types[] = { US("address"), US("domain"), US("host"),
+      US("localpart") };
     static tree_node **anchors[] = { &addresslist_anchor, &domainlist_anchor,
       &hostlist_anchor, &localpartlist_anchor };
 
@@ -2769,9 +2769,9 @@ if (!type)
 	const uschar * s = nb->hide ? hidden : nb->string;
         found = TRUE;
         if (no_labels)
-          printf("%s\n", CCS s);
+          printf("%s\n", CCS(s));
         else
-          printf("%slist %s = %s\n", types[i], name+1, CCS s);
+          printf("%slist %s = %s\n", types[i], name+1, CCS(s));
         }
 
     if (!found)
@@ -2784,7 +2784,7 @@ if (!type)
   if (  Ustrcmp(name, "configure_file") == 0
      || Ustrcmp(name, "config_file") == 0)
     {
-    printf("%s\n", CS config_main_filename);
+    printf("%s\n", CS(config_main_filename));
     return TRUE;
     }
 
@@ -2793,7 +2793,7 @@ if (!type)
     for (optionlist * ol = optionlist_config;
          ol < optionlist_config + nelem(optionlist_config); ol++)
       if (!(ol->type & opt_hidden))
-        (void) print_ol(ol, US ol->name, NULL,
+        (void) print_ol(ol, US(ol->name), NULL,
 		  optionlist_config, nelem(optionlist_config),
 		  no_labels);
     return TRUE;
@@ -2807,7 +2807,7 @@ if (!type)
 #else
     for (optionlist * ol = local_scan_options;
          ol < local_scan_options + local_scan_options_count; ol++)
-      (void) print_ol(ol, US ol->name, NULL, local_scan_options,
+      (void) print_ol(ol, US(ol->name), NULL, local_scan_options,
 		  local_scan_options_count, no_labels);
     return TRUE;
 #endif
@@ -2821,45 +2821,45 @@ if (!type)
 
   if (Ustrcmp(name, "routers") == 0)
     {
-    type = US"router";
+    type = US("router");
     name = NULL;
     }
   else if (Ustrcmp(name, "transports") == 0)
     {
-    type = US"transport";
+    type = US("transport");
     name = NULL;
     }
   else if (Ustrcmp(name, "authenticators") == 0)
     {
-    type = US"authenticator";
+    type = US("authenticator");
     name = NULL;
     }
   else if (Ustrcmp(name, "macros") == 0)
     {
-    type = US"macro";
+    type = US("macro");
     name = NULL;
     }
   else if (Ustrcmp(name, "router_list") == 0)
     {
-    type = US"router";
+    type = US("router");
     name = NULL;
     names_only = TRUE;
     }
   else if (Ustrcmp(name, "transport_list") == 0)
     {
-    type = US"transport";
+    type = US("transport");
     name = NULL;
     names_only = TRUE;
     }
   else if (Ustrcmp(name, "authenticator_list") == 0)
     {
-    type = US"authenticator";
+    type = US("authenticator");
     name = NULL;
     names_only = TRUE;
     }
   else if (Ustrcmp(name, "macro_list") == 0)
     {
-    type = US"macro";
+    type = US("macro");
     name = NULL;
     names_only = TRUE;
     }
@@ -2868,14 +2868,14 @@ if (!type)
     if (environ)
       {
       uschar ** p;
-      for (p = USS environ; *p; p++) ;
-      qsort(environ, p - USS environ, sizeof(*p), string_compare_by_pointer);
+      for (p = USS(environ); *p; p++) ;
+      qsort(environ, p - USS(environ), sizeof(*p), string_compare_by_pointer);
 
-      for (p = USS environ; *p; p++)
+      for (p = USS(environ); *p; p++)
         {
 	uschar * q;
         if (no_labels && (q = Ustrchr(*p, '='))) *q  = '\0';
-        puts(CS *p);
+        puts(CS(*p));
         }
       }
     return TRUE;
@@ -2925,11 +2925,11 @@ else if (Ustrcmp(type, "macro") == 0)
     if (!name || Ustrcmp(name, m->name) == 0)
       {
       if (names_only)
-        printf("%s\n", CS m->name);
+        printf("%s\n", CS(m->name));
       else if (no_labels)
-        printf("%s\n", CS m->replacement);
+        printf("%s\n", CS(m->replacement));
       else
-        printf("%s=%s\n", CS m->name, CS m->replacement);
+        printf("%s=%s\n", CS(m->name), CS(m->replacement));
       if (name)
         return TRUE;
       }
@@ -2941,7 +2941,7 @@ else if (Ustrcmp(type, "macro") == 0)
 
 if (names_only)
   {
-  for (; d; d = d->next) printf("%s\n", CS d->name);
+  for (; d; d = d->next) printf("%s\n", CS(d->name));
   return TRUE;
   }
 
@@ -2956,12 +2956,12 @@ for (; d; d = d->next)
 
   for (optionlist * ol = ol2; ol < ol2 + size; ol++)
     if (!(ol->type & opt_hidden))
-      rc |= print_ol(ol, US ol->name, d, ol2, size, no_labels);
+      rc |= print_ol(ol, US(ol->name), d, ol2, size, no_labels);
 
   for (optionlist * ol = d->info->options;
        ol < d->info->options + *(d->info->options_count); ol++)
     if (!(ol->type & opt_hidden))
-      rc |= print_ol(ol, US ol->name, d, d->info->options,
+      rc |= print_ol(ol, US(ol->name), d, d->info->options,
 		    *d->info->options_count, no_labels);
 
   if (name) return rc;
@@ -3078,7 +3078,7 @@ unpick_ratelimit(uschar *s, int *threshold, int *base, double *factor,
 {
 uschar bstring[16], lstring[16];
 
-if (sscanf(CS s, "%d, %15[0123456789smhdw.], %lf, %15s", threshold, bstring,
+if (sscanf(CS(s), "%d, %15[0123456789smhdw.], %lf, %15s", threshold, bstring,
     factor, lstring) == 4)
   {
   *base = readconf_readtime(bstring, 0, TRUE);
@@ -3145,11 +3145,11 @@ while((filename = string_nextinlist(&list, &sep, big_buffer, big_buffer_size)))
   if (uname(&uts) >= 0)
     {
 #  ifdef CONFIGURE_FILE_USE_EUID
-    sprintf(CS suffix, ".%ld.%.256s", (long int)original_euid, uts.nodename);
+    sprintf(CS(suffix), ".%ld.%.256s", (long int)original_euid, uts.nodename);
     if (!(config_file = Ufopen(filename, "rb")))
 #  endif  /* CONFIGURE_FILE_USE_EUID */
       {
-      sprintf(CS suffix, ".%.256s", uts.nodename);
+      sprintf(CS(suffix), ".%.256s", uts.nodename);
       config_file = Ufopen(filename, "rb");
       }
     }
@@ -3160,7 +3160,7 @@ while((filename = string_nextinlist(&list, &sep, big_buffer, big_buffer_size)))
 # ifdef CONFIGURE_FILE_USE_EUID
   if (!config_file)
     {
-    sprintf(CS suffix, ".%ld", (long int)original_euid);
+    sprintf(CS(suffix), ".%ld", (long int)original_euid);
     config_file = Ufopen(filename, "rb");
     }
 # endif  /* CONFIGURE_FILE_USE_EUID */
@@ -3202,7 +3202,7 @@ if (config_file)
   directory later. */
 
   if (filename[0] == '/')
-    config_main_directory = last_slash == filename ? US"/" : string_copyn(filename, last_slash - filename);
+    config_main_directory = last_slash == filename ? US("/") : string_copyn(filename, last_slash - filename);
   else
     {
     /* relative configuration file name: working dir + / + basename(filename) */
@@ -3219,7 +3219,7 @@ if (config_file)
 
     /* If the dir does not end with a "/", append one */
     if (g->s[g->ptr-1] != '/')
-      g = string_catn(g, US"/", 1);
+      g = string_catn(g, US("/"), 1);
 
     /* If the config file contains a "/", extract the directory part */
     if (last_slash)
@@ -3249,7 +3249,7 @@ if (Uchdir("/") < 0)
 /* Check the status of the file we have opened, if we have retained root
 privileges and the file isn't /dev/null (which *should* be 0666). */
 
-if (f.trusted_config && Ustrcmp(filename, US"/dev/null"))
+if (f.trusted_config && Ustrcmp(filename, US("/dev/null")))
   {
   if (fstat(fileno(config_file), &statbuf) != 0)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "failed to stat configuration file %s",
@@ -3308,23 +3308,23 @@ while ((s = get_config_line()))
 
   if (Ustrncmp(t, "domainlist", 10) == 0)
     read_named_list(&domainlist_anchor, &domainlist_count,
-      MAX_NAMED_LIST, t+10, US"domain list", hide);
+      MAX_NAMED_LIST, t+10, US("domain list"), hide);
 
   else if (Ustrncmp(t, "hostlist", 8) == 0)
     read_named_list(&hostlist_anchor, &hostlist_count,
-      MAX_NAMED_LIST, t+8, US"host list", hide);
+      MAX_NAMED_LIST, t+8, US("host list"), hide);
 
   else if (Ustrncmp(t, "addresslist", 11) == 0)
     read_named_list(&addresslist_anchor, &addresslist_count,
-      MAX_NAMED_LIST, t+11, US"address list", hide);
+      MAX_NAMED_LIST, t+11, US("address list"), hide);
 
   else if (Ustrncmp(t, "localpartlist", 13) == 0)
     read_named_list(&localpartlist_anchor, &localpartlist_count,
-      MAX_NAMED_LIST, t+13, US"local part list", hide);
+      MAX_NAMED_LIST, t+13, US("local part list"), hide);
 
   else
     (void) readconf_handle_option(s, optionlist_config, optionlist_config_size,
-      NULL, US"main option \"%s\" unknown");
+      NULL, US("main option \"%s\" unknown"));
   }
 
 
@@ -3365,7 +3365,7 @@ if (!primary_hostname)
 
   if (uname(&uts) < 0)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "uname() failed to yield host name");
-  hostname = US uts.nodename;
+  hostname = US(uts.nodename);
 
   if (Ustrchr(hostname, '.') == NULL)
     {
@@ -3375,7 +3375,7 @@ if (!primary_hostname)
 #if HAVE_IPV6
     if (  !disable_ipv6
        && (  !dns_ipv4_lookup
-	  || match_isinlist(hostname, CUSS &dns_ipv4_lookup, 0, NULL, NULL,
+	  || match_isinlist(hostname, CUSS(&dns_ipv4_lookup), 0, NULL, NULL,
 	    MCL_DOMAIN, TRUE, NULL) != OK))
       af = AF_INET6;
 #endif
@@ -3385,16 +3385,16 @@ if (!primary_hostname)
 #if HAVE_IPV6
 # if HAVE_GETIPNODEBYNAME
         int error_num;
-        hostdata = getipnodebyname(CS hostname, af, 0, &error_num);
+        hostdata = getipnodebyname(CS(hostname), af, 0, &error_num);
         #else
-        hostdata = gethostbyname2(CS hostname, af);
+        hostdata = gethostbyname2(CS(hostname), af);
 # endif
 #else
-      hostdata = gethostbyname(CS hostname);
+      hostdata = gethostbyname(CS(hostname));
 #endif
 
       if (hostdata)
-        { hostname = US hostdata->h_name; break; }
+        { hostname = US(hostdata->h_name); break; }
 
       if (af == AF_INET) break;
       af = AF_INET;
@@ -3465,7 +3465,7 @@ if (syslog_facility_str)
   uschar *s = syslog_facility_str;
 
   if ((Ustrlen(syslog_facility_str) >= 4) &&
-        (strncmpic(syslog_facility_str, US"log_", 4) == 0))
+        (strncmpic(syslog_facility_str, US("log_"), 4) == 0))
     s += 4;
 
   for (i = 0; i < syslog_list_size; i++)
@@ -3645,7 +3645,7 @@ init_driver(driver_instance *d, driver_info *drivers_available,
   int size_of_info, uschar *class)
 {
 for (driver_info * dd = drivers_available; dd->driver_name[0] != 0;
-     dd = (driver_info *)((US dd) + size_of_info))
+     dd = (driver_info *)((US(dd)) + size_of_info))
   if (Ustrcmp(d->driver_name, dd->driver_name) == 0)
     {
     int len = dd->options_len;
@@ -3781,7 +3781,7 @@ while ((buffer = get_config_line()))
     /* Check nothing more on this line, then do the next loop iteration. */
 
     Uskip_whitespace(&s);
-    if (*s) extra_chars_error(s, US"driver name ", name, US"");
+    if (*s) extra_chars_error(s, US("driver name "), name, US(""));
     continue;
     }
 
@@ -3808,7 +3808,7 @@ while ((buffer = get_config_line()))
 
   else if (d->info)
     readconf_handle_option(buffer, d->info->options,
-      *(d->info->options_count), d, US"option \"%s\" unknown");
+      *(d->info->options_count), d, US("option \"%s\" unknown"));
 
   /* The option is not generic and the driver name has not yet been given. */
 
@@ -3849,7 +3849,7 @@ for (optionlist * ol = d->info->options; ol < d->info->options + count; ol++)
   if ((ol->type & opt_mask) == opt_stringptr)
     {
     void * options_block = ol->type & opt_public ? (void *)d : d->options_block;
-    uschar * value = *USS(US options_block + ol->v.offset);
+    uschar * value = *USS(US(options_block) + ol->v.offset);
 
     if (value && (ss = Ustrstr(value, s)) != NULL)
       {
@@ -3894,25 +3894,25 @@ const uschar *q = pp;
 while (q < p && *q != '_') q++;
 len = q - pp;
 
-if (len == 5 && strncmpic(pp, US"quota", len) == 0)
+if (len == 5 && strncmpic(pp, US("quota"), len) == 0)
   {
   *basic_errno = ERRNO_EXIMQUOTA;
   if (q != p && (*more_errno = readconf_readtime(q+1, *p, FALSE)) < 0)
-      return US"bad time value";
+      return US("bad time value");
   }
 
-else if (len == 7 && strncmpic(pp, US"refused", len) == 0)
+else if (len == 7 && strncmpic(pp, US("refused"), len) == 0)
   {
   *basic_errno = ECONNREFUSED;
   if (q != p)
     {
-    if (strncmpic(q+1, US"MX", p-q-1) == 0) *more_errno = 'M';
-    else if (strncmpic(q+1, US"A", p-q-1) == 0) *more_errno = 'A';
-    else return US"A or MX expected after \"refused\"";
+    if (strncmpic(q+1, US("MX"), p-q-1) == 0) *more_errno = 'M';
+    else if (strncmpic(q+1, US("A"), p-q-1) == 0) *more_errno = 'A';
+    else return US("A or MX expected after \"refused\"");
     }
   }
 
-else if (len == 7 && strncmpic(pp, US"timeout", len) == 0)
+else if (len == 7 && strncmpic(pp, US("timeout"), len) == 0)
   {
   *basic_errno = ETIMEDOUT;
   if (q != p)
@@ -3922,7 +3922,7 @@ else if (len == 7 && strncmpic(pp, US"timeout", len) == 0)
     const uschar *x = q + 1;
 
     static uschar *extras[] =
-      { US"A", US"MX", US"connect", US"connect_A",  US"connect_MX" };
+      { US("A"), US("MX"), US("connect"), US("connect_A"),  US("connect_MX") };
     static int values[] =
       { 'A',   'M',    RTEF_CTOUT,  RTEF_CTOUT|'A', RTEF_CTOUT|'M' };
 
@@ -3934,18 +3934,18 @@ else if (len == 7 && strncmpic(pp, US"timeout", len) == 0)
         }
 
     if (i >= nelem(extras))
-      if (strncmpic(x, US"DNS", xlen) == 0)
+      if (strncmpic(x, US("DNS"), xlen) == 0)
         log_write(0, LOG_MAIN|LOG_PANIC, "\"timeout_dns\" is no longer "
           "available in retry rules (it has never worked) - treated as "
           "\"timeout\"");
       else
-        return US"\"A\", \"MX\", or \"connect\" expected after \"timeout\"";
+        return US("\"A\", \"MX\", or \"connect\" expected after \"timeout\"");
     }
   }
 
-else if (strncmpic(pp, US"mail_4", 6) == 0 ||
-         strncmpic(pp, US"rcpt_4", 6) == 0 ||
-         strncmpic(pp, US"data_4", 6) == 0)
+else if (strncmpic(pp, US("mail_4"), 6) == 0 ||
+         strncmpic(pp, US("rcpt_4"), 6) == 0 ||
+         strncmpic(pp, US("data_4"), 6) == 0)
   {
   BOOL bad = FALSE;
   int x = 255;                           /* means "any 4xx code" */
@@ -3971,17 +3971,17 @@ else if (strncmpic(pp, US"mail_4", 6) == 0 ||
   *more_errno = x << 8;
   }
 
-else if (len == 4 && strncmpic(pp, US"auth", len) == 0 &&
-         strncmpic(q+1, US"failed", p-q-1) == 0)
+else if (len == 4 && strncmpic(pp, US("auth"), len) == 0 &&
+         strncmpic(q+1, US("failed"), p-q-1) == 0)
   *basic_errno = ERRNO_AUTHFAIL;
 
-else if (strncmpic(pp, US"lost_connection", p - pp) == 0)
+else if (strncmpic(pp, US("lost_connection"), p - pp) == 0)
   *basic_errno = ERRNO_SMTPCLOSED;
 
-else if (strncmpic(pp, US"tls_required", p - pp) == 0)
+else if (strncmpic(pp, US("tls_required"), p - pp) == 0)
   *basic_errno = ERRNO_TLSREQUIRED;
 
-else if (strncmpic(pp, US"lookup", p - pp) == 0)
+else if (strncmpic(pp, US("lookup"), p - pp) == 0)
   *basic_errno = ERRNO_UNKNOWNHOST;
 
 else if (len != 1 || Ustrncmp(pp, "*", 1) != 0)
@@ -4164,7 +4164,7 @@ auths_init(void)
 int nauths = 0;
 #endif
 
-readconf_driver_init(US"authenticator",
+readconf_driver_init(US("authenticator"),
   (driver_instance **)(&auths),      /* chain anchor */
   (driver_info *)auths_available,    /* available drivers */
   sizeof(auth_info),                 /* size of info block */
@@ -4185,7 +4185,7 @@ for (auth_instance * au = auths; au; au = au->next)
 	 || au->server && bu->server)
         log_write(0, LOG_PANIC_DIE|LOG_CONFIG, "two %s authenticators "
           "(%s and %s) have the same public name (%s)",
-          au->client && bu->client ? US"client" : US"server",
+          au->client && bu->client ? US("client") : US("server"),
 	  au->name, bu->name, au->public_name);
 #ifndef DISABLE_PIPE_CONNECT
   nauths++;
@@ -4301,7 +4301,7 @@ log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "local_scan() options not supported: "
 uschar *p;
 while ((p = get_config_line()))
   (void) readconf_handle_option(p, local_scan_options, local_scan_options_count,
-    NULL, US"local_scan option \"%s\" unknown");
+    NULL, US("local_scan option \"%s\" unknown"));
 #endif
 }
 
@@ -4328,13 +4328,13 @@ Returns:     nothing
 */
 
 static uschar *section_list[] = {
-  US"acls",
-  US"authenticators",
-  US"local_scans",
-  US"retrys",
-  US"rewrites",
-  US"routers",
-  US"transports"};
+  US("acls"),
+  US("authenticators"),
+  US("local_scans"),
+  US("retrys"),
+  US("rewrites"),
+  US("routers"),
+  US("transports")};
 
 void
 readconf_rest(void)
@@ -4349,7 +4349,7 @@ while(next_section[0] != 0)
   int mid = last/2;
   int n = Ustrlen(next_section);
 
-  if (tolower(next_section[n-1]) != 's') Ustrcpy(next_section+n, US"s");
+  if (tolower(next_section[n-1]) != 's') Ustrcpy(next_section+n, US("s"));
 
   for (;;)
     {
@@ -4388,7 +4388,7 @@ void
 readconf_save_config(const uschar *s)
 {
 save_config_line(string_sprintf("# Exim Configuration (%s)",
-  f.running_in_test_harness ? US"X" : s));
+  f.running_in_test_harness ? US("X") : s));
 }
 
 static void
@@ -4461,13 +4461,13 @@ for (const config_line_item * i = config_lines; i; i = i->next)
 
   /* # lines */
   if (current[0] == '#')
-    puts(CCS current);
+    puts(CCS(current));
 
   /* begin lines are left aligned */
   else if (Ustrncmp(current, "begin", 5) == 0 && isspace(current[5]))
     {
     if (!terse) puts("");
-    puts(CCS current);
+    puts(CCS(current));
     indent = TS;
     }
 
@@ -4489,11 +4489,11 @@ for (const config_line_item * i = config_lines; i; i = i->next)
     if ((p = Ustrchr(current, '=')))
       {
       *p = '\0';
-      printf("%*s%s= %s\n", indent, "", current, CCS hidden);
+      printf("%*s%s= %s\n", indent, "", current, CCS(hidden));
       }
     /* e.g.: hide split_spool_directory */
     else
-      printf("%*s\n", indent, CCS hidden);
+      printf("%*s\n", indent, CCS(hidden));
     }
 
   else

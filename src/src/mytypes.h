@@ -80,26 +80,36 @@ systems where "char" is actually signed, I've converted Exim to use entirely
 unsigned chars, except in a few special places such as arguments that are
 almost always literal strings. */
 
-#if !defined CHAR_MIN || CHAR_MIN < 0
+#if defined __GNUC__ || __STDC_VERSION__ >= 199901L
+/* safer casts: check the source types */
+static inline char         * CS (uschar       *p) { return (void*)p; }
+static inline char   const *CCS (uschar const *p) { return (void*)p; }
+static inline char        ** CSS(uschar      **p) { return (void*)p; }
+static inline char   const**CCSS(uschar const**p) { return (void*)p; }
+static inline uschar       * US (char         *p) { return (void*)p; }
+static inline uschar const *CUS (char   const *p) { return (void*)p; }
+static inline uschar      ** USS(char        **p) { return (void*)p; }
+static inline uschar const**CUSS(char   const**p) { return (void*)p; }
+#elif !defined CHAR_MIN || CHAR_MIN < 0
 /* only use casts when needed */
-#define CS   (char *)
-#define CCS  (const char *)
-#define CSS  (char **)
-#define US   (unsigned char *)
-#define CUS  (const unsigned char *)
-#define USS  (unsigned char **)
-#define CUSS (const unsigned char **)
-#define CCSS (const char **)
+# define CS(S)   ((char *)(S))
+# define CCS(S)  ((const char *)(S))
+# define CSS(S)  ((char **)(S))
+# define US(S)   ((unsigned char *)(S))
+# define CUS(S)  ((const unsigned char *)(S))
+# define USS(S)  ((unsigned char **)(S))
+# define CUSS(S) ((const unsigned char **)(S))
+# define CCSS(S) ((const char **)(S))
 #else
 /* char is already unsigned, don't cast */
-#define CS
-#define CCS
-#define CSS
-#define US
-#define CUS
-#define USS
-#define CUSS
-#define CCSS
+# define CS(S)   (S)
+# define CCS(S)  (S)
+# define CSS(S)  (S)
+# define US(S)   (S)
+# define CUS(S)  (S)
+# define USS(S)  (S)
+# define CUSS(S) (S)
+# define CCSS(S) (S)
 #endif
 
 /* The C library string functions expect "char *" arguments. Use macros to
@@ -126,26 +136,28 @@ functions that are called quite often; for other calls to external libraries
 #define Uread(f,b,l)       read(f,CS(b),l)
 #define Urename(s,t)       rename(CCS(s),CCS(t))
 #define Ustat(s,t)         stat(CCS(s),t)
-#define Ustrchr(s,n)       US strchr(CCS(s),n)
-#define CUstrchr(s,n)      CUS strchr(CCS(s),n)
-#define CUstrerror(n)      CUS strerror(n)
+#define Ustrchr(s,n)       US(strchr(CCS(s),n))
+#define CUstrchr(s,n)      CUS(strchr(CCS(s),n))
+#define CUstrerror(n)      CUS(strerror(n))
 #define Ustrcmp(s,t)       strcmp(CCS(s),CCS(t))
-#define Ustrcpy_nt(s,t)    strcpy(CS s, CCS t)		/* no taint check */
+#define Ustrcpy_nt(s,t)    strcpy(CS(s), CCS(t))		/* no taint check */
 #define Ustrcspn(s,t)      strcspn(CCS(s),CCS(t))
 #define Ustrftime(s,m,f,t) strftime(CS(s),m,f,t)
 #define Ustrlen(s)         (int)strlen(CCS(s))
 #define Ustrncmp(s,t,n)    strncmp(CCS(s),CCS(t),n)
-#define Ustrncpy_nt(s,t,n) strncpy(CS s, CCS t, n)	/* no taint check */
+#define Ustrncpy_nt(s,t,n) strncpy(CS(s), CCS(t), n)	/* no taint check */
 #define Ustrpbrk(s,t)      strpbrk(CCS(s),CCS(t))
-#define Ustrrchr(s,n)      US strrchr(CCS(s),n)
-#define CUstrrchr(s,n)     CUS strrchr(CCS(s),n)
+#define Ustrrchr(s,n)      US(strrchr(CCS(s),n))
+#define CUstrrchr(s,n)     CUS(strrchr(CCS(s),n))
 #define Ustrspn(s,t)       strspn(CCS(s),CCS(t))
-#define Ustrstr(s,t)       US strstr(CCS(s),CCS(t))
-#define CUstrstr(s,t)      CUS strstr(CCS(s),CCS(t))
+#define Ustrstr(s,t)       US(strstr(CCS(s),CCS(t)))
+#define CUstrstr(s,t)      CUS(strstr(CCS(s),CCS(t)))
 #define Ustrtod(s,t)       strtod(CCS(s),CSS(t))
 #define Ustrtol(s,t,b)     strtol(CCS(s),CSS(t),b)
 #define Ustrtoul(s,t,b)    strtoul(CCS(s),CSS(t),b)
 #define Uunlink(s)         unlink(CCS(s))
+
+#define Ugetenv(s)         US(getenv(s))
 
 #if defined(EM_VERSION_C) || defined(LOCAL_SCAN) || defined(DLFUNC_IMPL)
 # define Ustrcat(s,t)       strcat(CS(s), CCS(t))

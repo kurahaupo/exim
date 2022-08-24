@@ -333,7 +333,7 @@ int main(void)
 {
 md5 base;
 int i = 0x01020304;
-uschar *ctest = US (&i);
+uschar *ctest = US(&i);
 uschar buffer[256];
 uschar digest[16];
 printf("Checking md5: %s-endian\n", (ctest[0] == 0x04)? "little" : "big");

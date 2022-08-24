@@ -22,8 +22,8 @@ if (dkim->dkim_strict)
   uschar * dkim_strict_result = expand_string(dkim->dkim_strict);
 
   if (dkim_strict_result)
-    if (  strcmpic(dkim_strict_result, US"1") == 0
-       || strcmpic(dkim_strict_result, US"true") == 0)
+    if (  strcmpic(dkim_strict_result, US("1")) == 0
+       || strcmpic(dkim_strict_result, US("true")) == 0)
       {
       /* Set errno to something halfway meaningful */
       *errp = EACCES;
@@ -87,9 +87,9 @@ else
 #ifndef DISABLE_TLS
       wwritten = tls_out.active.sock == out_fd
 	? tls_write(tls_out.active.tls_ctx, p, sread, FALSE)
-	: write(out_fd, CS p, sread);
+	: write(out_fd, CS(p), sread);
 #else
-      wwritten = write(out_fd, CS p, sread);
+      wwritten = write(out_fd, CS(p), sread);
 #endif
       if (wwritten == -1)
 	return FALSE;
@@ -236,7 +236,7 @@ int options, dlen;
 off_t k_file_size;
 const uschar * errstr;
 
-dkim_spool_name = spool_fname(US"input", message_subdir, message_id,
+dkim_spool_name = spool_fname(US("input"), message_subdir, message_id,
 		    string_sprintf("-%d-K", (int)getpid()));
 
 DEBUG(D_transport) debug_printf("dkim signing via file %s\n", dkim_spool_name);
@@ -296,7 +296,7 @@ else
 #ifdef EXPERIMENTAL_ARC
 if (dkim->arc_signspec)				/* Prepend ARC headers */
   {
-  if (!(dkim_signature = arc_sign(dkim->arc_signspec, dkim_signature, USS err)))
+  if (!(dkim_signature = arc_sign(dkim->arc_signspec, dkim_signature, USS(err))))
     goto CLEANUP;
   dlen = dkim_signature->ptr;
   }

@@ -113,9 +113,9 @@ BOOL appendfile_transport_entry(transport_instance *tblock, address_item *addr) 
 
 appendfile_transport_options_block appendfile_transport_option_defaults = {
   /* all non-mentioned members zero/null/false */
-  .dirfilename = US"q${base62:$tod_epoch}-$inode",
-  .create_file_string = US"anywhere",
-  .maildir_dir_regex = US"^(?:cur|new|\\..*)$",
+  .dirfilename = US("q${base62:$tod_epoch}-$inode"),
+  .create_file_string = US("anywhere"),
+  .maildir_dir_regex = US("^(?:cur|new|\\..*)$"),
   .mailbox_size_value = -1,
   .mailbox_filecount_value = -1,
   .mode = APPENDFILE_MODE,
@@ -185,7 +185,7 @@ double default_value = 0.0;
 
 if (ob->expand_maildir_use_size_file)
 	ob->maildir_use_size_file = expand_check_condition(ob->expand_maildir_use_size_file,
-		US"`maildir_use_size_file` in transport", tblock->name);
+		US("`maildir_use_size_file` in transport"), tblock->name);
 
 /* Loop for quota, quota_filecount, quota_warn_threshold, mailbox_size,
 mailbox_filecount */
@@ -255,7 +255,7 @@ for (int i = 0; i < 5; i++)
     {
     case 0:
       if (d >= 2.0*1024.0*1024.0*1024.0 && sizeof(off_t) <= 4)
-	which = US"quota";
+	which = US("quota");
       ob->quota_value = (off_t)d;
       ob->quota_no_check = no_check;
       q = ob->quota_filecount;
@@ -263,7 +263,7 @@ for (int i = 0; i < 5; i++)
 
     case 1:
       if (d >= 2.0*1024.0*1024.0*1024.0)
-	which = US"quota_filecount";
+	which = US("quota_filecount");
       ob->quota_filecount_value = (int)d;
       ob->quota_filecount_no_check = no_check;
       q = ob->quota_warn_threshold;
@@ -271,7 +271,7 @@ for (int i = 0; i < 5; i++)
 
     case 2:
       if (d >= 2.0*1024.0*1024.0*1024.0 && sizeof(off_t) <= 4)
-	  which = US"quota_warn_threshold";
+	  which = US("quota_warn_threshold");
       ob->quota_warn_threshold_value = (off_t)d;
       q = ob->mailbox_size_string;
       default_value = -1.0;
@@ -279,14 +279,14 @@ for (int i = 0; i < 5; i++)
 
     case 3:
       if (d >= 2.0*1024.0*1024.0*1024.0 && sizeof(off_t) <= 4)
-	which = US"mailbox_size";;
+	which = US("mailbox_size");;
       ob->mailbox_size_value = (off_t)d;
       q = ob->mailbox_filecount_string;
       break;
 
     case 4:
       if (d >= 2.0*1024.0*1024.0*1024.0)
-	which = US"mailbox_filecount";
+	which = US("mailbox_filecount");
       ob->mailbox_filecount_value = (int)d;
       break;
     }
@@ -448,8 +448,8 @@ headers are also escaped. */
 
 if (ob->use_bsmtp)
   {
-  ob->check_string = US".";
-  ob->escape_string = US"..";
+  ob->check_string = US(".");
+  ob->escape_string = US("..");
   ob->options |= topt_escape_headers;
   }
 
@@ -459,10 +459,10 @@ insert default values for for the affixes and the check/escape strings. */
 else if (!ob->dirname && !ob->maildir_format && !ob->mailstore_format)
   {
   if (!ob->message_prefix) ob->message_prefix =
-    US"From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n";
-  if (!ob->message_suffix) ob->message_suffix = US"\n";
-  if (!ob->check_string) ob->check_string = US"From ";
-  if (!ob->escape_string) ob->escape_string = US">From ";
+    US("From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n");
+  if (!ob->message_suffix) ob->message_suffix = US("\n");
+  if (!ob->check_string) ob->check_string = US("From ");
+  if (!ob->escape_string) ob->escape_string = US(">From ");
 
   }
 
@@ -517,7 +517,7 @@ if ((sp = getservbyname("biff", "udp")) == NULL)
   return;
   }
 
-host.name = US"localhost";
+host.name = US("localhost");
 host.next = NULL;
 
 
@@ -535,7 +535,7 @@ if (host_find_byname(&host, NULL, 0, NULL, FALSE) == HOST_FIND_FAILED)
   }
 ******/
 
-host.address = US"127.0.0.1";
+host.address = US("127.0.0.1");
 
 
 for (host_item * h = &host; h; h = h->next)
@@ -623,7 +623,7 @@ while ((s = string_nextinlist(&format, &sep, big_buffer, big_buffer_size)))
 /* Failed to find a match */
 
 addr->basic_errno = ERRNO_FORMATUNKNOWN;
-addr->message = US"mailbox file format unrecognized";
+addr->message = US("mailbox file format unrecognized");
 return NULL;
 }
 
@@ -668,7 +668,7 @@ if (!(dir = exim_opendir(dirname))) return 0;
 
 for (struct dirent *ent; ent = readdir(dir); )
   {
-  uschar * path, * name = US ent->d_name;
+  uschar * path, * name = US(ent->d_name);
   struct stat statbuf;
 
   if (Ustrcmp(name, ".") == 0 || Ustrcmp(name, "..") == 0) continue;
@@ -855,7 +855,7 @@ size, including CRLFs, which is the size of the input (temporary) file. */
 if (fstat(from_fd, &statbuf) < 0) return DEFER;
 size = statbuf.st_size;
 
-sprintf (CS deliver_out_buffer, "%s," OFF_T_FMT ";%08lx%04x-%08x\015\012",
+sprintf (CS(deliver_out_buffer), "%s," OFF_T_FMT ";%08lx%04x-%08x\015\012",
   tod_stamp(tod_mbx), size, 0L, 0, 0);
 used = Ustrlen(deliver_out_buffer);
 
@@ -939,7 +939,7 @@ if (deliver_dir  &&  create_file != create_anywhere)
          slash = next)
       {
       *slash = 0;
-      rp = US realpath(CS file, CS big_buffer);
+      rp = US(realpath(CS(file), CS(big_buffer)));
       next = Ustrrchr(file, '/');
       *slash = '/';
       }
@@ -957,7 +957,7 @@ if (deliver_dir  &&  create_file != create_anywhere)
       const uschar * rph = deliver_dir;
       int rlen = Ustrlen(big_buffer);
 
-      if ((rp = US realpath(CS deliver_dir, CS hdbuffer)))
+      if ((rp = US(realpath(CS(deliver_dir), CS(hdbuffer)))))
         {
         rph = hdbuffer;
         len = Ustrlen(rph);
@@ -1146,8 +1146,8 @@ uschar *dataname = NULL;
 uschar *lockname = NULL;
 uschar *newname = NULL;
 uschar *nametag = NULL;
-uschar *cr = US"";
-uschar *filecount_msg = US"";
+uschar *cr = US("");
+uschar *filecount_msg = US("");
 uschar *path;
 struct utimbuf times;
 struct timeval msg_tv;
@@ -1199,7 +1199,7 @@ changes by expansion, so that the final path ends up in the log. */
 
 if (testflag(addr, af_file) && !ob->filename && !ob->dirname)
   {
-  fdname = US"$address_file";
+  fdname = US("$address_file");
   if (address_file[Ustrlen(address_file)-1] == '/' ||
       ob->maildir_format ||
       ob->mailstore_format)
@@ -1295,8 +1295,8 @@ DEBUG(D_transport)
     ob->quota_warn_threshold_is_percent ? "%" : "",
     isdirectory ? "directory" : "file",
     path, mailbox_formats[mbformat],
-    !ob->message_prefix ? US"null" : string_printing(ob->message_prefix),
-    !ob->message_suffix ? US"null" : string_printing(ob->message_suffix),
+    !ob->message_prefix ? US("null") : string_printing(ob->message_prefix),
+    !ob->message_suffix ? US("null") : string_printing(ob->message_suffix),
     ob->maildir_use_size_file ? "yes" : "no");
 
   if (!isdirectory) debug_printf("  locking by %s%s%s%s%s\n",
@@ -1910,7 +1910,7 @@ if (!isdirectory)
 
       if (ob->file_format  &&  check_file_format(fd, tblock, addr) != tblock)
         {
-        addr->message = US"open mailbox has changed format";
+        addr->message = US("open mailbox has changed format");
         goto RETURN;
         }
 
@@ -1947,7 +1947,7 @@ if (!isdirectory)
            ob->use_flock, ob->lock_flock_timeout) >= 0 &&
            fstat(fd, &statbuf) >= 0)
         {
-        sprintf(CS mbx_lockname, "/tmp/.%lx.%lx", (long)statbuf.st_dev,
+        sprintf(CS(mbx_lockname), "/tmp/.%lx.%lx", (long)statbuf.st_dev,
           (long)statbuf.st_ino);
 
         /*
@@ -2315,7 +2315,7 @@ else
         {
         uschar *s = path + check_path_len;
         while (*s == '/') s++;
-        s = *s ? string_sprintf("%s/new", s) : US"new";
+        s = *s ? string_sprintf("%s/new", s) : US("new");
 	if (!regex_match(dir_regex, s, -1, NULL))
           {
           disable_quota = TRUE;
@@ -2359,7 +2359,7 @@ else
 /*  else
  *    {
  *    time_t old_latest;
- *    (void)unlink(CS string_sprintf("%s/maildirsize", check_path));
+ *    (void)unlink(CS(string_sprintf("%s/maildirsize", check_path)));
  *    if (THRESHOLD_CHECK)
  *      mailbox_size = maildir_compute_size(check_path, &mailbox_filecount, &old_latest,
  *         re, dir_regex, FALSE);
@@ -2475,7 +2475,7 @@ else
           filename, i, (i == 1) ? "y" : "ies");
         addr->basic_errno = errno;
         if (errno == errno_quota || errno == ENOSPC)
-          addr->user_message = US"mailbox is full";
+          addr->user_message = US("mailbox is full");
         return FALSE;
         }
 
@@ -2578,7 +2578,7 @@ else
       else
         {
         int n = Ustrlen(s);
-        fprintf(env_file, "%s", CS s);
+        fprintf(env_file, "%s", CS(s));
         if (n == 0 || s[n-1] != '\n') fprintf(env_file, "\n");
         }
       }
@@ -2606,7 +2606,7 @@ else
       else
         {
         int n = Ustrlen(s);
-        fprintf(env_file, "%s", CS s);
+        fprintf(env_file, "%s", CS(s));
         if (n == 0 || s[n-1] != '\n') fprintf(env_file, "\n");
         }
       }
@@ -2700,7 +2700,7 @@ if (!disable_quota && ob->quota_value > 0)
       DEBUG(D_transport) debug_printf("mailbox file count quota exceeded\n");
       yield = DEFER;
       errno = ERRNO_EXIMQUOTA;
-      filecount_msg = US" filecount";
+      filecount_msg = US(" filecount");
       }
     else DEBUG(D_transport) if (ob->quota_filecount_no_check)
       debug_printf("mailbox file count quota exceeded but ignored\n");
@@ -2710,7 +2710,7 @@ if (!disable_quota && ob->quota_value > 0)
 if (verify_mode)
   {
   addr->basic_errno = errno;
-  addr->message = US"Over quota";
+  addr->message = US("Over quota");
   addr->transport_return = yield;
   DEBUG(D_transport)
     debug_printf("appendfile (verify) yields %d with errno=%d more_errno=%d\n",
@@ -2732,7 +2732,7 @@ if (yield == OK && ob->mbx_format)
   if (!(temp_file = tmpfile()))
     {
     addr->basic_errno = errno;
-    addr->message = US"while setting up temporary file";
+    addr->message = US("while setting up temporary file");
     yield = DEFER;
     goto RETURN;
     }
@@ -2773,7 +2773,7 @@ if (yield == OK && ob->use_bsmtp)
   {
   transport_count = 0;
   transport_newlines = 0;
-  if (ob->use_crlf) cr = US"\r";
+  if (ob->use_crlf) cr = US("\r");
   if (!transport_write_string(fd, "MAIL FROM:<%s>%s\n", return_path, cr))
     yield = DEFER;
   else
@@ -2853,7 +2853,7 @@ if (temp_file && ob->mbx_format)
      * routine so the number won't be affected */
     yield = copy_mbx_message(fd, fileno(temp_file), saved_size);
     }
-  else if (errno >= 0) dataname = US"temporary file";
+  else if (errno >= 0) dataname = US("temporary file");
 
   /* Preserve errno while closing the temporary file. */
 
@@ -2979,13 +2979,13 @@ if (yield != OK)
     addr->message = string_sprintf("mailbox is full "
       "(quota exceeded while writing to file %s)", filename);
     #else
-    addr->message = US"mailbox is full";
+    addr->message = US("mailbox is full");
     #endif  /* EDQUOT */
-    addr->user_message = US"mailbox is full";
+    addr->user_message = US("mailbox is full");
     DEBUG(D_transport) debug_printf("System quota exceeded for %s%s%s\n",
       dataname,
-      isdirectory ? US"" : US": time since file read = ",
-      isdirectory ? US"" : readconf_printtime(addr->more_errno));
+      isdirectory ? US("") : US(": time since file read = "),
+      isdirectory ? US("") : readconf_printtime(addr->more_errno));
     }
 
   /* Handle Exim's own quota-imposition */
@@ -2995,11 +2995,11 @@ if (yield != OK)
     addr->message = string_sprintf("mailbox is full "
       "(MTA-imposed%s quota exceeded while writing to %s)", filecount_msg,
         dataname);
-    addr->user_message = US"mailbox is full";
+    addr->user_message = US("mailbox is full");
     DEBUG(D_transport) debug_printf("Exim%s quota exceeded for %s%s%s\n",
       filecount_msg, dataname,
-      isdirectory ? US"" : US": time since file read = ",
-      isdirectory ? US"" : readconf_printtime(addr->more_errno));
+      isdirectory ? US("") : US(": time since file read = "),
+      isdirectory ? US("") : readconf_printtime(addr->more_errno));
     }
 
   /* Handle a process failure while writing via a filter; the return
@@ -3115,7 +3115,7 @@ else
       if (!newname)
         {
         uschar *renameleaf;
-        uschar *old_renameleaf = US"";
+        uschar *old_renameleaf = US("");
 
         for (int i = 0; ; sleep(1), i++)
           {
@@ -3218,7 +3218,7 @@ else
 /* For a file, restore the last access time (atime), and set the modification
 time as required - changed if write succeeded, unchanged if not. */
 
-if (!isdirectory) utime(CS filename, &times);
+if (!isdirectory) utime(CS(filename), &times);
 
 /* Notify comsat if configured to do so. It only makes sense if the configured
 file is the one that the comsat daemon knows about. */

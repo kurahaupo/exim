@@ -10,6 +10,7 @@
 
 # MAGIC-TAG-MODS-OBJ-RULES-GO-HERE
 
+CFLAGS += -fsigned-char
 
 all:             lookups.a lf_quote.o lf_check_file.o lf_sqlperform.o $(MODS)
 

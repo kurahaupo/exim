@@ -121,8 +121,8 @@ and use that. */
 if (len > 64)
   {
   md5_start(&base);
-  md5_end(&base, US secret, len, md5secret);
-  secret = US md5secret;
+  md5_end(&base, US(secret), len, md5secret);
+  secret = US(md5secret);
   len = 16;
   }
 
@@ -143,7 +143,7 @@ for (int i = 0; i < 64; i++)
 
 md5_start(&base);
 md5_mid(&base, isecret);
-md5_end(&base, US challenge, Ustrlen(challenge), md5secret);
+md5_end(&base, US(challenge), Ustrlen(challenge), md5secret);
 
 /* Compute the outer MD5 digest */
 
@@ -176,7 +176,7 @@ int i, rc, len;
 an example string taken from the RFC. */
 
 if (f.running_in_test_harness)
-  challenge = US"<1896.697170952@postoffice.reston.mci.net>";
+  challenge = US("<1896.697170952@postoffice.reston.mci.net>");
 
 /* No data should have been sent with the AUTH command */
 
@@ -227,8 +227,8 @@ HDEBUG(D_auth)
   debug_printf("CRAM-MD5: user name = %s\n", auth_vars[0]);
   debug_printf("          challenge = %s\n", challenge);
   debug_printf("          received  = %s\n", clear);
-  Ustrcpy(buff, US"          digest    = ");
-  for (i = 0; i < 16; i++) sprintf(CS buff+22+2*i, "%02x", digest[i]);
+  Ustrcpy(buff, US("          digest    = "));
+  for (i = 0; i < 16; i++) sprintf(CS(buff)+22+2*i, "%02x", digest[i]);
   debug_printf("%.54s\n", buff);
   }
 
@@ -315,17 +315,17 @@ for (p = big_buffer; *p; ) p++;
 *p++ = ' ';
 
 for (i = 0; i < 16; i++)
-  p += sprintf(CS p, "%02x", digest[i]);
+  p += sprintf(CS(p), "%02x", digest[i]);
 
 /* Send the response, in base 64, and check the result. The response is
 in big_buffer, but b64encode() returns its result in working store,
 so calling smtp_write_command(), which uses big_buffer, is OK. */
 
 buffer[0] = 0;
-if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", b64encode(CUS big_buffer,
+if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", b64encode(CUS(big_buffer),
   p - big_buffer)) < 0) return FAIL_SEND;
 
-return smtp_read_response(sx, US buffer, buffsize, '2', timeout)
+return smtp_read_response(sx, US(buffer), buffsize, '2', timeout)
   ? OK : FAIL;
 }
 #endif  /* STAND_ALONE */
@@ -342,8 +342,8 @@ return smtp_read_response(sx, US buffer, buffsize, '2', timeout)
 int main(int argc, char **argv)
 {
 int i;
-uschar *secret = US argv[1];
-uschar *challenge = US argv[2];
+uschar *secret = US(argv[1]);
+uschar *challenge = US(argv[2]);
 uschar digest[16];
 
 compute_cram_md5(secret, challenge, digest);

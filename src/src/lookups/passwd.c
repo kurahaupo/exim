@@ -64,7 +64,7 @@ return g;
 }
 
 static lookup_info _lookup_info = {
-  .name = US"passwd",			/* lookup name */
+  .name = US("passwd"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = passwd_open,			/* open function */
   .check = NULL,			/* no check function */

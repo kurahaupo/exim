@@ -443,7 +443,7 @@ if (oncelog && *oncelog && to)
       {
       addr->transport_return = DEFER;
       addr->basic_errno = errno;
-      addr->message = US"error while reading \"once\" file";
+      addr->message = US("error while reading \"once\" file");
       goto END_OFF;
       }
 
@@ -528,7 +528,7 @@ if (oncelog && *oncelog && to)
     if (log_fd >= 0)
       {
       uschar *ptr = log_buffer;
-      sprintf(CS ptr, "%s\n  previously sent to %.200s\n", tod_stamp(tod_log), to);
+      sprintf(CS(ptr), "%s\n  previously sent to %.200s\n", tod_stamp(tod_log), to);
       while(*ptr) ptr++;
       if(write(log_fd, log_buffer, ptr - log_buffer) != ptr-log_buffer
         || close(log_fd))
@@ -565,7 +565,7 @@ if (file)
 
 /* Make a subprocess to send the message */
 
-if ((pid = child_open_exim(&fd, US"autoreply")) < 0)
+if ((pid = child_open_exim(&fd, US("autoreply"))) < 0)
   {
   /* Creation of child failed; defer this delivery. */
 
@@ -617,7 +617,7 @@ fprintf(fp, "\n");
 
 if (text)
   {
-  fprintf(fp, "%s", CS text);
+  fprintf(fp, "%s", CS(text));
   if (text[Ustrlen(text)-1] != '\n') fprintf(fp, "\n");
   }
 
@@ -634,9 +634,9 @@ if (ff)
           debug_printf("error while expanding line from file:\n  %s\n  %s\n",
             big_buffer, expand_string_message);
         }
-      fprintf(fp, "%s", s ? CS s : CS big_buffer);
+      fprintf(fp, "%s", s ? CS(s) : CS(big_buffer));
       }
-    else fprintf(fp, "%s", CS big_buffer);
+    else fprintf(fp, "%s", CS(big_buffer));
     }
   (void) fclose(ff);
   }
@@ -647,10 +647,10 @@ limit if we are returning the body. */
 if (return_message)
   {
   uschar *rubric = tblock->headers_only
-    ? US"------ This is a copy of the message's header lines.\n"
+    ? US("------ This is a copy of the message's header lines.\n")
     : tblock->body_only
-    ? US"------ This is a copy of the body of the message, without the headers.\n"
-    : US"------ This is a copy of the message, including all the headers.\n";
+    ? US("------ This is a copy of the body of the message, without the headers.\n")
+    : US("------ This is a copy of the message, including all the headers.\n");
   transport_ctx tctx = {
     .u = {.fd = fileno(fp)},
     .tblock = tblock,

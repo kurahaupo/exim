@@ -135,7 +135,7 @@ if (isdigit(*pstring))
 
 else
   {
-  struct servent *smtp_service = getservbyname(CS pstring, "tcp");
+  struct servent *smtp_service = getservbyname(CS(pstring), "tcp");
   if (!smtp_service)
     {
     addr->transport_return = PANIC;
@@ -270,7 +270,7 @@ if ((sock = ip_socket(SOCK_STREAM, sc->host_af)) < 0)
 
 /* Set TCP_NODELAY; Exim does its own buffering. */
 
-if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, US &on, sizeof(on)))
+if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, US(&on), sizeof(on)))
   HDEBUG(D_transport|D_acl|D_v)
     debug_printf_indent("failed to set NODELAY: %s ", strerror(errno));
 
@@ -346,7 +346,7 @@ const blob * fastopen_blob = NULL;
 #ifndef DISABLE_EVENT
 deliver_host_address = sc->host->address;
 deliver_host_port = sc->host->port;
-if (event_raise(sc->tblock->event_action, US"tcp:connect", NULL, &errno)) return -1;
+if (event_raise(sc->tblock->event_action, US("tcp:connect"), NULL, &errno)) return -1;
 #endif
 
 if (  (sock = sc->sock) < 0
@@ -363,7 +363,7 @@ if (!save_errno)
   {
 #ifdef TCP_FASTOPEN
   /* See if TCP Fast Open usable.  Default is a traditional 3WHS connect */
-  if (verify_check_given_host(CUSS &ob->hosts_try_fastopen, sc->host) == OK)
+  if (verify_check_given_host(CUSS(&ob->hosts_try_fastopen), sc->host) == OK)
     {
     if (!early_data)
       fastopen_blob = &tcp_fastopen_nodata;	/* TFO, with no data */
@@ -373,7 +373,7 @@ if (!save_errno)
     else
       {						/* expecting client data */
       DEBUG(D_transport|D_acl|D_v) debug_printf(" set up lazy-connect\n");
-      setsockopt(sock, IPPROTO_TCP, TCP_FASTOPEN_CONNECT, US &on, sizeof(on));
+      setsockopt(sock, IPPROTO_TCP, TCP_FASTOPEN_CONNECT, US(&on), sizeof(on));
       /* fastopen_blob = NULL;		 lazy TFO, triggered by data write */
       }
 # endif
@@ -389,7 +389,7 @@ if (!save_errno)
       debug_printf("sending %ld nonTFO early-data\n", (long)early_data->len);
 
 #ifdef TCP_QUICKACK_notdef
-    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US(&off), sizeof(off));
 #endif
     if (send(sock, early_data->data, early_data->len, 0) < 0)
       save_errno = errno;
@@ -399,7 +399,7 @@ if (!save_errno)
   5.10.8-100.fc32.x86_64) this seems to be inop.
   Perhaps overwritten when we (client) go -> ESTABLISHED on seeing the 3rd-ACK?
   For that case, added at smtp_reap_banner(). */
-  (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+  (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US(&off), sizeof(off));
 #endif
   }
 
@@ -489,7 +489,7 @@ callout_address = string_sprintf("[%s]:%d", sc->host->address, port);
 
 HDEBUG(D_transport|D_acl|D_v)
   {
-  uschar * s = US" ";
+  uschar * s = US(" ");
   if (sc->interface) s = string_sprintf(" from %s ", sc->interface);
 #ifdef SUPPORT_SOCKS
   if (ob->socks_proxy) s = string_sprintf("%svia proxy ", s);
@@ -675,7 +675,7 @@ if (format)
   alloc rather than big_buffer, and another global for the data-for-error. */
 
   va_start(ap, format);
-  if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS format, ap))
+  if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS(format), ap))
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "overlong write_command in outgoing "
       "SMTP");
   va_end(ap);

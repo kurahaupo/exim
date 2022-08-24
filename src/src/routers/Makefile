@@ -11,6 +11,8 @@ OBJ = accept.o dnslookup.o ipliteral.o iplookup.o manualroute.o \
       rf_queue_add.o rf_self_action.o \
       rf_set_ugid.o
 
+CFLAGS += -fsigned-char
+
 routers.a:       $(OBJ)
 		 @$(RM_COMMAND) -f routers.a
 		 @echo "$(AR) routers.a"

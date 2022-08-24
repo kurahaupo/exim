@@ -176,7 +176,7 @@ if (*errno_value == ERRNO_CHHEADER_FAIL)
 
 if (*errno_value == ERRNO_WRITEINCOMPLETE)
   {
-  *message = US"failed to write a data block";
+  *message = US("failed to write a data block");
   return FALSE;
   }
 
@@ -233,7 +233,7 @@ va_list ap;
 big_buffer */
 
 va_start(ap, format);
-if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS format, ap))
+if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS(format), ap))
   {
   va_end(ap);
   errno = ERRNO_SMTPFORMAT;
@@ -474,7 +474,7 @@ int fd_in = -1, fd_out = -1;
 int code, save_errno;
 BOOL send_data;
 BOOL yield = FALSE;
-uschar *igquotstr = US"";
+uschar *igquotstr = US("");
 uschar *sockname = NULL;
 const uschar **argv;
 uschar buffer[256];
@@ -488,7 +488,7 @@ argument list and expanding the items. */
 if (ob->cmd)
   {
   DEBUG(D_transport) debug_printf("using command %s\n", ob->cmd);
-  sprintf(CS buffer, "%.50s transport", tblock->name);
+  sprintf(CS(buffer), "%.50s transport", tblock->name);
   if (!transport_set_up_command(&argv, ob->cmd, TRUE, PANIC, addrlist, FALSE,
 	buffer, NULL))
     return FALSE;
@@ -501,8 +501,8 @@ if (ob->cmd)
 uid/gid and current directory. Request that the new process be a process group
 leader, so we can kill it and all its children on an error. */
 
-  if ((pid = child_open(USS argv, NULL, 0, &fd_in, &fd_out, TRUE,
-			US"lmtp-tpt-cmd")) < 0)
+  if ((pid = child_open(USS(argv), NULL, 0, &fd_in, &fd_out, TRUE,
+			US("lmtp-tpt-cmd"))) < 0)
     {
     addrlist->message = string_sprintf(
       "Failed to create child process for %s transport: %s", tblock->name,
@@ -557,7 +557,7 @@ allows for message+recipient checks after the message has been received. */
 
 /* First thing is to wait for an initial greeting. */
 
-Ustrcpy(big_buffer, US"initial connection");
+Ustrcpy(big_buffer, US("initial connection"));
 if (!lmtp_read_response(out, buffer, sizeof(buffer), '2', timeout))
   goto RESPONSE_FAILED;
 
@@ -574,7 +574,7 @@ IGNOREQUOTA option, and if so, set an appropriate addition for RCPT. */
 
 if (ob->ignore_quota)
   igquotstr = regex_match(regex_IGNOREQUOTA, buffer, -1, NULL)
-    ? US" IGNOREQUOTA" : US"";
+    ? US(" IGNOREQUOTA") : US("");
 
 /* Now the envelope sender */
 
@@ -628,7 +628,7 @@ if (send_data)
     {fd_in},
     tblock,
     addrlist,
-    US".", US"..",
+    US("."), US(".."),
     ob->options
   };
 
@@ -645,7 +645,7 @@ if (send_data)
 
   sigalrm_seen = FALSE;
   transport_write_timeout = timeout;
-  Ustrcpy(big_buffer, US"sending data block");   /* For error messages */
+  Ustrcpy(big_buffer, US("sending data block"));   /* For error messages */
   DEBUG(D_transport|D_v)
     debug_printf("  LMTP>> writing message and terminating \".\"\n");
 
@@ -661,7 +661,7 @@ if (send_data)
     goto RESPONSE_FAILED;
     }
 
-  Ustrcpy(big_buffer, US"end of data");   /* For error messages */
+  Ustrcpy(big_buffer, US("end of data"));   /* For error messages */
 
   /* We now expect a response for every address that was accepted above,
   in the same order. For those that get a response, their status is fixed;
@@ -679,7 +679,7 @@ if (send_data)
         {
         const uschar *s = string_printing(buffer);
 	/* de-const safe here as string_printing known to have alloc'n'copied */
-        addr->message = (s == buffer)? US string_copy(s) : US s;
+        addr->message = (s == buffer)? US(string_copy(s)) : US(s);
         }
       }
     /* If the response has failed badly, use it for all the remaining pending
@@ -767,11 +767,11 @@ if (errno == ERRNO_CHHEADER_FAIL)
     string_sprintf("Failed to expand headers_add or headers_remove: %s",
       expand_string_message);
 else if (errno == ERRNO_FILTER_FAIL)
-  addrlist->message = US"Filter process failure";
+  addrlist->message = US("Filter process failure");
 else if (errno == ERRNO_WRITEINCOMPLETE)
-  addrlist->message = US"Failed repeatedly to write data";
+  addrlist->message = US("Failed repeatedly to write data");
 else if (errno == ERRNO_SMTPFORMAT)
-  addrlist->message = US"overlong LMTP command generated";
+  addrlist->message = US("overlong LMTP command generated");
 else
   addrlist->message = string_sprintf("Error %d", errno);
 

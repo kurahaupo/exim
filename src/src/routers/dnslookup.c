@@ -252,12 +252,12 @@ for (;;)
   /* Check if we must request only. or prefer, ipv4 */
 
   if (  ob->ipv4_only
-     && expand_check_condition(ob->ipv4_only, rblock->name, US"router"))
+     && expand_check_condition(ob->ipv4_only, rblock->name, US("router")))
     flags = flags & ~HOST_FIND_BY_AAAA | HOST_FIND_IPV4_ONLY;
   else if (f.search_find_defer)
     return DEFER;
   if (  ob->ipv4_prefer
-     && expand_check_condition(ob->ipv4_prefer, rblock->name, US"router"))
+     && expand_check_condition(ob->ipv4_prefer, rblock->name, US("router")))
     flags |= HOST_FIND_IPV4_FIRST;
   else if (f.search_find_defer)
     return DEFER;
@@ -286,7 +286,7 @@ for (;;)
     if (ob->search_parents) flags |= HOST_FIND_SEARCH_PARENTS;
     }
 
-  rc = host_find_bydns(&h, CUS rblock->ignore_target_hosts, flags,
+  rc = host_find_bydns(&h, CUS(rblock->ignore_target_hosts), flags,
     srv_service, ob->srv_fail_domains, ob->mx_fail_domains,
     &rblock->dnssec,
     &fully_qualified_name, &removed);
@@ -300,11 +300,11 @@ for (;;)
   if ((rc == HOST_FOUND || rc == HOST_FOUND_LOCAL) && h.mx < 0 &&
        ob->mx_domains)
     switch(match_isinlist(fully_qualified_name,
-          CUSS &(ob->mx_domains), 0,
+          CUSS(&ob->mx_domains), 0,
           &domainlist_anchor, addr->domain_cache, MCL_DOMAIN, TRUE, NULL))
       {
       case DEFER:
-      addr->message = US"lookup defer for mx_domains";
+      addr->message = US("lookup defer for mx_domains");
       return DEFER;
 
       case OK:
@@ -318,7 +318,7 @@ for (;;)
 
   if (rc == HOST_FIND_SECURITY)
     {
-    addr->message = US"host lookup done insecurely";
+    addr->message = US("host lookup done insecurely");
     return DEFER;
     }
   if (rc == HOST_FIND_AGAIN)
@@ -329,7 +329,7 @@ for (;;)
         rblock->name);
       return PASS;
       }
-    addr->message = US"host lookup did not complete";
+    addr->message = US("host lookup did not complete");
     return DEFER;
     }
 
@@ -337,17 +337,17 @@ for (;;)
 
   if (ob->fail_defer_domains)
     switch(match_isinlist(fully_qualified_name,
-	  CUSS &ob->fail_defer_domains, 0,
+	  CUSS(&ob->fail_defer_domains), 0,
 	  &domainlist_anchor, addr->domain_cache, MCL_DOMAIN, TRUE, NULL))
       {
       case DEFER:
-	addr->message = US"lookup defer for fail_defer_domains option";
+	addr->message = US("lookup defer for fail_defer_domains option");
 	return DEFER;
 
       case OK:
 	DEBUG(D_route) debug_printf("%s router: matched fail_defer_domains\n",
 	  rblock->name);
-	addr->message = US"missing MX, or all MXs point to missing A records,"
+	addr->message = US("missing MX, or all MXs point to missing A records,")
 	  " and defer requested";
 	return DEFER;
       }
@@ -366,11 +366,11 @@ for (;;)
     {
     setflag(addr, af_pass_message);   /* This is not a security risk */
     if (h.name[0] == 0)
-      addr->message = US"an MX or SRV record indicated no SMTP service";
+      addr->message = US("an MX or SRV record indicated no SMTP service");
     else
       {
       addr->basic_errno = ERRNO_UNKNOWNHOST;
-      addr->message = US"all relevant MX records point to non-existent hosts";
+      addr->message = US("all relevant MX records point to non-existent hosts");
       if (!allow_mx_to_ip && string_is_ip_address(h.name, NULL) != 0)
         {
         addr->user_message =

@@ -189,7 +189,7 @@ if (cb->flags & MCS_AT_SPECIAL && pattern[0] == '@')
     return FAIL;
     }
 
-  if (strncmpic(pattern, US"@mx_", 4) == 0)
+  if (strncmpic(pattern, US("@mx_"), 4) == 0)
     {
     int rc;
     host_item h;
@@ -199,20 +199,20 @@ if (cb->flags & MCS_AT_SPECIAL && pattern[0] == '@')
     const uschar *ss = pattern + 4;
     const uschar *ignore_target_hosts = NULL;
 
-    if (strncmpic(ss, US"any", 3) == 0) ss += 3;
-    else if (strncmpic(ss, US"primary", 7) == 0)
+    if (strncmpic(ss, US("any"), 3) == 0) ss += 3;
+    else if (strncmpic(ss, US("primary"), 7) == 0)
       {
       ss += 7;
       prim = TRUE;
       }
-    else if (strncmpic(ss, US"secondary", 9) == 0)
+    else if (strncmpic(ss, US("secondary"), 9) == 0)
       {
       ss += 9;
       secy = TRUE;
       }
     else goto NOT_AT_SPECIAL;
 
-    if (strncmpic(ss, US"/ignore=", 8) == 0) ignore_target_hosts = ss + 8;
+    if (strncmpic(ss, US("/ignore="), 8) == 0) ignore_target_hosts = ss + 8;
     else if (*ss) goto NOT_AT_SPECIAL;
 
     h.next = NULL;
@@ -367,7 +367,7 @@ switch(type)
   case MCL_HOST:	return ((check_host_block *)arg)->host_address;
   case MCL_ADDRESS:	return ((check_address_block *)arg)->address;
   }
-return US"";  /* In practice, should never happen */
+return US("");  /* In practice, should never happen */
 }
 
 
@@ -508,8 +508,8 @@ HDEBUG(D_any) if (!ot)
   int n, m;
   gstring * g = string_fmt_append(NULL, "%s in \"%n%.*s%n\"",
     name, &n, LIST_LIMIT_PR, list, &m);
-  if (m - n >= LIST_LIMIT_PR) g = string_catn(g, US"...", 3);
-  g = string_catn(g, US"?", 1);
+  if (m - n >= LIST_LIMIT_PR) g = string_catn(g, US("..."), 3);
+  g = string_catn(g, US("?"), 1);
   gstring_release_unused(g);
   ot = string_from_gstring(g);
   }
@@ -547,7 +547,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
     if (Ustrcmp(ss, "+caseful") == 0)
       {
       check_string_block *cb = (check_string_block *)arg;
-      Ustrcpy(US cb->subject, cb->origsubject);
+      Ustrcpy(US(cb->subject), cb->origsubject);
       cb->flags &= ~MCS_CASELESS;
       continue;
       }
@@ -608,7 +608,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
       int offset = 0;
       int shift = 0;
       unsigned int *use_cache_bits = original_cache_bits;
-      uschar *cached = US"";
+      uschar *cached = US("");
       namedlist_block *nb;
       tree_node * t;
 
@@ -697,7 +697,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
         DEBUG(D_lists) debug_printf_indent("cached %s match for %s\n",
           (bits & (-bits)) == bits ? "yes" : "no", ss);
 
-        cached = US" - cached";
+        cached = US(" - cached");
         if (valueptr)
           {
           const uschar *key = get_check_key(arg, type);
@@ -1088,7 +1088,7 @@ if (pattern[0] == '@' && pattern[1] == '@')
     {
     int sep = 0;
 
-    if ((rc = match_check_string(key, pattern + 2, -1, MCS_PARTIAL, CUSS &list))
+    if ((rc = match_check_string(key, pattern + 2, -1, MCS_PARTIAL, CUSS(&list)))
 	!= OK)
       return rc;
 
@@ -1109,7 +1109,7 @@ if (pattern[0] == '@' && pattern[1] == '@')
     /* Look up the local parts provided by the list; negation is permitted.
     If a local part has to begin with !, a regex can be used. */
 
-    while ((ss = string_nextinlist(CUSS &list, &sep, NULL, 0)))
+    while ((ss = string_nextinlist(CUSS(&list), &sep, NULL, 0)))
       {
       int local_yield;
 
@@ -1236,7 +1236,7 @@ if (valueptr) *valueptr = NULL;
     &dvalue);                       /* where to pass back lookup data */
   if (valueptr && (value || dvalue))
     *valueptr = string_sprintf("%s@%s",
-		  value ? value : US"", dvalue ? dvalue : US"");
+		  value ? value : US(""), dvalue ? dvalue : US(""));
   }
 return rc;
 }

@@ -581,23 +581,23 @@ extern uschar *string_localpart_utf8_to_alabel(const uschar *, uschar **);
 #endif
 
 #define string_format(buf, siz, fmt, ...) \
-	string_format_trc(buf, siz, US __FUNCTION__, __LINE__, fmt, __VA_ARGS__)
+	string_format_trc(buf, siz, US(__FUNCTION__), __LINE__, fmt, __VA_ARGS__)
 extern BOOL    string_format_trc(uschar *, int, const uschar *, unsigned,
 			const char *, ...) ALMOST_PRINTF(5,6);
 
 #define string_vformat(g, flgs, fmt, ap) \
-	string_vformat_trc(g, US __FUNCTION__, __LINE__, \
+	string_vformat_trc(g, US(__FUNCTION__), __LINE__, \
 			 STRING_SPRINTF_BUFFER_SIZE, flgs, fmt, ap)
 extern gstring *string_vformat_trc(gstring *, const uschar *, unsigned,
 			unsigned, unsigned, const char *, va_list);
 
 #define string_open_failed(fmt, ...) \
-	string_open_failed_trc(US __FUNCTION__, __LINE__, fmt, __VA_ARGS__)
+	string_open_failed_trc(US(__FUNCTION__), __LINE__, fmt, __VA_ARGS__)
 extern uschar *string_open_failed_trc(const uschar *, unsigned,
 			const char *, ...) PRINTF_FUNCTION(3,4);
 
 #define string_nextinlist(lp, sp, b, l) \
-	string_nextinlist_trc((lp), (sp), (b), (l), US __FUNCTION__, __LINE__)
+	string_nextinlist_trc((lp), (sp), (b), (l), US(__FUNCTION__), __LINE__)
 extern uschar *string_nextinlist_trc(const uschar **listptr, int *separator, uschar *buffer, int buflen,
 			const uschar * func, int line);
 
@@ -710,30 +710,30 @@ return is_incompatible_fn(old, new);
 static inline uschar * __Ustrcat(uschar * dst, const uschar * src, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrcat", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted(US("Ustrcat"), CUS(func), line);
 #endif
-return US strcat(CS dst, CCS src);
+return US(strcat(CS(dst), CCS(src)));
 }
 static inline uschar * __Ustrcpy(uschar * dst, const uschar * src, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrcpy", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted(US("Ustrcpy"), CUS(func), line);
 #endif
-return US strcpy(CS dst, CCS src);
+return US(strcpy(CS(dst), CCS(src)));
 }
 static inline uschar * __Ustrncat(uschar * dst, const uschar * src, size_t n, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrncat", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted(US("Ustrncat"), CUS(func), line);
 #endif
-return US strncat(CS dst, CCS src, n);
+return US(strncat(CS(dst), CCS(src), n));
 }
 static inline uschar * __Ustrncpy(uschar * dst, const uschar * src, size_t n, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrncpy", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted(US("Ustrncpy"), CUS(func), line);
 #endif
-return US strncpy(CS dst, CCS src, n);
+return US(strncpy(CS(dst), CCS(src), n));
 }
 /*XXX will likely need unchecked copy also */
 
@@ -741,7 +741,7 @@ return US strncpy(CS dst, CCS src, n);
 /* Advance the string pointer given over any whitespace.
 Return the next char as there's enought places using it to be useful. */
 
-#define Uskip_whitespace(sp) skip_whitespace(CUSS sp)
+#define Uskip_whitespace(sp) skip_whitespace(CUSS(sp))
 
 static inline uschar skip_whitespace(const uschar ** sp)
 { while (isspace(**sp)) (*sp)++; return **sp; }
@@ -778,7 +778,7 @@ return fchown(fd, owner, group)
 static inline int
 exim_chown(const uschar *name, uid_t owner, gid_t group)
 {
-return chown(CCS name, owner, group)
+return chown(CCS(name), owner, group)
   ? exim_chown_failure(-1, name, owner, group) : 0;
 }
 #endif	/* !MACRO_PREDEF && !COMPILE_UTILITY */
@@ -980,11 +980,11 @@ if (g) store_release_above_3(g->s + (g->size = g->ptr + 1), file, line);
 /* sprintf-append to a growable-string */
 
 #define string_fmt_append(g, fmt, ...) \
-	string_fmt_append_f_trc(g, US __FUNCTION__, __LINE__, \
+	string_fmt_append_f_trc(g, US(__FUNCTION__), __LINE__, \
 	SVFMT_EXTEND|SVFMT_REBUFFER, fmt, __VA_ARGS__)
 
 #define string_fmt_append_f(g, flgs, fmt, ...) \
-	string_fmt_append_f_trc(g, US __FUNCTION__, __LINE__, \
+	string_fmt_append_f_trc(g, US(__FUNCTION__), __LINE__, \
 	flgs,         fmt, __VA_ARGS__)
 
 static inline gstring *
@@ -1020,20 +1020,20 @@ released, hence blowing 64k for every DNS lookup. That mounted up. With malloc
 we do have to take care over marking tainted all copied strings.  A separate pool
 could be used and would handle that implicitly. */
 
-#define store_get_dns_answer() store_get_dns_answer_trc(CUS __FUNCTION__, __LINE__)
+#define store_get_dns_answer() store_get_dns_answer_trc(CUS(__FUNCTION__), __LINE__)
 
 static inline dns_answer *
 store_get_dns_answer_trc(const uschar * func, unsigned line)
 {
-return store_malloc_3(sizeof(dns_answer), CCS func, line);
+return store_malloc_3(sizeof(dns_answer), CCS(func), line);
 }
 
-#define store_free_dns_answer(dnsa) store_free_dns_answer_trc(dnsa, CUS __FUNCTION__, __LINE__)
+#define store_free_dns_answer(dnsa) store_free_dns_answer_trc(dnsa, CUS(__FUNCTION__), __LINE__)
 
 static inline void
 store_free_dns_answer_trc(dns_answer * dnsa, const uschar * func, unsigned line)
 {
-store_free_3(dnsa, CCS func, line);
+store_free_3(dnsa, CCS(func), line);
 }
 
 /******************************************************************************/
@@ -1042,7 +1042,7 @@ store_free_3(dnsa, CCS func, line);
 static inline void
 spool_pname_buf(uschar * buf, int len)
 {
-snprintf(CS buf, len, "%s/%s/input", spool_directory, queue_name);
+snprintf(CS(buf), len, "%s/%s/input", spool_directory, queue_name);
 }
 
 static inline uschar *
@@ -1131,7 +1131,7 @@ static uschar buf[sizeof("0.000s")];
 if (diff->tv_sec >= 5 || !LOGGING(millisec))
   return readconf_printtime((int)diff->tv_sec);
 
-snprintf(CS buf, sizeof(buf), "%u.%03us", (uint)diff->tv_sec, (uint)diff->tv_usec/1000);
+snprintf(CS(buf), sizeof(buf), "%u.%03us", (uint)diff->tv_sec, (uint)diff->tv_usec/1000);
 return buf;
 }
 
@@ -1214,7 +1214,7 @@ return NULL;
 static inline DIR *
 exim_opendir(const uschar * name)
 {
-if (!is_tainted(name)) return opendir(CCS name);
+if (!is_tainted(name)) return opendir(CCS(name));
 log_write(0, LOG_MAIN|LOG_PANIC, "Tainted dirname '%s'", name);
 errno = EACCES;
 return NULL;
@@ -1285,7 +1285,7 @@ HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP%c> %s\n",
   client_cmd_log = string_append_listele_n(client_cmd_log, ':', buf, MIN(len, 8));
   if (mode == SCMD_BUFFER) 
     {
-    client_cmd_log = string_catn(client_cmd_log, US"|", 1); 
+    client_cmd_log = string_catn(client_cmd_log, US("|"), 1); 
     (void) string_from_gstring(client_cmd_log);
     }
   store_pool = old_pool;
@@ -1298,7 +1298,7 @@ static inline void
 smtp_debug_cmd_report(void)
 {
 #  ifndef DISABLE_CLIENT_CMD_LOG
-debug_printf("cmdlog: '%s'\n", client_cmd_log ? client_cmd_log->s : US"(unset)");
+debug_printf("cmdlog: '%s'\n", client_cmd_log ? client_cmd_log->s : US("(unset)"));
 #  endif
 }
 

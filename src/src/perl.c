@@ -62,10 +62,10 @@ XS(xs_expand_string)
   if (items != 1)
     croak("Usage: Exim::expand_string(string)");
 
-  str = expand_string(US SvPV(ST(0), len));
+  str = expand_string(US(SvPV(ST(0), len)));
   ST(0) = sv_newmortal();
   if (str != NULL)
-    sv_setpv(ST(0), CCS  str);
+    sv_setpv(ST(0), CCS(str));
   else if (!f.expand_string_forcedfail)
     croak("syntax error in Exim::expand_string argument: %s",
       expand_string_message);
@@ -77,7 +77,7 @@ XS(xs_debug_write)
   STRLEN len;
   if (items != 1)
     croak("Usage: Exim::debug_write(string)");
-  debug_printf("%s", US SvPV(ST(0), len));
+  debug_printf("%s", US(SvPV(ST(0), len)));
 }
 
 XS(xs_log_write)
@@ -86,7 +86,7 @@ XS(xs_log_write)
   STRLEN len;
   if (items != 1)
     croak("Usage: Exim::log_write(string)");
-  log_write(0, LOG_MAIN, "%s", US SvPV(ST(0), len));
+  log_write(0, LOG_MAIN, "%s", US(SvPV(ST(0), len)));
 }
 
 static void  xs_init(pTHX)
@@ -131,14 +131,14 @@ init_perl(uschar *startup_code)
     PUSHMARK(SP);
     perl_eval_sv(sv, G_SCALAR|G_DISCARD|G_KEEPERR);
     SvREFCNT_dec(sv);
-    if (SvTRUE(ERRSV)) return US SvPV(ERRSV, len);
+    if (SvTRUE(ERRSV)) return US(SvPV(ERRSV, len));
     /*********************************************************************/
 
-    sv = newSVpv(CS startup_code, 0);
+    sv = newSVpv(CS(startup_code), 0);
     PUSHMARK(SP);
     perl_eval_sv(sv, G_SCALAR|G_DISCARD|G_KEEPERR);
     SvREFCNT_dec(sv);
-    if (SvTRUE(ERRSV)) return US SvPV(ERRSV, len);
+    if (SvTRUE(ERRSV)) return US(SvPV(ERRSV, len));
 
     setlocale(LC_ALL, "C");    /* In case it got changed */
     return NULL;
@@ -166,22 +166,22 @@ call_perl_cat(gstring * yield, uschar **errstrp, uschar *name, uschar **arg)
 
   if (!interp_perl)
     {
-    *errstrp = US"the Perl interpreter has not been started";
+    *errstrp = US("the Perl interpreter has not been started");
     return 0;
     }
 
   ENTER;
   SAVETMPS;
   PUSHMARK(SP);
-  while (*arg != NULL) XPUSHs(newSVpv(CS (*arg++), 0));
+  while (*arg != NULL) XPUSHs(newSVpv(CS(*arg++), 0));
   PUTBACK;
-  items = perl_call_pv(CS name, G_SCALAR|G_EVAL);
+  items = perl_call_pv(CS(name), G_SCALAR|G_EVAL);
   SPAGAIN;
   sv = POPs;
   PUTBACK;
   if (SvTRUE(ERRSV))
     {
-    *errstrp = US SvPV(ERRSV, len);
+    *errstrp = US(SvPV(ERRSV, len));
     return NULL;
     }
   if (!SvOK(sv))
@@ -189,7 +189,7 @@ call_perl_cat(gstring * yield, uschar **errstrp, uschar *name, uschar **arg)
     *errstrp = 0;
     return NULL;
     }
-  str = US SvPV(sv, len);
+  str = US(SvPV(sv, len));
   yield = string_catn(yield, str, (int)len);
   FREETMPS;
   LEAVE;

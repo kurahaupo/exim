@@ -172,73 +172,73 @@ Also allow a numeric literal?
 static exim_openssl_option exim_openssl_options[] = {
 /* KEEP SORTED ALPHABETICALLY! */
 #ifdef SSL_OP_ALL
-  { US"all", (long) SSL_OP_ALL },
+  { US("all"), (long) SSL_OP_ALL },
 #endif
 #ifdef SSL_OP_ALLOW_NO_DHE_KEX
-  { US"allow_no_dhe_kex", SSL_OP_ALLOW_NO_DHE_KEX },
+  { US("allow_no_dhe_kex"), SSL_OP_ALLOW_NO_DHE_KEX },
 #endif
 #ifdef SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION
-  { US"allow_unsafe_legacy_renegotiation", SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION },
+  { US("allow_unsafe_legacy_renegotiation"), SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION },
 #endif
 #ifdef SSL_OP_CIPHER_SERVER_PREFERENCE
-  { US"cipher_server_preference", SSL_OP_CIPHER_SERVER_PREFERENCE },
+  { US("cipher_server_preference"), SSL_OP_CIPHER_SERVER_PREFERENCE },
 #endif
 #ifdef SSL_OP_CRYPTOPRO_TLSEXT_BUG
-  { US"cryptopro_tlsext_bug", SSL_OP_CRYPTOPRO_TLSEXT_BUG },
+  { US("cryptopro_tlsext_bug"), SSL_OP_CRYPTOPRO_TLSEXT_BUG },
 #endif
 #ifdef SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS
-  { US"dont_insert_empty_fragments", SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS },
+  { US("dont_insert_empty_fragments"), SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS },
 #endif
 #ifdef SSL_OP_ENABLE_MIDDLEBOX_COMPAT
-  { US"enable_middlebox_compat", SSL_OP_ENABLE_MIDDLEBOX_COMPAT },
+  { US("enable_middlebox_compat"), SSL_OP_ENABLE_MIDDLEBOX_COMPAT },
 #endif
 #ifdef SSL_OP_EPHEMERAL_RSA
-  { US"ephemeral_rsa", SSL_OP_EPHEMERAL_RSA },
+  { US("ephemeral_rsa"), SSL_OP_EPHEMERAL_RSA },
 #endif
 #ifdef SSL_OP_LEGACY_SERVER_CONNECT
-  { US"legacy_server_connect", SSL_OP_LEGACY_SERVER_CONNECT },
+  { US("legacy_server_connect"), SSL_OP_LEGACY_SERVER_CONNECT },
 #endif
 #ifdef SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER
-  { US"microsoft_big_sslv3_buffer", SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER },
+  { US("microsoft_big_sslv3_buffer"), SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER },
 #endif
 #ifdef SSL_OP_MICROSOFT_SESS_ID_BUG
-  { US"microsoft_sess_id_bug", SSL_OP_MICROSOFT_SESS_ID_BUG },
+  { US("microsoft_sess_id_bug"), SSL_OP_MICROSOFT_SESS_ID_BUG },
 #endif
 #ifdef SSL_OP_MSIE_SSLV2_RSA_PADDING
-  { US"msie_sslv2_rsa_padding", SSL_OP_MSIE_SSLV2_RSA_PADDING },
+  { US("msie_sslv2_rsa_padding"), SSL_OP_MSIE_SSLV2_RSA_PADDING },
 #endif
 #ifdef SSL_OP_NETSCAPE_CHALLENGE_BUG
-  { US"netscape_challenge_bug", SSL_OP_NETSCAPE_CHALLENGE_BUG },
+  { US("netscape_challenge_bug"), SSL_OP_NETSCAPE_CHALLENGE_BUG },
 #endif
 #ifdef SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG
-  { US"netscape_reuse_cipher_change_bug", SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG },
+  { US("netscape_reuse_cipher_change_bug"), SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG },
 #endif
 #ifdef SSL_OP_NO_ANTI_REPLAY
-  { US"no_anti_replay", SSL_OP_NO_ANTI_REPLAY },
+  { US("no_anti_replay"), SSL_OP_NO_ANTI_REPLAY },
 #endif
 #ifdef SSL_OP_NO_COMPRESSION
-  { US"no_compression", SSL_OP_NO_COMPRESSION },
+  { US("no_compression"), SSL_OP_NO_COMPRESSION },
 #endif
 #ifdef SSL_OP_NO_ENCRYPT_THEN_MAC
-  { US"no_encrypt_then_mac", SSL_OP_NO_ENCRYPT_THEN_MAC },
+  { US("no_encrypt_then_mac"), SSL_OP_NO_ENCRYPT_THEN_MAC },
 #endif
 #ifdef SSL_OP_NO_RENEGOTIATION
-  { US"no_renegotiation", SSL_OP_NO_RENEGOTIATION },
+  { US("no_renegotiation"), SSL_OP_NO_RENEGOTIATION },
 #endif
 #ifdef SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION
-  { US"no_session_resumption_on_renegotiation", SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION },
+  { US("no_session_resumption_on_renegotiation"), SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION },
 #endif
 #ifdef SSL_OP_NO_SSLv2
-  { US"no_sslv2", SSL_OP_NO_SSLv2 },
+  { US("no_sslv2"), SSL_OP_NO_SSLv2 },
 #endif
 #ifdef SSL_OP_NO_SSLv3
-  { US"no_sslv3", SSL_OP_NO_SSLv3 },
+  { US("no_sslv3"), SSL_OP_NO_SSLv3 },
 #endif
 #ifdef SSL_OP_NO_TICKET
-  { US"no_ticket", SSL_OP_NO_TICKET },
+  { US("no_ticket"), SSL_OP_NO_TICKET },
 #endif
 #ifdef SSL_OP_NO_TLSv1
-  { US"no_tlsv1", SSL_OP_NO_TLSv1 },
+  { US("no_tlsv1"), SSL_OP_NO_TLSv1 },
 #endif
 #ifdef SSL_OP_NO_TLSv1_1
 # if OPENSSL_VERSION_NUMBER < 0x30000000L
@@ -249,44 +249,44 @@ static exim_openssl_option exim_openssl_options[] = {
 #  endif
 # endif
 # ifndef NO_SSL_OP_NO_TLSv1_1
-  { US"no_tlsv1_1", SSL_OP_NO_TLSv1_1 },
+  { US("no_tlsv1_1"), SSL_OP_NO_TLSv1_1 },
 # endif
 #endif
 #ifdef SSL_OP_NO_TLSv1_2
-  { US"no_tlsv1_2", SSL_OP_NO_TLSv1_2 },
+  { US("no_tlsv1_2"), SSL_OP_NO_TLSv1_2 },
 #endif
 #ifdef SSL_OP_NO_TLSv1_3
-  { US"no_tlsv1_3", SSL_OP_NO_TLSv1_3 },
+  { US("no_tlsv1_3"), SSL_OP_NO_TLSv1_3 },
 #endif
 #ifdef SSL_OP_PRIORITIZE_CHACHA
-  { US"prioritize_chacha", SSL_OP_PRIORITIZE_CHACHA },
+  { US("prioritize_chacha"), SSL_OP_PRIORITIZE_CHACHA },
 #endif
 #ifdef SSL_OP_SAFARI_ECDHE_ECDSA_BUG
-  { US"safari_ecdhe_ecdsa_bug", SSL_OP_SAFARI_ECDHE_ECDSA_BUG },
+  { US("safari_ecdhe_ecdsa_bug"), SSL_OP_SAFARI_ECDHE_ECDSA_BUG },
 #endif
 #ifdef SSL_OP_SINGLE_DH_USE
-  { US"single_dh_use", SSL_OP_SINGLE_DH_USE },
+  { US("single_dh_use"), SSL_OP_SINGLE_DH_USE },
 #endif
 #ifdef SSL_OP_SINGLE_ECDH_USE
-  { US"single_ecdh_use", SSL_OP_SINGLE_ECDH_USE },
+  { US("single_ecdh_use"), SSL_OP_SINGLE_ECDH_USE },
 #endif
 #ifdef SSL_OP_SSLEAY_080_CLIENT_DH_BUG
-  { US"ssleay_080_client_dh_bug", SSL_OP_SSLEAY_080_CLIENT_DH_BUG },
+  { US("ssleay_080_client_dh_bug"), SSL_OP_SSLEAY_080_CLIENT_DH_BUG },
 #endif
 #ifdef SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG
-  { US"sslref2_reuse_cert_type_bug", SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG },
+  { US("sslref2_reuse_cert_type_bug"), SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG },
 #endif
 #ifdef SSL_OP_TLS_BLOCK_PADDING_BUG
-  { US"tls_block_padding_bug", SSL_OP_TLS_BLOCK_PADDING_BUG },
+  { US("tls_block_padding_bug"), SSL_OP_TLS_BLOCK_PADDING_BUG },
 #endif
 #ifdef SSL_OP_TLS_D5_BUG
-  { US"tls_d5_bug", SSL_OP_TLS_D5_BUG },
+  { US("tls_d5_bug"), SSL_OP_TLS_D5_BUG },
 #endif
 #ifdef SSL_OP_TLS_ROLLBACK_BUG
-  { US"tls_rollback_bug", SSL_OP_TLS_ROLLBACK_BUG },
+  { US("tls_rollback_bug"), SSL_OP_TLS_ROLLBACK_BUG },
 #endif
 #ifdef SSL_OP_TLSEXT_PADDING
-  { US"tlsext_padding", SSL_OP_TLSEXT_PADDING },
+  { US("tlsext_padding"), SSL_OP_TLSEXT_PADDING },
 #endif
 };
 
@@ -307,25 +307,25 @@ for (struct exim_openssl_option * o = exim_openssl_options;
   /* Trailing X is workaround for problem with _OPT_OPENSSL_NO_TLSV1
   being a ".ifdef _OPT_OPENSSL_NO_TLSV1_3" match */
 
-  spf(buf, sizeof(buf), US"_OPT_OPENSSL_%T_X", o->name);
+  spf(buf, sizeof(buf), US("_OPT_OPENSSL_%T_X"), o->name);
   builtin_macro_create(buf);
   }
 
 # ifndef DISABLE_TLS_RESUME
-builtin_macro_create_var(US"_RESUME_DECODE", RESUME_DECODE_STRING );
+builtin_macro_create_var(US("_RESUME_DECODE"), RESUME_DECODE_STRING );
 # endif
 # ifdef SSL_OP_NO_TLSv1_3
-builtin_macro_create(US"_HAVE_TLS1_3");
+builtin_macro_create(US("_HAVE_TLS1_3"));
 # endif
 # ifdef OPENSSL_BAD_SRVR_OURCERT
-builtin_macro_create(US"_TLS_BAD_MULTICERT_IN_OURCERT");
+builtin_macro_create(US("_TLS_BAD_MULTICERT_IN_OURCERT"));
 # endif
 # ifdef EXIM_HAVE_OCSP
-builtin_macro_create(US"_HAVE_TLS_OCSP");
-builtin_macro_create(US"_HAVE_TLS_OCSP_LIST");
+builtin_macro_create(US("_HAVE_TLS_OCSP"));
+builtin_macro_create(US("_HAVE_TLS_OCSP_LIST"));
 # endif
 # ifdef EXIM_HAVE_ALPN
-builtin_macro_create(US"_HAVE_TLS_ALPN");
+builtin_macro_create(US("_HAVE_TLS_ALPN"));
 # endif
 }
 #else
@@ -343,7 +343,7 @@ typedef struct randstuff {
 
 static BOOL client_verify_callback_called = FALSE;
 static BOOL server_verify_callback_called = FALSE;
-static const uschar *sid_ctx = US"exim";
+static const uschar *sid_ctx = US("exim");
 
 /* We have three different contexts to care about.
 
@@ -498,7 +498,7 @@ tls_error(uschar * prefix, const host_item * host, uschar * msg, uschar ** errst
 if (!msg)
   {
   ERR_error_string_n(ERR_get_error(), ssl_errstring, sizeof(ssl_errstring));
-  msg = US ssl_errstring;
+  msg = US(ssl_errstring);
   }
 
 msg = string_sprintf("(%s): %s", prefix, msg);
@@ -521,9 +521,9 @@ if (!RAND_status()) return TRUE;
 
 gettimeofday(&r.tv, NULL);
 r.p = getpid();
-RAND_seed(US (&r), sizeof(r));
-RAND_seed(US big_buffer, big_buffer_size);
-if (addr) RAND_seed(US addr, sizeof(addr));
+RAND_seed(US(&r), sizeof(r));
+RAND_seed(US(big_buffer), big_buffer_size);
+if (addr) RAND_seed(US(addr), sizeof(addr));
 
 return RAND_status();
 }
@@ -581,17 +581,17 @@ uschar * dhexpanded;
 const char * pem;
 int dh_bitsize;
 
-if (!expand_check(dhparam, US"tls_dhparam", &dhexpanded, errstr))
+if (!expand_check(dhparam, US("tls_dhparam"), &dhexpanded, errstr))
   return FALSE;
 
 if (!dhexpanded || !*dhexpanded)
-  bio = BIO_new_mem_buf(CS std_dh_prime_default(), -1);
+  bio = BIO_new_mem_buf(CS(std_dh_prime_default()), -1);
 else if (dhexpanded[0] == '/')
   {
-  if (!(bio = BIO_new_file(CS dhexpanded, "r")))
+  if (!(bio = BIO_new_file(CS(dhexpanded), "r")))
     {
     tls_error(string_sprintf("could not read dhparams file %s", dhexpanded),
-          NULL, US strerror(errno), errstr);
+          NULL, US(strerror(errno)), errstr);
     return FALSE;
     }
   }
@@ -606,10 +606,10 @@ else
   if (!(pem = std_dh_prime_named(dhexpanded)))
     {
     tls_error(string_sprintf("Unknown standard DH prime \"%s\"", dhexpanded),
-        NULL, US strerror(errno), errstr);
+        NULL, US(strerror(errno)), errstr);
     return FALSE;
     }
-  bio = BIO_new_mem_buf(CS pem, -1);
+  bio = BIO_new_mem_buf(CS(pem), -1);
   }
 
 if (!(
@@ -659,7 +659,7 @@ if (dh_bitsize <= tls_dh_max_bits)
     {
     ERR_error_string_n(ERR_get_error(), ssl_errstring, sizeof(ssl_errstring));
     log_write(0, LOG_MAIN|LOG_PANIC, "TLS error (D-H param setting '%s'): %s",
-	dhexpanded ? dhexpanded : US"default", ssl_errstring);
+	dhexpanded ? dhexpanded : US("default"), ssl_errstring);
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
     /* EVP_PKEY_free(pkey);  crashes */
 #endif
@@ -667,12 +667,12 @@ if (dh_bitsize <= tls_dh_max_bits)
   else
     DEBUG(D_tls)
       debug_printf("Diffie-Hellman initialized from %s with %d-bit prime\n",
-	dhexpanded ? dhexpanded : US"default", dh_bitsize);
+	dhexpanded ? dhexpanded : US("default"), dh_bitsize);
   }
 else
   DEBUG(D_tls)
     debug_printf("dhparams '%s' %d bits, is > tls_dh_max_bits limit of %d\n",
-	dhexpanded ? dhexpanded : US"default", dh_bitsize, tls_dh_max_bits);
+	dhexpanded ? dhexpanded : US("default"), dh_bitsize, tls_dh_max_bits);
 
 #if OPENSSL_VERSION_NUMBER < 0x30000000L
 DH_free(dh);
@@ -730,7 +730,7 @@ DEBUG(D_tls)
 return TRUE;
 # else
 
-if (!expand_check(tls_eccurve, US"tls_eccurve", &exp_curve, errstr))
+if (!expand_check(tls_eccurve, US("tls_eccurve"), &exp_curve, errstr))
   return FALSE;
 if (!exp_curve || !*exp_curve)
   return TRUE;
@@ -747,7 +747,7 @@ if (Ustrcmp(exp_curve, "auto") == 0)
 #if OPENSSL_VERSION_NUMBER < 0x10002000L
   DEBUG(D_tls) debug_printf(
     "ECDH OpenSSL < 1.0.2: temp key parameter settings: overriding \"auto\" with \"prime256v1\"\n");
-  exp_curve = US"prime256v1";
+  exp_curve = US("prime256v1");
 #else
 # if defined SSL_CTRL_SET_ECDH_AUTO
   DEBUG(D_tls) debug_printf(
@@ -763,9 +763,9 @@ if (Ustrcmp(exp_curve, "auto") == 0)
   }
 
 DEBUG(D_tls) debug_printf("ECDH: curve '%s'\n", exp_curve);
-if (  (nid = OBJ_sn2nid       (CCS exp_curve)) == NID_undef
+if (  (nid = OBJ_sn2nid       (CCS(exp_curve))) == NID_undef
 #   ifdef EXIM_HAVE_OPENSSL_EC_NIST2NID
-   && (nid = EC_curve_nist2nid(CCS exp_curve)) == NID_undef
+   && (nid = EC_curve_nist2nid(CCS(exp_curve))) == NID_undef
 #   endif
    )
   {
@@ -779,7 +779,7 @@ if (  (nid = OBJ_sn2nid       (CCS exp_curve)) == NID_undef
   EC_KEY * ecdh;
   if (!(ecdh = EC_KEY_new_by_curve_name(nid)))
     {
-    tls_error(US"Unable to create ec curve", NULL, NULL, errstr);
+    tls_error(US("Unable to create ec curve"), NULL, NULL, errstr);
     return FALSE;
     }
 
@@ -869,22 +869,22 @@ X509_NAME * name;
 uschar * where;
 
 DEBUG(D_tls) debug_printf("TLS: generating selfsigned server cert\n");
-where = US"allocating pkey";
+where = US("allocating pkey");
 if (!(pkey = EVP_PKEY_new()))
   goto err;
 
-where = US"allocating cert";
+where = US("allocating cert");
 if (!(x509 = X509_new()))
   goto err;
 
-where = US"generating pkey";
+where = US("generating pkey");
 #if OPENSSL_VERSION_NUMBER < 0x30000000L
  {
   RSA * rsa;
   if (!(rsa = rsa_callback(NULL, 0, 2048)))
     goto err;
 
-  where = US"assigning pkey";
+  where = US("assigning pkey");
   if (!EVP_PKEY_assign_RSA(pkey, rsa))
     goto err;
  }
@@ -900,22 +900,22 @@ X509_set_pubkey(x509, pkey);
 
 name = X509_get_subject_name(x509);
 X509_NAME_add_entry_by_txt(name, "C",
-			  MBSTRING_ASC, CUS "UK", -1, -1, 0);
+			  MBSTRING_ASC, CUS("UK"), -1, -1, 0);
 X509_NAME_add_entry_by_txt(name, "O",
-			  MBSTRING_ASC, CUS "Exim Developers", -1, -1, 0);
+			  MBSTRING_ASC, CUS("Exim Developers"), -1, -1, 0);
 X509_NAME_add_entry_by_txt(name, "CN",
-			  MBSTRING_ASC, CUS smtp_active_hostname, -1, -1, 0);
+			  MBSTRING_ASC, CUS(smtp_active_hostname), -1, -1, 0);
 X509_set_issuer_name(x509, name);
 
-where = US"signing cert";
+where = US("signing cert");
 if (!X509_sign(x509, pkey, EVP_md5()))
   goto err;
 
-where = US"installing selfsign cert";
+where = US("installing selfsign cert");
 if (!SSL_CTX_use_certificate(sctx, x509))
   goto err;
 
-where = US"installing selfsign key";
+where = US("installing selfsign key");
 if (!SSL_CTX_use_PrivateKey(sctx, pkey))
   goto err;
 
@@ -958,17 +958,17 @@ DEBUG(D_tls)
   const uschar * str;
 
   if (where & SSL_ST_CONNECT)
-     str = US"SSL_connect";
+     str = US("SSL_connect");
   else if (where & SSL_ST_ACCEPT)
-     str = US"SSL_accept";
+     str = US("SSL_accept");
   else
-     str = US"SSL info (undefined)";
+     str = US("SSL info (undefined)");
 
   if (where & SSL_CB_LOOP)
      debug_printf("%s: %s\n", str, SSL_state_string_long(s));
   else if (where & SSL_CB_ALERT)
     debug_printf("SSL3 alert %s:%s:%s\n",
-	  str = where & SSL_CB_READ ? US"read" : US"write",
+	  str = where & SSL_CB_READ ? US("read") : US("write"),
 	  SSL_alert_type_string_long(ret), SSL_alert_desc_string_long(ret));
   else if (where & SSL_CB_EXIT)
     {
@@ -1018,7 +1018,7 @@ if (ev)
   old_cert = tlsp->peercert;
   tlsp->peercert = X509_dup(cert);
   /* NB we do not bother setting peerdn */
-  if ((yield = event_raise(ev, US"tls:cert", string_sprintf("%d", depth), &errno)))
+  if ((yield = event_raise(ev, US("tls:cert"), string_sprintf("%d", depth), &errno)))
     {
     log_write(0, LOG_MAIN, "[%s] %s verify denied by event-action: "
 		"depth=%d cert=%s: %s",
@@ -1083,7 +1083,7 @@ X509 * cert = X509_STORE_CTX_get_current_cert(x509ctx);
 int depth = X509_STORE_CTX_get_error_depth(x509ctx);
 uschar dn[256];
 
-if (!X509_NAME_oneline(X509_get_subject_name(cert), CS dn, sizeof(dn)))
+if (!X509_NAME_oneline(X509_get_subject_name(cert), CS(dn), sizeof(dn)))
   {
   DEBUG(D_tls) debug_printf("X509_NAME_oneline() error\n");
   log_write(0, LOG_MAIN, "[%s] SSL verify error: internal error",
@@ -1097,7 +1097,7 @@ if (preverify_ok == 0)
   {
   uschar * extra = verify_mode ? string_sprintf(" (during %c-verify for [%s])",
       *verify_mode, sender_host_address)
-    : US"";
+    : US("");
   log_write(0, LOG_MAIN, "[%s] SSL verify error%s: depth=%d error=%s cert=%s",
     tlsp == &tls_out ? deliver_host_address : sender_host_address,
     extra, depth,
@@ -1130,7 +1130,7 @@ else if (depth != 0)
     }
 #endif
 #ifndef DISABLE_EVENT
-    if (verify_event(tlsp, cert, depth, dn, calledp, optionalp, US"SSL"))
+    if (verify_event(tlsp, cert, depth, dn, calledp, optionalp, US("SSL")))
       return 0;				/* reject, with peercert set */
 #endif
   }
@@ -1155,7 +1155,7 @@ else
     uschar * name;
     int rc;
     while ((name = string_nextinlist(&list, &sep, NULL, 0)))
-      if ((rc = X509_check_host(cert, CCS name, 0,
+      if ((rc = X509_check_host(cert, CCS(name), 0,
 		  X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS
 		  | X509_CHECK_FLAG_SINGLE_LABEL_SUBDOMAINS,
 		  NULL)))
@@ -1176,7 +1176,7 @@ else
       uschar * extra = verify_mode
         ? string_sprintf(" (during %c-verify for [%s])",
 	  *verify_mode, sender_host_address)
-	: US"";
+	: US("");
       log_write(0, LOG_MAIN,
 	"[%s] SSL verify error%s: certificate name mismatch: DN=\"%s\" H=\"%s\"",
 	tlsp == &tls_out ? deliver_host_address : sender_host_address,
@@ -1195,7 +1195,7 @@ else
     }
 
 #ifndef DISABLE_EVENT
-  if (verify_event(tlsp, cert, depth, dn, calledp, optionalp, US"SSL"))
+  if (verify_event(tlsp, cert, depth, dn, calledp, optionalp, US("SSL")))
     return 0;				/* reject, with peercert set */
 #endif
 
@@ -1237,7 +1237,7 @@ int depth = X509_STORE_CTX_get_error_depth(x509ctx);
 BOOL dummy_called, optional = FALSE;
 #endif
 
-if (!X509_NAME_oneline(X509_get_subject_name(cert), CS dn, sizeof(dn)))
+if (!X509_NAME_oneline(X509_get_subject_name(cert), CS(dn), sizeof(dn)))
   {
   DEBUG(D_tls) debug_printf("X509_NAME_oneline() error\n");
   log_write(0, LOG_MAIN, "[%s] SSL verify error: internal error",
@@ -1251,7 +1251,7 @@ DEBUG(D_tls) debug_printf("verify_callback_client_dane: %s depth %d %s\n",
 
 #ifndef DISABLE_EVENT
   if (verify_event(&tls_out, cert, depth, dn,
-	  &dummy_called, &optional, US"DANE"))
+	  &dummy_called, &optional, US("DANE")))
     return 0;				/* reject, with peercert set */
 #endif
 
@@ -1320,7 +1320,7 @@ DEBUG(D_tls)
 if (!filename || !*filename) return;
 
 ERR_clear_error();
-if (!(bio = BIO_new_file(CS filename, "rb")))
+if (!(bio = BIO_new_file(CS(filename), "rb")))
   {
   log_write(0, LOG_MAIN|LOG_PANIC,
     "Failed to open OCSP response file \"%s\": %.100s",
@@ -1340,7 +1340,7 @@ if (is_pem)
     return;
     }
   freep = data;
-  resp = d2i_OCSP_RESPONSE(NULL, CUSS &data, len);
+  resp = d2i_OCSP_RESPONSE(NULL, CUSS(&data), len);
   OPENSSL_free(freep);
   }
 else
@@ -1411,7 +1411,7 @@ if ((i = OCSP_basic_verify(basic_response, sk, NULL, verify_flags)) < 0)
   DEBUG(D_tls)
     {
     ERR_error_string_n(ERR_get_error(), ssl_errstring, sizeof(ssl_errstring));
-    debug_printf("OCSP response verify failure: %s\n", US ssl_errstring);
+    debug_printf("OCSP response verify failure: %s\n", US(ssl_errstring));
     }
   goto bad;
   }
@@ -1465,7 +1465,7 @@ bad:
   if (f.running_in_test_harness)
     {
     extern char ** environ;
-    if (environ) for (uschar ** p = USS environ; *p; p++)
+    if (environ) for (uschar ** p = USS(environ); *p; p++)
       if (Ustrncmp(*p, "EXIM_TESTHARNESS_DISABLE_OCSPVALIDITYCHECK", 42) == 0)
 	{
 	DEBUG(D_tls) debug_printf("Supplying known bad OCSP response\n");
@@ -1495,7 +1495,7 @@ tls_add_certfile(SSL_CTX * sctx, exim_openssl_state_st * cbinfo, uschar * file,
   uschar ** errstr)
 {
 DEBUG(D_tls) debug_printf("tls_certificate file '%s'\n", file);
-if (!SSL_CTX_use_certificate_chain_file(sctx, CS file))
+if (!SSL_CTX_use_certificate_chain_file(sctx, CS(file)))
   return tls_error(string_sprintf(
     "SSL_CTX_use_certificate_chain_file file=%s", file),
       cbinfo->host, NULL, errstr);
@@ -1507,7 +1507,7 @@ tls_add_pkeyfile(SSL_CTX * sctx, exim_openssl_state_st * cbinfo, uschar * file,
   uschar ** errstr)
 {
 DEBUG(D_tls) debug_printf("tls_privatekey file  '%s'\n", file);
-if (!SSL_CTX_use_PrivateKey_file(sctx, CS file, SSL_FILETYPE_PEM))
+if (!SSL_CTX_use_PrivateKey_file(sctx, CS(file), SSL_FILETYPE_PEM))
   return tls_error(string_sprintf(
     "SSL_CTX_use_PrivateKey_file file=%s", file), cbinfo->host, NULL, errstr);
 return 0;
@@ -1547,13 +1547,13 @@ else
   int err;
 
   if ( !reexpand_tls_files_for_sni
-     && (  Ustrstr(state->certificate, US"tls_sni")
-	|| Ustrstr(state->certificate, US"tls_in_sni")
-	|| Ustrstr(state->certificate, US"tls_out_sni")
+     && (  Ustrstr(state->certificate, US("tls_sni"))
+	|| Ustrstr(state->certificate, US("tls_in_sni"))
+	|| Ustrstr(state->certificate, US("tls_out_sni"))
      )  )
     reexpand_tls_files_for_sni = TRUE;
 
-  if (!expand_check(state->certificate, US"tls_certificate", &expanded, errstr))
+  if (!expand_check(state->certificate, US("tls_certificate"), &expanded, errstr))
     return DEFER;
 
   if (expanded)
@@ -1569,7 +1569,7 @@ else
       BOOL fmt_pem = FALSE;
 
       if (olist)
-	if (!expand_check(olist, US"tls_ocsp_file", USS &olist, errstr))
+	if (!expand_check(olist, US("tls_ocsp_file"), USS(&olist), errstr))
 	  return DEFER;
       if (olist && !*olist)
 	olist = NULL;
@@ -1601,12 +1601,12 @@ else
 	if (olist)
 	  if ((ofile = string_nextinlist(&olist, &osep, NULL, 0)))
 	    {
-	    if (Ustrncmp(ofile, US"PEM ", 4) == 0)
+	    if (Ustrncmp(ofile, US("PEM "), 4) == 0)
 	      {
 	      fmt_pem = TRUE;
 	      ofile += 4;
 	      }
-	    else if (Ustrncmp(ofile, US"DER ", 4) == 0)
+	    else if (Ustrncmp(ofile, US("DER "), 4) == 0)
 	      {
 	      fmt_pem = FALSE;
 	      ofile += 4;
@@ -1623,7 +1623,7 @@ else
 	return err;
 
   if (  state->privatekey
-     && !expand_check(state->privatekey, US"tls_privatekey", &expanded, errstr))
+     && !expand_check(state->privatekey, US("tls_privatekey"), &expanded, errstr))
     return DEFER;
 
   /* If expansion was forced to fail, key_expanded will be NULL. If the result
@@ -1675,8 +1675,8 @@ server_load_ciphers(SSL_CTX * ctx, exim_openssl_state_st * state,
   uschar * ciphers, uschar ** errstr)
 {
 DEBUG(D_tls) debug_printf("required ciphers: %s\n", ciphers);
-if (!SSL_CTX_set_cipher_list(ctx, CS ciphers))
-  return tls_error(US"SSL_CTX_set_cipher_list", NULL, NULL, errstr);
+if (!SSL_CTX_set_cipher_list(ctx, CS(ciphers)))
+  return tls_error(US("SSL_CTX_set_cipher_list"), NULL, NULL, errstr);
 state->server_cipher_list = ciphers;
 return OK;
 }
@@ -1692,7 +1692,7 @@ if (!(ctx = SSL_CTX_new(host ? TLS_client_method() : TLS_server_method())))
 #else
 if (!(ctx = SSL_CTX_new(host ? SSLv23_client_method() : SSLv23_server_method())))
 #endif
-  return tls_error(US"SSL_CTX_new", host, NULL, errstr);
+  return tls_error(US("SSL_CTX_new"), host, NULL, errstr);
 
 /* Set up the information callback, which outputs if debugging is at a suitable
 level. */
@@ -1804,7 +1804,7 @@ if (  opt_set_and_noexpand(tls_verify_certificates)
   {
   /* Watch the default dir also as they are always included */
 
-  if (  tls_set_watch(CUS X509_get_default_cert_file(), FALSE)
+  if (  tls_set_watch(CUS(X509_get_default_cert_file()), FALSE)
      && tls_set_watch(tls_verify_certificates, FALSE)
      && tls_set_watch(tls_crl, FALSE))
     {
@@ -1893,7 +1893,7 @@ if (  opt_set_and_noexpand(ob->tls_verify_certificates)
    && opt_unset_or_noexpand(ob->tls_crl))
   {
   if (  !watch
-     ||    tls_set_watch(CUS X509_get_default_cert_file(), FALSE)
+     ||    tls_set_watch(CUS(X509_get_default_cert_file()), FALSE)
         && tls_set_watch(ob->tls_verify_certificates, FALSE)
 	&& tls_set_watch(ob->tls_crl, FALSE)
      )
@@ -1964,7 +1964,7 @@ for (int i= 0; i < sk_X509_OBJECT_num(roots); i++)
   if(tmp_obj->type == X509_LU_X509)
     {
     X509_NAME * sn = X509_get_subject_name(tmp_obj->data.x509);
-    if (X509_NAME_oneline(sn, CS name, sizeof(name)))
+    if (X509_NAME_oneline(sn, CS(name), sizeof(name)))
       {
       name[sizeof(name)-1] = '\0';
       debug_printf(" %s\n", name);
@@ -2020,7 +2020,7 @@ exim_tk.aes_cipher = EVP_aes_256_cbc();
 # if OPENSSL_VERSION_NUMBER < 0x30000000L
 exim_tk.hmac_hash = EVP_sha256();
 # else
-exim_tk.hmac_hashname = US "sha256";
+exim_tk.hmac_hashname = US("sha256");
 # endif
 exim_tk.expire = t + ssl_session_timeout;
 exim_tk.renew = t + ssl_session_timeout/2;
@@ -2061,7 +2061,7 @@ tk_hmac_init(
   OSSL_PARAM params[3];
   uschar * hk = string_copy(key->hmac_hashname);	/* need nonconst */
   params[0] = OSSL_PARAM_construct_octet_string("key", key->hmac_key, sizeof(key->hmac_key));
-  params[1] = OSSL_PARAM_construct_utf8_string("digest", CS hk, 0);
+  params[1] = OSSL_PARAM_construct_utf8_string("digest", CS(hk), 0);
   params[2] = OSSL_PARAM_construct_end();
   if (EVP_MAC_CTX_set_params(hctx, params) == 0)
     {
@@ -2191,7 +2191,7 @@ DEBUG(D_tls) debug_printf("Received TLS SNI \"%s\"%s\n", servername,
 
 /* Make the extension value available for expansion */
 store_pool = POOL_PERM;
-tls_in.sni = string_copy_taint(US servername, GET_TAINTED);
+tls_in.sni = string_copy_taint(US(servername), GET_TAINTED);
 store_pool = old_pool;
 
 if (!reexpand_tls_files_for_sni)
@@ -2223,7 +2223,7 @@ if (  !init_dh(server_sni, state->dhparam, &dummy_errstr)
   goto bad;
 
 if (  state->server_cipher_list
-   && !SSL_CTX_set_cipher_list(server_sni, CS state->server_cipher_list))
+   && !SSL_CTX_set_cipher_list(server_sni, CS(state->server_cipher_list)))
   goto bad;
 
 #ifndef DISABLE_OCSP
@@ -2236,7 +2236,7 @@ if (state->u_ocsp.server.file)
 
   {
   uschar * expcerts;
-  if (  !expand_check(tls_verify_certificates, US"tls_verify_certificates",
+  if (  !expand_check(tls_verify_certificates, US("tls_verify_certificates"),
 		  &expcerts, &dummy_errstr)
      || (rc = setup_certs(server_sni, expcerts, tls_crl, NULL,
 			&dummy_errstr)) != OK)
@@ -2495,10 +2495,10 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
 	tls_out.ocsp = OCSP_FAILED;
 	if (LOGGING(tls_cipher))
 	  {
-	  const uschar * errstr = CUS ERR_reason_error_string(ERR_peek_error());
+	  const uschar * errstr = CUS(ERR_reason_error_string(ERR_peek_error()));
 	  static uschar peerdn[256];
 	  X509_NAME_oneline(X509_get_subject_name(SSL_get_peer_certificate(ssl)),
-						  CS peerdn, sizeof(peerdn));
+						  CS(peerdn), sizeof(peerdn));
 	  log_write(0, LOG_MAIN,
 		"[%s] %s Received TLS cert (DN: '%.*s') status response, "
 		"itself unverifiable: %s",
@@ -2594,7 +2594,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
   good:
     {
     uschar * s = NULL;
-    int len = (int) BIO_get_mem_data(bp, CSS &s);
+    int len = (int) BIO_get_mem_data(bp, CSS(&s));
     if (len > 0) debug_printf("%.*s", len, s);
     }
     BIO_free(bp);
@@ -2680,8 +2680,8 @@ Although we likely called this before, at daemon startup, this is a chance
 to mix in further variable info (time, pid) if needed. */
 
 if (!lib_rand_init(addr))
-  return tls_error(US"RAND_status", host,
-    US"unable to seed random number generator", errstr);
+  return tls_error(US("RAND_status"), host,
+    US("unable to seed random number generator"), errstr);
 
 /* Apply administrator-supplied work-arounds.
 Historically we applied just one requested option,
@@ -2694,7 +2694,7 @@ availability of the option value macros from OpenSSL.  */
 
 if (!init_options)
   if (!tls_openssl_options_parse(openssl_options, &init_options))
-    return tls_error(US"openssl_options parsing failed", host, NULL, errstr);
+    return tls_error(US("openssl_options parsing failed"), host, NULL, errstr);
 
 /* Create a context.
 The OpenSSL docs in 1.0.1b have not been updated to clarify TLS variant
@@ -2814,7 +2814,7 @@ if (!host)		/* server */
   if (tls_alpn && *tls_alpn)
     {
     uschar * exp_alpn;
-    if (  expand_check(tls_alpn, US"tls_alpn", &exp_alpn, errstr)
+    if (  expand_check(tls_alpn, US("tls_alpn"), &exp_alpn, errstr)
        && *exp_alpn && !isblank(*exp_alpn))
       {
       tls_alpn = exp_alpn;	/* subprocess so ok to overwrite */
@@ -2901,7 +2901,7 @@ static const uschar *
 cipher_stdname_ssl(SSL * ssl)
 {
 #ifdef EXIM_HAVE_OPENSSL_CIPHER_STD_NAME
-return CUS SSL_CIPHER_standard_name(SSL_get_current_cipher(ssl));
+return CUS(SSL_CIPHER_standard_name(SSL_get_current_cipher(ssl)));
 #else
 ushort id = 0xffff & SSL_CIPHER_get_id(SSL_get_current_cipher(ssl));
 return cipher_stdname(id >> 8, id & 0xff);
@@ -2916,11 +2916,11 @@ uschar * s, * p;
 int pool = store_pool;
 
 store_pool = POOL_PERM;
-s = string_copy(US SSL_get_version(ssl));
+s = string_copy(US(SSL_get_version(ssl)));
 store_pool = pool;
 if ((p = Ustrchr(s, 'v')))	/* TLSv1.2 -> TLS1.2 */
   for (;; p++) if (!(*p = p[1])) break;
-return CUS s;
+return CUS(s);
 }
 
 
@@ -2939,7 +2939,7 @@ if (!tlsp->peercert)
   tlsp->peercert = SSL_get_peer_certificate(ssl);
 /* Beware anonymous ciphers which lead to server_cert being NULL */
 if (tlsp->peercert)
-  if (!X509_NAME_oneline(X509_get_subject_name(tlsp->peercert), CS peerdn, siz))
+  if (!X509_NAME_oneline(X509_get_subject_name(tlsp->peercert), CS(peerdn), siz))
     { DEBUG(D_tls) debug_printf("X509_NAME_oneline() error\n"); }
   else
     {
@@ -2991,7 +2991,7 @@ if (verify_stack)
 else
   verify_stack = sk_X509_new_null();
 
-if (!(bp = BIO_new_file(CS file, "r"))) return FALSE;
+if (!(bp = BIO_new_file(CS(file), "r"))) return FALSE;
 for (X509 * x; x = PEM_read_bio_X509(bp, NULL, 0, NULL); )
   sk_X509_push(verify_stack, x);
 BIO_free(bp);
@@ -3021,7 +3021,7 @@ setup_certs(SSL_CTX *sctx, uschar *certs, uschar *crl, host_item *host,
 {
 uschar *expcerts, *expcrl;
 
-if (!expand_check(certs, US"tls_verify_certificates", &expcerts, errstr))
+if (!expand_check(certs, US("tls_verify_certificates"), &expcerts, errstr))
   return DEFER;
 DEBUG(D_tls) debug_printf("tls_verify_certificates: %s\n", expcerts);
 
@@ -3031,7 +3031,7 @@ if (expcerts && *expcerts)
   CA bundle. Then add the ones specified in the config, if any. */
 
   if (!SSL_CTX_set_default_verify_paths(sctx))
-    return tls_error(US"SSL_CTX_set_default_verify_paths", host, NULL, errstr);
+    return tls_error(US("SSL_CTX_set_default_verify_paths"), host, NULL, errstr);
 
   if (Ustrcmp(expcerts, "system") != 0 && Ustrncmp(expcerts, "system,", 7) != 0)
     {
@@ -3084,8 +3084,8 @@ This is inconsistent with the need to verify the OCSP proof of the server cert.
       says no certificate was supplied).  But this is better. */
 
       if (  (!file || statbuf.st_size > 0)
-         && !SSL_CTX_load_verify_locations(sctx, CS file, CS dir))
-	  return tls_error(US"SSL_CTX_load_verify_locations",
+         && !SSL_CTX_load_verify_locations(sctx, CS(file), CS(dir)))
+	  return tls_error(US("SSL_CTX_load_verify_locations"),
 			    host, NULL, errstr);
 
       /* On the server load the list of CAs for which we will accept certs, for
@@ -3100,7 +3100,7 @@ This is inconsistent with the need to verify the OCSP proof of the server cert.
 
       if (file)
 	{
-	STACK_OF(X509_NAME) * names = SSL_load_client_CA_file(CS file);
+	STACK_OF(X509_NAME) * names = SSL_load_client_CA_file(CS(file));
 	int i = sk_X509_NAME_num(names);
 
 	if (!host) SSL_CTX_set_client_CA_list(sctx, names);
@@ -3127,7 +3127,7 @@ This is inconsistent with the need to verify the OCSP proof of the server cert.
   OpenSSL will then handle the verify against CA certs and CRLs by
   itself in the verify callback." */
 
-  if (!expand_check(crl, US"tls_crl", &expcrl, errstr)) return DEFER;
+  if (!expand_check(crl, US("tls_crl"), &expcrl, errstr)) return DEFER;
   if (expcrl && *expcrl)
     {
     struct stat statbufcrl;
@@ -3154,8 +3154,8 @@ This is inconsistent with the need to verify the OCSP proof of the server cert.
         dir = NULL;
         DEBUG(D_tls) debug_printf("SSL CRL value is a file %s\n", file);
         }
-      if (X509_STORE_load_locations(cvstore, CS file, CS dir) == 0)
-        return tls_error(US"X509_STORE_load_locations", host, NULL, errstr);
+      if (X509_STORE_load_locations(cvstore, CS(file), CS(dir)) == 0)
+        return tls_error(US("X509_STORE_load_locations"), host, NULL, errstr);
 
       /* setting the flags to check against the complete crl chain */
 
@@ -3180,7 +3180,7 @@ tls_dump_keylog(SSL * ssl)
   uschar * s = NULL;
   int len;
   SSL_SESSION_print_keylog(bp, SSL_get_session(ssl));
-  len = (int) BIO_get_mem_data(bp, CSS &s);
+  len = (int) BIO_get_mem_data(bp, CSS(&s));
   if (len > 0) debug_printf("%.*s", len, s);
   BIO_free(bp);
 #endif
@@ -3226,7 +3226,7 @@ if (len > 0)
   {
   int old_pool = store_pool;
   store_pool = POOL_PERM;
-    tlsp->channelbinding = b64encode_taint(CUS s, (int)len, taintval);
+    tlsp->channelbinding = b64encode_taint(CUS(s), (int)len, taintval);
   store_pool = old_pool;
   DEBUG(D_tls) debug_printf("Have channel bindings cached for possible auth usage %p %p\n", tlsp->channelbinding, tlsp);
   }
@@ -3263,7 +3263,7 @@ static uschar peerdn[256];
 
 if (tls_in.active.sock >= 0)
   {
-  tls_error(US"STARTTLS received after TLS started", NULL, US"", errstr);
+  tls_error(US("STARTTLS received after TLS started"), NULL, US(""), errstr);
   smtp_printf("554 Already in TLS\r\n", FALSE);
   return FAIL;
   }
@@ -3292,7 +3292,7 @@ if (state_server.lib_state.pri_string)
   { DEBUG(D_tls) debug_printf("TLS: cipher list was preloaded\n"); }
 else 
   {
-  if (!expand_check(tls_require_ciphers, US"tls_require_ciphers", &expciphers, errstr))
+  if (!expand_check(tls_require_ciphers, US("tls_require_ciphers"), &expciphers, errstr))
     return FAIL;
 
   if (expciphers)
@@ -3321,7 +3321,7 @@ else
 
  {
   uschar * expcerts;
-  if (!expand_check(tls_verify_certificates, US"tls_verify_certificates",
+  if (!expand_check(tls_verify_certificates, US("tls_verify_certificates"),
 		    &expcerts, errstr))
     return DEFER;
   DEBUG(D_tls) debug_printf("tls_verify_certificates: %s\n", expcerts);
@@ -3359,7 +3359,7 @@ SSL_CTX_set_num_tickets(ctx, 0);	/* send no TLS1.3 stateful-tickets */
 /* Prepare for new connection */
 
 if (!(ssl = SSL_new(ctx)))
-  return tls_error(US"SSL_new", NULL, NULL, errstr);
+  return tls_error(US("SSL_new"), NULL, NULL, errstr);
 state_server.lib_state.lib_ssl = ssl;
 
 /* Warning: we used to SSL_clear(ssl) here, it was removed.
@@ -3413,9 +3413,9 @@ if (rc <= 0)
 
     case SSL_ERROR_ZERO_RETURN:
       DEBUG(D_tls) debug_printf("Got SSL_ERROR_ZERO_RETURN\n");
-      (void) tls_error(US"SSL_accept", NULL, sigalrm_seen ? US"timed out" : NULL, errstr);
+      (void) tls_error(US("SSL_accept"), NULL, sigalrm_seen ? US("timed out") : NULL, errstr);
 #ifndef DISABLE_EVENT
-      (void) event_raise(event_action, US"tls:fail:connect", *errstr, NULL);
+      (void) event_raise(event_action, US("tls:fail:connect"), *errstr, NULL);
 #endif
       if (SSL_get_shutdown(ssl) == SSL_RECEIVED_SHUTDOWN)
 	SSL_shutdown(ssl);
@@ -3434,9 +3434,9 @@ if (rc <= 0)
 #endif
          || r == SSL_R_UNKNOWN_PROTOCOL || r == SSL_R_UNSUPPORTED_PROTOCOL)
 	s = string_sprintf("(%s)", SSL_get_version(ssl));
-      (void) tls_error(US"SSL_accept", NULL, sigalrm_seen ? US"timed out" : s, errstr);
+      (void) tls_error(US("SSL_accept"), NULL, sigalrm_seen ? US("timed out") : s, errstr);
 #ifndef DISABLE_EVENT
-      (void) event_raise(event_action, US"tls:fail:connect", *errstr, NULL);
+      (void) event_raise(event_action, US("tls:fail:connect"), *errstr, NULL);
 #endif
       return FAIL;
       }
@@ -3447,20 +3447,20 @@ if (rc <= 0)
 	{
 	if (!errno)
 	  {
-	  *errstr = US"SSL_accept: TCP connection closed by peer";
+	  *errstr = US("SSL_accept: TCP connection closed by peer");
 #ifndef DISABLE_EVENT
-	  (void) event_raise(event_action, US"tls:fail:connect", *errstr, NULL);
+	  (void) event_raise(event_action, US("tls:fail:connect"), *errstr, NULL);
 #endif
 	  return FAIL;
 	  }
 	DEBUG(D_tls) debug_printf(" - syscall %s\n", strerror(errno));
 	}
-      (void) tls_error(US"SSL_accept", NULL,
-		      sigalrm_seen ? US"timed out"
+      (void) tls_error(US("SSL_accept"), NULL,
+		      sigalrm_seen ? US("timed out")
 		      : ERR_peek_error() ? NULL : string_sprintf("ret %d", error),
 		      errstr);
 #ifndef DISABLE_EVENT
-      (void) event_raise(event_action, US"tls:fail:connect", *errstr, NULL);
+      (void) event_raise(event_action, US("tls:fail:connect"), *errstr, NULL);
 #endif
       return FAIL;
     }
@@ -3487,7 +3487,7 @@ else if (!server_seen_alpn)
     {
     /* We'd like to send a definitive Alert but OpenSSL provides no facility */
     SSL_shutdown(ssl);
-    tls_error(US"handshake", NULL, US"ALPN required but not negotiated", errstr);
+    tls_error(US("handshake"), NULL, US("ALPN required but not negotiated"), errstr);
     return FAIL;
     }
   else
@@ -3521,7 +3521,7 @@ tls_in.cipher_stdname = cipher_stdname_ssl(ssl);
 DEBUG(D_tls)
   {
   uschar buf[2048];
-  if (SSL_get_shared_ciphers(ssl, CS buf, sizeof(buf)))
+  if (SSL_get_shared_ciphers(ssl, CS(buf), sizeof(buf)))
     debug_printf("Shared ciphers: %s\n", buf);
 
   tls_dump_keylog(ssl);
@@ -3587,17 +3587,17 @@ if (  (  (  !ob->tls_verify_hosts || !ob->tls_verify_hosts
 	 || Ustrcmp(ob->tls_try_verify_hosts, ":") == 0
          )
       )
-   || verify_check_given_host(CUSS &ob->tls_verify_hosts, host) == OK
+   || verify_check_given_host(CUSS(&ob->tls_verify_hosts), host) == OK
    )
   client_verify_optional = FALSE;
-else if (verify_check_given_host(CUSS &ob->tls_try_verify_hosts, host) == OK)
+else if (verify_check_given_host(CUSS(&ob->tls_try_verify_hosts), host) == OK)
   client_verify_optional = TRUE;
 else
   return OK;
 
  {
   uschar * expcerts;
-  if (!expand_check(ob->tls_verify_certificates, US"tls_verify_certificates",
+  if (!expand_check(ob->tls_verify_certificates, US("tls_verify_certificates"),
 		    &expcerts, errstr))
     return DEFER;
   DEBUG(D_tls) debug_printf("tls_verify_certificates: %s\n", expcerts);
@@ -3612,7 +3612,7 @@ else
     setup_cert_verify(ctx, client_verify_optional, verify_callback_client);
  }
 
-if (verify_check_given_host(CUSS &ob->tls_verify_cert_hostnames, host) == OK)
+if (verify_check_given_host(CUSS(&ob->tls_verify_cert_hostnames), host) == OK)
   {
   state->verify_cert_hostnames =
 #ifdef SUPPORT_I18N
@@ -3632,11 +3632,11 @@ static int
 dane_tlsa_load(SSL * ssl, host_item * host, dns_answer * dnsa, uschar ** errstr)
 {
 dns_scan dnss;
-const char * hostnames[2] = { CS host->name, NULL };
+const char * hostnames[2] = { CS(host->name), NULL };
 int found = 0;
 
 if (DANESSL_init(ssl, NULL, hostnames) != 1)
-  return tls_error(US"hostnames load", host, NULL, errstr);
+  return tls_error(US("hostnames load"), host, NULL, errstr);
 
 for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
      rr = dns_next_rr(dnsa, &dnss, RESET_NEXT)
@@ -3666,7 +3666,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
   switch (DANESSL_add_tlsa(ssl, usage, selector, mdname, p, rr->size - 3))
     {
     default:
-      return tls_error(US"tlsa load", host, NULL, errstr);
+      return tls_error(US("tlsa load"), host, NULL, errstr);
     case 0:	/* action not taken */
     case 1:	break;
     }
@@ -3701,7 +3701,7 @@ if (tlsp->host_resumable)
   tlsp->resumption |= RESUME_CLIENT_REQUESTED;
   DEBUG(D_tls)
     debug_printf("checking for resumable session for %s\n", tlsp->resume_index);
-  if ((dbm_file = dbfn_open(US"tls", O_RDWR, &dbblock, FALSE, FALSE)))
+  if ((dbm_file = dbfn_open(US("tls"), O_RDWR, &dbblock, FALSE, FALSE)))
     {
     if ((dt = dbfn_read_with_length(dbm_file, tlsp->resume_index, &len)))
       {
@@ -3783,7 +3783,7 @@ if (SSL_SESSION_is_resumable(ss)) 	/* 1.1.1 */
   dt->ocsp = tlsp->ocsp;
   (void) i2d_SSL_SESSION(ss, &s);		/* s gets bumped to end */
 
-  if ((dbm_file = dbfn_open(US"tls", O_RDWR, &dbblock, FALSE, FALSE)))
+  if ((dbm_file = dbfn_open(US("tls"), O_RDWR, &dbblock, FALSE, FALSE)))
     {
     dbfn_write(dbm_file, tlsp->resume_index, dt, dlen);
     dbfn_close(dbm_file);
@@ -3824,7 +3824,7 @@ if (tlsp->host_resumable)
   tls_exdata_idx = SSL_get_ex_new_index(0, 0, 0, 0, 0);
   if (!SSL_set_ex_data(ssl, tls_exdata_idx, client_static_state))
     {
-    tls_error(US"set ex_data", host, NULL, errstr);
+    tls_error(US("set ex_data"), host, NULL, errstr);
     return FALSE;
     }
   debug_printf("tls_exdata_idx %d cbinfo %p\n", tls_exdata_idx, client_static_state);
@@ -3862,7 +3862,7 @@ tls_alpn_plist(uschar ** tls_alpn, const uschar ** plist, unsigned * plen,
 {
 uschar * exp_alpn;
 
-if (!expand_check(*tls_alpn, US"tls_alpn", &exp_alpn, errstr))
+if (!expand_check(*tls_alpn, US("tls_alpn"), &exp_alpn, errstr))
   return FALSE;
 *tls_alpn = exp_alpn;
 
@@ -3950,21 +3950,21 @@ tlsp->tlsa_usage = 0;
     {
     /* Unchanged from default.  Use a safer one under DANE */
     request_ocsp = TRUE;
-    ob->hosts_request_ocsp = US"${if or { {= {0}{$tls_out_tlsa_usage}} "
+    ob->hosts_request_ocsp = US("${if or { {= {0}{$tls_out_tlsa_usage}} ")
 				      "   {= {4}{$tls_out_tlsa_usage}} } "
 				 " {*}{}}";
     }
 # endif
 
   if ((require_ocsp =
-	verify_check_given_host(CUSS &ob->hosts_require_ocsp, host) == OK))
+	verify_check_given_host(CUSS(&ob->hosts_require_ocsp), host) == OK))
     request_ocsp = TRUE;
   else
 # ifdef SUPPORT_DANE
     if (!request_ocsp)
 # endif
       request_ocsp =
-	verify_check_given_host(CUSS &ob->hosts_request_ocsp, host) == OK;
+	verify_check_given_host(CUSS(&ob->hosts_request_ocsp), host) == OK;
   }
 #endif
 
@@ -3987,7 +3987,7 @@ if (conn_args->dane)
   /* We fall back to tls_require_ciphers if unset, empty or forced failure, but
   other failures should be treated as problems. */
   if (ob->dane_require_tls_ciphers &&
-      !expand_check(ob->dane_require_tls_ciphers, US"dane_require_tls_ciphers",
+      !expand_check(ob->dane_require_tls_ciphers, US("dane_require_tls_ciphers"),
         &expciphers, errstr))
     return FALSE;
   if (expciphers && *expciphers == '\0')
@@ -3998,7 +3998,7 @@ if (conn_args->dane)
 #endif
 if (!expciphers)
   {
-  if (!expand_check(ob->tls_require_ciphers, US"tls_require_ciphers",
+  if (!expand_check(ob->tls_require_ciphers, US("tls_require_ciphers"),
       &expciphers, errstr))
     return FALSE;
 
@@ -4012,9 +4012,9 @@ if (!expciphers)
 if (expciphers)
   {
   DEBUG(D_tls) debug_printf("required ciphers: %s\n", expciphers);
-  if (!SSL_CTX_set_cipher_list(exim_client_ctx->ctx, CS expciphers))
+  if (!SSL_CTX_set_cipher_list(exim_client_ctx->ctx, CS(expciphers)))
     {
-    tls_error(US"SSL_CTX_set_cipher_list", host, NULL, errstr);
+    tls_error(US("SSL_CTX_set_cipher_list"), host, NULL, errstr);
     return FALSE;
     }
   }
@@ -4028,12 +4028,12 @@ if (conn_args->dane)
 
   if (!DANESSL_library_init())
     {
-    tls_error(US"library init", host, NULL, errstr);
+    tls_error(US("library init"), host, NULL, errstr);
     return FALSE;
     }
   if (DANESSL_CTX_init(exim_client_ctx->ctx) <= 0)
     {
-    tls_error(US"context init", host, NULL, errstr);
+    tls_error(US("context init"), host, NULL, errstr);
     return FALSE;
     }
   }
@@ -4047,7 +4047,7 @@ if (tls_client_basic_ctx_init(exim_client_ctx->ctx, host, ob,
 
 if (ob->tls_sni)
   {
-  if (!expand_check(ob->tls_sni, US"tls_sni", &tlsp->sni, errstr))
+  if (!expand_check(ob->tls_sni, US("tls_sni"), &tlsp->sni, errstr))
     return FALSE;
   if (!tlsp->sni)
     { DEBUG(D_tls) debug_printf("Setting TLS SNI forced to fail, not sending\n"); }
@@ -4074,7 +4074,7 @@ if (ob->tls_alpn)
   if (plist)
     if (SSL_CTX_set_alpn_protos(exim_client_ctx->ctx, plist, plen) != 0)
       {
-      tls_error(US"alpn init", host, NULL, errstr);
+      tls_error(US("alpn init"), host, NULL, errstr);
       return FALSE;
       }
     else
@@ -4091,14 +4091,14 @@ will be very low. */
 
 if (!conn_args->have_lbserver)	/* wanted for tls_client_resmption_key() */
   { DEBUG(D_tls) debug_printf("resumption not supported on continued-connection\n"); }
-else if (verify_check_given_host(CUSS &ob->tls_resumption_hosts, host) == OK)
+else if (verify_check_given_host(CUSS(&ob->tls_resumption_hosts), host) == OK)
   tls_client_ctx_resume_prehandshake(exim_client_ctx, conn_args, tlsp, ob);
 #endif
 
 
 if (!(exim_client_ctx->ssl = SSL_new(exim_client_ctx->ctx)))
   {
-  tls_error(US"SSL_new", host, NULL, errstr);
+  tls_error(US("SSL_new"), host, NULL, errstr);
   return FALSE;
   }
 SSL_set_session_id_context(exim_client_ctx->ssl, sid_ctx, Ustrlen(sid_ctx));
@@ -4126,15 +4126,15 @@ does OCSP stapling we will get the callback (set in tls_init()) */
 if (request_ocsp)
   {
   const uschar * s;
-  if (  ((s = ob->hosts_require_ocsp) && Ustrstr(s, US"tls_out_tlsa_usage"))
-     || ((s = ob->hosts_request_ocsp) && Ustrstr(s, US"tls_out_tlsa_usage"))
+  if (  ((s = ob->hosts_require_ocsp) && Ustrstr(s, US("tls_out_tlsa_usage")))
+     || ((s = ob->hosts_request_ocsp) && Ustrstr(s, US("tls_out_tlsa_usage")))
      )
     {	/* Re-eval now $tls_out_tlsa_usage is populated.  If
     	this means we avoid the OCSP request, we wasted the setup
 	cost in tls_init(). */
-    require_ocsp = verify_check_given_host(CUSS &ob->hosts_require_ocsp, host) == OK;
+    require_ocsp = verify_check_given_host(CUSS(&ob->hosts_require_ocsp), host) == OK;
     request_ocsp = require_ocsp
-      || verify_check_given_host(CUSS &ob->hosts_request_ocsp, host) == OK;
+      || verify_check_given_host(CUSS(&ob->hosts_request_ocsp), host) == OK;
     }
   }
 # endif
@@ -4172,7 +4172,7 @@ if (conn_args->dane)
 
 if (rc <= 0)
   {
-  tls_error(US"SSL_connect", host, sigalrm_seen ? US"timed out" : NULL, errstr);
+  tls_error(US("SSL_connect"), host, sigalrm_seen ? US("timed out") : NULL, errstr);
   return FALSE;
   }
 
@@ -4195,10 +4195,10 @@ if (ob->tls_alpn)	/* We requested. See what was negotiated. */
   SSL_get0_alpn_selected(exim_client_ctx->ssl, &name, &len);
   if (len > 0)
     { DEBUG(D_tls) debug_printf("ALPN negotiated %u: '%.*s'\n", len, (int)*name, name+1); }
-  else if (verify_check_given_host(CUSS &ob->hosts_require_alpn, host) == OK)
+  else if (verify_check_given_host(CUSS(&ob->hosts_require_alpn), host) == OK)
     {
     /* Would like to send a relevant fatal Alert, but OpenSSL has no API */
-    tls_error(US"handshake", host, US"ALPN required but not negotiated", errstr);
+    tls_error(US("handshake"), host, US("ALPN required but not negotiated"), errstr);
     return FALSE;
     }
   }
@@ -4244,7 +4244,7 @@ DEBUG(D_tls) debug_printf("Calling SSL_read(%p, %p, %u)\n", ssl,
 
 ERR_clear_error();
 if (smtp_receive_timeout > 0) ALARM(smtp_receive_timeout);
-inbytes = SSL_read(ssl, CS ssl_xfer_buffer,
+inbytes = SSL_read(ssl, CS(ssl_xfer_buffer),
 		  MIN(ssl_xfer_buffer_size, lim));
 error = SSL_get_error(ssl, inbytes);
 if (smtp_receive_timeout > 0) ALARM_CLR(0);
@@ -4404,7 +4404,7 @@ DEBUG(D_tls) debug_printf("Calling SSL_read(%p, %p, %u)\n", ssl,
   buff, (unsigned int)len);
 
 ERR_clear_error();
-inbytes = SSL_read(ssl, CS buff, len);
+inbytes = SSL_read(ssl, CS(buff), len);
 error = SSL_get_error(ssl, inbytes);
 
 if (error == SSL_ERROR_ZERO_RETURN)
@@ -4468,7 +4468,7 @@ a store reset there, so use POOL_PERM. */
 
 if (more || corked)
   {
-  if (!len) buff = US &error;	/* dummy just so that string_catn is ok */
+  if (!len) buff = US(&error);	/* dummy just so that string_catn is ok */
 
   int save_pool = store_pool;
   store_pool = POOL_PERM;
@@ -4482,7 +4482,7 @@ if (more || corked)
     *corkedp = corked;
     return len;
     }
-  buff = CUS corked->s;
+  buff = CUS(corked->s);
   len = corked->ptr;
   *corkedp = NULL;
   }
@@ -4491,7 +4491,7 @@ for (int left = len; left > 0;)
   {
   DEBUG(D_tls) debug_printf("SSL_write(%p, %p, %d)\n", ssl, buff, left);
   ERR_clear_error();
-  outbytes = SSL_write(ssl, CS buff, left);
+  outbytes = SSL_write(ssl, CS(buff), left);
   error = SSL_get_error(ssl, outbytes);
   DEBUG(D_tls) debug_printf("outbytes=%d error=%d\n", outbytes, error);
   switch (error)
@@ -4513,7 +4513,7 @@ for (int left = len; left > 0;)
     case SSL_ERROR_SYSCALL:
       if (ct_ctx || errno != ECONNRESET || !f.smtp_in_quit)
 	log_write(0, LOG_MAIN, "SSL_write: (from %s) syscall: %s",
-	  sender_fullhost ? sender_fullhost : US"<unknown>",
+	  sender_fullhost ? sender_fullhost : US("<unknown>"),
 	  strerror(errno));
       else if (LOGGING(protocol_detail))
 	log_write(0, LOG_MAIN, "[%s] after QUIT, client reset TCP before"
@@ -4602,7 +4602,7 @@ if (do_shutdown > TLS_NO_SHUTDOWN)
      )
     {
 #ifdef EXIM_TCP_CORK
-    (void) setsockopt(*fdp, IPPROTO_TCP, EXIM_TCP_CORK, US &off, sizeof(off));
+    (void) setsockopt(*fdp, IPPROTO_TCP, EXIM_TCP_CORK, US(&off), sizeof(off));
 #endif
     ALARM(2);
     rc = SSL_shutdown(*sslp);			/* wait for response */
@@ -4664,9 +4664,9 @@ tls_openssl_init();
 if (!(tls_require_ciphers && *tls_require_ciphers))
   return NULL;
 
-if (!expand_check(tls_require_ciphers, US"tls_require_ciphers", &expciphers,
+if (!expand_check(tls_require_ciphers, US("tls_require_ciphers"), &expciphers,
 		  &err))
-  return US"failed to expand tls_require_ciphers";
+  return US("failed to expand tls_require_ciphers");
 
 if (!(expciphers && *expciphers))
   return NULL;
@@ -4679,7 +4679,7 @@ if (lib_ctx_new(&ctx, NULL, &err) == OK)
   DEBUG(D_tls)
     debug_printf("tls_require_ciphers expands to \"%s\"\n", expciphers);
 
-  if (!SSL_CTX_set_cipher_list(ctx, CS expciphers))
+  if (!SSL_CTX_set_cipher_list(ctx, CS(expciphers)))
     {
     ERR_error_string_n(ERR_get_error(), ssl_errstring, sizeof(ssl_errstring));
     err = string_sprintf("SSL_CTX_set_cipher_list(%s) failed: %s",
@@ -4776,7 +4776,7 @@ if (!RAND_status())
   gettimeofday(&r.tv, NULL);
   r.p = getpid();
 
-  RAND_seed(US (&r), sizeof(r));
+  RAND_seed(US(&r), sizeof(r));
   }
 /* We're after pseudo-random, not random; if we still don't have enough data
 in the internal PRNG then our options are limited.  We could sleep and hope
@@ -4904,7 +4904,7 @@ if (!option_spec)
   return TRUE;
   }
 
-if (!expand_check(option_spec, US"openssl_options", &exp, &end))
+if (!expand_check(option_spec, US("openssl_options"), &exp, &end))
   return FALSE;
 
 for (uschar * s = exp; *s; /**/)

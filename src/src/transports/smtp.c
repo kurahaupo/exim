@@ -169,18 +169,18 @@ void smtp_transport_closedown(transport_instance *tblock) {}
 
 smtp_transport_options_block smtp_transport_option_defaults = {
   /* All non-mentioned elements 0/NULL/FALSE */
-  .helo_data =			US"$primary_hostname",
-  .protocol =			US"smtp",
-  .hosts_try_chunking =		US"*",
+  .helo_data =			US("$primary_hostname"),
+  .protocol =			US("smtp"),
+  .hosts_try_chunking =		US("*"),
 #ifdef SUPPORT_DANE
-  .hosts_try_dane =		US"*",
+  .hosts_try_dane =		US("*"),
 #endif
-  .hosts_try_fastopen =		US"*",
+  .hosts_try_fastopen =		US("*"),
 #ifndef DISABLE_PRDR
-  .hosts_try_prdr =		US"*",
+  .hosts_try_prdr =		US("*"),
 #endif
 #ifndef DISABLE_OCSP
-  .hosts_request_ocsp =		US"*",               /* hosts_request_ocsp (except under DANE; tls_client_start()) */
+  .hosts_request_ocsp =		US("*"),               /* hosts_request_ocsp (except under DANE; tls_client_start()) */
 #endif
   .command_timeout =		5*60,
   .connect_timeout =		5*60,
@@ -192,26 +192,26 @@ smtp_transport_options_block smtp_transport_option_defaults = {
   .message_linelength_limit =	998,
   .address_retry_include_sender = TRUE,
   .dns_qualify_single =		TRUE,
-  .dnssec = { .request= US"*", .require=NULL },
+  .dnssec = { .request= US("*"), .require=NULL },
   .delay_after_cutoff =		TRUE,
   .keepalive =			TRUE,
   .retry_include_ip_address =	TRUE,
 #ifndef DISABLE_TLS
-  .tls_verify_certificates =	US"system",
+  .tls_verify_certificates =	US("system"),
   .tls_dh_min_bits =		EXIM_CLIENT_DH_DEFAULT_MIN_BITS,
   .tls_tempfail_tryclear =	TRUE,
-  .tls_try_verify_hosts =	US"*",
-  .tls_verify_cert_hostnames =	US"*",
+  .tls_try_verify_hosts =	US("*"),
+  .tls_verify_cert_hostnames =	US("*"),
 # ifndef DISABLE_TLS_RESUME
-  .host_name_extract =		US"${if and {{match{$host}{.outlook.com\\$}} {match{$item}{\\N^250-([\\w.]+)\\s\\N}}} {$1}}",
+  .host_name_extract =		US("${if and {{match{$host}{.outlook.com\\$}} {match{$item}{\\N^250-([\\w.]+)\\s\\N}}} {$1}}"),
 # endif
 #endif
 #ifdef SUPPORT_I18N
-  .utf8_downconvert =		US"-1",
+  .utf8_downconvert =		US("-1"),
 #endif
 #ifndef DISABLE_DKIM
  .dkim =
-   { .dkim_hash =		US"sha256", },
+   { .dkim_hash =		US("sha256"), },
 #endif
 };
 
@@ -220,7 +220,7 @@ smtp_transport_options_block smtp_transport_option_defaults = {
 static int     rf_list[] = {rf_notify_never, rf_notify_success,
                             rf_notify_failure, rf_notify_delay };
 
-static uschar *rf_names[] = { US"NEVER", US"SUCCESS", US"FAILURE", US"DELAY" };
+static uschar *rf_names[] = { US("NEVER"), US("SUCCESS"), US("FAILURE"), US("DELAY") };
 
 
 
@@ -228,7 +228,7 @@ static uschar *rf_names[] = { US"NEVER", US"SUCCESS", US"FAILURE", US"DELAY" };
 
 static uschar *smtp_command;		/* Points to last cmd for error messages */
 static uschar *mail_command;		/* Points to MAIL cmd for error messages */
-static uschar *data_command = US"";	/* Points to DATA cmd for error messages */
+static uschar *data_command = US("");	/* Points to DATA cmd for error messages */
 static BOOL    update_waiting;		/* TRUE to update the "wait" database */
 
 /*XXX move to smtp_context */
@@ -250,26 +250,26 @@ struct list
   } list[] =
   {
     { &regex_AUTH,		AUTHS_REGEX },
-    { &regex_CHUNKING,		US"\\n250[\\s\\-]CHUNKING(\\s|\\n|$)" },
-    { &regex_DSN,		US"\\n250[\\s\\-]DSN(\\s|\\n|$)" },
-    { &regex_IGNOREQUOTA,	US"\\n250[\\s\\-]IGNOREQUOTA(\\s|\\n|$)" },
-    { &regex_PIPELINING,	US"\\n250[\\s\\-]PIPELINING(\\s|\\n|$)" },
-    { &regex_SIZE,		US"\\n250[\\s\\-]SIZE(\\s|\\n|$)" },
+    { &regex_CHUNKING,		US("\\n250[\\s\\-]CHUNKING(\\s|\\n|$)") },
+    { &regex_DSN,		US("\\n250[\\s\\-]DSN(\\s|\\n|$)") },
+    { &regex_IGNOREQUOTA,	US("\\n250[\\s\\-]IGNOREQUOTA(\\s|\\n|$)") },
+    { &regex_PIPELINING,	US("\\n250[\\s\\-]PIPELINING(\\s|\\n|$)") },
+    { &regex_SIZE,		US("\\n250[\\s\\-]SIZE(\\s|\\n|$)") },
 
 #ifndef DISABLE_TLS
-    { &regex_STARTTLS,		US"\\n250[\\s\\-]STARTTLS(\\s|\\n|$)" },
+    { &regex_STARTTLS,		US("\\n250[\\s\\-]STARTTLS(\\s|\\n|$)") },
 #endif
 #ifndef DISABLE_PRDR
-    { &regex_PRDR,		US"\\n250[\\s\\-]PRDR(\\s|\\n|$)" },
+    { &regex_PRDR,		US("\\n250[\\s\\-]PRDR(\\s|\\n|$)") },
 #endif
 #ifdef SUPPORT_I18N
-    { &regex_UTF8,		US"\\n250[\\s\\-]SMTPUTF8(\\s|\\n|$)" },
+    { &regex_UTF8,		US("\\n250[\\s\\-]SMTPUTF8(\\s|\\n|$)") },
 #endif
 #ifndef DISABLE_PIPE_CONNECT
-    { &regex_EARLY_PIPE,  	US"\\n250[\\s\\-]" EARLY_PIPE_FEATURE_NAME "(\\s|\\n|$)" },
+    { &regex_EARLY_PIPE,  	US("\\n250[\\s\\-]" EARLY_PIPE_FEATURE_NAME "(\\s|\\n|$)") },
 #endif
 #ifdef EXPERIMENTAL_ESMTP_LIMITS
-    { &regex_LIMITS,		US"\\n250[\\s\\-]LIMITS\\s" },
+    { &regex_LIMITS,		US("\\n250[\\s\\-]LIMITS\\s") },
 #endif
   };
 
@@ -362,10 +362,10 @@ if (tblock->retry_use_local_part == TRUE_UNSET)
 /* Set the default port according to the protocol */
 
 if (!ob->port)
-  ob->port = strcmpic(ob->protocol, US"lmtp") == 0
-  ? US"lmtp"
-  : strcmpic(ob->protocol, US"smtps") == 0
-  ? US"smtps" : US"smtp";
+  ob->port = strcmpic(ob->protocol, US("lmtp")) == 0
+  ? US("lmtp")
+  : strcmpic(ob->protocol, US("smtps")) == 0
+  ? US("smtps") : US("smtp");
 
 /* Set up the setup entry point, to be called before subprocesses for this
 transport. */
@@ -507,7 +507,7 @@ static BOOL
 check_response(host_item *host, int *errno_value, int more_errno,
   uschar *buffer, int *yield, uschar **message, BOOL *pass_message)
 {
-uschar * pl = pipelining_active ? US"pipelined " : US"";
+uschar * pl = pipelining_active ? US("pipelined ") : US("");
 const uschar * s;
 
 *yield = '4';    /* Default setting is to give a temporary error */
@@ -515,11 +515,11 @@ const uschar * s;
 switch(*errno_value)
   {
   case ETIMEDOUT:		/* Handle response timeout */
-    *message = US string_sprintf("SMTP timeout after %s%s",
-	pl, smtp_command);
+    *message = US(string_sprintf("SMTP timeout after %s%s",
+	pl, smtp_command));
     if (transport_count > 0)
-      *message = US string_sprintf("%s (%d bytes written)", *message,
-	transport_count);
+      *message = US(string_sprintf("%s (%d bytes written)", *message,
+	transport_count));
     return FALSE;
 
   case ERRNO_SMTPFORMAT:	/* Handle malformed SMTP response */
@@ -534,7 +534,7 @@ switch(*errno_value)
 
   case ERRNO_TLSFAILURE:	/* Handle bad first read; can happen with
 				GnuTLS and TLS1.3 */
-    *message = US"bad first read from TLS conn";
+    *message = US("bad first read from TLS conn");
     return TRUE;
 
   case ERRNO_FILTER_FAIL:	/* Handle a failed filter process error;
@@ -552,12 +552,12 @@ switch(*errno_value)
     return FALSE;
 
   case ERRNO_WRITEINCOMPLETE:	/* failure to write a complete data block */
-    *message = US"failed to write a data block";
+    *message = US("failed to write a data block");
     return FALSE;
 
 #ifdef SUPPORT_I18N
   case ERRNO_UTF8_FWD: /* no advertised SMTPUTF8, for international message */
-    *message = US"utf8 support required but not offered for forwarding";
+    *message = US("utf8 support required but not offered for forwarding");
     DEBUG(D_deliver|D_transport) debug_printf("%s\n", *message);
     return TRUE;
 #endif
@@ -583,11 +583,11 @@ assume the connection is now dead. */
 if (*errno_value == 0 || *errno_value == ECONNRESET)
   {
   *errno_value = ERRNO_SMTPCLOSED;
-  *message = US string_sprintf("Remote host closed connection "
-    "in response to %s%s", pl, smtp_command);
+  *message = US(string_sprintf("Remote host closed connection "
+    "in response to %s%s", pl, smtp_command));
   }
 else
-  *message = US string_sprintf("%s [%s]", host->name, host->address);
+  *message = US(string_sprintf("%s [%s]", host->name, host->address));
 
 return FALSE;
 }
@@ -683,7 +683,7 @@ deliver_localpart = addr->local_part;
 	? string_sprintf("%s: %s", addr->message, strerror(addr->basic_errno))
 	: string_copy(addr->message)
       : addr->basic_errno > 0
-	? string_copy(US strerror(addr->basic_errno))
+	? string_copy(US(strerror(addr->basic_errno)))
 	: NULL,
       NULL);
 
@@ -725,8 +725,8 @@ BOOL good_response;
   struct pollfd p = {.fd = sock, .events = POLLOUT};
   if (poll(&p, 1, 1000) >= 0)	/* retval test solely for compiler quitening */
     {
-    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &on, sizeof(on));
-    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US(&on), sizeof(on));
+    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US(&off), sizeof(off));
     }
   }
 #endif
@@ -758,7 +758,7 @@ sx->helo_response = string_copy(sx->buffer);
 #endif
 #ifndef DISABLE_EVENT
 (void) event_raise(sx->conn_args.tblock->event_action,
-  US"smtp:ehlo", sx->buffer, NULL);
+  US("smtp:ehlo"), sx->buffer, NULL);
 #endif
 return TRUE;
 }
@@ -809,19 +809,19 @@ if (regex_match(regex_LIMITS, sx->buffer, -1, &match))
     while (isspace(*s)) s++;
     if (*s == '\n') break;
 
-    if (strncmpic(s, US"MAILMAX=", 8) == 0)
+    if (strncmpic(s, US("MAILMAX="), 8) == 0)
       {
-      sx->peer_limit_mail = atoi(CS (s += 8));
+      sx->peer_limit_mail = atoi(CS(s += 8));
       while (isdigit(*s)) s++;
       }
-    else if (strncmpic(s, US"RCPTMAX=", 8) == 0)
+    else if (strncmpic(s, US("RCPTMAX="), 8) == 0)
       {
-      sx->peer_limit_rcpt = atoi(CS (s += 8));
+      sx->peer_limit_rcpt = atoi(CS(s += 8));
       while (isdigit(*s)) s++;
       }
-    else if (strncmpic(s, US"RCPTDOMAINMAX=", 14) == 0)
+    else if (strncmpic(s, US("RCPTDOMAINMAX="), 14) == 0)
       {
-      sx->peer_limit_rcptdom = atoi(CS (s += 14));
+      sx->peer_limit_rcptdom = atoi(CS(s += 14));
       while (isdigit(*s)) s++;
       }
     else
@@ -897,7 +897,7 @@ sx->ehlo_resp.limit_rcpt = sx->peer_limit_rcpt;
 sx->ehlo_resp.limit_rcptdom = sx->peer_limit_rcptdom;
 # endif
 
-if ((dbm_file = dbfn_open(US"misc", O_RDWR, &dbblock, TRUE, TRUE)))
+if ((dbm_file = dbfn_open(US("misc"), O_RDWR, &dbblock, TRUE, TRUE)))
   {
   uschar * ehlo_resp_key = ehlo_cache_key(sx);
   dbdata_ehlo_resp er = { .data = sx->ehlo_resp };
@@ -927,7 +927,7 @@ invalidate_ehlo_cache_entry(smtp_context * sx)
 open_db dbblock, * dbm_file;
 
 if (  sx->early_pipe_active
-   && (dbm_file = dbfn_open(US"misc", O_RDWR, &dbblock, TRUE, TRUE)))
+   && (dbm_file = dbfn_open(US("misc"), O_RDWR, &dbblock, TRUE, TRUE)))
   {
   uschar * ehlo_resp_key = ehlo_cache_key(sx);
   dbfn_delete(dbm_file, ehlo_resp_key);
@@ -941,7 +941,7 @@ read_ehlo_cache_entry(smtp_context * sx)
 open_db dbblock;
 open_db * dbm_file;
 
-if (!(dbm_file = dbfn_open(US"misc", O_RDONLY, &dbblock, FALSE, TRUE)))
+if (!(dbm_file = dbfn_open(US("misc"), O_RDONLY, &dbblock, FALSE, TRUE)))
   { DEBUG(D_transport) debug_printf("ehlo-cache: no misc DB\n"); }
 else
   {
@@ -954,7 +954,7 @@ else
     {
     DEBUG(D_transport) debug_printf("ehlo-resp record too old\n");
     dbfn_close(dbm_file);
-    if ((dbm_file = dbfn_open(US"misc", O_RDWR, &dbblock, TRUE, TRUE)))
+    if ((dbm_file = dbfn_open(US("misc"), O_RDWR, &dbblock, TRUE, TRUE)))
       dbfn_delete(dbm_file, ehlo_resp_key);
     }
   else
@@ -1351,7 +1351,7 @@ while (count-- > 0)
 	{
 #ifndef DISABLE_EVENT
 	event_defer_errno = addr->more_errno;
-	msg_event_raise(US"msg:rcpt:host:defer", addr);
+	msg_event_raise(US("msg:rcpt:host:defer"), addr);
 #endif
 	/* If a 452 and we've had at least one 2xx or 5xx, set next_addr to the
 	start point for another MAIL command. */
@@ -1384,7 +1384,7 @@ while (count-- > 0)
 
 #ifndef DISABLE_EVENT
 	  else
-	    msg_event_raise(US"msg:rcpt:defer", addr);
+	    msg_event_raise(US("msg:rcpt:defer"), addr);
 #endif
 
 	  /* Do not put this message on the list of those waiting for specific
@@ -1508,7 +1508,7 @@ switch(rc)
      {
       uschar * save_name = sender_host_authenticated;
       sender_host_authenticated = au->name;
-      if ((logmsg = event_raise(sx->conn_args.tblock->event_action, US"auth:fail",
+      if ((logmsg = event_raise(sx->conn_args.tblock->event_action, US("auth:fail"),
 				sx->buffer, NULL)))
 	log_write(0, LOG_MAIN, "%s", logmsg);
       sender_host_authenticated = save_name;
@@ -1567,12 +1567,12 @@ smtp_auth(smtp_context * sx)
 {
 host_item * host = sx->conn_args.host;			/* host to deliver to */
 smtp_transport_options_block * ob = sx->conn_args.ob;	/* transport options */
-int require_auth = verify_check_given_host(CUSS &ob->hosts_require_auth, host);
+int require_auth = verify_check_given_host(CUSS(&ob->hosts_require_auth), host);
 #ifndef DISABLE_PIPE_CONNECT
 unsigned short authbits = tls_out.active.sock >= 0
       ? sx->ehlo_resp.crypted_auths : sx->ehlo_resp.cleartext_auths;
 #endif
-uschar * fail_reason = US"server did not advertise AUTH support";
+uschar * fail_reason = US("server did not advertise AUTH support");
 
 f.smtp_authenticated = FALSE;
 client_authenticator = client_authenticated_id = client_authenticated_sender = NULL;
@@ -1603,10 +1603,10 @@ if (  sx->esmtp
   regex match above as the check could be another RE. */
 
   if (  require_auth == OK
-     || verify_check_given_host(CUSS &ob->hosts_try_auth, host) == OK)
+     || verify_check_given_host(CUSS(&ob->hosts_try_auth), host) == OK)
     {
     DEBUG(D_transport) debug_printf("scanning authentication mechanisms\n");
-    fail_reason = US"no common mechanisms were found";
+    fail_reason = US("no common mechanisms were found");
 
 #ifndef DISABLE_PIPE_CONNECT
     if (sx->early_pipe_active)
@@ -1627,7 +1627,7 @@ if (  sx->esmtp
 	{
 	if (  au->client_condition
 	   && !expand_check_condition(au->client_condition, au->name,
-                   US"client authenticator"))
+                   US("client authenticator")))
 	  {
 	  DEBUG(D_transport) debug_printf("skipping %s authenticator: %s\n",
 	    au->name, "client_condition is false");
@@ -1638,7 +1638,7 @@ if (  sx->esmtp
 	a flag in the outblock so that data is overwritten after sending so
 	that reflections don't show it. */
 
-	fail_reason = US"authentication attempt(s) failed";
+	fail_reason = US("authentication attempt(s) failed");
 
 	if ((rc = try_authenticator(sx, au)) != OK)
 	  return rc;
@@ -1660,7 +1660,7 @@ if (  sx->esmtp
       if (  !au->client
          || (   au->client_condition
 	    &&  !expand_check_condition(au->client_condition, au->name,
-		   US"client authenticator")))
+		   US("client authenticator"))))
 	{
 	DEBUG(D_transport) debug_printf("skipping %s authenticator: %s\n",
 	  au->name,
@@ -1689,7 +1689,7 @@ if (  sx->esmtp
 	a flag in the outblock so that data is overwritten after sending so
 	that reflections don't show it. */
 
-	fail_reason = US"authentication attempt(s) failed";
+	fail_reason = US("authentication attempt(s) failed");
 
 	if ((rc = try_authenticator(sx, au)) != OK)
 	  return rc;
@@ -1790,10 +1790,10 @@ static uschar *
 smtp_local_identity(uschar * sender, struct transport_instance * tblock)
 {
 address_item * addr1;
-uschar * if1 = US"";
-uschar * helo1 = US"";
+uschar * if1 = US("");
+uschar * helo1 = US("");
 #ifndef DISABLE_TLS
-uschar * tlsc1 = US"";
+uschar * tlsc1 = US("");
 #endif
 uschar * save_sender_address = sender_address;
 uschar * local_identity = NULL;
@@ -2045,7 +2045,7 @@ check_force_dane_conn(smtp_context * sx, smtp_transport_options_block * ob)
 {
 int rc;
 if(  sx->dane_required
-  || verify_check_given_host(CUSS &ob->hosts_try_dane, sx->conn_args.host) == OK
+  || verify_check_given_host(CUSS(&ob->hosts_try_dane), sx->conn_args.host) == OK
   )
   switch (rc = tlsa_lookup(sx->conn_args.host, &sx->conn_args.tlsa_dnsa, sx->dane_required))
     {
@@ -2060,8 +2060,8 @@ if(  sx->dane_required
 			    rc, FALSE, &sx->delivery_start);
 # ifndef DISABLE_EVENT
 			(void) event_raise(sx->conn_args.tblock->event_action,
-			  US"dane:fail", sx->dane_required
-			    ?  US"dane-required" : US"dnssec-invalid",
+			  US("dane:fail"), sx->dane_required
+			    ?  US("dane-required") : US("dnssec-invalid"),
 			  NULL);
 # endif
 			return rc;
@@ -2108,8 +2108,8 @@ up nonzero elements. */
 
 sx->conn_args.ob = ob;
 
-sx->lmtp = strcmpic(ob->protocol, US"lmtp") == 0;
-sx->smtps = strcmpic(ob->protocol, US"smtps") == 0;
+sx->lmtp = strcmpic(ob->protocol, US("lmtp")) == 0;
+sx->smtps = strcmpic(ob->protocol, US("smtps")) == 0;
 sx->send_rset = TRUE;
 sx->send_quit = TRUE;
 sx->setting_up = TRUE;
@@ -2117,15 +2117,15 @@ sx->esmtp = TRUE;
 sx->dsn_all_lasthop = TRUE;
 #ifdef SUPPORT_DANE
 sx->dane_required =
-  verify_check_given_host(CUSS &ob->hosts_require_dane, sx->conn_args.host) == OK;
+  verify_check_given_host(CUSS(&ob->hosts_require_dane), sx->conn_args.host) == OK;
 #endif
 
 if ((sx->max_mail = sx->conn_args.tblock->connection_max_messages) == 0) sx->max_mail = 999999;
 if ((sx->max_rcpt = sx->conn_args.tblock->max_addresses) == 0)           sx->max_rcpt = 999999;
-sx->igquotstr = US"";
+sx->igquotstr = US("");
 if (!sx->helo_data) sx->helo_data = ob->helo_data;
 
-smtp_command = US"initial connection";
+smtp_command = US("initial connection");
 
 /* Set up the buffer for reading SMTP response packets. */
 
@@ -2166,7 +2166,7 @@ tls_modify_variables(&tls_out);
 #ifdef DISABLE_TLS
 if (sx->smtps)
   {
-  set_errno_nohost(sx->addrlist, ERRNO_TLSFAILURE, US"TLS support not available",
+  set_errno_nohost(sx->addrlist, ERRNO_TLSFAILURE, US("TLS support not available"),
 	    DEFER, FALSE, &sx->delivery_start);
   return ERROR;
   }
@@ -2177,7 +2177,7 @@ if (sx->smtps)
 if (continue_hostname && continue_proxy_cipher)
   {
   int rc;
-  const uschar * sni = US"";
+  const uschar * sni = US("");
 
 # ifdef SUPPORT_DANE
   /* Check if the message will be DANE-verified; if so force TLS and its SNI */
@@ -2202,20 +2202,20 @@ if (continue_hostname && continue_proxy_cipher)
   if (  (continue_proxy_sni ? (Ustrcmp(continue_proxy_sni, sni) == 0) : !*sni)
      && continue_proxy_dane == sx->conn_args.dane)
     {
-    tls_out.sni = US sni;
+    tls_out.sni = US(sni);
     if ((tls_out.dane_verified = continue_proxy_dane))
       sx->conn_args.host->dnssec = DS_YES;
     }
 # else
   if ((continue_proxy_sni ? (Ustrcmp(continue_proxy_sni, sni) == 0) : !*sni))
-    tls_out.sni = US sni;
+    tls_out.sni = US(sni);
 # endif
   else
     {
     DEBUG(D_transport)
       debug_printf("Closing proxied-TLS connection due to SNI mismatch\n");
 
-    smtp_debug_cmd(US"QUIT", 0);
+    smtp_debug_cmd(US("QUIT"), 0);
     write(0, "QUIT\r\n", 6);
     close(0);
     continue_hostname = continue_proxy_cipher = NULL;
@@ -2264,7 +2264,7 @@ if (!continue_hostname)
 	FAIL, FALSE, &sx->delivery_start);
 # ifndef DISABLE_EVENT
       (void) event_raise(sx->conn_args.tblock->event_action,
-	US"dane:fail", US"dane-required", NULL);
+	US("dane:fail"), US("dane-required"), NULL);
 # endif
       return FAIL;
       }
@@ -2284,7 +2284,7 @@ if (!continue_hostname)
 #endif
 
 #ifndef DISABLE_PIPE_CONNECT
-  if (  verify_check_given_host(CUSS &ob->hosts_pipe_connect,
+  if (  verify_check_given_host(CUSS(&ob->hosts_pipe_connect),
 					    sx->conn_args.host) == OK)
 
     /* We don't find out the local ip address until the connect, so if
@@ -2327,13 +2327,13 @@ PIPE_CONNECT_RETRY:
       {
       set_errno_nohost(sx->addrlist,
 	errno == ETIMEDOUT ? ERRNO_CONNECTTIMEOUT : errno,
-	sx->verify ? US strerror(errno) : NULL,
+	sx->verify ? US(strerror(errno)) : NULL,
 	DEFER, FALSE, &sx->delivery_start);
       sx->send_quit = FALSE;
       return DEFER;
       }
 #ifdef TCP_QUICKACK
-    (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, TCP_QUICKACK, US &off,
+    (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, TCP_QUICKACK, US(&off),
 			sizeof(off));
 #endif
     }
@@ -2389,9 +2389,9 @@ PIPE_CONNECT_RETRY:
 #ifndef DISABLE_EVENT
       {
       uschar * s;
-      lookup_dnssec_authenticated = sx->conn_args.host->dnssec==DS_YES ? US"yes"
-	: sx->conn_args.host->dnssec==DS_NO ? US"no" : NULL;
-      s = event_raise(sx->conn_args.tblock->event_action, US"smtp:connect", sx->buffer, NULL);
+      lookup_dnssec_authenticated = sx->conn_args.host->dnssec==DS_YES ? US("yes")
+	: sx->conn_args.host->dnssec==DS_NO ? US("no") : NULL;
+      s = event_raise(sx->conn_args.tblock->event_action, US("smtp:connect"), sx->buffer, NULL);
       if (s)
 	{
 	set_errno_nohost(sx->addrlist, ERRNO_EXPANDFAIL,
@@ -2451,7 +2451,7 @@ goto SEND_QUIT;
   mailers use upper case for some reason (the RFC is quite clear about case
   independence) so, for peace of mind, I gave in. */
 
-  sx->esmtp = verify_check_given_host(CUSS &ob->hosts_avoid_esmtp, sx->conn_args.host) != OK;
+  sx->esmtp = verify_check_given_host(CUSS(&ob->hosts_avoid_esmtp), sx->conn_args.host) != OK;
 
   /* Alas; be careful, since this goto is not an error-out, so conceivably
   we might set data between here and the target which we assume to exist
@@ -2462,7 +2462,7 @@ goto SEND_QUIT;
     smtp_peer_options |= OPTION_TLS;
     suppress_tls = FALSE;
     ob->tls_tempfail_tryclear = FALSE;
-    smtp_command = US"SSL-on-connect";
+    smtp_command = US("SSL-on-connect");
     goto TLS_NEGOTIATE;
     }
 #endif
@@ -2662,9 +2662,9 @@ for error analysis. */
 #ifndef DISABLE_TLS
 if (  smtp_peer_options & OPTION_TLS
    && !suppress_tls
-   && verify_check_given_host(CUSS &ob->hosts_avoid_tls, sx->conn_args.host) != OK
+   && verify_check_given_host(CUSS(&ob->hosts_avoid_tls), sx->conn_args.host) != OK
    && (  !sx->verify
-      || verify_check_given_host(CUSS &ob->hosts_verify_avoid_tls, sx->conn_args.host) != OK
+      || verify_check_given_host(CUSS(&ob->hosts_verify_avoid_tls), sx->conn_args.host) != OK
    )  )
   {
   uschar buffer2[4096];
@@ -2733,7 +2733,7 @@ if (  smtp_peer_options & OPTION_TLS
 	  sx->conn_args.host->name, sx->conn_args.host->address, tls_errstr);
 #  ifndef DISABLE_EVENT
 	(void) event_raise(sx->conn_args.tblock->event_action,
-	  US"dane:fail", US"validation-failure", NULL);	/* could do with better detail */
+	  US("dane:fail"), US("validation-failure"), NULL);	/* could do with better detail */
 #  endif
 	}
 # endif
@@ -2759,7 +2759,7 @@ if (  smtp_peer_options & OPTION_TLS
 	  "'%.*s'%s\n",
 	  i > 100 ? 100 : i, sx->inblock.ptr, i > 100 ? "..." : "");
 	}
-      tls_errstr = US"synch error before connect";
+      tls_errstr = US("synch error before connect");
       goto TLS_CONN_FAILED;
       }
 
@@ -2837,12 +2837,12 @@ if (tls_out.active.sock >= 0)
 	goto RESPONSE_FAILED;
 
   if (sx->lmtp)
-    greeting_cmd = US"LHLO";
+    greeting_cmd = US("LHLO");
   else if (sx->esmtp)
-    greeting_cmd = US"EHLO";
+    greeting_cmd = US("EHLO");
   else
     {
-    greeting_cmd = US"HELO";
+    greeting_cmd = US("HELO");
     DEBUG(D_transport)
       debug_printf("not sending EHLO (host matches hosts_avoid_esmtp)\n");
     }
@@ -2872,7 +2872,7 @@ if (tls_out.active.sock >= 0)
       It would be nicer to have GnuTLS check the cert during the handshake.
       Can it do that, with all the flexibility we need? */
 
-      tls_errstr = US"error on first read";
+      tls_errstr = US("error on first read");
       goto TLS_CONN_FAILED;
       }
 #else
@@ -2889,7 +2889,7 @@ else if (  sx->smtps
 # ifdef SUPPORT_DANE
 	|| sx->conn_args.dane
 # endif
-	|| verify_check_given_host(CUSS &ob->hosts_require_tls, sx->conn_args.host) == OK
+	|| verify_check_given_host(CUSS(&ob->hosts_require_tls), sx->conn_args.host) == OK
 	)
   {
   errno = ERRNO_TLSREQUIRED;
@@ -2898,10 +2898,10 @@ else if (  sx->smtps
     ? "an attempt to start TLS failed" : "the server did not offer TLS support");
 # if defined(SUPPORT_DANE) && !defined(DISABLE_EVENT)
   if (sx->conn_args.dane)
-    (void) event_raise(sx->conn_args.tblock->event_action, US"dane:fail",
+    (void) event_raise(sx->conn_args.tblock->event_action, US("dane:fail"),
       smtp_peer_options & OPTION_TLS
-      ? US"validation-failure"		/* could do with better detail */
-      : US"starttls-not-supported",
+      ? US("validation-failure")		/* could do with better detail */
+      : US("starttls-not-supported"),
       NULL);
 # endif
   goto TLS_FAILED;
@@ -2965,7 +2965,7 @@ if (   !continue_hostname
     /* Set for IGNOREQUOTA if the response to LHLO specifies support and the
     lmtp_ignore_quota option was set. */
 
-    sx->igquotstr = sx->peer_offered & OPTION_IGNQ ? US" IGNOREQUOTA" : US"";
+    sx->igquotstr = sx->peer_offered & OPTION_IGNQ ? US(" IGNOREQUOTA") : US("");
 
     /* If the response to EHLO specified support for the SIZE parameter, note
     this, provided size_addition is non-negative. */
@@ -2977,14 +2977,14 @@ if (   !continue_hostname
     the current host matches hosts_avoid_pipelining, don't do it. */
 
     if (  sx->peer_offered & OPTION_PIPE
-       && verify_check_given_host(CUSS &ob->hosts_avoid_pipelining, sx->conn_args.host) != OK)
+       && verify_check_given_host(CUSS(&ob->hosts_avoid_pipelining), sx->conn_args.host) != OK)
       smtp_peer_options |= OPTION_PIPE;
 
     DEBUG(D_transport) debug_printf("%susing PIPELINING\n",
       smtp_peer_options & OPTION_PIPE ? "" : "not ");
 
     if (  sx->peer_offered & OPTION_CHUNKING
-       && verify_check_given_host(CUSS &ob->hosts_try_chunking, sx->conn_args.host) == OK)
+       && verify_check_given_host(CUSS(&ob->hosts_try_chunking), sx->conn_args.host) == OK)
       smtp_peer_options |= OPTION_CHUNKING;
 
     if (smtp_peer_options & OPTION_CHUNKING)
@@ -2992,7 +2992,7 @@ if (   !continue_hostname
 
 #ifndef DISABLE_PRDR
     if (  sx->peer_offered & OPTION_PRDR
-       && verify_check_given_host(CUSS &ob->hosts_try_prdr, sx->conn_args.host) == OK)
+       && verify_check_given_host(CUSS(&ob->hosts_try_prdr), sx->conn_args.host) == OK)
       smtp_peer_options |= OPTION_PRDR;
 
     if (smtp_peer_options & OPTION_PRDR)
@@ -3112,7 +3112,7 @@ return OK;
 	errno = ETIMEDOUT;
       set_errno_nohost(sx->addrlist,
 	errno == ETIMEDOUT ? ERRNO_CONNECTTIMEOUT : errno,
-	sx->verify ? US strerror(errno) : NULL,
+	sx->verify ? US(strerror(errno)) : NULL,
 	DEFER, FALSE, &sx->delivery_start);
       sx->send_quit = FALSE;
       return DEFER;
@@ -3127,8 +3127,8 @@ return OK;
 
   SEND_FAILED:
     code = '4';
-    message = US string_sprintf("smtp send to %s [%s] failed: %s",
-      sx->conn_args.host->name, sx->conn_args.host->address, strerror(errno));
+    message = US(string_sprintf("smtp send to %s [%s] failed: %s",
+      sx->conn_args.host->name, sx->conn_args.host->address, strerror(errno)));
     sx->send_quit = FALSE;
     yield = DEFER;
     goto FAILED;
@@ -3220,7 +3220,7 @@ if (sx->send_quit)
 sx->cctx.sock = -1;
 
 #ifndef DISABLE_EVENT
-(void) event_raise(sx->conn_args.tblock->event_action, US"tcp:close", NULL, NULL);
+(void) event_raise(sx->conn_args.tblock->event_action, US("tcp:close"), NULL, NULL);
 #endif
 
 smtp_debug_cmd_report();
@@ -3257,7 +3257,7 @@ if (  message_size > 0
 /*XXX problem here under spool_files_wireformat?
 Or just forget about lines?  Or inflate by a fixed proportion? */
 
-  sprintf(CS p, " SIZE=%d", message_size+message_linecount+(SOB sx->conn_args.ob)->size_addition);
+  sprintf(CS(p), " SIZE=%d", message_size+message_linecount+(SOB sx->conn_args.ob)->size_addition);
   while (*p) p++;
   }
 
@@ -3274,7 +3274,7 @@ if (smtp_peer_options & OPTION_PRDR)
         if (addr->transport_return == PENDING_DEFER)
 	  {			/* at least two recipients to send */
 	  sx->prdr_active = TRUE;
-	  sprintf(CS p, " PRDR"); p += 5;
+	  sprintf(CS(p), " PRDR"); p += 5;
 	  break;
 	  }
       break;
@@ -3289,7 +3289,7 @@ if (  sx->peer_offered & OPTION_UTF8
    && addrlist->prop.utf8_msg
    && !addrlist->prop.utf8_downcvt
    )
-  Ustrcpy(p, US" SMTPUTF8"), p += 9;
+  Ustrcpy(p, US(" SMTPUTF8")), p += 9;
 #endif
 
 /* check if all addresses have DSN-lasthop flag; do not send RET and ENVID if so */
@@ -3310,9 +3310,9 @@ for (sx->dsn_all_lasthop = TRUE, addr = addrlist, address_count = 0;
 if (sx->peer_offered & OPTION_DSN && !sx->dsn_all_lasthop)
   {
   if (dsn_ret == dsn_ret_hdrs)
-    { Ustrcpy(p, US" RET=HDRS"); p += 9; }
+    { Ustrcpy(p, US(" RET=HDRS")); p += 9; }
   else if (dsn_ret == dsn_ret_full)
-    { Ustrcpy(p, US" RET=FULL"); p += 9; }
+    { Ustrcpy(p, US(" RET=FULL")); p += 9; }
 
   if (dsn_envid)
     {
@@ -3346,7 +3346,7 @@ if (sx->peer_offered & OPTION_DSN && !(addr->dsn_flags & rf_dsnlasthop))
     {
     BOOL first = TRUE;
 
-    Ustrcpy(p, US" NOTIFY=");
+    Ustrcpy(p, US(" NOTIFY="));
     while (*p) p++;
     for (int i = 0; i < nelem(rf_list); i++) if (addr->dsn_flags & rf_list[i])
       {
@@ -3606,7 +3606,7 @@ int rc, i;
 BOOL send_tls_shutdown = TRUE;
 
 close(pfd[1]);
-if ((rc = exim_fork(US"tls-proxy")))
+if ((rc = exim_fork(US("tls-proxy"))))
   _exit(rc < 0 ? EXIT_FAILURE : EXIT_SUCCESS);
 
 set_process_info("proxying TLS connection for continued transport to %s\n", host);
@@ -3664,7 +3664,7 @@ do
       p[1].fd = -1;
 
 # ifdef EXIM_TCP_CORK  /* Use _CORK to get TLS Close Notify in FIN segment */
-      (void) setsockopt(tls_out.active.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
+      (void) setsockopt(tls_out.active.sock, IPPROTO_TCP, EXIM_TCP_CORK, US(&on), sizeof(on));
 # endif
       tls_shutdown_wr(ct_ctx);
       send_tls_shutdown = FALSE;
@@ -3964,8 +3964,8 @@ else
     .u = {.fd = sx->cctx.sock},	/*XXX will this need TLS info? */
     .tblock =	tblock,
     .addr =	addrlist,
-    .check_string = US".",
-    .escape_string = US"..",	/* Escaping strings */
+    .check_string = US("."),
+    .escape_string = US(".."),	/* Escaping strings */
     .options =
       topt_use_crlf | topt_escape_headers
     | (tblock->body_only	? topt_no_headers : 0)
@@ -4003,7 +4003,7 @@ else
 
   sigalrm_seen = FALSE;
   transport_write_timeout = ob->data_timeout;
-  smtp_command = US"sending data block";   /* For error messages */
+  smtp_command = US("sending data block");   /* For error messages */
   DEBUG(D_transport|D_v)
     if (smtp_peer_options & OPTION_CHUNKING)
       debug_printf("         will write message using CHUNKING\n");
@@ -4027,7 +4027,7 @@ else
 	{
 	if (!f.expand_string_forcedfail)
 	  {
-	  message = US"failed to expand arc_sign";
+	  message = US("failed to expand arc_sign");
 	  sx->ok = FALSE;
 	  goto SEND_FAILED;
 	  }
@@ -4042,7 +4042,7 @@ else
     }
 # endif
 # ifdef MEASURE_TIMING
-  report_time_since(&t0, US"dkim_exim_sign_init (delta)");
+  report_time_since(&t0, US("dkim_exim_sign_init (delta)"));
 # endif
   }
 #endif
@@ -4070,7 +4070,7 @@ else
     tcw =
 #ifndef DISABLE_TLS
 	   (  tls_out.active.sock < 0  &&  !continue_proxy_cipher
-           || verify_check_given_host(CUSS &ob->hosts_nopass_tls, host) != OK
+           || verify_check_given_host(CUSS(&ob->hosts_nopass_tls), host) != OK
 	   )
         &&
 #endif
@@ -4085,7 +4085,7 @@ else
     }
 
 #ifndef DISABLE_DKIM
-  sx->ok = dkim_transport_write_message(&tctx, &ob->dkim, CUSS &message);
+  sx->ok = dkim_transport_write_message(&tctx, &ob->dkim, CUSS(&message));
 #else
   sx->ok = transport_write_message(&tctx, 0);
 #endif
@@ -4111,7 +4111,7 @@ else
   data buffer for efficiency. This is now done by setting the topt_end_dot
   flag above. */
 
-  smtp_command = US"end of data";
+  smtp_command = US("end of data");
 
   /* If we can pipeline a QUIT with the data them send it now.  If a new message
   for this host appeared in the queue while data was being sent, we will not see
@@ -4144,7 +4144,7 @@ else
       if (sx->cctx.tls_ctx && sx->send_tlsclose)	/* need to send TLS Close Notify */
 	{
 # ifdef EXIM_TCP_CORK		/* Use _CORK to get Close Notify in FIN segment */
-	(void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
+	(void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US(&on), sizeof(on));
 # endif
 	tls_shutdown_wr(sx->cctx.tls_ctx);
 	sx->send_tlsclose = FALSE;	/* avoid later repeat */
@@ -4249,7 +4249,7 @@ else
       {
       const uschar * s = string_printing(sx->buffer);
       /* deconst cast ok here as string_printing was checked to have alloc'n'copied */
-      conf = s == sx->buffer ? US string_copy(s) : US s;
+      conf = s == sx->buffer ? US(string_copy(s)) : US(s);
       }
 
     /* Process all transported addresses - for LMTP or PRDR, read a status for
@@ -4302,7 +4302,7 @@ else
           {
           const uschar *s = string_printing(sx->buffer);
 	  /* deconst cast ok here as string_printing was checked to have alloc'n'copied */
-          conf = (s == sx->buffer) ? US string_copy(s) : US s;
+          conf = (s == sx->buffer) ? US(string_copy(s)) : US(s);
           }
         }
 
@@ -4341,12 +4341,12 @@ else
         write error, as it may prove possible to update the spool file later. */
 
         if (testflag(addr, af_homonym))
-          sprintf(CS sx->buffer, "%.500s/%s\n", addr->unique + 3, tblock->name);
+          sprintf(CS(sx->buffer), "%.500s/%s\n", addr->unique + 3, tblock->name);
         else
-          sprintf(CS sx->buffer, "%.500s\n", addr->unique);
+          sprintf(CS(sx->buffer), "%.500s\n", addr->unique);
 
         DEBUG(D_deliver) debug_printf("S:journalling %s", sx->buffer);
-        len = Ustrlen(CS sx->buffer);
+        len = Ustrlen(CS(sx->buffer));
         if (write(journal_fd, sx->buffer, len) != len)
           log_write(0, LOG_MAIN|LOG_PANIC, "failed to write journal for "
             "%s: %s", sx->buffer, strerror(errno));
@@ -4388,12 +4388,12 @@ else
 	if (addr->transport_return == OK)
 	  {
 	  if (testflag(addr, af_homonym))
-	    sprintf(CS sx->buffer, "%.500s/%s\n", addr->unique + 3, tblock->name);
+	    sprintf(CS(sx->buffer), "%.500s/%s\n", addr->unique + 3, tblock->name);
 	  else
-	    sprintf(CS sx->buffer, "%.500s\n", addr->unique);
+	    sprintf(CS(sx->buffer), "%.500s\n", addr->unique);
 
 	  DEBUG(D_deliver) debug_printf("journalling(PRDR) %s\n", sx->buffer);
-	  len = Ustrlen(CS sx->buffer);
+	  len = Ustrlen(CS(sx->buffer));
 	  if (write(journal_fd, sx->buffer, len) != len)
 	    log_write(0, LOG_MAIN|LOG_PANIC, "failed to write journal for "
 	      "%s: %s", sx->buffer, strerror(errno));
@@ -4441,7 +4441,7 @@ if (!sx->ok)
     save_errno = errno;
     code = '4';
     message = string_sprintf("smtp send to %s [%s] failed: %s",
-      host->name, host->address, message ? message : US strerror(save_errno));
+      host->name, host->address, message ? message : US(strerror(save_errno)));
     sx->send_quit = FALSE;
     goto FAILED;
     }
@@ -4526,7 +4526,7 @@ if (!sx->ok)
         {
 	set_rc = DEFER;
         if (save_errno > 0)
-          message = US string_sprintf("%s: %s", message, strerror(save_errno));
+          message = US(string_sprintf("%s: %s", message, strerror(save_errno)));
 
         write_logs(host, message, sx->first_addr ? sx->first_addr->basic_errno : 0);
 
@@ -4625,7 +4625,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
        || (
 #ifndef DISABLE_TLS
 	     (  tls_out.active.sock < 0  &&  !continue_proxy_cipher
-	     || verify_check_given_host(CUSS &ob->hosts_nopass_tls, host) != OK
+	     || verify_check_given_host(CUSS(&ob->hosts_nopass_tls), host) != OK
 	     )
 	  &&
 #endif
@@ -4640,8 +4640,8 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
       if (sx->send_rset)
 	if (! (sx->ok = smtp_write_command(sx, SCMD_FLUSH, "RSET\r\n") >= 0))
 	  {
-	  msg = US string_sprintf("smtp send to %s [%s] failed: %s", host->name,
-	    host->address, strerror(errno));
+	  msg = US(string_sprintf("smtp send to %s [%s] failed: %s", host->name,
+	    host->address, strerror(errno)));
 	  sx->send_quit = FALSE;
 	  }
 	else if (! (sx->ok = smtp_read_response(sx, sx->buffer, sizeof(sx->buffer),
@@ -4689,7 +4689,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 #ifndef DISABLE_TLS
 	if (tls_out.active.sock >= 0)
 	  if (  f.continue_more
-	     || verify_check_given_host(CUSS &ob->hosts_noproxy_tls, host) == OK)
+	     || verify_check_given_host(CUSS(&ob->hosts_noproxy_tls), host) == OK)
 	    {
 	    /* Before passing the socket on, or returning to caller with it still
 	    open, we must shut down TLS.  Not all MTAs allow for the continuation
@@ -4723,7 +4723,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 	    if ((sx->ok = socketpair(AF_UNIX, SOCK_STREAM, 0, pfd) == 0))
 	      socket_fd = pfd[1];
 	    else
-	      set_errno(sx->first_addr, errno, US"internal allocation problem",
+	      set_errno(sx->first_addr, errno, US("internal allocation problem"),
 		      DEFER, FALSE, host,
 # ifdef EXPERIMENTAL_DSN_INFO
 		      sx->smtp_greeting, sx->helo_response,
@@ -4758,7 +4758,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 #ifndef DISABLE_TLS
 	  if (tls_out.active.sock >= 0)
 	    {
-	    int pid = exim_fork(US"tls-proxy-interproc");
+	    int pid = exim_fork(US("tls-proxy-interproc"));
 	    if (pid == 0)		/* child; fork again to disconnect totally */
 	      {
 	      /* does not return */
@@ -4806,7 +4806,7 @@ if (sx->send_quit)
   if (sx->cctx.tls_ctx && sx->send_tlsclose)
     {
 # ifdef EXIM_TCP_CORK	/* Use _CORK to get TLS Close Notify in FIN segment */
-    (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
+    (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US(&on), sizeof(on));
 # endif
     tls_shutdown_wr(sx->cctx.tls_ctx);
     sx->send_tlsclose = FALSE;
@@ -4861,7 +4861,7 @@ if (sx->send_quit || tcw_done && !tcw)
     if (sx->send_tlsclose)
       {
 # ifdef EXIM_TCP_CORK
-      (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
+      (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US(&on), sizeof(on));
 # endif
       tls_close(sx->cctx.tls_ctx, TLS_SHUTDOWN_WAIT);
       }
@@ -4893,7 +4893,7 @@ continue_hostname = NULL;
 smtp_debug_cmd_report();
 
 #ifndef DISABLE_EVENT
-(void) event_raise(tblock->event_action, US"tcp:close", NULL, NULL);
+(void) event_raise(tblock->event_action, US("tcp:close"), NULL, NULL);
 #endif
 
 #ifdef SUPPORT_DANE
@@ -5107,7 +5107,7 @@ if (max_received_linelength > ob->message_linelength_limit)
       addr->transport_return = PENDING_DEFER;
 
   set_errno_nohost(addrlist, ERRNO_SMTPFORMAT,
-    US"message has lines too long for transport", FAIL, TRUE, &now);
+    US("message has lines too long for transport"), FAIL, TRUE, &now);
   goto END_TRANSPORT;
   }
 
@@ -5170,7 +5170,7 @@ if (!hostlist || (ob->hosts_override && ob->hosts))
 	"attempt to use tainted host list '%s' from '%s' in transport %s",
 	s, ob->hosts, tblock->name);
       /* Avoid leaking info to an attacker */
-      addrlist->message = US"internal configuration error";
+      addrlist->message = US("internal configuration error");
       addrlist->transport_return = PANIC;
       return FALSE;
       }
@@ -5323,7 +5323,7 @@ retry_non_continued:
       {
       DEBUG(D_transport|D_acl|D_v)
 	debug_printf("Clearing TFO as not first host for message\n");
-      ob->hosts_try_fastopen = US"";
+      ob->hosts_try_fastopen = US("");
       }
 
     /* Default next host is next host. :-) But this can vary if the
@@ -5465,7 +5465,7 @@ retry_non_continued:
     if (  (!f.deliver_force || f.queue_2stage)
        && (  f.queue_smtp
 	  || match_isinlist(addrlist->domain,
-	      CUSS &queue_smtp_domains, 0,
+	      CUSS(&queue_smtp_domains), 0,
 	      &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK)
        )
       {
@@ -5473,7 +5473,7 @@ retry_non_continued:
       expired = FALSE;
       for (address_item * addr = addrlist; addr; addr = addr->next)
         if (addr->transport_return == DEFER)
-	  addr->message = US"first-pass only routing due to -odqs, "
+	  addr->message = US("first-pass only routing due to -odqs, ")
 			    "queue_smtp_domains or control=queue";
       continue;      /* With next host */
       }
@@ -5489,9 +5489,9 @@ retry_non_continued:
 
     deliver_host = host->name;
     deliver_host_address = host->address;
-    lookup_dnssec_authenticated = host->dnssec == DS_YES ? US"yes"
-				: host->dnssec == DS_NO ? US"no"
-				: US"";
+    lookup_dnssec_authenticated = host->dnssec == DS_YES ? US("yes")
+				: host->dnssec == DS_NO ? US("no")
+				: US("");
 
     /* Set up a string for adding to the retry key if the port number is not
     the standard SMTP port. A host may have its own port setting that overrides
@@ -5499,7 +5499,7 @@ retry_non_continued:
 
     pistring = string_sprintf(":%d", host->port == PORT_NONE
       ? defport : host->port);
-    if (Ustrcmp(pistring, ":25") == 0) pistring = US"";
+    if (Ustrcmp(pistring, ":25") == 0) pistring = US("");
 
     /* Select IPv4 or IPv6, and choose an outgoing interface. If the interface
     string is set, even if constant (as different transports can have different
@@ -5531,8 +5531,8 @@ retry_non_continued:
       If either of these retry records are actually read, the keys used are
       returned to save recomputing them later. */
 
-      if (exp_bool(addrlist, US"transport", tblock->name, D_transport,
-		US"retry_include_ip_address", ob->retry_include_ip_address,
+      if (exp_bool(addrlist, US("transport"), tblock->name, D_transport,
+		US("retry_include_ip_address"), ob->retry_include_ip_address,
 		ob->expand_retry_include_ip_address, &incl_ip) != OK)
 	continue;	/* with next host */
 
@@ -5540,7 +5540,7 @@ retry_non_continued:
         incl_ip, &retry_host_key, &retry_message_key);
 
       DEBUG(D_transport) debug_printf("%s [%s]%s retry-status = %s\n", host->name,
-        host->address ? host->address : US"", pistring,
+        host->address ? host->address : US(""), pistring,
         host->status == hstatus_usable ? "usable"
         : host->status == hstatus_unusable ? "unusable"
         : host->status == hstatus_unusable_expired ? "unusable (expired)" : "?");
@@ -5600,7 +5600,7 @@ retry_non_continued:
     sending the message down a pre-existing connection. */
 
     if (  !continue_hostname
-       && verify_check_given_host(CUSS &ob->serialize_hosts, host) == OK)
+       && verify_check_given_host(CUSS(&ob->serialize_hosts), host) == OK)
       {
       serialize_key = string_sprintf("host-serialize-%s", host->name);
       if (!enq_start(serialize_key, 1))
@@ -5642,7 +5642,7 @@ retry_non_continued:
         {
         addr->host_used = host;
         addr->special_action = '*';
-        addr->message = US"delivery bypassed by -N option";
+        addr->message = US("delivery bypassed by -N option");
         }
       DEBUG(D_transport)
         {
@@ -5650,7 +5650,7 @@ retry_non_continued:
                      "*** host and remaining hosts:\n", tblock->name);
         for (host_item * host2 = host; host2; host2 = host2->next)
           debug_printf("    %s [%s]\n", host2->name,
-            host2->address ? host2->address : US"unset");
+            host2->address ? host2->address : US("unset"));
         }
       rc = OK;
       }
@@ -5725,7 +5725,7 @@ retry_non_continued:
 
 #ifndef DISABLE_EVENT
       if (rc == DEFER)
-	deferred_event_raise(first_addr, host, US"msg:host:defer");
+	deferred_event_raise(first_addr, host, US("msg:host:defer"));
 #endif
 
       /* If STARTTLS was accepted, but there was a failure in setting up the
@@ -5741,7 +5741,7 @@ retry_non_continued:
       if (  rc == DEFER
 	 && first_addr->basic_errno == ERRNO_TLSFAILURE
 	 && ob->tls_tempfail_tryclear
-	 && verify_check_given_host(CUSS &ob->hosts_require_tls, host) != OK
+	 && verify_check_given_host(CUSS(&ob->hosts_require_tls), host) != OK
 	 )
         {
         log_write(0, LOG_MAIN,
@@ -5754,7 +5754,7 @@ retry_non_continued:
           write_logs(host, first_addr->message, first_addr->basic_errno);
 # ifndef DISABLE_EVENT
 	if (rc == DEFER)
-	  deferred_event_raise(first_addr, host, US"msg:host:defer");
+	  deferred_event_raise(first_addr, host, US("msg:host:defer"));
 # endif
         }
 #endif	/*DISABLE_TLS*/
@@ -5768,7 +5768,7 @@ retry_non_continued:
 	     )
          && (message_defer || rc == DEFER)
 	 )
-	deferred_event_raise(first_addr, host, US"msg:defer");
+	deferred_event_raise(first_addr, host, US("msg:defer"));
 #endif
       }
 
@@ -5796,8 +5796,8 @@ retry_non_continued:
       if (!retry_host_key)
         {
 	BOOL incl_ip;
-	if (exp_bool(addrlist, US"transport", tblock->name, D_transport,
-		  US"retry_include_ip_address", ob->retry_include_ip_address,
+	if (exp_bool(addrlist, US("transport"), tblock->name, D_transport,
+		  US("retry_include_ip_address"), ob->retry_include_ip_address,
 		  ob->expand_retry_include_ip_address, &incl_ip) != OK)
 	  incl_ip = TRUE;	/* error; use most-specific retry record */
 
@@ -5844,8 +5844,8 @@ retry_non_continued:
       if (!retry_message_key)
         {
 	BOOL incl_ip;
-	if (exp_bool(addrlist, US"transport", tblock->name, D_transport,
-		  US"retry_include_ip_address", ob->retry_include_ip_address,
+	if (exp_bool(addrlist, US("transport"), tblock->name, D_transport,
+		  US("retry_include_ip_address"), ob->retry_include_ip_address,
 		  ob->expand_retry_include_ip_address, &incl_ip) != OK)
 	  incl_ip = TRUE;	/* error; use most-specific retry record */
 
@@ -5949,14 +5949,14 @@ retry_non_continued:
 
     if (cutthrough.cctx.sock >= 0 && cutthrough.is_tls)
       {
-      (void) tls_write(cutthrough.cctx.tls_ctx, US"QUIT\r\n", 6, FALSE);
+      (void) tls_write(cutthrough.cctx.tls_ctx, US("QUIT\r\n"), 6, FALSE);
       tls_close(cutthrough.cctx.tls_ctx, TLS_SHUTDOWN_NOWAIT);
       cutthrough.cctx.tls_ctx = NULL;
       cutthrough.is_tls = FALSE;
       }
     else
 #else
-      (void) write(fd, US"QUIT\r\n", 6);
+      (void) write(fd, US("QUIT\r\n"), 6);
 #endif
     (void) close(fd);
     cutthrough.cctx.sock = -1;
@@ -6027,7 +6027,7 @@ for (address_item * addr = addrlist; addr; addr = addr->next)
     {
     addr->transport_return = DEFER;
     addr->basic_errno = 0;
-    addr->message = US"SMTP delivery explicitly queued";
+    addr->message = US("SMTP delivery explicitly queued");
     }
 
   else if (  addr->transport_return == DEFER
@@ -6037,16 +6037,16 @@ for (address_item * addr = addrlist; addr; addr = addr->next)
     {
     addr->basic_errno = ERRNO_HRETRY;
     if (continue_hostname)
-      addr->message = US"no host found for existing SMTP connection";
+      addr->message = US("no host found for existing SMTP connection");
     else if (expired)
       {
       setflag(addr, af_pass_message);   /* This is not a security risk */
       addr->message = string_sprintf(
 	"all hosts%s have been failing for a long time %s",
-	addr->domain ? string_sprintf(" for '%s'", addr->domain) : US"",
+	addr->domain ? string_sprintf(" for '%s'", addr->domain) : US(""),
         ob->delay_after_cutoff
-	? US"(and retry time not reached)"
-	: US"and were last tried after this message arrived");
+	? US("(and retry time not reached)")
+	: US("and were last tried after this message arrived"));
 
       /* If we are already using fallback hosts, or there are no fallback hosts
       defined, convert the result to FAIL to cause a bounce. */
@@ -6072,7 +6072,7 @@ for (address_item * addr = addrlist; addr; addr = addr->next)
         "not reached for other hosts or connection limit reached%s";
 
       addr->message = string_sprintf(s,
-	addr->domain ? string_sprintf(" for '%s'", addr->domain) : US"");
+	addr->domain ? string_sprintf(" for '%s'", addr->domain) : US(""));
       }
     }
   }

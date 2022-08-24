@@ -100,14 +100,14 @@ for (int k = 1;  (key = string_nextinlist(&keystring, &sep, NULL, 0)); k++)
   for (uschar * s = key; *s; s++) if (!isdigit(*s)) { numeric = FALSE; break; }
 
   if (!(j = numeric
-	? json_array_get(j, (size_t) strtoul(CS key, NULL, 10))
-	: json_object_get(j, CCS key)
+	? json_array_get(j, (size_t) strtoul(CS(key), NULL, 10))
+	: json_object_get(j, CCS(key))
      ) )
     {
     DEBUG(D_lookup) debug_printf_indent("%s, for key %d: '%s'\n",
       numeric
-      ? US"bad index, or not json array"
-      : US"no such key, or not json object",
+      ? US("bad index, or not json array")
+      : US("no such key, or not json object"),
       k, key);
     json_decref(j0);
     return FAIL;
@@ -117,7 +117,7 @@ for (int k = 1;  (key = string_nextinlist(&keystring, &sep, NULL, 0)); k++)
 switch (json_typeof(j))
   {
   case JSON_STRING:
-    *result = string_copyn(CUS json_string_value(j), json_string_length(j));
+    *result = string_copyn(CUS(json_string_value(j)), json_string_length(j));
     break;
   case JSON_INTEGER:
     *result = string_sprintf("%" JSON_INTEGER_FORMAT, json_integer_value(j));
@@ -125,10 +125,10 @@ switch (json_typeof(j))
   case JSON_REAL:
     *result = string_sprintf("%f", json_real_value(j));
     break;
-  case JSON_TRUE:	*result = US"true";	break;
-  case JSON_FALSE:	*result = US"false";	break;
+  case JSON_TRUE:	*result = US("true");	break;
+  case JSON_FALSE:	*result = US("false");	break;
   case JSON_NULL:	*result = NULL;		break;
-  default:		*result = US json_dumps(j, 0); break;
+  default:		*result = US(json_dumps(j, 0)); break;
   }
 json_decref(j0);
 return OK;
@@ -166,7 +166,7 @@ return string_fmt_append(g, "Library version: json: Jansonn version %s\n", JANSS
 
 
 static lookup_info json_lookup_info = {
-  .name = US"json",			/* lookup name */
+  .name = US("json"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = json_open,			/* open function */
   .check = json_check,			/* check function */

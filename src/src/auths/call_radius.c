@@ -87,7 +87,7 @@ int sep = 0;
 #endif
 
 
-if (!(user = string_nextinlist(&radius_args, &sep, NULL, 0))) user = US"";
+if (!(user = string_nextinlist(&radius_args, &sep, NULL, 0))) user = US("");
 
 DEBUG(D_auth) debug_printf("Running RADIUS authentication for user \"%s\" "
                "and \"%s\"\n", user, radius_args);
@@ -106,16 +106,16 @@ if (rc_read_config(RADIUS_CONFIG_FILE) != 0)
   *errptr = string_sprintf("RADIUS: can't open %s", RADIUS_CONFIG_FILE);
 
 else if (rc_read_dictionary(rc_conf_str("dictionary")) != 0)
-  *errptr = US"RADIUS: can't read dictionary";
+  *errptr = US("RADIUS: can't read dictionary");
 
 else if (!rc_avpair_add(&send, PW_USER_NAME, user, 0))
-  *errptr = US"RADIUS: add user name failed";
+  *errptr = US("RADIUS: add user name failed");
 
-else if (!rc_avpair_add(&send, PW_USER_PASSWORD, CS radius_args, 0))
-  *errptr = US"RADIUS: add password failed");
+else if (!rc_avpair_add(&send, PW_USER_PASSWORD, CS(radius_args), 0))
+  *errptr = US("RADIUS: add password failed"));
 
 else if (!rc_avpair_add(&send, PW_SERVICE_TYPE, &service, 0))
-  *errptr = US"RADIUS: add service type failed";
+  *errptr = US("RADIUS: add service type failed");
 
 #else  /* RADIUS_LIB_RADIUSCLIENT unset => RADIUS_LIB_RADIUSCLIENT2 */
 
@@ -123,17 +123,17 @@ if (!(h = rc_read_config(RADIUS_CONFIG_FILE)))
   *errptr = string_sprintf("RADIUS: can't open %s", RADIUS_CONFIG_FILE);
 
 else if (rc_read_dictionary(h, rc_conf_str(h, "dictionary")) != 0)
-  *errptr = US"RADIUS: can't read dictionary";
+  *errptr = US("RADIUS: can't read dictionary");
 
 else if (!rc_avpair_add(h, &send, PW_USER_NAME, user, Ustrlen(user), 0))
-  *errptr = US"RADIUS: add user name failed";
+  *errptr = US("RADIUS: add user name failed");
 
-else if (!rc_avpair_add(h, &send, PW_USER_PASSWORD, CS radius_args,
+else if (!rc_avpair_add(h, &send, PW_USER_PASSWORD, CS(radius_args),
     Ustrlen(radius_args), 0))
-  *errptr = US"RADIUS: add password failed";
+  *errptr = US("RADIUS: add password failed");
 
 else if (!rc_avpair_add(h, &send, PW_SERVICE_TYPE, &service, 0, 0))
-  *errptr = US"RADIUS: add service type failed";
+  *errptr = US("RADIUS: add service type failed");
 
 #endif  /* RADIUS_LIB_RADIUSCLIENT */
 
@@ -161,7 +161,7 @@ switch (result)
     return FAIL;
 
   case TIMEOUT_RC:
-    *errptr = US"RADIUS: timed out";
+    *errptr = US("RADIUS: timed out");
     return ERROR;
 
   case BADRESP_RC:
@@ -181,10 +181,10 @@ if (!(h = rad_auth_open()))
   }
 if (rad_config(h, RADIUS_CONFIG_FILE) != 0 ||
     rad_create_request(h, RAD_ACCESS_REQUEST) != 0 ||
-    rad_put_string(h, RAD_USER_NAME, CS user) != 0 ||
-    rad_put_string(h, RAD_USER_PASSWORD, CS radius_args) != 0 ||
+    rad_put_string(h, RAD_USER_NAME, CS(user)) != 0 ||
+    rad_put_string(h, RAD_USER_PASSWORD, CS(radius_args)) != 0 ||
     rad_put_int(h, RAD_SERVICE_TYPE, RAD_AUTHENTICATE_ONLY) != 0 ||
-    rad_put_string(h, RAD_NAS_IDENTIFIER, CS primary_hostname) != 0)
+    rad_put_string(h, RAD_NAS_IDENTIFIER, CS(primary_hostname)) != 0)
   {
   *errptr = string_sprintf("RADIUS: %s", rad_strerror(h));
   result = ERROR;
