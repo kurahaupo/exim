@@ -42,7 +42,7 @@ be expanded and possibly looked up. */
 
 if (!ugid->uid_set && rblock->expand_uid != NULL)
   {
-  if (route_find_expanded_user(rblock->expand_uid, rblock->name, US("router"),
+  if (route_find_expanded_user(rblock->expand_uid, rblock->name, cUS("router"),
     &upw, &(ugid->uid), &(addr->message))) ugid->uid_set = TRUE;
   else return FALSE;
   }
@@ -51,7 +51,7 @@ if (!ugid->uid_set && rblock->expand_uid != NULL)
 
 if (!ugid->gid_set && rblock->expand_gid != NULL)
   {
-  if (route_find_expanded_group(rblock->expand_gid, rblock->name, US("router"),
+  if (route_find_expanded_group(rblock->expand_gid, rblock->name, cUS("router"),
     &(ugid->gid), &(addr->message))) ugid->gid_set = TRUE;
   else return FALSE;
   }

@@ -31,7 +31,7 @@ tls_export_cert(uschar * buf, size_t buflen, void * cert)
 size_t sz = buflen;
 rmark reset_point = store_mark();
 BOOL fail;
-const uschar * cp;
+cuschar * cp;
 
 if ((fail = gnutls_x509_crt_export((gnutls_x509_crt_t)cert,
     GNUTLS_X509_FMT_PEM, buf, &sz)))
@@ -52,7 +52,7 @@ return !fail;
 
 /* On error, NULL out the destination */
 BOOL
-tls_import_cert(const uschar * buf, void ** cert)
+tls_import_cert(cuschar * buf, void ** cert)
 {
 rmark reset_point = store_mark();
 gnutls_datum_t datum;
@@ -118,7 +118,7 @@ if (mod && Ustrcmp(mod, "int") == 0)
 cp = store_get(len, GET_UNTAINTED);
 if (f.timestamps_utc)
   {
-  uschar * tz = to_tz(US("GMT0"));
+  uschar * tz = to_tz(cUS("GMT0"));
   len = strftime(CS(cp), len, "%b %e %T %Y %Z", gmtime(&t));
   restore_tz(tz);
   }
@@ -285,7 +285,7 @@ gstring * list = NULL;
 size_t siz;
 int ret;
 uschar sep = '\n';
-uschar * tag = US("");
+uschar * tag = cUS("");
 uschar * ele;
 int match = -1;
 
@@ -328,9 +328,9 @@ for (int index = 0;; index++)
     continue;
   switch (ret)
     {
-    case GNUTLS_SAN_DNSNAME:    tag = US("DNS");  break;
-    case GNUTLS_SAN_URI:        tag = US("URI");  break;
-    case GNUTLS_SAN_RFC822NAME: tag = US("MAIL"); break;
+    case GNUTLS_SAN_DNSNAME:    tag = cUS("DNS");  break;
+    case GNUTLS_SAN_URI:        tag = cUS("URI");  break;
+    case GNUTLS_SAN_RFC822NAME: tag = cUS("MAIL"); break;
     default: continue;        /* ignore unrecognised types */
     }
   list = string_append_listele(list, sep,

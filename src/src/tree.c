@@ -28,7 +28,7 @@ Returns:  nothing
 */
 
 void
-tree_add_nonrecipient(const uschar *s)
+tree_add_nonrecipient(cuschar *s)
 {
 rmark rpoint = store_mark();
 tree_node * node = store_get(sizeof(tree_node) + Ustrlen(s), s);
@@ -53,7 +53,7 @@ Returns:  nothing
 */
 
 void
-tree_add_duplicate(const uschar *s, address_item *addr)
+tree_add_duplicate(cuschar *s, address_item *addr)
 {
 rmark rpoint = store_mark();
 tree_node * node = store_get(sizeof(tree_node) + Ustrlen(s), s);
@@ -333,7 +333,7 @@ Returns:    pointer to node, or NULL if not found
 */
 
 tree_node *
-tree_search(tree_node *p, const uschar *name)
+tree_search(tree_node *p, cuschar *name)
 {
 while (p)
   {

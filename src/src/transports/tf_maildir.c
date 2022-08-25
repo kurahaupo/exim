@@ -61,11 +61,11 @@ loop so that code can be shared. */
 for (i = 0; i < 4; i++)
   {
   int j;
-  const uschar *dir, *mdir;
+  cuschar *dir, *mdir;
 
   if (i == 0)
     {
-    mdir = CUS("");
+    mdir = cUS("");
     dir = path;
     }
   else

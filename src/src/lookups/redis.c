@@ -29,7 +29,7 @@ static redis_connection *redis_connections = NULL;
 
 
 static void *
-redis_open(const uschar * filename, uschar ** errmsg)
+redis_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(1);
 }
@@ -74,8 +74,8 @@ single server.
 */
 
 static int
-perform_redis_search(const uschar *command, uschar *server, uschar **resultptr,
-  uschar **errmsg, BOOL *defer_break, uint *do_cache, const uschar * opts)
+perform_redis_search(cuschar *command, uschar *server, uschar **resultptr,
+  uschar **errmsg, BOOL *defer_break, uint *do_cache, cuschar * opts)
 {
 redisContext *redis_handle = NULL;        /* Keep compilers happy */
 redisReply *redis_reply = NULL;
@@ -165,7 +165,7 @@ if (!cn)
     socket ? redisConnectUnix(CCS(socket)) : redisConnect(CCS(server), port);
   if (!redis_handle)
     {
-    *errmsg = US("REDIS connection failed");
+    *errmsg = cUS("REDIS connection failed");
     *defer_break = FALSE;
     goto REDIS_EXIT;
     }
@@ -207,7 +207,7 @@ if(sdata[1])
 /* split string on whitespace into argv */
   {
   uschar * argv[32];
-  const uschar * s = command;
+  cuschar * s = command;
   int siz, ptr, i;
   uschar c;
 
@@ -262,13 +262,13 @@ switch (redis_reply->type)
   case REDIS_REPLY_NIL:
     DEBUG(D_lookup)
       debug_printf_indent("REDIS: query was not one that returned any data\n");
-    result = string_catn(result, US(""), 1);
+    result = string_catn(result, cUS(""), 1);
     *do_cache = 0;
     goto REDIS_EXIT;
     /* NOTREACHED */
 
   case REDIS_REPLY_INTEGER:
-    result = string_cat(result, redis_reply->integer != 0 ? US("true") : US("false"));
+    result = string_cat(result, redis_reply->integer != 0 ? cUS("true") : cUS("false"));
     break;
 
   case REDIS_REPLY_STRING:
@@ -286,7 +286,7 @@ switch (redis_reply->type)
       entry = redis_reply->element[i];
 
       if (result)
-	result = string_catn(result, US("\n"), 1);
+	result = string_catn(result, cUS("\n"), 1);
 
       switch (entry->type)
 	{
@@ -302,7 +302,7 @@ switch (redis_reply->type)
 	    tentry = entry->element[j];
 
 	    if (result)
-	      result = string_catn(result, US("\n"), 1);
+	      result = string_catn(result, cUS("\n"), 1);
 
 	    switch (tentry->type)
 	      {
@@ -338,7 +338,7 @@ if (result)
 else
   {
   yield = FAIL;
-  *errmsg = US("REDIS: no data found");
+  *errmsg = cUS("REDIS: no data found");
   }
 
 REDIS_EXIT:
@@ -377,11 +377,11 @@ else
 
 static int
 redis_find(void * handle __attribute__((unused)),
-  const uschar * filename __attribute__((unused)),
-  const uschar * command, int length, uschar ** result, uschar ** errmsg,
-  uint * do_cache, const uschar * opts)
+  cuschar * filename __attribute__((unused)),
+  cuschar * command, int length, uschar ** result, uschar ** errmsg,
+  uint * do_cache, cuschar * opts)
 {
-return lf_sqlperform(US("Redis"), US("redis_servers"), redis_servers, command,
+return lf_sqlperform(cUS("Redis"), cUS("redis_servers"), redis_servers, command,
   result, errmsg, do_cache, opts, perform_redis_search);
 }
 
@@ -449,7 +449,7 @@ return g;
 
 /* These are the lookup_info blocks for this driver */
 static lookup_info redis_lookup_info = {
-  .name = US("redis"),			/* lookup name */
+  .name = cUS("redis"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = redis_open,			/* open function */
   .check = NULL,			/* no check function */

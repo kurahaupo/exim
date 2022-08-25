@@ -46,7 +46,7 @@
 #include "signing.h"
 
 #define PDKIM_SIGNATURE_VERSION     "1"
-#define PDKIM_PUB_RECORD_VERSION    US("DKIM1")
+#define PDKIM_PUB_RECORD_VERSION    cUS("DKIM1")
 
 #define PDKIM_MAX_HEADER_LEN        65536
 #define PDKIM_MAX_HEADERS           512
@@ -62,53 +62,53 @@ struct pdkim_stringlist {
 
 /* -------------------------------------------------------------------------- */
 /* A bunch of list constants */
-const uschar * pdkim_querymethods[] = {
-  US("dns/txt"),
+cuschar * pdkim_querymethods[] = {
+  cUS("dns/txt"),
   NULL
 };
-const uschar * pdkim_canons[] = {
-  US("simple"),
-  US("relaxed"),
+cuschar * pdkim_canons[] = {
+  cUS("simple"),
+  cUS("relaxed"),
   NULL
 };
 
 const pdkim_hashtype pdkim_hashes[] = {
-  { US("sha1"),   HASH_SHA1 },
-  { US("sha256"), HASH_SHA2_256 },
-  { US("sha512"), HASH_SHA2_512 }
+  { cUS("sha1"),   HASH_SHA1 },
+  { cUS("sha256"), HASH_SHA2_256 },
+  { cUS("sha512"), HASH_SHA2_512 }
 };
 
-const uschar * pdkim_keytypes[] = {
-  [KEYTYPE_RSA] =	US("rsa"),
+cuschar * pdkim_keytypes[] = {
+  [KEYTYPE_RSA] =	cUS("rsa"),
 #ifdef SIGN_HAVE_ED25519
-  [KEYTYPE_ED25519] =	US("ed25519"),		/* Works for 3.6.0 GnuTLS, OpenSSL 1.1.1 */
+  [KEYTYPE_ED25519] =	cUS("ed25519"),		/* Works for 3.6.0 GnuTLS, OpenSSL 1.1.1 */
 #endif
 
 #ifdef notyet_EC_dkim_extensions	/* https://tools.ietf.org/html/draft-srose-dkim-ecc-00 */
-  US("eccp256"),
-  US("eccp348"),
-  US("ed448"),
+  cUS("eccp256"),
+  cUS("eccp348"),
+  cUS("ed448"),
 #endif
 };
 
 typedef struct pdkim_combined_canon_entry {
-  const uschar *	str;
+  cuschar *	str;
   int			canon_headers;
   int			canon_body;
 } pdkim_combined_canon_entry;
 
 pdkim_combined_canon_entry pdkim_combined_canons[] = {
-  { US("simple/simple"),    PDKIM_CANON_SIMPLE,   PDKIM_CANON_SIMPLE },
-  { US("simple/relaxed"),   PDKIM_CANON_SIMPLE,   PDKIM_CANON_RELAXED },
-  { US("relaxed/simple"),   PDKIM_CANON_RELAXED,  PDKIM_CANON_SIMPLE },
-  { US("relaxed/relaxed"),  PDKIM_CANON_RELAXED,  PDKIM_CANON_RELAXED },
-  { US("simple"),           PDKIM_CANON_SIMPLE,   PDKIM_CANON_SIMPLE },
-  { US("relaxed"),          PDKIM_CANON_RELAXED,  PDKIM_CANON_SIMPLE },
+  { cUS("simple/simple"),    PDKIM_CANON_SIMPLE,   PDKIM_CANON_SIMPLE },
+  { cUS("simple/relaxed"),   PDKIM_CANON_SIMPLE,   PDKIM_CANON_RELAXED },
+  { cUS("relaxed/simple"),   PDKIM_CANON_RELAXED,  PDKIM_CANON_SIMPLE },
+  { cUS("relaxed/relaxed"),  PDKIM_CANON_RELAXED,  PDKIM_CANON_RELAXED },
+  { cUS("simple"),           PDKIM_CANON_SIMPLE,   PDKIM_CANON_SIMPLE },
+  { cUS("relaxed"),          PDKIM_CANON_RELAXED,  PDKIM_CANON_SIMPLE },
   { NULL,                 0,                    0 }
 };
 
 
-static const blob lineending = {.data = US("\r\n"), .len = 2};
+static const blob lineending = {.data = cUS("\r\n"), .len = 2};
 
 /* -------------------------------------------------------------------------- */
 uschar *
@@ -116,14 +116,14 @@ dkim_sig_to_a_tag(const pdkim_signature * sig)
 {
 if (  sig->keytype < 0  || sig->keytype > nelem(pdkim_keytypes)
    || sig->hashtype < 0 || sig->hashtype > nelem(pdkim_hashes))
-  return US("err");
+  return cUS("err");
 return string_sprintf("%s-%s",
   pdkim_keytypes[sig->keytype], pdkim_hashes[sig->hashtype].dkim_hashname);
 }
 
 
 static int
-pdkim_keyname_to_keytype(const uschar * s)
+pdkim_keyname_to_keytype(cuschar * s)
 {
 for (int i = 0; i < nelem(pdkim_keytypes); i++)
   if (Ustrcmp(s, pdkim_keytypes[i]) == 0) return i;
@@ -131,7 +131,7 @@ return -1;
 }
 
 int
-pdkim_hashname_to_hashtype(const uschar * s, unsigned len)
+pdkim_hashname_to_hashtype(cuschar * s, unsigned len)
 {
 if (!len) len = Ustrlen(s);
 for (int i = 0; i < nelem(pdkim_hashes); i++)
@@ -141,7 +141,7 @@ return -1;
 }
 
 void
-pdkim_cstring_to_canons(const uschar * s, unsigned len,
+pdkim_cstring_to_canons(cuschar * s, unsigned len,
   int * canon_head, int * canon_body)
 {
 if (!len) len = Ustrlen(s);
@@ -189,21 +189,21 @@ switch(ext_status)
   }
 }
 
-const uschar *
+cuschar *
 pdkim_errstr(int status)
 {
 switch(status)
   {
-  case PDKIM_OK:		return US("OK");
-  case PDKIM_FAIL:		return US("FAIL");
-  case PDKIM_ERR_RSA_PRIVKEY:	return US("PRIVKEY");
-  case PDKIM_ERR_RSA_SIGNING:	return US("SIGNING");
-  case PDKIM_ERR_LONG_LINE:	return US("LONG_LINE");
-  case PDKIM_ERR_BUFFER_TOO_SMALL:	return US("BUFFER_TOO_SMALL");
-  case PDKIM_ERR_EXCESS_SIGS:	return US("EXCESS_SIGS");
-  case PDKIM_SIGN_PRIVKEY_WRAP:	return US("PRIVKEY_WRAP");
-  case PDKIM_SIGN_PRIVKEY_B64D:	return US("PRIVKEY_B64D");
-  default: return US("(unknown)");
+  case PDKIM_OK:		return cUS("OK");
+  case PDKIM_FAIL:		return cUS("FAIL");
+  case PDKIM_ERR_RSA_PRIVKEY:	return cUS("PRIVKEY");
+  case PDKIM_ERR_RSA_SIGNING:	return cUS("SIGNING");
+  case PDKIM_ERR_LONG_LINE:	return cUS("LONG_LINE");
+  case PDKIM_ERR_BUFFER_TOO_SMALL:	return cUS("BUFFER_TOO_SMALL");
+  case PDKIM_ERR_EXCESS_SIGS:	return cUS("EXCESS_SIGS");
+  case PDKIM_SIGN_PRIVKEY_WRAP:	return cUS("PRIVKEY_WRAP");
+  case PDKIM_SIGN_PRIVKEY_B64D:	return cUS("PRIVKEY_B64D");
+  default: return cUS("(unknown)");
   }
 }
 
@@ -211,7 +211,7 @@ switch(status)
 /* -------------------------------------------------------------------------- */
 /* Print debugging functions */
 void
-pdkim_quoteprint(const uschar *data, int len)
+pdkim_quoteprint(cuschar *data, int len)
 {
 for (int i = 0; i < len; i++)
   {
@@ -236,7 +236,7 @@ debug_printf("\n");
 }
 
 void
-pdkim_hexprint(const uschar *data, int len)
+pdkim_hexprint(cuschar *data, int len)
 {
 if (data) for (int i = 0 ; i < len; i++) debug_printf("%02x", data[i]);
 else debug_printf("<NULL>");
@@ -246,7 +246,7 @@ debug_printf("\n");
 
 
 static pdkim_stringlist *
-pdkim_prepend_stringlist(pdkim_stringlist * base, const uschar * str)
+pdkim_prepend_stringlist(pdkim_stringlist * base, cuschar * str)
 {
 pdkim_stringlist * new_entry = store_get(sizeof(pdkim_stringlist), GET_UNTAINTED);
 
@@ -297,9 +297,9 @@ pdkim_free_ctx(pdkim_ctx *ctx)
 */
 
 static int
-header_name_match(const uschar * header, uschar * tick)
+header_name_match(cuschar * header, uschar * tick)
 {
-const uschar * ticklist = tick;
+cuschar * ticklist = tick;
 int sep = ':';
 BOOL multisign;
 uschar * hname, * p, * ele;
@@ -334,14 +334,14 @@ return PDKIM_FAIL;
 /* Performs "relaxed" canonicalization of a header. */
 
 uschar *
-pdkim_relax_header_n(const uschar * header, int len, BOOL append_crlf)
+pdkim_relax_header_n(cuschar * header, int len, BOOL append_crlf)
 {
 BOOL past_field_name = FALSE;
 BOOL seen_wsp = FALSE;
 uschar * relaxed = store_get(len+3, GET_TAINTED);
 uschar * q = relaxed;
 
-for (const uschar * p = header; p - header < len; p++)
+for (cuschar * p = header; p - header < len; p++)
   {
   uschar c = *p;
 
@@ -378,7 +378,7 @@ return relaxed;
 
 
 uschar *
-pdkim_relax_header(const uschar * header, BOOL append_crlf)
+pdkim_relax_header(cuschar * header, BOOL append_crlf)
 {
 return pdkim_relax_header_n(header, Ustrlen(header), append_crlf);
 }
@@ -387,10 +387,10 @@ return pdkim_relax_header_n(header, Ustrlen(header), append_crlf);
 /* -------------------------------------------------------------------------- */
 #define PDKIM_QP_ERROR_DECODE -1
 
-static const uschar *
-pdkim_decode_qp_char(const uschar *qp_p, int *c)
+static cuschar *
+pdkim_decode_qp_char(cuschar *qp_p, int *c)
 {
-const uschar *initial_pos = qp_p;
+cuschar *initial_pos = qp_p;
 
 /* Advance one char */
 qp_p++;
@@ -413,11 +413,11 @@ return initial_pos;
 /* -------------------------------------------------------------------------- */
 
 static uschar *
-pdkim_decode_qp(const uschar * str)
+pdkim_decode_qp(cuschar * str)
 {
 int nchar = 0;
 uschar * q;
-const uschar * p = str;
+cuschar * p = str;
 uschar * n = store_get(Ustrlen(str)+1, GET_TAINTED);
 
 *n = '\0';
@@ -445,7 +445,7 @@ return n;
 /* -------------------------------------------------------------------------- */
 
 void
-pdkim_decode_base64(const uschar * str, blob * b)
+pdkim_decode_base64(cuschar * str, blob * b)
 {
 int dlen = b64decode(str, &b->data);
 if (dlen < 0) b->data = NULL;
@@ -566,7 +566,7 @@ for (uschar * p = raw_hdr; ; p++)
 	    break;
 	  case 'a':					/* algorithm */
 	    {
-	    const uschar * list = cur_val->s;
+	    cuschar * list = cur_val->s;
 	    int sep = '-';
 	    uschar * elem;
 
@@ -658,9 +658,9 @@ return sig;
 /* -------------------------------------------------------------------------- */
 
 pdkim_pubkey *
-pdkim_parse_pubkey_record(const uschar *raw_record)
+pdkim_parse_pubkey_record(cuschar *raw_record)
 {
-const uschar * ele;
+cuschar * ele;
 int sep = ';';
 pdkim_pubkey * pub;
 
@@ -669,7 +669,7 @@ memset(pub, 0, sizeof(pdkim_pubkey));
 
 while ((ele = string_nextinlist(&raw_record, &sep, NULL, 0)))
   {
-  const uschar * val;
+  cuschar * val;
 
   if ((val = Ustrchr(ele, '=')))
     {
@@ -702,9 +702,9 @@ else if (Ustrcmp(pub->version, PDKIM_PUB_RECORD_VERSION) != 0)
   return NULL;
   }
 
-if (!pub->granularity) pub->granularity = US("*");
-if (!pub->keytype    ) pub->keytype     = US("rsa");
-if (!pub->srvtype    ) pub->srvtype     = US("*");
+if (!pub->granularity) pub->granularity = cUS("*");
+if (!pub->keytype    ) pub->keytype     = cUS("rsa");
+if (!pub->srvtype    ) pub->srvtype     = cUS("*");
 
 /* p= is required */
 if (pub->key.data)
@@ -744,7 +744,7 @@ if (b->canon_method == PDKIM_CANON_RELAXED)
     relaxed_data = store_malloc(sizeof(blob) + orig_data->len+1);
     relaxed_data->data = US(relaxed_data+1);
 
-    for (const uschar * p = orig_data->data, * r = p + orig_data->len; p < r; p++)
+    for (cuschar * p = orig_data->data, * r = p + orig_data->len; p < r; p++)
       {
       char c = *p;
       if (c == '\r')
@@ -1072,7 +1072,7 @@ else for (int p = 0; p < len; p++)
     else if (c == '\n')
       {
       if (!(ctx->flags & PDKIM_SEEN_CR))		/* emulate the CR */
-	ctx->cur_header = string_catn(ctx->cur_header, CUS("\r"), 1);
+	ctx->cur_header = string_catn(ctx->cur_header, cUS("\r"), 1);
 
       if (ctx->flags & PDKIM_SEEN_LF)		/* Seen last header line */
 	{
@@ -1109,7 +1109,7 @@ static gstring *
 pdkim_hdr_cont(gstring * str, int * col)
 {
 *col = 1;
-return string_catn(str, US("\r\n\t"), 3);
+return string_catn(str, cUS("\r\n\t"), 3);
 }
 
 
@@ -1138,7 +1138,7 @@ return string_catn(str, US("\r\n\t"), 3);
 
 static gstring *
 pdkim_headcat(int * col, gstring * str,
-  const uschar * pad, const uschar * intro, const uschar * payload)
+  cuschar * pad, cuschar * intro, cuschar * payload)
 {
 int len, chomp, padded = 0;
 
@@ -1173,12 +1173,12 @@ if (len <= 77 && *col+len > 78)
 if (pad)
   {
   str = string_catn(str, pad, 1);
-  str = string_catn(str, US(" "), 1);
+  str = string_catn(str, cUS(" "), 1);
   *col += 2;
   }
 else if (padded && *col < 78)
   {
-  str = string_catn(str, US(" "), 1);
+  str = string_catn(str, cUS(" "), 1);
   (*col)++;
   }
 
@@ -1217,25 +1217,25 @@ gstring * hdr;
 gstring * canon_all;
 
 canon_all = string_cat (NULL, pdkim_canons[sig->canon_headers]);
-canon_all = string_catn(canon_all, US("/"), 1);
+canon_all = string_catn(canon_all, cUS("/"), 1);
 canon_all = string_cat (canon_all, pdkim_canons[sig->canon_body]);
 (void) string_from_gstring(canon_all);
 
-hdr = string_cat(NULL, US("DKIM-Signature: v="PDKIM_SIGNATURE_VERSION));
+hdr = string_cat(NULL, cUS("DKIM-Signature: v="PDKIM_SIGNATURE_VERSION));
 col = hdr->ptr;
 
 /* Required and static bits */
-hdr = pdkim_headcat(&col, hdr, US(";"), US("a="), dkim_sig_to_a_tag(sig));
-hdr = pdkim_headcat(&col, hdr, US(";"), US("q="), pdkim_querymethods[sig->querymethod]);
-hdr = pdkim_headcat(&col, hdr, US(";"), US("c="), canon_all->s);
-hdr = pdkim_headcat(&col, hdr, US(";"), US("d="), sig->domain);
-hdr = pdkim_headcat(&col, hdr, US(";"), US("s="), sig->selector);
+hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("a="), dkim_sig_to_a_tag(sig));
+hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("q="), pdkim_querymethods[sig->querymethod]);
+hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("c="), canon_all->s);
+hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("d="), sig->domain);
+hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("s="), sig->selector);
 
 /* list of header names can be split between items. */
   {
   uschar * n = string_copy(sig->headernames);
-  uschar * i = US("h=");
-  uschar * s = US(";");
+  uschar * i = cUS("h=");
+  uschar * s = cUS(";");
 
   while (*n)
     {
@@ -1244,7 +1244,7 @@ hdr = pdkim_headcat(&col, hdr, US(";"), US("s="), sig->selector);
     if (c) *c ='\0';
 
     if (!i)
-      hdr = pdkim_headcat(&col, hdr, NULL, NULL, US(":"));
+      hdr = pdkim_headcat(&col, hdr, NULL, NULL, cUS(":"));
 
     hdr = pdkim_headcat(&col, hdr, s, i, n);
 
@@ -1258,18 +1258,18 @@ hdr = pdkim_headcat(&col, hdr, US(";"), US("s="), sig->selector);
   }
 
 base64_bh = pdkim_encode_base64(&sig->calc_body_hash->bh);
-hdr = pdkim_headcat(&col, hdr, US(";"), US("bh="), base64_bh);
+hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("bh="), base64_bh);
 
 /* Optional bits */
 if (sig->identity)
-  hdr = pdkim_headcat(&col, hdr, US(";"), US("i="), sig->identity);
+  hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("i="), sig->identity);
 
 if (sig->created > 0)
   {
   uschar minibuf[21];
 
   snprintf(CS(minibuf), sizeof(minibuf), "%lu", sig->created);
-  hdr = pdkim_headcat(&col, hdr, US(";"), US("t="), minibuf);
+  hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("t="), minibuf);
 }
 
 if (sig->expires > 0)
@@ -1277,7 +1277,7 @@ if (sig->expires > 0)
   uschar minibuf[21];
 
   snprintf(CS(minibuf), sizeof(minibuf), "%lu", sig->expires);
-  hdr = pdkim_headcat(&col, hdr, US(";"), US("x="), minibuf);
+  hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("x="), minibuf);
   }
 
 if (sig->bodylength >= 0)
@@ -1285,17 +1285,17 @@ if (sig->bodylength >= 0)
   uschar minibuf[21];
 
   snprintf(CS(minibuf), sizeof(minibuf), "%lu", sig->bodylength);
-  hdr = pdkim_headcat(&col, hdr, US(";"), US("l="), minibuf);
+  hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("l="), minibuf);
   }
 
 /* Preliminary or final version? */
 if (final)
   {
   base64_b = pdkim_encode_base64(&sig->sighash);
-  hdr = pdkim_headcat(&col, hdr, US(";"), US("b="), base64_b);
+  hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("b="), base64_b);
 
   /* add trailing semicolon: I'm not sure if this is actually needed */
-  hdr = pdkim_headcat(&col, hdr, NULL, US(";"), US(""));
+  hdr = pdkim_headcat(&col, hdr, NULL, cUS(";"), cUS(""));
   }
 else
   {
@@ -1304,7 +1304,7 @@ else
   the headcat routine could insert a linebreak which the relaxer would reduce
   to a single space preceding the terminating semicolon, resulting in an
   incorrect header-hash. */
-  hdr = pdkim_headcat(&col, hdr, US(";"), US("b=;"), US(""));
+  hdr = pdkim_headcat(&col, hdr, cUS(";"), cUS("b=;"), cUS(""));
   }
 
 return string_from_gstring(hdr);
@@ -1338,7 +1338,7 @@ if (excess > 0)
 
 static pdkim_pubkey *
 pdkim_key_from_dns(pdkim_ctx * ctx, pdkim_signature * sig, ev_ctx * vctx,
-  const uschar ** errstr)
+  cuschar ** errstr)
 {
 uschar * dns_txt_name, * dns_txt_reply;
 pdkim_pubkey * p;
@@ -1429,7 +1429,7 @@ static pdkim_signature *
 sort_sig_methods(pdkim_signature * siglist)
 {
 pdkim_signature * yield, ** ss;
-const uschar * prefs;
+cuschar * prefs;
 uschar * ele;
 int sep;
 
@@ -1481,7 +1481,7 @@ return yield;
 
 DLLEXPORT int
 pdkim_feed_finish(pdkim_ctx * ctx, pdkim_signature ** return_signatures,
-  const uschar ** err)
+  cuschar ** err)
 {
 BOOL verify_pass = FALSE;
 
@@ -1524,7 +1524,7 @@ if (!ctx->sig)
 for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   {
   hctx hhash_ctx;
-  uschar * sig_hdr = US("");
+  uschar * sig_hdr = cUS("");
   blob hhash;
   gstring * hdata = NULL;
   es_ctx sctx;
@@ -1585,7 +1585,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   if (ctx->flags & PDKIM_MODE_SIGN)
     {
     gstring * g = NULL;
-    const uschar * l;
+    cuschar * l;
     uschar * s;
     int sep = 0;
 
@@ -1822,8 +1822,8 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     if (!(sig->pubkey = pdkim_key_from_dns(ctx, sig, &vctx, err)))
       {
       log_write(0, LOG_MAIN, "DKIM: %s%s %s%s [failed key import]",
-	sig->domain   ? "d=" : "", sig->domain   ? sig->domain   : US(""),
-	sig->selector ? "s=" : "", sig->selector ? sig->selector : US(""));
+	sig->domain   ? "d=" : "", sig->domain   ? sig->domain   : cUS(""),
+	sig->selector ? "s=" : "", sig->selector ? sig->selector : cUS(""));
       goto NEXT_VERIFY;
       }
 
@@ -1832,7 +1832,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
     if (sig->pubkey->hashes)
       {
-      const uschar * list = sig->pubkey->hashes, * ele;
+      cuschar * list = sig->pubkey->hashes, * ele;
       int sep = ':';
       while ((ele = string_nextinlist(&list, &sep, NULL, 0)))
 	if (Ustrcmp(ele, pdkim_hashes[sig->hashtype].dkim_hashname) == 0) break;
@@ -1916,7 +1916,7 @@ return ctx->flags & PDKIM_MODE_SIGN  ||  verify_pass
 /* -------------------------------------------------------------------------- */
 
 DLLEXPORT pdkim_ctx *
-pdkim_init_verify(uschar * (*dns_txt_callback)(const uschar *), BOOL dot_stuffing)
+pdkim_init_verify(uschar * (*dns_txt_callback)(cuschar *), BOOL dot_stuffing)
 {
 pdkim_ctx * ctx;
 
@@ -1938,7 +1938,7 @@ return ctx;
 DLLEXPORT pdkim_signature *
 pdkim_init_sign(pdkim_ctx * ctx,
   uschar * domain, uschar * selector, uschar * privkey,
-  uschar * hashname, const uschar ** errstr)
+  uschar * hashname, cuschar ** errstr)
 {
 int hashtype;
 pdkim_signature * sig;
@@ -2076,7 +2076,7 @@ return b;
 
 void
 pdkim_init_context(pdkim_ctx * ctx, BOOL dot_stuffed,
-  uschar * (*dns_txt_callback)(const uschar *))
+  uschar * (*dns_txt_callback)(cuschar *))
 {
 memset(ctx, 0, sizeof(pdkim_ctx));
 ctx->flags = dot_stuffed ? PDKIM_MODE_SIGN | PDKIM_DOT_TERM : PDKIM_MODE_SIGN;

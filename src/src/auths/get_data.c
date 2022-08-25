@@ -20,11 +20,11 @@ $2, etc. If the data consists of the string "=" it indicates a single, empty
 string. */
 
 int
-auth_read_input(const uschar * data)
+auth_read_input(cuschar * data)
 {
 if (Ustrcmp(data, "=") == 0)
   {
-  auth_vars[0] = expand_nstring[++expand_nmax] = US("");
+  auth_vars[0] = expand_nstring[++expand_nmax] = cUS("");
   expand_nlength[expand_nmax] = 0;
   }
 else
@@ -68,7 +68,7 @@ Returns:      OK on success
 */
 
 int
-auth_get_data(uschar ** aptr, const uschar * challenge, int challen)
+auth_get_data(uschar ** aptr, cuschar * challenge, int challen)
 {
 int c;
 int p = 0;
@@ -89,7 +89,7 @@ return OK;
 
 
 int
-auth_prompt(const uschar * challenge)
+auth_prompt(cuschar * challenge)
 {
 int rc, len;
 uschar * resp, * clear, * end;
@@ -134,7 +134,7 @@ Return:
 */
 
 int
-auth_client_item(void * sx, auth_instance * ablock, const uschar ** inout,
+auth_client_item(void * sx, auth_instance * ablock, cuschar ** inout,
   unsigned flags, int timeout, uschar * buffer, int buffsize)
 {
 int len, clear_len;
@@ -247,7 +247,7 @@ if (clear_len < 0)
     }
   DEBUG(D_auth) debug_printf("bad b64 decode for '%s';"
        " ignoring due to client_ignore_invalid_base64\n", save_bad);
-  clear = string_copy(US(""));
+  clear = string_copy(cUS(""));
   clear_len = 0;
   }
 

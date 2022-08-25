@@ -28,7 +28,7 @@ Normally, source_file_override is NULL
 */
 
 FILE *
-spool_mbox(unsigned long *mbox_file_size, const uschar *source_file_override,
+spool_mbox(unsigned long *mbox_file_size, cuschar *source_file_override,
   uschar ** mbox_fname)
 {
 uschar message_subdir[2];
@@ -73,7 +73,7 @@ if (!spool_mbox_ok)
   if it should become available in future. */
 
   temp_string = expand_string(
-    US("From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n")
+    cUS("From ${if def:return_path{$return_path}{MAILER-DAEMON}} ${tod_bsdinbox}\n")
     "${if def:sender_address{X-Envelope-From: <${sender_address}>\n}}"
     "${if def:recipients{X-Envelope-To: ${recipients}\n}}");
 
@@ -118,7 +118,7 @@ if (!spool_mbox_ok)
     for (int i = 0; i < 2; i++)
       {
       set_subdir_str(message_subdir, message_id, i);
-      temp_string = spool_fname(US("input"), message_subdir, message_id, US("-D"));
+      temp_string = spool_fname(cUS("input"), message_subdir, message_id, cUS("-D"));
       if ((l_data_file = Ufopen(temp_string, "rb"))) break;
       }
     }
@@ -226,7 +226,7 @@ if (spool_mbox_ok && !f.no_mbox_unspool)
   for (struct dirent *entry; entry = readdir(tempdir); )
     {
     uschar *name = US(entry->d_name);
-    if (Ustrcmp(name, US(".")) == 0 || Ustrcmp(name, US("..")) == 0) continue;
+    if (Ustrcmp(name, cUS(".")) == 0 || Ustrcmp(name, cUS("..")) == 0) continue;
 
     file_path = string_sprintf("%s/%s", mbox_path, name);
     debug_printf("unspool_mbox(): unlinking '%s'\n", file_path);

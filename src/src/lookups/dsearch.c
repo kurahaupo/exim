@@ -26,7 +26,7 @@ it open, because the "search" can be done by a call to lstat() rather than
 actually scanning through the list of files. */
 
 static void *
-dsearch_open(const uschar * dirname, uschar ** errmsg)
+dsearch_open(cuschar * dirname, uschar ** errmsg)
 {
 DIR * dp = exim_opendir(dirname);
 if (!dp)
@@ -47,7 +47,7 @@ return (void *)(-1);
 integer as this gives warnings on 64-bit systems. */
 
 static BOOL
-dsearch_check(void * handle, const uschar * filename, int modemask,
+dsearch_check(void * handle, cuschar * filename, int modemask,
   uid_t * owners, gid_t * owngroups, uschar ** errmsg)
 {
 handle = handle;
@@ -75,9 +75,9 @@ scanning the directory, as it is hopefully faster to let the OS do the scanning
 for us. */
 
 static int
-dsearch_find(void * handle, const uschar * dirname, const uschar * keystring,
+dsearch_find(void * handle, cuschar * dirname, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 struct stat statbuf;
 int save_errno;
@@ -169,7 +169,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("dsearch"),			/* lookup name */
+  .name = cUS("dsearch"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dsearch_open,			/* open function */
   .check = dsearch_check,		/* check function */

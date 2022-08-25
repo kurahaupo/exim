@@ -166,7 +166,7 @@ call_perl_cat(gstring * yield, uschar **errstrp, uschar *name, uschar **arg)
 
   if (!interp_perl)
     {
-    *errstrp = US("the Perl interpreter has not been started");
+    *errstrp = cUS("the Perl interpreter has not been started");
     return 0;
     }
 

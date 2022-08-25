@@ -35,22 +35,22 @@ struct socks_err
   } socks_errs[] =
   {
     {NULL, 0},
-    {US("general SOCKS server failure"),		EIO},
-    {US("connection not allowed by ruleset"),	EACCES},
-    {US("Network unreachable"),			ENETUNREACH},
-    {US("Host unreachable"),			EHOSTUNREACH},
-    {US("Connection refused"),			ECONNREFUSED},
-    {US("TTL expired"),				ECANCELED},
-    {US("Command not supported"),			EOPNOTSUPP},
-    {US("Address type not supported"),		EAFNOSUPPORT}
+    {cUS("general SOCKS server failure"),		EIO},
+    {cUS("connection not allowed by ruleset"),	EACCES},
+    {cUS("Network unreachable"),			ENETUNREACH},
+    {cUS("Host unreachable"),			EHOSTUNREACH},
+    {cUS("Connection refused"),			ECONNREFUSED},
+    {cUS("TTL expired"),				ECANCELED},
+    {cUS("Command not supported"),			EOPNOTSUPP},
+    {cUS("Address type not supported"),		EAFNOSUPPORT}
   };
 
 typedef struct
   {
-  const uschar *	proxy_host;
+  cuschar *	proxy_host;
   uschar		auth_type;	/* RFC 1928 encoding */
-  const uschar *	auth_name;
-  const uschar *	auth_pwd;
+  cuschar *	auth_name;
+  cuschar *	auth_pwd;
   short			port;
   BOOL			is_failed;
   unsigned		timeout;
@@ -63,8 +63,8 @@ socks_option_defaults(socks_opts * sob)
 {
 sob->proxy_host = NULL;
 sob->auth_type =  AUTH_NONE;
-sob->auth_name =  US("");
-sob->auth_pwd =   US("");
+sob->auth_name =  cUS("");
+sob->auth_pwd =   cUS("");
 sob->is_failed =  FALSE;
 sob->port =	  SOCKS_PORT;
 sob->timeout =	  SOCKS_TIMEOUT;
@@ -73,7 +73,7 @@ sob->priority =   SOCKS_PRIORITY;
 }
 
 static void
-socks_option(socks_opts * sob, const uschar * opt)
+socks_option(socks_opts * sob, cuschar * opt)
 {
 if (Ustrncmp(opt, "auth=", 5) == 0)
   {
@@ -212,12 +212,12 @@ socks_sock_connect(host_item * host, int host_af, int port, uschar * interface,
 {
 smtp_transport_options_block * ob =
   (smtp_transport_options_block *)tb->options_block;
-const uschar * proxy_list;
-const uschar * proxy_spec;
+cuschar * proxy_list;
+cuschar * proxy_spec;
 int sep = 0;
 int fd;
 time_t tmo;
-const uschar * state;
+cuschar * state;
 uschar buf[24];
 socks_opts proxies[32];			/* max #proxies handled */
 unsigned nproxies;
@@ -243,7 +243,7 @@ for (nproxies = 0;
      nproxies++)
   {
   int subsep = -' ';
-  const uschar * option;
+  cuschar * option;
 
   socks_option_defaults(sob = &proxies[nproxies]);
 
@@ -263,7 +263,7 @@ if (!sob) return -1;
 /* Set up the socks protocol method-selection message,
 for sending on connection */
 
-state = US("method select");
+state = cUS("method select");
 buf[0] = 5; buf[1] = 1; buf[2] = sob->auth_type;
 early_data.data = buf;
 early_data.len = 3;
@@ -352,7 +352,7 @@ if (  buf[0] != 5
     }
  }
 
-state = US("connect");
+state = cUS("connect");
 HDEBUG(D_transport|D_acl|D_v)
   {
   debug_printf_indent("  SOCKS>>");
@@ -399,7 +399,7 @@ proxy_err:
   struct socks_err * se =
     buf[1] > nelem(socks_errs) ? NULL : socks_errs + buf[1];
   HDEBUG(D_transport|D_acl|D_v)
-    debug_printf_indent("  proxy %s: %s\n", state, se ? se->reason : US("unknown error code received"));
+    debug_printf_indent("  proxy %s: %s\n", state, se ? se->reason : cUS("unknown error code received"));
   errno = se ? se->errcode : EPROTO;
   }
 

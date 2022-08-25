@@ -54,7 +54,7 @@ for (int i = 0; i < 2; i++)
   int save_errno;
 
   set_subdir_str(message_subdir, id, i);
-  fname = spool_fname(US("input"), message_subdir, id, US("-D"));
+  fname = spool_fname(cUS("input"), message_subdir, id, cUS("-D"));
   DEBUG(D_deliver) debug_printf_indent("Trying spool file %s\n", fname);
 
   /* We protect against symlink attacks both in not propagating the
@@ -77,8 +77,8 @@ for (int i = 0; i < 2; i++)
     if (i == 0) continue;
     if (!f.queue_running)
       log_write(0, LOG_MAIN, "Spool%s%s file %s-D not found",
-	*queue_name ? US(" Q=") : US(""),
-	*queue_name ? queue_name : US(""),
+	*queue_name ? cUS(" Q=") : cUS(""),
+	*queue_name ? queue_name : cUS(""),
 	id);
     }
   else
@@ -390,7 +390,7 @@ for (int n = 0; n < 2; n++)
   if (!subdir_set)
     set_subdir_str(message_subdir, name, n);
 
-  if ((fp = Ufopen(spool_fname(US("input"), message_subdir, name, US("")), "rb")))
+  if ((fp = Ufopen(spool_fname(cUS("input"), message_subdir, name, cUS("")), "rb")))
     break;
   if (n != 0 || subdir_set || errno != ENOENT)
     return spool_read_notopen;
@@ -490,7 +490,7 @@ for (;;)
   {
   const void * proto_mem;
   uschar * var;
-  const uschar * p;
+  cuschar * p;
 
   if (fgets_big_buffer(fp) == NULL) goto SPOOL_READ_ERROR;
   if (big_buffer[0] != '-') break;
@@ -723,7 +723,7 @@ for (;;)
     case 't':
     if (Ustrncmp(p, "ls_", 3) == 0)
       {
-      const uschar * q = p + 3;
+      cuschar * q = p + 3;
       if (Ustrncmp(q, "certificate_verified", 20) == 0)
 	tls_in.certificate_verified = TRUE;
       else if (Ustrncmp(q, "cipher", 6) == 0)
@@ -773,7 +773,7 @@ host_build_sender_fullhost();
 #ifndef COMPILE_UTILITY
 DEBUG(D_deliver)
   debug_printf_indent("sender_local=%d ident=%s\n", f.sender_local,
-    sender_ident ? sender_ident : US("unset"));
+    sender_ident ? sender_ident : cUS("unset"));
 #endif  /* COMPILE_UTILITY */
 
 /* We now have the tree of addresses NOT to deliver to, or a line
@@ -1057,14 +1057,14 @@ We assume that message_subdir is already set.
 */
 
 uschar *
-spool_sender_from_msgid(const uschar * id)
+spool_sender_from_msgid(cuschar * id)
 {
 uschar * name = string_sprintf("%s-H", id);
 FILE * fp;
 int n;
 uschar * yield = NULL;
 
-if (!(fp = Ufopen(spool_fname(US("input"), message_subdir, name, US("")), "rb")))
+if (!(fp = Ufopen(spool_fname(cUS("input"), message_subdir, name, cUS("")), "rb")))
   return NULL;
 
 DEBUG(D_deliver) debug_printf_indent("reading spool file %s\n", name);

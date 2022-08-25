@@ -27,7 +27,7 @@ enum {
 /* See local README for interface description */
 
 static void *
-lsearch_open(const uschar * filename, uschar ** errmsg)
+lsearch_open(cuschar * filename, uschar ** errmsg)
 {
 FILE * f = Ufopen(filename, "rb");
 if (!f)
@@ -42,7 +42,7 @@ return f;
 *************************************************/
 
 static BOOL
-lsearch_check(void *handle, const uschar *filename, int modemask, uid_t *owners,
+lsearch_check(void *handle, cuschar *filename, int modemask, uid_t *owners,
   gid_t *owngroups, uschar **errmsg)
 {
 return lf_check_file(fileno((FILE *)handle), filename, S_IFREG, modemask,
@@ -67,9 +67,9 @@ fit into the fixed sized buffer. Most of the time this will never be exercised,
 but people do occasionally do weird things. */
 
 static int
-internal_lsearch_find(void * handle, const uschar * filename,
-  const uschar * keystring, int length, uschar ** result, uschar ** errmsg,
-  int type, const uschar * opts)
+internal_lsearch_find(void * handle, cuschar * filename,
+  cuschar * keystring, int length, uschar ** result, uschar ** errmsg,
+  int type, cuschar * opts)
 {
 FILE *f = handle;
 BOOL ret_full = FALSE;
@@ -184,7 +184,7 @@ for (BOOL this_is_eol, last_was_eol = TRUE;
       {
       int rc;
       int save = buffer[linekeylength];
-      const uschar *list = buffer;
+      cuschar *list = buffer;
       buffer[linekeylength] = 0;
       rc = match_isinlist(keystring,
         &list,
@@ -324,9 +324,9 @@ return FAIL;
 /* See local README for interface description */
 
 static int
-lsearch_find(void * handle, const uschar * filename, const uschar * keystring,
+lsearch_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 return internal_lsearch_find(handle, filename, keystring, length, result,
   errmsg, LSEARCH_PLAIN, opts);
@@ -341,9 +341,9 @@ return internal_lsearch_find(handle, filename, keystring, length, result,
 /* See local README for interface description */
 
 static int
-wildlsearch_find(void * handle, const uschar * filename, const uschar * keystring,
+wildlsearch_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 return internal_lsearch_find(handle, filename, keystring, length, result,
   errmsg, LSEARCH_WILD, opts);
@@ -358,9 +358,9 @@ return internal_lsearch_find(handle, filename, keystring, length, result,
 /* See local README for interface description */
 
 static int
-nwildlsearch_find(void * handle, const uschar * filename, const uschar * keystring,
+nwildlsearch_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 return internal_lsearch_find(handle, filename, keystring, length, result,
   errmsg, LSEARCH_NWILD, opts);
@@ -376,9 +376,9 @@ return internal_lsearch_find(handle, filename, keystring, length, result,
 /* See local README for interface description */
 
 static int
-iplsearch_find(void * handle, uschar const * filename, const uschar * keystring,
+iplsearch_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 if ((length == 1 && keystring[0] == '*') ||
     string_is_ip_address(keystring, NULL) != 0)
@@ -427,7 +427,7 @@ return g;
 
 
 static lookup_info iplsearch_lookup_info = {
-  .name = US("iplsearch"),		/* lookup name */
+  .name = cUS("iplsearch"),		/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */
@@ -439,7 +439,7 @@ static lookup_info iplsearch_lookup_info = {
 };
 
 static lookup_info lsearch_lookup_info = {
-  .name = US("lsearch"),			/* lookup name */
+  .name = cUS("lsearch"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */
@@ -451,7 +451,7 @@ static lookup_info lsearch_lookup_info = {
 };
 
 static lookup_info nwildlsearch_lookup_info = {
-  .name = US("nwildlsearch"),		/* lookup name */
+  .name = cUS("nwildlsearch"),		/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */
@@ -463,7 +463,7 @@ static lookup_info nwildlsearch_lookup_info = {
 };
 
 static lookup_info wildlsearch_lookup_info = {
-  .name = US("wildlsearch"),		/* lookup name */
+  .name = cUS("wildlsearch"),		/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = lsearch_open,			/* open function */
   .check = lsearch_check,		/* check function */

@@ -63,7 +63,7 @@ Returns:     +ve => valid lookup name; value is offset in lookup_list
 */
 
 int
-search_findtype(const uschar * name, int len)
+search_findtype(cuschar * name, int len)
 {
 for (int bot = 0, top = lookup_list_count; top > bot; )
   {
@@ -121,13 +121,13 @@ Returns:     +ve => valid lookup name; value is offset in lookup_list
 */
 
 int
-search_findtype_partial(const uschar *name, int *ptypeptr, const uschar **ptypeaff,
-  int *afflen, int *starflags, const uschar ** opts)
+search_findtype_partial(cuschar *name, int *ptypeptr, cuschar **ptypeaff,
+  int *afflen, int *starflags, cuschar ** opts)
 {
 int len, stype;
 int pv = -1;
-const uschar *ss = name;
-const uschar * t;
+cuschar *ss = name;
+cuschar * t;
 
 *starflags = 0;
 *ptypeaff = NULL;
@@ -156,7 +156,7 @@ if (Ustrncmp(name, "partial", 7) == 0)
     }
   else if (*ss++ == '-')
     {
-    *ptypeaff = US("*.");
+    *ptypeaff = cUS("*.");
     *afflen = 2;
     }
   else
@@ -227,7 +227,7 @@ Return:	keyquery	the search-type (for single-key) or query (for query-type)
  */
 uschar *
 search_args(int search_type, uschar * search, uschar * query, uschar ** fnamep,
-  const uschar * opts)
+  cuschar * opts)
 {
 Uskip_whitespace(&query);
 if (mac_islookup(search_type, lookup_absfilequery))
@@ -380,7 +380,7 @@ Returns:         an identifying handle for the open database;
 */
 
 void *
-search_open(const uschar * filename, int search_type, int modemask,
+search_open(cuschar * filename, int search_type, int modemask,
   uid_t * owners, gid_t * owngroups)
 {
 void *handle;
@@ -403,7 +403,7 @@ store_pool = POOL_SEARCH;
 if (!search_reset_point) search_reset_point = store_mark();
 
 DEBUG(D_lookup) debug_printf_indent("search_open: %s \"%s\"\n", lk->name,
-  filename ? filename : US("NULL"));
+  filename ? filename : cUS("NULL"));
 
 /* See if we already have this open for this type of search, and if so,
 pass back the tree block as the handle. The key for the tree node is the search
@@ -411,7 +411,7 @@ type plus '0' concatenated with the file name. There may be entries in the tree
 with closed files if a lot of files have been opened. */
 
 sprintf(CS(keybuffer), "%c%.254s", search_type + '0',
-  filename ? filename : US(""));
+  filename ? filename : cUS(""));
 
 if ((t = tree_search(search_tree, keybuffer)))
   {
@@ -519,8 +519,8 @@ Returns:       a pointer to a dynamic string containing the answer,
 */
 
 static uschar *
-internal_search_find(void * handle, const uschar * filename, uschar * keystring,
-  BOOL cache_rd, const uschar * opts)
+internal_search_find(void * handle, cuschar * filename, uschar * keystring,
+  BOOL cache_rd, cuschar * opts)
 {
 tree_node * t = (tree_node *)handle;
 search_cache * c = (search_cache *)(t->data.ptr);
@@ -532,7 +532,7 @@ int old_pool = store_pool;
 /* Lookups that return DEFER may not always set an error message. So that
 the callers don't have to test for NULL, set an empty string. */
 
-search_error_message = US("");
+search_error_message = cUS("");
 f.search_find_defer = FALSE;
 
 DEBUG(D_lookup) debug_printf_indent("internal_search_find: file=\"%s\"\n  "
@@ -561,7 +561,7 @@ if (  (t = tree_search(c->item_cache, keystring))
   data = e->data.ptr;
   DEBUG(D_lookup) debug_printf_indent("cached data used for lookup of %s%s%s\n",
     keystring,
-    filename ? US("\n  in ") : US(""), filename ? filename : US(""));
+    filename ? cUS("\n  in ") : cUS(""), filename ? filename : cUS(""));
   }
 else
   {
@@ -575,9 +575,9 @@ else
 	e->expiry && e->expiry <= time(NULL) ? "out-of-date"
 	: cache_rd ? "wrong opts" : "no_rd option set");
     debug_printf_indent("%s lookup required for %s%s%s\n",
-      filename ? US("file") : US("database"),
+      filename ? cUS("file") : cUS("database"),
       keystring,
-      filename ? US("\n  in ") : US(""), filename ? filename : US(""));
+      filename ? cUS("\n  in ") : cUS(""), filename ? filename : cUS(""));
     if (!filename && is_tainted(keystring))
       {
       debug_printf_indent("                             ");
@@ -598,7 +598,7 @@ else
     if (!s) s = authenticator_current_name();	/* must be before transport */
     if (!s) s = transport_current_name();	/* must be before router */
     if (!s) s = router_current_name();	/* GCC ?: would be good, but not in clang */
-    if (!s) s = US("");
+    if (!s) s = cUS("");
 #ifdef enforce_quote_protection_notyet
     search_error_message = string_sprintf(
       "tainted search query is not properly quoted%s: %s%s",
@@ -616,7 +616,7 @@ else
 
       DEBUG(D_lookup) debug_printf_indent("search_type %d (%s) quoting %d (%s)\n",
 	search_type, lookup_list[search_type]->name,
-	q, is_real_quoter(q) ? lookup_list[q]->name : US("none"));
+	q, is_real_quoter(q) ? lookup_list[q]->name : cUS("none"));
      }
 #endif
     }
@@ -714,9 +714,9 @@ Returns:         a pointer to a dynamic string containing the answer,
 */
 
 uschar *
-search_find(void * handle, const uschar * filename, uschar * keystring,
-  int partial, const uschar * affix, int affixlen, int starflags,
-  int * expand_setup, const uschar * opts)
+search_find(void * handle, cuschar * filename, uschar * keystring,
+  int partial, cuschar * affix, int affixlen, int starflags,
+  int * expand_setup, cuschar * opts)
 {
 tree_node * t = (tree_node *)handle;
 BOOL set_null_wild = FALSE, cache_rd = TRUE, ret_key = FALSE;
@@ -727,7 +727,7 @@ DEBUG(D_lookup)
   if (partial < 0) affixlen = 99;   /* So that "NULL" prints */
   debug_printf_indent("search_find: file=\"%s\"\n  key=\"%s\" "
     "partial=%d affix=%.*s starflags=%x opts=%s%s%s\n",
-    filename ? filename : US("NULL"),
+    filename ? filename : cUS("NULL"),
     keystring, partial, affixlen, affix, starflags,
     opts ? "\"" : "", opts, opts ? "\"" : "");
 
@@ -925,7 +925,7 @@ and the second is empty. */
 if (!yield  &&  starflags & (SEARCH_STAR|SEARCH_STARAT))
   {
   DEBUG(D_lookup) debug_printf_indent("trying to match *\n");
-  yield = internal_search_find(handle, filename, US("*"), cache_rd, opts);
+  yield = internal_search_find(handle, filename, cUS("*"), cache_rd, opts);
   if (yield && expand_setup && *expand_setup >= 0)
     {
     *expand_setup += 1;

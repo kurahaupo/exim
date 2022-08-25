@@ -29,7 +29,7 @@ Returns:    TRUE or FALSE
 */
 
 BOOL
-header_testname(header_line *h, const uschar *name, int len, BOOL notdel)
+header_testname(header_line *h, cuschar *name, int len, BOOL notdel)
 {
 uschar *tt;
 if (h->type == '*' && notdel) return FALSE;
@@ -45,7 +45,7 @@ return *tt == ':';
    header_testname() above. */
 
 BOOL
-header_testname_incomplete(header_line *h, const uschar *name,
+header_testname_incomplete(header_line *h, cuschar *name,
     int len, BOOL notdel)
 {
 if (h->type == '*' && notdel) return FALSE;
@@ -279,7 +279,7 @@ Returns:        nothing
 */
 
 void
-header_remove(int occ, const uschar *name)
+header_remove(int occ, cuschar *name)
 {
 int hcount = 0;
 int len = Ustrlen(name);

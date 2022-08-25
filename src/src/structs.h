@@ -30,7 +30,11 @@ struct router_info;
 typedef struct gstring {
   int	size;		/* Current capacity of string memory */
   int	ptr;		/* Offset at which to append further chars */
+#ifdef HAS_FAM
+  uschar s[];		/* The string memory */
+#else
   uschar * s;		/* The string memory */
+#endif
 } gstring;
 
 /* Structure for remembering macros for the configuration file */
@@ -40,14 +44,14 @@ typedef struct macro_item {
   BOOL     	command_line;
   unsigned	namelen;
   unsigned	replen;
-  const uschar * name;
-  const uschar * replacement;
+  cuschar * name;
+  cuschar * replacement;
 } macro_item;
 
 /* Structure for bit tables for debugging and logging */
 
 typedef struct bit_table {
-  uschar *name;
+  cuschar *name;
   int bit;
 } bit_table;
 
@@ -80,11 +84,11 @@ typedef enum {DS_UNK=-1, DS_NO, DS_YES} dnssec_status_t;
 
 typedef struct host_item {
   struct host_item *next;
-  const uschar *name;		/* Host name */
+  cuschar *name;		/* Host name */
 #ifndef DISABLE_TLS
-  const uschar *certname;	/* Name used for certificate checks */
+  cuschar *certname;	/* Name used for certificate checks */
 #endif
-  const uschar *address;	/* IP address in text form */
+  cuschar *address;	/* IP address in text form */
   int     port;			/* port value in host order (if SRV lookup) */
   int     mx;			/* MX value if found via MX records */
   int     sort_key;		/* MX*1000 plus random "fraction" */
@@ -134,13 +138,13 @@ typedef struct driver_instance {
   struct driver_info *info;       /* Points to info for this driver */
   void   *options_block;          /* Pointer to private options */
 
-  uschar *driver_name;            /* All start with this generic option */
-  const uschar *srcfile;	  /* and config source info for errors */
+  cuschar *driver_name;      /* All start with this generic option */
+  cuschar *srcfile;	  /* and config source info for errors */
   int	  srcline;
 } driver_instance;
 
 typedef struct driver_info {
-  uschar *driver_name;            /* Name of driver */
+  cuschar *driver_name;      /* Name of driver */
 
   optionlist *options;            /* Table of private options names */
   int    *options_count;          /* -> Number of entries in table */
@@ -162,8 +166,8 @@ typedef struct transport_instance {
   uschar *name;                   /* Instance name */
   struct transport_info *info;    /* Info for this driver */
   void *options_block;            /* Pointer to private options */
-  uschar *driver_name;            /* Must be first */
-  const uschar *srcfile;
+  cuschar *driver_name;      /* Must be first */
+  cuschar *srcfile;
   int	  srcline;
 
   int   (*setup)(                 /* Setup entry point */
@@ -230,7 +234,7 @@ typedef struct transport_instance {
 fields must match driver_info above. */
 
 typedef struct transport_info {
-  uschar *driver_name;            /* Driver name */
+  cuschar *driver_name;      /* Driver name */
   optionlist *options;            /* Table of private options names */
   int    *options_count;          /* -> Number of entries in table */
   void   *options_block;          /* Points to default private block */
@@ -278,7 +282,7 @@ typedef struct transport_context {
 
 
 typedef struct {
-  uschar *request;
+  cuschar *request;
   uschar *require;
 } dnssec_domains;
 
@@ -286,11 +290,11 @@ typedef struct {
 
 typedef struct router_instance {
   struct router_instance *next;
-  uschar *name;
+  cuschar *name;
   struct router_info *info;
   void   *options_block;          /* Pointer to private options */
-  uschar *driver_name;            /* Must be first */
-  const uschar *srcfile;
+  cuschar *driver_name;      /* Must be first */
+  cuschar *srcfile;
   int	  srcline;
 
   uschar *address_data;           /* Arbitrary data */
@@ -318,7 +322,7 @@ typedef struct router_instance {
   uschar *remove_headers;         /* Removed headers */
   uschar *require_files;          /* File checks before router is run */
   uschar *router_home_directory;  /* For use while routing */
-  uschar *self;                   /* Text option for handling self reference */
+  cuschar *self;             /* Text option for handling self reference */
   uschar *senders;                /* Specific senders */
   uschar *suffix;                 /* Address suffix */
   uschar *translate_ip_address;   /* IP address translation fudgery */
@@ -372,7 +376,7 @@ typedef struct router_instance {
 fields must match driver_info above. */
 
 typedef struct router_info {
-  uschar *driver_name;
+  cuschar *driver_name;
   optionlist *options;            /* Table of private options names */
   int    *options_count;          /* -> Number of entries in table */
   void   *options_block;          /* Points to default private block */
@@ -408,8 +412,8 @@ typedef struct auth_instance {
   uschar *name;                   /* Exim instance name */
   struct auth_info *info;         /* Pointer to driver info block */
   void   *options_block;          /* Pointer to private options */
-  uschar *driver_name;            /* Must be first */
-  const uschar *srcfile;
+  cuschar *driver_name;            /* Must be first */
+  cuschar *srcfile;
   int	  srcline;
 
   uschar *advertise_condition;    /* Are we going to advertise this?*/
@@ -430,7 +434,7 @@ typedef struct auth_instance {
 first six fields must match driver_info above. */
 
 typedef struct auth_info {
-  uschar *driver_name;            /* e.g. "condition" */
+  cuschar *driver_name;      /* e.g. "condition" */
   optionlist *options;            /* Table of private options names */
   int    *options_count;          /* -> Number of entries in table */
   void   *options_block;          /* Points to default private block */
@@ -469,7 +473,7 @@ typedef struct ip_address_item {
 
 typedef struct string_item {
   struct string_item *next;
-  uschar *text;
+  cuschar *text;
 } string_item;
 
 /* Information about a soft delivery failure, for use when calculating
@@ -560,50 +564,50 @@ typedef struct address_item {
   reply_item *reply;              /* data for autoreply */
   retry_item *retries;            /* chain of retry information */
 
-  uschar *address;                /* address being delivered or routed */
-  uschar *unique;                 /* used for disambiguating */
-  uschar *cc_local_part;          /* caseful local part */
-  uschar *lc_local_part;          /* lowercased local part */
-  uschar *local_part;             /* points to cc or lc version */
-  uschar *prefix;                 /* stripped prefix of local part */
-  uschar *prefix_v;		  /*  variable part of above */
-  uschar *suffix;                 /* stripped suffix of local part */
-  uschar *suffix_v;		  /*  variable part of above */
-  const uschar *domain;           /* working domain (lower cased) */
+  cuschar *address;                /* address being delivered or routed */
+  cuschar *unique;                 /* used for disambiguating */
+  cuschar *cc_local_part;          /* caseful local part */
+  cuschar *lc_local_part;          /* lowercased local part */
+  cuschar *local_part;             /* points to cc or lc version */
+  cuschar *prefix;                 /* stripped prefix of local part */
+  cuschar *prefix_v;		  /*  variable part of above */
+  cuschar *suffix;                 /* stripped suffix of local part */
+  cuschar *suffix_v;		  /*  variable part of above */
+  cuschar *domain;           /* working domain (lower cased) */
 
-  uschar *address_retry_key;      /* retry key including full address */
-  uschar *domain_retry_key;       /* retry key for domain only */
+  cuschar *address_retry_key;      /* retry key including full address */
+  cuschar *domain_retry_key;       /* retry key for domain only */
 
-  uschar *current_dir;            /* current directory for transporting */
-  uschar *home_dir;               /* home directory for transporting */
-  uschar *message;                /* error message */
-  uschar *user_message;           /* error message that can be sent over SMTP
+  cuschar *current_dir;            /* current directory for transporting */
+  cuschar *home_dir;               /* home directory for transporting */
+  cuschar *message;                /* error message */
+  cuschar *user_message;           /* error message that can be sent over SMTP
                                      or quoted in bounce message */
-  uschar *onetime_parent;         /* saved original parent for onetime */
-  uschar **pipe_expandn;          /* numeric expansions for pipe from filter */
-  uschar *return_filename;        /* name of return file */
-  uschar *self_hostname;          /* after self=pass */
-  uschar *shadow_message;         /* info about shadow transporting */
+  cuschar *onetime_parent;         /* saved original parent for onetime */
+  cuschar **pipe_expandn;          /* numeric expansions for pipe from filter */
+  cuschar *return_filename;        /* name of return file */
+  cuschar *self_hostname;          /* after self=pass */
+  cuschar *shadow_message;         /* info about shadow transporting */
 
 #ifndef DISABLE_TLS
-  const uschar *tlsver;           /* version used for transport */
-  uschar *cipher;                 /* Cipher used for transport */
+  cuschar *tlsver;           /* version used for transport */
+  cuschar *cipher;                 /* Cipher used for transport */
   void   *ourcert;                /* Certificate offered to peer, binary */
   void   *peercert;               /* Certificate from peer, binary */
-  uschar *peerdn;                 /* DN of server's certificate */
+  cuschar *peerdn;                 /* DN of server's certificate */
   int    ocsp;			  /* OCSP status of peer cert */
 #endif
 
 #ifdef EXPERIMENTAL_DSN_INFO
-  const uschar *smtp_greeting;	  /* peer self-identification */
-  const uschar *helo_response;	  /* peer message */
+  cuschar *smtp_greeting;	  /* peer self-identification */
+  cuschar *helo_response;	  /* peer message */
 #endif
 
-  uschar *authenticator;	  /* auth driver name used by transport */
-  uschar *auth_id;		  /* auth "login" name used by transport */
-  uschar *auth_sndr;		  /* AUTH arg to SMTP MAIL, used by transport */
+  cuschar *authenticator;	  /* auth driver name used by transport */
+  cuschar *auth_id;		  /* auth "login" name used by transport */
+  cuschar *auth_sndr;		  /* AUTH arg to SMTP MAIL, used by transport */
 
-  uschar *dsn_orcpt;              /* DSN orcpt value */
+  cuschar *dsn_orcpt;              /* DSN orcpt value */
   int     dsn_flags;              /* DSN flags */
   int     dsn_aware;              /* DSN aware flag */
 
@@ -684,7 +688,7 @@ typedef struct address_item {
 /* The table of header names consists of items of this type */
 
 typedef struct {
-  uschar *name;
+  cuschar *name;
   int     len;
   BOOL    allow_resent;
   int     htype;
@@ -694,7 +698,7 @@ typedef struct {
 
 typedef struct error_block {
   struct error_block *next;
-  const uschar *text1;
+  cuschar *text1;
   uschar *text2;
 } error_block;
 
@@ -747,7 +751,7 @@ We also store any options used for the lookup. */
 
 typedef struct expiring_data {
   time_t	expiry;		/* if nonzero, data invalid after this time */
-  const uschar * opts;		/* options, or NULL */
+  cuschar * opts;		/* options, or NULL */
   union
     {
     void  *	ptr;		/* pointer to data */
@@ -776,7 +780,7 @@ typedef struct {
   int           type;                   /* record type */
   unsigned short ttl;		        /* time-to-live, seconds */
   int           size;                   /* size of data */
-  const uschar *data;                   /* pointer to data */
+  cuschar *data;                   /* pointer to data */
 } dns_record;
 
 /* Structure for holding the result of a DNS query.  A touch over
@@ -792,7 +796,7 @@ block. */
 
 typedef struct {
   int            rrcount;         /* count of RRs in the answer */
-  const uschar *aptr;             /* pointer in the answer while scanning */
+  cuschar *aptr;             /* pointer in the answer while scanning */
   dns_record     srr;             /* data from current record in scan */
 } dns_scan;
 
@@ -833,7 +837,7 @@ typedef struct {
 
   int			sock;	/* used for a bound but not connected socket */
   uschar *		sending_ip_address;	/* used for TLS resumption */
-  const uschar *	host_lbserver;		/* ditto, for server-behind LB */
+  cuschar *	host_lbserver;		/* ditto, for server-behind LB */
   BOOL			have_lbserver:1;	/* host_lbserver is valid */
 
 #ifdef SUPPORT_DANE
@@ -892,9 +896,9 @@ typedef struct redirect_block {
 /* Structure for passing arguments to check_host() */
 
 typedef struct check_host_block {
-  const uschar *host_name;
-  const uschar *host_address;
-  const uschar *host_ipv4;
+  cuschar *host_name;
+  cuschar *host_address;
+  cuschar *host_ipv4;
   mcs_flags	flags;
 } check_host_block;
 
@@ -910,7 +914,7 @@ typedef struct namedlist_cacheblock {
 /* Structure for holding data for an entry in a named list */
 
 typedef struct namedlist_block {
-  const uschar *string;			/* the list string */
+  cuschar *string;			/* the list string */
   namedlist_cacheblock *cache_data;	/* cached domain_data or localpart_data */
   short		number;			/* the number of the list for caching */
   BOOL		hide;			/* -bP does not display value */
@@ -933,7 +937,7 @@ typedef struct acl_block {
   acl_condition_block *	condition;
   int			verb;
   int			srcline;
-  const uschar *	srcfile;
+  cuschar *	srcfile;
 } acl_block;
 
 /* smtp transport calc outbound_ip */

@@ -37,7 +37,7 @@ The reason that version_cnumber_format isn't just written inline in the
 sprintf() call is the gcc -Wall warns about a \0 in a format string. */
 
 version_cnumber = cnumber_buffer;
-version_cnumber_format = US("%d\0<<eximcnumber>>");
+version_cnumber_format = cUS("%d\0<<eximcnumber>>");
 sprintf(CS(version_cnumber), CS(version_cnumber_format), cnumber);
 version_string = US(EXIM_VERSION_STR "\0<<eximversion>>");
 
@@ -60,7 +60,7 @@ version_date[0] = 0;
 Ustrncat(version_date, today+4, 3);
 Ustrncat(version_date, today, 4);
 Ustrncat(version_date, today+7, 4);
-Ustrcat(version_date, US(" "));
+Ustrcat(version_date, cUS(" "));
 Ustrcat(version_date, US(__TIME__));
 #endif
 }

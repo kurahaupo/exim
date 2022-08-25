@@ -19,7 +19,7 @@ log files was originally contributed by Tony Sheen. */
 
 enum { lt_main, lt_reject, lt_panic, lt_debug };
 
-static uschar *log_names[] = { US("main"), US("reject"), US("panic"), US("debug") };
+static uschar *log_names[] = { cUS("main"), cUS("reject"), cUS("panic"), cUS("debug") };
 
 
 
@@ -44,7 +44,7 @@ static BOOL   panic_recurseflag = FALSE;
 static BOOL   syslog_open = FALSE;
 static BOOL   path_inspected = FALSE;
 static int    logging_mode = LOG_MODE_FILE;
-static uschar *file_path = US("");
+static uschar *file_path = cUS("");
 
 static size_t pid_position[2];
 
@@ -52,74 +52,74 @@ static size_t pid_position[2];
 /* These should be kept in-step with the private delivery error
 number definitions in macros.h */
 
-static const uschar * exim_errstrings[] = {
-  [0] = US(""),
-  [- ERRNO_UNKNOWNERROR] =	US("unknown error"),
-  [- ERRNO_USERSLASH] =		US("user slash"),
-  [- ERRNO_EXISTRACE] =		US("exist race"),
-  [- ERRNO_NOTREGULAR] =	US("not regular"),
-  [- ERRNO_NOTDIRECTORY] =	US("not directory"),
-  [- ERRNO_BADUGID] =		US("bad ugid"),
-  [- ERRNO_BADMODE] =		US("bad mode"),
-  [- ERRNO_INODECHANGED] =	US("inode changed"),
-  [- ERRNO_LOCKFAILED] =	US("lock failed"),
-  [- ERRNO_BADADDRESS2] =	US("bad address2"),
-  [- ERRNO_FORBIDPIPE] =	US("forbid pipe"),
-  [- ERRNO_FORBIDFILE] =	US("forbid file"),
-  [- ERRNO_FORBIDREPLY] =	US("forbid reply"),
-  [- ERRNO_MISSINGPIPE] =	US("missing pipe"),
-  [- ERRNO_MISSINGFILE] =	US("missing file"),
-  [- ERRNO_MISSINGREPLY] =	US("missing reply"),
-  [- ERRNO_BADREDIRECT] =	US("bad redirect"),
-  [- ERRNO_SMTPCLOSED] =	US("smtp closed"),
-  [- ERRNO_SMTPFORMAT] =	US("smtp format"),
-  [- ERRNO_SPOOLFORMAT] =	US("spool format"),
-  [- ERRNO_NOTABSOLUTE] =	US("not absolute"),
-  [- ERRNO_EXIMQUOTA] =		US("Exim-imposed quota"),
-  [- ERRNO_HELD] =		US("held"),
-  [- ERRNO_FILTER_FAIL] =	US("Delivery filter process failure"),
-  [- ERRNO_CHHEADER_FAIL] =	US("Delivery add/remove header failure"),
-  [- ERRNO_WRITEINCOMPLETE] =	US("Delivery write incomplete error"),
-  [- ERRNO_EXPANDFAIL] =	US("Some expansion failed"),
-  [- ERRNO_GIDFAIL] =		US("Failed to get gid"),
-  [- ERRNO_UIDFAIL] =		US("Failed to get uid"),
-  [- ERRNO_BADTRANSPORT] =	US("Unset or non-existent transport"),
-  [- ERRNO_MBXLENGTH] =		US("MBX length mismatch"),
-  [- ERRNO_UNKNOWNHOST] =	US("Lookup failed routing or in smtp tpt"),
-  [- ERRNO_FORMATUNKNOWN] =	US("Can't match format in appendfile"),
-  [- ERRNO_BADCREATE] =		US("Creation outside home in appendfile"),
-  [- ERRNO_LISTDEFER] =		US("Can't check a list; lookup defer"),
-  [- ERRNO_DNSDEFER] =		US("DNS lookup defer"),
-  [- ERRNO_TLSFAILURE] =	US("Failed to start TLS session"),
-  [- ERRNO_TLSREQUIRED] =	US("Mandatory TLS session not started"),
-  [- ERRNO_CHOWNFAIL] =		US("Failed to chown a file"),
-  [- ERRNO_PIPEFAIL] =		US("Failed to create a pipe"),
-  [- ERRNO_CALLOUTDEFER] =	US("When verifying"),
-  [- ERRNO_AUTHFAIL] =		US("When required by client"),
-  [- ERRNO_CONNECTTIMEOUT] =	US("Used internally in smtp transport"),
-  [- ERRNO_RCPT4XX] =		US("RCPT gave 4xx error"),
-  [- ERRNO_MAIL4XX] =		US("MAIL gave 4xx error"),
-  [- ERRNO_DATA4XX] =		US("DATA gave 4xx error"),
-  [- ERRNO_PROXYFAIL] =		US("Negotiation failed for proxy configured host"),
-  [- ERRNO_AUTHPROB] =		US("Authenticator 'other' failure"),
-  [- ERRNO_UTF8_FWD] =		US("target not supporting SMTPUTF8"),
-  [- ERRNO_HOST_IS_LOCAL] =	US("host is local"),
-  [- ERRNO_TAINT] =		US("tainted filename"),
+static cuschar * exim_errstrings[] = {
+  [0] = cUS(""),
+  [- ERRNO_UNKNOWNERROR] =	cUS("unknown error"),
+  [- ERRNO_USERSLASH] =		cUS("user slash"),
+  [- ERRNO_EXISTRACE] =		cUS("exist race"),
+  [- ERRNO_NOTREGULAR] =	cUS("not regular"),
+  [- ERRNO_NOTDIRECTORY] =	cUS("not directory"),
+  [- ERRNO_BADUGID] =		cUS("bad ugid"),
+  [- ERRNO_BADMODE] =		cUS("bad mode"),
+  [- ERRNO_INODECHANGED] =	cUS("inode changed"),
+  [- ERRNO_LOCKFAILED] =	cUS("lock failed"),
+  [- ERRNO_BADADDRESS2] =	cUS("bad address2"),
+  [- ERRNO_FORBIDPIPE] =	cUS("forbid pipe"),
+  [- ERRNO_FORBIDFILE] =	cUS("forbid file"),
+  [- ERRNO_FORBIDREPLY] =	cUS("forbid reply"),
+  [- ERRNO_MISSINGPIPE] =	cUS("missing pipe"),
+  [- ERRNO_MISSINGFILE] =	cUS("missing file"),
+  [- ERRNO_MISSINGREPLY] =	cUS("missing reply"),
+  [- ERRNO_BADREDIRECT] =	cUS("bad redirect"),
+  [- ERRNO_SMTPCLOSED] =	cUS("smtp closed"),
+  [- ERRNO_SMTPFORMAT] =	cUS("smtp format"),
+  [- ERRNO_SPOOLFORMAT] =	cUS("spool format"),
+  [- ERRNO_NOTABSOLUTE] =	cUS("not absolute"),
+  [- ERRNO_EXIMQUOTA] =		cUS("Exim-imposed quota"),
+  [- ERRNO_HELD] =		cUS("held"),
+  [- ERRNO_FILTER_FAIL] =	cUS("Delivery filter process failure"),
+  [- ERRNO_CHHEADER_FAIL] =	cUS("Delivery add/remove header failure"),
+  [- ERRNO_WRITEINCOMPLETE] =	cUS("Delivery write incomplete error"),
+  [- ERRNO_EXPANDFAIL] =	cUS("Some expansion failed"),
+  [- ERRNO_GIDFAIL] =		cUS("Failed to get gid"),
+  [- ERRNO_UIDFAIL] =		cUS("Failed to get uid"),
+  [- ERRNO_BADTRANSPORT] =	cUS("Unset or non-existent transport"),
+  [- ERRNO_MBXLENGTH] =		cUS("MBX length mismatch"),
+  [- ERRNO_UNKNOWNHOST] =	cUS("Lookup failed routing or in smtp tpt"),
+  [- ERRNO_FORMATUNKNOWN] =	cUS("Can't match format in appendfile"),
+  [- ERRNO_BADCREATE] =		cUS("Creation outside home in appendfile"),
+  [- ERRNO_LISTDEFER] =		cUS("Can't check a list; lookup defer"),
+  [- ERRNO_DNSDEFER] =		cUS("DNS lookup defer"),
+  [- ERRNO_TLSFAILURE] =	cUS("Failed to start TLS session"),
+  [- ERRNO_TLSREQUIRED] =	cUS("Mandatory TLS session not started"),
+  [- ERRNO_CHOWNFAIL] =		cUS("Failed to chown a file"),
+  [- ERRNO_PIPEFAIL] =		cUS("Failed to create a pipe"),
+  [- ERRNO_CALLOUTDEFER] =	cUS("When verifying"),
+  [- ERRNO_AUTHFAIL] =		cUS("When required by client"),
+  [- ERRNO_CONNECTTIMEOUT] =	cUS("Used internally in smtp transport"),
+  [- ERRNO_RCPT4XX] =		cUS("RCPT gave 4xx error"),
+  [- ERRNO_MAIL4XX] =		cUS("MAIL gave 4xx error"),
+  [- ERRNO_DATA4XX] =		cUS("DATA gave 4xx error"),
+  [- ERRNO_PROXYFAIL] =		cUS("Negotiation failed for proxy configured host"),
+  [- ERRNO_AUTHPROB] =		cUS("Authenticator 'other' failure"),
+  [- ERRNO_UTF8_FWD] =		cUS("target not supporting SMTPUTF8"),
+  [- ERRNO_HOST_IS_LOCAL] =	cUS("host is local"),
+  [- ERRNO_TAINT] =		cUS("tainted filename"),
 
-  [- ERRNO_RRETRY] =		US("Not time for routing"),
+  [- ERRNO_RRETRY] =		cUS("Not time for routing"),
 
-  [- ERRNO_LRETRY] =		US("Not time for local delivery"),
-  [- ERRNO_HRETRY] =		US("Not time for any remote host"),
-  [- ERRNO_LOCAL_ONLY] =	US("Local-only delivery"),
-  [- ERRNO_QUEUE_DOMAIN] =	US("Domain in queue_domains"),
-  [- ERRNO_TRETRY] =		US("Transport concurrency limit"),
+  [- ERRNO_LRETRY] =		cUS("Not time for local delivery"),
+  [- ERRNO_HRETRY] =		cUS("Not time for any remote host"),
+  [- ERRNO_LOCAL_ONLY] =	cUS("Local-only delivery"),
+  [- ERRNO_QUEUE_DOMAIN] =	cUS("Domain in queue_domains"),
+  [- ERRNO_TRETRY] =		cUS("Transport concurrency limit"),
 
-  [- ERRNO_EVENT] =		US("Event requests alternate response"),
+  [- ERRNO_EVENT] =		cUS("Event requests alternate response"),
 };
 
 
 /************************************************/
-const uschar *
+cuschar *
 exim_errstr(int err)
 {
 return err < 0 ? exim_errstrings[-err] : CUS(strerror(err));
@@ -143,7 +143,7 @@ Returns:         nothing
 */
 
 static void
-write_syslog(int priority, const uschar *s)
+write_syslog(int priority, cuschar *s)
 {
 int len;
 int linecount = 0;
@@ -176,7 +176,7 @@ it is going to end up as. Then rescan to output it. */
 
 for (int pass = 0; pass < 2; pass++)
   {
-  const uschar * ss = s;
+  cuschar * ss = s;
   for (int i = 1, tlen = len; tlen > 0; i++)
     {
     int plen = tlen;
@@ -266,7 +266,7 @@ Returns:       a file descriptor, or < 0 on failure (errno set)
 */
 
 static int
-log_open_already_exim(const uschar * const name)
+log_open_already_exim(cuschar * const name)
 {
 int fd = -1;
 const int flags = O_WRONLY | O_APPEND | O_CREAT | O_NONBLOCK;
@@ -390,7 +390,7 @@ Returns:       a file descriptor, or < 0 on failure (errno set)
 */
 
 int
-log_open_as_exim(const uschar * const name)
+log_open_as_exim(cuschar * const name)
 {
 int fd = -1;
 const uid_t euid = geteuid();
@@ -473,7 +473,7 @@ Returns:   nothing
 */
 
 static void
-open_log(int * fd, int type, const uschar * tag)
+open_log(int * fd, int type, cuschar * tag)
 {
 uid_t euid;
 BOOL ok, ok2;
@@ -516,8 +516,8 @@ switch (type)
     if (tag)
       {
       if (is_tainted(tag))
-      	die(US("exim: tainted tag for debug log filename"),
-      	      US("Logging failure; please try later"));
+      	die(cUS("exim: tainted tag for debug log filename"),
+      	      cUS("Logging failure; please try later"));
 
       /* this won't change the offset of the datestamp */
       ok2 = string_format(buffer, sizeof(buffer), "%s%s",
@@ -553,8 +553,8 @@ switch (type)
 /* If the file name is too long, it is an unrecoverable disaster */
 
 if (!ok)
-  die(US("exim: log file path too long: aborting"),
-      US("Logging failure; please try later"));
+  die(cUS("exim: log file path too long: aborting"),
+      cUS("Logging failure; please try later"));
 
 /* We now have the file name. After a successful open, return. */
 
@@ -617,15 +617,15 @@ Returns:      updated pointer
 static gstring *
 log_config_info(gstring * g, int flags)
 {
-g = string_cat(g, US("Exim configuration error"));
+g = string_cat(g, cUS("Exim configuration error"));
 
 if (flags & (LOG_CONFIG_FOR & ~LOG_CONFIG))
-  return string_cat(g, US(" for "));
+  return string_cat(g, cUS(" for "));
 
 if (flags & (LOG_CONFIG_IN & ~LOG_CONFIG))
   g = string_fmt_append(g, " in line %d of %s", config_lineno, config_filename);
 
-return string_catn(g, US(":\n  "), 4);
+return string_catn(g, cUS(":\n  "), 4);
 }
 
 
@@ -683,11 +683,11 @@ Returns:
   length actually written, persisting an errno from write()
 */
 ssize_t
-write_to_fd_buf(int fd, const uschar *buf, size_t length)
+write_to_fd_buf(int fd, cuschar *buf, size_t length)
 {
 ssize_t wrote;
 size_t total_written = 0;
-const uschar *p = buf;
+cuschar *p = buf;
 size_t left = length;
 
 while (1)
@@ -717,7 +717,7 @@ set_file_path(void)
 {
 int sep = ':';              /* Fixed separator - outside use */
 uschar *t;
-const uschar *tt = US(LOG_FILE_PATH);
+cuschar *tt = US(LOG_FILE_PATH);
 while ((t = string_nextinlist(&tt, &sep, log_buffer, LOG_BUFFER_SIZE)))
   {
   if (Ustrcmp(t, "syslog") == 0 || t[0] == 0) continue;
@@ -816,14 +816,14 @@ original log line that caused the problem. Afterwards, expire. */
 
 if (panic_recurseflag)
   {
-  uschar *extra = panic_save_buffer ? panic_save_buffer : US("");
+  uschar *extra = panic_save_buffer ? panic_save_buffer : cUS("");
   if (debug_file) debug_printf("%s%s", extra, log_buffer);
   if (log_stderr && log_stderr != debug_file)
     fprintf(log_stderr, "%s%s", extra, log_buffer);
   if (*extra) write_syslog(LOG_CRIT, extra);
   write_syslog(LOG_CRIT, log_buffer);
-  die(US("exim: could not open panic log - aborting: see message(s) above"),
-    US("Unexpected log failure, please try later"));
+  die(cUS("exim: could not open panic log - aborting: see message(s) above"),
+    cUS("Unexpected log failure, please try later"));
   }
 
 /* Ensure we have a buffer (see comment above); this should never be obeyed
@@ -856,7 +856,7 @@ if (!path_inspected)
     {
     int sep = ':';              /* Fixed separator - outside use */
     uschar *s;
-    const uschar *ss = log_file_path;
+    cuschar *ss = log_file_path;
 
     logging_mode = 0;
     while ((s = string_nextinlist(&ss, &sep, log_buffer, LOG_BUFFER_SIZE)))
@@ -888,8 +888,8 @@ if (!path_inspected)
   /* If no modes have been selected, it is a major disaster */
 
   if (logging_mode == 0)
-    die(US("Neither syslog nor file logging set in log_file_path"),
-        US("Unexpected logging failure"));
+    die(cUS("Neither syslog nor file logging set in log_file_path"),
+        cUS("Unexpected logging failure"));
 
   /* Set up the ultimate default if necessary. Then revert to the old store
   pool, and record that we've sorted out the path. */
@@ -919,7 +919,7 @@ DEBUG(D_any|D_v)
   {
   int i;
 
-  g = string_catn(&gs, US("LOG:"), 4);
+  g = string_catn(&gs, cUS("LOG:"), 4);
 
   /* Show the selector that was passed into the call. */
 
@@ -947,12 +947,12 @@ DEBUG(D_any|D_v)
   if (!string_vformat(g, SVFMT_TAINT_NOCHK, format, ap))
     {
     g->ptr = i;
-    g = string_cat(g, US("**** log string overflowed log buffer ****"));
+    g = string_cat(g, cUS("**** log string overflowed log buffer ****"));
     }
   va_end(ap);
 
   g->size = LOG_BUFFER_SIZE;
-  g = string_catn(g, US("\n"), 1);
+  g = string_catn(g, cUS("\n"), 1);
   debug_printf("%s", string_from_gstring(g));
 
   gs.size = LOG_BUFFER_SIZE-1;	/* Having used the buffer for debug output, */
@@ -1007,7 +1007,7 @@ va_start(ap, format);
   if (!string_vformat(g, SVFMT_TAINT_NOCHK, format, ap))
     {
     g->ptr = i;
-    g = string_cat(g, US("**** log string overflowed log buffer ****\n"));
+    g = string_cat(g, cUS("**** log string overflowed log buffer ****\n"));
     }
   }
 va_end(ap);
@@ -1037,7 +1037,7 @@ if (  flags & LOG_RECIPIENTS
     }
   }
 
-g = string_catn(g, US("\n"), 1);
+g = string_catn(g, cUS("\n"), 1);
 string_from_gstring(g);
 
 /* Handle loggable errors when running a utility, or when address testing.
@@ -1114,7 +1114,7 @@ if (  flags & LOG_MAIN
     written_len = write_to_fd_buf(mainlogfd, g->s, g->ptr);
     if (written_len != g->ptr)
       {
-      log_write_failed(US("main log"), g->ptr, written_len);
+      log_write_failed(cUS("main log"), g->ptr, written_len);
       /* That function does not return */
       }
     }
@@ -1172,7 +1172,7 @@ if (flags & LOG_REJECT)
         {
         g->ptr -= 100;        /* For message and separator */
         if (g->s[g->ptr-1] == '\n') g->ptr--;
-        g = string_cat(g, US("\n*** truncated ***\n"));
+        g = string_cat(g, cUS("\n*** truncated ***\n"));
         break;
         }
       }
@@ -1229,7 +1229,7 @@ if (flags & LOG_REJECT)
     written_len = write_to_fd_buf(rejectlogfd, g->s, g->ptr);
     if (written_len != g->ptr)
       {
-      log_write_failed(US("reject log"), g->ptr, written_len);
+      log_write_failed(cUS("reject log"), g->ptr, written_len);
       /* That function does not return */
       }
     }
@@ -1281,7 +1281,7 @@ if (flags & LOG_PANIC)
     if (panic_coredump)
       kill(getpid(), SIGSEGV);	/* deliberate trap */
     else
-      die(NULL, US("Unexpected failure, please try later"));
+      die(NULL, cUS("Unexpected failure, please try later"));
   }
 }
 
@@ -1367,7 +1367,7 @@ Returns:         nothing on success - bomb out on failure
 
 void
 decode_bits(unsigned int * selector, size_t selsize, int * notall,
-  const uschar * string, bit_table * options, int count, uschar * which,
+  cuschar * string, bit_table * options, int count, uschar * which,
   int flags)
 {
 uschar *errmsg;
@@ -1389,7 +1389,7 @@ if (*string == '=')
 else for(;;)
   {
   BOOL adding;
-  const uschar * s;
+  cuschar * s;
   int len;
   bit_table * start, * end;
 
@@ -1487,12 +1487,12 @@ immediately but only upon a trigger - but we'd need another cmdline option
 to pass the name through child_exxec_exim(). */
 
 void
-debug_logging_activate(const uschar * tag_name, const uschar * opts)
+debug_logging_activate(cuschar * tag_name, cuschar * opts)
 {
 if (debug_file)
   {
   debug_printf("DEBUGGING ACTIVATED FROM WITHIN CONFIG.\n"
-      "DEBUG: Tag=\"%s\" opts=\"%s\"\n", tag_name, opts ? opts : US(""));
+      "DEBUG: Tag=\"%s\" opts=\"%s\"\n", tag_name, opts ? opts : cUS(""));
   return;
   }
 
@@ -1506,7 +1506,7 @@ if (tag_name && (Ustrchr(tag_name, '/') != NULL))
 debug_selector = D_default;
 if (opts)
   decode_bits(&debug_selector, 1, debug_notall, opts,
-      debug_options, debug_options_count, US("debug"), DEBUG_FROM_CONFIG);
+      debug_options, debug_options_count, cUS("debug"), DEBUG_FROM_CONFIG);
 
 /* When activating from a transport process we may never have logged at all
 resulting in certain setup not having been done.  Hack this for now so we
@@ -1524,7 +1524,7 @@ else
 
 
 void
-debug_logging_from_spool(const uschar * filename)
+debug_logging_from_spool(cuschar * filename)
 {
 if (debug_fd < 0)
   {

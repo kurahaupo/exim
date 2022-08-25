@@ -97,7 +97,7 @@ out as prompts, and get a data item back. If the data item is "*", abandon the
 authentication attempt. Otherwise, split it into items as above. */
 
 if (expand_nmax == 0) 	/* skip if rxd data */
-  if ((rc = auth_prompt(CUS(""))) != OK)
+  if ((rc = auth_prompt(cUS(""))) != OK)
     return rc;
 
 if (ob->server_param2)
@@ -136,7 +136,7 @@ auth_external_client(
 {
 auth_external_options_block *ob =
   (auth_external_options_block *)(ablock->options_block);
-const uschar * text = ob->client_send;
+cuschar * text = ob->client_send;
 int rc;
 
 /* We output an AUTH command with one expanded argument, the client_send option */

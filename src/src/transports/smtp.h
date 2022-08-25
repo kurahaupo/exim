@@ -111,7 +111,7 @@ typedef struct {
   uschar	*host_name_extract;
   uschar	*tls_resumption_hosts;
 # endif
-  const uschar	*tls_sni;
+  cuschar	*tls_sni;
   uschar	*tls_verify_certificates;
   int		tls_dh_min_bits;
   BOOL		tls_tempfail_tryclear;

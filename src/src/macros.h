@@ -343,7 +343,7 @@ and the first word of the log selector. */
 /* Used in globals.c for initializing bit_table structures. T will be either
 D or L corresponding to the debug and log selector bits declared below. */
 
-#define BIT_TABLE(T,name) { US(#name), T##i_##name }
+#define BIT_TABLE(T,name) { cUS(#name), T##i_##name }
 
 /* IOTA allows us to keep an implicit sequential count, like a simple enum,
 but we can have sequentially numbered identifiers which are not declared
@@ -1074,7 +1074,7 @@ should not be one active. */
     ? (sigalarm_setter = NULL, alarm(seconds)) : alarm(seconds);
 #endif
 
-#define AUTHS_REGEX US("\\n250[\\s\\-]AUTH\\s+([\\-\\w \\t]+)(?:\\n|$)")
+#define AUTHS_REGEX cUS("\\n250[\\s\\-]AUTH\\s+([\\-\\w \\t]+)(?:\\n|$)")
 
 #define EARLY_PIPE_FEATURE_NAME "PIPECONNECT"
 #define EARLY_PIPE_FEATURE_LEN  11
@@ -1095,7 +1095,7 @@ should not be one active. */
 #define RESUME_USED		BIT(4)
 
 #define RESUME_DECODE_STRING \
-	  US("not requested or offered : 0x02 :client requested, no server ticket" \
+	  cUS("not requested or offered : 0x02 :client requested, no server ticket" \
     ": 0x04 : 0x05 : 0x06 :client offered session, no server action" \
     ": 0x08 :no client request: 0x0A :client requested new ticket, server provided" \
     ": 0x0C :client offered session, not used: 0x0E :client offered session, server only provided new ticket" \

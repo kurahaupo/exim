@@ -95,6 +95,6 @@ extern void appendfile_transport_init(transport_instance *);
 
 /* Function that is shared with tf_maildir.c */
 
-extern off_t  check_dir_size(const uschar *, int *, const pcre2_code *);
+extern off_t  check_dir_size(cuschar *, int *, const pcre2_code *);
 
 /* End of transports/appendfile.h */

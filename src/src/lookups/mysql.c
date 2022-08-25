@@ -82,7 +82,7 @@ static mysql_connection *mysql_connections = NULL;
 /* See local README for interface description. */
 
 static void *
-mysql_open(const uschar * filename, uschar ** errmsg)
+mysql_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(1);    /* Just return something non-null */
 }
@@ -133,8 +133,8 @@ Returns:       OK, FAIL, or DEFER
 */
 
 static int
-perform_mysql_search(const uschar *query, uschar *server, uschar **resultptr,
-  uschar **errmsg, BOOL *defer_break, uint *do_cache, const uschar * opts)
+perform_mysql_search(cuschar *query, uschar *server, uschar **resultptr,
+  uschar **errmsg, BOOL *defer_break, uint *do_cache, cuschar * opts)
 {
 MYSQL *mysql_handle = NULL;        /* Keep compilers happy */
 MYSQL_RES *mysql_result = NULL;
@@ -188,7 +188,7 @@ if (!cn)
   uschar *p;
   uschar *socket = NULL;
   int port = 0;
-  uschar *group = US("exim");
+  uschar *group = cUS("exim");
 
   if ((p = Ustrchr(sdata[0], '[')))
     {
@@ -311,7 +311,7 @@ while ((mysql_row_data = mysql_fetch_row(mysql_result)))
   unsigned long * lengths = mysql_fetch_lengths(mysql_result);
 
   if (result)
-    result = string_catn(result, US("\n"), 1);
+    result = string_catn(result, cUS("\n"), 1);
 
   if (num_fields != 1)
     for (int i = 0; i < num_fields; i++)
@@ -346,7 +346,7 @@ always leaves enough room for a terminating zero. */
 if (!result)
   {
   yield = FAIL;
-  *errmsg = US("MYSQL: no data found");
+  *errmsg = cUS("MYSQL: no data found");
   }
 
 /* Get here by goto from various error checks and from the case where no data
@@ -387,11 +387,11 @@ query is deferred with a retryable error is now in a separate function that is
 shared with other SQL lookups. */
 
 static int
-mysql_find(void * handle, const uschar * filename, const uschar * query,
+mysql_find(void * handle, cuschar * filename, cuschar * query,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
-return lf_sqlperform(US("MySQL"), US("mysql_servers"), mysql_servers, query,
+return lf_sqlperform(cUS("MySQL"), cUS("mysql_servers"), mysql_servers, query,
   result, errmsg, do_cache, opts, perform_mysql_search);
 }
 
@@ -482,7 +482,7 @@ return g;
 /* These are the lookup_info blocks for this driver */
 
 static lookup_info mysql_lookup_info = {
-  .name = US("mysql"),			/* lookup name */
+  .name = cUS("mysql"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = mysql_open,			/* open function */
   .check = NULL,			/* no check function */

@@ -18,6 +18,7 @@ to be able to do I/O */
 # include <stdio.h>
 # include <stdlib.h>
 typedef unsigned char uschar;
+typedef const uschar cuschar;
 typedef struct sha1 {
   unsigned int H[5];
   unsigned int length;
@@ -86,7 +87,7 @@ return FALSE;
 
 
 void
-exim_sha_update(hctx * h, const uschar * data, int len)
+exim_sha_update(hctx * h, cuschar * data, int len)
 {
 # if OPENSSL_VERSION_NUMBER < 0x30000000L
 switch (h->method)
@@ -172,7 +173,7 @@ return TRUE;
 
 
 void
-exim_sha_update(hctx * h, const uschar * data, int len)
+exim_sha_update(hctx * h, cuschar * data, int len)
 {
 gnutls_hash(h->sha, data, len);
 }
@@ -210,7 +211,7 @@ return TRUE;
 
 
 void
-exim_sha_update(hctx * h, const uschar * data, int len)
+exim_sha_update(hctx * h, cuschar * data, int len)
 {
 gcry_md_write(h->sha, data, len);
 }
@@ -245,7 +246,7 @@ return TRUE;
 
 
 void
-exim_sha_update(hctx * h, const uschar * data, int len)
+exim_sha_update(hctx * h, cuschar * data, int len)
 {
 switch (h->method)
   {
@@ -309,7 +310,7 @@ Returns:     nothing
 */
 
 static void
-native_sha1_mid(sha1 *base, const uschar *text)
+native_sha1_mid(sha1 *base, cuschar *text)
 {
 uint A, B, C, D, E;
 uint W[80];
@@ -407,7 +408,7 @@ Returns:    nothing
 */
 
 static void
-native_sha1_end(sha1 *base, const uschar *text, int length, uschar *digest)
+native_sha1_end(sha1 *base, cuschar *text, int length, uschar *digest)
 {
 uschar work[64];
 
@@ -485,7 +486,7 @@ return TRUE;
 
 
 void
-exim_sha_update(hctx * h, const uschar * data, int len)
+exim_sha_update(hctx * h, cuschar * data, int len)
 {
 native_sha1_mid(&h->sha1, US(data));	/* implicit size always 64 */
 }
@@ -520,13 +521,13 @@ native_sha1_start(&h->sha1);
 }
 
 void
-sha1_mid(hctx * h, const uschar * data)
+sha1_mid(hctx * h, cuschar * data)
 {
 native_sha1_mid(&h->sha1, data);
 }
 
 void
-sha1_end(hctx * h, const uschar * data, int len, uschar *digest)
+sha1_end(hctx * h, cuschar * data, int len, uschar *digest)
 {
 native_sha1_end(&h->sha1, data, len, digest);
 }
@@ -540,13 +541,13 @@ sha1_start(hctx * h)
 }
 
 void
-sha1_mid(hctx * h, const uschar * data)
+sha1_mid(hctx * h, cuschar * data)
 {
 exim_sha_update(h, data, 64);
 }
 
 void
-sha1_end(hctx * h, const uschar * data, int len, uschar *digest)
+sha1_end(hctx * h, cuschar * data, int len, uschar *digest)
 {
 blob b;
 exim_sha_update(h, data, len);
@@ -561,7 +562,7 @@ memcpy(digest, b.data, 20);
 #ifdef HAVE_PARTIAL_SHA
 # undef HAVE_PARTIAL_SHA
 void
-exim_sha_update_string(hctx * h, const uschar * s)
+exim_sha_update_string(hctx * h, cuschar * s)
 {
 if (s) exim_sha_update(h, s, Ustrlen(s));
 }

@@ -36,7 +36,7 @@ Returns:    0 if the string is not a textual representation of an IP address
 */
 
 int
-string_is_ip_address(const uschar *s, int *maskptr)
+string_is_ip_address(cuschar *s, int *maskptr)
 {
 int yield = 4;
 
@@ -45,7 +45,7 @@ offset. */
 
 if (maskptr)
   {
-  const uschar *ss = s + Ustrlen(s);
+  cuschar *ss = s + Ustrlen(s);
   *maskptr = 0;
   if (s != ss && isdigit(*(--ss)))
     {
@@ -168,7 +168,7 @@ Returns:      pointer to the buffer
 uschar *
 string_format_size(int size, uschar *buffer)
 {
-if (size == 0) Ustrcpy(buffer, US("     "));
+if (size == 0) Ustrcpy(buffer, cUS("     "));
 else if (size < 1024) sprintf(CS(buffer), "%5d", size);
 else if (size < 10*1024)
   sprintf(CS(buffer), "%4.1fK", (double)size / 1024.0);
@@ -229,13 +229,13 @@ Returns:   the value of the character escape
 */
 
 int
-string_interpret_escape(const uschar **pp)
+string_interpret_escape(cuschar **pp)
 {
 #ifdef COMPILE_UTILITY
-const uschar *hex_digits= CUS("0123456789abcdef");
+cuschar *hex_digits= cUS("0123456789abcdef");
 #endif
 int ch;
-const uschar *p = *pp;
+cuschar *p = *pp;
 ch = *(++p);
 if (ch == '\0') return **pp;
 if (isdigit(ch) && ch != '8' && ch != '9')
@@ -290,12 +290,12 @@ Arguments:
 Returns:        string with non-printers encoded as printing sequences
 */
 
-const uschar *
-string_printing2(const uschar *s, int flags)
+cuschar *
+string_printing2(cuschar *s, int flags)
 {
 int nonprintcount = 0;
 int length = 0;
-const uschar *t = s;
+cuschar *t = s;
 uschar *ss, *tt;
 
 while (*t)
@@ -385,7 +385,7 @@ while (*p)
   {
   if (*p == '\\')
     {
-    *q++ = string_interpret_escape((const uschar **)&p);
+    *q++ = string_interpret_escape((cuschar **)&p);
     p++;
     }
   else
@@ -428,7 +428,7 @@ Returns:  copy of string in new store with the same taint status
 */
 
 uschar *
-string_copy_function(const uschar * s)
+string_copy_function(cuschar * s)
 {
 return string_copy_taint(s, s);
 }
@@ -437,7 +437,7 @@ return string_copy_taint(s, s);
 */
 
 uschar *
-string_copy_taint_function(const uschar * s, const void * proto_mem)
+string_copy_taint_function(cuschar * s, const void * proto_mem)
 {
 return string_copy_taint(s, proto_mem);
 }
@@ -459,7 +459,7 @@ Returns:    copy of string in new store
 */
 
 uschar *
-string_copyn_function(const uschar * s, int n)
+string_copyn_function(cuschar * s, int n)
 {
 return string_copyn(s, n);
 }
@@ -477,7 +477,7 @@ Returns:  copy of string in new store
 */
 
 uschar *
-string_copy_malloc(const uschar * s)
+string_copy_malloc(cuschar * s)
 {
 int len = Ustrlen(s) + 1;
 uschar * ss = store_malloc(len);
@@ -604,9 +604,9 @@ Returns:   the new string
 */
 
 uschar *
-string_dequote(const uschar ** sptr)
+string_dequote(cuschar ** sptr)
 {
-const uschar * s = * sptr;
+cuschar * s = * sptr;
 uschar * t, * yield;
 
 /* First find the end of the string */
@@ -672,7 +672,7 @@ Returns:    pointer to fresh piece of store containing sprintf'ed string
 */
 
 uschar *
-string_sprintf_trc(const char * format, const uschar * func, unsigned line, ...)
+string_sprintf_trc(const char * format, cuschar * func, unsigned line, ...)
 {
 #ifdef COMPILE_UTILITY
 uschar buffer[STRING_SPRINTF_BUFFER_SIZE];
@@ -720,7 +720,7 @@ Returns:    < 0, = 0, or > 0, according to the comparison
 */
 
 int
-strncmpic(const uschar * s, const uschar * t, int n)
+strncmpic(cuschar * s, cuschar * t, int n)
 {
 while (n--)
   {
@@ -744,7 +744,7 @@ Returns:    < 0, = 0, or > 0, according to the comparison
 */
 
 int
-strcmpic(const uschar * s, const uschar * t)
+strcmpic(cuschar * s, cuschar * t)
 {
 while (*s)
   {
@@ -770,11 +770,11 @@ Arguments:
 Returns:         pointer to substring in string, or NULL if not found
 */
 
-const uschar *
-strstric_c(const uschar * s, const uschar * t, BOOL space_follows)
+cuschar *
+strstric_c(cuschar * s, cuschar * t, BOOL space_follows)
 {
-const uschar * p = t;
-const uschar * yield = NULL;
+cuschar * p = t;
+cuschar * yield = NULL;
 int cl = tolower(*p);
 int cu = toupper(*p);
 
@@ -808,7 +808,7 @@ return NULL;
 uschar *
 strstric(uschar * s, uschar * t, BOOL space_follows)
 {
-return US(strstric_c(s, t, space_follows));
+return (uschar *)strstric_c(s, t, space_follows);
 }
 
 
@@ -871,11 +871,11 @@ Returns:     pointer to buffer, containing the next substring,
 */
 
 uschar *
-string_nextinlist_trc(const uschar ** listptr, int * separator, uschar * buffer,
-  int buflen, const uschar * func, int line)
+string_nextinlist_trc(cuschar ** listptr, int * separator, uschar * buffer,
+  int buflen, cuschar * func, int line)
 {
 int sep = *separator;
-const uschar * s = *listptr;
+cuschar * s = *listptr;
 BOOL sep_is_special;
 
 if (!s) return NULL;
@@ -917,7 +917,7 @@ if (buffer)
   {
   int p = 0;
   if (is_tainted(s) && !is_tainted(buffer))
-    die_tainted(US("string_nextinlist"), func, line);
+    die_tainted(cUS("string_nextinlist"), func, line);
   for (; *s; s++)
     {
     if (*s == sep && (*(++s) != sep || sep_is_special)) break;
@@ -942,7 +942,7 @@ else
     if (*++s != sep || sep_is_special)
       {
       *listptr = s;
-      return string_copy(US(""));
+      return string_copy(cUS(""));
       }
 
   /* Not an empty string; the first character is guaranteed to be a data
@@ -950,7 +950,7 @@ else
 
   for (;;)
     {
-    const uschar * ss;
+    cuschar * ss;
     for (ss = s + 1; *ss && *ss != sep; ) ss++;
     g = string_catn(g, s, ss-s);
     s = ss;
@@ -974,8 +974,8 @@ return buffer;
 }
 
 
-static const uschar *
-Ustrnchr(const uschar * s, int c, unsigned * len)
+static cuschar *
+Ustrnchr(cuschar * s, int c, unsigned * len)
 {
 unsigned siz = *len;
 while (siz)
@@ -1013,7 +1013,7 @@ Returns:  pointer to the start of the list, changed if copied for expansion.
 */
 
 gstring *
-string_append_listele(gstring * list, uschar sep, const uschar * ele)
+string_append_listele(gstring * list, uschar sep, cuschar * ele)
 {
 uschar * sp;
 
@@ -1033,10 +1033,10 @@ return list;
 
 
 gstring *
-string_append_listele_n(gstring * list, uschar sep, const uschar * ele,
+string_append_listele_n(gstring * list, uschar sep, cuschar * ele,
  unsigned len)
 {
-const uschar * sp;
+cuschar * sp;
 
 if (list && list->ptr)
   list = string_catn(list, &sep, 1);
@@ -1060,8 +1060,8 @@ can be multiple chars - there is no checking for the element content
 containing any of the separator. */
 
 gstring *
-string_append2_listele_n(gstring * list, const uschar * sepstr,
- const uschar * ele, unsigned len)
+string_append2_listele_n(gstring * list, cuschar * sepstr,
+ cuschar * ele, unsigned len)
 {
 if (list && list->ptr)
   list = string_cat(list, sepstr);
@@ -1150,7 +1150,7 @@ Returns:   growable string, changed if copied for expansion.
 /* coverity[+alloc] */
 
 gstring *
-string_catn(gstring * g, const uschar * s, int count)
+string_catn(gstring * g, cuschar * s, int count)
 {
 int p;
 
@@ -1198,7 +1198,7 @@ return g;
 
 
 gstring *
-string_cat(gstring * g, const uschar * s)
+string_cat(gstring * g, cuschar * s)
 {
 return string_catn(g, s, Ustrlen(s));
 }
@@ -1269,7 +1269,7 @@ Returns:       TRUE if the result fitted in the buffer
 
 BOOL
 string_format_trc(uschar * buffer, int buflen,
-  const uschar * func, unsigned line, const char * format, ...)
+  cuschar * func, unsigned line, const char * format, ...)
 {
 gstring g = { .size = buflen, .ptr = 0, .s = buffer }, * gp;
 va_list ap;
@@ -1313,7 +1313,7 @@ string, not nul-terminated.
 */
 
 gstring *
-string_vformat_trc(gstring * g, const uschar * func, unsigned line,
+string_vformat_trc(gstring * g, cuschar * func, unsigned line,
   unsigned size_limit, unsigned flags, const char * format, va_list ap)
 {
 enum ltypes { L_NORMAL=1, L_SHORT=2, L_LONG=3, L_LONGLONG=4, L_LONGDOUBLE=5, L_SIZE=6 };
@@ -1337,7 +1337,7 @@ if (!(flags & SVFMT_TAINT_NOCHK) && is_incompatible(g->s, format))
   {
 #ifndef MACRO_PREDEF
   if (!(flags & SVFMT_REBUFFER))
-    die_tainted(US("string_vformat"), func, line);
+    die_tainted(cUS("string_vformat"), func, line);
 #endif
 /* debug_printf("rebuf B\n"); */
   gstring_rebuffer(g, format);
@@ -1569,7 +1569,7 @@ while (*fp)
 	  }
 #ifndef MACRO_PREDEF
 	else
-	  die_tainted(US("string_vformat"), func, line);
+	  die_tainted(cUS("string_vformat"), func, line);
 #endif
 
     INSERT_STRING:              /* Come to from %D or %M above */
@@ -1663,13 +1663,13 @@ Returns:        a message, in dynamic store
 */
 
 uschar *
-string_open_failed_trc(const uschar * func, unsigned line,
+string_open_failed_trc(cuschar * func, unsigned line,
   const char * format, ...)
 {
 va_list ap;
 gstring * g = string_get(1024);
 
-g = string_catn(g, US("failed to open "), 15);
+g = string_catn(g, cUS("failed to open "), 15);
 
 /* Use the checked formatting routine to ensure that the buffer
 does not overflow. It should not, since this is called only for internally
@@ -1681,7 +1681,7 @@ va_start(ap, format);
 	SVFMT_REBUFFER, format, ap);
 va_end(ap);
 
-g = string_catn(g, US(": "), 2);
+g = string_catn(g, cUS(": "), 2);
 g = string_cat(g, US(strerror(errno)));
 
 if (errno == EACCES)
@@ -1706,7 +1706,7 @@ pointers. Here it is. */
 int
 string_compare_by_pointer(const void *a, const void *b)
 {
-return Ustrcmp(* CUSS(a), * CUSS(b));
+return strcmp(*(char const * const *)a, *(char const * const *)b);
 }
 #endif /* COMPILE_UTILITY */
 

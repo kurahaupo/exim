@@ -6,7 +6,7 @@
 #ifdef SUPPORT_I18N
 
 uschar *
-imap_utf7_encode(uschar *string, const uschar *charset, uschar sep,
+imap_utf7_encode(uschar *string, cuschar *charset, uschar sep,
   uschar *specials, uschar **error)
 {
 static uschar encode_base64[64] =
@@ -27,7 +27,7 @@ uschar *outptr = outbuf;
 iconv_t icd;
 #endif
 
-if (!specials) specials = US("");
+if (!specials) specials = cUS("");
 
 /* Pass over the string. If it consists entirely of "normal" characters
    (possibly with leading seps), return it as is. */

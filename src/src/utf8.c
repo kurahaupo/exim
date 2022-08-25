@@ -21,12 +21,12 @@
 #include <stringprep.h>
 
 static uschar *
-string_localpart_alabel_to_utf8_(const uschar * alabel, uschar ** err);
+string_localpart_alabel_to_utf8_(cuschar * alabel, uschar ** err);
 
 /**************************************************/
 
 BOOL
-string_is_utf8(const uschar * s)
+string_is_utf8(cuschar * s)
 {
 uschar c;
 if (s) while ((c = *s++)) if (c & 0x80) return TRUE;
@@ -34,7 +34,7 @@ return FALSE;
 }
 
 static BOOL
-string_is_alabel(const uschar * s)
+string_is_alabel(cuschar * s)
 {
 return s[0] == 'x' && s[1] == 'n' && s[2] == '-' && s[3] == '-';
 }
@@ -47,7 +47,7 @@ Return NULL for error, with optional errstr pointer filled in
 */
 
 uschar *
-string_domain_utf8_to_alabel(const uschar * utf8, uschar ** err)
+string_domain_utf8_to_alabel(cuschar * utf8, uschar ** err)
 {
 uschar * s1, * s;
 int rc;
@@ -93,10 +93,10 @@ return s;
 
 
 uschar *
-string_domain_alabel_to_utf8(const uschar * alabel, uschar ** err)
+string_domain_alabel_to_utf8(cuschar * alabel, uschar ** err)
 {
 #ifdef SUPPORT_I18N_2008
-const uschar * label;
+cuschar * label;
 int sep = '.';
 gstring * g = NULL;
 
@@ -132,7 +132,7 @@ return s;
 
 
 uschar *
-string_localpart_utf8_to_alabel(const uschar * utf8, uschar ** err)
+string_localpart_utf8_to_alabel(cuschar * utf8, uschar ** err)
 {
 size_t ucs4_len = 0;
 punycode_uint * p;
@@ -145,7 +145,7 @@ if (!string_is_utf8(utf8)) return string_copy(utf8);
 p = (punycode_uint *) stringprep_utf8_to_ucs4(CCS(utf8), -1, &ucs4_len);
 if (!p || !ucs4_len)
   {
-  if (err) *err = US("l_u2a: bad UTF-8 input");
+  if (err) *err = cUS("l_u2a: bad UTF-8 input");
   return NULL;
   }
 p_len = ucs4_len*4;	/* this multiplier is pure guesswork */
@@ -168,7 +168,7 @@ return res;
 
 
 static uschar *
-string_localpart_alabel_to_utf8_(const uschar * alabel, uschar ** err)
+string_localpart_alabel_to_utf8_(cuschar * alabel, uschar ** err)
 {
 size_t p_len;
 punycode_uint * p;
@@ -194,12 +194,12 @@ return res;
 
 
 uschar *
-string_localpart_alabel_to_utf8(const uschar * alabel, uschar ** err)
+string_localpart_alabel_to_utf8(cuschar * alabel, uschar ** err)
 {
 if (string_is_alabel(alabel))
   return string_localpart_alabel_to_utf8_(alabel, err);
 
-if (err) *err = US("bad alabel prefix");
+if (err) *err = cUS("bad alabel prefix");
 return NULL;
 }
 
@@ -212,7 +212,7 @@ Return NULL on error, with (optional) errstring pointer filled in
 */
 
 uschar *
-string_address_utf8_to_alabel(const uschar * utf8, uschar ** err)
+string_address_utf8_to_alabel(cuschar * utf8, uschar ** err)
 {
 uschar * l, * d;
 
@@ -220,7 +220,7 @@ if (!*utf8) return string_copy(utf8);
 
 DEBUG(D_expand) debug_printf("addr from utf8 <%s>", utf8);
 
-for (const uschar * s = utf8; *s; s++)
+for (cuschar * s = utf8; *s; s++)
   if (*s == '@')
     {
     l = string_copyn(utf8, s - utf8);

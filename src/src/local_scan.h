@@ -159,21 +159,21 @@ extern unsigned int debug_selector;    /* Debugging bits */
 
 extern int     body_linecount;         /* Line count in body */
 extern int     body_zerocount;         /* Binary zero count in body */
-extern uschar *expand_string_message;  /* Error info for failing expansion */
-extern const uschar *headers_charset;  /* Charset for RFC 2047 decoding */
+extern cuschar *expand_string_message;  /* Error info for failing expansion */
+extern cuschar *headers_charset;  /* Charset for RFC 2047 decoding */
 extern header_line *header_last;       /* Final header */
 extern header_line *header_list;       /* First header */
 extern BOOL    host_checking;          /* Set when checking a host */
-extern uschar *interface_address;      /* Interface for incoming call */
+extern cuschar *interface_address;      /* Interface for incoming call */
 extern int     interface_port;         /* Port number for incoming call */
-extern uschar *message_id;             /* Internal id of message being handled */
-extern uschar *received_protocol;      /* Name of incoming protocol */
+extern cuschar *message_id;             /* Internal id of message being handled */
+extern cuschar *received_protocol;      /* Name of incoming protocol */
 extern int     recipients_count;       /* Number of recipients */
 extern recipient_item *recipients_list;/* List of recipient addresses */
-extern unsigned char *sender_address;  /* Sender address */
-extern uschar *sender_host_address;    /* IP address of sender, as chars */
-extern uschar *sender_host_authenticated; /* Name of authentication mechanism */
-extern uschar *sender_host_name;       /* Host name from lookup */
+extern cuschar *sender_address;    /* Sender address */
+extern cuschar *sender_host_address;    /* IP address of sender, as chars */
+extern cuschar *sender_host_authenticated; /* Name of authentication mechanism */
+extern cuschar *sender_host_name;       /* Host name from lookup */
 extern int     sender_host_port;       /* Port number of sender */
 extern BOOL    smtp_batched_input;     /* TRUE if SMTP batch (no interaction) */
 extern BOOL    smtp_input;             /* TRUE if input is via SMTP */
@@ -183,12 +183,20 @@ extern BOOL    smtp_input;             /* TRUE if input is via SMTP */
 
 extern int     child_close(pid_t, int);
 extern void    debug_printf(const char *, ...) PRINTF_FUNCTION(1,2);
-extern uschar *expand_string(uschar *);
+
+#ifndef expand_string_2
+#define expand_string_2 expand_string_2
+extern uschar *expand_string_2(uschar *, BOOL *);
+static inline uschar *expand_string(uschar *s) { return expand_string_2(s, NULL); }
+static inline cuschar *expand_cstring(cuschar *s) { return expand_string_2((uschar*)s, NULL); }
+static inline cuschar *expand_cstring_2(cuschar *s, BOOL *b) { return expand_string_2((uschar*)s, b); }
+#endif
+
 extern void    header_add(int, const char *, ...);
 extern void    header_add_at_position(BOOL, uschar *, BOOL, int, const char *, ...);
-extern void    header_remove(int, const uschar *);
-extern BOOL    header_testname(header_line *, const uschar *, int, BOOL);
-extern BOOL    header_testname_incomplete(header_line *, const uschar *, int, BOOL);
+extern void    header_remove(int, cuschar *);
+extern BOOL    header_testname(header_line *, cuschar *, int, BOOL);
+extern BOOL    header_testname_incomplete(header_line *, cuschar *, int, BOOL);
 extern void    log_write(unsigned int, int, const char *format, ...) PRINTF_FUNCTION(3,4);
 extern int     lss_b64decode(uschar *, uschar **);
 extern uschar *lss_b64encode(uschar *, int);
@@ -198,15 +206,15 @@ extern int     lss_match_address(uschar *, uschar *, BOOL);
 extern int     lss_match_host(uschar *, uschar *, uschar *);
 extern void    receive_add_recipient(uschar *, int);
 extern BOOL    receive_remove_recipient(uschar *);
-extern uschar *rfc2047_decode(uschar *, BOOL, const uschar *, int, int *,
+extern uschar *rfc2047_decode(uschar *, BOOL, cuschar *, int, int *,
 			      uschar **);
 extern int     smtp_fflush(void);
 extern void    smtp_printf(const char *, BOOL, ...) PRINTF_FUNCTION(1,3);
 extern void    smtp_vprintf(const char *, BOOL, va_list);
 
 #define string_sprintf(fmt, ...) \
-	string_sprintf_trc(fmt, US(__FUNCTION__), __LINE__, __VA_ARGS__)
-extern uschar *string_sprintf_trc(const char *, const uschar *, unsigned, ...) ALMOST_PRINTF(1,4);
+	string_sprintf_trc(fmt, cUS(__FUNCTION__), __LINE__, __VA_ARGS__)
+extern uschar *string_sprintf_trc(const char *, cuschar *, unsigned, ...) ALMOST_PRINTF(1,4);
 
 #define store_get(size, proto_mem) \
 	store_get_3((size), (proto_mem), __FUNCTION__, __LINE__)
@@ -224,16 +232,16 @@ with the original name. */
 # define string_copy(s) string_copy_function(s)
 # define string_copyn(s, n) string_copyn_function((s), (n))
 # define string_copy_taint(s, t) string_copy_taint_function((s), (t))
-# define child_open_exim(p)        child_open_exim_function((p), US("from local_scan"))
-# define child_open_exim2(p, s, a) child_open_exim2_function((p), (s), (a), US("from local_scan"))
-# define child_open(a,e,u,i,o,l) child_open_function((a),(e),(u),(i),(o),(l),US("from local_scan"))
+# define child_open_exim(p)        child_open_exim_function((p), cUS("from local_scan"))
+# define child_open_exim2(p, s, a) child_open_exim2_function((p), (s), (a), cUS("from local_scan"))
+# define child_open(a,e,u,i,o,l) child_open_function((a),(e),(u),(i),(o),(l),cUS("from local_scan"))
 
-extern uschar * string_copy_function(const uschar *);
-extern uschar * string_copyn_function(const uschar *, int n);
-extern uschar * string_copy_taint_function(const uschar *, const void * proto_mem);
-extern pid_t    child_open_exim_function(int *, const uschar *);
-extern pid_t    child_open_exim2_function(int *, uschar *, uschar *, const uschar *);
-extern pid_t    child_open_function(uschar **, uschar **, int, int *, int *, BOOL, const uschar *);
+extern uschar * string_copy_function(cuschar *);
+extern uschar * string_copyn_function(cuschar *, int n);
+extern uschar * string_copy_taint_function(cuschar *, const void * proto_mem);
+extern pid_t    child_open_exim_function(int *, cuschar *);
+extern pid_t    child_open_exim2_function(int *, uschar *, uschar *, cuschar *);
+extern pid_t    child_open_function(uschar **, uschar **, int, int *, int *, BOOL, cuschar *);
 #endif
 
 /* End of local_scan.h */

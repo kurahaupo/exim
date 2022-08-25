@@ -64,7 +64,7 @@ queryprogram_router_options_block queryprogram_router_option_defaults = {
   (gid_t)(-1),  /* cmd_gid */
   FALSE,        /* cmd_uid_set */
   FALSE,        /* cmd_gid_set */
-  US("/"),        /* current_directory */
+  cUS("/"),        /* current_directory */
   NULL,         /* expand_cmd_gid */
   NULL          /* expand_cmd_uid */
 };
@@ -209,7 +209,7 @@ int fd_in, fd_out, len, rc;
 pid_t pid;
 struct passwd *upw = NULL;
 uschar buffer[1024];
-const uschar **argvptr;
+cuschar **argvptr;
 uschar *rword, *rdata, *s;
 address_item_propagated addr_prop;
 queryprogram_router_options_block *ob =
@@ -246,7 +246,7 @@ if (rc != OK) return rc;
 (initialization ensures that one or the other is set). */
 
 if (  !ob->cmd_uid_set
-   && !route_find_expanded_user(ob->expand_cmd_uid, rblock->name, US("router"),
+   && !route_find_expanded_user(ob->expand_cmd_uid, rblock->name, cUS("router"),
 	&upw, &uid, &(addr->message)))
     return DEFER;
 
@@ -256,7 +256,7 @@ if (!ob->cmd_gid_set)
   if (ob->expand_cmd_gid)
     {
     if (route_find_expanded_group(ob->expand_cmd_gid, rblock->name,
-        US("router"), &gid, &(addr->message)))
+        cUS("router"), &gid, &(addr->message)))
       return DEFER;
     }
   else if (upw)
@@ -292,14 +292,14 @@ if (!transport_set_up_command(&argvptr, /* anchor for arg list */
     0,                                  /* not relevant when... */
     NULL,                               /* no transporting address */
     FALSE,				/* args must be untainted */
-    US("queryprogram router"),            /* for error messages */
+    cUS("queryprogram router"),            /* for error messages */
     &addr->message))                    /* where to put error message */
   return DEFER;
 
 /* Create the child process, making it a group leader. */
 
 if ((pid = child_open_uid(argvptr, NULL, 0077, puid, pgid, &fd_in, &fd_out,
-			  current_directory, TRUE, US("queryprogram-cmd"))) < 0)
+			  current_directory, TRUE, cUS("queryprogram-cmd"))) < 0)
   {
   addr->message = string_sprintf("%s router couldn't create child process: %s",
     rblock->name, strerror(errno));
@@ -370,7 +370,7 @@ line is redirection data, as for a .forward file. It may not contain filter
 data, and it may not contain anything other than addresses (no files, no pipes,
 no specials). */
 
-if (strcmpic(rword, US("REDIRECT")) == 0)
+if (strcmpic(rword, cUS("REDIRECT")) == 0)
   {
   int filtertype;
   redirect_block redirect;
@@ -403,13 +403,13 @@ if (strcmpic(rword, US("REDIRECT")) == 0)
     response after verifying. */
 
     case FF_DEFER:
-      if (!addr->message) addr->message = US("forced defer");
+      if (!addr->message) addr->message = cUS("forced defer");
       else addr->user_message = addr->message;
       return DEFER;
 
     case FF_FAIL:
       add_generated(rblock, addr_new, addr, generated, &addr_prop);
-      if (!addr->message) addr->message = US("forced rejection");
+      if (!addr->message) addr->message = cUS("forced rejection");
       else addr->user_message = addr->message;
       return FAIL;
 
@@ -417,7 +417,7 @@ if (strcmpic(rword, US("REDIRECT")) == 0)
       break;
 
     case FF_NOTDELIVERED:    /* an empty redirection list is bad */
-      addr->message = US("no addresses supplied");
+      addr->message = cUS("no addresses supplied");
     /* Fall through */
 
     case FF_ERROR:
@@ -442,18 +442,18 @@ if (strcmpic(rword, US("REDIRECT")) == 0)
 
 /* Handle other returns that are not ACCEPT */
 
-if (strcmpic(rword, US("accept")) != 0)
+if (strcmpic(rword, cUS("accept")) != 0)
   {
-  if (strcmpic(rword, US("decline")) == 0) return DECLINE;
-  if (strcmpic(rword, US("pass")) == 0) return PASS;
+  if (strcmpic(rword, cUS("decline")) == 0) return DECLINE;
+  if (strcmpic(rword, cUS("pass")) == 0) return PASS;
   addr->message = string_copy(rdata);                /* data is a message */
-  if (strcmpic(rword, US("fail")) == 0)
+  if (strcmpic(rword, cUS("fail")) == 0)
     {
     setflag(addr, af_pass_message);
     return FAIL;
     }
-  if (strcmpic(rword, US("freeze")) == 0) addr->special_action = SPECIAL_FREEZE;
-  else if (strcmpic(rword, US("defer")) != 0)
+  if (strcmpic(rword, cUS("freeze")) == 0) addr->special_action = SPECIAL_FREEZE;
+  else if (strcmpic(rword, cUS("defer")) != 0)
     {
     addr->message = string_sprintf("bad command yield: %s %s", rword, rdata);
     log_write(0, LOG_PANIC, "%s router: %s", rblock->name, addr->message);
@@ -465,12 +465,12 @@ if (strcmpic(rword, US("accept")) != 0)
 fields from which we can fish out values using the equivalent of the "extract"
 expansion function. */
 
-if ((s = expand_getkeyed(US("data"), rdata)) && *s)
+if ((s = expand_getkeyed(cUS("data"), rdata)) && *s)
   addr_prop.address_data = string_copy(s);
 
 /* If we found a transport name, find the actual transport */
 
-if ((s = expand_getkeyed(US("transport"), rdata)) && *s)
+if ((s = expand_getkeyed(cUS("transport"), rdata)) && *s)
   {
   transport_instance *transport;
   for (transport = transports; transport; transport = transport->next)
@@ -492,17 +492,17 @@ the last argument not being NULL. */
 else
   {
   if (!rf_get_transport(rblock->transport_name, &rblock->transport, addr,
-       rblock->name, US("transport")))
+       rblock->name, cUS("transport")))
     return DEFER;
   addr->transport = rblock->transport;
   }
 
 /* See if a host list is given, and if so, look up the addresses. */
 
-if ((s = expand_getkeyed(US("hosts"), rdata)) && *s)
+if ((s = expand_getkeyed(cUS("hosts"), rdata)) && *s)
   {
   int lookup_type = LK_DEFAULT;
-  uschar * ss = expand_getkeyed(US("lookup"), rdata);
+  uschar * ss = expand_getkeyed(cUS("lookup"), rdata);
 
   if (ss && *ss)
     {

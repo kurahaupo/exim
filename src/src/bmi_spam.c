@@ -209,7 +209,7 @@ uschar *bmi_process_message(header_line *header_list, int data_fd) {
       return NULL;
     };
     if (*verdicts != '\0')
-      Ustrcat(verdicts, US(":"));
+      Ustrcat(verdicts, cUS(":"));
     Ustrcat(verdicts, US(verdict_str));
     bmiFreeStr(verdict_str);
   };
@@ -357,7 +357,7 @@ uschar *bmi_get_base64_verdict(uschar *bmi_local_part, uschar *bmi_domain) {
       rcpt_local_part = US(bmiRecipientAccessAddress(recipient));
       rcpt_domain = Ustrchr(rcpt_local_part,'@');
       if (rcpt_domain == NULL) {
-        rcpt_domain = US("");
+        rcpt_domain = cUS("");
       }
       else {
         *rcpt_domain = '\0';

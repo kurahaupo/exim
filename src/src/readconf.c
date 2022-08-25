@@ -20,7 +20,7 @@ implementation of the conditional .ifdef etc. */
 
 
 static uschar * syslog_facility_str;
-static void fn_smtp_receive_timeout(const uschar *, const uschar *, unsigned);
+static void fn_smtp_receive_timeout(cuschar *, cuschar *, unsigned);
 
 /*************************************************
 *           Main configuration options           *
@@ -409,12 +409,12 @@ static int optionlist_config_size = nelem(optionlist_config);
 #ifdef MACRO_PREDEF
 
 static void
-fn_smtp_receive_timeout(const uschar * name, const uschar * str, unsigned flags) {/*Dummy*/}
+fn_smtp_receive_timeout(cuschar * name, cuschar * str, unsigned flags) {/*Dummy*/}
 
 void
 options_main(void)
 {
-options_from_list(optionlist_config, nelem(optionlist_config), US("MAIN"), NULL);
+options_from_list(optionlist_config, nelem(optionlist_config), cUS("MAIN"), NULL);
 }
 
 void
@@ -422,13 +422,13 @@ options_auths(void)
 {
 uschar buf[EXIM_DRIVERNAME_MAX];
 
-options_from_list(optionlist_auths, optionlist_auths_size, US("AUTHENTICATORS"), NULL);
+options_from_list(optionlist_auths, optionlist_auths_size, cUS("AUTHENTICATORS"), NULL);
 
 for (struct auth_info * ai = auths_available; ai->driver_name[0]; ai++)
   {
-  spf(buf, sizeof(buf), US("_DRIVER_AUTHENTICATOR_%T"), ai->driver_name);
+  spf(buf, sizeof(buf), cUS("_DRIVER_AUTHENTICATOR_%T"), ai->driver_name);
   builtin_macro_create(buf);
-  options_from_list(ai->options, (unsigned)*ai->options_count, US("AUTHENTICATOR"), ai->driver_name);
+  options_from_list(ai->options, (unsigned)*ai->options_count, cUS("AUTHENTICATOR"), ai->driver_name);
 
   if (ai->macros_create) (ai->macros_create)();
   }
@@ -441,7 +441,7 @@ uschar buf[EXIM_DRIVERNAME_MAX];
 
 for (bit_table * bp = log_options; bp < log_options + log_options_count; bp++)
   {
-  spf(buf, sizeof(buf), US("_LOG_%T"), bp->name);
+  spf(buf, sizeof(buf), cUS("_LOG_%T"), bp->name);
   builtin_macro_create(buf);
   }
 }
@@ -451,22 +451,22 @@ for (bit_table * bp = log_options; bp < log_options + log_options_count; bp++)
 
 extern char **environ;
 
-static void save_config_line(const uschar* line);
-static void save_config_position(const uschar *file, int line);
+static void save_config_line(cuschar* line);
+static void save_config_position(cuschar *file, int line);
 static void print_config(BOOL admin, BOOL terse);
 
 
 #define CSTATE_STACK_SIZE 10
 
-const uschar *config_directory = NULL;
+cuschar *config_directory = NULL;
 
 
 /* Structure for chain (stack) of .included files */
 
 typedef struct config_file_item {
   struct config_file_item *next;
-  const uschar *filename;
-  const uschar *directory;
+  cuschar *filename;
+  cuschar *directory;
   FILE *file;
   int lineno;
 } config_file_item;
@@ -498,7 +498,7 @@ typedef struct syslog_fac_item {
 } syslog_fac_item;
 
 /* constants */
-static const uschar * const hidden = US("<value not displayable>");
+static cuschar * const hidden = cUS("<value not displayable>");
 
 /* Static variables */
 
@@ -545,12 +545,12 @@ in the line, and a stack manipulation setting which is:
 */
 
 static cond_item cond_list[] = {
-  { US("ifdef"),    5, 0, 1,  1 },
-  { US("ifndef"),   6, 1, 0,  1 },
-  { US("elifdef"),  7, 2, 3,  0 },
-  { US("elifndef"), 8, 3, 2,  0 },
-  { US("else"),     4, 2, 2,  0 },
-  { US("endif"),    5, 0, 0, -1 }
+  { cUS("ifdef"),    5, 0, 1,  1 },
+  { cUS("ifndef"),   6, 1, 0,  1 },
+  { cUS("elifdef"),  7, 2, 3,  0 },
+  { cUS("elifndef"), 8, 3, 2,  0 },
+  { cUS("else"),     4, 2, 2,  0 },
+  { cUS("endif"),    5, 0, 0, -1 }
 };
 
 static int cond_list_size = sizeof(cond_list)/sizeof(cond_item);
@@ -558,19 +558,19 @@ static int cond_list_size = sizeof(cond_list)/sizeof(cond_item);
 /* Table of syslog facility names and their values */
 
 static syslog_fac_item syslog_list[] = {
-  { US("mail"),   LOG_MAIL },
-  { US("user"),   LOG_USER },
-  { US("news"),   LOG_NEWS },
-  { US("uucp"),   LOG_UUCP },
-  { US("local0"), LOG_LOCAL0 },
-  { US("local1"), LOG_LOCAL1 },
-  { US("local2"), LOG_LOCAL2 },
-  { US("local3"), LOG_LOCAL3 },
-  { US("local4"), LOG_LOCAL4 },
-  { US("local5"), LOG_LOCAL5 },
-  { US("local6"), LOG_LOCAL6 },
-  { US("local7"), LOG_LOCAL7 },
-  { US("daemon"), LOG_DAEMON }
+  { cUS("mail"),   LOG_MAIL },
+  { cUS("user"),   LOG_USER },
+  { cUS("news"),   LOG_NEWS },
+  { cUS("uucp"),   LOG_UUCP },
+  { cUS("local0"), LOG_LOCAL0 },
+  { cUS("local1"), LOG_LOCAL1 },
+  { cUS("local2"), LOG_LOCAL2 },
+  { cUS("local3"), LOG_LOCAL3 },
+  { cUS("local4"), LOG_LOCAL4 },
+  { cUS("local5"), LOG_LOCAL5 },
+  { cUS("local6"), LOG_LOCAL6 },
+  { cUS("local7"), LOG_LOCAL7 },
+  { cUS("daemon"), LOG_DAEMON }
 };
 
 static int syslog_list_size = sizeof(syslog_list)/sizeof(syslog_fac_item);
@@ -627,7 +627,7 @@ for (transport_instance * t = transports; t; t = t->next)
     }
   }
 
-return US("");
+return cUS("");
 }
 
 
@@ -645,7 +645,7 @@ Args:
 */
 
 macro_item *
-macro_create(const uschar * name, const uschar * val, BOOL command_line)
+macro_create(cuschar * name, cuschar * val, BOOL command_line)
 {
 macro_item * m = store_get(sizeof(macro_item), GET_UNTAINTED);
 
@@ -1139,7 +1139,7 @@ s = big_buffer + startoffset;            /* First non-space character */
 if (config_lines)
   save_config_line(s);
 
-if (strncmpic(s, US("begin "), 6) == 0)
+if (strncmpic(s, cUS("begin "), 6) == 0)
   {
   s += 6;
   Uskip_whitespace(&s);
@@ -1172,8 +1172,8 @@ Arguments:
 Returns:    new input pointer
 */
 
-const uschar *
-readconf_readname(uschar * name, int len, const uschar * s)
+cuschar *
+readconf_readname(uschar * name, int len, cuschar * s)
 {
 int p = 0;
 BOOL broken = FALSE;
@@ -1226,7 +1226,7 @@ Returns:        the time value, or -1 on syntax error
 */
 
 int
-readconf_readtime(const uschar *s, int terminator, BOOL return_msec)
+readconf_readtime(cuschar *s, int terminator, BOOL return_msec)
 {
 int yield = 0;
 for (;;)
@@ -1281,7 +1281,7 @@ Returns:      the value, or -1 on error
 */
 
 static int
-readconf_readfixed(const uschar *s, int terminator)
+readconf_readfixed(cuschar *s, int terminator)
 {
 int yield = 0;
 int value, count;
@@ -1319,7 +1319,7 @@ Returns:    pointer to an option entry, or NULL if not found
 */
 
 static optionlist *
-find_option(const uschar *name, optionlist *ol, int last)
+find_option(cuschar *name, optionlist *ol, int last)
 {
 int first = 0;
 while (last > first)
@@ -1358,7 +1358,7 @@ Returns:        a pointer to the boolean flag.
 */
 
 static BOOL *
-get_set_flag(const uschar *name, optionlist *oltop, int last, void *data_block)
+get_set_flag(cuschar *name, optionlist *oltop, int last, void *data_block)
 {
 optionlist *ol;
 uschar name2[EXIM_DRIVERNAME_MAX];
@@ -1388,10 +1388,10 @@ Returns:     doesn't return; dies
 */
 
 static void
-extra_chars_error(const uschar *s, const uschar *t1, const uschar *t2, const uschar *t3)
+extra_chars_error(cuschar *s, cuschar *t1, cuschar *t2, cuschar *t3)
 {
-uschar *comment = US("");
-if (*s == '#') comment = US(" (# is comment only at line start)");
+uschar *comment = cUS("");
+if (*s == '#') comment = cUS(" (# is comment only at line start)");
 log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
   "extra characters follow %s%s%s%s", t1, t2, t3, comment);
 }
@@ -1424,7 +1424,7 @@ Returns:      the control block for the parsed rule.
 */
 
 static rewrite_rule *
-readconf_one_rewrite(const uschar *p, int *existflags, BOOL isglobal)
+readconf_one_rewrite(cuschar *p, int *existflags, BOOL isglobal)
 {
 rewrite_rule * next = store_get(sizeof(rewrite_rule), GET_UNTAINTED);
 
@@ -1530,10 +1530,10 @@ Returns:    pointer to the string
 */
 
 static uschar *
-read_string(const uschar *s, const uschar *name)
+read_string(cuschar *s, cuschar *name)
 {
 uschar *yield;
-const uschar *ss;
+cuschar *ss;
 
 if (*s != '\"') return string_copy(s);
 
@@ -1544,7 +1544,7 @@ if (s == ss+1 || s[-1] != '\"')
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
     "missing quote at end of string value for %s", name);
 
-if (*s != 0) extra_chars_error(s, US("string value for "), name, US(""));
+if (*s != 0) extra_chars_error(s, cUS("string value for "), name, cUS(""));
 
 return yield;
 }
@@ -1554,7 +1554,7 @@ return yield;
 *            Custom-handler options              *
 *************************************************/
 static void
-fn_smtp_receive_timeout(const uschar * name, const uschar * str, unsigned flags)
+fn_smtp_receive_timeout(cuschar * name, cuschar * str, unsigned flags)
 {
 if (flags & opt_fn_print)
   {
@@ -1630,9 +1630,9 @@ optionlist *ol, *ol2;
 struct passwd *pw;
 rmark reset_point;
 int intbase = 0;
-uschar *inttype = US("");
+uschar *inttype = cUS("");
 uschar *sptr;
-const uschar * s = buffer;
+cuschar * s = buffer;
 uschar **str_target;
 uschar name[EXIM_DRIVERNAME_MAX];
 uschar name2[EXIM_DRIVERNAME_MAX];
@@ -1712,7 +1712,7 @@ true/false/yes/no, or, in the case of opt_expand_bool, a general string that
 ultimately expands to one of those values. */
 
 else if (*s && (offset != 0 || *s != '='))
-  extra_chars_error(s, US("boolean option "), name, US(""));
+  extra_chars_error(s, cUS("boolean option "), name, cUS(""));
 
 /* Skip white space after = */
 
@@ -1802,7 +1802,7 @@ switch (type)
 	    : Ustrncmp(name, "set", 3) == 0		? ';'
 	    : ':';
 	  int    sep_i = -(int)sep_o;
-	  const uschar * list = sptr;
+	  cuschar * list = sptr;
 	  uschar * s;
 	  gstring * list_o = NULL;
 
@@ -1918,7 +1918,7 @@ switch (type)
 	ignore. Also ignore if the value is already set. */
 
 	if (pw == NULL) break;
-	Ustrcpy(name+Ustrlen(name)-4, US("group"));
+	Ustrcpy(name+Ustrlen(name)-4, cUS("group"));
 	ol2 = find_option(name, oltop, last);
 	if (ol2 && ((ol2->type & opt_mask) == opt_gid ||
 	    (ol2->type & opt_mask) == opt_expand_gid))
@@ -1982,8 +1982,8 @@ switch (type)
 	int count = 1;
 	uid_t *list;
 	int ptr = 0;
-	const uschar *p;
-	const uschar *op = expand_string (sptr);
+	cuschar *p;
+	cuschar *op = expand_string (sptr);
 
 	if (op == NULL)
 	  log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "failed to expand %s: %s",
@@ -2024,8 +2024,8 @@ switch (type)
 	int count = 1;
 	gid_t *list;
 	int ptr = 0;
-	const uschar *p;
-	const uschar *op = expand_string (sptr);
+	cuschar *p;
+	cuschar *op = expand_string (sptr);
 
 	if (!op)
 	  log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "failed to expand %s: %s",
@@ -2098,14 +2098,14 @@ switch (type)
     if (*s)
       {
       s = readconf_readname(name2, EXIM_DRIVERNAME_MAX, s);
-      if (strcmpic(name2, US("true")) == 0 || strcmpic(name2, US("yes")) == 0)
+      if (strcmpic(name2, cUS("true")) == 0 || strcmpic(name2, cUS("yes")) == 0)
 	boolvalue = TRUE;
-      else if (strcmpic(name2, US("false")) == 0 || strcmpic(name2, US("no")) == 0)
+      else if (strcmpic(name2, cUS("false")) == 0 || strcmpic(name2, cUS("no")) == 0)
 	boolvalue = FALSE;
       else log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
 	"\"%s\" is not a valid value for the \"%s\" option", name2, name);
       if (*s != 0) extra_chars_error(s, string_sprintf("\"%s\" ", name2),
-	US("for boolean option "), name);
+	cUS("for boolean option "), name);
       }
 
     /* Handle single-bit type. */
@@ -2156,7 +2156,7 @@ switch (type)
 
   case opt_octint:
     intbase = 8;
-    inttype = US("octal ");
+    inttype = cUS("octal ");
 
   /*  Integer: a simple(ish) case; allow octal and hex formats, and
   suffixes K, M, G, and T.  The different types affect output, not input. */
@@ -2176,7 +2176,7 @@ switch (type)
 
       if (errno != ERANGE && *endptr)
 	{
-	uschar * mp = US("TtGgMmKk\0");	/* YyZzEePpTtGgMmKk */
+	uschar * mp = cUS("TtGgMmKk\0");	/* YyZzEePpTtGgMmKk */
 
 	if ((mp = Ustrchr(mp, *endptr)))
 	  {
@@ -2200,7 +2200,7 @@ switch (type)
 
       while (isspace(*endptr)) endptr++;
       if (*endptr)
-	extra_chars_error(endptr, inttype, US("integer value for "), name);
+	extra_chars_error(endptr, inttype, cUS("integer value for "), name);
 
       value = (int)lvalue;
      }
@@ -2225,7 +2225,7 @@ switch (type)
 
     if (errno != ERANGE && *endptr)
       {
-      uschar * mp = US("ZzEePpTtGgMmKk\0");	/* YyZzEePpTtGgMmKk */
+      uschar * mp = cUS("ZzEePpTtGgMmKk\0");	/* YyZzEePpTtGgMmKk */
 
       if ((mp = Ustrchr(mp, *endptr)))
 	{
@@ -2249,7 +2249,7 @@ switch (type)
 
     while (isspace(*endptr)) endptr++;
     if (*endptr != 0)
-      extra_chars_error(endptr, inttype, US("integer value for "), name);
+      extra_chars_error(endptr, inttype, cUS("integer value for "), name);
 
     if (data_block)
       *(int_eximarith_t *)(US(data_block) + ol->v.offset) = lvalue;
@@ -2291,7 +2291,7 @@ switch (type)
     while (isspace(s[count])) count++;
 
     if (s[count] != 0)
-      extra_chars_error(s+count, US("fixed-point value for "), name, US(""));
+      extra_chars_error(s+count, cUS("fixed-point value for "), name, cUS(""));
 
     if (data_block)
       *((int *)(US(data_block) + ol->v.offset)) = value;
@@ -2434,7 +2434,7 @@ Returns:         boolean success
 */
 
 static BOOL
-print_ol(optionlist *ol, const uschar *name, void *options_block,
+print_ol(optionlist *ol, cuschar *name, void *options_block,
   optionlist *oltop, int last, BOOL no_labels)
 {
 struct passwd *pw;
@@ -2480,7 +2480,7 @@ switch(ol->type & opt_mask)
   case opt_rewrite:        /* Show the text value */
     s = *(USS(value));
     if (!no_labels) printf("%s = ", name);
-    printf("%s\n", s ? string_printing2(s, SP_TAB) : US(""));
+    printf("%s\n", s ? string_printing2(s, SP_TAB) : cUS(""));
     break;
 
   case opt_int:
@@ -2564,7 +2564,7 @@ switch(ol->type & opt_mask)
 	else
 	  s = *USS(ol2->v.value);
 	if (!no_labels) printf("%s = ", name);
-	printf("%s\n", s ? string_printing(s) : US(""));
+	printf("%s\n", s ? string_printing(s) : cUS(""));
 	break;
 	}
       }
@@ -2596,7 +2596,7 @@ switch(ol->type & opt_mask)
 	else
 	  s = *USS(ol2->v.value);
 	if (!no_labels) printf("%s = ", name);
-	printf("%s\n", s ? string_printing(s) : US(""));
+	printf("%s\n", s ? string_printing(s) : cUS(""));
 	break;
 	}
       }
@@ -2744,7 +2744,7 @@ Returns:      Boolean success
 */
 
 BOOL
-readconf_print(const uschar *name, uschar *type, BOOL no_labels)
+readconf_print(cuschar *name, uschar *type, BOOL no_labels)
 {
 BOOL names_only = FALSE;
 optionlist *ol2 = NULL;
@@ -2757,8 +2757,8 @@ if (!type)
     {
     tree_node *t;
     BOOL found = FALSE;
-    static uschar *types[] = { US("address"), US("domain"), US("host"),
-      US("localpart") };
+    static uschar *types[] = { cUS("address"), cUS("domain"), cUS("host"),
+      cUS("localpart") };
     static tree_node **anchors[] = { &addresslist_anchor, &domainlist_anchor,
       &hostlist_anchor, &localpartlist_anchor };
 
@@ -2766,7 +2766,7 @@ if (!type)
       if ((t = tree_search(*(anchors[i]), name+1)))
         {
 	namedlist_block * nb = t->data.ptr;
-	const uschar * s = nb->hide ? hidden : nb->string;
+	cuschar * s = nb->hide ? hidden : nb->string;
         found = TRUE;
         if (no_labels)
           printf("%s\n", CCS(s));
@@ -2821,45 +2821,45 @@ if (!type)
 
   if (Ustrcmp(name, "routers") == 0)
     {
-    type = US("router");
+    type = cUS("router");
     name = NULL;
     }
   else if (Ustrcmp(name, "transports") == 0)
     {
-    type = US("transport");
+    type = cUS("transport");
     name = NULL;
     }
   else if (Ustrcmp(name, "authenticators") == 0)
     {
-    type = US("authenticator");
+    type = cUS("authenticator");
     name = NULL;
     }
   else if (Ustrcmp(name, "macros") == 0)
     {
-    type = US("macro");
+    type = cUS("macro");
     name = NULL;
     }
   else if (Ustrcmp(name, "router_list") == 0)
     {
-    type = US("router");
+    type = cUS("router");
     name = NULL;
     names_only = TRUE;
     }
   else if (Ustrcmp(name, "transport_list") == 0)
     {
-    type = US("transport");
+    type = cUS("transport");
     name = NULL;
     names_only = TRUE;
     }
   else if (Ustrcmp(name, "authenticator_list") == 0)
     {
-    type = US("authenticator");
+    type = cUS("authenticator");
     name = NULL;
     names_only = TRUE;
     }
   else if (Ustrcmp(name, "macro_list") == 0)
     {
-    type = US("macro");
+    type = cUS("macro");
     name = NULL;
     names_only = TRUE;
     }
@@ -3125,7 +3125,7 @@ readconf_main(BOOL nowarn)
 int sep = 0;
 struct stat statbuf;
 uschar *s, *filename;
-const uschar *list = config_main_filelist;
+cuschar *list = config_main_filelist;
 
 /* Loop through the possible file names */
 
@@ -3202,7 +3202,7 @@ if (config_file)
   directory later. */
 
   if (filename[0] == '/')
-    config_main_directory = last_slash == filename ? US("/") : string_copyn(filename, last_slash - filename);
+    config_main_directory = last_slash == filename ? cUS("/") : string_copyn(filename, last_slash - filename);
   else
     {
     /* relative configuration file name: working dir + / + basename(filename) */
@@ -3219,7 +3219,7 @@ if (config_file)
 
     /* If the dir does not end with a "/", append one */
     if (g->s[g->ptr-1] != '/')
-      g = string_catn(g, US("/"), 1);
+      g = string_catn(g, cUS("/"), 1);
 
     /* If the config file contains a "/", extract the directory part */
     if (last_slash)
@@ -3249,7 +3249,7 @@ if (Uchdir("/") < 0)
 /* Check the status of the file we have opened, if we have retained root
 privileges and the file isn't /dev/null (which *should* be 0666). */
 
-if (f.trusted_config && Ustrcmp(filename, US("/dev/null")))
+if (f.trusted_config && Ustrcmp(filename, cUS("/dev/null")))
   {
   if (fstat(fileno(config_file), &statbuf) != 0)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "failed to stat configuration file %s",
@@ -3308,23 +3308,23 @@ while ((s = get_config_line()))
 
   if (Ustrncmp(t, "domainlist", 10) == 0)
     read_named_list(&domainlist_anchor, &domainlist_count,
-      MAX_NAMED_LIST, t+10, US("domain list"), hide);
+      MAX_NAMED_LIST, t+10, cUS("domain list"), hide);
 
   else if (Ustrncmp(t, "hostlist", 8) == 0)
     read_named_list(&hostlist_anchor, &hostlist_count,
-      MAX_NAMED_LIST, t+8, US("host list"), hide);
+      MAX_NAMED_LIST, t+8, cUS("host list"), hide);
 
   else if (Ustrncmp(t, "addresslist", 11) == 0)
     read_named_list(&addresslist_anchor, &addresslist_count,
-      MAX_NAMED_LIST, t+11, US("address list"), hide);
+      MAX_NAMED_LIST, t+11, cUS("address list"), hide);
 
   else if (Ustrncmp(t, "localpartlist", 13) == 0)
     read_named_list(&localpartlist_anchor, &localpartlist_count,
-      MAX_NAMED_LIST, t+13, US("local part list"), hide);
+      MAX_NAMED_LIST, t+13, cUS("local part list"), hide);
 
   else
     (void) readconf_handle_option(s, optionlist_config, optionlist_config_size,
-      NULL, US("main option \"%s\" unknown"));
+      NULL, cUS("main option \"%s\" unknown"));
   }
 
 
@@ -3360,7 +3360,7 @@ don't force the case. */
 
 if (!primary_hostname)
   {
-  const uschar * hostname;
+  cuschar * hostname;
   struct utsname uts;
 
   if (uname(&uts) < 0)
@@ -3430,7 +3430,7 @@ or %M. However, it must NOT contain % followed by anything else. */
 
 if (*log_file_path)
   {
-  const uschar *ss, *sss;
+  cuschar *ss, *sss;
   int sep = ':';                       /* Fixed for log file path */
   if (!(s = expand_string(log_file_path)))
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "failed to expand log_file_path "
@@ -3465,7 +3465,7 @@ if (syslog_facility_str)
   uschar *s = syslog_facility_str;
 
   if ((Ustrlen(syslog_facility_str) >= 4) &&
-        (strncmpic(syslog_facility_str, US("log_"), 4) == 0))
+        (strncmpic(syslog_facility_str, cUS("log_"), 4) == 0))
     s += 4;
 
   for (i = 0; i < syslog_list_size; i++)
@@ -3667,7 +3667,7 @@ return NULL;   /* never obeyed */
 
 
 static void
-driver_init_fini(driver_instance * d, const uschar * class)
+driver_init_fini(driver_instance * d, cuschar * class)
 {
 if (!d->driver_name)
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG,
@@ -3721,7 +3721,7 @@ uschar * buffer;
 while ((buffer = get_config_line()))
   {
   uschar name[EXIM_DRIVERNAME_MAX];
-  const uschar * s;
+  cuschar * s;
 
   /* Read the first name on the line and test for the start of a new driver. A
   macro definition indicates the end of the previous driver. If this isn't the
@@ -3771,7 +3771,7 @@ while ((buffer = get_config_line()))
     p = &d->next;
     d->name = string_copy(name);
     d->srcfile = config_filename;
-    d->srcline = config_lineno; 
+    d->srcline = config_lineno;
 
     /* Clear out the "set" bits in the generic options */
 
@@ -3781,7 +3781,7 @@ while ((buffer = get_config_line()))
     /* Check nothing more on this line, then do the next loop iteration. */
 
     Uskip_whitespace(&s);
-    if (*s) extra_chars_error(s, US("driver name "), name, US(""));
+    if (*s) extra_chars_error(s, cUS("driver name "), name, cUS(""));
     continue;
     }
 
@@ -3808,7 +3808,7 @@ while ((buffer = get_config_line()))
 
   else if (d->info)
     readconf_handle_option(buffer, d->info->options,
-      *(d->info->options_count), d, US("option \"%s\" unknown"));
+      *(d->info->options_count), d, cUS("option \"%s\" unknown"));
 
   /* The option is not generic and the driver name has not yet been given. */
 
@@ -3886,43 +3886,43 @@ Returns:       NULL if decoded correctly; else points to error text
 */
 
 uschar *
-readconf_retry_error(const uschar *pp, const uschar *p,
+readconf_retry_error(cuschar *pp, cuschar *p,
   int *basic_errno, int *more_errno)
 {
 int len;
-const uschar *q = pp;
+cuschar *q = pp;
 while (q < p && *q != '_') q++;
 len = q - pp;
 
-if (len == 5 && strncmpic(pp, US("quota"), len) == 0)
+if (len == 5 && strncmpic(pp, cUS("quota"), len) == 0)
   {
   *basic_errno = ERRNO_EXIMQUOTA;
   if (q != p && (*more_errno = readconf_readtime(q+1, *p, FALSE)) < 0)
-      return US("bad time value");
+      return cUS("bad time value");
   }
 
-else if (len == 7 && strncmpic(pp, US("refused"), len) == 0)
+else if (len == 7 && strncmpic(pp, cUS("refused"), len) == 0)
   {
   *basic_errno = ECONNREFUSED;
   if (q != p)
     {
-    if (strncmpic(q+1, US("MX"), p-q-1) == 0) *more_errno = 'M';
-    else if (strncmpic(q+1, US("A"), p-q-1) == 0) *more_errno = 'A';
-    else return US("A or MX expected after \"refused\"");
+    if (strncmpic(q+1, cUS("MX"), p-q-1) == 0) *more_errno = 'M';
+    else if (strncmpic(q+1, cUS("A"), p-q-1) == 0) *more_errno = 'A';
+    else return cUS("A or MX expected after \"refused\"");
     }
   }
 
-else if (len == 7 && strncmpic(pp, US("timeout"), len) == 0)
+else if (len == 7 && strncmpic(pp, cUS("timeout"), len) == 0)
   {
   *basic_errno = ETIMEDOUT;
   if (q != p)
     {
     int i;
     int xlen = p - q - 1;
-    const uschar *x = q + 1;
+    cuschar *x = q + 1;
 
     static uschar *extras[] =
-      { US("A"), US("MX"), US("connect"), US("connect_A"),  US("connect_MX") };
+      { cUS("A"), cUS("MX"), cUS("connect"), cUS("connect_A"),  cUS("connect_MX") };
     static int values[] =
       { 'A',   'M',    RTEF_CTOUT,  RTEF_CTOUT|'A', RTEF_CTOUT|'M' };
 
@@ -3934,18 +3934,18 @@ else if (len == 7 && strncmpic(pp, US("timeout"), len) == 0)
         }
 
     if (i >= nelem(extras))
-      if (strncmpic(x, US("DNS"), xlen) == 0)
+      if (strncmpic(x, cUS("DNS"), xlen) == 0)
         log_write(0, LOG_MAIN|LOG_PANIC, "\"timeout_dns\" is no longer "
           "available in retry rules (it has never worked) - treated as "
           "\"timeout\"");
       else
-        return US("\"A\", \"MX\", or \"connect\" expected after \"timeout\"");
+        return cUS("\"A\", \"MX\", or \"connect\" expected after \"timeout\"");
     }
   }
 
-else if (strncmpic(pp, US("mail_4"), 6) == 0 ||
-         strncmpic(pp, US("rcpt_4"), 6) == 0 ||
-         strncmpic(pp, US("data_4"), 6) == 0)
+else if (strncmpic(pp, cUS("mail_4"), 6) == 0 ||
+         strncmpic(pp, cUS("rcpt_4"), 6) == 0 ||
+         strncmpic(pp, cUS("data_4"), 6) == 0)
   {
   BOOL bad = FALSE;
   int x = 255;                           /* means "any 4xx code" */
@@ -3971,17 +3971,17 @@ else if (strncmpic(pp, US("mail_4"), 6) == 0 ||
   *more_errno = x << 8;
   }
 
-else if (len == 4 && strncmpic(pp, US("auth"), len) == 0 &&
-         strncmpic(q+1, US("failed"), p-q-1) == 0)
+else if (len == 4 && strncmpic(pp, cUS("auth"), len) == 0 &&
+         strncmpic(q+1, cUS("failed"), p-q-1) == 0)
   *basic_errno = ERRNO_AUTHFAIL;
 
-else if (strncmpic(pp, US("lost_connection"), p - pp) == 0)
+else if (strncmpic(pp, cUS("lost_connection"), p - pp) == 0)
   *basic_errno = ERRNO_SMTPCLOSED;
 
-else if (strncmpic(pp, US("tls_required"), p - pp) == 0)
+else if (strncmpic(pp, cUS("tls_required"), p - pp) == 0)
   *basic_errno = ERRNO_TLSREQUIRED;
 
-else if (strncmpic(pp, US("lookup"), p - pp) == 0)
+else if (strncmpic(pp, cUS("lookup"), p - pp) == 0)
   *basic_errno = ERRNO_UNKNOWNHOST;
 
 else if (len != 1 || Ustrncmp(pp, "*", 1) != 0)
@@ -4021,10 +4021,10 @@ Returns:    time in seconds or fixed point number * 1000
 */
 
 static int
-retry_arg(const uschar **paddr, int type)
+retry_arg(cuschar **paddr, int type)
 {
-const uschar *p = *paddr;
-const uschar *pp;
+cuschar *p = *paddr;
+cuschar *pp;
 
 if (*p++ != ',') log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "comma expected");
 
@@ -4051,12 +4051,12 @@ readconf_retries(void)
 {
 retry_config **chain = &retries;
 retry_config *next;
-const uschar *p;
+cuschar *p;
 
 while ((p = get_config_line()))
   {
   retry_rule **rchain;
-  const uschar *pp;
+  cuschar *pp;
   uschar *error;
 
   next = store_get(sizeof(retry_config), GET_UNTAINTED);
@@ -4164,7 +4164,7 @@ auths_init(void)
 int nauths = 0;
 #endif
 
-readconf_driver_init(US("authenticator"),
+readconf_driver_init(cUS("authenticator"),
   (driver_instance **)(&auths),      /* chain anchor */
   (driver_info *)auths_available,    /* available drivers */
   sizeof(auth_info),                 /* size of info block */
@@ -4185,7 +4185,7 @@ for (auth_instance * au = auths; au; au = au->next)
 	 || au->server && bu->server)
         log_write(0, LOG_PANIC_DIE|LOG_CONFIG, "two %s authenticators "
           "(%s and %s) have the same public name (%s)",
-          au->client && bu->client ? US("client") : US("server"),
+          au->client && bu->client ? cUS("client") : cUS("server"),
 	  au->name, bu->name, au->public_name);
 #ifndef DISABLE_PIPE_CONNECT
   nauths++;
@@ -4251,7 +4251,7 @@ while(acl_line)
   uschar name[EXIM_DRIVERNAME_MAX];
   tree_node * node;
   uschar * error;
-  const uschar * p = readconf_readname(name, sizeof(name), acl_line);
+  cuschar * p = readconf_readname(name, sizeof(name), acl_line);
 
   if (isupper(*name) && *p == '=')
     {
@@ -4301,7 +4301,7 @@ log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "local_scan() options not supported: "
 uschar *p;
 while ((p = get_config_line()))
   (void) readconf_handle_option(p, local_scan_options, local_scan_options_count,
-    NULL, US("local_scan option \"%s\" unknown"));
+    NULL, cUS("local_scan option \"%s\" unknown"));
 #endif
 }
 
@@ -4328,13 +4328,13 @@ Returns:     nothing
 */
 
 static uschar *section_list[] = {
-  US("acls"),
-  US("authenticators"),
-  US("local_scans"),
-  US("retrys"),
-  US("rewrites"),
-  US("routers"),
-  US("transports")};
+  cUS("acls"),
+  cUS("authenticators"),
+  cUS("local_scans"),
+  cUS("retrys"),
+  cUS("rewrites"),
+  cUS("routers"),
+  cUS("transports")};
 
 void
 readconf_rest(void)
@@ -4349,7 +4349,7 @@ while(next_section[0] != 0)
   int mid = last/2;
   int n = Ustrlen(next_section);
 
-  if (tolower(next_section[n-1]) != 's') Ustrcpy(next_section+n, US("s"));
+  if (tolower(next_section[n-1]) != 's') Ustrcpy(next_section+n, cUS("s"));
 
   for (;;)
     {
@@ -4385,14 +4385,14 @@ while(next_section[0] != 0)
 
 /* Init the storage for the pre-parsed config lines */
 void
-readconf_save_config(const uschar *s)
+readconf_save_config(cuschar *s)
 {
 save_config_line(string_sprintf("# Exim Configuration (%s)",
-  f.running_in_test_harness ? US("X") : s));
+  f.running_in_test_harness ? cUS("X") : s));
 }
 
 static void
-save_config_position(const uschar *file, int line)
+save_config_position(cuschar *file, int line)
 {
 save_config_line(string_sprintf("# %d \"%s\"", line, file));
 }
@@ -4403,7 +4403,7 @@ config lines, we do no further processing here, output formatting and
 honouring of <hide> or macros will be done during output */
 
 static void
-save_config_line(const uschar* line)
+save_config_line(cuschar* line)
 {
 static config_line_item *current;
 config_line_item *next;

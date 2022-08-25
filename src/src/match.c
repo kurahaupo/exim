@@ -16,8 +16,8 @@
 strings, domains, and local parts. */
 
 typedef struct check_string_block {
-  const uschar *origsubject;           /* caseful; keep these two first, in */
-  const uschar *subject;               /* step with the block below */
+  cuschar *origsubject;           /* caseful; keep these two first, in */
+  cuschar *subject;               /* step with the block below */
   int    expand_setup;
   mcs_flags flags;			/* MCS_* defs in macros.h */
 } check_string_block;
@@ -27,7 +27,7 @@ typedef struct check_string_block {
 addresses. */
 
 typedef struct check_address_block {
-  const uschar *origaddress;         /* caseful; keep these two first, in */
+  cuschar *origaddress;         /* caseful; keep these two first, in */
   uschar *address;                   /* step with the block above */
   int    expand_setup;
   mcs_flags flags;			/* MCS_CASELESS, MCS_TEXTONLY_RE */
@@ -91,13 +91,13 @@ Returns:       OK    if matched
 */
 
 static int
-check_string(void * arg, const uschar * pattern, const uschar ** valueptr,
+check_string(void * arg, cuschar * pattern, cuschar ** valueptr,
   uschar ** error)
 {
 const check_string_block * cb = arg;
 int search_type, partial, affixlen, starflags;
 int expand_setup = cb->expand_setup;
-const uschar * affix, * opts;
+cuschar * affix, * opts;
 uschar *s;
 uschar *filename = NULL;
 uschar *keyquery, *result, *semicolon;
@@ -189,30 +189,30 @@ if (cb->flags & MCS_AT_SPECIAL && pattern[0] == '@')
     return FAIL;
     }
 
-  if (strncmpic(pattern, US("@mx_"), 4) == 0)
+  if (strncmpic(pattern, cUS("@mx_"), 4) == 0)
     {
     int rc;
     host_item h;
     BOOL prim = FALSE;
     BOOL secy = FALSE;
     BOOL removed = FALSE;
-    const uschar *ss = pattern + 4;
-    const uschar *ignore_target_hosts = NULL;
+    cuschar *ss = pattern + 4;
+    cuschar *ignore_target_hosts = NULL;
 
-    if (strncmpic(ss, US("any"), 3) == 0) ss += 3;
-    else if (strncmpic(ss, US("primary"), 7) == 0)
+    if (strncmpic(ss, cUS("any"), 3) == 0) ss += 3;
+    else if (strncmpic(ss, cUS("primary"), 7) == 0)
       {
       ss += 7;
       prim = TRUE;
       }
-    else if (strncmpic(ss, US("secondary"), 9) == 0)
+    else if (strncmpic(ss, cUS("secondary"), 9) == 0)
       {
       ss += 9;
       secy = TRUE;
       }
     else goto NOT_AT_SPECIAL;
 
-    if (strncmpic(ss, US("/ignore="), 8) == 0) ignore_target_hosts = ss + 8;
+    if (strncmpic(ss, cUS("/ignore="), 8) == 0) ignore_target_hosts = ss + 8;
     else if (*ss) goto NOT_AT_SPECIAL;
 
     h.next = NULL;
@@ -329,8 +329,8 @@ Returns:       OK    if matched
 */
 
 int
-match_check_string(const uschar * s, const uschar * pattern, int expand_setup,
-  mcs_flags flags, const uschar ** valueptr)
+match_check_string(cuschar * s, cuschar * pattern, int expand_setup,
+  mcs_flags flags, cuschar ** valueptr)
 {
 check_string_block cb;
 cb.origsubject = s;
@@ -356,7 +356,7 @@ Arguments:
   type         MCL_STRING, MCL_DOMAIN, MCL_HOST, MCL_ADDRESS, or MCL_LOCALPART
 */
 
-static const uschar *
+static cuschar *
 get_check_key(void *arg, int type)
 {
 switch(type)
@@ -367,7 +367,7 @@ switch(type)
   case MCL_HOST:	return ((check_host_block *)arg)->host_address;
   case MCL_ADDRESS:	return ((check_address_block *)arg)->address;
   }
-return US("");  /* In practice, should never happen */
+return cUS("");  /* In practice, should never happen */
 }
 
 
@@ -421,15 +421,15 @@ Returns:       OK    if matched a non-negated item
 */
 
 int
-match_check_list(const uschar **listptr, int sep, tree_node **anchorptr,
-  unsigned int **cache_ptr, int (*func)(void *,const uschar *,const uschar **,uschar **),
-  void *arg, int type, const uschar *name, const uschar **valueptr)
+match_check_list(cuschar **listptr, int sep, tree_node **anchorptr,
+  unsigned int **cache_ptr, int (*func)(void *,cuschar *,cuschar **,uschar **),
+  void *arg, int type, cuschar *name, cuschar **valueptr)
 {
 int yield = OK;
 unsigned int * original_cache_bits = *cache_ptr;
 BOOL include_unknown = FALSE, ignore_unknown = FALSE,
       include_defer = FALSE, ignore_defer = FALSE;
-const uschar *list;
+cuschar *list;
 uschar *sss;
 uschar *ot = NULL;
 BOOL textonly_re;
@@ -508,8 +508,8 @@ HDEBUG(D_any) if (!ot)
   int n, m;
   gstring * g = string_fmt_append(NULL, "%s in \"%n%.*s%n\"",
     name, &n, LIST_LIMIT_PR, list, &m);
-  if (m - n >= LIST_LIMIT_PR) g = string_catn(g, US("..."), 3);
-  g = string_catn(g, US("?"), 1);
+  if (m - n >= LIST_LIMIT_PR) g = string_catn(g, cUS("..."), 3);
+  g = string_catn(g, cUS("?"), 1);
   gstring_release_unused(g);
   ot = string_from_gstring(g);
   }
@@ -608,7 +608,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
       int offset = 0;
       int shift = 0;
       unsigned int *use_cache_bits = original_cache_bits;
-      uschar *cached = US("");
+      uschar *cached = cUS("");
       namedlist_block *nb;
       tree_node * t;
 
@@ -697,10 +697,10 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
         DEBUG(D_lists) debug_printf_indent("cached %s match for %s\n",
           (bits & (-bits)) == bits ? "yes" : "no", ss);
 
-        cached = US(" - cached");
+        cached = cUS(" - cached");
         if (valueptr)
           {
-          const uschar *key = get_check_key(arg, type);
+          cuschar *key = get_check_key(arg, type);
 
           for (namedlist_cacheblock * p = nb->cache_data; p; p = p->next)
             if (Ustrcmp(key, p->key) == 0)
@@ -955,9 +955,9 @@ Returns:         OK    if matched a non-negated item
 */
 
 int
-match_isinlist(const uschar *s, const uschar **listptr, int sep,
+match_isinlist(cuschar *s, cuschar **listptr, int sep,
    tree_node **anchorptr,
-  unsigned int *cache_bits, int type, BOOL caseless, const uschar **valueptr)
+  unsigned int *cache_bits, int type, BOOL caseless, cuschar **valueptr)
 {
 unsigned int *local_cache_bits = cache_bits;
 check_string_block cb;
@@ -1006,7 +1006,7 @@ Returns:         OK     for a match
 */
 
 static int
-check_address(void * arg, const uschar * pattern, const uschar ** valueptr,
+check_address(void * arg, cuschar * pattern, cuschar ** valueptr,
   uschar ** error)
 {
 check_address_block * cb = (check_address_block *)arg;
@@ -1014,9 +1014,9 @@ check_string_block csb;
 int rc;
 int expand_inc = 0;
 unsigned int * null = NULL;
-const uschar * listptr;
+cuschar * listptr;
 uschar * subject = cb->address;
-const uschar * s;
+cuschar * s;
 uschar * pdomain, * sdomain;
 uschar * value = NULL;
 
@@ -1084,7 +1084,7 @@ if (pattern[0] == '@' && pattern[1] == '@')
   /* Loop for handling chains. The last item in any list may be of the form
   ">name" in order to chain on to another list. */
 
-  for (const uschar * key = sdomain + 1; key && watchdog-- > 0; )
+  for (cuschar * key = sdomain + 1; key && watchdog-- > 0; )
     {
     int sep = 0;
 
@@ -1223,7 +1223,7 @@ listptr = pdomain ? pdomain + 1 : pattern;
 if (valueptr) *valueptr = NULL;
 
   {
-  const uschar * dvalue = NULL;
+  cuschar * dvalue = NULL;
   rc = match_check_list(
     &listptr,                  /* list of one item */
     UCHAR_MAX+1,               /* impossible separator; single item */
@@ -1236,7 +1236,7 @@ if (valueptr) *valueptr = NULL;
     &dvalue);                       /* where to pass back lookup data */
   if (valueptr && (value || dvalue))
     *valueptr = string_sprintf("%s@%s",
-		  value ? value : US(""), dvalue ? dvalue : US(""));
+		  value ? value : cUS(""), dvalue ? dvalue : cUS(""));
   }
 return rc;
 }
@@ -1279,9 +1279,9 @@ Returns:          OK    for a positive match, or end list after a negation;
 */
 
 int
-match_address_list(const uschar *address, BOOL caseless, BOOL expand,
-  const uschar **listptr, unsigned int *cache_bits, int expand_setup, int sep,
-  const uschar **valueptr)
+match_address_list(cuschar *address, BOOL caseless, BOOL expand,
+  cuschar **listptr, unsigned int *cache_bits, int expand_setup, int sep,
+  cuschar **valueptr)
 {
 check_address_block ab;
 unsigned int *local_cache_bits = cache_bits;
@@ -1345,7 +1345,7 @@ Returns:          OK    for a positive match, or end list after a negation;
 */
 
 int
-match_address_list_basic(const uschar *address, const uschar **listptr, int sep)
+match_address_list_basic(cuschar *address, cuschar **listptr, int sep)
 {
 return match_address_list(address, TRUE, TRUE, listptr, NULL, -1, sep, NULL);
 }

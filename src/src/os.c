@@ -12,11 +12,14 @@
 # include <time.h>
 #endif
 
+#include "mytypes.h"
+#if 0
 #ifndef CS
 #if defined __GNUC__ || __STDC_VERSION__ >= 199901L
 /* safer casts: check the source types */
 static inline char         * CS (uschar       *p) { return (void*)p; }
 static inline uschar       * US (char         *p) { return (void*)p; }
+#define CS CS
 #elif !defined CHAR_MIN || CHAR_MIN < 0
 /* only use casts when needed */
 # define CS(S)   ((char *)(S))
@@ -25,6 +28,7 @@ static inline uschar       * US (char         *p) { return (void*)p; }
 /* char is already unsigned, don't cast */
 # define CS(S)   (S)
 # define US(S)   (S)
+#endif
 #endif
 #endif
 
@@ -790,13 +794,13 @@ ip_address_item *
 os_common_find_running_interfaces(void)
 {
 ip_address_item *yield = store_get(sizeof(address_item), GET_UNTAINTED);
-yield->address = US("127.0.0.1");
+yield->address = CUS("127.0.0.1");
 yield->port = 0;
 yield->next = NULL;
 
 #if HAVE_IPV6
 yield->next = store_get(sizeof(address_item), GET_UNTAINTED);
-yield->next->address = US("::1");
+yield->next->address = CUS("::1");
 yield->next->port = 0;
 yield->next->next = NULL;
 #endif
@@ -863,7 +867,7 @@ return &_res;
 int
 os_unsetenv(const unsigned char * name)
 {
-return unsetenv(CS(name));
+return unsetenv(CCS(name));
 }
 #endif
 

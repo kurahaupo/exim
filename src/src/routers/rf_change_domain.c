@@ -33,7 +33,7 @@ Returns:      nothing
 */
 
 void
-rf_change_domain(address_item *addr, const uschar *domain, BOOL rewrite,
+rf_change_domain(address_item *addr, cuschar *domain, BOOL rewrite,
   address_item **addr_new)
 {
 address_item * parent = store_get(sizeof(address_item), GET_UNTAINTED);

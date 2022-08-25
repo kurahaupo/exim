@@ -17,32 +17,32 @@ static unsigned pretrigger_writeoff;
 static unsigned pretrigger_readoff;
 
 
-const uschar * rc_names[] = {		/* Mostly for debug output */
-  [OK] =		US("OK"),
-  [DEFER] =		US("DEFER"),
-  [FAIL] =		US("FAIL"),
-  [ERROR] =		US("ERROR"),
-  [FAIL_FORCED] =	US("FAIL_FORCED"),
-  [DECLINE] =		US("DECLINE"),
-  [PASS] =		US("PASS"),
-  [DISCARD] =		US("DISCARD"),
-  [SKIP] =		US("SKIP"),
-  [REROUTED] =		US("REROUTED"),
-  [PANIC] =		US("PANIC"),
-  [BAD64] =		US("BAD64"),
-  [UNEXPECTED] =	US("UNEXPECTED"),
-  [CANCELLED] =		US("CANCELLED"),
-  [FAIL_SEND] =		US("FAIL_SEND"),
-  [FAIL_DROP] =		US("FAIL_DROP"),
-  [DANE] =		US("DANE"),
+cuschar * rc_names[] = {		/* Mostly for debug output */
+  [OK] =		cUS("OK"),
+  [DEFER] =		cUS("DEFER"),
+  [FAIL] =		cUS("FAIL"),
+  [ERROR] =		cUS("ERROR"),
+  [FAIL_FORCED] =	cUS("FAIL_FORCED"),
+  [DECLINE] =		cUS("DECLINE"),
+  [PASS] =		cUS("PASS"),
+  [DISCARD] =		cUS("DISCARD"),
+  [SKIP] =		cUS("SKIP"),
+  [REROUTED] =		cUS("REROUTED"),
+  [PANIC] =		cUS("PANIC"),
+  [BAD64] =		cUS("BAD64"),
+  [UNEXPECTED] =	cUS("UNEXPECTED"),
+  [CANCELLED] =		cUS("CANCELLED"),
+  [FAIL_SEND] =		cUS("FAIL_SEND"),
+  [FAIL_DROP] =		cUS("FAIL_DROP"),
+  [DANE] =		cUS("DANE"),
 };
 
-const uschar * dns_rc_names[] = {
-  [DNS_SUCCEED] =	US("DNS_SUCCEED"),
-  [DNS_NOMATCH] =	US("DNS_NOMATCH"),
-  [DNS_NODATA] =	US("DNS_NODATA"),
-  [DNS_AGAIN] =		US("DNS_AGAIN"),
-  [DNS_FAIL] =		US("DNS_FAIL"),
+cuschar * dns_rc_names[] = {
+  [DNS_SUCCEED] =	cUS("DNS_SUCCEED"),
+  [DNS_NOMATCH] =	cUS("DNS_NOMATCH"),
+  [DNS_NODATA] =	cUS("DNS_NODATA"),
+  [DNS_AGAIN] =		cUS("DNS_AGAIN"),
+  [DNS_FAIL] =		cUS("DNS_FAIL"),
 };
 
 
@@ -106,7 +106,7 @@ Returns:     nothing
 */
 
 void
-debug_print_argv(const uschar ** argv)
+debug_print_argv(cuschar ** argv)
 {
 debug_printf("exec");
 while (*argv) debug_printf(" %.256s", *argv++);
@@ -164,10 +164,10 @@ debug_printf("%s uid=%ld gid=%ld euid=%ld egid=%ld\n", s,
 
 /* Give a string for a return-code */
 
-const uschar *
+cuschar *
 rc_to_string(int rc)
 {
-return rc < 0 || rc >= nelem(rc_names) ? US("?") : rc_names[rc];
+return rc < 0 || rc >= nelem(rc_names) ? cUS("?") : rc_names[rc];
 }
 
 
@@ -243,7 +243,7 @@ if (debug_ptr == debug_buffer)
 
   if (host_checking && debug_selector == 0)
     {
-    Ustrcpy(debug_ptr, US(">>> "));
+    Ustrcpy(debug_ptr, cUS(">>> "));
     debug_ptr += 4;
     }
 
@@ -255,18 +255,18 @@ if (indent > 0)
   for (int i = indent >> 2; i > 0; i--)
     DEBUG(D_noutf8)
       {
-      Ustrcpy(debug_ptr, US("   !"));
+      Ustrcpy(debug_ptr, cUS("   !"));
       debug_ptr += 4;	/* 3 spaces + shriek */
       debug_prefix_length += 4;
       }
     else
       {
-      Ustrcpy(debug_ptr, US("   " UTF8_VERT_2DASH));
+      Ustrcpy(debug_ptr, cUS("   " UTF8_VERT_2DASH));
       debug_ptr += 6;	/* 3 spaces + 3 UTF-8 octets */
       debug_prefix_length += 6;
       }
 
-  Ustrncpy(debug_ptr, US("   "), indent &= 3);
+  Ustrncpy(debug_ptr, cUS("   "), indent &= 3);
   debug_ptr += indent;
   debug_prefix_length += indent;
   }
@@ -283,7 +283,7 @@ we trust that we will never expand the results. */
 		.s = debug_buffer };
   if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, format, ap))
     {
-    uschar * s = US("**** debug string too long - truncated ****\n");
+    uschar * s = cUS("**** debug string too long - truncated ****\n");
     uschar * p = gs.s + gs.ptr;
     int maxlen = gs.size - Ustrlen(s) - 2;
     if (p > gs.s + maxlen) p = gs.s + maxlen;
@@ -384,7 +384,7 @@ if (fstat(fd, &s) == 0 && (s.st_mode & S_IFMT) == S_IFSOCK)
     switch (a.ss_family)
       {
       case AF_INET:
-	g = string_cat(g, US("domain AF_INET"));
+	g = string_cat(g, cUS("domain AF_INET"));
 	g = string_fmt_append(g, " lcl [%s]:%u",
 	  inet_ntoa(sinp->sin_addr), ntohs(sinp->sin_port));
 	alen = sizeof(*sinp);
@@ -395,7 +395,7 @@ if (fstat(fd, &s) == 0 && (s.st_mode & S_IFMT) == S_IFSOCK)
       case AF_INET6:
 	{
 	uschar buf[46];
-	g = string_cat(g, US("domain AF_INET6"));
+	g = string_cat(g, cUS("domain AF_INET6"));
 	g = string_fmt_append(g, " lcl [%s]:%u",
 	  inet_ntop(AF_INET6, &sin6p->sin6_addr, CS(buf), sizeof(buf)),
 	  ntohs(sin6p->sin6_port));
@@ -407,15 +407,15 @@ if (fstat(fd, &s) == 0 && (s.st_mode & S_IFMT) == S_IFSOCK)
 	break;
 	}
       case AF_UNIX:
-        g = string_cat(g, US("domain AF_UNIX"));
+        g = string_cat(g, cUS("domain AF_UNIX"));
         if (alen > sizeof(sa_family_t)) /* not unix(7) "unnamed socket" */
           g = string_fmt_append(g, " lcl %s%s",
-            sunp->sun_path[0] ? US("") : US("@"),
+            sunp->sun_path[0] ? cUS("") : cUS("@"),
             sunp->sun_path[0] ? sunp->sun_path : sunp->sun_path+1);
         alen = sizeof(*sunp);
         if (getpeername(fd, (struct sockaddr *)sunp, &alen) == 0)
           g = string_fmt_append(g, " rmt %s%s",
-            sunp->sun_path[0] ? US("") : US("@"),
+            sunp->sun_path[0] ? cUS("") : cUS("@"),
             sunp->sun_path[0] ? sunp->sun_path : sunp->sun_path+1);
         break;
       default:
@@ -425,8 +425,8 @@ if (fstat(fd, &s) == 0 && (s.st_mode & S_IFMT) == S_IFSOCK)
   if (getsockopt(fd, SOL_SOCKET, SO_TYPE, &val, &vlen) == 0)
     switch (val)
       {
-      case SOCK_STREAM:	g = string_cat(g, US(" type SOCK_STREAM")); break;
-      case SOCK_DGRAM:	g = string_cat(g, US(" type SOCK_DGRAM")); break;
+      case SOCK_STREAM:	g = string_cat(g, cUS(" type SOCK_STREAM")); break;
+      case SOCK_DGRAM:	g = string_cat(g, cUS(" type SOCK_DGRAM")); break;
       default:	g = string_fmt_append(g, " type %d", val); break;
       }
 #ifdef SO_PROTOCOL
@@ -452,7 +452,7 @@ The routines here set up the buffer, and unload it to file (and release it).
 What ends up in the buffer is subject to the usual debug_selector. */
 
 void
-debug_pretrigger_setup(const uschar * size_string)
+debug_pretrigger_setup(cuschar * size_string)
 {
 long size = Ustrtol(size_string, NULL, 0);
 if (size > 0)

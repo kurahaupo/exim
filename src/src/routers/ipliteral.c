@@ -110,8 +110,8 @@ ipliteral_router_options_block *ob =
   (ipliteral_router_options_block *)(rblock->options_block);
 */
 host_item *h;
-const uschar *domain = addr->domain;
-const uschar *ip;
+cuschar *domain = addr->domain;
+cuschar *ip;
 int len = Ustrlen(domain);
 int rc, ipv;
 
@@ -125,7 +125,7 @@ declines. Otherwise route to the single IP address, setting the host name to
 
 if (domain[0] != '[' || domain[len-1] != ']') return DECLINE;
 ip = string_copyn(domain+1, len-2);
-if (strncmpic(ip, US("IPV6:"), 5) == 0 || strncmpic(ip, US("IPV4:"), 5) == 0)
+if (strncmpic(ip, cUS("IPV6:"), 5) == 0 || strncmpic(ip, cUS("IPV4:"), 5) == 0)
   ip += 5;
 
 ipv = string_is_ip_address(ip, NULL);
@@ -140,7 +140,7 @@ if (verify_check_this_host(CUSS(&rblock->ignore_target_hosts),
   {
   DEBUG(D_route)
       debug_printf("%s is in ignore_target_hosts\n", ip);
-  addr->message = US("IP literal host explicitly ignored");
+  addr->message = cUS("IP literal host explicitly ignored");
   return DECLINE;
   }
 

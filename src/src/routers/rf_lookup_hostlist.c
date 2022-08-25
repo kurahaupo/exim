@@ -64,7 +64,7 @@ list of MX hosts. If the first host is the local host, act according to the
 
 for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
   {
-  const uschar *canonical_name;
+  cuschar *canonical_name;
   int rc, len, port, mx, sort_key;
 
   next_h = h->next;
@@ -89,7 +89,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
   the ordering from host_build_hostlist. */
 
   len = Ustrlen(h->name);
-  if (len > 3 && strcmpic(h->name + len - 3, US("/mx")) == 0)
+  if (len > 3 && strcmpic(h->name + len - 3, cUS("/mx")) == 0)
     {
     int whichrrs = lookup_type & LK_IPV4_ONLY
       ? HOST_FIND_BY_MX | HOST_FIND_IPV4_ONLY

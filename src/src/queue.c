@@ -288,7 +288,7 @@ for (; i <= *subcount; i++)
 
       rmdir(CS(buffer));
       subdir[0] = subdirchar; subdir[1] = 0;
-      rmdir(CS(spool_dname(US("msglog"), subdir)));
+      rmdir(CS(spool_dname(cUS("msglog"), subdir)));
       }
     if (subdiroffset > 0) break;    /* Single sub-directory */
     }
@@ -359,7 +359,7 @@ pid_t qpid[4] = {0};	/* Parallelism factor for q2stage 1st phase */
 BOOL single_id = FALSE;
 
 #ifdef MEASURE_TIMING
-report_time_since(&timestamp_startup, US("queue_run start"));
+report_time_since(&timestamp_startup, cUS("queue_run start"));
 #endif
 
 /* Cancel any specific queue domains. Turn off the flag that causes SMTP
@@ -505,7 +505,7 @@ for (int i = queue_run_in_order ? -1 : 0;
 	}
       else
 	for (i = 0; qpid[i]; ) i++;
-      if ((qpid[i] = exim_fork(US("qrun-phase-one"))))
+      if ((qpid[i] = exim_fork(cUS("qrun-phase-one"))))
 	continue;	/* parent loops around */
       }
 
@@ -519,7 +519,7 @@ for (int i = queue_run_in_order ? -1 : 0;
     /* Check that the message still exists */
 
     message_subdir[0] = fq->dir_uschar;
-    if (Ustat(spool_fname(US("input"), message_subdir, fq->text, US("")), &statbuf) < 0)
+    if (Ustat(spool_fname(cUS("input"), message_subdir, fq->text, cUS("")), &statbuf) < 0)
       goto go_around;
 
     /* There are some tests that require the reading of the header file. Ensure
@@ -651,7 +651,7 @@ for (int i = queue_run_in_order ? -1 : 0;
     set_process_info("running queue: %s", fq->text);
     fq->text[SPOOL_NAME_LENGTH-2] = 0;
 #ifdef MEASURE_TIMING
-    report_time_since(&timestamp_startup, US("queue msg selected"));
+    report_time_since(&timestamp_startup, cUS("queue msg selected"));
 #endif
 
 #ifndef DISABLE_TLS
@@ -665,7 +665,7 @@ for (int i = queue_run_in_order ? -1 : 0;
 #endif
 
 single_item_retry:
-    if ((pid = exim_fork(US("qrun-delivery"))) == 0)
+    if ((pid = exim_fork(cUS("qrun-delivery"))) == 0)
       {
       int rc;
       (void)close(pfd[pipe_read]);
@@ -779,7 +779,7 @@ if (f.queue_2stage)
     else break;
 
 #ifdef MEASURE_TIMING
-  report_time_since(&timestamp_startup, US("queue_run 1st phase done"));
+  report_time_since(&timestamp_startup, cUS("queue_run 1st phase done"));
 #endif
   f.queue_2stage = FALSE;
   queue_run(start_id, stop_id, TRUE);
@@ -949,7 +949,7 @@ for (;
     int i, ptr;
     FILE *jread;
     struct stat statbuf;
-    uschar * fname = spool_fname(US("input"), message_subdir, qf->text, US(""));
+    uschar * fname = spool_fname(cUS("input"), message_subdir, qf->text, cUS(""));
 
     ptr = Ustrlen(fname)-1;
     fname[ptr] = 'D';
@@ -998,7 +998,7 @@ for (;
     if (save_errno == ERRNO_SPOOLFORMAT)
       {
       struct stat statbuf;
-      uschar * fname = spool_fname(US("input"), message_subdir, qf->text, US(""));
+      uschar * fname = spool_fname(cUS("input"), message_subdir, qf->text, cUS(""));
 
       if (Ustat(fname, &statbuf) == 0)
         printf("*** spool format error: size=" OFF_T_FMT " ***",
@@ -1093,18 +1093,18 @@ if (action >= MSG_SHOW_BODY)
 
   if (action == MSG_SHOW_BODY)
     {
-    subdirectory = US("input");
-    suffix = US("-D");
+    subdirectory = cUS("input");
+    suffix = cUS("-D");
     }
   else if (action == MSG_SHOW_HEADER)
     {
-    subdirectory = US("input");
-    suffix = US("-H");
+    subdirectory = cUS("input");
+    suffix = cUS("-H");
     }
   else
     {
-    subdirectory = US("msglog");
-    suffix = US("");
+    subdirectory = cUS("msglog");
+    suffix = cUS("");
     }
 
   for (int i = 0; i < 2; i++)
@@ -1276,7 +1276,7 @@ switch(action)
 
     for (int j = 0; j < 2; message_subdir[0] = 0, j++)
       {
-      uschar * fname = spool_fname(US("msglog"), message_subdir, id, US(""));
+      uschar * fname = spool_fname(cUS("msglog"), message_subdir, id, cUS(""));
 
       DEBUG(D_any) debug_printf(" removing %s", fname);
       if (Uunlink(fname) < 0)
@@ -1298,8 +1298,8 @@ switch(action)
 	{
 	uschar * fname;
 
-	suffix[1] = (US("DHJ"))[i];
-	fname = spool_fname(US("input"), message_subdir, id, suffix);
+	suffix[1] = (cUS("DHJ"))[i];
+	fname = spool_fname(cUS("input"), message_subdir, id, suffix);
 
 	DEBUG(D_any) debug_printf(" removing %s", fname);
 	if (Uunlink(fname) < 0)
@@ -1334,7 +1334,7 @@ switch(action)
 	if (!delivered)
 	  {
 	  uschar * save_local = deliver_localpart;
-	  const uschar * save_domain = deliver_domain;
+	  cuschar * save_domain = deliver_domain;
 	  uschar * addr = recipients_list[i].address, * errmsg = NULL;
 	  int start, end, dom;
 
@@ -1346,9 +1346,9 @@ switch(action)
 	    deliver_localpart =
 	      string_copyn(addr+start, dom ? (dom-1) - start : end - start);
 	    deliver_domain = dom
-	      ? CUS(string_copyn(addr+dom, end - dom)) : CUS("");
+	      ? CUS(string_copyn(addr+dom, end - dom)) : cUS("");
 
-	    (void) event_raise(event_action, US("msg:fail:internal"),
+	    (void) event_raise(event_action, cUS("msg:fail:internal"),
 	      string_sprintf("message removed by %s", username), NULL);
 
 	    deliver_localpart = save_local;
@@ -1356,7 +1356,7 @@ switch(action)
 	    }
 	  }
 	}
-      (void) event_raise(event_action, US("msg:complete"), NULL, NULL);
+      (void) event_raise(event_action, cUS("msg:complete"), NULL, NULL);
 #endif
       log_write(0, LOG_MAIN, "removed by %s", username);
       log_write(0, LOG_MAIN, "Completed");
@@ -1369,7 +1369,7 @@ switch(action)
     /* The global "queue_name_dest" is used as destination, "queue_name"
     as source */
 
-    spool_move_message(id, message_subdir, US(""), US(""));
+    spool_move_message(id, message_subdir, cUS(""), cUS(""));
     break;
 
 
@@ -1399,15 +1399,15 @@ switch(action)
     printf("- only one sender address can be specified\n");
     break;
     }
-  doing = US("editing sender");
+  doing = cUS("editing sender");
   /* Fall through */
 
   case MSG_ADD_RECIPIENT:
-  if (doing == NULL) doing = US("adding recipient");
+  if (doing == NULL) doing = cUS("adding recipient");
   /* Fall through */
 
   case MSG_MARK_DELIVERED:
-  if (doing == NULL) doing = US("marking as delivered");
+  if (doing == NULL) doing = cUS("marking as delivered");
 
   /* Common code for EDIT_SENDER, ADD_RECIPIENT, & MARK_DELIVERED */
 
@@ -1520,7 +1520,7 @@ queue_check_only(void)
 {
 int sep = 0;
 struct stat statbuf;
-const uschar * s = queue_only_file;
+cuschar * s = queue_only_file;
 uschar * ss;
 
 if (s)
@@ -1549,7 +1549,7 @@ if (s)
 
 #ifndef DISABLE_QUEUE_RAMP
 void
-queue_notify_daemon(const uschar * msgid)
+queue_notify_daemon(cuschar * msgid)
 {
 uschar buf[MESSAGE_ID_LENGTH + 2];
 int fd;

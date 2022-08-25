@@ -95,7 +95,7 @@ typedef unsigned int uint32;
  * Internal function to make hash value */
 
 static uint32
-cdb_hash(const uschar *buf, unsigned int len)
+cdb_hash(cuschar *buf, unsigned int len)
 {
   uint32 h;
 
@@ -148,7 +148,7 @@ return num;
 static void cdb_close(void *handle);
 
 static void *
-cdb_open(const uschar * filename, uschar ** errmsg)
+cdb_open(cuschar * filename, uschar ** errmsg)
 {
 int fileno;
 struct cdb_state *cdbp;
@@ -239,7 +239,7 @@ return cdbp;
 *************************************************/
 
 static BOOL
-cdb_check(void * handle, const uschar * filename, int modemask,
+cdb_check(void * handle, cuschar * filename, int modemask,
   uid_t * owners, gid_t * owngroups, uschar ** errmsg)
 {
 struct cdb_state * cdbp = handle;
@@ -254,9 +254,9 @@ return lf_check_file(cdbp->fileno, filename, S_IFREG, modemask,
 *************************************************/
 
 static int
-cdb_find(void * handle, const uschar * filename, const uschar * keystring,
+cdb_find(void * handle, cuschar * filename, cuschar * keystring,
   int key_len, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 struct cdb_state * cdbp = handle;
 uint32 item_key_len,
@@ -469,7 +469,7 @@ return g;
 
 
 lookup_info cdb_lookup_info = {
-  .name = US("cdb"),			/* lookup name */
+  .name = cUS("cdb"),			/* lookup name */
   .type = lookup_absfile,		/* absolute file name */
   .open = cdb_open,			/* open function */
   .check = cdb_check,			/* check function */

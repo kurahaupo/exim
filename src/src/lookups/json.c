@@ -41,7 +41,7 @@ json_free(void * p)
 /* See local README for interface description */
 
 static void *
-json_open(const uschar * filename, uschar ** errmsg)
+json_open(cuschar * filename, uschar ** errmsg)
 {
 FILE * f;
 
@@ -59,7 +59,7 @@ return f;
 *************************************************/
 
 static BOOL
-json_check(void *handle, const uschar *filename, int modemask, uid_t *owners,
+json_check(void *handle, cuschar *filename, int modemask, uid_t *owners,
   gid_t *owngroups, uschar **errmsg)
 {
 return lf_check_file(fileno((FILE *)handle), filename, S_IFREG, modemask,
@@ -75,9 +75,9 @@ return lf_check_file(fileno((FILE *)handle), filename, S_IFREG, modemask,
 /* See local README for interface description */
 
 static int
-json_find(void * handle, const uschar * filename, const uschar * keystring,
+json_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 FILE * f = handle;
 json_t * j, * j0;
@@ -106,8 +106,8 @@ for (int k = 1;  (key = string_nextinlist(&keystring, &sep, NULL, 0)); k++)
     {
     DEBUG(D_lookup) debug_printf_indent("%s, for key %d: '%s'\n",
       numeric
-      ? US("bad index, or not json array")
-      : US("no such key, or not json object"),
+      ? cUS("bad index, or not json array")
+      : cUS("no such key, or not json object"),
       k, key);
     json_decref(j0);
     return FAIL;
@@ -125,8 +125,8 @@ switch (json_typeof(j))
   case JSON_REAL:
     *result = string_sprintf("%f", json_real_value(j));
     break;
-  case JSON_TRUE:	*result = US("true");	break;
-  case JSON_FALSE:	*result = US("false");	break;
+  case JSON_TRUE:	*result = cUS("true");	break;
+  case JSON_FALSE:	*result = cUS("false");	break;
   case JSON_NULL:	*result = NULL;		break;
   default:		*result = US(json_dumps(j, 0)); break;
   }
@@ -166,7 +166,7 @@ return string_fmt_append(g, "Library version: json: Jansonn version %s\n", JANSS
 
 
 static lookup_info json_lookup_info = {
-  .name = US("json"),			/* lookup name */
+  .name = cUS("json"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = json_open,			/* open function */
   .check = json_check,			/* check function */

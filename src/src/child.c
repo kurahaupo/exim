@@ -88,7 +88,7 @@ if (clmacro_count > 0)
   n += clmacro_count;
   }
 if (f.config_changed)
-  { argv[n++] = US("-C"); argv[n++] = config_main_filename; }
+  { argv[n++] = cUS("-C"); argv[n++] = config_main_filename; }
 
 /* These values are added only for non-minimal cases. If debug_selector is
 precisely D_v, we have to assume this was started by a non-admin user, and
@@ -100,7 +100,7 @@ if (!minimal)
   {
   if (debug_selector == D_v)
     {
-    if (!kill_v) argv[n++] = US("-v");
+    if (!kill_v) argv[n++] = cUS("-v");
     }
   else
     {
@@ -118,22 +118,22 @@ if (!minimal)
       }
     }
   if (debug_pretrigger_buf)
-    { argv[n++] = US("-dp"); argv[n++] = string_sprintf("0x%x", debug_pretrigger_bsize); }
+    { argv[n++] = cUS("-dp"); argv[n++] = string_sprintf("0x%x", debug_pretrigger_bsize); }
   if (dtrigger_selector != 0)
     argv[n++] = string_sprintf("-dt=0x%x", dtrigger_selector);
   DEBUG(D_any)
     {
-    argv[n++] = US("-MCd");
+    argv[n++] = cUS("-MCd");
     argv[n++] = US(process_purpose);
     }
-  if (!f.testsuite_delays)	argv[n++] = US("-odd");
-  if (f.dont_deliver)		argv[n++] = US("-N");
-  if (f.queue_smtp)		argv[n++] = US("-odqs");
-  if (f.synchronous_delivery)	argv[n++] = US("-odi");
+  if (!f.testsuite_delays)	argv[n++] = cUS("-odd");
+  if (f.dont_deliver)		argv[n++] = cUS("-N");
+  if (f.queue_smtp)		argv[n++] = cUS("-odqs");
+  if (f.synchronous_delivery)	argv[n++] = cUS("-odi");
   if (connection_max_messages >= 0)
     argv[n++] = string_sprintf("-oB%d", connection_max_messages);
   if (*queue_name)
-    { argv[n++] = US("-MCG"); argv[n++] = queue_name; }
+    { argv[n++] = cUS("-MCG"); argv[n++] = queue_name; }
   }
 
 /* Now add in any others that are in the call. Remember which they were,
@@ -204,9 +204,9 @@ Returns:          pid of the created process or -1 if anything has gone wrong
 */
 
 pid_t
-child_open_exim_function(int * fdptr, const uschar * purpose)
+child_open_exim_function(int * fdptr, cuschar * purpose)
 {
-return child_open_exim2_function(fdptr, US("<>"), bounce_sender_authentication,
+return child_open_exim2_function(fdptr, cUS("<>"), bounce_sender_authentication,
   purpose);
 }
 
@@ -225,7 +225,7 @@ Returns:          pid of the created process or -1 if anything has gone wrong
 
 pid_t
 child_open_exim2_function(int * fdptr, uschar * sender,
-  uschar * sender_authentication, const uschar * purpose)
+  uschar * sender_authentication, cuschar * purpose)
 {
 int pfd[2];
 int save_errno;
@@ -256,11 +256,11 @@ if (pid == 0)
     {
     if (sender_authentication)
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 9,
-        US("-odi"), US("-t"), US("-oem"), US("-oi"), US("-f"), sender, US("-oMas"),
+        cUS("-odi"), cUS("-t"), cUS("-oem"), cUS("-oi"), cUS("-f"), sender, cUS("-oMas"),
         sender_authentication, message_id_option);
     else
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 7,
-        US("-odi"), US("-t"), US("-oem"), US("-oi"), US("-f"), sender,
+        cUS("-odi"), cUS("-t"), cUS("-oem"), cUS("-oi"), cUS("-f"), sender,
         message_id_option);
     /* Control does not return here. */
     }
@@ -268,11 +268,11 @@ if (pid == 0)
     {
     if (sender_authentication)
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 8,
-        US("-t"), US("-oem"), US("-oi"), US("-f"), sender, US("-oMas"),
+        cUS("-t"), cUS("-oem"), cUS("-oi"), cUS("-f"), sender, cUS("-oMas"),
         sender_authentication, message_id_option);
     else
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 6,
-        US("-t"), US("-oem"), US("-oi"), US("-f"), sender, message_id_option);
+        cUS("-t"), cUS("-oem"), cUS("-oi"), cUS("-f"), sender, message_id_option);
     /* Control does not return here. */
     }
   }
@@ -335,9 +335,9 @@ Returns:      the pid of the created process or -1 if anything has gone wrong
 */
 
 pid_t
-child_open_uid(const uschar **argv, const uschar **envp, int newumask,
+child_open_uid(cuschar **argv, cuschar **envp, int newumask,
   uid_t *newuid, gid_t *newgid, int *infdptr, int *outfdptr, uschar *wd,
-  BOOL make_leader, const uschar * purpose)
+  BOOL make_leader, cuschar * purpose)
 {
 int save_errno;
 int inpfd[2], outpfd[2];
@@ -485,7 +485,7 @@ Returns:      the pid of the created process or -1 if anything has gone wrong
 
 pid_t
 child_open_function(uschar **argv, uschar **envp, int newumask, int *infdptr,
-  int *outfdptr, BOOL make_leader, const uschar * purpose)
+  int *outfdptr, BOOL make_leader, cuschar * purpose)
 {
 return child_open_uid(CUSS(argv), CUSS(envp), newumask, NULL, NULL,
   infdptr, outfdptr, NULL, make_leader, purpose);

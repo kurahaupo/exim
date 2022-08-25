@@ -57,8 +57,8 @@ int auth_cyrus_sasl_options_count =
 /* Default private options block for the cyrus_sasl authentication method. */
 
 auth_cyrus_sasl_options_block auth_cyrus_sasl_option_defaults = {
-  US("smtp"),         /* server_service */
-  US("$primary_hostname"), /* server_hostname */
+  cUS("smtp"),         /* server_service */
+  cUS("$primary_hostname"), /* server_hostname */
   NULL,             /* server_realm */
   NULL              /* server_mech */
 };
@@ -109,7 +109,7 @@ auth_cyrus_sasl_init(auth_instance *ablock)
 {
 auth_cyrus_sasl_options_block *ob =
   (auth_cyrus_sasl_options_block *)(ablock->options_block);
-const uschar *list, *listptr, *buffer;
+cuschar *list, *listptr, *buffer;
 int rc, i;
 unsigned int len;
 rmark rs_point;
@@ -239,7 +239,7 @@ if (inlen)
 
 if ((rc = sasl_server_init(cbs, "exim")) != SASL_OK)
   {
-  auth_defer_msg = US("couldn't initialise Cyrus SASL library");
+  auth_defer_msg = cUS("couldn't initialise Cyrus SASL library");
   return DEFER;
   }
 
@@ -252,7 +252,7 @@ HDEBUG(D_auth)
 
 if (rc != SASL_OK )
   {
-  auth_defer_msg = US("couldn't initialise Cyrus SASL connection");
+  auth_defer_msg = cUS("couldn't initialise Cyrus SASL connection");
   sasl_done();
   return DEFER;
   }
@@ -263,7 +263,7 @@ if (tls_in.cipher)
     {
     HDEBUG(D_auth) debug_printf("Cyrus SASL EXTERNAL SSF set %d failed: %s\n",
         tls_in.bits, sasl_errstring(rc, NULL, NULL));
-    auth_defer_msg = US("couldn't set Cyrus SASL EXTERNAL SSF");
+    auth_defer_msg = cUS("couldn't set Cyrus SASL EXTERNAL SSF");
     sasl_done();
     return DEFER;
     }
@@ -288,21 +288,21 @@ So the docs are too strict and we shouldn't worry about :: contractions. */
 for (int i = 0; i < 2; ++i)
   {
   int propnum;
-  const uschar * label;
+  cuschar * label;
   uschar * address_port;
   const char *s_err;
 
   if (i)
     {
     propnum = SASL_IPREMOTEPORT;
-    label = CUS("peer");
+    label = cUS("peer");
     address_port = string_sprintf("%s;%d",
 				  sender_host_address, sender_host_port);
     }
   else
     {
     propnum = SASL_IPLOCALPORT;
-    label = CUS("local");
+    label = cUS("local");
     address_port = string_sprintf("%s;%d", interface_address, interface_port);
     }
 

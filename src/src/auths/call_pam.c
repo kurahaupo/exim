@@ -37,7 +37,7 @@ data pointer passed to the conversation function. However, I was unable to get
 this to work on Solaris 2.6, so static variables are used instead. */
 
 static int pam_conv_had_error;
-static const uschar *pam_args;
+static cuschar *pam_args;
 static BOOL pam_arg_ended;
 
 
@@ -85,7 +85,7 @@ for (int i = 0; i < num_msg; i++)
     case PAM_PROMPT_ECHO_OFF:
       if (!(arg = string_nextinlist(&pam_args, &sep, NULL, 0)))
 	{
-	arg = US("");
+	arg = cUS("");
 	pam_arg_ended = TRUE;
 	}
       reply[i].resp = strdup(CCS(arg)); /* Use libc malloc, PAM frees resp directly*/
@@ -128,7 +128,7 @@ Returns:   OK if authentication succeeded
 */
 
 int
-auth_call_pam(const uschar *s, uschar **errptr)
+auth_call_pam(cuschar *s, uschar **errptr)
 {
 pam_handle_t *pamh = NULL;
 struct pam_conv pamc;

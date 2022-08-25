@@ -68,12 +68,12 @@ if (!message_id)
       }
 
 for (h = header_list; h; h = h->next)
-  if (h->type != htype_old && strncmpic(US("References:"), h->text, 11) == 0)
+  if (h->type != htype_old && strncmpic(cUS("References:"), h->text, 11) == 0)
     break;
 
 if (!h)
   for (h = header_list; h; h = h->next)
-    if (h->type != htype_old && strncmpic(US("In-Reply-To:"), h->text, 12) == 0)
+    if (h->type != htype_old && strncmpic(cUS("In-Reply-To:"), h->text, 12) == 0)
       break;
 
 /* We limit the total length of references.  Although there is no fixed
@@ -86,7 +86,7 @@ if (h || message_id)
   fprintf(fp, "References:");
   if (h)
     {
-    const uschar * s;
+    cuschar * s;
     uschar * id, * error;
     uschar * referenced_ids[12];
     int reference_count = 0;
@@ -163,15 +163,15 @@ if (  ident == ERRMESS_DMARC_FORENSIC
    && *s2
    )
   pid = child_open_exim2(&fd, s2, bounce_sender_authentication,
-		US("moan_send_message"));
+		cUS("moan_send_message"));
 else
   {
   s = NULL;
-  pid = child_open_exim(&fd, US("moan_send_message"));
+  pid = child_open_exim(&fd, cUS("moan_send_message"));
   }
 
 #else
-pid = child_open_exim(&fd, US("moan_send_message"));
+pid = child_open_exim(&fd, cUS("moan_send_message"));
 #endif
 
 if (pid < 0)
@@ -311,7 +311,7 @@ switch(ident)
     bounce_return_message = TRUE;
     bounce_return_body    = FALSE;
     fprintf(fp, "Subject: DMARC Forensic Report for %s from IP %s\n\n",
-	  eblock ? eblock->text2 : US("Unknown"),
+	  eblock ? eblock->text2 : cUS("Unknown"),
           sender_host_address);
     fprintf(fp,
       "A message claiming to be from you has failed the published DMARC\n"
@@ -348,10 +348,10 @@ if (bounce_return_message)
     if (size_limit > 0 && size_limit < message_size)
       {
       int x = size_limit;
-      uschar *k = US("");
+      uschar *k = cUS("");
       if ((x & 1023) == 0)
         {
-        k = US("K");
+        k = cUS("K");
         x >>= 10;
         }
       fprintf(fp, "\n"
@@ -424,7 +424,7 @@ if (bounce_return_message)
     /*XXX limit line length here? */
     /* This doesn't print newlines, disable until can parse and fix
      * output to be legible.  */
-    fprintf(fp, "%s", expand_string(US("$message_body")));
+    fprintf(fp, "%s", expand_string(cUS("$message_body")));
     }
 #endif
   }
@@ -435,7 +435,7 @@ that is receiving the message. Wait for it to finish, without a timeout. */
 status = child_close(pid, 0);  /* Waits for child to close */
 if (status != 0)
   {
-  uschar *msg = US("Child mail process returned status");
+  uschar *msg = cUS("Child mail process returned status");
   if (status == -257)
     log_write(0, LOG_MAIN, "%s %d: errno=%d: %s", msg, status, errno,
       strerror(errno));
@@ -481,7 +481,7 @@ moan_to_sender(int ident, error_block *eblock, header_line *headers,
   FILE *message_file, BOOL check_sender)
 {
 uschar *firstline = NULL;
-uschar *msg = US("Error while reading message with no usable sender address");
+uschar *msg = cUS("Error while reading message with no usable sender address");
 
 if (message_reference)
   msg = string_sprintf("%s (R=%s)", msg, message_reference);
@@ -582,12 +582,12 @@ Returns:        nothing
 
 void
 moan_tell_someone(uschar *who, address_item *addr,
-  const uschar *subject, const char *format, ...)
+  cuschar *subject, const char *format, ...)
 {
 FILE *f;
 va_list ap;
 int fd;
-int pid = child_open_exim(&fd, US("moan_tell_someone"));
+int pid = child_open_exim(&fd, cUS("moan_tell_someone"));
 
 if (pid < 0)
   {
@@ -717,7 +717,7 @@ uschar *
 moan_check_errorcopy(uschar *recipient)
 {
 uschar *item, *localpart, *domain;
-const uschar *listptr = errors_copy;
+cuschar *listptr = errors_copy;
 uschar *yield = NULL;
 int sep = 0;
 int llen;
@@ -736,8 +736,8 @@ llen = domain++ - recipient;
 
 while ((item = string_nextinlist(&listptr, &sep, NULL, 0)))
   {
-  const uschar *newaddress = item;
-  const uschar *pattern = string_dequote(&newaddress);
+  cuschar *newaddress = item;
+  cuschar *pattern = string_dequote(&newaddress);
 
   /* If no new address found, just skip this item. */
 
@@ -765,7 +765,7 @@ while ((item = string_nextinlist(&listptr, &sep, NULL, 0)))
   }
 
 DEBUG(D_any) debug_printf("errors_copy check returned %s\n",
-  (yield == NULL)? US("NULL") : yield);
+  (yield == NULL)? cUS("NULL") : yield);
 
 expand_nmax = -1;
 return yield;
@@ -822,7 +822,7 @@ if (!(s = expand_string(syntax_errors_to)))
 /* If we can't create a process to send the message, just forget about
 it. */
 
-pid = child_open_exim(&fd, US("moan_skipped_syntax_errors"));
+pid = child_open_exim(&fd, cUS("moan_skipped_syntax_errors"));
 
 if (pid < 0)
   {

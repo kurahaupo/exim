@@ -87,8 +87,14 @@ is probably right, and this is sizeof(double) on some systems and sizeof(void
 is a constant, the compiler should optimize it to a simple constant wherever it
 appears (I checked that gcc does do this). */
 
-#define alignment \
+#if __STDC_VERSION__ >= 201701L
+#define Alignment (alignof(max_align_t))
+#elif __GNUC__ >= 3
+#define Alignment (__alignof__(max_align_t))
+#else
+#define Alignment \
   (sizeof(void *) > sizeof(double) ? sizeof(void *) : sizeof(double))
+#endif
 
 /* store_reset() will not free the following block if the last used block has
 less than this much left in it. */
@@ -139,7 +145,35 @@ length that is not a multiple of the alignment, set up a macro for the padded
 length. */
 
 #define ALIGNED_SIZEOF_STOREBLOCK \
-  (((sizeof(storeblock) + alignment - 1) / alignment) * alignment)
+  (((sizeof(storeblock) + Alignment - 1) / Alignment) * Alignment)
+
+static inline size_t AlignSize(size_t x)
+{
+#define isPOT(X) ((X) == ((X) & - (X)))
+/* Negative array size on the following line means that Alignment isn't a power
+ * of two */
+char check_alignment_is_power_of_two[ isPOT(Alignment) ? 1 : -1 ];
+return ((x-1)|(Alignment-1))+1;
+if (x % Alignment != 0)
+  x += Alignment - (x % Alignment);
+return x;
+}
+
+static inline void *storeblock_content(storeblock const *b)
+{
+return (char *)b + ALIGNED_SIZEOF_STOREBLOCK;
+}
+
+static inline void *storeblock_end_ptr(storeblock const *b)
+{
+char *content = storeblock_content(b);
+return content + b->length;
+}
+
+static inline size_t storeblock_external_size(storeblock const *b)
+{
+return b->length + ALIGNED_SIZEOF_STOREBLOCK;
+}
 
 /* Size of block to get from malloc to carve up into smaller ones. This
 must be a multiple of the alignment. We assume that 4096 is going to be
@@ -156,7 +190,10 @@ defining RESTRICTED_MEMORY */
 /*XXX should we allow any for malloc's own overhead?  But how much? */
 
 /* #define RESTRICTED_MEMORY */
-#define STORE_BLOCK_SIZE(order) ((1U << (order)) - ALIGNED_SIZEOF_STOREBLOCK)
+static inline size_t storeblock_order_size(unsigned order)
+{
+return (1U << order) - ALIGNED_SIZEOF_STOREBLOCK;
+}
 
 /* Variables holding data for the local pools of store. The current pool number
 is held in store_pool, which is global so that it can be changed from outside.
@@ -183,29 +220,29 @@ static int nonpool_malloc;
 
 
 #ifndef COMPILE_UTILITY
-static const uschar * pooluse[N_PAIRED_POOLS] = {
-[POOL_MAIN] =		US("main"),
-[POOL_PERM] =		US("perm"),
-[POOL_CONFIG] =		US("config"),
-[POOL_SEARCH] =		US("search"),
-[POOL_MESSAGE] =	US("message"),
-[POOL_TAINT_MAIN] =	US("main"),
-[POOL_TAINT_PERM] =	US("perm"),
-[POOL_TAINT_CONFIG] =	US("config"),
-[POOL_TAINT_SEARCH] =	US("search"),
-[POOL_TAINT_MESSAGE] =	US("message"),
+static cuschar * pooluse[N_PAIRED_POOLS] = {
+[POOL_MAIN] =		cUS("main"),
+[POOL_PERM] =		cUS("perm"),
+[POOL_CONFIG] =		cUS("config"),
+[POOL_SEARCH] =		cUS("search"),
+[POOL_MESSAGE] =	cUS("message"),
+[POOL_TAINT_MAIN] =	cUS("main"),
+[POOL_TAINT_PERM] =	cUS("perm"),
+[POOL_TAINT_CONFIG] =	cUS("config"),
+[POOL_TAINT_SEARCH] =	cUS("search"),
+[POOL_TAINT_MESSAGE] =	cUS("message"),
 };
-static const uschar * poolclass[N_PAIRED_POOLS] = {
-[POOL_MAIN] =		US("untainted"),
-[POOL_PERM] =		US("untainted"),
-[POOL_CONFIG] =		US("untainted"),
-[POOL_SEARCH] =		US("untainted"),
-[POOL_MESSAGE] =	US("untainted"),
-[POOL_TAINT_MAIN] =	US("tainted"),
-[POOL_TAINT_PERM] =	US("tainted"),
-[POOL_TAINT_CONFIG] =	US("tainted"),
-[POOL_TAINT_SEARCH] =	US("tainted"),
-[POOL_TAINT_MESSAGE] =	US("tainted"),
+static cuschar * poolclass[N_PAIRED_POOLS] = {
+[POOL_MAIN] =		cUS("untainted"),
+[POOL_PERM] =		cUS("untainted"),
+[POOL_CONFIG] =		cUS("untainted"),
+[POOL_SEARCH] =		cUS("untainted"),
+[POOL_MESSAGE] =	cUS("untainted"),
+[POOL_TAINT_MAIN] =	cUS("tainted"),
+[POOL_TAINT_PERM] =	cUS("tainted"),
+[POOL_TAINT_CONFIG] =	cUS("tainted"),
+[POOL_TAINT_SEARCH] =	cUS("tainted"),
+[POOL_TAINT_MESSAGE] =	cUS("tainted"),
 };
 #endif
 
@@ -234,13 +271,18 @@ for (pooldesc * pp = paired_pools; pp < paired_pools + N_PAIRED_POOLS; pp++)
 }
 
 /******************************************************************************/
-/* Locating elements given memory pointer */
+/* Locating elements given memory pointer
+ *
+ * NOTE: C does define what happens when you compare pointers outside the same
+ * object; but by converting to uintptr_t, the behaviour becomes well-defined.
+ */
 
 static BOOL
 is_pointer_in_block(const storeblock * b, const void * p)
 {
-uschar * bc = US(b) + ALIGNED_SIZEOF_STOREBLOCK;
-return US(p) >= bc && US(p) < bc + b->length;
+uintptr_t bc = (uintptr_t)storeblock_content(b);
+uintptr_t pn = (uintptr_t)p;
+return bc <= pn && pn < bc + b->length;
 }
 
 static pooldesc *
@@ -323,7 +365,7 @@ return FALSE;
 
 
 void
-die_tainted(const uschar * msg, const uschar * func, int line)
+die_tainted(cuschar * msg, cuschar * func, int line)
 {
 log_write(0, LOG_MAIN|LOG_PANIC_DIE, "Taint mismatch, %s: %s %d\n",
 	msg, func, line);
@@ -365,7 +407,7 @@ store_writeprotect(int pool)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MISSING_POSIX_MEMALIGN)
 for (storeblock * b =  paired_pools[pool].chainbase; b; b = b->next)
-  if (mprotect(b, ALIGNED_SIZEOF_STOREBLOCK + b->length, PROT_READ) != 0)
+  if (mprotect(b, storeblock_external_size(b), PROT_READ) != 0)
     DEBUG(D_any) debug_printf("config block mprotect: (%d) %s\n", errno, strerror(errno));
 #endif
 }
@@ -392,18 +434,19 @@ do a reasonable job of optimizing, especially if the value of "alignment" is a
 power of two. I checked this with -O2, and gcc did very well, compiling it to 4
 instructions on a Sparc (alignment = 8). */
 
-if (size % alignment != 0) size += alignment - (size % alignment);
+size = AlignSize(size);
 
 /* If there isn't room in the current block, get a new one. The minimum
-size is STORE_BLOCK_SIZE, and we would expect this to be the norm, since
-these functions are mostly called for small amounts of store. */
+size is storeblock_order_size() of the order of the current group, and we would
+expect this to be the norm, since these functions are mostly called for small
+amounts of store. */
 
 if (size > pp->yield_length)
   {
-  int length = MAX(
-	  STORE_BLOCK_SIZE(pp->store_block_order) - ALIGNED_SIZEOF_STOREBLOCK,
-	  size);
-  int mlength = length + ALIGNED_SIZEOF_STOREBLOCK;
+  int mlength = MAX(
+	  storeblock_order_size(pp->store_block_order),
+	  size + ALIGNED_SIZEOF_STOREBLOCK);
+  int length = mlength - ALIGNED_SIZEOF_STOREBLOCK;  /* TODO: check whether this subtraction is correct, since storeblock_order_size() already subtracts this amount */
   storeblock * newblock;
 
   /* Sometimes store_reset() may leave a block for us; check if we can use it */
@@ -461,8 +504,7 @@ if (size > pp->yield_length)
 
   pp->current_block = newblock;
   pp->yield_length = newblock->length;
-  pp->next_yield =
-    (void *)(CS(pp->current_block) + ALIGNED_SIZEOF_STOREBLOCK);
+  pp->next_yield = storeblock_content(pp->current_block);
   (void) VALGRIND_MAKE_MEM_NOACCESS(pp->next_yield, pp->yield_length);
   }
 
@@ -474,7 +516,7 @@ pp->store_last_get = pp->next_yield;
 (void) VALGRIND_MAKE_MEM_UNDEFINED(pp->store_last_get, size);
 /* Update next pointer and number of bytes left in the current block. */
 
-pp->next_yield = (void *)(CS(pp->next_yield) + size);
+pp->next_yield = (char*)pp->next_yield + size;
 pp->yield_length -= size;
 return pp->store_last_get;
 }
@@ -726,8 +768,7 @@ if (oldsize < 0 || newsize < oldsize || newsize >= INT_MAX/2)
             "bad memory extension requested (%d -> %d bytes) at %s %d",
             oldsize, newsize, func, linenumber);
 
-if (rounded_oldsize % alignment != 0)
-  rounded_oldsize += alignment - (rounded_oldsize % alignment);
+rounded_oldsize = AlignSize(rounded_oldsize);
 
 if (CS(ptr) + rounded_oldsize != CS(pp->next_yield) ||
     inc > pp->yield_length + rounded_oldsize - oldsize)
@@ -755,7 +796,7 @@ DEBUG(D_memory)
   }
 #endif  /* COMPILE_UTILITY */
 
-if (newsize % alignment != 0) newsize += alignment - (newsize % alignment);
+newsize = AlignSize(newsize);
 pp->next_yield = CS(ptr) + newsize;
 pp->yield_length -= newsize - rounded_oldsize;
 (void) VALGRIND_MAKE_MEM_UNDEFINED(ptr + oldsize, inc);
@@ -799,11 +840,13 @@ internal_store_reset(void * ptr, int pool, const char *func, int linenumber)
 storeblock * bb;
 pooldesc * pp = paired_pools + pool;
 storeblock * b = pp->current_block;
-char * bc = CS(b) + ALIGNED_SIZEOF_STOREBLOCK;
+uintptr_t ic = (uintptr_t)storeblock_content(b);
+uintptr_t ie = (uintptr_t)storeblock_end_ptr(b);
 int newlength, count;
 #ifndef COMPILE_UTILITY
 int oldmalloc = pool_malloc;
 #endif
+uintptr_t ip = (uintptr_t)ptr;
 
 if (!b) return;	/* exim_dumpdb gets this, becuse it has never used tainted mem */
 
@@ -814,12 +857,13 @@ pp->store_last_get = NULL;
 /* See if the place is in the current block - as it often will be. Otherwise,
 search for the block in which it lies. */
 
-if (CS(ptr) < bc || CS(ptr) > bc + b->length)
+if (ip < ic || ip > ie)   /* TODO: check whether ptr > end_ptr should be ptr >= end_ptr */
   {
   for (b =  pp->chainbase; b; b = b->next)
     {
-    bc = CS(b) + ALIGNED_SIZEOF_STOREBLOCK;
-    if (CS(ptr) >= bc && CS(ptr) <= bc + b->length) break;
+    ic = (uintptr_t)storeblock_content(b);
+    ie = (uintptr_t)storeblock_end_ptr(b);
+    if (ip >= ic && ip <= ie) break;    /* TODO: and correspondingly, whether ptr <= end_ptr should be ptr < end_ptr */
     }
   if (!b)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "internal error: store_reset(%p) "
@@ -829,7 +873,7 @@ if (CS(ptr) < bc || CS(ptr) > bc + b->length)
 /* Back up, rounding to the alignment if necessary. When testing, flatten
 the released memory. */
 
-newlength = bc + b->length - CS(ptr);
+newlength = ie - ip;
 #ifndef COMPILE_UTILITY
 if (debug_store)
   {
@@ -842,9 +886,9 @@ if (debug_store)
   }
 #endif
 (void) VALGRIND_MAKE_MEM_NOACCESS(ptr, newlength);
-pp->next_yield = CS(ptr) + (newlength % alignment);
+pp->next_yield = (char*)ptr + (newlength % Alignment);
 count = pp->yield_length;
-count = (pp->yield_length = newlength - (newlength % alignment)) - count;
+count = (pp->yield_length = newlength - (newlength % Alignment)) - count;
 pp->current_block = b;
 
 /* Free any subsequent block. Do NOT free the first
@@ -854,16 +898,16 @@ a power-of-two size so probably is not a custom inflated one. */
 
 if (  pp->yield_length < STOREPOOL_MIN_SIZE
    && b->next
-   && is_pwr2_size(b->next->length + ALIGNED_SIZEOF_STOREBLOCK))
+   && is_pwr2_size(storeblock_external_size(b->next)))
   {
   b = b->next;
 #ifndef COMPILE_UTILITY
   if (debug_store)
-    assert_no_variables(b, b->length + ALIGNED_SIZEOF_STOREBLOCK,
+    assert_no_variables(b, storeblock_external_size(b),
 			func, linenumber);
 #endif
-  (void) VALGRIND_MAKE_MEM_NOACCESS(CS(b) + ALIGNED_SIZEOF_STOREBLOCK,
-		b->length - ALIGNED_SIZEOF_STOREBLOCK);
+  (void) VALGRIND_MAKE_MEM_NOACCESS(storeblock_content(b),
+		b->length - ALIGNED_SIZEOF_STOREBLOCK);  /* TODO: check whether this subtraction is correct */
   }
 
 bb = b->next;
@@ -872,11 +916,11 @@ if (pool != POOL_CONFIG)
 
 while ((b = bb))
   {
-  int siz = b->length + ALIGNED_SIZEOF_STOREBLOCK;
+  int siz = storeblock_external_size(b);
 
 #ifndef COMPILE_UTILITY
   if (debug_store)
-    assert_no_variables(b, b->length + ALIGNED_SIZEOF_STOREBLOCK,
+    assert_no_variables(b, storeblock_external_size(b),
 			func, linenumber);
 #endif
   bb = bb->next;
@@ -957,7 +1001,7 @@ if ((pp = pool_current_for_pointer(ptr)))
   /* Back up, rounding to the alignment if necessary. When testing, flatten
   the released memory. */
 
-  newlength = (CS(b) + ALIGNED_SIZEOF_STOREBLOCK) + b->length - CS(ptr);
+  newlength = (char*)storeblock_end_ptr(b) - (char*)ptr;
 #ifndef COMPILE_UTILITY
   if (debug_store)
     {
@@ -970,9 +1014,9 @@ if ((pp = pool_current_for_pointer(ptr)))
     }
 #endif
   (void) VALGRIND_MAKE_MEM_NOACCESS(ptr, newlength);
-  pp->next_yield = CS(ptr) + (newlength % alignment);
+  pp->next_yield = CS(ptr) + (newlength % Alignment);
   count = pp->yield_length;
-  count = (pp->yield_length = newlength - (newlength % alignment)) - count;
+  count = (pp->yield_length = newlength - (newlength % Alignment)) - count;
 
   /* Cut out the debugging stuff for utilities, but stop picky compilers from
   giving warnings. */
@@ -1054,9 +1098,9 @@ store_release_3(void * block, pooldesc * pp, const char * func, int linenumber)
 for (storeblock * b =  pp->chainbase; b; b = b->next)
   {
   storeblock * bb = b->next;
-  if (bb && CS(block) == CS(bb) + ALIGNED_SIZEOF_STOREBLOCK)
+  if (bb && block == storeblock_content(bb))
     {
-    int siz = bb->length + ALIGNED_SIZEOF_STOREBLOCK;
+    int siz = storeblock_external_size(bb);
     b->next = bb->next;
     pp->nbytes -= siz;
     pool_malloc -= siz;
@@ -1071,7 +1115,7 @@ for (storeblock * b =  pp->chainbase; b; b = b->next)
 	linenumber, pool_malloc);
 
     if (f.running_in_test_harness)
-      memset(bb, 0xF0, bb->length+ALIGNED_SIZEOF_STOREBLOCK);
+      memset(bb, 0xF0, storeblock_external_size(bb));
 #endif  /* COMPILE_UTILITY */
 
     internal_store_free(bb, func, linenumber);

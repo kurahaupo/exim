@@ -31,7 +31,7 @@ characters. */
 
 #include "exim.h"
 
-uschar * spool_directory = NULL;	/* dummy for hintsdb.h */
+cuschar * spool_directory = NULL;	/* dummy for hintsdb.h */
 
 /******************************************************************************/
 					/* dummies needed by Solaris build */
@@ -51,14 +51,14 @@ void
 store_release_above_3(void *ptr, const char *func, int linenumber)
 { }
 gstring *
-string_vformat_trc(gstring * g, const uschar * func, unsigned line,
+string_vformat_trc(gstring * g, cuschar * func, unsigned line,
   unsigned size_limit, unsigned flags, const char *format, va_list ap)
 { return NULL; }
 uschar *
-string_sprintf_trc(const char * a, const uschar * b, unsigned c, ...)
+string_sprintf_trc(const char * a, cuschar * b, unsigned c, ...)
 { return NULL; }
 BOOL
-string_format_trc(uschar * buf, int len, const uschar * func, unsigned line,
+string_format_trc(uschar * buf, int len, cuschar * func, unsigned line,
   const char * fmt, ...)
 { return FALSE; }
 void
@@ -68,7 +68,7 @@ log_write(unsigned int selector, int flags, const char *format, ...)
 
 struct global_flags	f;
 unsigned int		log_selector[1];
-uschar *		queue_name;
+cuschar *		queue_name;
 BOOL			split_spool_directory;
 
 
@@ -89,7 +89,7 @@ BOOL    allow_insecure_tainted_data;
 /* This is global because it's defined in the headers and compilers grumble
 if it is made static. */
 
-const uschar *hex_digits = CUS("0123456789abcdef");
+cuschar *hex_digits = cUS("0123456789abcdef");
 
 
 #ifdef STRERROR_FROM_ERRLIST
@@ -120,10 +120,10 @@ Returns:   the value of the character escape
 */
 
 int
-string_interpret_escape(const uschar **pp)
+string_interpret_escape(cuschar **pp)
 {
 int ch;
-const uschar *p = *pp;
+cuschar *p = *pp;
 ch = *(++p);
 if (ch == '\0') return **pp;
 if (isdigit(ch) && ch != '8' && ch != '9')
@@ -234,14 +234,14 @@ if (strlen(argv[arg+1]) > sizeof(temp_dbmname) - 20)
   exit(1);
   }
 
-Ustrcpy(temp_dbmname, US(argv[arg+1]));
-Ustrcat(temp_dbmname, US(".dbmbuild_temp"));
+Ustrcpy(temp_dbmname, CUS(argv[arg+1]));
+Ustrcat(temp_dbmname, cUS(".dbmbuild_temp"));
 
 Ustrcpy(dirname, temp_dbmname);
 if ((bptr = Ustrrchr(dirname, '/')))
   *bptr = '\0';
 else
-  Ustrcpy(dirname, US("."));
+  Ustrcpy(dirname, cUS("."));
 
 /* It is apparently necessary to open with O_RDWR for this to work
 with gdbm-1.7.3, though no reading is actually going to be done. */
@@ -365,7 +365,7 @@ while (Ufgets(line, max_insize, f) != NULL)
       while (*s != 0 && *s != '\"')
         {
 	*t++ = *s == '\\'
-	? string_interpret_escape((const uschar **)&s)
+	? string_interpret_escape((cuschar **)&s)
 	: *s;
         s++;
         }

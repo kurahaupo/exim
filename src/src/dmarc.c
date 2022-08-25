@@ -28,7 +28,7 @@ DMARC_POLICY_T     *dmarc_pctx = NULL;
 OPENDMARC_STATUS_T  libdm_status, action, dmarc_policy;
 OPENDMARC_STATUS_T  da, sa, action;
 BOOL dmarc_abort  = FALSE;
-uschar *dmarc_pass_fail = US("skipped");
+uschar *dmarc_pass_fail = cUS("skipped");
 header_line *from_header   = NULL;
 extern SPF_response_t   *spf_response;
 int dmarc_spf_ares_result  = 0;
@@ -45,10 +45,10 @@ typedef struct dmarc_exim_p {
 
 static dmarc_exim_p dmarc_policy_description[] = {
   /* name		value */
-  { US(""),           DMARC_RECORD_P_UNSPECIFIED },
-  { US("none"),       DMARC_RECORD_P_NONE },
-  { US("quarantine"), DMARC_RECORD_P_QUARANTINE },
-  { US("reject"),     DMARC_RECORD_P_REJECT },
+  { cUS(""),           DMARC_RECORD_P_UNSPECIFIED },
+  { cUS("none"),       DMARC_RECORD_P_NONE },
+  { cUS("quarantine"), DMARC_RECORD_P_QUARANTINE },
+  { cUS("reject"),     DMARC_RECORD_P_REJECT },
   { NULL,           0 }
 };
 
@@ -99,10 +99,10 @@ int is_ipv6    = 0;
 /* Set some sane defaults.  Also clears previous results when
  * multiple messages in one connection. */
 dmarc_pctx         = NULL;
-dmarc_status       = US("none");
+dmarc_status       = cUS("none");
 dmarc_abort        = FALSE;
-dmarc_pass_fail    = US("skipped");
-dmarc_used_domain  = US("");
+dmarc_pass_fail    = cUS("skipped");
+dmarc_used_domain  = cUS("");
 f.dmarc_has_been_checked = FALSE;
 header_from_sender = NULL;
 spf_sender_domain  = NULL;
@@ -185,14 +185,14 @@ if (  dmarc_policy == DMARC_POLICY_REJECT     && action == DMARC_RESULT_REJECT
    )
   if (ruf)
     {
-    eblock = add_to_eblock(eblock, US("Sender Domain"), dmarc_used_domain);
-    eblock = add_to_eblock(eblock, US("Sender IP Address"), sender_host_address);
-    eblock = add_to_eblock(eblock, US("Received Date"), tod_stamp(tod_full));
-    eblock = add_to_eblock(eblock, US("SPF Alignment"),
-		     sa == DMARC_POLICY_SPF_ALIGNMENT_PASS ? US("yes") : US("no"));
-    eblock = add_to_eblock(eblock, US("DKIM Alignment"),
-		     da == DMARC_POLICY_DKIM_ALIGNMENT_PASS ? US("yes") : US("no"));
-    eblock = add_to_eblock(eblock, US("DMARC Results"), dmarc_status_text);
+    eblock = add_to_eblock(eblock, cUS("Sender Domain"), dmarc_used_domain);
+    eblock = add_to_eblock(eblock, cUS("Sender IP Address"), sender_host_address);
+    eblock = add_to_eblock(eblock, cUS("Received Date"), tod_stamp(tod_full));
+    eblock = add_to_eblock(eblock, cUS("SPF Alignment"),
+		     sa == DMARC_POLICY_SPF_ALIGNMENT_PASS ? cUS("yes") : cUS("no"));
+    eblock = add_to_eblock(eblock, cUS("DKIM Alignment"),
+		     da == DMARC_POLICY_DKIM_ALIGNMENT_PASS ? cUS("yes") : cUS("no"));
+    eblock = add_to_eblock(eblock, cUS("DMARC Results"), dmarc_status_text);
 
     for (int c = 0; ruf[c]; c++)
       {
@@ -265,7 +265,7 @@ if (history_file_fd < 0)
 history_buffer = string_sprintf(
   "job %s\nreporter %s\nreceived %ld\nipaddr %s\nfrom %s\nmfrom %s\n",
   message_id, primary_hostname, time(NULL), sender_host_address,
-  header_from_sender, expand_string(US("$sender_address_domain")));
+  header_from_sender, expand_string(cUS("$sender_address_domain")));
 
 if (spf_response)
   history_buffer = string_sprintf("%sspf %d\n", history_buffer, dmarc_spf_ares_result);
@@ -394,7 +394,7 @@ if (!dmarc_abort && !sender_host_authenticated)
   uschar * dmarc_domain;
 
   /* Use the envelope sender domain for this part of DMARC */
-  spf_sender_domain = expand_string(US("$sender_address_domain"));
+  spf_sender_domain = expand_string(cUS("$sender_address_domain"));
   if (!spf_response)
     {
     /* No spf data means null envelope sender so generate a domain name
@@ -411,7 +411,7 @@ if (!dmarc_abort && !sender_host_authenticated)
     dmarc_spf_result = DMARC_POLICY_SPF_OUTCOME_NONE;
     dmarc_spf_ares_result = ARES_RESULT_UNKNOWN;
     origin = DMARC_POLICY_SPF_ORIGIN_HELO;
-    spf_human_readable = US("");
+    spf_human_readable = cUS("");
     }
   else
     {
@@ -447,7 +447,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 
   /* Now we cycle through the dkim signature results and put into
    * the opendmarc context, further building the DMARC reply.  */
-  dkim_history_buffer = US("");
+  dkim_history_buffer = cUS("");
   while (sig)
     {
     int dkim_result, dkim_ares_result, vs, ves;
@@ -459,7 +459,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 		  vs == PDKIM_VERIFY_INVALID ? DMARC_POLICY_DKIM_OUTCOME_TMPFAIL :
 		  DMARC_POLICY_DKIM_OUTCOME_NONE;
     libdm_status = opendmarc_policy_store_dkim(dmarc_pctx, US(sig->domain),
-					       dkim_result, US(""));
+					       dkim_result, cUS(""));
     DEBUG(D_receive)
       debug_printf("DMARC adding DKIM sender domain = %s\n", sig->domain);
     if (libdm_status != DMARC_PARSE_OKAY)
@@ -545,45 +545,45 @@ if (!dmarc_abort && !sender_host_authenticated)
   switch(libdm_status)
     {
     case DMARC_POLICY_ABSENT:     /* No DMARC record found */
-      dmarc_status = US("norecord");
-      dmarc_pass_fail = US("none");
-      dmarc_status_text = US("No DMARC record");
+      dmarc_status = cUS("norecord");
+      dmarc_pass_fail = cUS("none");
+      dmarc_status_text = cUS("No DMARC record");
       action = DMARC_RESULT_ACCEPT;
       break;
     case DMARC_FROM_DOMAIN_ABSENT:    /* No From: domain */
-      dmarc_status = US("nofrom");
-      dmarc_pass_fail = US("temperror");
-      dmarc_status_text = US("No From: domain found");
+      dmarc_status = cUS("nofrom");
+      dmarc_pass_fail = cUS("temperror");
+      dmarc_status_text = cUS("No From: domain found");
       action = DMARC_RESULT_ACCEPT;
       break;
     case DMARC_POLICY_NONE:       /* Accept and report */
-      dmarc_status = US("none");
-      dmarc_pass_fail = US("none");
-      dmarc_status_text = US("None, Accept");
+      dmarc_status = cUS("none");
+      dmarc_pass_fail = cUS("none");
+      dmarc_status_text = cUS("None, Accept");
       action = DMARC_RESULT_ACCEPT;
       break;
     case DMARC_POLICY_PASS:       /* Explicit accept */
-      dmarc_status = US("accept");
-      dmarc_pass_fail = US("pass");
-      dmarc_status_text = US("Accept");
+      dmarc_status = cUS("accept");
+      dmarc_pass_fail = cUS("pass");
+      dmarc_status_text = cUS("Accept");
       action = DMARC_RESULT_ACCEPT;
       break;
     case DMARC_POLICY_REJECT:       /* Explicit reject */
-      dmarc_status = US("reject");
-      dmarc_pass_fail = US("fail");
-      dmarc_status_text = US("Reject");
+      dmarc_status = cUS("reject");
+      dmarc_pass_fail = cUS("fail");
+      dmarc_status_text = cUS("Reject");
       action = DMARC_RESULT_REJECT;
       break;
     case DMARC_POLICY_QUARANTINE:       /* Explicit quarantine */
-      dmarc_status = US("quarantine");
-      dmarc_pass_fail = US("fail");
-      dmarc_status_text = US("Quarantine");
+      dmarc_status = cUS("quarantine");
+      dmarc_pass_fail = cUS("fail");
+      dmarc_status_text = cUS("Quarantine");
       action = DMARC_RESULT_QUARANTINE;
       break;
     default:
-      dmarc_status = US("temperror");
-      dmarc_pass_fail = US("temperror");
-      dmarc_status_text = US("Internal Policy Error");
+      dmarc_status = cUS("temperror");
+      dmarc_pass_fail = cUS("temperror");
+      dmarc_status_text = cUS("Internal Policy Error");
       action = DMARC_RESULT_TEMPFAIL;
       break;
     }
@@ -625,15 +625,15 @@ if (f.dmarc_disable_verify || !dmarc_pctx)
 
 if (what == DMARC_VERIFY_STATUS)
   return dmarc_status;
-return US("");
+return cUS("");
 }
 
 uschar *
 dmarc_exim_expand_defaults(int what)
 {
 if (what == DMARC_VERIFY_STATUS)
-  return f.dmarc_disable_verify ?  US("off") : US("none");
-return US("");
+  return f.dmarc_disable_verify ?  cUS("off") : cUS("none");
+return cUS("");
 }
 
 
@@ -642,9 +642,9 @@ authres_dmarc(gstring * g)
 {
 if (f.dmarc_has_been_checked)
   {
-  g = string_append(g, 2, US(";\n\tdmarc="), dmarc_pass_fail);
+  g = string_append(g, 2, cUS(";\n\tdmarc="), dmarc_pass_fail);
   if (header_from_sender)
-    g = string_append(g, 2, US(" header.from="), header_from_sender);
+    g = string_append(g, 2, cUS(" header.from="), header_from_sender);
   }
 return g;
 }

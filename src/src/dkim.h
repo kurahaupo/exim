@@ -6,7 +6,7 @@
 /* See the file NOTICE for conditions of use and distribution. */
 
 void    dkim_exim_init(void);
-gstring * dkim_exim_sign(int, off_t, uschar *, struct ob_dkim *, const uschar **);
+gstring * dkim_exim_sign(int, off_t, uschar *, struct ob_dkim *, cuschar **);
 void    dkim_exim_verify_init(BOOL);
 void    dkim_exim_verify_feed(uschar *, int);
 void    dkim_exim_verify_finish(void);

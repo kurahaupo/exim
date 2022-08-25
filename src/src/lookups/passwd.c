@@ -17,7 +17,7 @@
 /* See local README for interface description */
 
 static void *
-passwd_open(const uschar * filename, uschar ** errmsg)
+passwd_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(-1);     /* Just return something non-null */
 }
@@ -32,9 +32,9 @@ return (void *)(-1);     /* Just return something non-null */
 /* See local README for interface description */
 
 static int
-passwd_find(void * handle, const uschar * filename, const uschar * keystring,
+passwd_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 struct passwd *pw;
 
@@ -64,7 +64,7 @@ return g;
 }
 
 static lookup_info _lookup_info = {
-  .name = US("passwd"),			/* lookup name */
+  .name = cUS("passwd"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = passwd_open,			/* open function */
   .check = NULL,			/* no check function */

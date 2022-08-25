@@ -17,7 +17,7 @@
 /* See local README for interface description */
 
 static void *
-dbmdb_open(const uschar * filename, uschar ** errmsg)
+dbmdb_open(cuschar * filename, uschar ** errmsg)
 {
 uschar * dirname = string_copy(filename);
 uschar * s;
@@ -43,7 +43,7 @@ the same. Otherwise, for safety, we have to check for x.db or x.dir and x.pag.
 */
 
 static BOOL
-dbmdb_check(void *handle, const uschar *filename, int modemask, uid_t *owners,
+dbmdb_check(void *handle, cuschar *filename, int modemask, uid_t *owners,
   gid_t *owngroups, uschar **errmsg)
 {
 int rc;
@@ -85,9 +85,9 @@ return rc == 0;
 the keylength in order to include the terminating zero. */
 
 static int
-dbmdb_find(void * handle, const uschar * filename, const uschar * keystring,
+dbmdb_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 EXIM_DB *d = (EXIM_DB *)handle;
 EXIM_DATUM key, data;
@@ -117,9 +117,9 @@ return FAIL;
 /* See local README for interface description */
 
 static int
-dbmnz_find(void * handle, const uschar * filename, const uschar * keystring,
+dbmnz_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 return dbmdb_find(handle, filename, keystring, length-1, result, errmsg,
   do_cache, opts);
@@ -138,12 +138,12 @@ return dbmdb_find(handle, filename, keystring, length-1, result, errmsg,
  */
 
 static int
-dbmjz_find(void * handle, const uschar * filename, const uschar * keystring,
+dbmjz_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 uschar *key_item, *key_buffer, *key_p;
-const uschar *key_elems = keystring;
+cuschar *key_elems = keystring;
 int buflen, bufleft, key_item_len, sep = 0;
 
 /* To a first approximation, the size of the lookup key needs to be about,
@@ -179,7 +179,7 @@ while ((key_item = string_nextinlist(&key_elems, &sep, key_p, bufleft)) != NULL)
     {
     /* The string_nextinlist() will stop at buffer size, but we should always
     have at least 1 character extra, so some assumption has failed. */
-    *errmsg = string_copy(US("Ran out of buffer space for joining elements"));
+    *errmsg = string_copy(cUS("Ran out of buffer space for joining elements"));
     return DEFER;
     }
   key_p += key_item_len;
@@ -187,7 +187,7 @@ while ((key_item = string_nextinlist(&key_elems, &sep, key_p, bufleft)) != NULL)
 
 if (key_p == key_buffer)
   {
-  *errmsg = string_copy(US("empty list key"));
+  *errmsg = string_copy(cUS("empty list key"));
   return FAIL;
   }
 
@@ -239,7 +239,7 @@ return g;
 
 
 lookup_info dbm_lookup_info = {
-  .name = US("dbm"),			/* lookup name */
+  .name = cUS("dbm"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dbmdb_open,			/* open function */
   .check = dbmdb_check,			/* check function */
@@ -251,7 +251,7 @@ lookup_info dbm_lookup_info = {
 };
 
 lookup_info dbmz_lookup_info = {
-  .name = US("dbmnz"),			/* lookup name */
+  .name = cUS("dbmnz"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dbmdb_open,			/* sic */     /* open function */
   .check = dbmdb_check,			/* sic */     /* check function */
@@ -263,7 +263,7 @@ lookup_info dbmz_lookup_info = {
 };
 
 lookup_info dbmjz_lookup_info = {
-  .name = US("dbmjz"),			/* lookup name */
+  .name = cUS("dbmjz"),			/* lookup name */
   .type = lookup_absfile,		/* uses absolute file name */
   .open = dbmdb_open,			/* sic */     /* open function */
   .check = dbmdb_check,			/* sic */     /* check function */

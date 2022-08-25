@@ -111,12 +111,12 @@ typedef struct sha2_context sha2_context;
 /* -------------------------------------------------------------------------- */
 /* Public key as (usually) fetched from DNS */
 typedef struct pdkim_pubkey {
-  const uschar * version;         /* v=  */
-  const uschar *granularity;      /* g=  */
+  cuschar * version;         /* v=  */
+  cuschar *granularity;      /* g=  */
 
-  const uschar * hashes;          /* h=  */
-  const uschar * keytype;         /* k=  */
-  const uschar * srvtype;         /* s=  */
+  cuschar * hashes;          /* h=  */
+  cuschar * keytype;         /* k=  */
+  cuschar * srvtype;         /* s=  */
   uschar *notes;                  /* n=  */
 
   blob  key;                      /* p=  */
@@ -288,7 +288,7 @@ typedef struct pdkim_ctx {
   pdkim_bodyhash *bodyhash;
 
   /* Callback for dns/txt query method (verification only) */
-  uschar * (*dns_txt_callback)(const uschar *);
+  uschar * (*dns_txt_callback)(cuschar *);
 
   /* Coder's little helpers */
   gstring   *cur_header;
@@ -302,7 +302,7 @@ typedef struct pdkim_ctx {
 /******************************************************************************/
 
 typedef struct {
-  const uschar * dkim_hashname;
+  cuschar * dkim_hashname;
   hashmethod	 exim_hashmethod;
 } pdkim_hashtype;
 extern const pdkim_hashtype pdkim_hashes[];
@@ -321,15 +321,15 @@ extern "C" {
 
 void	   pdkim_init         (void);
 
-void	   pdkim_init_context (pdkim_ctx *, BOOL, uschar * (*)(const uschar *));
+void	   pdkim_init_context (pdkim_ctx *, BOOL, uschar * (*)(cuschar *));
 
 DLLEXPORT
 pdkim_signature *pdkim_init_sign    (pdkim_ctx *,
 			       uschar *, uschar *, uschar *, uschar *,
-			       const uschar **);
+			       cuschar **);
 
 DLLEXPORT
-pdkim_ctx *pdkim_init_verify  (uschar * (*)(const uschar *), BOOL);
+pdkim_ctx *pdkim_init_verify  (uschar * (*)(cuschar *), BOOL);
 
 DLLEXPORT
 void       pdkim_set_optional (pdkim_signature *, char *, char *,int, int,
@@ -337,29 +337,29 @@ void       pdkim_set_optional (pdkim_signature *, char *, char *,int, int,
                                unsigned long,
                                unsigned long);
 
-int		pdkim_hashname_to_hashtype(const uschar *, unsigned);
-void		pdkim_cstring_to_canons(const uschar *, unsigned, int *, int *);
+int		pdkim_hashname_to_hashtype(cuschar *, unsigned);
+void		pdkim_cstring_to_canons(cuschar *, unsigned, int *, int *);
 pdkim_bodyhash *pdkim_set_bodyhash(pdkim_ctx *, int, int, long);
 pdkim_bodyhash *pdkim_set_sig_bodyhash(pdkim_ctx *, pdkim_signature *);
 
 DLLEXPORT
 int        pdkim_feed         (pdkim_ctx *, uschar *, int);
 DLLEXPORT
-int        pdkim_feed_finish  (pdkim_ctx *, pdkim_signature **, const uschar **);
+int        pdkim_feed_finish  (pdkim_ctx *, pdkim_signature **, cuschar **);
 
 DLLEXPORT
 void       pdkim_free_ctx     (pdkim_ctx *);
 
 
-const uschar *	pdkim_errstr(int);
+cuschar *	pdkim_errstr(int);
 
 extern uschar *		pdkim_encode_base64(blob *);
-extern void		pdkim_decode_base64(const uschar *, blob *);
-extern void		pdkim_hexprint(const uschar *, int);
-extern void		pdkim_quoteprint(const uschar *, int);
-extern pdkim_pubkey *	pdkim_parse_pubkey_record(const uschar *);
-extern uschar *		pdkim_relax_header_n(const uschar *, int, BOOL);
-extern uschar *		pdkim_relax_header(const uschar *, BOOL);
+extern void		pdkim_decode_base64(cuschar *, blob *);
+extern void		pdkim_hexprint(cuschar *, int);
+extern void		pdkim_quoteprint(cuschar *, int);
+extern pdkim_pubkey *	pdkim_parse_pubkey_record(cuschar *);
+extern uschar *		pdkim_relax_header_n(cuschar *, int, BOOL);
+extern uschar *		pdkim_relax_header(cuschar *, BOOL);
 extern uschar *		dkim_sig_to_a_tag(const pdkim_signature *);
 
 #ifdef __cplusplus

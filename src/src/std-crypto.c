@@ -1005,7 +1005,7 @@ return EXIM_DH_PRIME_DEFAULT;
 /* Return PEM string for given name */
 
 const char *
-std_dh_prime_named(const uschar * name)
+std_dh_prime_named(cuschar * name)
 {
 for (int first = 0, last = dh_constants_count; last > first; )
   {

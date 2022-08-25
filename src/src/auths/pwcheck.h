@@ -21,7 +21,7 @@ daemon (whence its name) and the newer saslauthd daemon. */
 /* Cyrus functions for doing the business. */
 
 extern int pwcheck_verify_password(const char *, const char *, const char **);
-extern int saslauthd_verify_password(const uschar *, const uschar *,
-           const uschar *, const uschar *, const uschar **);
+extern int saslauthd_verify_password(cuschar *, cuschar *,
+           cuschar *, cuschar *, cuschar **);
 
 /* End of pwcheck.h */

@@ -24,7 +24,7 @@ extern int dcc_ok;
 *************************************************/
 
 static int     data_fd = -1;
-static uschar *spool_name = US("");
+static uschar *spool_name = cUS("");
 
 enum CH_STATE {LF_SEEN, MID_LINE, CR_SEEN};
 
@@ -59,7 +59,7 @@ if (rc <= 0)
     fprintf(stderr, "exim: timed out while reading - message abandoned\n");
     log_write(L_lost_incoming_connection,
 	      LOG_MAIN, "timed out while reading local message");
-    receive_bomb_out(US("data-timeout"), NULL);   /* Does not return */
+    receive_bomb_out(cUS("data-timeout"), NULL);   /* Does not return */
     }
   if (had_data_sigint)
     {
@@ -70,7 +70,7 @@ if (rc <= 0)
       log_write(0, LOG_MAIN, "%s received while reading local message",
 	had_data_sigint == SIGTERM ? "SIGTERM" : "SIGINT");
       }
-    receive_bomb_out(US("signal-exit"), NULL);    /* Does not return */
+    receive_bomb_out(cUS("signal-exit"), NULL);    /* Does not return */
     }
   return FALSE;
   }
@@ -189,7 +189,7 @@ uschar buffer[1024];
 if (isspool)
   {
   path = spool_directory;
-  name = US("spool");
+  name = cUS("spool");
   }
 
 /* Need to cut down the log file path to the directory, and to ignore any
@@ -198,13 +198,13 @@ appearance of "syslog" in it. */
 else
   {
   int sep = ':';              /* Not variable - outside scripts use */
-  const uschar *p = log_file_path;
-  name = US("log");
+  cuschar *p = log_file_path;
+  name = cUS("log");
 
   /* An empty log_file_path means "use the default". This is the same as an
   empty item in a list. */
 
-  if (*p == 0) p = US(":");
+  if (*p == 0) p = cUS(":");
   /* should never be a tainted list */
   while ((path = string_nextinlist(&p, &sep, buffer, sizeof(buffer))))
     if (Ustrcmp(path, "syslog") != 0)
@@ -246,7 +246,7 @@ if (STATVFS(CS(path), &statbuf) != 0)
     {
     log_write(0, LOG_MAIN|LOG_PANIC, "cannot accept message: failed to stat "
       "%s directory %s: %s", name, path, strerror(errno));
-    smtp_closedown(US("spool or log directory problem"));
+    smtp_closedown(cUS("spool or log directory problem"));
     exim_exit(EXIT_FAILURE);
     }
 
@@ -396,7 +396,7 @@ if (!already_bombing_out)
     {
     if (smtp_batched_input)
       moan_smtp_batch(NULL, "421 %s - message abandoned", msg);  /* No return */
-    smtp_notquit_exit(reason, US("421"), US("%s %s - closing connection."),
+    smtp_notquit_exit(reason, cUS("421"), cUS("%s %s - closing connection."),
       smtp_active_hostname, msg);
     }
   }
@@ -796,7 +796,7 @@ were saved up while testing for an ending dot. */
 
 if (ch_state != 1)
   {
-  static uschar *ends[] = { US("\n"), NULL, US("\n"), US(".\n"), US(".\n") };
+  static uschar *ends[] = { cUS("\n"), NULL, cUS("\n"), cUS(".\n"), cUS(".\n") };
   if (fputs(CS(ends[ch_state]), fout) == EOF) return END_WERROR;
   message_size += Ustrlen(ends[ch_state]);
   body_linecount++;
@@ -1159,8 +1159,8 @@ handle_lost_connection(uschar *s)
 {
 log_write(L_lost_incoming_connection | L_smtp_connection, LOG_MAIN,
   "%s lost while reading message data%s", smtp_get_connection_info(), s);
-smtp_notquit_exit(US("connection-lost"), NULL, NULL);
-return US("421 Lost incoming connection");
+smtp_notquit_exit(cUS("connection-lost"), NULL, NULL);
+return cUS("421 Lost incoming connection");
 }
 
 
@@ -1194,7 +1194,7 @@ if (error_handling == ERRORS_SENDER)
   error_block eblock;
   eblock.next = NULL;
   eblock.text1 = text1;
-  eblock.text2 = US("");
+  eblock.text2 = cUS("");
   if (!moan_to_sender(errcode, &eblock, hptr, f, FALSE))
     error_rc = EXIT_FAILURE;
   }
@@ -1253,7 +1253,7 @@ if (acl_removed_headers)
 
   for (header_line * h = header_list; h; h = h->next) if (h->type != htype_old)
     {
-    const uschar * list = acl_removed_headers;
+    cuschar * list = acl_removed_headers;
     int sep = ':';         /* This is specified as a colon-separated list */
     uschar *s;
 
@@ -1287,10 +1287,10 @@ for (header_line * h = acl_added_headers, * next; h; h = next)
       if (!last_received)
 	{
 	last_received = header_list;
-	while (!header_testname(last_received, US("Received"), 8, FALSE))
+	while (!header_testname(last_received, cUS("Received"), 8, FALSE))
 	  last_received = last_received->next;
 	while (last_received->next &&
-	       header_testname(last_received->next, US("Received"), 8, FALSE))
+	       header_testname(last_received->next, cUS("Received"), 8, FALSE))
 	  last_received = last_received->next;
 	}
       h->next = last_received->next;
@@ -1302,8 +1302,8 @@ for (header_line * h = acl_added_headers, * next; h; h = next)
       /* add header before any header which is NOT Received: or Resent- */
       last_received = header_list;
       while ( last_received->next &&
-	      ( (header_testname(last_received->next, US("Received"), 8, FALSE)) ||
-		(header_testname_incomplete(last_received->next, US("Resent-"), 7, FALSE)) ) )
+	      ( (header_testname(last_received->next, cUS("Received"), 8, FALSE)) ||
+		(header_testname_incomplete(last_received->next, cUS("Resent-"), 7, FALSE)) ) )
 		last_received = last_received->next;
       /* last_received now points to the last Received: or Resent-* header
 	 in an uninterrupted chain of those header types (seen from the beginning
@@ -1359,31 +1359,31 @@ add_host_info_for_log(gstring * g)
 if (sender_fullhost)
   {
   if (LOGGING(dnssec) && sender_host_dnssec)	/*XXX sender_helo_dnssec? */
-    g = string_catn(g, US(" DS"), 3);
-  g = string_append(g, 2, US(" H="), sender_fullhost);
+    g = string_catn(g, cUS(" DS"), 3);
+  g = string_append(g, 2, cUS(" H="), sender_fullhost);
   if (LOGGING(incoming_interface) && interface_address)
     g = string_fmt_append(g, " I=[%s]:%d", interface_address, interface_port);
   }
 if (f.tcp_in_fastopen && !f.tcp_in_fastopen_logged)
   {
-  g = string_catn(g, US(" TFO*"), f.tcp_in_fastopen_data ? 5 : 4);
+  g = string_catn(g, cUS(" TFO*"), f.tcp_in_fastopen_data ? 5 : 4);
   f.tcp_in_fastopen_logged = TRUE;
   }
 if (sender_ident)
-  g = string_append(g, 2, US(" U="), sender_ident);
+  g = string_append(g, 2, cUS(" U="), sender_ident);
 if (received_protocol)
-  g = string_append(g, 2, US(" P="), received_protocol);
+  g = string_append(g, 2, cUS(" P="), received_protocol);
 if (LOGGING(pipelining) && f.smtp_in_pipelining_advertised)
   {
-  g = string_catn(g, US(" L"), 2);
+  g = string_catn(g, cUS(" L"), 2);
 #ifndef DISABLE_PIPE_CONNECT
   if (f.smtp_in_early_pipe_used)
-    g = string_catn(g, US("*"), 1);
+    g = string_catn(g, cUS("*"), 1);
   else if (f.smtp_in_early_pipe_advertised)
-    g = string_catn(g, US("."), 1);
+    g = string_catn(g, cUS("."), 1);
 #endif
   if (!f.smtp_in_pipelining_used)
-    g = string_catn(g, US("-"), 1);
+    g = string_catn(g, cUS("-"), 1);
   }
 return g;
 }
@@ -1425,7 +1425,7 @@ int rc = OK;
 for (header_line * my_headerlist = header_list; my_headerlist;
      my_headerlist = my_headerlist->next)
   if (  my_headerlist->type != '*'			/* skip deleted headers */
-     && strncmpic(my_headerlist->text, US("Content-Type:"), 13) == 0
+     && strncmpic(my_headerlist->text, cUS("Content-Type:"), 13) == 0
      )
     {
     DEBUG(D_receive) debug_printf("Found Content-Type: header - executing acl_smtp_mime.\n");
@@ -1447,9 +1447,9 @@ if (!(mbox_file = spool_mbox(&mbox_size, NULL, &mbox_filename)))
 #ifdef EXPERIMENTAL_DCC
   dcc_ok = 0;
 #endif
-  smtp_respond(US("451"), 3, TRUE, US("temporary local problem"));
+  smtp_respond(cUS("451"), 3, TRUE, cUS("temporary local problem"));
   message_id[0] = 0;            /* Indicate no message accepted */
-  *smtp_reply_ptr = US("");       /* Indicate reply already sent */
+  *smtp_reply_ptr = cUS("");       /* Indicate reply already sent */
   return FALSE;                 /* Indicate skip to end of receive function */
   }
 
@@ -1482,7 +1482,7 @@ if (rc == OK)
   DIR * tempdir;
 
   for (tempdir = exim_opendir(scandir); entry = readdir(tempdir); )
-    if (strncmpic(US(entry->d_name), US("__rfc822_"), 9) == 0)
+    if (strncmpic(US(entry->d_name), cUS("__rfc822_"), 9) == 0)
       {
       rfc822_file_path = string_sprintf("%s/%s", scandir, entry->d_name);
       DEBUG(D_receive)
@@ -1508,17 +1508,17 @@ if (rc == OK)
   }
 
 END_MIME_ACL:
-add_acl_headers(ACL_WHERE_MIME, US("MIME"));
+add_acl_headers(ACL_WHERE_MIME, cUS("MIME"));
 if (rc == DISCARD)
   {
   recipients_count = 0;
-  *blackholed_by_ptr = US("MIME ACL");
-  cancel_cutthrough_connection(TRUE, US("mime acl discard"));
+  *blackholed_by_ptr = cUS("MIME ACL");
+  cancel_cutthrough_connection(TRUE, cUS("mime acl discard"));
   }
 else if (rc != OK)
   {
   Uunlink(spool_name);
-  cancel_cutthrough_connection(TRUE, US("mime acl not ok"));
+  cancel_cutthrough_connection(TRUE, cUS("mime acl not ok"));
   unspool_mbox();
 #ifdef EXPERIMENTAL_DCC
   dcc_ok = 0;
@@ -1527,7 +1527,7 @@ else if (rc != OK)
     {
     if (smtp_handle_acl_fail(ACL_WHERE_MIME, rc, user_msg, log_msg) != 0)
       *smtp_yield_ptr = FALSE;  /* No more messages after dropped connection */
-    *smtp_reply_ptr = US("");     /* Indicate reply already sent */
+    *smtp_reply_ptr = cUS("");     /* Indicate reply already sent */
     }
   message_id[0] = 0;            /* Indicate no message accepted */
   return FALSE;                 /* Cause skip to end of receive function */
@@ -1544,7 +1544,7 @@ void
 received_header_gen(void)
 {
 uschar * received;
-uschar * timestamp = expand_string(US("${tod_full}"));
+uschar * timestamp = expand_string(cUS("${tod_full}"));
 header_line * received_header= header_list;
 
 if (recipients_count == 1) received_for = recipients_list[0].address;
@@ -1696,9 +1696,9 @@ BOOL smtp_yield = TRUE;
 BOOL yield = FALSE;
 
 BOOL resents_exist = FALSE;
-uschar *resent_prefix = US("");
+uschar *resent_prefix = cUS("");
 uschar *blackholed_by = NULL;
-uschar *blackhole_log_msg = US("");
+uschar *blackhole_log_msg = cUS("");
 enum {NOT_TRIED, TMP_REJ, PERM_REJ, ACCEPTED} cutthrough_done = NOT_TRIED;
 
 flock_t lock_data;
@@ -1754,7 +1754,7 @@ search_tidyup();
 cutthrough delivery with the no-spool option.  It shouldn't be possible
 to set up the combination, but just in case kill any ongoing connection. */
 if (extract_recip || !smtp_input)
-  cancel_cutthrough_connection(TRUE, US("not smtp input"));
+  cancel_cutthrough_connection(TRUE, cUS("not smtp input"));
 
 /* Initialize the chain of headers by setting up a place-holder for Received:
 header. Temporarily mark it as "old", i.e. not to be used. We keep header_last
@@ -1780,7 +1780,7 @@ yet, initialize the size and warning count, and deal with no size limit. */
 message_id[0] = 0;
 spool_data_file = NULL;
 data_fd = -1;
-spool_name = US("");
+spool_name = cUS("");
 message_size = 0;
 warning_count = 0;
 received_count = 1;            /* For the one we will add */
@@ -1892,7 +1892,7 @@ for (;;)
   if (smtp_input /* && !smtp_batched_input */)
     if (ch == EOF)
       {
-      smtp_reply = handle_lost_connection(US(" (header)"));
+      smtp_reply = handle_lost_connection(cUS(" (header)"));
       smtp_yield = FALSE;
       goto TIDYUP;                       /* Skip to end of function */
       }
@@ -2040,7 +2040,7 @@ OVERSIZE:
 
     if (smtp_input)
       {
-      smtp_reply = US("552 Message header is ridiculously long");
+      smtp_reply = cUS("552 Message header is ridiculously long");
       receive_swallow_smtp();
       goto TIDYUP;                             /* Skip to end of function */
       }
@@ -2049,7 +2049,7 @@ OVERSIZE:
       {
       give_local_error(ERRMESS_VLONGHEADER,
         string_sprintf("message header longer than %d characters received: "
-         "message not accepted", header_maxsize), US(""), error_rc, stdin,
+         "message not accepted", header_maxsize), cUS(""), error_rc, stdin,
            header_list->next);
       /* Does not return */
       }
@@ -2188,7 +2188,7 @@ OVERSIZE:
             if (f.trusted_caller || filter_test != FTEST_NONE)
               {
               authenticated_sender = NULL;
-              originator_name = US("");
+              originator_name = cUS("");
               f.sender_local = FALSE;
               }
 
@@ -2266,7 +2266,7 @@ OVERSIZE:
 
       if (smtp_input)
         {
-        smtp_reply = US("552 A message header line is too long");
+        smtp_reply = cUS("552 A message header line is too long");
         receive_swallow_smtp();
         goto TIDYUP;                             /* Skip to end of function */
         }
@@ -2274,17 +2274,17 @@ OVERSIZE:
       else
         give_local_error(ERRMESS_VLONGHDRLINE,
           string_sprintf("message header line longer than %d characters "
-           "received: message not accepted", header_line_maxsize), US(""),
+           "received: message not accepted", header_line_maxsize), cUS(""),
            error_rc, stdin, header_list->next);
         /* Does not return */
       }
 
     /* Note if any resent- fields exist. */
 
-    if (!resents_exist && strncmpic(next->text, US("resent-"), 7) == 0)
+    if (!resents_exist && strncmpic(next->text, cUS("resent-"), 7) == 0)
       {
       resents_exist = TRUE;
-      resent_prefix = US("Resent-");
+      resent_prefix = cUS("Resent-");
       }
     }
 
@@ -2295,11 +2295,11 @@ OVERSIZE:
     log_write(L_size_reject, LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
       "Non-CRLF-terminated header, under CHUNKING: message abandoned",
       sender_address,
-      sender_fullhost ? " H=" : "", sender_fullhost ? sender_fullhost : US(""),
-      sender_ident ? " U=" : "",    sender_ident ? sender_ident : US(""));
+      sender_fullhost ? " H=" : "", sender_fullhost ? sender_fullhost : cUS(""),
+      sender_ident ? " U=" : "",    sender_ident ? sender_ident : cUS(""));
     smtp_printf("552 Message header not CRLF terminated\r\n", FALSE);
     bdat_flush_data();
-    smtp_reply = US("");
+    smtp_reply = cUS("");
     goto TIDYUP;                             /* Skip to end of function */
     }
 
@@ -2348,13 +2348,13 @@ In CHUNKING mode, a protocol error makes us give up on the message. */
 if (smtp_input)
   if ((receive_feof)())
     {
-    smtp_reply = handle_lost_connection(US(" (after header)"));
+    smtp_reply = handle_lost_connection(cUS(" (after header)"));
     smtp_yield = FALSE;
     goto TIDYUP;			/* Skip to end of function */
     }
   else if (message_ended == END_PROTOCOL)
     {
-    smtp_reply = US("");			/* no reply needed */
+    smtp_reply = cUS("");			/* no reply needed */
     goto TIDYUP;
     }
 
@@ -2370,7 +2370,7 @@ processing; some are dealt with here. */
 
 for (header_line * h = header_list->next; h; h = h->next)
   {
-  BOOL is_resent = strncmpic(h->text, US("resent-"), 7) == 0;
+  BOOL is_resent = strncmpic(h->text, cUS("resent-"), 7) == 0;
   if (is_resent) contains_resent_headers = TRUE;
 
   switch (header_checkname(h, is_resent))
@@ -2421,7 +2421,7 @@ for (header_line * h = header_list->next; h; h = h->next)
 	  if (Ustrlen(originator_login) == len &&
 	      strncmpic(s, originator_login, len) == 0)
 	    {
-	    uschar *name = is_resent? US("Resent-From") : US("From");
+	    uschar *name = is_resent? cUS("Resent-From") : cUS("From");
 	    header_add(htype_from, "%s: %s <%s@%s>\n", name, originator_name,
 	      originator_login, qualify_domain_sender);
 	    from_header = header_last;
@@ -2572,7 +2572,7 @@ if (extract_recip)
     {
     while (recipients_count-- > 0)
       {
-      const uschar * s = rewrite_address(recipients_list[recipients_count].address,
+      cuschar * s = rewrite_address(recipients_list[recipients_count].address,
         TRUE, TRUE, global_rewrite_rules, rewrite_existflags);
       tree_add_nonrecipient(s);
       }
@@ -2585,7 +2585,7 @@ if (extract_recip)
   for (header_line * h = header_list->next; h; h = h->next)
     {
     if ((h->type == htype_to || h->type == htype_cc || h->type == htype_bcc) &&
-        (!contains_resent_headers || strncmpic(h->text, US("resent-"), 7) == 0))
+        (!contains_resent_headers || strncmpic(h->text, cUS("resent-"), 7) == 0))
       {
       uschar *s = Ustrchr(h->text, ':') + 1;
       while (isspace(*s)) s++;
@@ -2601,8 +2601,8 @@ if (extract_recip)
         /* Check on maximum */
 
         if (recipients_max > 0 && ++rcount > recipients_max)
-          give_local_error(ERRMESS_TOOMANYRECIP, US("too many recipients"),
-            US("message rejected: "), error_rc, stdin, NULL);
+          give_local_error(ERRMESS_TOOMANYRECIP, cUS("too many recipients"),
+            cUS("message rejected: "), error_rc, stdin, NULL);
           /* Does not return */
 
         /* Make a copy of the address, and remove any internal newlines. These
@@ -2774,7 +2774,7 @@ any illegal characters therein. */
 if (  !msgid_header
    && ((!sender_host_address && !f.suppress_local_fixups) || f.submission_mode))
   {
-  uschar *id_text = US("");
+  uschar *id_text = cUS("");
   uschar *id_domain = primary_hostname;
   header_line * h;
 
@@ -2871,7 +2871,7 @@ From:) but we still want to ensure a valid Sender: if it is required. */
 if (  !from_header
    && ((!sender_host_address && !f.suppress_local_fixups) || f.submission_mode))
   {
-  const uschar * oname = US("");
+  cuschar * oname = cUS("");
 
   /* Use the originator_name if this is a locally submitted message and the
   caller is not trusted. For trusted callers, use it only if -F was used to
@@ -2898,7 +2898,7 @@ if (  !from_header
 
     fromstart = string_sprintf("%sFrom: %s%s",
       resent_prefix, oname, *oname ? " <" : "");
-    fromend = *oname ? US(">") : US("");
+    fromend = *oname ? cUS(">") : cUS("");
 
     if (f.sender_local || f.local_error_message)
       header_add(htype_from, "%s%s@%s%s\n", fromstart,
@@ -3117,7 +3117,7 @@ inbound is, but inbound chunking ought to be ok with outbound plain.
 Could we do onward CHUNKING given inbound CHUNKING?
 */
 if (chunking_state > CHUNKING_OFFERED)
-  cancel_cutthrough_connection(FALSE, US("chunking active"));
+  cancel_cutthrough_connection(FALSE, cUS("chunking active"));
 
 /* Cutthrough delivery:
 We have to create the Received header now rather than at the end of reception,
@@ -3128,19 +3128,19 @@ if (cutthrough.cctx.sock >= 0 && cutthrough.delivery)
   {
   if (received_count > received_headers_max)
     {
-    cancel_cutthrough_connection(TRUE, US("too many headers"));
+    cancel_cutthrough_connection(TRUE, cUS("too many headers"));
     if (smtp_input) receive_swallow_smtp();  /* Swallow incoming SMTP */
     log_write(0, LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
       "Too many \"Received\" headers",
       sender_address,
-      sender_fullhost ? "H=" : "", sender_fullhost ? sender_fullhost : US(""),
-      sender_ident ? "U=" : "", sender_ident ? sender_ident : US(""));
+      sender_fullhost ? "H=" : "", sender_fullhost ? sender_fullhost : cUS(""),
+      sender_ident ? "U=" : "", sender_ident ? sender_ident : cUS(""));
     message_id[0] = 0;                       /* Indicate no message accepted */
-    smtp_reply = US("550 Too many \"Received\" headers - suspected mail loop");
+    smtp_reply = cUS("550 Too many \"Received\" headers - suspected mail loop");
     goto TIDYUP;                             /* Skip to end of function */
     }
   received_header_gen();
-  add_acl_headers(ACL_WHERE_RCPT, US("MAIL or RCPT"));
+  add_acl_headers(ACL_WHERE_RCPT, cUS("MAIL or RCPT"));
   (void) cutthrough_headers_send();
   }
 
@@ -3149,7 +3149,7 @@ if (cutthrough.cctx.sock >= 0 && cutthrough.delivery)
 to access it both via a file descriptor and a stream. Try to make the
 directory if it isn't there. */
 
-spool_name = spool_fname(US("input"), message_subdir, message_id, US("-D"));
+spool_name = spool_fname(cUS("input"), message_subdir, message_id, cUS("-D"));
 DEBUG(D_receive) debug_printf("Data file name: %s\n", spool_name);
 
 if ((data_fd = Uopen(spool_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE)) < 0)
@@ -3157,7 +3157,7 @@ if ((data_fd = Uopen(spool_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE)) < 0)
   if (errno == ENOENT)
     {
     (void) directory_make(spool_directory,
-		        spool_sname(US("input"), message_subdir),
+		        spool_sname(cUS("input"), message_subdir),
 			INPUT_DIRECTORY_MODE, TRUE);
     data_fd = Uopen(spool_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE);
     }
@@ -3235,9 +3235,9 @@ if (!ferror(spool_data_file) && !(receive_feof)() && message_ended != END_DOT)
       if (smtp_input)
 	{
 	Uunlink(spool_name);                 /* Lose data file when closed */
-	cancel_cutthrough_connection(TRUE, US("sender closed connection"));
+	cancel_cutthrough_connection(TRUE, cUS("sender closed connection"));
 	message_id[0] = 0;                   /* Indicate no message accepted */
-	smtp_reply = handle_lost_connection(US(""));
+	smtp_reply = handle_lost_connection(cUS(""));
 	smtp_yield = FALSE;
 	goto TIDYUP;                         /* Skip to end of function */
 	}
@@ -3248,22 +3248,22 @@ if (!ferror(spool_data_file) && !(receive_feof)() && message_ended != END_DOT)
 
     case END_SIZE:
       Uunlink(spool_name);                /* Lose the data file when closed */
-      cancel_cutthrough_connection(TRUE, US("mail too big"));
+      cancel_cutthrough_connection(TRUE, cUS("mail too big"));
       if (smtp_input) receive_swallow_smtp();  /* Swallow incoming SMTP */
 
       log_write(L_size_reject, LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
 	"message too big: read=%d max=%d",
 	sender_address,
 	sender_fullhost ? " H=" : "",
-	sender_fullhost ? sender_fullhost : US(""),
+	sender_fullhost ? sender_fullhost : cUS(""),
 	sender_ident ? " U=" : "",
-	sender_ident ? sender_ident : US(""),
+	sender_ident ? sender_ident : cUS(""),
 	message_size,
 	thismessage_size_limit);
 
       if (smtp_input)
 	{
-	smtp_reply = US("552 Message size exceeds maximum permitted");
+	smtp_reply = cUS("552 Message size exceeds maximum permitted");
 	message_id[0] = 0;               /* Indicate no message accepted */
 	goto TIDYUP;                     /* Skip to end of function */
 	}
@@ -3272,7 +3272,7 @@ if (!ferror(spool_data_file) && !(receive_feof)() && message_ended != END_DOT)
 	fseek(spool_data_file, (long int)SPOOL_DATA_START_OFFSET, SEEK_SET);
 	give_local_error(ERRMESS_TOOBIG,
 	  string_sprintf("message too big (max=%d)", thismessage_size_limit),
-	  US("message rejected: "), error_rc, spool_data_file, header_list);
+	  cUS("message rejected: "), error_rc, spool_data_file, header_list);
 	/* Does not return */
 	}
       break;
@@ -3281,8 +3281,8 @@ if (!ferror(spool_data_file) && !(receive_feof)() && message_ended != END_DOT)
 
     case END_PROTOCOL:
       Uunlink(spool_name);		/* Lose the data file when closed */
-      cancel_cutthrough_connection(TRUE, US("sender protocol error"));
-      smtp_reply = US("");		/* Response already sent */
+      cancel_cutthrough_connection(TRUE, cUS("sender protocol error"));
+      smtp_reply = cUS("");		/* Response already sent */
       message_id[0] = 0;		/* Indicate no message accepted */
       goto TIDYUP;			/* Skip to end of function */
     }
@@ -3314,15 +3314,15 @@ if (fflush(spool_data_file) == EOF || ferror(spool_data_file) ||
 
   log_write(0, LOG_MAIN, "Message abandoned: %s", msg);
   Uunlink(spool_name);                /* Lose the data file */
-  cancel_cutthrough_connection(TRUE, US("error writing spoolfile"));
+  cancel_cutthrough_connection(TRUE, cUS("error writing spoolfile"));
 
   if (smtp_input)
     {
     if (input_error)
-      smtp_reply = US("451 Error while reading input data");
+      smtp_reply = cUS("451 Error while reading input data");
     else
       {
-      smtp_reply = US("451 Error while writing spool file");
+      smtp_reply = cUS("451 Error while writing spool file");
       receive_swallow_smtp();
       }
     message_id[0] = 0;               /* Indicate no message accepted */
@@ -3332,7 +3332,7 @@ if (fflush(spool_data_file) == EOF || ferror(spool_data_file) ||
   else
     {
     fseek(spool_data_file, (long int)SPOOL_DATA_START_OFFSET, SEEK_SET);
-    give_local_error(ERRMESS_IOERR, msg, US(""), error_rc, spool_data_file,
+    give_local_error(ERRMESS_IOERR, msg, cUS(""), error_rc, spool_data_file,
       header_list);
     /* Does not return */
     }
@@ -3444,7 +3444,7 @@ if (!received_header->text)	/* Non-cutthrough case */
   /* If an ACL from any RCPT commands set up any warning headers to add, do so
   now, before running the DATA ACL. */
 
-  add_acl_headers(ACL_WHERE_RCPT, US("MAIL or RCPT"));
+  add_acl_headers(ACL_WHERE_RCPT, cUS("MAIL or RCPT"));
   }
 else
   message_body_size = (fstat(data_fd, &statbuf) == 0)?
@@ -3463,7 +3463,7 @@ user_msg = NULL;
 f.enable_dollar_recipients = TRUE;
 
 if (recipients_count == 0)
-  blackholed_by = f.recipients_discarded ? US("MAIL ACL") : US("RCPT ACL");
+  blackholed_by = f.recipients_discarded ? cUS("MAIL ACL") : cUS("RCPT ACL");
 
 else
   {
@@ -3485,7 +3485,7 @@ else
           expand_string(dkim_verify_signers);
 	gstring * results = NULL;
 	int signer_sep = 0;
-	const uschar * ptr;
+	cuschar * ptr;
 	uschar * item;
 	gstring * seen_items = NULL;
 	int old_pool = store_pool;
@@ -3509,7 +3509,7 @@ else
 	  if (seen_items)
 	    {
 	    uschar * seen_item;
-	    const uschar * seen_items_list = string_from_gstring(seen_items);
+	    cuschar * seen_items_list = string_from_gstring(seen_items);
 	    int seen_sep = ':';
 	    BOOL seen_this_item = FALSE;
 
@@ -3529,7 +3529,7 @@ else
 	      continue;
 	      }
 
-	    seen_items = string_catn(seen_items, US(":"), 1);
+	    seen_items = string_catn(seen_items, cUS(":"), 1);
 	    }
 	  seen_items = string_cat(seen_items, item);
 
@@ -3539,17 +3539,17 @@ else
 	    DEBUG(D_receive)
 	      debug_printf("acl_smtp_dkim: acl_check returned %d on %s, "
 		"skipping remaining items\n", rc, item);
-	    cancel_cutthrough_connection(TRUE, US("dkim acl not ok"));
+	    cancel_cutthrough_connection(TRUE, cUS("dkim acl not ok"));
 	    break;
 	    }
 	  }
 	dkim_verify_status = string_from_gstring(results);
 	store_pool = old_pool;
-	add_acl_headers(ACL_WHERE_DKIM, US("DKIM"));
+	add_acl_headers(ACL_WHERE_DKIM, cUS("DKIM"));
 	if (rc == DISCARD)
 	  {
 	  recipients_count = 0;
-	  blackholed_by = US("DKIM ACL");
+	  blackholed_by = cUS("DKIM ACL");
 	  if (log_msg)
 	    blackhole_log_msg = string_sprintf(": %s", log_msg);
 	  }
@@ -3558,7 +3558,7 @@ else
 	  Uunlink(spool_name);
 	  if (smtp_handle_acl_fail(ACL_WHERE_DKIM, rc, user_msg, log_msg) != 0)
 	    smtp_yield = FALSE;    /* No more messages after dropped connection */
-	  smtp_reply = US("");       /* Indicate reply already sent */
+	  smtp_reply = cUS("");       /* Indicate reply already sent */
 	  message_id[0] = 0;       /* Indicate no message accepted */
 	  goto TIDYUP;             /* Skip to end of function */
 	  }
@@ -3591,7 +3591,7 @@ else
       for (unsigned int c = 0; recipients_count > c; c++)
         {
 	uschar * addr= recipients_list[c].address;
-	uschar * msg= US("PRDR R=<%s> %s");
+	uschar * msg= cUS("PRDR R=<%s> %s");
 	uschar * code;
         DEBUG(D_receive)
           debug_printf("PRDR processing recipient %s (%d of %d)\n",
@@ -3606,9 +3606,9 @@ else
 
         switch (rc)
           {
-          case OK: case DISCARD: code = US("250"); break;
-          case DEFER:            code = US("450"); break;
-          default:               code = US("550"); break;
+          case OK: case DISCARD: code = cUS("250"); break;
+          case DEFER:            code = cUS("450"); break;
+          default:               code = cUS("550"); break;
           }
 	if (user_msg != NULL)
 	  smtp_user_msg(code, user_msg);
@@ -3633,13 +3633,13 @@ else
         }
       /* Set up final message, used if data acl gives OK */
       smtp_reply = string_sprintf("%s id=%s message %s",
-		       all_fail == FAIL ? US("550") : US("250"),
+		       all_fail == FAIL ? cUS("550") : cUS("250"),
 		       message_id,
                        all_fail == FAIL
-		         ? US("rejected for all recipients")
+		         ? cUS("rejected for all recipients")
 			 : all_pass == OK
-			   ? US("accepted")
-			   : US("accepted for some recipients"));
+			   ? cUS("accepted")
+			   : cUS("accepted for some recipients"));
       if (recipients_count == 0)
         {
         message_id[0] = 0;       /* Indicate no message accepted */
@@ -3656,19 +3656,19 @@ else
     if (acl_smtp_data != NULL && recipients_count > 0)
       {
       rc = acl_check(ACL_WHERE_DATA, NULL, acl_smtp_data, &user_msg, &log_msg);
-      add_acl_headers(ACL_WHERE_DATA, US("DATA"));
+      add_acl_headers(ACL_WHERE_DATA, cUS("DATA"));
       if (rc == DISCARD)
         {
         recipients_count = 0;
-        blackholed_by = US("DATA ACL");
+        blackholed_by = cUS("DATA ACL");
         if (log_msg)
           blackhole_log_msg = string_sprintf(": %s", log_msg);
-	cancel_cutthrough_connection(TRUE, US("data acl discard"));
+	cancel_cutthrough_connection(TRUE, cUS("data acl discard"));
         }
       else if (rc != OK)
         {
         Uunlink(spool_name);
-	cancel_cutthrough_connection(TRUE, US("data acl not ok"));
+	cancel_cutthrough_connection(TRUE, cUS("data acl not ok"));
 #ifdef WITH_CONTENT_SCAN
         unspool_mbox();
 #endif
@@ -3677,7 +3677,7 @@ else
 #endif
         if (smtp_handle_acl_fail(ACL_WHERE_DATA, rc, user_msg, log_msg) != 0)
           smtp_yield = FALSE;    /* No more messages after dropped connection */
-        smtp_reply = US("");       /* Indicate reply already sent */
+        smtp_reply = cUS("");       /* Indicate reply already sent */
         message_id[0] = 0;       /* Indicate no message accepted */
         goto TIDYUP;             /* Skip to end of function */
         }
@@ -3706,7 +3706,7 @@ else
       if (rc == DISCARD)
         {
         recipients_count = 0;
-        blackholed_by = US("non-SMTP ACL");
+        blackholed_by = cUS("non-SMTP ACL");
         if (log_msg)
           blackhole_log_msg = string_sprintf(": %s", log_msg);
         }
@@ -3726,7 +3726,7 @@ else
           log_write(0, log_reject_target, "F=<%s> rejected by non-SMTP ACL: %s",
             sender_address, log_msg);
 
-        if (!user_msg) user_msg = US("local configuration problem");
+        if (!user_msg) user_msg = cUS("local configuration problem");
         if (smtp_batched_input)
           moan_smtp_batch(NULL, "%d %s", 550, user_msg);
           /* Does not return */
@@ -3734,19 +3734,19 @@ else
           {
           fseek(spool_data_file, (long int)SPOOL_DATA_START_OFFSET, SEEK_SET);
           give_local_error(ERRMESS_LOCAL_ACL, user_msg,
-            US("message rejected by non-SMTP ACL: "), error_rc, spool_data_file,
+            cUS("message rejected by non-SMTP ACL: "), error_rc, spool_data_file,
               header_list);
           /* Does not return */
           }
         }
-      add_acl_headers(ACL_WHERE_NOTSMTP, US("non-SMTP"));
+      add_acl_headers(ACL_WHERE_NOTSMTP, cUS("non-SMTP"));
       }
     }
 
   /* The applicable ACLs have been run */
 
-  if (f.deliver_freeze) frozen_by = US("ACL");     /* for later logging */
-  if (f.queue_only_policy) queued_by = US("ACL");
+  if (f.deliver_freeze) frozen_by = cUS("ACL");     /* for later logging */
+  if (f.queue_only_policy) queued_by = cUS("ACL");
   }
 
 #ifdef WITH_CONTENT_SCAN
@@ -3806,14 +3806,14 @@ else
     log_write(0, LOG_MAIN|LOG_REJECT, "local_scan() function crashed with "
       "signal %d - message temporarily rejected (size %d)",
       had_local_scan_crash, message_size);
-    receive_bomb_out(US("local-scan-error"), US("local verification problem"));
+    receive_bomb_out(cUS("local-scan-error"), cUS("local verification problem"));
     /* Does not return */
     }
   if (had_local_scan_timeout)
     {
     log_write(0, LOG_MAIN|LOG_REJECT, "local_scan() function timed out - "
       "message temporarily rejected (size %d)", message_size);
-    receive_bomb_out(US("local-scan-timeout"), US("local verification problem"));
+    receive_bomb_out(cUS("local-scan-timeout"), cUS("local verification problem"));
     /* Does not return */
     }
   }
@@ -3834,7 +3834,7 @@ if (rc == LOCAL_SCAN_ACCEPT_FREEZE)
     {
     f.deliver_freeze = TRUE;
     deliver_frozen_at = time(NULL);
-    frozen_by = US("local_scan()");
+    frozen_by = cUS("local_scan()");
     }
   rc = LOCAL_SCAN_ACCEPT;
   }
@@ -3843,7 +3843,7 @@ else if (rc == LOCAL_SCAN_ACCEPT_QUEUE)
   if (!f.queue_only_policy)      /* ACL might have already queued */
     {
     f.queue_only_policy = TRUE;
-    queued_by = US("local_scan()");
+    queued_by = cUS("local_scan()");
     }
   rc = LOCAL_SCAN_ACCEPT;
   }
@@ -3863,7 +3863,7 @@ if (rc == LOCAL_SCAN_ACCEPT)
       r->errors_to = rewrite_address_qualify(r->errors_to, TRUE);
     }
   if (recipients_count == 0 && !blackholed_by)
-    blackholed_by = US("local_scan");
+    blackholed_by = cUS("local_scan");
   }
 
 /* Message rejected: newlines permitted in local_scan_data to generate
@@ -3871,7 +3871,7 @@ multiline SMTP responses. */
 
 else
   {
-  uschar *istemp = US("");
+  uschar *istemp = cUS("");
   uschar *smtp_code;
   gstring * g;
 
@@ -3890,8 +3890,8 @@ else
       /* Fall through */
 
     case LOCAL_SCAN_REJECT:
-      smtp_code = US("550");
-      if (!errmsg) errmsg =  US("Administrative prohibition");
+      smtp_code = cUS("550");
+      if (!errmsg) errmsg =  cUS("Administrative prohibition");
       break;
 
     case LOCAL_SCAN_TEMPREJECT_NOLOGHDR:
@@ -3900,14 +3900,14 @@ else
 
     case LOCAL_SCAN_TEMPREJECT:
     TEMPREJECT:
-      smtp_code = US("451");
-      if (!errmsg) errmsg = US("Temporary local problem");
-      istemp = US("temporarily ");
+      smtp_code = cUS("451");
+      if (!errmsg) errmsg = cUS("Temporary local problem");
+      istemp = cUS("temporarily ");
       break;
     }
 
-  g = string_append(NULL, 2, US("F="),
-    sender_address[0] == 0 ? US("<>") : sender_address);
+  g = string_append(NULL, 2, cUS("F="),
+    sender_address[0] == 0 ? cUS("<>") : sender_address);
   g = add_host_info_for_log(g);
 
   log_write(0, LOG_MAIN|LOG_REJECT, "%s %srejected by local_scan(): %.256s",
@@ -3918,7 +3918,7 @@ else
       {
       smtp_respond(smtp_code, 3, TRUE, errmsg);
       message_id[0] = 0;            /* Indicate no message accepted */
-      smtp_reply = US("");            /* Indicate reply already sent */
+      smtp_reply = cUS("");            /* Indicate reply already sent */
       goto TIDYUP;                  /* Skip to end of function */
       }
     else
@@ -3928,7 +3928,7 @@ else
     {
     fseek(spool_data_file, (long int)SPOOL_DATA_START_OFFSET, SEEK_SET);
     give_local_error(ERRMESS_LOCAL_SCAN, errmsg,
-      US("message rejected by local scan code: "), error_rc, spool_data_file,
+      cUS("message rejected by local scan code: "), error_rc, spool_data_file,
         header_list);
     /* Does not return */
     }
@@ -3958,7 +3958,7 @@ if (bmi_run == 1)
 an ACL or by local_scan(). The new time is the time that all reception
 processing is complete. */
 
-timestamp = expand_string(US("${tod_full}"));
+timestamp = expand_string(cUS("${tod_full}"));
 tslen = Ustrlen(timestamp);
 
 memcpy(received_header->text + received_header->slen - tslen - 1,
@@ -3995,14 +3995,14 @@ else
 
     if (smtp_input)
       {
-      smtp_reply = US("451 Error in writing spool file");
+      smtp_reply = cUS("451 Error in writing spool file");
       message_id[0] = 0;          /* Indicate no message accepted */
       goto TIDYUP;
       }
     else
       {
       fseek(spool_data_file, (long int)SPOOL_DATA_START_OFFSET, SEEK_SET);
-      give_local_error(ERRMESS_IOERR, errmsg, US(""), error_rc, spool_data_file,
+      give_local_error(ERRMESS_IOERR, errmsg, cUS(""), error_rc, spool_data_file,
         header_list);
       /* Does not return */
       }
@@ -4026,14 +4026,14 @@ if (fflush(spool_data_file))
 
   if (smtp_input)
     {
-    smtp_reply = US("451 Error in writing spool file");
+    smtp_reply = cUS("451 Error in writing spool file");
     message_id[0] = 0;          /* Indicate no message accepted */
     goto TIDYUP;
     }
   else
     {
     fseek(spool_data_file, (long int)SPOOL_DATA_START_OFFSET, SEEK_SET);
-    give_local_error(ERRMESS_IOERR, errmsg, US(""), error_rc, spool_data_file,
+    give_local_error(ERRMESS_IOERR, errmsg, cUS(""), error_rc, spool_data_file,
       header_list);
     /* Does not return */
     }
@@ -4053,53 +4053,53 @@ rcvd_log_reset_point = store_mark();
 g = string_get(256);
 
 g = string_append(g, 2,
-  fake_response == FAIL ? US("(= ") : US("<= "),
-  sender_address[0] == 0 ? US("<>") : sender_address);
+  fake_response == FAIL ? cUS("(= ") : cUS("<= "),
+  sender_address[0] == 0 ? cUS("<>") : sender_address);
 if (message_reference)
-  g = string_append(g, 2, US(" R="), message_reference);
+  g = string_append(g, 2, cUS(" R="), message_reference);
 
 g = add_host_info_for_log(g);
 
 #ifndef DISABLE_TLS
 if (LOGGING(tls_cipher) && tls_in.cipher)
   {
-  g = string_append(g, 2, US(" X="), tls_in.cipher);
+  g = string_append(g, 2, cUS(" X="), tls_in.cipher);
 # ifndef DISABLE_TLS_RESUME
   if (LOGGING(tls_resumption) && tls_in.resumption & RESUME_USED)
-    g = string_catn(g, US("*"), 1);
+    g = string_catn(g, cUS("*"), 1);
 # endif
   }
 if (LOGGING(tls_certificate_verified) && tls_in.cipher)
-  g = string_append(g, 2, US(" CV="), tls_in.certificate_verified ? "yes":"no");
+  g = string_append(g, 2, cUS(" CV="), tls_in.certificate_verified ? "yes":"no");
 if (LOGGING(tls_peerdn) && tls_in.peerdn)
-  g = string_append(g, 3, US(" DN=\""), string_printing(tls_in.peerdn), US("\""));
+  g = string_append(g, 3, cUS(" DN=\""), string_printing(tls_in.peerdn), cUS("\""));
 if (LOGGING(tls_sni) && tls_in.sni)
-  g = string_append(g, 2, US(" SNI="), string_printing2(tls_in.sni, SP_TAB|SP_SPACE));
+  g = string_append(g, 2, cUS(" SNI="), string_printing2(tls_in.sni, SP_TAB|SP_SPACE));
 #endif
 
 if (sender_host_authenticated)
   {
-  g = string_append(g, 2, US(" A="), sender_host_authenticated);
+  g = string_append(g, 2, cUS(" A="), sender_host_authenticated);
   if (authenticated_id)
     {
-    g = string_append(g, 2, US(":"), authenticated_id);
+    g = string_append(g, 2, cUS(":"), authenticated_id);
     if (LOGGING(smtp_mailauth) && authenticated_sender)
-      g = string_append(g, 2, US(":"), authenticated_sender);
+      g = string_append(g, 2, cUS(":"), authenticated_sender);
     }
   }
 
 #ifndef DISABLE_PRDR
 if (prdr_requested)
-  g = string_catn(g, US(" PRDR"), 5);
+  g = string_catn(g, cUS(" PRDR"), 5);
 #endif
 
 #ifdef SUPPORT_PROXY
 if (proxy_session && LOGGING(proxy))
-  g = string_append(g, 2, US(" PRX="), proxy_local_address);
+  g = string_append(g, 2, cUS(" PRX="), proxy_local_address);
 #endif
 
 if (chunking_state > CHUNKING_OFFERED)
-  g = string_catn(g, US(" K"), 2);
+  g = string_catn(g, cUS(" K"), 2);
 
 g = string_fmt_append(g, " S=%d", msg_size);
 
@@ -4112,10 +4112,10 @@ if (LOGGING(8bitmime))
 
 #ifndef DISABLE_DKIM
 if (LOGGING(dkim) && dkim_verify_overall)
-  g = string_append(g, 2, US(" DKIM="), dkim_verify_overall);
+  g = string_append(g, 2, cUS(" DKIM="), dkim_verify_overall);
 # ifdef EXPERIMENTAL_ARC
 if (LOGGING(dkim) && arc_state && Ustrcmp(arc_state, "pass") == 0)
-  g = string_catn(g, US(" ARC"), 4);
+  g = string_catn(g, cUS(" ARC"), 4);
 # endif
 #endif
 
@@ -4123,11 +4123,11 @@ if (LOGGING(receive_time))
   {
   struct timeval diff = received_time_complete;
   timediff(&diff, &received_time);
-  g = string_append(g, 2, US(" RT="), string_timediff(&diff));
+  g = string_append(g, 2, cUS(" RT="), string_timediff(&diff));
   }
 
 if (*queue_name)
-  g = string_append(g, 2, US(" Q="), queue_name);
+  g = string_append(g, 2, cUS(" Q="), queue_name);
 
 /* If an addr-spec in a message-id contains a quoted string, it can contain
 any characters except " \ and CR and so in particular it can contain NL!
@@ -4148,7 +4148,7 @@ if (  LOGGING(msg_id) && msgid_header
   allow_domain_literals = save_allow_domain_literals;
   if (old_id)
     g = string_append(g, 2,
-      msgid_header_newly_created ? US(" id*=") : US(" id="),
+      msgid_header_newly_created ? cUS(" id*=") : cUS(" id="),
       string_printing(old_id));
   }
 
@@ -4158,7 +4158,7 @@ text. By expanding $h_subject: we make use of the MIME decoding. */
 if (LOGGING(subject) && subject_header)
   {
   uschar *p = big_buffer;
-  uschar *ss = expand_string(US("$h_subject:"));
+  uschar *ss = expand_string(cUS("$h_subject:"));
 
   /* Backslash-quote any double quotes or backslashes so as to make a
   a C-like string, and turn any non-printers into escape sequences. */
@@ -4171,7 +4171,7 @@ if (LOGGING(subject) && subject_header)
     }
   *p++ = '\"';
   *p = 0;
-  g = string_append(g, 2, US(" T="), string_printing(big_buffer));
+  g = string_append(g, 2, cUS(" T="), string_printing(big_buffer));
   }
 
 /* Terminate the string: string_cat() and string_append() leave room, but do
@@ -4187,14 +4187,14 @@ people. */
 if (message_logs && !blackholed_by)
   {
   int fd;
-  uschar * m_name = spool_fname(US("msglog"), message_subdir, message_id, US(""));
+  uschar * m_name = spool_fname(cUS("msglog"), message_subdir, message_id, cUS(""));
 
   if (  (fd = Uopen(m_name, O_WRONLY|O_APPEND|O_CREAT, SPOOL_MODE)) < 0
      && errno == ENOENT
      )
     {
     (void)directory_make(spool_directory,
-			spool_sname(US("msglog"), message_subdir),
+			spool_sname(cUS("msglog"), message_subdir),
 			MSGLOG_DIRECTORY_MODE, TRUE);
     fd = Uopen(m_name, O_WRONLY|O_APPEND|O_CREAT, SPOOL_MODE);
     }
@@ -4259,22 +4259,22 @@ if (  smtp_input && sender_host_address && !f.sender_host_notsocket
     if (c != EOF) (receive_ungetc)(c);
     else
       {
-      smtp_notquit_exit(US("connection-lost"), NULL, NULL);
-      smtp_reply = US("");    /* No attempt to send a response */
+      smtp_notquit_exit(cUS("connection-lost"), NULL, NULL);
+      smtp_reply = cUS("");    /* No attempt to send a response */
       smtp_yield = FALSE;   /* Nothing more on this connection */
 
       /* Re-use the log line workspace */
 
       g->ptr = 0;
-      g = string_cat(g, US("SMTP connection lost after final dot"));
+      g = string_cat(g, cUS("SMTP connection lost after final dot"));
       g = add_host_info_for_log(g);
       log_write(0, LOG_MAIN, "%s", string_from_gstring(g));
 
       /* Delete the files for this aborted message. */
 
       Uunlink(spool_name);
-      Uunlink(spool_fname(US("input"), message_subdir, message_id, US("-H")));
-      Uunlink(spool_fname(US("msglog"), message_subdir, message_id, US("")));
+      Uunlink(spool_fname(cUS("input"), message_subdir, message_id, cUS("-H")));
+      Uunlink(spool_fname(cUS("msglog"), message_subdir, message_id, cUS("")));
 
       goto TIDYUP;
       }
@@ -4314,7 +4314,7 @@ if(cutthrough.cctx.sock >= 0 && cutthrough.delivery)
       break;					/* message_id needed for SMTP accept below */
 
     default:	/* Unknown response, or error.  Treat as temp-reject.         */
-      if (cutthrough.defer_pass) smtp_reply = US("450 Onward transmission not accepted");
+      if (cutthrough.defer_pass) smtp_reply = cUS("450 Onward transmission not accepted");
       cutthrough_done = TMP_REJ;		/* Avoid the usual immediate delivery attempt */
       break;					/* message_id needed for SMTP accept below */
 
@@ -4352,7 +4352,7 @@ rcvd_log_reset_point = store_reset(rcvd_log_reset_point);
 /* If the message is frozen, and freeze_tell is set, do the telling. */
 
 if (f.deliver_freeze && freeze_tell && freeze_tell[0])
-  moan_tell_someone(freeze_tell, NULL, US("Message frozen on arrival"),
+  moan_tell_someone(freeze_tell, NULL, cUS("Message frozen on arrival"),
     "Message %s was frozen on arrival by %s.\nThe sender is <%s>.\n",
     message_id, frozen_by, sender_address);
 
@@ -4411,14 +4411,14 @@ if (smtp_input)
     if (!smtp_reply)
       {
       if (fake_response != OK)
-        smtp_respond(fake_response == DEFER ? US("450") : US("550"),
+        smtp_respond(fake_response == DEFER ? cUS("450") : cUS("550"),
 	  3, TRUE, fake_response_text);
 
       /* An OK response is required; use "message" text if present. */
 
       else if (user_msg)
         {
-        uschar *code = US("250");
+        uschar *code = cUS("250");
         int len = 3;
         smtp_message_code(&code, &len, &user_msg, NULL, TRUE);
         smtp_respond(code, len, TRUE, user_msg);
@@ -4449,7 +4449,7 @@ if (smtp_input)
 
     else if (smtp_reply[0] != 0)
       if (fake_response != OK && smtp_reply[0] == '2')
-        smtp_respond(fake_response == DEFER ? US("450") : US("550"), 3, TRUE,
+        smtp_respond(fake_response == DEFER ? cUS("450") : cUS("550"), 3, TRUE,
           fake_response_text);
       else
         smtp_printf("%.1024s\r\n", FALSE, smtp_reply);
@@ -4461,16 +4461,16 @@ if (smtp_input)
       case PERM_REJ:
 							 /* Delete spool files */
 	Uunlink(spool_name);
-	Uunlink(spool_fname(US("input"), message_subdir, message_id, US("-H")));
-	Uunlink(spool_fname(US("msglog"), message_subdir, message_id, US("")));
+	Uunlink(spool_fname(cUS("input"), message_subdir, message_id, cUS("-H")));
+	Uunlink(spool_fname(cUS("msglog"), message_subdir, message_id, cUS("")));
 	break;
 
       case TMP_REJ:
 	if (cutthrough.defer_pass)
 	  {
 	  Uunlink(spool_name);
-	  Uunlink(spool_fname(US("input"), message_subdir, message_id, US("-H")));
-	  Uunlink(spool_fname(US("msglog"), message_subdir, message_id, US("")));
+	  Uunlink(spool_fname(cUS("input"), message_subdir, message_id, cUS("-H")));
+	  Uunlink(spool_fname(cUS("msglog"), message_subdir, message_id, cUS("")));
 	  }
       default:
 	break;
@@ -4504,7 +4504,7 @@ starting. */
 
 if (blackholed_by)
   {
-  const uschar *detail =
+  cuschar *detail =
 #ifdef HAVE_LOCAL_SCAN
     local_scan_data ? string_printing(local_scan_data) :
 #endif

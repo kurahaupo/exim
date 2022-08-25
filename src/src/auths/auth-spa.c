@@ -163,6 +163,8 @@ extern int DEBUGLEVEL;
 #include "auth-spa.h"
 #include <assert.h>
 
+#error Block building this file
+#if 0
 
 #ifndef _BYTEORDER_H
 # define _BYTEORDER_H
@@ -231,10 +233,10 @@ extern int DEBUGLEVEL;
 */
 
 /* get single value from an SMB buffer */
-#  define SVAL(buf,pos) (*(uint16x *)(CS(buf) + (pos)))
-#  define IVAL(buf,pos) (*(uint32x *)(CS(buf) + (pos)))
-#  define SVALS(buf,pos) (*(int16x *)(CS(buf) + (pos)))
-#  define IVALS(buf,pos) (*(int32x *)(CS(buf) + (pos)))
+#  define SVAL(buf,pos) (*(uint16x *)((char *)(buf) + (pos)))
+#  define IVAL(buf,pos) (*(uint32x *)((char *)(buf) + (pos)))
+#  define SVALS(buf,pos) (*(int16x *)((char *)(buf) + (pos)))
+#  define IVALS(buf,pos) (*(int32x *)((char *)(buf) + (pos)))
 
 /* store single value in an SMB buffer */
 #  define SSVAL(buf,pos,val) SVAL(buf,pos)=((uint16x)(val))
@@ -373,7 +375,7 @@ static const char base64val[] = {
 #define DECODE64(c)  (isascii(c) ? base64val[c] : BAD)
 
 void
-spa_bits_to_base64 (uschar *out, const uschar *in, int inlen)
+spa_bits_to_base64 (uschar *out, cuschar *in, int inlen)
 /* raw bytes in quasi-big-endian order to base 64 string (NUL-terminated) */
 {
 for (; inlen >= 3; inlen -= 3)

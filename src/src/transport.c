@@ -99,13 +99,13 @@ options_transports(void)
 {
 uschar buf[64];
 
-options_from_list(optionlist_transports, nelem(optionlist_transports), US("TRANSPORTS"), NULL);
+options_from_list(optionlist_transports, nelem(optionlist_transports), cUS("TRANSPORTS"), NULL);
 
 for (transport_info * ti = transports_available; ti->driver_name[0]; ti++)
   {
-  spf(buf, sizeof(buf), US("_DRIVER_TRANSPORT_%T"), ti->driver_name);
+  spf(buf, sizeof(buf), cUS("_DRIVER_TRANSPORT_%T"), ti->driver_name);
   builtin_macro_create(buf);
-  options_from_list(ti->options, (unsigned)*ti->options_count, US("TRANSPORT"), ti->driver_name);
+  options_from_list(ti->options, (unsigned)*ti->options_count, cUS("TRANSPORT"), ti->driver_name);
   }
 }
 
@@ -143,7 +143,7 @@ the work. */
 void
 transport_init(void)
 {
-readconf_driver_init(US("transport"),
+readconf_driver_init(cUS("transport"),
   (driver_instance **)(&transports),     /* chain anchor */
   (driver_info *)transports_available,   /* available drivers */
   sizeof(transport_info),                /* size of info block */
@@ -680,7 +680,7 @@ ppp->next = *pplist;
 *pplist = ppp;
 ppp->ptr = pp;
 
-if (!*first && !write_chunk(tctx, US(",\n "), 3)) return FALSE;
+if (!*first && !write_chunk(tctx, cUS(",\n "), 3)) return FALSE;
 *first = FALSE;
 return write_chunk(tctx, pp->address, Ustrlen(pp->address));
 }
@@ -705,7 +705,7 @@ BOOL
 transport_headers_send(transport_ctx * tctx,
   BOOL (*sendfn)(transport_ctx * tctx, uschar * s, int len))
 {
-const uschar *list;
+cuschar *list;
 transport_instance * tblock = tctx ? tctx->tblock : NULL;
 address_item * addr = tctx ? tctx->addr : NULL;
 
@@ -834,7 +834,7 @@ if (tblock && (list = CUS(tblock->add_headers)))
       if (len > 0)
 	{
 	if (!sendfn(tctx, s, len)) return FALSE;
-	if (s[len-1] != '\n' && !sendfn(tctx, US("\n"), 1))
+	if (s[len-1] != '\n' && !sendfn(tctx, cUS("\n"), 1))
 	  return FALSE;
 	DEBUG(D_transport)
 	  {
@@ -850,7 +850,7 @@ if (tblock && (list = CUS(tblock->add_headers)))
 
 /* Separate headers from body with a blank line */
 
-return sendfn(tctx, US("\n"), 1);
+return sendfn(tctx, cUS("\n"), 1);
 }
 
 
@@ -972,7 +972,7 @@ if (!(tctx->options & topt_no_headers))
     struct aci *dlist = NULL;
     rmark reset_point = store_mark();
 
-    if (!write_chunk(tctx, US("Envelope-to: "), 13)) goto bad;
+    if (!write_chunk(tctx, cUS("Envelope-to: "), 13)) goto bad;
 
     /* Pick up from all the addresses. The plist and dlist variables are
     anchors for lists of addresses already handled; they have to be defined at
@@ -984,7 +984,7 @@ if (!(tctx->options & topt_no_headers))
 
     /* Add a final newline and reset the store used for tracking duplicates */
 
-    if (!write_chunk(tctx, US("\n"), 1)) goto bad;
+    if (!write_chunk(tctx, cUS("\n"), 1)) goto bad;
     store_reset(reset_point);
     }
 
@@ -994,9 +994,9 @@ if (!(tctx->options & topt_no_headers))
     {
     uschar * s = tod_stamp(tod_full);
 
-    if (  !write_chunk(tctx, US("Delivery-date: "), 15)
+    if (  !write_chunk(tctx, cUS("Delivery-date: "), 15)
        || !write_chunk(tctx, s, Ustrlen(s))
-       || !write_chunk(tctx, US("\n"), 1)) goto bad;
+       || !write_chunk(tctx, cUS("\n"), 1)) goto bad;
     }
 
   /* Then the message's headers. Don't write any that are flagged as "old";
@@ -1157,8 +1157,8 @@ f.spool_file_wireformat = FALSE;
 
 if (tctx->options & topt_end_dot)
   {
-  smtp_debug_cmd(US("."), 0);
-  if (!write_chunk(tctx, US(".\n"), 2))
+  smtp_debug_cmd(cUS("."), 0);
+  if (!write_chunk(tctx, cUS(".\n"), 2))
     return FALSE;
   }
 
@@ -1241,7 +1241,7 @@ write_pid = (pid_t)(-1);
   int bits = fcntl(tctx->u.fd, F_GETFD);
   (void) fcntl(tctx->u.fd, F_SETFD, bits | FD_CLOEXEC);
   filter_pid = child_open(USS(transport_filter_argv), NULL, 077,
-			  &fd_write, &fd_read, FALSE, US("transport-filter"));
+			  &fd_write, &fd_read, FALSE, cUS("transport-filter"));
   (void) fcntl(tctx->u.fd, F_SETFD, bits & ~FD_CLOEXEC);
   }
 if (filter_pid < 0) goto TIDY_UP;      /* errno set */
@@ -1255,7 +1255,7 @@ via a(nother) pipe. While writing to the filter, we do not do the CRLF,
 smtp dots, or check string processing. */
 
 if (pipe(pfd) != 0) goto TIDY_UP;      /* errno set */
-if ((write_pid = exim_fork(US("tpt-filter-writer"))) == 0)
+if ((write_pid = exim_fork(cUS("tpt-filter-writer"))) == 0)
   {
   BOOL rc;
   (void)close(fd_read);
@@ -1427,10 +1427,10 @@ if (yield)
   f.spool_file_wireformat = FALSE;
   if (  tctx->options & topt_end_dot
      && ( last_filter_was_NL
-        ? !write_chunk(tctx, US(".\n"), 2)
-	: !write_chunk(tctx, US("\n.\n"), 3)
+        ? !write_chunk(tctx, cUS(".\n"), 2)
+	: !write_chunk(tctx, cUS("\n.\n"), 3)
      )  )
-    { smtp_debug_cmd(US("."), 0); yield = FALSE; }
+    { smtp_debug_cmd(cUS("."), 0); yield = FALSE; }
 
   /* Write out any remaining data in the buffer. */
 
@@ -1493,7 +1493,7 @@ Returns:    nothing
 void
 transport_update_waiting(host_item *hostlist, uschar *tpname)
 {
-const uschar *prevname = US("");
+cuschar *prevname = cUS("");
 open_db dbblock;
 open_db *dbm_file;
 
@@ -1646,7 +1646,7 @@ typedef struct msgq_s
 } msgq_t;
 
 BOOL
-transport_check_waiting(const uschar *transport_name, const uschar *hostname,
+transport_check_waiting(cuschar *transport_name, cuschar *hostname,
   int local_message_max, uschar *new_message_id, oicf oicf_func, void *oicf_data)
 {
 dbdata_wait *host_record;
@@ -1754,7 +1754,7 @@ while (1)
     uschar * mid = msgq[i].message_id;
 
     set_subdir_str(subdir, mid, 0);
-    if (Ustat(spool_fname(US("input"), subdir, mid, US("-D")), &statbuf) != 0)
+    if (Ustat(spool_fname(cUS("input"), subdir, mid, cUS("-D")), &statbuf) != 0)
       msgq[i].bKeep = FALSE;
     else if (!oicf_func || oicf_func(mid, oicf_data))
       {
@@ -1879,11 +1879,11 @@ return FALSE;
 
 /* Just the regain-root-privilege exec portion */
 void
-transport_do_pass_socket(const uschar *transport_name, const uschar *hostname,
-  const uschar *hostaddress, uschar *id, int socket_fd)
+transport_do_pass_socket(cuschar *transport_name, cuschar *hostname,
+  cuschar *hostaddress, uschar *id, int socket_fd)
 {
 int i = 13;
-const uschar **argv;
+cuschar **argv;
 
 #ifndef DISABLE_TLS
 if (smtp_peer_options & OPTION_TLS) i += 6;
@@ -1902,16 +1902,16 @@ but we have a number of extras that may be added. */
 
 argv = CUSS(child_exec_exim(CEE_RETURN_ARGV, TRUE, &i, FALSE, 0));
 
-if (f.smtp_authenticated)			argv[i++] = US("-MCA");
-if (smtp_peer_options & OPTION_CHUNKING)	argv[i++] = US("-MCK");
-if (smtp_peer_options & OPTION_DSN)		argv[i++] = US("-MCD");
-if (smtp_peer_options & OPTION_PIPE)		argv[i++] = US("-MCP");
-if (smtp_peer_options & OPTION_SIZE)		argv[i++] = US("-MCS");
+if (f.smtp_authenticated)			argv[i++] = cUS("-MCA");
+if (smtp_peer_options & OPTION_CHUNKING)	argv[i++] = cUS("-MCK");
+if (smtp_peer_options & OPTION_DSN)		argv[i++] = cUS("-MCD");
+if (smtp_peer_options & OPTION_PIPE)		argv[i++] = cUS("-MCP");
+if (smtp_peer_options & OPTION_SIZE)		argv[i++] = cUS("-MCS");
 #ifndef DISABLE_TLS
 if (smtp_peer_options & OPTION_TLS)
   if (tls_out.active.sock >= 0 || continue_proxy_cipher)
     {
-    argv[i++] = US("-MCt");
+    argv[i++] = cUS("-MCt");
     argv[i++] = sending_ip_address;
     argv[i++] = string_sprintf("%d", sending_port);
     argv[i++] = tls_out.active.sock >= 0 ? tls_out.cipher : continue_proxy_cipher;
@@ -1920,20 +1920,20 @@ if (smtp_peer_options & OPTION_TLS)
       {
       argv[i++] =
 #ifdef SUPPORT_DANE
-        tls_out.dane_verified ? US("-MCr") :
+        tls_out.dane_verified ? cUS("-MCr") :
 #endif
-        US("-MCs");
+        cUS("-MCs");
       argv[i++] = tls_out.sni;
       }
     }
   else
-    argv[i++] = US("-MCT");
+    argv[i++] = cUS("-MCT");
 #endif
 
 #ifdef EXPERIMENTAL_ESMTP_LIMITS
 if (continue_limit_rcpt || continue_limit_rcptdom)
   {
-  argv[i++] = US("-MCL");
+  argv[i++] = cUS("-MCL");
   argv[i++] = string_sprintf("%u", continue_limit_mail);
   argv[i++] = string_sprintf("%u", continue_limit_rcpt);
   argv[i++] = string_sprintf("%u", continue_limit_rcptdom);
@@ -1942,7 +1942,7 @@ if (continue_limit_rcpt || continue_limit_rcptdom)
 
 if (queue_run_pid != (pid_t)0)
   {
-  argv[i++] = US("-MCQ");
+  argv[i++] = cUS("-MCQ");
   argv[i++] = string_sprintf("%d", queue_run_pid);
   argv[i++] = string_sprintf("%d", queue_run_pipe);
   }
@@ -1950,7 +1950,7 @@ if (queue_run_pid != (pid_t)0)
 #ifdef SUPPORT_SOCKS
 if (proxy_session)
   {
-  argv[i++] = US("-MCp");
+  argv[i++] = cUS("-MCp");
   argv[i++] = proxy_local_address;
   argv[i++] = string_sprintf("%d", proxy_local_port);
   argv[i++] = proxy_external_address;
@@ -1958,7 +1958,7 @@ if (proxy_session)
   }
 #endif
 
-argv[i++] = US("-MC");
+argv[i++] = cUS("-MC");
 argv[i++] = US(transport_name);
 argv[i++] = US(hostname);
 argv[i++] = US(hostaddress);
@@ -2000,8 +2000,8 @@ Returns:          FALSE if fork fails; TRUE otherwise
 */
 
 BOOL
-transport_pass_socket(const uschar *transport_name, const uschar *hostname,
-  const uschar *hostaddress, uschar *id, int socket_fd
+transport_pass_socket(cuschar *transport_name, cuschar *hostname,
+  cuschar *hostaddress, uschar *id, int socket_fd
 #ifdef EXPERIMENTAL_ESMTP_LIMITS
   , unsigned peer_limit_mail, unsigned peer_limit_rcpt, unsigned peer_limit_rcptdom
 #endif
@@ -2018,14 +2018,14 @@ continue_limit_rcpt = peer_limit_rcpt;
 continue_limit_rcptdom = peer_limit_rcptdom;
 #endif
 
-if ((pid = exim_fork(US("continued-transport-interproc"))) == 0)
+if ((pid = exim_fork(cUS("continued-transport-interproc"))) == 0)
   {
   /* Disconnect entirely from the parent process. If we are running in the
   test harness, wait for a bit to allow the previous process time to finish,
   write the log, etc., so that the output is always in the same order for
   automatic comparison. */
 
-  if ((pid = exim_fork(US("continued-transport"))) != 0)
+  if ((pid = exim_fork(cUS("continued-transport"))) != 0)
     _exit(EXIT_SUCCESS);
   testharness_pause_ms(1000);
 
@@ -2059,8 +2059,8 @@ tainted arg taints the executable name.  It's unclear also that letting an
 attacker supply command arguments is wise. */
 
 static BOOL
-arg_is_tainted(const uschar * s, int argn, address_item * addr,
-  const uschar * etext, uschar ** errptr)
+arg_is_tainted(cuschar * s, int argn, address_item * addr,
+  cuschar * etext, uschar ** errptr)
 {
 if (is_tainted(s))
   {
@@ -2105,11 +2105,11 @@ Returns:             TRUE if all went well; otherwise an error will be
 */
 
 BOOL
-transport_set_up_command(const uschar *** argvptr, const uschar * cmd,
+transport_set_up_command(cuschar *** argvptr, cuschar * cmd,
   BOOL expand_arguments, int expand_failed, address_item * addr,
-  BOOL allow_tainted_args, const uschar * etext, uschar ** errptr)
+  BOOL allow_tainted_args, cuschar * etext, uschar ** errptr)
 {
-const uschar ** argv, * s;
+cuschar ** argv, * s;
 int address_count = 0, argcount = 0, max_args;
 
 /* Get store in which to build an argument list. Count the number of addresses
@@ -2343,7 +2343,7 @@ if (expand_arguments)
 
     else
       {
-      const uschar *expanded_arg;
+      cuschar *expanded_arg;
       f.enable_dollar_recipients = allow_dollar_recipients;
       expanded_arg = expand_cstring(argv[i]);
       f.enable_dollar_recipients = FALSE;

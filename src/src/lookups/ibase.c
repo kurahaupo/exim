@@ -32,7 +32,7 @@ static ibase_connection *ibase_connections = NULL;
 
 /* See local README for interface description. */
 
-static void *ibase_open(const uschar * filename, uschar ** errmsg)
+static void *ibase_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *) (1);        /* Just return something non-null */
 }
@@ -362,7 +362,7 @@ while (isc_dsql_fetch(status, &stmth, out_sqlda->version, out_sqlda) != 100L)
     }
 
   if (result)
-    result = string_catn(result, US("\n"), 1);
+    result = string_catn(result, cUS("\n"), 1);
 
   /* Find the number of fields returned. If this is one, we don't add field
      names to the data. Otherwise we do. */
@@ -381,27 +381,27 @@ while (isc_dsql_fetch(status, &stmth, out_sqlda->version, out_sqlda) != 100L)
 
       result = string_catn(result, US(out_sqlda->sqlvar[i].aliasname),
 		     out_sqlda->sqlvar[i].aliasname_length);
-      result = string_catn(result, US("="), 1);
+      result = string_catn(result, cUS("="), 1);
 
       /* Quote the value if it contains spaces or is empty */
 
       if (*out_sqlda->sqlvar[i].sqlind == -1)       /* NULL value */
-	result = string_catn(result, US("\"\""), 2);
+	result = string_catn(result, cUS("\"\""), 2);
 
       else if (buffer[0] == 0 || Ustrchr(buffer, ' ') != NULL)
 	{
-	result = string_catn(result, US("\""), 1);
+	result = string_catn(result, cUS("\""), 1);
 	for (int j = 0; j < len; j++)
 	  {
 	  if (buffer[j] == '\"' || buffer[j] == '\\')
-	      result = string_cat(result, US("\\"), 1);
+	      result = string_cat(result, cUS("\\"), 1);
 	  result = string_cat(result, US(buffer) + j, 1);
 	  }
-	result = string_catn(result, US("\""), 1);
+	result = string_catn(result, cUS("\""), 1);
 	}
       else
 	result = string_catn(result, US(buffer), len);
-      result = string_catn(result, US(" "), 1);
+      result = string_catn(result, cUS(" "), 1);
       }
   }
 
@@ -412,7 +412,7 @@ always leaves enough room for a terminating zero. */
 if (!result)
   {
   yield = FAIL;
-  *errmsg = US("Interbase: no data found");
+  *errmsg = cUS("Interbase: no data found");
   }
 else
   gstring_release_unused(result);
@@ -451,8 +451,8 @@ arguments are not used. Loop through a list of servers while the query is
 deferred with a retryable error. */
 
 static int
-ibase_find(void * handle, const uschar * filename, uschar * query, int length,
-  uschar ** result, uschar ** errmsg, uint * do_cache, const uschar * opts)
+ibase_find(void * handle, cuschar * filename, uschar * query, int length,
+  uschar ** result, uschar ** errmsg, uint * do_cache, cuschar * opts)
 {
 int sep = 0;
 uschar *server;
@@ -469,7 +469,7 @@ while ((server = string_nextinlist(&list, &sep, NULL, 0)))
   }
 
 if (!ibase_servers)
-  *errmsg = US("no Interbase servers defined (ibase_servers option)");
+  *errmsg = cUS("no Interbase servers defined (ibase_servers option)");
 
 return DEFER;
 }
@@ -540,7 +540,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("ibase"),			/* lookup name */
+  .name = cUS("ibase"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = ibase_open,			/* open function */
   .check NULL,				/* no check function */

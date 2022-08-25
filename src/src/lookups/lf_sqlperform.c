@@ -35,10 +35,10 @@ Returns:         the return from the lookup function, or DEFER
 */
 
 int
-lf_sqlperform(const uschar *name, const uschar *optionname,
-  const uschar *optserverlist, const uschar *query,
-  uschar **result, uschar **errmsg, uint *do_cache, const uschar * opts,
-  int(*fn)(const uschar *, uschar *, uschar **, uschar **, BOOL *, uint *, const uschar *))
+lf_sqlperform(cuschar *name, cuschar *optionname,
+  cuschar *optserverlist, cuschar *query,
+  uschar **result, uschar **errmsg, uint *do_cache, cuschar * opts,
+  int(*fn)(cuschar *, uschar *, uschar **, uschar **, BOOL *, uint *, cuschar *))
 {
 int rc;
 uschar *server;
@@ -51,8 +51,8 @@ DEBUG(D_lookup) debug_printf_indent("%s query: \"%s\" opts '%s'\n", name, query,
 if (Ustrncmp(query, "servers", 7) == 0)
   {
   int qsep = 0;
-  const uschar *s, *ss;
-  const uschar *qserverlist;
+  cuschar *s, *ss;
+  cuschar *qserverlist;
   uschar *qserver;
 
   s = query + 7;
@@ -88,7 +88,7 @@ if (Ustrncmp(query, "servers", 7) == 0)
     else
       {
       int len = Ustrlen(qserver);
-      const uschar * serverlist = optserverlist;
+      cuschar * serverlist = optserverlist;
 
       for (int sep = 0; server = string_nextinlist(&serverlist, &sep, NULL, 0);)
         if (Ustrncmp(server, qserver, len) == 0 && server[len] == '/')
@@ -117,7 +117,7 @@ if (Ustrncmp(query, "servers", 7) == 0)
 
 else
   {
-  const uschar * serverlist = NULL;
+  cuschar * serverlist = NULL;
 
   /* If options are present, scan for a server definition.  Default to
   the "optserverlist" srgument. */
@@ -144,7 +144,7 @@ else
       if (!Ustrchr(server, '/'))
 	{
 	int len = Ustrlen(server);
-	const uschar * slist = optserverlist;
+	cuschar * slist = optserverlist;
 	uschar * ele;
 	for (int sep = 0; ele = string_nextinlist(&slist, &sep, NULL, 0); )
 	  if (Ustrncmp(ele, server, len) == 0 && ele[len] == '/')

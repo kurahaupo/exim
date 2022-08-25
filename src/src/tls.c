@@ -48,8 +48,8 @@ static void tls_server_creds_invalidate(void);
 static void tls_client_creds_init(transport_instance *, BOOL);
 static void tls_client_creds_invalidate(transport_instance *);
 static void tls_daemon_creds_reload(void);
-static BOOL opt_set_and_noexpand(const uschar *);
-static BOOL opt_unset_or_noexpand(const uschar *);
+static BOOL opt_set_and_noexpand(cuschar *);
+static BOOL opt_unset_or_noexpand(cuschar *);
 
 
 
@@ -105,7 +105,7 @@ Returns:    TRUE if OK; result may still be NULL after forced failure
 */
 
 static BOOL
-expand_check(const uschar *s, const uschar *name, uschar **result, uschar ** errstr)
+expand_check(cuschar *s, cuschar *name, uschar **result, uschar ** errstr)
 {
 if (!s)
   *result = NULL;
@@ -113,7 +113,7 @@ else if (  !(*result = expand_string(US(s))) /* need to clean up const more */
 	&& !f.expand_string_forcedfail
 	)
   {
-  *errstr = US("Internal error");
+  *errstr = cUS("Internal error");
   log_write(0, LOG_MAIN|LOG_PANIC, "expansion of %s failed: %s", name,
     expand_string_message);
   return FALSE;
@@ -140,7 +140,7 @@ A full set of caching including the CAs takes 35ms output off of the
 server tls_init() (GnuTLS, Fedora 32, 2018-class x86_64 laptop hardware).
 */
 static BOOL
-tls_set_one_watch(const uschar * filename)
+tls_set_one_watch(cuschar * filename)
 # ifdef EXIM_HAVE_INOTIFY
 {
 uschar buf[PATH_MAX];
@@ -190,20 +190,20 @@ if (Ustrcmp(filename, "system,cache") == 0) return TRUE;
 
 for (;;)
   {
-  if (kev_used > KEV_SIZE-2) { s = US("out of kev space"); goto bad; }
+  if (kev_used > KEV_SIZE-2) { s = cUS("out of kev space"); goto bad; }
   if (!(s = Ustrrchr(filename, '/'))) return FALSE;
   s = string_copyn(filename, s - filename);	/* mem released by tls_set_watch */
 
   /* The dir open will fail if there is a symlink on the path. Fine; it's too
   much effort to handle all possible cases; just refuse the preload. */
 
-  if ((fd2 = open(CCS(s), O_RDONLY | O_NOFOLLOW)) < 0) { s = US("open dir"); goto bad; }
+  if ((fd2 = open(CCS(s), O_RDONLY | O_NOFOLLOW)) < 0) { s = cUS("open dir"); goto bad; }
 
-  if ((lstat(CCS(filename), &sb)) < 0) { s = US("lstat"); goto bad; }
+  if ((lstat(CCS(filename), &sb)) < 0) { s = cUS("lstat"); goto bad; }
   if (!S_ISLNK(sb.st_mode))
     {
     if ((fd1 = open(CCS(filename), O_RDONLY | O_NOFOLLOW)) < 0)
-      { s = US("open file"); goto bad; }
+      { s = cUS("open file"); goto bad; }
     DEBUG(D_tls) debug_printf("watch file '%s':\t%d\n", filename, fd1);
     EV_SET(&kev[kev_used++],
 	(uintptr_t)fd1,
@@ -232,7 +232,7 @@ for (;;)
   Ustrncpy(t, s, 1022);
   j = Ustrlen(s);
   t[j++] = '/';
-  if ((i = readlink(CCS(filename), (void *)(t+j), 1023-j)) < 0) { s = US("readlink"); goto bad; }
+  if ((i = readlink(CCS(filename), (void *)(t+j), 1023-j)) < 0) { s = cUS("readlink"); goto bad; }
   filename = t;
   *(t += i+j) = '\0';
   store_release_above(t+1);
@@ -245,7 +245,7 @@ if (kevent(tls_watch_fd, &kev[kev_used-cnt], cnt, &k_dummy, 1, &ts) >= 0)
 if (kevent(tls_watch_fd, &kev[kev_used-cnt], cnt, NULL, 0, NULL) >= 0)
   return TRUE;
 #endif
-s = US("kevent");
+s = cUS("kevent");
 
 bad:
 DEBUG(D_tls)
@@ -263,7 +263,7 @@ Then set watches on the dir containing the given file or (optionally)
 list of files.  Return boolean success. */
 
 static BOOL
-tls_set_watch(const uschar * filename, BOOL list)
+tls_set_watch(cuschar * filename, BOOL list)
 {
 rmark r;
 BOOL rc = FALSE;
@@ -372,11 +372,11 @@ tls_client_creds_reload(TRUE);
 
 /* Utility predicates for use by the per-library code */
 static BOOL
-opt_set_and_noexpand(const uschar * opt)
+opt_set_and_noexpand(cuschar * opt)
 { return opt && *opt && Ustrchr(opt, '$') == NULL; }
 
 static BOOL
-opt_unset_or_noexpand(const uschar * opt)
+opt_unset_or_noexpand(cuschar * opt)
 { return !opt || Ustrchr(opt, '$') == NULL; }
 
 
@@ -450,7 +450,7 @@ restore_tz(uschar * tz)
 if (tz)
   (void) setenv("TZ", CCS(tz), 1);
 else
-  (void) os_unsetenv(US("TZ"));
+  (void) os_unsetenv(cUS("TZ"));
 tzset();
 }
 
@@ -564,12 +564,12 @@ return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 void
 tls_modify_variables(tls_support * dest_tsp)
 {
-modify_variable(US("tls_bits"),                 &dest_tsp->bits);
-modify_variable(US("tls_certificate_verified"), &dest_tsp->certificate_verified);
-modify_variable(US("tls_cipher"),               &dest_tsp->cipher);
-modify_variable(US("tls_peerdn"),               &dest_tsp->peerdn);
+modify_variable(cUS("tls_bits"),                 &dest_tsp->bits);
+modify_variable(cUS("tls_certificate_verified"), &dest_tsp->certificate_verified);
+modify_variable(cUS("tls_cipher"),               &dest_tsp->cipher);
+modify_variable(cUS("tls_peerdn"),               &dest_tsp->peerdn);
 #ifdef USE_OPENSSL
-modify_variable(US("tls_sni"),                  &dest_tsp->sni);
+modify_variable(cUS("tls_sni"),                  &dest_tsp->sni);
 #endif
 }
 
@@ -608,7 +608,7 @@ Return:
 */
 
 uschar *
-tls_field_from_dn(uschar * dn, const uschar * mod)
+tls_field_from_dn(uschar * dn, cuschar * mod)
 {
 int insep = ',';
 uschar outsep = '\n';
@@ -641,7 +641,7 @@ having at least three dot-separated elements.  Case-independent.
 Return TRUE for a match
 */
 static BOOL
-is_name_match(const uschar * name, const uschar * pat)
+is_name_match(cuschar * name, cuschar * pat)
 {
 uschar * cp;
 return *pat == '*'		/* possible wildcard match */
@@ -667,20 +667,20 @@ Returns:
 */
 
 BOOL
-tls_is_name_for_cert(const uschar * namelist, void * cert)
+tls_is_name_for_cert(cuschar * namelist, void * cert)
 {
-uschar * altnames = tls_cert_subject_altname(cert, US("dns"));
+uschar * altnames = tls_cert_subject_altname(cert, cUS("dns"));
 uschar * subjdn;
 uschar * certname;
 int cmp_sep = 0;
 uschar * cmpname;
 
-if ((altnames = tls_cert_subject_altname(cert, US("dns"))))
+if ((altnames = tls_cert_subject_altname(cert, cUS("dns"))))
   {
   int alt_sep = '\n';
   while ((cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0)))
     {
-    const uschar * an = altnames;
+    cuschar * an = altnames;
     while ((certname = string_nextinlist(&an, &alt_sep, NULL, 0)))
       if (is_name_match(cmpname, certname))
 	return TRUE;
@@ -694,7 +694,7 @@ else if ((subjdn = tls_cert_subject(cert, NULL)))
   dn_to_list(subjdn);
   while ((cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0)))
     {
-    const uschar * sn = subjdn;
+    cuschar * sn = subjdn;
     while ((certname = string_nextinlist(&sn, &sn_sep, NULL, 0)))
       if (  *certname++ == 'C'
 	 && *certname++ == 'N'
@@ -759,7 +759,7 @@ Returns:  bool for "okay"; false will cause caller to immediately exit.
 BOOL
 tls_dropprivs_validate_require_cipher(BOOL nowarn)
 {
-const uschar *errmsg;
+cuschar *errmsg;
 pid_t pid;
 int rc, status;
 void (*oldsignal)(int);
@@ -779,7 +779,7 @@ else if (!nowarn && !tls_certificate)
 oldsignal = signal(SIGCHLD, SIG_DFL);
 
 fflush(NULL);
-if ((pid = exim_fork(US("cipher-validate"))) < 0)
+if ((pid = exim_fork(cUS("cipher-validate"))) < 0)
   log_write(0, LOG_MAIN|LOG_PANIC_DIE, "fork failed for TLS check");
 
 if (pid == 0)
@@ -787,7 +787,7 @@ if (pid == 0)
   /* in some modes, will have dropped privilege already */
   if (!geteuid())
     exim_setugid(exim_uid, exim_gid, FALSE,
-        US("calling tls_validate_require_cipher"));
+        cUS("calling tls_validate_require_cipher"));
 
   if ((errmsg = tls_validate_require_cipher()))
     log_write(0, LOG_PANIC_DIE|LOG_CONFIG,

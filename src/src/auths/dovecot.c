@@ -168,7 +168,7 @@ debug_printf("%d read but unreturned bytes; strcut() gave %d results: ",
 for (i = 0; i < nlen; i++)
   debug_printf(" {%s}", ptrs[i]);
 if (nlen < alen)
-  debug_printf(" last is %s\n", ptrs[i] ? ptrs[i] : US("<null>"));
+  debug_printf(" last is %s\n", ptrs[i] ? ptrs[i] : cUS("<null>"));
 else
   debug_printf(" (max for capacity)\n");
 }
@@ -250,7 +250,7 @@ auth_dovecot_options_block *ob =
 uschar buffer[DOVECOT_AUTH_MAXLINELEN];
 uschar *args[DOVECOT_AUTH_MAXFIELDCOUNT];
 uschar *auth_command;
-uschar *auth_extra_data = US("");
+uschar *auth_extra_data = cUS("");
 uschar *p;
 int nargs, tmp;
 int crequid = 1, ret = DEFER;
@@ -298,7 +298,7 @@ if (ob->server_tls)
 # endif
 #endif
 
-auth_defer_msg = US("authentication socket protocol error");
+auth_defer_msg = cUS("authentication socket protocol error");
 
 socket_buffer_left = 0;  /* Global, used to read more than a line but return by line */
 for (;;)
@@ -328,20 +328,20 @@ debug_printf("%s %d\n", __FUNCTION__, __LINE__);
     connected to the CUID value, so we ignore CUID from server.  It's purely for
     diagnostics. */
 
-  if (Ustrcmp(args[0], US("VERSION")) == 0)
+  if (Ustrcmp(args[0], cUS("VERSION")) == 0)
     {
     CHECK_COMMAND("VERSION", 2, 2);
     if (Uatoi(args[1]) != VERSION_MAJOR)
       OUT("authentication socket protocol version mismatch");
     }
-  else if (Ustrcmp(args[0], US("MECH")) == 0)
+  else if (Ustrcmp(args[0], cUS("MECH")) == 0)
     {
     CHECK_COMMAND("MECH", 1, INT_MAX);
     have_mech_line = TRUE;
     if (strcmpic(US(args[1]), ablock->public_name) == 0)
       found = TRUE;
     }
-  else if (Ustrcmp(args[0], US("SPID")) == 0)
+  else if (Ustrcmp(args[0], cUS("SPID")) == 0)
     {
     /* Unfortunately the auth protocol handshake wasn't designed well
     to differentiate between auth-client/userdb/master. auth-userdb
@@ -356,7 +356,7 @@ debug_printf("%s %d\n", __FUNCTION__, __LINE__);
       OUT("authentication socket type mismatch"
 	" (connected to auth-master instead of auth-client)");
     }
-  else if (Ustrcmp(args[0], US("DONE")) == 0)
+  else if (Ustrcmp(args[0], cUS("DONE")) == 0)
     {
     CHECK_COMMAND("DONE", 0, 0);
     break;
@@ -389,7 +389,7 @@ if (tls_in.cipher)
 
 else if (  interface_address
         && Ustrcmp(sender_host_address, interface_address) == 0)
-  auth_extra_data = US("secured\t");
+  auth_extra_data = cUS("secured\t");
 
 
 /****************************************************************************
@@ -431,7 +431,7 @@ while (1)
 
   if (!dc_gets(buffer, sizeof(buffer), &cctx))
     {
-    auth_defer_msg = US("authentication socket read error or premature eof");
+    auth_defer_msg = cUS("authentication socket read error or premature eof");
     goto out;
     }
 
@@ -476,7 +476,7 @@ while (1)
       CHECK_COMMAND("FAIL", 1, -1);
 
       for (int i = 2; i < nargs && !auth_id_pre; i++)
-	if (Ustrncmp(args[i], US("user="), 5) == 0)
+	if (Ustrncmp(args[i], cUS("user="), 5) == 0)
 	  {
 	  auth_id_pre = args[i] + 5;
 	  expand_nstring[1] = auth_vars[0] = string_copy(auth_id_pre); /* PH */
@@ -493,7 +493,7 @@ while (1)
       and return the proper value.  */
 
       for (int i = 2; i < nargs && !auth_id_pre; i++)
-	if (Ustrncmp(args[i], US("user="), 5) == 0)
+	if (Ustrncmp(args[i], cUS("user="), 5) == 0)
 	  {
 	  auth_id_pre = args[i] + 5;
 	  expand_nstring[1] = auth_vars[0] = string_copy(auth_id_pre); /* PH */

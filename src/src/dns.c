@@ -36,7 +36,7 @@ Returns:      length of returned data, or -1 on error (h_errno set)
 */
 
 static int
-fakens_search(const uschar *domain, int type, uschar *answerptr, int size)
+fakens_search(cuschar *domain, int type, uschar *answerptr, int size)
 {
 int len = Ustrlen(domain);
 int asize = size;                  /* Locally modified */
@@ -70,7 +70,7 @@ if (stat(CS(utilname), &statbuf) >= 0)
   argv[3] = dns_text_type(type);
   argv[4] = NULL;
 
-  pid = child_open(argv, NULL, 0000, &infd, &outfd, FALSE, US("fakens-search"));
+  pid = child_open(argv, NULL, 0000, &infd, &outfd, FALSE, cUS("fakens-search"));
   if (pid < 0)
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "failed to run fakens: %s",
       strerror(errno));
@@ -228,9 +228,9 @@ Returns:     an allocated string
 */
 
 uschar *
-dns_build_reverse(const uschar * string)
+dns_build_reverse(cuschar * string)
 {
-const uschar * p = string + Ustrlen(string);
+cuschar * p = string + Ustrlen(string);
 gstring * g = NULL;
 
 /* Handle IPv4 address */
@@ -241,13 +241,13 @@ if (Ustrchr(string, ':') == NULL)
   {
   for (int i = 0; i < 4; i++)
     {
-    const uschar * ppp = p;
+    cuschar * ppp = p;
     while (ppp > string && ppp[-1] != '.') ppp--;
     g = string_catn(g, ppp, p - ppp);
-    g = string_catn(g, US("."), 1);
+    g = string_catn(g, cUS("."), 1);
     p = ppp - 1;
     }
-  g = string_catn(g, US("in-addr.arpa"), 12);
+  g = string_catn(g, cUS("in-addr.arpa"), 12);
   }
 
 /* Handle IPv6 address; convert to binary so as to fill out any
@@ -268,7 +268,7 @@ else
   for (int i = 3; i >= 0; i--)
     for (int j = 0; j < 32; j += 4)
       g = string_fmt_append(g, "%x.", (v6[i] >> j) & 15);
-  g = string_catn(g, US("ip6.arpa."), 9);
+  g = string_catn(g, cUS("ip6.arpa."), 9);
 
   /* Another way of doing IPv6 reverse lookups was proposed in conjunction
   with A6 records. However, it fell out of favour when they did. The
@@ -287,7 +287,7 @@ else
     sprintf(pp, "%08X", v6[i]);
     pp += 8;
     }
-  Ustrcpy(pp, US("].ip6.arpa."));
+  Ustrcpy(pp, cUS("].ip6.arpa."));
   **************************************************/
 
   }
@@ -459,7 +459,7 @@ Scan the whole AUTHORITY section, since it may contain other records
 
 Return: name for the authority, in an allocated string, or NULL if none found */
 
-static const uschar *
+static cuschar *
 dns_extract_auth_name(const dns_answer * dnsa)	/* FIXME: const dns_answer */
 {
 dns_scan dnss;
@@ -497,8 +497,8 @@ DEBUG(D_dns)
 return FALSE;
 #else
 const HEADER * h = (const HEADER *) dnsa->answer;
-const uschar * auth_name;
-const uschar * trusted;
+cuschar * auth_name;
+cuschar * trusted;
 
 if (dnsa->answerlen < 0) return FALSE;
 /* Beware that newer versions of glibc on Linux will filter out the ad bit
@@ -571,19 +571,19 @@ dns_text_type(int t)
 {
 switch(t)
   {
-  case T_A:     return US("A");
-  case T_MX:    return US("MX");
-  case T_AAAA:  return US("AAAA");
-  case T_A6:    return US("A6");
-  case T_TXT:   return US("TXT");
-  case T_SPF:   return US("SPF");
-  case T_PTR:   return US("PTR");
-  case T_SOA:   return US("SOA");
-  case T_SRV:   return US("SRV");
-  case T_NS:    return US("NS");
-  case T_CNAME: return US("CNAME");
-  case T_TLSA:  return US("TLSA");
-  default:      return US("?");
+  case T_A:     return cUS("A");
+  case T_MX:    return cUS("MX");
+  case T_AAAA:  return cUS("AAAA");
+  case T_A6:    return cUS("A6");
+  case T_TXT:   return cUS("TXT");
+  case T_SPF:   return cUS("SPF");
+  case T_PTR:   return cUS("PTR");
+  case T_SOA:   return cUS("SOA");
+  case T_SRV:   return cUS("SRV");
+  case T_NS:    return cUS("NS");
+  case T_CNAME: return cUS("CNAME");
+  case T_TLSA:  return cUS("TLSA");
+  default:      return cUS("?");
   }
 }
 
@@ -594,7 +594,7 @@ switch(t)
 *************************************************/
 
 static void
-dns_fail_tag(uschar * buf, const uschar * name, int dns_type)
+dns_fail_tag(uschar * buf, cuschar * name, int dns_type)
 {
 res_state resp = os_get_dns_resolver_res();
 
@@ -626,7 +626,7 @@ Returns:     the return code
   (sizeof(expiring_data) + sizeof(tree_node) + DNS_FAILTAG_MAX)
 
 static int
-dns_fail_return(const uschar * name, int type, time_t expiry, int rc)
+dns_fail_return(cuschar * name, int type, time_t expiry, int rc)
 {
 uschar node_name[DNS_FAILTAG_MAX];
 tree_node * previous, * new;
@@ -656,7 +656,7 @@ return rc;
 /* Return the cached result of a known-bad lookup, or -1.
 */
 static int
-dns_fail_cache_hit(const uschar * name, int type)
+dns_fail_cache_hit(cuschar * name, int type)
 {
 uschar node_name[DNS_FAILTAG_MAX];
 tree_node * previous;
@@ -735,7 +735,7 @@ if (fake_dnsa_len_for_fail(dnsa, type))
        rr; rr = dns_next_rr(dnsa, &dnss, RESET_NEXT)
       ) if (rr->type == T_SOA)
     {
-    const uschar * p = rr->data;
+    cuschar * p = rr->data;
     uschar discard_buf[256];
     int len;
     unsigned long ttl;
@@ -796,11 +796,11 @@ Returns:    DNS_SUCCEED   successful lookup
 */
 
 int
-dns_basic_lookup(dns_answer * dnsa, const uschar * name, int type)
+dns_basic_lookup(dns_answer * dnsa, cuschar * name, int type)
 {
 int rc;
 #ifndef STAND_ALONE
-const uschar * save_domain;
+cuschar * save_domain;
 #endif
 
 /* DNS lookup failures of any kind are cached in a tree. This is mainly so that
@@ -985,10 +985,10 @@ Returns:                DNS_SUCCEED   successful lookup
 */
 
 int
-dns_lookup(dns_answer *dnsa, const uschar *name, int type,
-  const uschar **fully_qualified_name)
+dns_lookup(dns_answer *dnsa, cuschar *name, int type,
+  cuschar **fully_qualified_name)
 {
-const uschar *orig_name = name;
+cuschar *orig_name = name;
 BOOL secure_so_far = TRUE;
 
 /* By default, assume the resolver follows CNAME chains (and returns NODATA for
@@ -1112,8 +1112,8 @@ Returns:                DNS_SUCCEED   successful lookup
 */
 
 int
-dns_special_lookup(dns_answer *dnsa, const uschar *name, int type,
-  const uschar **fully_qualified_name)
+dns_special_lookup(dns_answer *dnsa, cuschar *name, int type,
+  cuschar **fully_qualified_name)
 {
 switch (type)
   {
@@ -1128,7 +1128,7 @@ switch (type)
     /* FALLTHROUGH */
   case T_SOA:
     {
-    const uschar *d = name;
+    cuschar *d = name;
     while (d != 0)
       {
       int rc = dns_lookup(dnsa, d, type, fully_qualified_name);
@@ -1177,14 +1177,14 @@ switch (type)
 
     /* Use more appropriate search parameters if we are in the reverse DNS. */
 
-    if (strcmpic(namesuff, US(".arpa")) == 0)
-      if (namesuff - 8 > name && strcmpic(namesuff - 8, US(".in-addr.arpa")) == 0)
+    if (strcmpic(namesuff, cUS(".arpa")) == 0)
+      if (namesuff - 8 > name && strcmpic(namesuff - 8, cUS(".in-addr.arpa")) == 0)
 	{
 	namesuff -= 8;
 	tld = namesuff + 1;
 	limit = 3;
 	}
-      else if (namesuff - 4 > name && strcmpic(namesuff - 4, US(".ip6.arpa")) == 0)
+      else if (namesuff - 4 > name && strcmpic(namesuff - 4, cUS(".ip6.arpa")) == 0)
 	{
 	namesuff -= 4;
 	tld = namesuff + 1;
@@ -1233,7 +1233,7 @@ switch (type)
       for (rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
 	   rr; rr = dns_next_rr(dnsa, &dnss, RESET_NEXT)) if (rr->type == T_SRV)
 	{
-	const uschar * p = rr->data;
+	cuschar * p = rr->data;
 
 	/* Extract the numerical SRV fields (p is incremented) */
 	GETSHORT(priority, p);

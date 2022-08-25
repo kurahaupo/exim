@@ -71,7 +71,7 @@ Returns:      nothing - failure provokes a panic-die
 */
 
 static void
-ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
+ip_addrinfo(cuschar *address, struct sockaddr_in6 *saddr)
 {
 #ifdef IPV6_USE_INET_PTON
 
@@ -105,7 +105,7 @@ ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
 *************************************************/
 
 int
-ip_addr(void * sin_, int af, const uschar * address, int port)
+ip_addr(void * sin_, int af, cuschar * address, int port)
 {
 union sockaddr_46 * sin = sin_;
 memset(sin, 0, sizeof(*sin));
@@ -187,7 +187,7 @@ Returns:      0 on success; -1 on failure, with errno set
 */
 
 int
-ip_connect(int sock, int af, const uschar *address, int port, int timeout,
+ip_connect(int sock, int af, cuschar *address, int port, int timeout,
   const blob * fastopen_blob)
 {
 struct sockaddr_in s_in4;
@@ -400,8 +400,8 @@ Return:
   socket fd, or -1 on failure (having allocated an error string)
 */
 int
-ip_connectedsocket(int type, const uschar * hostname, int portlo, int porthi,
-      int timeout, host_item * connhost, uschar ** errstr, const blob * fastopen_blob)
+ip_connectedsocket(int type, cuschar * hostname, int portlo, int porthi,
+      int timeout, host_item * connhost, cuschar ** errstr, const blob * fastopen_blob)
 {
 int namelen;
 host_item shost;
@@ -485,7 +485,7 @@ bad:
 
 /*XXX TFO? */
 int
-ip_tcpsocket(const uschar * hostport, uschar ** errstr, int tmo,
+ip_tcpsocket(cuschar * hostport, uschar ** errstr, int tmo,
   host_item * connhost)
 {
 int scan;
@@ -509,14 +509,14 @@ return ip_connectedsocket(SOCK_STREAM, hostname, portlow, porthigh,
 }
 
 int
-ip_unixsocket(const uschar * path, uschar ** errstr)
+ip_unixsocket(cuschar * path, uschar ** errstr)
 {
 int sock;
 struct sockaddr_un server;
 
 if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
   {
-  *errstr = US("can't open UNIX socket.");
+  *errstr = cUS("can't open UNIX socket.");
   return -1;
   }
 
@@ -542,7 +542,7 @@ The port can be a range, dash-separated, or a single number.
 For a TCP socket, optionally fill in a  host_item.
 */
 int
-ip_streamsocket(const uschar * spec, uschar ** errstr, int tmo,
+ip_streamsocket(cuschar * spec, uschar ** errstr, int tmo,
   host_item * connhost)
 {
 return *spec == '/'
@@ -564,7 +564,7 @@ Returns:     nothing
 */
 
 void
-ip_keepalive(int sock, const uschar *address, BOOL torf)
+ip_keepalive(int sock, cuschar *address, BOOL torf)
 {
 int fodder = 1;
 if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE,
@@ -712,35 +712,35 @@ return (int) ss.ss_family;
 *************************************************/
 
 struct dscp_name_tableentry {
-  const uschar *name;
+  cuschar *name;
   int value;
 };
 /* Keep both of these tables sorted! */
 static struct dscp_name_tableentry dscp_table[] = {
 #ifdef IPTOS_DSCP_AF11
-    { CUS("af11"), IPTOS_DSCP_AF11 },
-    { CUS("af12"), IPTOS_DSCP_AF12 },
-    { CUS("af13"), IPTOS_DSCP_AF13 },
-    { CUS("af21"), IPTOS_DSCP_AF21 },
-    { CUS("af22"), IPTOS_DSCP_AF22 },
-    { CUS("af23"), IPTOS_DSCP_AF23 },
-    { CUS("af31"), IPTOS_DSCP_AF31 },
-    { CUS("af32"), IPTOS_DSCP_AF32 },
-    { CUS("af33"), IPTOS_DSCP_AF33 },
-    { CUS("af41"), IPTOS_DSCP_AF41 },
-    { CUS("af42"), IPTOS_DSCP_AF42 },
-    { CUS("af43"), IPTOS_DSCP_AF43 },
-    { CUS("ef"), IPTOS_DSCP_EF },
+    { cUS("af11"), IPTOS_DSCP_AF11 },
+    { cUS("af12"), IPTOS_DSCP_AF12 },
+    { cUS("af13"), IPTOS_DSCP_AF13 },
+    { cUS("af21"), IPTOS_DSCP_AF21 },
+    { cUS("af22"), IPTOS_DSCP_AF22 },
+    { cUS("af23"), IPTOS_DSCP_AF23 },
+    { cUS("af31"), IPTOS_DSCP_AF31 },
+    { cUS("af32"), IPTOS_DSCP_AF32 },
+    { cUS("af33"), IPTOS_DSCP_AF33 },
+    { cUS("af41"), IPTOS_DSCP_AF41 },
+    { cUS("af42"), IPTOS_DSCP_AF42 },
+    { cUS("af43"), IPTOS_DSCP_AF43 },
+    { cUS("ef"), IPTOS_DSCP_EF },
 #endif
 #ifdef IPTOS_LOWCOST
-    { CUS("lowcost"), IPTOS_LOWCOST },
+    { cUS("lowcost"), IPTOS_LOWCOST },
 #endif
-    { CUS("lowdelay"), IPTOS_LOWDELAY },
+    { cUS("lowdelay"), IPTOS_LOWDELAY },
 #ifdef IPTOS_MINCOST
-    { CUS("mincost"), IPTOS_MINCOST },
+    { cUS("mincost"), IPTOS_MINCOST },
 #endif
-    { CUS("reliability"), IPTOS_RELIABILITY },
-    { CUS("throughput"), IPTOS_THROUGHPUT }
+    { cUS("reliability"), IPTOS_RELIABILITY },
+    { cUS("throughput"), IPTOS_THROUGHPUT }
 };
 static int dscp_table_size =
   sizeof(dscp_table) / sizeof(struct dscp_name_tableentry);
@@ -765,7 +765,7 @@ Returns: TRUE if okay to setsockopt(), else FALSE
 */
 
 BOOL
-dscp_lookup(const uschar *dscp_name, int af,
+dscp_lookup(cuschar *dscp_name, int af,
     int *level, int *optname, int *dscp_value)
 {
 uschar *dscp_lookup, *p;

@@ -35,7 +35,7 @@ Returns:    panic on failure if panic is set; otherwise return FALSE;
 */
 
 BOOL
-directory_make(const uschar *parent, const uschar *name,
+directory_make(cuschar *parent, cuschar *name,
                int mode, BOOL panic)
 {
 BOOL use_chown = parent == spool_directory && geteuid() == root_uid;
@@ -45,11 +45,11 @@ struct stat statbuf;
 uschar * path;
 
 if (is_tainted(name)) 
-  { p = US("create"); path = US(name); errno = ERRNO_TAINT; goto bad; }
+  { p = cUS("create"); path = US(name); errno = ERRNO_TAINT; goto bad; }
 
 if (parent)
   {
-  path = string_sprintf("%s%s%s", parent, US("/"), name);
+  path = string_sprintf("%s%s%s", parent, cUS("/"), name);
   p = path + Ustrlen(parent);
   }
 else
@@ -68,12 +68,12 @@ while (c && *p)
   if (Ustat(path, &statbuf) != 0)
     {
     if (mkdir(CS(path), mode) < 0 && errno != EEXIST)
-      { p = US("create"); goto bad; }
+      { p = cUS("create"); goto bad; }
 
     /* Set the ownership if necessary. */
 
     if (use_chown && exim_chown(path, exim_uid, exim_gid))
-      { p = US("set owner on"); goto bad; }
+      { p = cUS("set owner on"); goto bad; }
 
     /* It appears that any mode bits greater than 0777 are ignored by
     mkdir(), at least on some operating systems. Therefore, if the mode

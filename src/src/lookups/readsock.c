@@ -11,10 +11,10 @@
 
 
 static int
-internal_readsock_open(client_conn_ctx * cctx, const uschar * sspec,
+internal_readsock_open(client_conn_ctx * cctx, cuschar * sspec,
   int timeout, BOOL do_tls, uschar ** errmsg)
 {
-const uschar * server_name;
+cuschar * server_name;
 host_item host;
 
 if (Ustrncmp(sspec, "inet:", 5) == 0)
@@ -100,7 +100,7 @@ else
   ALARM_CLR(0);
   if (sigalrm_seen)
     {
-    *errmsg = US("socket connect timed out");
+    *errmsg = cUS("socket connect timed out");
     goto bad;
     }
   if (rc < 0)
@@ -110,7 +110,7 @@ else
     goto bad;
     }
   host.name = server_name;
-  host.address = US("");
+  host.address = cUS("");
   }
 
 #ifndef DISABLE_TLS
@@ -158,7 +158,7 @@ which is freed once by search_tidyup(). */
 that connection cacheing at the framework layer works. */
 
 static void *
-readsock_open(const uschar * filename, uschar ** errmsg)
+readsock_open(cuschar * filename, uschar ** errmsg)
 {
 client_conn_ctx * cctx = store_get(sizeof(*cctx), GET_UNTAINTED);
 cctx->sock = -1;
@@ -178,9 +178,9 @@ return cctx;
 /* See local README for interface description */
 
 static int
-readsock_find(void * handle, const uschar * filename, const uschar * keystring,
+readsock_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 client_conn_ctx * cctx = handle;
 int sep = ',';
@@ -206,7 +206,7 @@ if (opts) for (uschar * s; s = string_nextinlist(&opts, &sep, NULL, 0); )
   else if (Ustrncmp(s, "shutdown=", 9) == 0)
     lf.do_shutdown = Ustrcmp(s + 9, "no") != 0;
 #ifndef DISABLE_TLS
-  else if (Ustrncmp(s, "tls=", 4) == 0 && Ustrcmp(s + 4, US("no")) != 0)
+  else if (Ustrncmp(s, "tls=", 4) == 0 && Ustrcmp(s + 4, cUS("no")) != 0)
     lf.do_tls = TRUE;
 #endif
   else if (Ustrncmp(s, "eol=", 4) == 0)
@@ -283,9 +283,9 @@ else
 ALARM_CLR(0);
 
 if (sigalrm_seen)
-  { *errmsg = US("socket read timed out"); goto out; }
+  { *errmsg = cUS("socket read timed out"); goto out; }
 
-*result = yield ? string_from_gstring(yield) : US("");
+*result = yield ? string_from_gstring(yield) : cUS("");
 ret = OK;
 if (!lf.cache) *do_cache = 0;
 
@@ -319,7 +319,7 @@ cctx->sock = -1;
 
 
 static lookup_info readsock_lookup_info = {
-  .name = US("readsock"),			/* lookup name */
+  .name = cUS("readsock"),			/* lookup name */
   .type = lookup_querystyle,
   .open = readsock_open,		/* open function */
   .check = NULL,

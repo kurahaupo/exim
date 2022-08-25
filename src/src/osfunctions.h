@@ -34,7 +34,7 @@ extern const char   *os_strexit(int);     /* char to match os_strsignal */
 extern const char   *os_strsignal(int);   /* char to match strsignal in some OS */
 #endif
 #ifndef os_unsetenv
-extern int           os_unsetenv(const uschar *);
+extern int           os_unsetenv(cuschar *);
 #endif
 #ifndef os_getcwd
 extern uschar       *os_getcwd(uschar *, size_t);

@@ -135,7 +135,7 @@ if (!ss)
 if (type != cke_text) for (uschar * t = ss; *t != 0; t++)
   {
   int c = *t;
-  const uschar * sp;
+  cuschar * sp;
   if (mac_isprint(c)) continue;
   if (type == cke_hdr && c == '\n' && (t[1] == ' ' || t[1] == '\t')) continue;
   sp = string_printing(s);
@@ -166,7 +166,7 @@ Returns:      edited replacement address list, or NULL, or original
 */
 
 static uschar *
-check_never_mail(uschar * list, const uschar * never_mail)
+check_never_mail(uschar * list, cuschar * never_mail)
 {
 rmark reset_point = store_mark();
 uschar * newlist = string_copy(list);
@@ -360,7 +360,7 @@ remove those that match. */
 
 if (ob->never_mail)
   {
-  const uschar *never_mail = expand_string(ob->never_mail);
+  cuschar *never_mail = expand_string(ob->never_mail);
 
   if (!never_mail)
     {
@@ -443,7 +443,7 @@ if (oncelog && *oncelog && to)
       {
       addr->transport_return = DEFER;
       addr->basic_errno = errno;
-      addr->message = US("error while reading \"once\" file");
+      addr->message = cUS("error while reading \"once\" file");
       goto END_OFF;
       }
 
@@ -565,7 +565,7 @@ if (file)
 
 /* Make a subprocess to send the message */
 
-if ((pid = child_open_exim(&fd, US("autoreply"))) < 0)
+if ((pid = child_open_exim(&fd, cUS("autoreply"))) < 0)
   {
   /* Creation of child failed; defer this delivery. */
 
@@ -647,10 +647,10 @@ limit if we are returning the body. */
 if (return_message)
   {
   uschar *rubric = tblock->headers_only
-    ? US("------ This is a copy of the message's header lines.\n")
+    ? cUS("------ This is a copy of the message's header lines.\n")
     : tblock->body_only
-    ? US("------ This is a copy of the body of the message, without the headers.\n")
-    : US("------ This is a copy of the message, including all the headers.\n");
+    ? cUS("------ This is a copy of the body of the message, without the headers.\n")
+    : cUS("------ This is a copy of the message, including all the headers.\n");
   transport_ctx tctx = {
     .u = {.fd = fileno(fp)},
     .tblock = tblock,

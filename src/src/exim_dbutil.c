@@ -45,7 +45,7 @@ whose inclusion is controlled by -D on the compilation command. */
 
 /* This is used by our cut-down dbfn_open(). */
 
-uschar *spool_directory;
+cuschar *spool_directory;
 
 BOOL keyonly = FALSE;
 BOOL utc = FALSE;
@@ -60,20 +60,20 @@ uschar *
 readconf_printtime(int t)
 { return NULL; }
 gstring *
-string_vformat_trc(gstring * g, const uschar * func, unsigned line,
+string_vformat_trc(gstring * g, cuschar * func, unsigned line,
   unsigned size_limit, unsigned flags, const char *format, va_list ap)
 { return NULL; }
 uschar *
-string_sprintf_trc(const char * fmt, const uschar * func, unsigned line, ...)
+string_sprintf_trc(const char * fmt, cuschar * func, unsigned line, ...)
 { return NULL; }
 BOOL
-string_format_trc(uschar * buf, int len, const uschar * func, unsigned line,
+string_format_trc(uschar * buf, int len, cuschar * func, unsigned line,
   const char * fmt, ...)
 { return FALSE; }
 
 struct global_flags	f;
 unsigned int		log_selector[1];
-uschar *		queue_name;
+cuschar *		queue_name;
 BOOL			split_spool_directory;
 
 
@@ -104,9 +104,9 @@ sigalrm_seen = 1;
 *************************************************/
 
 static void
-usage(uschar *name, uschar *options)
+usage(cuschar *name, cuschar *options)
 {
-printf("Usage: exim_%s%s  <spool-directory> <database-name>\n", name, options);
+printf("Usage: exim_%s%s  <spool-directory> <database-name>\n", CCS(name), CCS(options));
 printf("  <database-name> = retry | misc | wait-<transport-name> | callout | ratelimit | tls | seen\n");
 exit(EXIT_FAILURE);
 }
@@ -121,7 +121,7 @@ exit(EXIT_FAILURE);
 second of them to be sure it is a known database name. */
 
 static int
-check_args(int argc, uschar **argv, uschar *name, uschar *options)
+check_args(int argc, uschar **argv, cuschar *name, cuschar *options)
 {
 uschar * aname = argv[optind + 1];
 if (argc - optind == 2)
@@ -141,7 +141,7 @@ return -1;              /* Never obeyed */
 
 FUNC_MAYBE_UNUSED
 static void
-options(int argc, uschar * argv[], uschar * name, const uschar * opts)
+options(int argc, uschar * argv[], cuschar * name, cuschar * opts)
 {
 int opt;
 
@@ -151,7 +151,7 @@ while ((opt = getopt(argc, (char * const *)argv, CCS(opts))) != -1)
   {
   case 'k':	keyonly = TRUE; break;
   case 'z':	utc = TRUE; break;
-  default:	usage(name, US(" [-z] [-k]"));
+  default:	usage(name, cUS(" [-z] [-k]"));
   }
 }
 
@@ -208,12 +208,12 @@ return time_buffer;
 *        Format a cache value for printing       *
 *************************************************/
 
-uschar *
+cuschar *
 print_cache(int value)
 {
-return value == ccache_accept ? US("accept") :
-       value == ccache_reject ? US("reject") :
-       US("unknown");
+return value == ccache_accept ? cUS("accept") :
+       value == ccache_reject ? cUS("reject") :
+       cUS("unknown");
 }
 
 
@@ -283,20 +283,20 @@ Returns:   NULL if the open failed, or the locking failed.
 */
 
 open_db *
-dbfn_open(uschar *name, int flags, open_db *dbblock, BOOL lof, BOOL panic)
+dbfn_open(cuschar *name, int flags, open_db *dbblock, BOOL lof, BOOL panic)
 {
 int rc;
 struct flock lock_data;
 BOOL read_only = flags == O_RDONLY;
-uschar * dirname, * filename;
+cuschar * dirname, * filename;
 
 /* The first thing to do is to open a separate file on which to lock. This
 ensures that Exim has exclusive use of the database before it even tries to
 open it. If there is a database, there should be a lock file in existence. */
 
 #ifdef COMPILE_UTILITY
-if (  asprintf(CSS(&dirname), "%s/db", spool_directory) < 0
-   || asprintf(CSS(&filename), "%s/%s.lockfile", dirname, name) < 0)
+if (  asprintf((char**)CCSS(&dirname), "%s/db", spool_directory) < 0
+   || asprintf((char**)CCSS(&filename), "%s/%s.lockfile", dirname, name) < 0)
   return NULL;
 #else
 dirname = string_sprintf("%s/db", spool_directory);
@@ -338,7 +338,7 @@ if (rc < 0)
 exclusive access to the database, so we can go ahead and open it. */
 
 #ifdef COMPILE_UTILITY
-if (asprintf(CSS(&filename), "%s/%s", dirname, name) < 0) return NULL;
+if (asprintf((char**)CCSS(&filename), "%s/%s", dirname, name) < 0) return NULL;
 #else
 filename = string_sprintf("%s/%s", dirname, name);
 #endif
@@ -403,7 +403,7 @@ Returns: a pointer to the retrieved record, or
 */
 
 void *
-dbfn_read_with_length(open_db *dbblock, const uschar *key, int *length)
+dbfn_read_with_length(open_db *dbblock, cuschar *key, int *length)
 {
 void *yield;
 EXIM_DATUM key_datum, result_datum;
@@ -450,7 +450,7 @@ Returns:    the yield of the underlying dbm or db "write" function. If this
 */
 
 int
-dbfn_write(open_db *dbblock, const uschar *key, void *ptr, int length)
+dbfn_write(open_db *dbblock, cuschar *key, void *ptr, int length)
 {
 EXIM_DATUM key_datum, value_datum;
 dbdata_generic *gptr = (dbdata_generic *)ptr;
@@ -484,7 +484,7 @@ Returns: the yield of the underlying dbm or db "delete" function.
 */
 
 int
-dbfn_delete(open_db *dbblock, const uschar *key)
+dbfn_delete(open_db *dbblock, cuschar *key)
 {
 int klen = Ustrlen(key) + 1;
 uschar * key_copy = store_get(klen, key);
@@ -560,11 +560,11 @@ uschar **argv = USS(cargv);
 uschar keybuffer[1024];
 
 store_init();
-options(argc, argv, US("dumpdb"), US("kz"));
+options(argc, argv, cUS("dumpdb"), cUS("kz"));
 
 /* Check the arguments, and open the database */
 
-dbdata_type = check_args(argc, argv, US("dumpdb"), US(" [-z] [-k]"));
+dbdata_type = check_args(argc, argv, cUS("dumpdb"), cUS(" [-z] [-k]"));
 argc -= optind; argv += optind;
 spool_directory = argv[0];
 
@@ -677,9 +677,9 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
 	if (length == sizeof(dbdata_callout_cache_address))
 	  {
 	  printf("%s %s callout=%s\n",
-	    print_time(((dbdata_generic *)value)->time_stamp),
-	    keybuffer,
-	    print_cache(callout->result));
+	    CCS(print_time(((dbdata_generic *)value)->time_stamp)),
+	    CCS(keybuffer),
+	    CCS(print_cache(callout->result)));
 	  }
 
 	/* New-style domain record */
@@ -787,13 +787,13 @@ rmark reset_point;
 uschar * aname;
 
 store_init();
-options(argc, argv, US("fixdb"), US("z"));
+options(argc, argv, cUS("fixdb"), cUS("z"));
 name[0] = 0;  /* No name set */
 
 /* Sort out the database type, verify what we are working on and then process
 user requests */
 
-dbdata_type = check_args(argc, argv, US("fixdb"), US(" [-z]"));
+dbdata_type = check_args(argc, argv, cUS("fixdb"), cUS(" [-z]"));
 argc -= optind; argv += optind;
 spool_directory = argv[0];
 aname = argv[1];
@@ -1176,7 +1176,7 @@ for (i = 1; i < argc; i++)
     while (*s != 0)
       {
       int value, count;
-      if (!isdigit(*s)) usage(US("tidydb"), US(" [-t <time>]"));
+      if (!isdigit(*s)) usage(cUS("tidydb"), cUS(" [-t <time>]"));
       (void)sscanf(CS(s), "%d%n", &value, &count);
       s += count;
       switch (*s)
@@ -1187,12 +1187,12 @@ for (i = 1; i < argc; i++)
         case 'm': value *= 60;
         case 's': s++;
         break;
-        default: usage(US("tidydb"), US(" [-t <time>]"));
+        default: usage(cUS("tidydb"), cUS(" [-t <time>]"));
         }
       maxkeep += value;
       }
     }
-  else usage(US("tidydb"), US(" [-t <time>]"));
+  else usage(cUS("tidydb"), cUS(" [-t <time>]"));
   }
 
 /* Adjust argument values and process arguments */
@@ -1200,7 +1200,7 @@ for (i = 1; i < argc; i++)
 argc -= --i;
 argv += i;
 
-dbdata_type = check_args(argc, argv, US("tidydb"), US(" [-t <time>]"));
+dbdata_type = check_args(argc, argv, cUS("tidydb"), cUS(" [-t <time>]"));
 
 /* Compute the oldest keep time, verify what we are doing, and open the
 database */

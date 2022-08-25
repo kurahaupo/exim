@@ -67,10 +67,10 @@ return !fail;
 
 /* On error, NULL out the destination */
 BOOL
-tls_import_cert(const uschar * buf, void ** cert)
+tls_import_cert(cuschar * buf, void ** cert)
 {
 rmark reset_point = store_mark();
-const uschar * cp = string_unprinting(US(buf));
+cuschar * cp = string_unprinting(US(buf));
 BIO * bp;
 X509 * x = *(X509 **)cert;
 
@@ -108,14 +108,14 @@ if (x)
 static uschar *
 badalloc(void)
 {
-expand_string_message = US("allocation failure");
+expand_string_message = cUS("allocation failure");
 return NULL;
 }
 
 static uschar *
 bio_string_copy(BIO * bp, int len)
 {
-uschar * cp = US("");
+uschar * cp = cUS("");
 len = len > 0 ? (int) BIO_get_mem_data(bp, &cp) : 0;
 cp = string_copyn(cp, len);
 BIO_free(bp);
@@ -141,7 +141,7 @@ else
   struct tm tm;
   struct tm * tm_p = &tm;
   BOOL mod_tz = TRUE;
-  uschar * tz = to_tz(US("GMT0"));    /* need to call strptime with baseline TZ */
+  uschar * tz = to_tz(cUS("GMT0"));    /* need to call strptime with baseline TZ */
 
   /* Parse OpenSSL ASN1_TIME_print output.  A shame there seems to
   be no other interface for the times.
@@ -151,7 +151,7 @@ else
   /*XXX should we switch to POSIX locale for this? */
   tm.tm_isdst = 0;
   if (!len || !strptime(CCS(s), "%b %e %T %Y %Z", &tm))
-    expand_string_message = US("failed time conversion");
+    expand_string_message = cUS("failed time conversion");
 
   else
     {
@@ -363,7 +363,7 @@ gstring * list = NULL;
 STACK_OF(GENERAL_NAME) * san = (STACK_OF(GENERAL_NAME) *)
   X509_get_ext_d2i((X509 *)cert, NID_subject_alt_name, NULL, NULL);
 uschar osep = '\n';
-uschar * tag = US("");
+uschar * tag = cUS("");
 uschar * ele;
 int match = -1;
 int len;
@@ -389,17 +389,17 @@ while (sk_GENERAL_NAME_num(san) > 0)
   switch (namePart->type)
     {
     case GEN_DNS:
-      tag = US("DNS");
+      tag = cUS("DNS");
       ele = US(ASN1_STRING_get0_data(namePart->d.dNSName));
       len = ASN1_STRING_length(namePart->d.dNSName);
       break;
     case GEN_URI:
-      tag = US("URI");
+      tag = cUS("URI");
       ele = US(ASN1_STRING_get0_data(namePart->d.uniformResourceIdentifier));
       len = ASN1_STRING_length(namePart->d.uniformResourceIdentifier);
       break;
     case GEN_EMAIL:
-      tag = US("MAIL");
+      tag = cUS("MAIL");
       ele = US(ASN1_STRING_get0_data(namePart->d.rfc822Name));
       len = ASN1_STRING_length(namePart->d.rfc822Name);
       break;
@@ -508,7 +508,7 @@ uschar * cp;
 
 if (!X509_digest(cert,fdig,md,&n))
   {
-  expand_string_message = US("tls_cert_fprt: out of mem\n");
+  expand_string_message = cUS("tls_cert_fprt: out of mem\n");
   return NULL;
   }
 cp = store_get(n*2+1, GET_TAINTED);

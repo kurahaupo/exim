@@ -176,7 +176,7 @@ if (*errno_value == ERRNO_CHHEADER_FAIL)
 
 if (*errno_value == ERRNO_WRITEINCOMPLETE)
   {
-  *message = US("failed to write a data block");
+  *message = cUS("failed to write a data block");
   return FALSE;
   }
 
@@ -184,7 +184,7 @@ if (*errno_value == ERRNO_WRITEINCOMPLETE)
 
 if (buffer[0] != 0)
   {
-  const uschar *s = string_printing(buffer);
+  cuschar *s = string_printing(buffer);
   *message = string_sprintf("LMTP error after %s: %s", big_buffer, s);
   *yield = buffer[0];
   return TRUE;
@@ -474,9 +474,9 @@ int fd_in = -1, fd_out = -1;
 int code, save_errno;
 BOOL send_data;
 BOOL yield = FALSE;
-uschar *igquotstr = US("");
+uschar *igquotstr = cUS("");
 uschar *sockname = NULL;
-const uschar **argv;
+cuschar **argv;
 uschar buffer[256];
 
 DEBUG(D_transport) debug_printf("%s transport entered\n", tblock->name);
@@ -502,7 +502,7 @@ uid/gid and current directory. Request that the new process be a process group
 leader, so we can kill it and all its children on an error. */
 
   if ((pid = child_open(USS(argv), NULL, 0, &fd_in, &fd_out, TRUE,
-			US("lmtp-tpt-cmd"))) < 0)
+			cUS("lmtp-tpt-cmd"))) < 0)
     {
     addrlist->message = string_sprintf(
       "Failed to create child process for %s transport: %s", tblock->name,
@@ -557,7 +557,7 @@ allows for message+recipient checks after the message has been received. */
 
 /* First thing is to wait for an initial greeting. */
 
-Ustrcpy(big_buffer, US("initial connection"));
+Ustrcpy(big_buffer, cUS("initial connection"));
 if (!lmtp_read_response(out, buffer, sizeof(buffer), '2', timeout))
   goto RESPONSE_FAILED;
 
@@ -574,7 +574,7 @@ IGNOREQUOTA option, and if so, set an appropriate addition for RCPT. */
 
 if (ob->ignore_quota)
   igquotstr = regex_match(regex_IGNOREQUOTA, buffer, -1, NULL)
-    ? US(" IGNOREQUOTA") : US("");
+    ? cUS(" IGNOREQUOTA") : cUS("");
 
 /* Now the envelope sender */
 
@@ -628,7 +628,7 @@ if (send_data)
     {fd_in},
     tblock,
     addrlist,
-    US("."), US(".."),
+    cUS("."), cUS(".."),
     ob->options
   };
 
@@ -645,7 +645,7 @@ if (send_data)
 
   sigalrm_seen = FALSE;
   transport_write_timeout = timeout;
-  Ustrcpy(big_buffer, US("sending data block"));   /* For error messages */
+  Ustrcpy(big_buffer, cUS("sending data block"));   /* For error messages */
   DEBUG(D_transport|D_v)
     debug_printf("  LMTP>> writing message and terminating \".\"\n");
 
@@ -661,7 +661,7 @@ if (send_data)
     goto RESPONSE_FAILED;
     }
 
-  Ustrcpy(big_buffer, US("end of data"));   /* For error messages */
+  Ustrcpy(big_buffer, cUS("end of data"));   /* For error messages */
 
   /* We now expect a response for every address that was accepted above,
   in the same order. For those that get a response, their status is fixed;
@@ -677,7 +677,7 @@ if (send_data)
       addr->transport_return = OK;
       if (LOGGING(smtp_confirmation))
         {
-        const uschar *s = string_printing(buffer);
+        cuschar *s = string_printing(buffer);
 	/* de-const safe here as string_printing known to have alloc'n'copied */
         addr->message = (s == buffer)? US(string_copy(s)) : US(s);
         }
@@ -767,11 +767,11 @@ if (errno == ERRNO_CHHEADER_FAIL)
     string_sprintf("Failed to expand headers_add or headers_remove: %s",
       expand_string_message);
 else if (errno == ERRNO_FILTER_FAIL)
-  addrlist->message = US("Filter process failure");
+  addrlist->message = cUS("Filter process failure");
 else if (errno == ERRNO_WRITEINCOMPLETE)
-  addrlist->message = US("Failed repeatedly to write data");
+  addrlist->message = cUS("Failed repeatedly to write data");
 else if (errno == ERRNO_SMTPFORMAT)
-  addrlist->message = US("overlong LMTP command generated");
+  addrlist->message = cUS("overlong LMTP command generated");
 else
   addrlist->message = string_sprintf("Error %d", errno);
 

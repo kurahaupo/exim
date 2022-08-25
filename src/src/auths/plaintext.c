@@ -79,7 +79,7 @@ auth_plaintext_server(auth_instance * ablock, uschar * data)
 {
 auth_plaintext_options_block * ob =
   (auth_plaintext_options_block *)(ablock->options_block);
-const uschar * prompts = ob->server_prompts;
+cuschar * prompts = ob->server_prompts;
 uschar * s;
 int number = 1;
 int rc;
@@ -142,8 +142,8 @@ auth_plaintext_client(
 {
 auth_plaintext_options_block *ob =
   (auth_plaintext_options_block *)(ablock->options_block);
-const uschar * text = ob->client_send;
-const uschar * s;
+cuschar * text = ob->client_send;
+cuschar * s;
 int sep = 0;
 int auth_var_idx = 0, rc;
 int flags = AUTH_ITEM_FIRST;

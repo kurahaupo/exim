@@ -61,8 +61,8 @@ rf_self_action(address_item *addr, host_item *host, int code, BOOL rewrite,
   uschar *new, address_item **addr_new)
 {
 uschar * msg = host->mx >= 0
-  ? US("lowest numbered MX record points to local host")
-  : US("remote host address is the local host");
+  ? cUS("lowest numbered MX record points to local host")
+  : cUS("remote host address is the local host");
 
 switch (code)
   {

@@ -21,7 +21,7 @@
 /* See local README for interface description. */
 
 static void *
-whoson_open(const uschar * filename, uschar ** errmsg)
+whoson_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(1);    /* Just return something non-null */
 }
@@ -34,8 +34,8 @@ return (void *)(1);    /* Just return something non-null */
 /* See local README for interface description. */
 
 static int
-whoson_find(void * handle, const uschar * filename, uschar * query, int length,
-  uschar ** result, uschar ** errmsg, uint * do_cache, const uschar * opts)
+whoson_find(void * handle, cuschar * filename, uschar * query, int length,
+  uschar ** result, uschar ** errmsg, uint * do_cache, cuschar * opts)
 {
 uschar buffer[80];
 
@@ -77,7 +77,7 @@ return g;
 }
 
 static lookup_info _lookup_info = {
-  .name = US("whoson"),			/* lookup name */
+  .name = cUS("whoson"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = whoson_open,			/* open function */
   .check = NULL,			/* check function */

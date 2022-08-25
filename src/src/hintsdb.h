@@ -46,7 +46,7 @@ tdb_traverse to be called) */
 
 /* EXIM_DBOPEN - return pointer to an EXIM_DB, NULL if failed */
 static inline EXIM_DB *
-exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
+exim_dbopen__(cuschar * name, cuschar * dirname, int flags,
   unsigned mode)
 {
 return tdb_open(CS(name), 0, TDB_DEFAULT, flags, mode);
@@ -220,20 +220,20 @@ specified working dir, to avoid the DBCONFIG file trap. */
 #   define ENV_TO_DB(env) ((DB *)(((EXIM_DB *)env)->app_private))
 
 static inline EXIM_DB *
-exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
+exim_dbopen__(cuschar * name, cuschar * dirname, int flags,
   unsigned mode)
 {
 EXIM_DB * dbp;
 DB * b;
 if (  db_env_create(&dbp, 0) != 0
    || (dbp->set_errcall(dbp, dbfn_bdb_error_callback), 0)
-   || dbp->open(dbp, CS(dirname), DB_CREATE|DB_INIT_MPOOL|DB_PRIVATE, 0) != 0
+   || dbp->open(dbp, CCS(dirname), DB_CREATE|DB_INIT_MPOOL|DB_PRIVATE, 0) != 0
    )
   return NULL;
 if (db_create(&b, dbp, 0) == 0)
   {
   dbp->app_private = b;
-  if (b->open(b, NULL, CS(name), NULL,
+  if (b->open(b, NULL, CCS(name), NULL,
 	      flags == O_RDONLY ? DB_UNKNOWN : DB_HASH,
 	      flags == O_RDONLY ? DB_RDONLY : DB_CREATE,
 	      mode) == 0
@@ -361,7 +361,7 @@ exim_datum_free(EXIM_DATUM * d)
 
 /* EXIM_DBOPEN - return pointer to an EXIM_DB, NULL if failed */
 static inline EXIM_DB *
-exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
+exim_dbopen__(cuschar * name, cuschar * dirname, int flags,
   unsigned mode)
 {
 EXIM_DB * dbp;
@@ -503,7 +503,7 @@ typedef struct {
 
 /* EXIM_DBOPEN - return pointer to an EXIM_DB, NULL if failed */
 static inline EXIM_DB *
-exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
+exim_dbopen__(cuschar * name, cuschar * dirname, int flags,
   unsigned mode)
 {
 EXIM_DB * dbp = malloc(sizeof(EXIM_DB));	/*XXX why not exim mem-mgmt? */
@@ -648,7 +648,7 @@ a directory name; otherwise we would create the name.pag and
 name.dir files in the directory's parent. */
 
 static inline EXIM_DB *
-exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
+exim_dbopen__(cuschar * name, cuschar * dirname, int flags,
   unsigned mode)
 {
 struct stat st;
@@ -753,7 +753,7 @@ exim_datum_free(EXIM_DATUM * d)
 #if defined(COMPILE_UTILITY) || defined(MACRO_PREDEF)
 
 static inline EXIM_DB *
-exim_dbopen(const uschar * name, const uschar * dirname, int flags,
+exim_dbopen(cuschar * name, cuschar * dirname, int flags,
   unsigned mode)
 {
 return exim_dbopen__(name, dirname, flags, mode);
@@ -771,7 +771,7 @@ extern void debug_printf_indent(const char *, ...);
 static inline BOOL is_tainted(const void *);
 
 static inline EXIM_DB *
-exim_dbopen(const uschar * name, const uschar * dirname, int flags,
+exim_dbopen(cuschar * name, cuschar * dirname, int flags,
   unsigned mode)
 {
 void * dbp;

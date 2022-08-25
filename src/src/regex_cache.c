@@ -44,7 +44,7 @@ static tree_node * regex_caseless_cache = NULL;
 /******************************************************************************/
 
 static void
-regex_to_daemon(const uschar * key, BOOL caseless)
+regex_to_daemon(cuschar * key, BOOL caseless)
 {
 int klen = Ustrlen(key) + 1;
 int rlen = sizeof(re_req) + klen;
@@ -76,7 +76,7 @@ else DEBUG(D_queue_run) debug_printf(" socket: %s\n", strerror(errno));
 
 
 static const pcre2_code *
-regex_from_cache(const uschar * key, BOOL caseless)
+regex_from_cache(cuschar * key, BOOL caseless)
 {
 tree_node * node  =
   tree_search(caseless ? regex_caseless_cache : regex_cache, key);
@@ -89,7 +89,7 @@ return node ? node->data.ptr : NULL;
 
 
 static void
-regex_to_cache(const uschar * key, BOOL caseless, const pcre2_code * cre)
+regex_to_cache(cuschar * key, BOOL caseless, const pcre2_code * cre)
 {
 PCRE2_SIZE srelen;
 uschar * sre;
@@ -136,7 +136,7 @@ Returns:      pointer to the compiled pattern
 */
 
 const pcre2_code *
-regex_must_compile(const uschar * pattern, mcs_flags flags, BOOL use_malloc)
+regex_must_compile(cuschar * pattern, mcs_flags flags, BOOL use_malloc)
 {
 BOOL caseless = !!(flags & MCS_CASELESS);
 size_t offset;
@@ -189,10 +189,10 @@ Return:		NULL on error, with errstr set. Otherwise, the compiled RE object
 */
 
 const pcre2_code *
-regex_compile(const uschar * pattern, mcs_flags flags, uschar ** errstr,
+regex_compile(cuschar * pattern, mcs_flags flags, uschar ** errstr,
   pcre2_compile_context * cctx)
 {
-const uschar * key = pattern;
+cuschar * key = pattern;
 BOOL caseless = !!(flags & MCS_CASELESS);
 int err;
 PCRE2_SIZE offset;
@@ -234,14 +234,14 @@ read from the cache, unless they re-execed.  Therefore, those latter never bothe
 sending us a notification. */
 
 void
-regex_at_daemon(const uschar * reqbuf)
+regex_at_daemon(cuschar * reqbuf)
 {
 const re_req * req = (const re_req *)reqbuf;
 uschar * errstr;
 const pcre2_code * cre;
 
 if (regex_cachesize >= REGEX_CACHESIZE_LIMIT)
-  errstr = US("regex cache size limit reached");
+  errstr = cUS("regex cache size limit reached");
 else if ((cre = regex_compile(req->re,
 	    req->caseless ? MCS_CASELESS | MCS_CACHEABLE : MCS_CACHEABLE,
 	    &errstr, pcre_gen_cmp_ctx)))

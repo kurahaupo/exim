@@ -40,7 +40,7 @@ Returns:   FILTER_EXIM    if it starts with "# Exim filter"
 /* This is an auxiliary function for matching a tag. */
 
 static BOOL
-match_tag(const uschar *s, const uschar *tag)
+match_tag(cuschar *s, cuschar *tag)
 {
 for (; *tag; s++, tag++)
   if (*tag == ' ')
@@ -58,11 +58,11 @@ return (*tag == 0);
 tags for other types of filter. */
 
 int
-rda_is_filter(const uschar *s)
+rda_is_filter(cuschar *s)
 {
 Uskip_whitespace(&s);			/* Skips initial blank lines */
-if (match_tag(s, CUS("# exim filter")))		return FILTER_EXIM;
-else if (match_tag(s, CUS("# sieve filter")))	return FILTER_SIEVE;
+if (match_tag(s, cUS("# exim filter")))		return FILTER_EXIM;
+else if (match_tag(s, cUS("# sieve filter")))	return FILTER_SIEVE;
 else						return FILTER_FORWARD;
 }
 
@@ -109,7 +109,7 @@ sigalrm_seen = FALSE;
 if (saved_errno == ENOENT)
   {
   uschar * slash = Ustrrchr(s, '/');
-  Ustrcpy(slash+1, US("."));
+  Ustrcpy(slash+1, cUS("."));
 
   ALARM(30);
   rc = Ustat(s, &statbuf);
@@ -340,12 +340,12 @@ Returns:                    a suitable return for rda_interpret()
 
 static int
 rda_extract(const redirect_block * rdata, int options,
-  const uschar * include_directory, const uschar * sieve_vacation_directory,
-  const uschar * sieve_enotify_mailto_owner, const uschar * sieve_useraddress,
-  const uschar * sieve_subaddress, address_item ** generated, uschar ** error,
+  cuschar * include_directory, cuschar * sieve_vacation_directory,
+  cuschar * sieve_enotify_mailto_owner, cuschar * sieve_useraddress,
+  cuschar * sieve_subaddress, address_item ** generated, uschar ** error,
   error_block ** eblockp, int * filtertype)
 {
-const uschar * data;
+cuschar * data;
 
 if (rdata->isfile)
   {
@@ -375,7 +375,7 @@ if (*filtertype != FILTER_FORWARD)
 
   if (!(options & RDO_FILTER))
     {
-    *error = US("filtering not enabled");
+    *error = cUS("filtering not enabled");
     return FF_ERROR;
     }
 
@@ -388,7 +388,7 @@ if (*filtertype != FILTER_FORWARD)
     {
     if ((options & RDO_EXIM_FILTER) != 0)
       {
-      *error = US("Exim filtering not enabled");
+      *error = cUS("Exim filtering not enabled");
       return FF_ERROR;
       }
     frc = filter_interpret(data, options, generated, error);
@@ -397,7 +397,7 @@ if (*filtertype != FILTER_FORWARD)
     {
     if (options & RDO_SIEVE_FILTER)
       {
-      *error = US("Sieve filtering not enabled");
+      *error = cUS("Sieve filtering not enabled");
       return FF_ERROR;
       }
     frc = sieve_interpret(data, options, sieve_vacation_directory,
@@ -440,7 +440,7 @@ Returns:     -1 on error, else 0
 */
 
 static int
-rda_write_string(int fd, const uschar *s)
+rda_write_string(int fd, cuschar *s)
 {
 int len = s ? Ustrlen(s) + 1 : 0;
 return (  write(fd, &len, sizeof(int)) != sizeof(int)
@@ -542,17 +542,17 @@ Returns:        values from extraction function, or FF_NONEXIST:
 
 int
 rda_interpret(redirect_block * rdata, int options,
-  const uschar * include_directory, const uschar * sieve_vacation_directory,
-  const uschar * sieve_enotify_mailto_owner, const uschar * sieve_useraddress,
-  const uschar * sieve_subaddress, const ugid_block * ugid, address_item ** generated,
-  uschar ** error, error_block ** eblockp, int * filtertype, const uschar * rname)
+  cuschar * include_directory, cuschar * sieve_vacation_directory,
+  cuschar * sieve_enotify_mailto_owner, cuschar * sieve_useraddress,
+  cuschar * sieve_subaddress, const ugid_block * ugid, address_item ** generated,
+  uschar ** error, error_block ** eblockp, int * filtertype, cuschar * rname)
 {
 int fd, rc, pfd[2];
 int yield, status;
 BOOL had_disaster = FALSE;
 pid_t pid;
 uschar *data;
-uschar *readerror = US("");
+uschar *readerror = cUS("");
 void (*oldsignal)(int);
 
 DEBUG(D_route) debug_printf("rda_interpret (%s): '%s'\n",
@@ -615,7 +615,7 @@ with the parent process. */
 oldsignal = signal(SIGCHLD, SIG_DFL);
 search_tidyup();
 
-if ((pid = exim_fork(US("router-interpret"))) == 0)
+if ((pid = exim_fork(cUS("router-interpret"))) == 0)
   {
   header_line *waslast = header_last;   /* Save last header */
   int fd_flags = -1;
@@ -961,8 +961,8 @@ if (had_disaster)
   *error = string_sprintf("internal problem in %s: failure to transfer "
     "data from subprocess: status=%04x%s%s%s", rname,
     status, readerror,
-    *error ? US(": error=") : US(""),
-    *error ? *error : US(""));
+    *error ? cUS(": error=") : cUS(""),
+    *error ? *error : cUS(""));
   log_write(0, LOG_MAIN|LOG_PANIC, "%s", *error);
   }
 else if (status != 0)
@@ -979,7 +979,7 @@ return yield;
 /* Come here if the data indicates removal of a header that we can't find */
 
 DISASTER_NO_HEADER:
-readerror = US(" readerror=bad header identifier");
+readerror = cUS(" readerror=bad header identifier");
 had_disaster = TRUE;
 yield = FF_ERROR;
 goto WAIT_EXIT;

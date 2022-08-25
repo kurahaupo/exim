@@ -117,7 +117,7 @@ static void
 never_error(uschar *log_msg, uschar *smtp_msg, int was_errno)
 {
 uschar *emsg = was_errno <= 0
-  ? US("") : string_sprintf(": %s", strerror(was_errno));
+  ? cUS("") : string_sprintf(": %s", strerror(was_errno));
 log_write(0, LOG_MAIN|LOG_PANIC, "%s%s", log_msg, emsg);
 if (smtp_out) smtp_printf("421 %s\r\n", FALSE, smtp_msg);
 }
@@ -202,21 +202,21 @@ that never_error() won't use smtp_out if it is NULL. */
 
 if (!(smtp_out = fdopen(accept_socket, "wb")))
   {
-  never_error(US("daemon: fdopen() for smtp_out failed"), US(""), errno);
+  never_error(cUS("daemon: fdopen() for smtp_out failed"), cUS(""), errno);
   goto ERROR_RETURN;
   }
 
 if ((dup_accept_socket = dup(accept_socket)) < 0)
   {
-  never_error(US("daemon: couldn't dup socket descriptor"),
-    US("Connection setup failed"), errno);
+  never_error(cUS("daemon: couldn't dup socket descriptor"),
+    cUS("Connection setup failed"), errno);
   goto ERROR_RETURN;
   }
 
 if (!(smtp_in = fdopen(dup_accept_socket, "rb")))
   {
-  never_error(US("daemon: fdopen() for smtp_in failed"),
-    US("Connection setup failed"), errno);
+  never_error(cUS("daemon: fdopen() for smtp_in failed"),
+    cUS("Connection setup failed"), errno);
   goto ERROR_RETURN;
   }
 
@@ -385,7 +385,7 @@ if (LOGGING(smtp_connection))
 expansion above did a lookup. */
 
 search_tidyup();
-pid = exim_fork(US("daemon-accept"));
+pid = exim_fork(cUS("daemon-accept"));
 
 /* Handle the child process */
 
@@ -554,7 +554,7 @@ if (pid == 0)
       search_tidyup();                    /* Close cached databases */
       if (!ok)                            /* Connection was dropped */
         {
-	cancel_cutthrough_connection(TRUE, US("receive dropped"));
+	cancel_cutthrough_connection(TRUE, cUS("receive dropped"));
         mac_smtp_fflush();
         smtp_log_no_mail();               /* Log no mail if configured */
         exim_underbar_exit(EXIT_SUCCESS);
@@ -573,7 +573,7 @@ if (pid == 0)
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) == 0)
 	  for(int i = 16; read(fd, buf, sizeof(buf)) > 0 && i > 0; ) i--;
 	}
-      cancel_cutthrough_connection(TRUE, US("message setup dropped"));
+      cancel_cutthrough_connection(TRUE, cUS("message setup dropped"));
       search_tidyup();
       smtp_log_no_mail();                 /* Log no mail if configured */
 
@@ -686,7 +686,7 @@ if (pid == 0)
       Instead, hard-close the fd underlying smtp_out right after fork to discard
       the data buffer. */
 
-      if ((dpid = exim_fork(US("daemon-accept-delivery"))) == 0)
+      if ((dpid = exim_fork(cUS("daemon-accept-delivery"))) == 0)
         {
         (void)fclose(smtp_in);
 	(void)close(fileno(smtp_out));
@@ -723,12 +723,12 @@ if (pid == 0)
 
       if (dpid > 0)
         {
-	release_cutthrough_connection(US("passed for delivery"));
+	release_cutthrough_connection(cUS("passed for delivery"));
         DEBUG(D_any) debug_printf("forked delivery process %d\n", (int)dpid);
         }
       else
 	{
-	cancel_cutthrough_connection(TRUE, US("delivery fork failed"));
+	cancel_cutthrough_connection(TRUE, cUS("delivery fork failed"));
         log_write(0, LOG_MAIN|LOG_PANIC, "daemon: delivery process fork "
           "failed: %s", strerror(errno));
 	}
@@ -742,7 +742,7 @@ failed. Otherwise, keep count of the number of accepting processes and
 remember the pid for ticking off when the child completes. */
 
 if (pid < 0)
-  never_error(US("daemon: accept process fork failed"), US("Fork failed"), errno);
+  never_error(cUS("daemon: accept process fork failed"), cUS("Fork failed"), errno);
 else
   {
   for (int i = 0; i < smtp_accept_max; ++i)
@@ -983,7 +983,7 @@ path = string_copy(pid_file_path);
 if ((base = Ustrrchr(path, '/')) == NULL)	/* should not happen, but who knows */
   log_write(0, LOG_MAIN|LOG_PANIC_DIE, "pid file path \"%s\" does not contain a '/'", pid_file_path);
 
-dir = base != path ? path : US("/");
+dir = base != path ? path : cUS("/");
 *base++ = '\0';
 
 if (!dir || !*dir || *dir != '/') goto cleanup;
@@ -1111,7 +1111,7 @@ if (daemon_notifier_fd >= 0)
 
 if (f.running_in_test_harness || write_pid)
   {
-  if ((pid = exim_fork(US("daemon-del-pidfile"))) == 0)
+  if ((pid = exim_fork(cUS("daemon-del-pidfile"))) == 0)
     {
     if (override_pid_file_path)
       (void)child_exec_exim(CEE_EXEC_PANIC, FALSE, NULL, FALSE, 3,
@@ -1166,7 +1166,7 @@ static void
 daemon_notifier_socket(void)
 {
 int fd;
-const uschar * where;
+cuschar * where;
 struct sockaddr_un sa_un = {.sun_family = AF_UNIX};
 ssize_t len;
 
@@ -1186,10 +1186,10 @@ DEBUG(D_any) debug_printf("creating notifier socket\n");
 
 #ifdef SOCK_CLOEXEC
 if ((fd = socket(PF_UNIX, SOCK_DGRAM|SOCK_CLOEXEC, 0)) < 0)
-  { where = US("socket"); goto bad; }
+  { where = cUS("socket"); goto bad; }
 #else
 if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) < 0)
-  { where = US("socket"); goto bad; }
+  { where = cUS("socket"); goto bad; }
 (void)fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | FD_CLOEXEC);
 #endif
 
@@ -1202,14 +1202,14 @@ DEBUG(D_any) debug_printf(" %s\n", sa_un.sun_path);
 #endif
 
 if (bind(fd, (const struct sockaddr *)&sa_un, (socklen_t)len) < 0)
-  { where = US("bind"); goto bad; }
+  { where = cUS("bind"); goto bad; }
 
 #ifdef SO_PASSCRED		/* Linux */
 if (setsockopt(fd, SOL_SOCKET, SO_PASSCRED, &on, sizeof(on)) < 0)
-  { where = US("SO_PASSCRED"); goto bad2; }
+  { where = cUS("SO_PASSCRED"); goto bad2; }
 #elif defined(LOCAL_CREDS)	/* FreeBSD-ish */
 if (setsockopt(fd, 0, LOCAL_CREDS, &on, sizeof(on)) < 0)
-  { where = US("LOCAL_CREDS"); goto bad2; }
+  { where = cUS("LOCAL_CREDS"); goto bad2; }
 #endif
 
 /* debug_printf("%s: fd %d\n", __FUNCTION__, fd); */
@@ -1366,7 +1366,7 @@ ip_address_item * addresses = NULL;
 time_t last_connection_time = (time_t)0;
 int local_queue_run_max = atoi(CS(expand_string(queue_run_max)));
 
-process_purpose = US("daemon");
+process_purpose = cUS("daemon");
 
 /* If any debugging options are set, turn on the D_pid bit so that all
 debugging lines get the pid added. */
@@ -1402,7 +1402,7 @@ if (f.inetd_wait_mode)
     fclose(debug_file);
     debug_file = NULL;
     exim_nullstd(); /* re-open fd2 after we just closed it again */
-    debug_logging_activate(US("-wait"), NULL);
+    debug_logging_activate(cUS("-wait"), NULL);
     }
 
   DEBUG(D_any) debug_printf("running in inetd wait mode\n");
@@ -1505,8 +1505,8 @@ if (f.daemon_listen && !f.inetd_wait_mode)
   int sep;
   int pct = 0;
   uschar *s;
-  const uschar * list;
-  uschar *local_iface_source = US("local_interfaces");
+  cuschar * list;
+  uschar *local_iface_source = cUS("local_interfaces");
   ip_address_item *ipa;
   ip_address_item **pipa;
 
@@ -1533,7 +1533,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
         {
         joinstr[0] = sep;
         joinstr[1] = ' ';
-        *gp = string_catn(*gp, US("<"), 1);
+        *gp = string_catn(*gp, cUS("<"), 1);
         }
 
       *gp = string_catn(*gp, joinstr, 2);
@@ -1550,7 +1550,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
     if (new_local_interfaces)
       {
       local_interfaces = string_from_gstring(new_local_interfaces);
-      local_iface_source = US("-oX data");
+      local_iface_source = cUS("-oX data");
       DEBUG(D_any) debug_printf("local_interfaces overridden by -oX:\n  %s\n",
         local_interfaces);
       }
@@ -1647,8 +1647,8 @@ if (f.daemon_listen && !f.inetd_wait_mode)
     if (daemon_smtp_port[0] <= 0)
       log_write(0, LOG_MAIN|LOG_PANIC_DIE, "no port specified for interface "
         "%s and daemon_smtp_port is unset; cannot start daemon",
-        ipa->address[0] == 0 ? US("\"all IPv4\"") :
-        ipa->address[1] == 0 ? US("\"all IPv6\"") : ipa->address);
+        ipa->address[0] == 0 ? cUS("\"all IPv4\"") :
+        ipa->address[1] == 0 ? cUS("\"all IPv6\"") : ipa->address);
 
     ipa->port = default_smtp_port[0];
     for (int i = 1; default_smtp_port[i] > 0; i++)
@@ -1780,7 +1780,7 @@ if (f.background_daemon)
 
   if (getppid() != 1)
     {
-    pid_t pid = exim_fork(US("daemon"));
+    pid_t pid = exim_fork(cUS("daemon"));
     if (pid < 0) log_write(0, LOG_MAIN|LOG_PANIC_DIE,
       "fork() failed when starting daemon: %s", strerror(errno));
     if (pid > 0) exit(EXIT_SUCCESS);      /* in parent process, just exit */
@@ -1884,8 +1884,8 @@ if (f.daemon_listen && !f.inetd_wait_mode)
       msg = US(strerror(errno));
       addr = wildcard
         ? af == AF_INET6
-	? US("(any IPv6)")
-	: US("(any IPv4)")
+	? cUS("(any IPv6)")
+	: cUS("(any IPv4)")
 	: ipa->address;
       if (daemon_startup_retries <= 0)
         log_write(0, LOG_MAIN|LOG_PANIC_DIE,
@@ -1942,7 +1942,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
     if (!check_special_case(errno, addresses, ipa, TRUE))
       log_write(0, LOG_PANIC_DIE, "listen() failed on interface %s: %s",
         wildcard
-	? af == AF_INET6 ? US("(any IPv6)") : US("(any IPv4)") : ipa->address,
+	? af == AF_INET6 ? cUS("(any IPv6)") : cUS("(any IPv4)") : ipa->address,
         strerror(errno));
 
     DEBUG(D_any) debug_printf("wildcard IPv4 listen() failed after IPv6 "
@@ -2006,7 +2006,7 @@ Normally we do this, in order to set up the groups for the Exim user. However,
 if we are not root at this time - some odd installations run that way - we
 cannot do this. */
 
-exim_setugid(exim_uid, exim_gid, geteuid()==root_uid, US("running as a daemon"));
+exim_setugid(exim_uid, exim_gid, geteuid()==root_uid, cUS("running as a daemon"));
 
 /* Update the originator_xxx fields so that received messages as listed as
 coming from Exim, not whoever started the daemon. */
@@ -2014,7 +2014,7 @@ coming from Exim, not whoever started the daemon. */
 originator_uid = exim_uid;
 originator_gid = exim_gid;
 originator_login = (pw = getpwuid(exim_uid))
-  ? string_copy_perm(US(pw->pw_name), FALSE) : US("exim");
+  ? string_copy_perm(US(pw->pw_name), FALSE) : cUS("exim");
 
 /* Get somewhere to keep the list of queue-runner pids if we are keeping track
 of them (and also if we are doing queue runs). */
@@ -2070,7 +2070,7 @@ else if (f.daemon_listen)
   uschar * qinfo = queue_interval > 0
     ? string_sprintf("-q%s%s",
 	f.queue_2stage ? "q" : "", readconf_printtime(queue_interval))
-    : US("no queue runs");
+    : cUS("no queue runs");
 
   /* Build a list of listening addresses in big_buffer, but limit it to 10
   items. The style is for backwards compatibility.
@@ -2195,7 +2195,7 @@ smtp_deliver_init();	/* Used for callouts */
 # endif
   dkim_exim_init();
 # ifdef MEASURE_TIMING
-  report_time_since(&t0, US("dkim_exim_init (delta)"));
+  report_time_since(&t0, cUS("dkim_exim_init (delta)"));
 # endif
   }
 #endif
@@ -2234,14 +2234,14 @@ closes the log afterwards, for the same reason. */
 
 log_close_all();
 
-DEBUG(D_any) debug_print_ids(US("daemon running with"));
+DEBUG(D_any) debug_print_ids(cUS("daemon running with"));
 
 /* Any messages accepted via this route are going to be SMTP. */
 
 smtp_input = TRUE;
 
 #ifdef MEASURE_TIMING
-report_time_since(&timestamp_startup, US("daemon loop start"));	/* testcase 0022 */
+report_time_since(&timestamp_startup, cUS("daemon loop start"));	/* testcase 0022 */
 #endif
 
 /* Enter the never-ending loop... */
@@ -2314,7 +2314,7 @@ for (;;)
       if (  queue_interval > 0
          && (local_queue_run_max <= 0 || queue_run_count < local_queue_run_max))
         {
-        if ((pid = exim_fork(US("queue-runner"))) == 0)
+        if ((pid = exim_fork(cUS("queue-runner"))) == 0)
           {
           /* Disable debugging if it's required only for the daemon process. We
           leave the above message, because it ties up with the "child ended"
@@ -2374,14 +2374,14 @@ for (;;)
 
             if (deliver_selectstring)
               {
-              extra[extracount++] = f.deliver_selectstring_regex ? US("-Rr") : US("-R");
+              extra[extracount++] = f.deliver_selectstring_regex ? cUS("-Rr") : cUS("-R");
               extra[extracount++] = deliver_selectstring;
               }
 
             if (deliver_selectstring_sender)
               {
               extra[extracount++] = f.deliver_selectstring_sender_regex
-	        ? US("-Sr") : US("-S");
+	        ? cUS("-Sr") : cUS("-S");
               extra[extracount++] = deliver_selectstring_sender;
               }
 

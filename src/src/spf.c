@@ -16,14 +16,14 @@
 /* must be kept in numeric order */
 static spf_result_id spf_result_id_list[] = {
   /* name		value */
-  { US("invalid"),	0},
-  { US("neutral"),	1 },
-  { US("pass"),		2 },
-  { US("fail"),		3 },
-  { US("softfail"),	4 },
-  { US("none"),		5 },
-  { US("temperror"),	6 }, /* RFC 4408 defined */
-  { US("permerror"),	7 }  /* RFC 4408 defined */
+  { cUS("invalid"),	0},
+  { cUS("neutral"),	1 },
+  { cUS("pass"),		2 },
+  { cUS("fail"),		3 },
+  { cUS("softfail"),	4 },
+  { cUS("none"),		5 },
+  { cUS("temperror"),	6 }, /* RFC 4408 defined */
+  { cUS("permerror"),	7 }  /* RFC 4408 defined */
 };
 
 SPF_server_t    *spf_server = NULL;
@@ -114,7 +114,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
    rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
   if (rr->type == rr_type)
     {
-    const uschar * s = rr->data;
+    cuschar * s = rr->data;
 
     srr.ttl = rr->ttl;
     switch(rr_type)
@@ -223,7 +223,7 @@ spf_init(void)
 {
 SPF_dns_server_t * dc;
 int debug = 0;
-const uschar *s;
+cuschar *s;
 
 DEBUG(D_receive) debug = 1;
 
@@ -334,10 +334,10 @@ else for (int i = 0; i < SPF_response_messages(spf_response); i++)
 Return: OK/FAIL  */
 
 int
-spf_process(const uschar **listptr, uschar *spf_envelope_sender, int action)
+spf_process(cuschar **listptr, uschar *spf_envelope_sender, int action)
 {
 int sep = 0;
-const uschar *list = *listptr;
+cuschar *list = *listptr;
 uschar *spf_result_id;
 int rc = SPF_RESULT_PERMERROR;
 
@@ -402,18 +402,18 @@ authres_spf(gstring * g)
 uschar * s;
 if (!spf_result) return g;
 
-g = string_append(g, 2, US(";\n\tspf="), spf_result);
+g = string_append(g, 2, cUS(";\n\tspf="), spf_result);
 if (spf_result_guessed)
-  g = string_cat(g, US(" (best guess record for domain)"));
+  g = string_cat(g, cUS(" (best guess record for domain)"));
 
-s = expand_string(US("$sender_address_domain"));
+s = expand_string(cUS("$sender_address_domain"));
 if (s && *s)
-  return string_append(g, 2, US(" smtp.mailfrom="), s);
+  return string_append(g, 2, cUS(" smtp.mailfrom="), s);
 
 s = sender_helo_name;
 return s && *s
-  ? string_append(g, 2, US(" smtp.helo="), s)
-  : string_cat(g, US(" smtp.mailfrom=<>"));
+  ? string_append(g, 2, cUS(" smtp.helo="), s)
+  : string_cat(g, cUS(" smtp.mailfrom=<>"));
 }
 
 

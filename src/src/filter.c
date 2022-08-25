@@ -27,7 +27,7 @@ union argtypes {
   struct condition_block *c;
   struct filter_cmd      *f;
   int                     i;
-  const uschar            *u;
+  cuschar            *u;
 };
 
 /* Local structures used in this module */
@@ -51,7 +51,7 @@ typedef struct condition_block {
 /* Miscellaneous other declarations */
 
 static uschar **error_pointer;
-static const uschar *log_filename;
+static cuschar *log_filename;
 static int  filter_options;
 static int  line_number;
 static int  expect_endif;
@@ -67,7 +67,7 @@ static BOOL noerror_force;
 
 enum { had_neither, had_else, had_elif, had_endif };
 
-static BOOL read_command_list(const uschar **, filter_cmd ***, BOOL);
+static BOOL read_command_list(cuschar **, filter_cmd ***, BOOL);
 
 
 /* The string arguments for the mail command. The header line ones (that are
@@ -252,8 +252,8 @@ Arguments:
 Returns:           pointer to next non-whitespace character
 */
 
-static const uschar *
-nextsigchar(const uschar *ptr, BOOL comment_allowed)
+static cuschar *
+nextsigchar(cuschar *ptr, BOOL comment_allowed)
 {
 for (;;)
   {
@@ -290,8 +290,8 @@ Arguments
 Returns:    pointer to the next significant character after the word
 */
 
-static const uschar *
-nextword(const uschar *ptr, uschar *buffer, int size, BOOL bracket)
+static cuschar *
+nextword(cuschar *ptr, uschar *buffer, int size, BOOL bracket)
 {
 uschar *bp = buffer;
 while (*ptr != 0 && !isspace(*ptr) &&
@@ -326,8 +326,8 @@ Arguments:
 Returns:     the next significant character after the item
 */
 
-static const uschar *
-nextitem(const uschar *ptr, uschar *buffer, int size, BOOL bracket)
+static cuschar *
+nextitem(cuschar *ptr, uschar *buffer, int size, BOOL bracket)
 {
 uschar *bp = buffer;
 if (*ptr != '\"') return nextword(ptr, buffer, size, bracket);
@@ -345,7 +345,7 @@ while (*++ptr && *ptr != '\"' && *ptr != '\n')
     {
     if (isspace(ptr[1]))    /* \<whitespace>NL<whitespace> ignored */
       {
-      const uschar *p = ptr + 1;
+      cuschar *p = ptr + 1;
       while (*p != '\n' && isspace(*p)) p++;
       if (*p == '\n')
         {
@@ -385,7 +385,7 @@ Returns:   the number, or 0 on error (with *OK FALSE)
 */
 
 static int
-get_number(const uschar *s, BOOL *ok)
+get_number(cuschar *s, BOOL *ok)
 {
 int value, count;
 *ok = FALSE;
@@ -416,8 +416,8 @@ Arguments:
 Returns:          points to next character after "then"
 */
 
-static const uschar *
-read_condition(const uschar *ptr, condition_block **cond, BOOL toplevel)
+static cuschar *
+read_condition(cuschar *ptr, condition_block **cond, BOOL toplevel)
 {
 uschar buffer[1024];
 BOOL testfor = TRUE;
@@ -436,7 +436,7 @@ for (;;)
 
   if (!*ptr)
     {
-    *error_pointer = US("\"then\" missing at end of filter file");
+    *error_pointer = cUS("\"then\" missing at end of filter file");
     break;
     }
 
@@ -518,7 +518,7 @@ for (;;)
       for (;;)
         {
         string_item *aa;
-        const uschar * saveptr = ptr;
+        cuschar * saveptr = ptr;
         ptr = nextword(ptr, buffer, sizeof(buffer), TRUE);
         if (*error_pointer) break;
         if (Ustrcmp(buffer, "alias") != 0)
@@ -569,7 +569,7 @@ for (;;)
     else
       {
       int i;
-      const uschar *isptr = NULL;
+      cuschar *isptr = NULL;
 
       c->left.u = string_copy(buffer);
       ptr = nextword(ptr, buffer, sizeof(buffer), TRUE);
@@ -578,14 +578,14 @@ for (;;)
       /* Handle "does|is [not]", preserving the pointer after "is" in
       case it isn't that, but the form "is <string>". */
 
-      if (strcmpic(buffer, US("does")) == 0 || strcmpic(buffer, US("is")) == 0)
+      if (strcmpic(buffer, cUS("does")) == 0 || strcmpic(buffer, cUS("is")) == 0)
         {
         if (buffer[0] == 'i') { c->type = cond_is; isptr = ptr; }
         if (buffer[0] == 'I') { c->type = cond_IS; isptr = ptr; }
 
         ptr = nextword(ptr, buffer, sizeof(buffer), TRUE);
         if (*error_pointer) break;
-        if (strcmpic(buffer, US("not")) == 0)
+        if (strcmpic(buffer, cUS("not")) == 0)
           {
           c->testfor = !c->testfor;
           if (isptr) isptr = ptr;
@@ -655,7 +655,7 @@ for (;;)
 
   else
     {
-//    const uschar *saveptr = ptr;
+//    cuschar *saveptr = ptr;
     ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
     if (*error_pointer) break;
 
@@ -842,7 +842,7 @@ Returns:       TRUE if command successfully read, else FALSE
 */
 
 static BOOL
-read_command(const uschar **pptr, filter_cmd ***lastcmdptr)
+read_command(cuschar **pptr, filter_cmd ***lastcmdptr)
 {
 int command, i, cmd_bit;
 filter_cmd *new, **newlastcmdptr;
@@ -850,8 +850,8 @@ BOOL yield = TRUE;
 BOOL was_seen_or_unseen = FALSE;
 BOOL was_noerror = FALSE;
 uschar buffer[1024];
-const uschar *ptr = *pptr;
-const uschar *saveptr;
+cuschar *ptr = *pptr;
+cuschar *saveptr;
 uschar *fmsg = NULL;
 
 /* Read the next word and find which command it is. Command words are normally
@@ -864,12 +864,12 @@ white space here. */
 
 if (Ustrncmp(ptr, "if(", 3) == 0)
   {
-  Ustrcpy(buffer, US("if"));
+  Ustrcpy(buffer, cUS("if"));
   ptr += 2;
   }
 else if (Ustrncmp(ptr, "elif(", 5) == 0)
   {
-  Ustrcpy(buffer, US("elif"));
+  Ustrcpy(buffer, cUS("elif"));
   ptr += 4;
   }
 else
@@ -989,7 +989,7 @@ switch (command)
       if (command == logwrite_command)
         {
         int len = Ustrlen(buffer);
-        if (len == 0 || buffer[len-1] != '\n') Ustrcat(buffer, US("\n"));
+        if (len == 0 || buffer[len-1] != '\n') Ustrcat(buffer, cUS("\n"));
         }
 
       argument.u = string_copy(buffer);
@@ -1006,7 +1006,7 @@ switch (command)
 
       else if (command == deliver_command)
         {
-        const uschar *save_ptr = ptr;
+        cuschar *save_ptr = ptr;
         ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
         if (Ustrcmp(buffer, "errors_to") == 0)
           {
@@ -1092,7 +1092,7 @@ switch (command)
   if (*saveptr != '\"' && (!*buffer || Ustrcmp(buffer, "text") != 0))
     {
     ptr = saveptr;
-    fmsg = US("");
+    fmsg = cUS("");
     }
   else
     {
@@ -1227,7 +1227,7 @@ switch (command)
 
   for (;;)
     {
-    const uschar *saveptr = ptr;
+    cuschar *saveptr = ptr;
     ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
     if (*error_pointer)
       { yield = FALSE; break; }
@@ -1236,7 +1236,7 @@ switch (command)
 
     if (Ustrcmp(buffer, "return") == 0)
       {
-      new->args[mailarg_index_return].u = US("");  /* not NULL => TRUE */
+      new->args[mailarg_index_return].u = cUS("");  /* not NULL => TRUE */
       ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
       if (Ustrcmp(buffer, "message") != 0)
         {
@@ -1253,7 +1253,7 @@ switch (command)
 
     if (Ustrcmp(buffer, "expand") == 0)
       {
-      new->args[mailarg_index_expand].u = US("");  /* not NULL => TRUE */
+      new->args[mailarg_index_expand].u = cUS("");  /* not NULL => TRUE */
       ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
       if (Ustrcmp(buffer, "file") != 0)
         {
@@ -1292,17 +1292,17 @@ switch (command)
     {
     if (!new->args[mailarg_index_file].u)
       {
-      new->args[mailarg_index_file].u = string_copy(US(".vacation.msg"));
-      new->args[mailarg_index_expand].u = US("");   /* not NULL => TRUE */
+      new->args[mailarg_index_file].u = string_copy(cUS(".vacation.msg"));
+      new->args[mailarg_index_expand].u = cUS("");   /* not NULL => TRUE */
       }
     if (!new->args[mailarg_index_log].u)
-      new->args[mailarg_index_log].u = string_copy(US(".vacation.log"));
+      new->args[mailarg_index_log].u = string_copy(cUS(".vacation.log"));
     if (!new->args[mailarg_index_once].u)
-      new->args[mailarg_index_once].u = string_copy(US(".vacation"));
+      new->args[mailarg_index_once].u = string_copy(cUS(".vacation"));
     if (!new->args[mailarg_index_once_repeat].u)
-      new->args[mailarg_index_once_repeat].u = string_copy(US("7d"));
+      new->args[mailarg_index_once_repeat].u = string_copy(cUS("7d"));
     if (!new->args[mailarg_index_subject].u)
-      new->args[mailarg_index_subject].u = string_copy(US("On vacation"));
+      new->args[mailarg_index_subject].u = string_copy(cUS("On vacation"));
     }
 
   /* Join the address on to the chain of generated addresses */
@@ -1386,7 +1386,7 @@ Returns:      TRUE on success
 */
 
 static BOOL
-read_command_list(const uschar **pptr, filter_cmd ***lastcmdptr, BOOL conditional)
+read_command_list(cuschar **pptr, filter_cmd ***lastcmdptr, BOOL conditional)
 {
 if (conditional) expect_endif++;
 had_else_endif = had_neither;
@@ -1400,7 +1400,7 @@ if (conditional)
   expect_endif--;
   if (had_else_endif == had_neither)
     {
-    *error_pointer = US("\"endif\" missing at end of filter file");
+    *error_pointer = cUS("\"endif\" missing at end of filter file");
     return FALSE;
     }
   }
@@ -1427,7 +1427,7 @@ static BOOL
 test_condition(condition_block * c, BOOL toplevel)
 {
 BOOL yield = FALSE, textonly_re;
-const uschar * exp[2], * p, * pp;
+cuschar * exp[2], * p, * pp;
 int val[2];
 
 if (!c) return TRUE;  /* does this ever occur? */
@@ -1574,7 +1574,7 @@ switch (c->type)
       case cond_ENDS:
 	{
 	int len = Ustrlen(exp[1]);
-	const uschar *s = exp[0] + Ustrlen(exp[0]) - len;
+	cuschar *s = exp[0] + Ustrlen(exp[0]) - len;
 	yield = s < exp[0]
 	  ? FALSE
 	  : (c->type == cond_ends ? strcmpic(s, exp[1]) : Ustrcmp(s, exp[1])) == 0;
@@ -1662,7 +1662,7 @@ Returns:      FF_DELIVERED     success, a significant action was taken
 static int
 interpret_commands(filter_cmd *commands, address_item **generated)
 {
-const uschar *s;
+cuschar *s;
 int mode;
 address_item *addr;
 BOOL condition_value;
@@ -1671,7 +1671,7 @@ while (commands)
   {
   int ff_ret;
   uschar *fmsg, *ff_name;
-  const uschar *expargs[MAILARGS_STRING_COUNT];
+  cuschar *expargs[MAILARGS_STRING_COUNT];
 
   int i, n[2];
 
@@ -1680,7 +1680,7 @@ while (commands)
 
   for (i = 0; i < (command_exparg_count[commands->command] & 15); i++)
     {
-    const uschar *ss = commands->args[i].u;
+    cuschar *ss = commands->args[i].u;
     if (!ss)
       expargs[i] = NULL;
     else if (!(expargs[i] = expand_cstring(ss)))
@@ -1702,7 +1702,7 @@ while (commands)
     case add_command:
       for (i = 0; i < 2; i++)
 	{
-	const uschar *ss = expargs[i];
+	cuschar *ss = expargs[i];
 	uschar *end;
 
 	if (i == 1 && (*ss++ != 'n' || ss[1] != 0))
@@ -1763,10 +1763,10 @@ while (commands)
 
       if (s != NULL && !f.system_filtering)
 	{
-	uschar *ownaddress = expand_string(US("$local_part@$domain"));
+	uschar *ownaddress = expand_string(cUS("$local_part@$domain"));
 	if (strcmpic(ownaddress, s) != 0)
 	  {
-	  *error_pointer = US("errors_to must point to the caller's address");
+	  *error_pointer = cUS("errors_to must point to the caller's address");
 	  return FF_ERROR;
 	  }
 	}
@@ -1781,7 +1781,7 @@ while (commands)
 	  expargs[0],
 	  commands->noerror? " (noerror)" : "",
 	  (s != NULL)? " errors_to " : "",
-	  (s != NULL)? s : US(""));
+	  (s != NULL)? s : cUS(""));
 	}
 
       /* Real case. */
@@ -1793,7 +1793,7 @@ while (commands)
 	  expargs[0],
 	  commands->noerror? " (noerror)" : "",
 	  (s != NULL)? " errors_to " : "",
-	  (s != NULL)? s : US(""));
+	  (s != NULL)? s : cUS(""));
 
 	/* Create the new address and add it to the chain, setting the
 	af_ignore_error flag if necessary, and the errors address, which can be
@@ -1888,7 +1888,7 @@ while (commands)
 	  uschar ** ss = store_get(sizeof(uschar *) * (ecount + 3), GET_UNTAINTED);
 
 	  addr->pipe_expandn = ss;
-	  if (!filter_thisaddress) filter_thisaddress = US("");
+	  if (!filter_thisaddress) filter_thisaddress = cUS("");
 	  *ss++ = string_copy(filter_thisaddress);
 	  for (int i = 0; i <= expand_nmax; i++)
 	    *ss++ = string_copyn(expand_nstring[i], expand_nlength[i]);
@@ -1934,7 +1934,7 @@ while (commands)
 	DEBUG(D_filter)
 	  debug_printf_indent("filter log command aborted: euid=%ld\n",
 	  (long int)geteuid());
-	*error_pointer = US("logwrite command forbidden");
+	*error_pointer = cUS("logwrite command forbidden");
 	return FF_ERROR;
 	}
       else if ((filter_options & RDO_REALLOG) != 0)
@@ -1946,7 +1946,7 @@ while (commands)
 	  {
 	  if (!log_filename)
 	    {
-	    *error_pointer = US("attempt to obey \"logwrite\" command ")
+	    *error_pointer = cUS("attempt to obey \"logwrite\" command ")
 	      "without a previous \"logfile\"";
 	    return FF_ERROR;
 	    }
@@ -2002,7 +2002,7 @@ while (commands)
 	else if (subtype == FALSE)
 	  {
 	  int sep = 0;
-	  const uschar * list = s;
+	  cuschar * list = s;
 
 	  for (uschar * ss; ss = string_nextinlist(&list, &sep, NULL, 0); )
 	    header_remove(0, ss);
@@ -2021,17 +2021,17 @@ while (commands)
       ensure printing characters so as not to mess up log files. */
 
     case defer_command:
-      ff_name = US("defer");
+      ff_name = cUS("defer");
       ff_ret = FF_DEFER;
       goto DEFERFREEZEFAIL;
 
     case fail_command:
-      ff_name = US("fail");
+      ff_name = cUS("fail");
       ff_ret = FF_FAIL;
       goto DEFERFREEZEFAIL;
 
     case freeze_command:
-      ff_name = US("freeze");
+      ff_name = cUS("freeze");
       ff_ret = FF_FREEZE;
 
     DEFERFREEZEFAIL:
@@ -2119,11 +2119,11 @@ while (commands)
 
 	for (i = 0; i < MAILARGS_STRING_COUNT; i++)
 	  {
-	  const uschar *s = expargs[i];
+	  cuschar *s = expargs[i];
 
 	  if (!s) continue;
 
-	  if (i != mailarg_index_text) for (const uschar * p = s; *p; p++)
+	  if (i != mailarg_index_text) for (cuschar * p = s; *p; p++)
 	    {
 	    int c = *p;
 	    if (i > mailarg_index_text)
@@ -2153,7 +2153,7 @@ while (commands)
 
 	      else
 		{
-		const uschar *pp;
+		cuschar *pp;
 		for (pp = p + 1;; pp++)
 		  {
 		  c = *pp;
@@ -2180,15 +2180,15 @@ while (commands)
 
 	if (filter_test != FTEST_NONE)
 	  {
-	  const uschar *to = commands->args[mailarg_index_to].u;
+	  cuschar *to = commands->args[mailarg_index_to].u;
 	  indent();
 	  printf("%sail to: %s%s%s\n", (commands->seen)? "Seen m" : "M",
-	    to ? to : US("<default>"),
+	    to ? to : cUS("<default>"),
 	    commands->command == vacation_command ? " (vacation)" : "",
 	    commands->noerror ? " (noerror)" : "");
 	  for (i = 1; i < MAILARGS_STRING_COUNT; i++)
 	    {
-	    const uschar *arg = commands->args[i].u;
+	    cuschar *arg = commands->args[i].u;
 	    if (arg)
 	      {
 	      int len = Ustrlen(mailargs[i]);
@@ -2204,11 +2204,11 @@ while (commands)
 	  }
 	else
 	  {
-	  const uschar *tt;
-	  const uschar *to = commands->args[mailarg_index_to].u;
+	  cuschar *tt;
+	  cuschar *to = commands->args[mailarg_index_to].u;
 	  gstring * log_addr = NULL;
 
-	  if (!to) to = expand_string(US("$reply_address"));
+	  if (!to) to = expand_string(cUS("$reply_address"));
 	  while (isspace(*to)) to++;
 
 	  for (tt = to; *tt; tt++)     /* Get rid of newlines */
@@ -2230,7 +2230,7 @@ while (commands)
 	      commands->noerror ? " (noerror)" : "");
 	    for (i = 1; i < MAILARGS_STRING_COUNT; i++)
 	      {
-	      const uschar *arg = commands->args[i].u;
+	      cuschar *arg = commands->args[i].u;
 	      if (arg)
 		{
 		int len = Ustrlen(mailargs[i]);
@@ -2266,7 +2266,7 @@ while (commands)
 
 	    if (recipient)
 	      {
-	      log_addr = string_catn(log_addr, log_addr ? US(",") : US(">"), 1);
+	      log_addr = string_catn(log_addr, log_addr ? cUS(",") : cUS(">"), 1);
 	      log_addr = string_cat (log_addr, recipient);
 	      }
 
@@ -2274,7 +2274,7 @@ while (commands)
 
 	    if (log_addr && log_addr->ptr > 256)
 	      {
-	      log_addr = string_catn(log_addr, US(", ..."), 5);
+	      log_addr = string_catn(log_addr, cUS(", ..."), 5);
 	      break;
 	      }
 
@@ -2288,7 +2288,7 @@ while (commands)
 	    addr = deliver_make_addr(string_from_gstring(log_addr), FALSE);
 	  else
 	    {
-	    addr = deliver_make_addr(US(">**bad-reply**"), FALSE);
+	    addr = deliver_make_addr(cUS(">**bad-reply**"), FALSE);
 	    setflag(addr, af_bad_reply);
 	    }
 
@@ -2325,7 +2325,7 @@ while (commands)
 
 	  for (i = 1; i < mailargs_string_passed; i++)
 	    {
-	    const uschar *ss = commands->args[i].u;
+	    cuschar *ss = commands->args[i].u;
 	    *(USS((US(addr->reply)) + reply_offsets[i])) =
 	      ss ? string_copy(ss) : NULL;
 	    }
@@ -2335,7 +2335,7 @@ while (commands)
     case testprint_command:
 	if (filter_test != FTEST_NONE || (debug_selector & D_filter) != 0)
 	  {
-	  const uschar *s = string_printing(expargs[0]);
+	  cuschar *s = string_printing(expargs[0]);
 	  if (filter_test == FTEST_NONE)
 	    debug_printf_indent("Filter: testprint: %s\n", s);
 	  else
@@ -2368,9 +2368,9 @@ Returns:     TRUE if the message is deemed to be personal
 BOOL
 filter_personal(string_item *aliases, BOOL scan_cc)
 {
-const uschar *self, *self_from, *self_to;
+cuschar *self, *self_from, *self_to;
 uschar *psself = NULL;
-const uschar *psself_from = NULL, *psself_to = NULL;
+cuschar *psself_from = NULL, *psself_to = NULL;
 rmark reset_point = store_mark();
 BOOL yield;
 header_line *h;
@@ -2390,24 +2390,24 @@ for (h = header_list; h; h = h->next)
   {
   if (h->type == htype_old) continue;
 
-  if (strncmpic(h->text, US("List-"), 5) == 0)
+  if (strncmpic(h->text, cUS("List-"), 5) == 0)
     {
     uschar * s = h->text + 5;
-    if (strncmpic(s, US("Id:"), 3) == 0 ||
-        strncmpic(s, US("Help:"), 5) == 0 ||
-        strncmpic(s, US("Subscribe:"), 10) == 0 ||
-        strncmpic(s, US("Unsubscribe:"), 12) == 0 ||
-        strncmpic(s, US("Post:"), 5) == 0 ||
-        strncmpic(s, US("Owner:"), 6) == 0 ||
-        strncmpic(s, US("Archive:"), 8) == 0)
+    if (strncmpic(s, cUS("Id:"), 3) == 0 ||
+        strncmpic(s, cUS("Help:"), 5) == 0 ||
+        strncmpic(s, cUS("Subscribe:"), 10) == 0 ||
+        strncmpic(s, cUS("Unsubscribe:"), 12) == 0 ||
+        strncmpic(s, cUS("Post:"), 5) == 0 ||
+        strncmpic(s, cUS("Owner:"), 6) == 0 ||
+        strncmpic(s, cUS("Archive:"), 8) == 0)
       return FALSE;
     }
 
-  else if (strncmpic(h->text, US("Auto-submitted:"), 15) == 0)
+  else if (strncmpic(h->text, cUS("Auto-submitted:"), 15) == 0)
     {
     uschar * s = h->text + 15;
     Uskip_whitespace(&s);
-    if (strncmpic(s, US("no"), 2) != 0) return FALSE;
+    if (strncmpic(s, cUS("no"), 2) != 0) return FALSE;
     s += 2;
     Uskip_whitespace(&s);
     if (*s) return FALSE;
@@ -2417,9 +2417,9 @@ for (h = header_list; h; h = h->next)
 /* Set up "my" address */
 
 self = string_sprintf("%s@%s", deliver_localpart, deliver_domain);
-self_from = rewrite_one(self, rewrite_from, NULL, FALSE, US(""),
+self_from = rewrite_one(self, rewrite_from, NULL, FALSE, cUS(""),
   global_rewrite_rules);
-self_to   = rewrite_one(self, rewrite_to, NULL, FALSE, US(""),
+self_to   = rewrite_one(self, rewrite_to, NULL, FALSE, cUS(""),
   global_rewrite_rules);
 
 
@@ -2432,13 +2432,13 @@ suffixed version of the local part in the tests. */
 if (deliver_localpart_prefix || deliver_localpart_suffix)
   {
   psself = string_sprintf("%s%s%s@%s",
-    deliver_localpart_prefix ? deliver_localpart_prefix : US(""),
+    deliver_localpart_prefix ? deliver_localpart_prefix : cUS(""),
     deliver_localpart,
-    deliver_localpart_suffix ? deliver_localpart_suffix : US(""),
+    deliver_localpart_suffix ? deliver_localpart_suffix : cUS(""),
     deliver_domain);
-  psself_from = rewrite_one(psself, rewrite_from, NULL, FALSE, US(""),
+  psself_from = rewrite_one(psself, rewrite_from, NULL, FALSE, cUS(""),
     global_rewrite_rules);
-  psself_to   = rewrite_one(psself, rewrite_to, NULL, FALSE, US(""),
+  psself_to   = rewrite_one(psself, rewrite_to, NULL, FALSE, cUS(""),
     global_rewrite_rules);
   if (psself_from == NULL) psself_from = psself;
   if (psself_to == NULL) psself_to = psself;
@@ -2450,24 +2450,24 @@ if (deliver_localpart_prefix || deliver_localpart_suffix)
 
 yield =
   (
-  header_match(US("to:"), TRUE, TRUE, aliases, to_count, self, self_to, psself,
+  header_match(cUS("to:"), TRUE, TRUE, aliases, to_count, self, self_to, psself,
                psself_to) ||
     (scan_cc &&
        (
-       header_match(US("cc:"), TRUE, TRUE, aliases, to_count, self, self_to,
+       header_match(cUS("cc:"), TRUE, TRUE, aliases, to_count, self, self_to,
                              psself, psself_to)
        ||
-       header_match(US("bcc:"), TRUE, TRUE, aliases, to_count, self, self_to,
+       header_match(cUS("bcc:"), TRUE, TRUE, aliases, to_count, self, self_to,
                               psself, psself_to)
        )
     )
   ) &&
 
-  header_match(US("from:"), TRUE, FALSE, aliases, from_count, "^server@",
+  header_match(cUS("from:"), TRUE, FALSE, aliases, from_count, "^server@",
     "^daemon@", "^root@", "^listserv@", "^majordomo@", "^.*?-request@",
     "^owner-[^@]+@", self, self_from, psself, psself_from) &&
 
-  header_match(US("precedence:"), FALSE, FALSE, NULL, 3, "bulk","list","junk") &&
+  header_match(cUS("precedence:"), FALSE, FALSE, NULL, 3, "bulk","list","junk") &&
 
   (sender_address == NULL || sender_address[0] != 0);
 
@@ -2498,13 +2498,13 @@ Returns:      FF_DELIVERED     success, a significant action was taken
 */
 
 int
-filter_interpret(const uschar *filter, int options, address_item **generated,
+filter_interpret(cuschar *filter, int options, address_item **generated,
   uschar **error)
 {
 int i;
 int yield = FF_ERROR;
-const uschar *ptr = filter;
-const uschar *save_headers_charset = headers_charset;
+cuschar *ptr = filter;
+cuschar *save_headers_charset = headers_charset;
 filter_cmd *commands = NULL;
 filter_cmd **lastcmdptr = &commands;
 
@@ -2545,29 +2545,29 @@ if (read_command_list(&ptr, &lastcmdptr, FALSE))
 
 if (filter_test != FTEST_NONE || (debug_selector & D_filter) != 0)
   {
-  uschar *s = US("");
+  uschar *s = cUS("");
   switch(yield)
     {
     case FF_DEFER:
-      s = US("Filtering ended by \"defer\".");
+      s = cUS("Filtering ended by \"defer\".");
       break;
 
     case FF_FREEZE:
-      s = US("Filtering ended by \"freeze\".");
+      s = cUS("Filtering ended by \"freeze\".");
       break;
 
     case FF_FAIL:
-      s = US("Filtering ended by \"fail\".");
+      s = cUS("Filtering ended by \"fail\".");
       break;
 
     case FF_DELIVERED:
-      s = US("Filtering set up at least one significant delivery ")
+      s = cUS("Filtering set up at least one significant delivery ")
 	     "or other action.\n"
 	     "No other deliveries will occur.";
       break;
 
     case FF_NOTDELIVERED:
-      s = US("Filtering did not set up a significant delivery.\n")
+      s = cUS("Filtering did not set up a significant delivery.\n")
 	     "Normal delivery will occur.";
       break;
 

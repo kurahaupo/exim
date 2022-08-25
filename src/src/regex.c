@@ -30,7 +30,7 @@ extern uschar *mime_current_boundary;
 
 
 static pcre_list *
-compile(const uschar * list, BOOL cacheable)
+compile(cuschar * list, BOOL cacheable)
 {
 int sep = 0;
 uschar * regex_string;
@@ -39,7 +39,7 @@ pcre_list * ri;
 
 /* precompile our regexes */
 while ((regex_string = string_nextinlist(&list, &sep, NULL, 0)))
-  if (strcmpic(regex_string, US("false")) != 0 && Ustrcmp(regex_string, "0") != 0)
+  if (strcmpic(regex_string, cUS("false")) != 0 && Ustrcmp(regex_string, "0") != 0)
     {
     /* compile our regular expression */
     uschar * errstr;
@@ -95,7 +95,7 @@ return FAIL;
 
 
 int
-regex(const uschar **listptr, BOOL cacheable)
+regex(cuschar **listptr, BOOL cacheable)
 {
 unsigned long mbox_size;
 FILE *mbox_file;
@@ -165,7 +165,7 @@ return ret;
 
 
 int
-mime_regex(const uschar **listptr, BOOL cacheable)
+mime_regex(cuschar **listptr, BOOL cacheable)
 {
 pcre_list *re_list_head = NULL;
 FILE *f;
@@ -183,7 +183,7 @@ if (!(re_list_head = compile(*listptr, cacheable)))
 /* check if the file is already decoded */
 if (!mime_decoded_filename)
   {				/* no, decode it first */
-  const uschar *empty = US("");
+  cuschar *empty = cUS("");
   mime_decode(&empty);
   if (!mime_decoded_filename)
     {				/* decoding failed */

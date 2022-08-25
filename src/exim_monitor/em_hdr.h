@@ -223,12 +223,12 @@ typedef struct pipe_item {
 *                Global variables                *
 *************************************************/
 
-extern Display *X_display;         /* Current display */
-extern XtAppContext X_appcon;      /* Application context */
-extern XtActionsRec actionTable[]; /* Actions table */
+extern Display *X_display;          /* Current display */
+extern XtAppContext X_appcon;       /* Application context */
+extern XtActionsRec actionTable[];  /* Actions table */
 
-extern XtTranslations queue_trans; /* translation table for queue text widget */
-extern XtTranslations text_trans;  /* translation table for other text widgets */
+extern XtTranslations queue_trans;  /* translation table for queue text widget */
+extern XtTranslations text_trans;   /* translation table for other text widgets */
 
 extern Widget  dialog_ref_widget;   /* for positioning dialog box */
 extern Widget  toplevel_widget;
@@ -242,8 +242,8 @@ extern int     action_output;       /* TRUE when wanting action command output *
 extern int     action_queue_update; /* controls auto updates */
 extern int     actionTableSize;     /* # entries in actionTable */
 extern uschar  actioned_message[];  /* For menu handling */
-extern uschar *action_required;
-extern uschar *alternate_config;    /* Alternate Exim configuration file */
+extern cuschar *action_required;
+extern cuschar *alternate_config;   /* Alternate Exim configuration file */
 
 extern int     body_max;            /* Max size of body to display */
 
@@ -252,41 +252,41 @@ extern int     eximon_initialized;  /* TRUE when initialized */
 extern int     log_buffer_size;     /* size of log buffer */
 extern BOOL    log_datestamping;    /* TRUE if logs are datestamped */
 extern int     log_depth;           /* depth of log tail window */
-extern uschar *log_display_buffer;  /* to hold display text */
-extern uschar *log_file;            /* supplied name of exim log file */
+extern cuschar *log_display_buffer; /* to hold display text */
+extern cuschar *log_file;           /* supplied name of exim log file */
 extern uschar  log_file_open[256];  /* actual open file */
-extern uschar *log_font;            /* font for log display */
+extern cuschar *log_font;           /* font for log display */
 extern ino_t   log_inode;           /* the inode of the log file */
-extern long int log_position;      /* position in log file */
+extern long int log_position;       /* position in log file */
 extern int     log_width;           /* width of log tail window */
 
-extern uschar *menu_event;          /* name of menu event */
+extern cuschar *menu_event;          /* name of menu event */
 extern int     menu_is_up;          /* TRUE when menu displayed */
 extern int     min_height;          /* min window height */
 extern int     min_width;           /* min window width */
 
-extern pipe_item *pipe_chain;      /* for delivery displays */
+extern pipe_item *pipe_chain;       /* for delivery displays */
 
-extern uschar *qualify_domain;
+extern cuschar *qualify_domain;
 extern int     queue_depth;         /* depth of queue window */
-extern uschar *queue_font;          /* font for queue display */
+extern cuschar *queue_font;         /* font for queue display */
 extern int     queue_max_addresses; /* limit on per-message list */
-extern skip_item *queue_skip;      /* for hiding bits of queue */
-extern uschar *queue_stripchart_name; /* sic */
+extern skip_item *queue_skip;       /* for hiding bits of queue */
+extern cuschar *queue_stripchart_name; /* sic */
 extern int     queue_update;        /* update interval */
 extern int     queue_width;         /* width of queue window */
 
-extern pcre2_code   *yyyymmdd_regex;    /* for matching yyyy-mm-dd */
+extern pcre2_code *yyyymmdd_regex;  /* for matching yyyy-mm-dd */
 
-extern uschar *size_stripchart;     /* path for size monitoring */
-extern uschar *size_stripchart_name; /* name for size stripchart */
-extern uschar *spool_directory;     /* Name of exim spool directory */
+extern cuschar *size_stripchart;    /* path for size monitoring */
+extern cuschar *size_stripchart_name; /* name for size stripchart */
+extern cuschar *spool_directory;    /* Name of exim spool directory */
 extern int     spool_is_split;      /* True if detected split spool */
 extern int     start_small;         /* True to start with small window */
 extern int     stripchart_height;   /* height of stripcharts */
 extern int     stripchart_number;   /* number of stripcharts */
-extern pcre2_code  **stripchart_regex;  /* vector of regexps */
-extern uschar **stripchart_title;    /* vector of titles */
+extern pcre2_code **stripchart_regex; /* vector of regexps */
+extern cuschar *const*stripchart_title; /* vector of titles */
 extern int    *stripchart_total;    /* vector of accumulating values */
 extern int     stripchart_update;   /* update interval */
 extern int     stripchart_width;    /* width of stripcharts */
@@ -295,7 +295,7 @@ extern int     stripchart_varstart; /* starting number for variable charts */
 extern int     text_depth;          /* depth of text windows */
 extern int     tick_queue_accumulator; /* For timing next auto update */
 
-extern uschar *window_title;        /* title of the exim monitor window */
+extern cuschar *window_title;       /* title of the exim monitor window */
 
 
 /*************************************************

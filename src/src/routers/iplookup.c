@@ -159,7 +159,7 @@ iplookup_router_entry(
 uschar *query = NULL;
 uschar *reply;
 uschar *hostname, *reroute, *domain;
-const uschar *listptr;
+cuschar *listptr;
 uschar host_buffer[256];
 host_item *host = store_get(sizeof(host_item), GET_UNTAINTED);
 address_item *new_addr;

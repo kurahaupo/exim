@@ -38,7 +38,7 @@ BOOL
 smtp_get_interface(uschar *istring, int host_af, address_item *addr,
   uschar **interface, uschar *msg)
 {
-const uschar * expint;
+cuschar * expint;
 uschar *iface;
 int sep = 0;
 
@@ -262,7 +262,7 @@ smtp_boundsock(smtp_connect_args * sc)
 transport_instance * tb = sc->tblock;
 smtp_transport_options_block * ob =
   (smtp_transport_options_block *)tb->options_block;
-const uschar * dscp = ob->dscp;
+cuschar * dscp = ob->dscp;
 int sock, dscp_value, dscp_level, dscp_option;
 
 if ((sock = ip_socket(SOCK_STREAM, sc->host_af)) < 0)
@@ -346,7 +346,7 @@ const blob * fastopen_blob = NULL;
 #ifndef DISABLE_EVENT
 deliver_host_address = sc->host->address;
 deliver_host_port = sc->host->port;
-if (event_raise(sc->tblock->event_action, US("tcp:connect"), NULL, &errno)) return -1;
+if (event_raise(sc->tblock->event_action, cUS("tcp:connect"), NULL, &errno)) return -1;
 #endif
 
 if (  (sock = sc->sock) < 0
@@ -489,7 +489,7 @@ callout_address = string_sprintf("[%s]:%d", sc->host->address, port);
 
 HDEBUG(D_transport|D_acl|D_v)
   {
-  uschar * s = US(" ");
+  uschar * s = cUS(" ");
   if (sc->interface) s = string_sprintf(" from %s ", sc->interface);
 #ifdef SUPPORT_SOCKS
   if (ob->socks_proxy) s = string_sprintf("%svia proxy ", s);
@@ -625,7 +625,7 @@ return TRUE;
 Use memory that will not be released between those phases.
 */
 static void
-smtp_debug_resp(const uschar * buf)
+smtp_debug_resp(cuschar * buf)
 {
 #ifndef DISABLE_CLIENT_CMD_LOG
 int old_pool = store_pool;

@@ -27,8 +27,8 @@
 
 #include "version.h"
 
-extern uschar *version_string;
-extern uschar *version_date;
+extern cuschar *version_string;
+extern cuschar *version_date;
 
 void
 version_init(void)

@@ -24,7 +24,7 @@ int spam_ok = 0;
 int spam_rc = 0;
 uschar *prev_spamd_address_work = NULL;
 
-static const uschar * loglabel = US("spam acl condition:");
+static cuschar * loglabel = cUS("spam acl condition:");
 
 
 static int
@@ -42,11 +42,11 @@ return 0;
 
 
 static int
-spamd_param(const uschar * param, spamd_address_container * spamd)
+spamd_param(cuschar * param, spamd_address_container * spamd)
 {
 static int timesinceday = -1;
-const uschar * s;
-const uschar * name;
+cuschar * s;
+cuschar * name;
 
 /*XXX more clever parsing could discard embedded spaces? */
 
@@ -65,9 +65,9 @@ if (Ustrncmp(param, "time=", 5) == 0)
   unsigned int start_h = 0, start_m = 0, start_s = 0;
   unsigned int end_h = 24, end_m = 0, end_s = 0;
   unsigned int time_start, time_end;
-  const uschar * end_string;
+  cuschar * end_string;
 
-  name = US("time");
+  name = cUS("time");
   s = param+5;
   if ((end_string = Ustrchr(s, '-')))
     {
@@ -105,7 +105,7 @@ if (Ustrcmp(param, "variant=rspamd") == 0)
 if (Ustrncmp(param, "tmo=", 4) == 0)
   {
   int sec = readconf_readtime((s = param+4), '\0', FALSE);
-  name = US("timeout");
+  name = cUS("timeout");
   if (sec < 0)
     goto badval;
   spamd->timeout = sec;
@@ -115,7 +115,7 @@ if (Ustrncmp(param, "tmo=", 4) == 0)
 if (Ustrncmp(param, "retry=", 6) == 0)
   {
   int sec = readconf_readtime((s = param+6), '\0', FALSE);
-  name = US("retry");
+  name = cUS("retry");
   if (sec < 0)
     goto badval;
   spamd->retry = sec;
@@ -176,10 +176,10 @@ return -1;
 
 
 int
-spam(const uschar **listptr)
+spam(cuschar **listptr)
 {
 int sep = 0;
-const uschar *list = *listptr;
+cuschar *list = *listptr;
 uschar *user_name;
 unsigned long mbox_size;
 FILE *mbox_file;
@@ -209,11 +209,11 @@ if (!(user_name = string_nextinlist(&list, &sep, NULL, 0)))
   }
 
 /* if username is "0" or "false", do not scan */
-if (Ustrcmp(user_name, "0") == 0 || strcmpic(user_name, US("false")) == 0)
+if (Ustrcmp(user_name, "0") == 0 || strcmpic(user_name, cUS("false")) == 0)
   return FAIL;
 
 /* if there is an additional option, check if it is "true" */
-if (strcmpic(list,US("true")) == 0)
+if (strcmpic(list,cUS("true")) == 0)
   /* in that case, always return true later */
   override = 1;
 
@@ -256,7 +256,7 @@ start = time(NULL);
   int num_servers = 0;
   int current_server;
   uschar * address;
-  const uschar * spamd_address_list_ptr = spamd_address_work;
+  cuschar * spamd_address_list_ptr = spamd_address_work;
   spamd_address_container * spamd_address_vector[32];
 
   /* Check how many spamd servers we have
@@ -264,7 +264,7 @@ start = time(NULL);
   sep = 0;				/* default colon-sep */
   while ((address = string_nextinlist(&spamd_address_list_ptr, &sep, NULL, 0)))
     {
-    const uschar * sublist;
+    cuschar * sublist;
     int sublist_sep = -(int)' ';	/* default space-sep */
     unsigned args;
     uschar * s;
@@ -349,7 +349,7 @@ start = time(NULL);
 if (sd->is_rspamd)
   {
   gstring * req_str;
-  const uschar * s;
+  cuschar * s;
 
   req_str = string_append(NULL, 8,
     "CHECK RSPAMC/1.3\r\nContent-length: ", string_sprintf("%lu\r\n", mbox_size),
@@ -360,15 +360,15 @@ if (sd->is_rspamd)
   for (int i = 0; i < recipients_count; i++)
     req_str = string_append(req_str, 3,
       "Rcpt: <", recipients_list[i].address, ">\r\n");
-  if ((s = expand_string(US("$sender_helo_name"))) && *s)
+  if ((s = expand_string(cUS("$sender_helo_name"))) && *s)
     req_str = string_append(req_str, 3, "Helo: ", s, "\r\n");
-  if ((s = expand_string(US("$sender_host_name"))) && *s)
+  if ((s = expand_string(cUS("$sender_host_name"))) && *s)
     req_str = string_append(req_str, 3, "Hostname: ", s, "\r\n");
   if (sender_host_address)
     req_str = string_append(req_str, 3, "IP: ", sender_host_address, "\r\n");
-  if ((s = expand_string(US("$authenticated_id"))) && *s)
+  if ((s = expand_string(cUS("$authenticated_id"))) && *s)
     req_str = string_append(req_str, 3, "User: ", s, "\r\n");
-  req_str = string_catn(req_str, US("\r\n"), 2);
+  req_str = string_catn(req_str, cUS("\r\n"), 2);
   wrote = send(spamd_cctx.sock, req_str->s, req_str->ptr, 0);
   }
 else
@@ -529,7 +529,7 @@ else
     }
 
   Ustrcpy(spam_action_buffer,
-    spamd_score >= spamd_threshold ? US("reject") : US("no action"));
+    spamd_score >= spamd_threshold ? cUS("reject") : cUS("no action"));
   }
 
 /* Create report. Since this is a multiline string,

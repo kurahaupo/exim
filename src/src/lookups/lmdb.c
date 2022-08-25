@@ -24,19 +24,19 @@ MDB_dbi db_dbi;
 *************************************************/
 
 static void *
-lmdb_open(const uschar * filename, uschar ** errmsg)
+lmdb_open(cuschar * filename, uschar ** errmsg)
 {
 MDB_env * db_env = NULL;
 Lmdbstrct * lmdb_p;
 int ret, save_errno;
-const uschar * errstr;
+cuschar * errstr;
 
 lmdb_p = store_get(sizeof(Lmdbstrct), GET_UNTAINTED);
 lmdb_p->txn = NULL;
 
 if ((ret = mdb_env_create(&db_env)))
   {
-  errstr = US("create environment");
+  errstr = cUS("create environment");
   goto bad;
   }
 
@@ -48,13 +48,13 @@ if ((ret = mdb_env_open(db_env, CS(filename), MDB_NOSUBDIR|MDB_RDONLY, 0660)))
 
 if ((ret = mdb_txn_begin(db_env, NULL, MDB_RDONLY, &lmdb_p->txn)))
   {
-  errstr = US("start transaction");
+  errstr = cUS("start transaction");
   goto bad;
   }
 
 if ((ret = mdb_open(lmdb_p->txn, NULL, 0, &lmdb_p->db_dbi)))
   {
-  errstr = US("open database");
+  errstr = cUS("open database");
   goto bad;
   }
 
@@ -75,9 +75,9 @@ bad:
 *************************************************/
 
 static int
-lmdb_find(void * handle, const uschar * filename,
-    const uschar * keystring, int length, uschar ** result, uschar ** errmsg,
-    uint * do_cache, const uschar * opts)
+lmdb_find(void * handle, cuschar * filename,
+    cuschar * keystring, int length, uschar ** result, uschar ** errmsg,
+    uint * do_cache, cuschar * opts)
 {
 int ret;
 MDB_val dbkey, data;
@@ -96,7 +96,7 @@ if ((ret = mdb_get(lmdb_p->txn, lmdb_p->db_dbi, &dbkey, &data)) == 0)
   }
 else if (ret == MDB_NOTFOUND)
   {
-  *errmsg = US("LMDB: lookup, no data found");
+  *errmsg = cUS("LMDB: lookup, no data found");
   DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
   return FAIL;
   }
@@ -141,7 +141,7 @@ return g;
 }
 
 static lookup_info lmdb_lookup_info = {
-  .name = US("lmdb"),			/* lookup name */
+  .name = cUS("lmdb"),			/* lookup name */
   .type = lookup_absfile,		/* query-style lookup */
   .open = lmdb_open,			/* open function */
   .check = NULL,			/* no check function */

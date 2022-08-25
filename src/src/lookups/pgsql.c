@@ -34,7 +34,7 @@ static pgsql_connection *pgsql_connections = NULL;
 /* See local README for interface description. */
 
 static void *
-pgsql_open(const uschar * filename, uschar ** errmsg)
+pgsql_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(1);    /* Just return something non-null */
 }
@@ -120,8 +120,8 @@ Returns:       OK, FAIL, or DEFER
 */
 
 static int
-perform_pgsql_search(const uschar *query, uschar *server, uschar **resultptr,
-  uschar **errmsg, BOOL *defer_break, uint *do_cache, const uschar * opts)
+perform_pgsql_search(cuschar *query, uschar *server, uschar **resultptr,
+  uschar **errmsg, BOOL *defer_break, uint *do_cache, cuschar * opts)
 {
 PGconn *pg_conn = NULL;
 PGresult *pg_result = NULL;
@@ -169,7 +169,7 @@ for (cn = pgsql_connections; cn; cn = cn->next)
 
 if (!cn)
   {
-  uschar *port = US("");
+  uschar *port = cUS("");
 
   /* For a Unix domain socket connection, the path is in parentheses */
 
@@ -325,7 +325,7 @@ row, we insert '\n' between them. */
 for (int i = 0; i < num_tuples; i++)
   {
   if (result)
-    result = string_catn(result, US("\n"), 1);
+    result = string_catn(result, cUS("\n"), 1);
 
   if (num_fields == 1)
     result = string_catn(result,
@@ -344,7 +344,7 @@ for (int i = 0; i < num_tuples; i++)
 if (!result)
   {
   yield = FAIL;
-  *errmsg = US("PGSQL: no data found");
+  *errmsg = cUS("PGSQL: no data found");
   }
 
 /* Get here by goto from various error checks. */
@@ -384,11 +384,11 @@ query is deferred with a retryable error is now in a separate function that is
 shared with other SQL lookups. */
 
 static int
-pgsql_find(void * handle, const uschar * filename, const uschar * query,
+pgsql_find(void * handle, cuschar * filename, cuschar * query,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
-return lf_sqlperform(US("PostgreSQL"), US("pgsql_servers"), pgsql_servers, query,
+return lf_sqlperform(cUS("PostgreSQL"), cUS("pgsql_servers"), pgsql_servers, query,
   result, errmsg, do_cache, opts, perform_pgsql_search);
 }
 
@@ -485,7 +485,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("pgsql"),			/* lookup name */
+  .name = cUS("pgsql"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = pgsql_open,			/* open function */
   .check = NULL,			/* no check function */

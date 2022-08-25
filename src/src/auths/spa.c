@@ -146,7 +146,7 @@ unsigned off;
 /* send a 334, MS Exchange style, and grab the client's request,
 unless we already have it via an initial response. */
 
-if (!*data && auth_get_no64_data(&data, US("NTLM supported")) != OK)
+if (!*data && auth_get_no64_data(&data, cUS("NTLM supported")) != OK)
   return FAIL;
 
 if (spa_base64_to_bits(CS(&request), sizeof(request), CCS(data)) < 0)

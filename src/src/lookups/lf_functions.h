@@ -8,13 +8,13 @@
 
 /* Header for the functions that are shared by the lookups */
 
-extern int     lf_check_file(int, const uschar *, int, int, uid_t *, gid_t *,
+extern int     lf_check_file(int, cuschar *, int, int, uid_t *, gid_t *,
                  const char *, uschar **);
 extern gstring *lf_quote(uschar *, uschar *, int, gstring *);
-extern int     lf_sqlperform(const uschar *, const uschar *, const uschar *,
-		 const uschar *, uschar **,
-                 uschar **, uint *, const uschar *,
-		 int(*)(const uschar *, uschar *, uschar **,
-                 uschar **, BOOL *, uint *, const uschar *));
+extern int     lf_sqlperform(cuschar *, cuschar *, cuschar *,
+		 cuschar *, uschar **,
+                 uschar **, uint *, cuschar *,
+		 int(*)(cuschar *, uschar *, uschar **,
+                 uschar **, BOOL *, uint *, cuschar *));
 
 /* End of lf_functions.h */

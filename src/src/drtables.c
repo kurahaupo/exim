@@ -66,7 +66,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_CRAM_MD5
   {
-  .driver_name =	US("cram_md5"),                              /* lookup name */
+  .driver_name =	cUS("cram_md5"),                              /* lookup name */
   .options =		auth_cram_md5_options,
   .options_count =	&auth_cram_md5_options_count,
   .options_block =	&auth_cram_md5_option_defaults,
@@ -81,7 +81,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_CYRUS_SASL
   {
-  .driver_name =	US("cyrus_sasl"),
+  .driver_name =	cUS("cyrus_sasl"),
   .options =		auth_cyrus_sasl_options,
   .options_count =	&auth_cyrus_sasl_options_count,
   .options_block =	&auth_cyrus_sasl_option_defaults,
@@ -96,7 +96,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_DOVECOT
   {
-  .driver_name =	US("dovecot"),
+  .driver_name =	cUS("dovecot"),
   .options =		auth_dovecot_options,
   .options_count =	&auth_dovecot_options_count,
   .options_block =	&auth_dovecot_option_defaults,
@@ -111,7 +111,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_EXTERNAL
   {
-  .driver_name =	US("external"),
+  .driver_name =	cUS("external"),
   .options =		auth_external_options,
   .options_count =	&auth_external_options_count,
   .options_block =	&auth_external_option_defaults,
@@ -126,7 +126,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_GSASL
   {
-  .driver_name =	US("gsasl"),
+  .driver_name =	cUS("gsasl"),
   .options =		auth_gsasl_options,
   .options_count =	&auth_gsasl_options_count,
   .options_block =	&auth_gsasl_option_defaults,
@@ -141,7 +141,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_HEIMDAL_GSSAPI
   {
-  .driver_name =	US("heimdal_gssapi"),
+  .driver_name =	cUS("heimdal_gssapi"),
   .options =		auth_heimdal_gssapi_options,
   .options_count =	&auth_heimdal_gssapi_options_count,
   .options_block =	&auth_heimdal_gssapi_option_defaults,
@@ -156,7 +156,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_PLAINTEXT
   {
-  .driver_name =	US("plaintext"),
+  .driver_name =	cUS("plaintext"),
   .options =		auth_plaintext_options,
   .options_count =	&auth_plaintext_options_count,
   .options_block =	&auth_plaintext_option_defaults,
@@ -171,7 +171,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_SPA
   {
-  .driver_name =	US("spa"),
+  .driver_name =	cUS("spa"),
   .options =		auth_spa_options,
   .options_count =	&auth_spa_options_count,
   .options_block =	&auth_spa_option_defaults,
@@ -186,7 +186,7 @@ auth_info auths_available[] = {
 
 #ifdef AUTH_TLS
   {
-  .driver_name =	US("tls"),
+  .driver_name =	cUS("tls"),
   .options =		auth_tls_options,
   .options_count =	&auth_tls_options_count,
   .options_block =	&auth_tls_option_defaults,
@@ -199,7 +199,7 @@ auth_info auths_available[] = {
   },
 #endif
 
-  { .driver_name = US("") }		/* end marker */
+  { .driver_name = cUS("") }		/* end marker */
 };
 
 
@@ -268,7 +268,7 @@ exim binary. */
 router_info routers_available[] = {
 #ifdef ROUTER_ACCEPT
   {
-  .driver_name =	US("accept"),
+  .driver_name =	cUS("accept"),
   .options =		accept_router_options,
   .options_count =	&accept_router_options_count,
   .options_block =	&accept_router_option_defaults,
@@ -281,7 +281,7 @@ router_info routers_available[] = {
 #endif
 #ifdef ROUTER_DNSLOOKUP
   {
-  .driver_name =	US("dnslookup"),
+  .driver_name =	cUS("dnslookup"),
   .options =		dnslookup_router_options,
   .options_count =	&dnslookup_router_options_count,
   .options_block =	&dnslookup_router_option_defaults,
@@ -294,7 +294,7 @@ router_info routers_available[] = {
 #endif
 #ifdef ROUTER_IPLITERAL
   {
-  .driver_name =	US("ipliteral"),
+  .driver_name =	cUS("ipliteral"),
   .options =		ipliteral_router_options,
   .options_count =	&ipliteral_router_options_count,
   .options_block =	&ipliteral_router_option_defaults,
@@ -307,7 +307,7 @@ router_info routers_available[] = {
 #endif
 #ifdef ROUTER_IPLOOKUP
   {
-  .driver_name =	US("iplookup"),
+  .driver_name =	cUS("iplookup"),
   .options =		iplookup_router_options,
   .options_count =	&iplookup_router_options_count,
   .options_block =	&iplookup_router_option_defaults,
@@ -320,7 +320,7 @@ router_info routers_available[] = {
 #endif
 #ifdef ROUTER_MANUALROUTE
   {
-  .driver_name =	US("manualroute"),
+  .driver_name =	cUS("manualroute"),
   .options =		manualroute_router_options,
   .options_count =	&manualroute_router_options_count,
   .options_block =	&manualroute_router_option_defaults,
@@ -333,7 +333,7 @@ router_info routers_available[] = {
 #endif
 #ifdef ROUTER_QUERYPROGRAM
   {
-  .driver_name =	US("queryprogram"),
+  .driver_name =	cUS("queryprogram"),
   .options =		queryprogram_router_options,
   .options_count =	&queryprogram_router_options_count,
   .options_block =	&queryprogram_router_option_defaults,
@@ -346,7 +346,7 @@ router_info routers_available[] = {
 #endif
 #ifdef ROUTER_REDIRECT
   {
-  .driver_name =	US("redirect"),
+  .driver_name =	cUS("redirect"),
   .options =		redirect_router_options,
   .options_count =	&redirect_router_options_count,
   .options_block =	&redirect_router_option_defaults,
@@ -357,7 +357,7 @@ router_info routers_available[] = {
   .ri_flags =		ri_notransport
   },
 #endif
-  { US("") }
+  { cUS("") }
 };
 
 
@@ -365,7 +365,7 @@ router_info routers_available[] = {
 transport_info transports_available[] = {
 #ifdef TRANSPORT_APPENDFILE
   {
-  .driver_name =	US("appendfile"),
+  .driver_name =	cUS("appendfile"),
   .options =		appendfile_transport_options,
   .options_count =	&appendfile_transport_options_count,
   .options_block =	&appendfile_transport_option_defaults,       /* private options defaults */
@@ -379,7 +379,7 @@ transport_info transports_available[] = {
 #endif
 #ifdef TRANSPORT_AUTOREPLY
   {
-  .driver_name =	US("autoreply"),
+  .driver_name =	cUS("autoreply"),
   .options =		autoreply_transport_options,
   .options_count =	&autoreply_transport_options_count,
   .options_block =	&autoreply_transport_option_defaults,
@@ -393,7 +393,7 @@ transport_info transports_available[] = {
 #endif
 #ifdef TRANSPORT_LMTP
   {
-  .driver_name =	US("lmtp"),
+  .driver_name =	cUS("lmtp"),
   .options =		lmtp_transport_options,
   .options_count =	&lmtp_transport_options_count,
   .options_block =	&lmtp_transport_option_defaults,
@@ -407,7 +407,7 @@ transport_info transports_available[] = {
 #endif
 #ifdef TRANSPORT_PIPE
   {
-  .driver_name =	US("pipe"),
+  .driver_name =	cUS("pipe"),
   .options =		pipe_transport_options,
   .options_count =	&pipe_transport_options_count,
   .options_block =	&pipe_transport_option_defaults,
@@ -421,7 +421,7 @@ transport_info transports_available[] = {
 #endif
 #ifdef EXPERIMENTAL_QUEUEFILE
   {
-  .driver_name =	US("queuefile"),
+  .driver_name =	cUS("queuefile"),
   .options =		queuefile_transport_options,
   .options_count =	&queuefile_transport_options_count,
   .options_block =	&queuefile_transport_option_defaults,
@@ -435,7 +435,7 @@ transport_info transports_available[] = {
 #endif
 #ifdef TRANSPORT_SMTP
   {
-  .driver_name =	US("smtp"),
+  .driver_name =	cUS("smtp"),
   .options =		smtp_transport_options,
   .options_count =	&smtp_transport_options_count,
   .options_block =	&smtp_transport_option_defaults,
@@ -447,7 +447,7 @@ transport_info transports_available[] = {
   .local =		FALSE
   },
 #endif
-  { US("") }
+  { cUS("") }
 };
 
 #ifndef MACRO_PREDEF
@@ -455,53 +455,53 @@ transport_info transports_available[] = {
 gstring *
 auth_show_supported(gstring * g)
 {
-g = string_cat(g, US("Authenticators:"));
+g = string_cat(g, cUS("Authenticators:"));
 for (auth_info * ai = auths_available; ai->driver_name[0]; ai++)
        	g = string_fmt_append(g, " %s", ai->driver_name);
-return string_cat(g, US("\n"));
+return string_cat(g, cUS("\n"));
 }
 
 gstring *
 route_show_supported(gstring * g)
 {
-g = string_cat(g, US("Routers:"));
+g = string_cat(g, cUS("Routers:"));
 for (router_info * rr = routers_available; rr->driver_name[0]; rr++)
        	g = string_fmt_append(g, " %s", rr->driver_name);
-return string_cat(g, US("\n"));
+return string_cat(g, cUS("\n"));
 }
 
 gstring *
 transport_show_supported(gstring * g)
 {
-g = string_cat(g, US("Transports:"));
+g = string_cat(g, cUS("Transports:"));
 #ifdef TRANSPORT_APPENDFILE
-  g = string_cat(g, US(" appendfile"));
+  g = string_cat(g, cUS(" appendfile"));
   #ifdef SUPPORT_MAILDIR
-    g = string_cat(g, US("/maildir"));	/* damn these subclasses */
+    g = string_cat(g, cUS("/maildir"));	/* damn these subclasses */
   #endif
   #ifdef SUPPORT_MAILSTORE
-    g = string_cat(g, US("/mailstore"));
+    g = string_cat(g, cUS("/mailstore"));
   #endif
   #ifdef SUPPORT_MBX
-    g = string_cat(g, US("/mbx"));
+    g = string_cat(g, cUS("/mbx"));
   #endif
 #endif
 #ifdef TRANSPORT_AUTOREPLY
-  g = string_cat(g, US(" autoreply"));
+  g = string_cat(g, cUS(" autoreply"));
 #endif
 #ifdef TRANSPORT_LMTP
-  g = string_cat(g, US(" lmtp"));
+  g = string_cat(g, cUS(" lmtp"));
 #endif
 #ifdef TRANSPORT_PIPE
-  g = string_cat(g, US(" pipe"));
+  g = string_cat(g, cUS(" pipe"));
 #endif
 #ifdef EXPERIMENTAL_QUEUEFILE
-  g = string_cat(g, US(" queuefile"));
+  g = string_cat(g, cUS(" queuefile"));
 #endif
 #ifdef TRANSPORT_SMTP
-  g = string_cat(g, US(" smtp"));
+  g = string_cat(g, cUS(" smtp"));
 #endif
-return string_cat(g, US("\n"));
+return string_cat(g, cUS("\n"));
 }
 
 
@@ -729,7 +729,7 @@ if (!(dd = exim_opendir(LOOKUP_MODULE_DIR)))
 else
   {
   const pcre2_code * regex_islookupmod = regex_must_compile(
-    US("\\." DYNLIB_FN_EXT "$"), MCS_NOFLAGS, TRUE);
+    cUS("\\." DYNLIB_FN_EXT "$"), MCS_NOFLAGS, TRUE);
 
   DEBUG(D_lookup) debug_printf("Loading lookup modules from %s\n", LOOKUP_MODULE_DIR);
   while ((ent = readdir(dd)))

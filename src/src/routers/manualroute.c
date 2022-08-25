@@ -56,8 +56,8 @@ manualroute_router_options_block manualroute_router_option_defaults = {
   -1,           /* host_all_ignored code (unset) */
   -1,           /* host_find_failed code (unset) */
   FALSE,        /* hosts_randomize */
-  US("defer"),    /* host_all_ignored */
-  US("freeze"),   /* host_find_failed */
+  cUS("defer"),    /* host_all_ignored */
+  cUS("freeze"),   /* host_find_failed */
   NULL,         /* route_data */
   NULL          /* route_list */
 };
@@ -66,12 +66,12 @@ manualroute_router_options_block manualroute_router_option_defaults = {
 /* Names and values for host_find_failed and host_all_ignored.  */
 
 static uschar *hff_names[] = {
-  US("ignore"),  /* MUST be first - not valid for host_all_ignored */
-  US("decline"),
-  US("defer"),
-  US("fail"),
-  US("freeze"),
-  US("pass") };
+  cUS("ignore"),  /* MUST be first - not valid for host_all_ignored */
+  cUS("decline"),
+  cUS("defer"),
+  cUS("fail"),
+  cUS("freeze"),
+  cUS("pass") };
 
 static int hff_codes[] = { hff_ignore, hff_decline, hff_defer, hff_fail,
   hff_freeze, hff_pass };
@@ -150,8 +150,8 @@ Returns:    FALSE if domain expected and string is empty;
 */
 
 static BOOL
-parse_route_item(const uschar *s, const uschar **domain, const uschar **hostlist,
-  const uschar **options)
+parse_route_item(cuschar *s, cuschar **domain, cuschar **hostlist,
+  cuschar **options)
 {
 while (*s != 0 && isspace(*s)) s++;
 
@@ -237,11 +237,11 @@ manualroute_router_entry(
 {
 int rc, lookup_type;
 uschar *route_item = NULL;
-const uschar *options = NULL;
-const uschar *hostlist = NULL;
-const uschar *domain;
+cuschar *options = NULL;
+cuschar *hostlist = NULL;
+cuschar *domain;
 uschar *newhostlist;
-const uschar *listptr;
+cuschar *listptr;
 manualroute_router_options_block *ob =
   (manualroute_router_options_block *)(rblock->options_block);
 transport_instance *transport = NULL;
@@ -277,7 +277,7 @@ if (ob->route_list)
 
     if (rc == DEFER)
       {
-      addr->message = US("lookup defer in route_list");
+      addr->message = cUS("lookup defer in route_list");
       return DEFER;
       }
     }
@@ -329,7 +329,7 @@ lookup_type = LK_DEFAULT;
 while (*options)
   {
   unsigned n;
-  const uschar *s = options;
+  cuschar *s = options;
   while (*options != 0 && !isspace(*options)) options++;
   n = options-s;
 
@@ -472,7 +472,7 @@ if (!transport && verify == v_none)
     {
     log_write(0, LOG_MAIN, "Error in %s router: no transport defined",
       rblock->name);
-    addr->message = US("error in router: transport missing");
+    addr->message = cUS("error in router: transport missing");
     return DEFER;
     }
 

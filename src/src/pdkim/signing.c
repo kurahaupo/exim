@@ -17,10 +17,10 @@ void
 features_crypto(void)
 {
 # ifdef SIGN_HAVE_ED25519
-  builtin_macro_create(US("_CRYPTO_SIGN_ED25519"));
+  builtin_macro_create(cUS("_CRYPTO_SIGN_ED25519"));
 # endif
 # ifdef EXIM_HAVE_SHA3
-  builtin_macro_create(US("_CRYPTO_HASH_SHA3"));
+  builtin_macro_create(cUS("_CRYPTO_HASH_SHA3"));
 # endif
 }
 #else
@@ -88,19 +88,19 @@ return string_cat(g, s);
 /* import private key from PEM string in memory.
 Return: NULL for success, or an error string */
 
-const uschar *
-exim_dkim_signing_init(const uschar * privkey_pem, es_ctx * sign_ctx)
+cuschar *
+exim_dkim_signing_init(cuschar * privkey_pem, es_ctx * sign_ctx)
 {
 gnutls_datum_t k = { .data = (void *)privkey_pem, .size = Ustrlen(privkey_pem) };
 gnutls_x509_privkey_t x509_key;
-const uschar * where;
+cuschar * where;
 int rc;
 
-if (  (where = US("internal init"), rc = gnutls_x509_privkey_init(&x509_key))
+if (  (where = cUS("internal init"), rc = gnutls_x509_privkey_init(&x509_key))
    || (rc = gnutls_privkey_init(&sign_ctx->key))
-   || (where = US("privkey PEM-block import"),
+   || (where = cUS("privkey PEM-block import"),
        rc = gnutls_x509_privkey_import(x509_key, &k, GNUTLS_X509_FMT_PEM))
-   || (where = US("internal privkey transfer"),
+   || (where = cUS("internal privkey transfer"),
        rc = gnutls_privkey_import_x509(sign_ctx->key, x509_key, 0))
    )
   return string_sprintf("%s: %s", where, gnutls_strerror(rc));
@@ -126,7 +126,7 @@ return NULL;
 
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_sign(es_ctx * sign_ctx, hashmethod hash, blob * data, blob * sig)
 {
 gnutls_datum_t k_data = { .data = data->data, .size = data->len };
@@ -139,7 +139,7 @@ switch (hash)
   case HASH_SHA1:	dig = GNUTLS_DIG_SHA1; break;
   case HASH_SHA2_256:	dig = GNUTLS_DIG_SHA256; break;
   case HASH_SHA2_512:	dig = GNUTLS_DIG_SHA512; break;
-  default:		return US("nonhandled hash type");
+  default:		return cUS("nonhandled hash type");
   }
 
 if ((rc = gnutls_privkey_sign_data(sign_ctx->key, dig, 0, &k_data, &k_sig)))
@@ -157,13 +157,13 @@ return NULL;
 /* import public key (from blob in memory)
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_verify_init(blob * pubkey, keyformat fmt, ev_ctx * verify_ctx,
   unsigned * bits)
 {
 gnutls_datum_t k;
 int rc;
-const uschar * ret = NULL;
+cuschar * ret = NULL;
 
 gnutls_pubkey_init(&verify_ctx->key);
 k.data = pubkey->data;
@@ -183,7 +183,7 @@ switch(fmt)
     break;
 #endif
   default:
-    ret = US("pubkey format not handled");
+    ret = cUS("pubkey format not handled");
     break;
   }
 if (!ret && bits) gnutls_pubkey_get_pk_algorithm(verify_ctx->key, bits);
@@ -195,13 +195,13 @@ return ret;
 (given pubkey & alleged sig)
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_verify(ev_ctx * verify_ctx, hashmethod hash, blob * data_hash, blob * sig)
 {
 gnutls_datum_t k = { .data = data_hash->data, .size = data_hash->len };
 gnutls_datum_t s = { .data = sig->data,       .size = sig->len };
 int rc;
-const uschar * ret = NULL;
+cuschar * ret = NULL;
 
 #ifdef SIGN_HAVE_ED25519
 if (verify_ctx->keytype == KEYTYPE_ED25519)
@@ -219,7 +219,7 @@ else
     case HASH_SHA1:	algo = GNUTLS_SIGN_RSA_SHA1;   break;
     case HASH_SHA2_256:	algo = GNUTLS_SIGN_RSA_SHA256; break;
     case HASH_SHA2_512:	algo = GNUTLS_SIGN_RSA_SHA512; break;
-    default:		return US("nonhandled hash type");
+    default:		return cUS("nonhandled hash type");
     }
 
   if ((rc = gnutls_pubkey_verify_hash2(verify_ctx->key, algo,
@@ -353,8 +353,8 @@ return g;	/*dummy*/
 Only handles RSA keys.
 Return: NULL for success, or an error string */
 
-const uschar *
-exim_dkim_signing_init(const uschar * privkey_pem, es_ctx * sign_ctx)
+cuschar *
+exim_dkim_signing_init(cuschar * privkey_pem, es_ctx * sign_ctx)
 {
 uschar * s1, * s2;
 blob der;
@@ -414,12 +414,12 @@ Useful cmds:
 if (  !(s1 = Ustrstr(CS(privkey_pem), "-----BEGIN RSA PRIVATE KEY-----"))
    || !(s2 = Ustrstr(CS(s1+=31),      "-----END RSA PRIVATE KEY-----" ))
    )
-  return US("Bad PEM wrapper");
+  return cUS("Bad PEM wrapper");
 
 *s2 = '\0';
 
 if ((rc = b64decode(s1, &der.data) < 0))
-  return US("Bad PEM-DER b64 decode");
+  return cUS("Bad PEM-DER b64 decode");
 der.len = rc;
 
 /* untangle asn.1 */
@@ -432,7 +432,7 @@ if ((rc = as_tag(&der, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
 if ((rc = as_tag(&der, 0, ASN1_TAG_INTEGER, &alen)) != ASN1_SUCCESS)
   goto asn_err;
 if (alen != 1 || *der.data != 0)
-  return US("Bad version number");
+  return cUS("Bad version number");
 der.data++; der.len--;
 
 if (  (s1 = as_mpi(&der, &sign_ctx->n))
@@ -482,7 +482,7 @@ asn_err: return US(asn1_strerror(rc));
 
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_sign(es_ctx * sign_ctx, hashmethod hash, blob * data, blob * sig)
 {
 char * sexp_hash;
@@ -502,7 +502,7 @@ switch (hash)
   {
   case HASH_SHA1:	sexp_hash = "(data(flags pkcs1)(hash sha1 %b))"; break;
   case HASH_SHA2_256:	sexp_hash = "(data(flags pkcs1)(hash sha256 %b))"; break;
-  default:		return US("nonhandled hash type");
+  default:		return cUS("nonhandled hash type");
   }
 
 #define SIGSPACE 128
@@ -529,7 +529,7 @@ if (  (gerr = gcry_sexp_build (&s_key, NULL,
 
 if (  !(s_sig = gcry_sexp_find_token(s_sig, "s", 0))
    )
-  return US("no sig result");
+  return cUS("no sig result");
 
 m_sig = gcry_sexp_nth_mpi(s_sig, 1, GCRYMPI_FMT_USG);
 
@@ -557,7 +557,7 @@ return NULL;
 /* import public key (from blob in memory)
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_verify_init(blob * pubkey, keyformat fmt, ev_ctx * verify_ctx,
   unsigned * bits)
 {
@@ -571,9 +571,9 @@ unsigned nbits;
 int rc;
 uschar * errstr;
 gcry_error_t gerr;
-uschar * stage = US("S1");
+cuschar * stage = cUS("S1");
 
-if (fmt != KEYFMT_DER) return US("pubkey format not handled");
+if (fmt != KEYFMT_DER) return cUS("pubkey format not handled");
 
 /*
 sequence
@@ -595,7 +595,7 @@ if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
    != ASN1_SUCCESS) goto asn_err;
 
 /* sequence; skip the entire thing */
-DEBUG(D_acl) stage = US("S2");
+DEBUG(D_acl) stage = cUS("S2");
 if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, &alen))
    != ASN1_SUCCESS) goto asn_err;
 pubkey->data += alen; pubkey->len -= alen;
@@ -603,19 +603,19 @@ pubkey->data += alen; pubkey->len -= alen;
 
 /* bitstring: limit range to size of bitstring;
 move over header + content wrapper */
-DEBUG(D_acl) stage = US("BS");
+DEBUG(D_acl) stage = cUS("BS");
 if ((rc = as_tag(pubkey, 0, ASN1_TAG_BIT_STRING, &alen)) != ASN1_SUCCESS)
   goto asn_err;
 pubkey->len = alen;
 pubkey->data++; pubkey->len--;
 
 /* sequence; just move past the header */
-DEBUG(D_acl) stage = US("S3");
+DEBUG(D_acl) stage = cUS("S3");
 if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
    != ASN1_SUCCESS) goto asn_err;
 
 /* read two integers */
-DEBUG(D_acl) stage = US("MPI");
+DEBUG(D_acl) stage = cUS("MPI");
 nbits = pubkey->len;
 if ((errstr = as_mpi(pubkey, &verify_ctx->n))) return errstr;
 nbits = (nbits - pubkey->len) * 8;
@@ -646,7 +646,7 @@ XXX though we appear to be doing a hash, too!
 (given pubkey & alleged sig)
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_verify(ev_ctx * verify_ctx, hashmethod hash, blob * data_hash, blob * sig)
 {
 /*
@@ -663,20 +663,20 @@ switch (hash)
   {
   case HASH_SHA1:     sexp_hash = "(data(flags pkcs1)(hash sha1 %b))"; break;
   case HASH_SHA2_256: sexp_hash = "(data(flags pkcs1)(hash sha256 %b))"; break;
-  default:	      return US("nonhandled hash type");
+  default:	      return cUS("nonhandled hash type");
   }
 
-if (  (stage = US("pkey sexp build"),
+if (  (stage = cUS("pkey sexp build"),
        gerr = gcry_sexp_build (&s_pkey, NULL, "(public-key(rsa(n%m)(e%m)))",
 		        verify_ctx->n, verify_ctx->e))
-   || (stage = US("data sexp build"),
+   || (stage = cUS("data sexp build"),
        gerr = gcry_sexp_build (&s_hash, NULL, sexp_hash,
 		(int) data_hash->len, CS(data_hash->data)))
-   || (stage = US("sig mpi scan"),
+   || (stage = cUS("sig mpi scan"),
        gerr = gcry_mpi_scan(&m_sig, GCRYMPI_FMT_USG, sig->data, sig->len, NULL))
-   || (stage = US("sig sexp build"),
+   || (stage = cUS("sig sexp build"),
        gerr = gcry_sexp_build (&s_sig, NULL, "(sig-val(rsa(s%m)))", m_sig))
-   || (stage = US("verify"),
+   || (stage = cUS("verify"),
        gerr = gcry_pk_verify (s_sig, s_hash, s_pkey))
    )
   {
@@ -719,8 +719,8 @@ return string_cat(g, s);
 /* import private key from PEM string in memory.
 Return: NULL for success, or an error string */
 
-const uschar *
-exim_dkim_signing_init(const uschar * privkey_pem, es_ctx * sign_ctx)
+cuschar *
+exim_dkim_signing_init(cuschar * privkey_pem, es_ctx * sign_ctx)
 {
 BIO * bp = BIO_new_mem_buf((void *)privkey_pem, -1);
 
@@ -745,7 +745,7 @@ return NULL;
 
 Return: NULL for success with the signaature in the sig blob, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_sign(es_ctx * sign_ctx, hashmethod hash, blob * data, blob * sig)
 {
 const EVP_MD * md;
@@ -758,7 +758,7 @@ switch (hash)
   case HASH_SHA1:	md = EVP_sha1();   break;
   case HASH_SHA2_256:	md = EVP_sha256(); break;
   case HASH_SHA2_512:	md = EVP_sha512(); break;
-  default:		return US("nonhandled hash type");
+  default:		return cUS("nonhandled hash type");
   }
 
 #ifdef SIGN_HAVE_ED25519
@@ -782,7 +782,7 @@ if (  (ctx = EVP_MD_CTX_create())
    && EVP_DigestSignUpdate(ctx, data->data, data->len) > 0
    && EVP_DigestSignFinal(ctx, NULL, &siglen) > 0
    && (sig->data = store_get(siglen, GET_UNTAINTED))
- 
+
    /* Obtain the signature (slen could change here!) */
    && EVP_DigestSignFinal(ctx, sig->data, &siglen) > 0
    )
@@ -802,11 +802,11 @@ return US(ERR_error_string(ERR_get_error(), NULL));
 /* import public key (from blob in memory)
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_verify_init(blob * pubkey, keyformat fmt, ev_ctx * verify_ctx,
   unsigned * bits)
 {
-const uschar * s = pubkey->data;
+cuschar * s = pubkey->data;
 uschar * ret = NULL;
 
 switch(fmt)
@@ -824,7 +824,7 @@ switch(fmt)
     break;
 #endif
   default:
-    ret = US("pubkey format not handled");
+    ret = cUS("pubkey format not handled");
     break;
   }
 
@@ -839,7 +839,7 @@ return ret;
 (given pubkey & alleged sig)
 Return: NULL for success, or an error string */
 
-const uschar *
+cuschar *
 exim_dkim_verify(ev_ctx * verify_ctx, hashmethod hash, blob * data, blob * sig)
 {
 const EVP_MD * md;
@@ -850,7 +850,7 @@ switch (hash)
   case HASH_SHA1:	md = EVP_sha1();   break;
   case HASH_SHA2_256:	md = EVP_sha256(); break;
   case HASH_SHA2_512:	md = EVP_sha512(); break;
-  default:		return US("nonhandled hash type");
+  default:		return cUS("nonhandled hash type");
   }
 
 #ifdef SIGN_HAVE_ED25519

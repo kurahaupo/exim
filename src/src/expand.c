@@ -20,8 +20,8 @@ typedef unsigned esi_flags;
 
 /* Recursively called function */
 
-static uschar *expand_string_internal(const uschar *, esi_flags, const uschar **, BOOL *, BOOL *);
-static int_eximarith_t expanded_string_integer(const uschar *, BOOL);
+static uschar *expand_string_internal(cuschar *, esi_flags, cuschar **, BOOL *, BOOL *);
+static int_eximarith_t expanded_string_integer(cuschar *, BOOL);
 
 #ifdef STAND_ALONE
 # ifndef SUPPORT_CRYPTEQ
@@ -108,40 +108,40 @@ bcrypt ({CRYPT}$2a$).
 /* Table of item names, and corresponding switch numbers. The names must be in
 alphabetical order. */
 
-static uschar *item_table[] = {
-  US("acl"),
-  US("authresults"),
-  US("certextract"),
-  US("dlfunc"),
-  US("env"),
-  US("extract"),
-  US("filter"),
-  US("hash"),
-  US("hmac"),
-  US("if"),
+static cuschar *item_table[] = {
+  cUS("acl"),
+  cUS("authresults"),
+  cUS("certextract"),
+  cUS("dlfunc"),
+  cUS("env"),
+  cUS("extract"),
+  cUS("filter"),
+  cUS("hash"),
+  cUS("hmac"),
+  cUS("if"),
 #ifdef SUPPORT_I18N
-  US("imapfolder"),
+  cUS("imapfolder"),
 #endif
-  US("length"),
-  US("listextract"),
-  US("listquote"),
-  US("lookup"),
-  US("map"),
-  US("nhash"),
-  US("perl"),
-  US("prvs"),
-  US("prvscheck"),
-  US("readfile"),
-  US("readsocket"),
-  US("reduce"),
-  US("run"),
-  US("sg"),
-  US("sort"),
+  cUS("length"),
+  cUS("listextract"),
+  cUS("listquote"),
+  cUS("lookup"),
+  cUS("map"),
+  cUS("nhash"),
+  cUS("perl"),
+  cUS("prvs"),
+  cUS("prvscheck"),
+  cUS("readfile"),
+  cUS("readsocket"),
+  cUS("reduce"),
+  cUS("run"),
+  cUS("sg"),
+  cUS("sort"),
 #ifdef SUPPORT_SRS
-  US("srs_encode"),
+  cUS("srs_encode"),
 #endif
-  US("substr"),
-  US("tr") };
+  cUS("substr"),
+  cUS("tr") };
 
 enum {
   EITEM_ACL,
@@ -183,18 +183,18 @@ in alphabetical order. There are two tables, because underscore is used in some
 cases to introduce arguments, whereas for other it is part of the name. This is
 an historical mis-design. */
 
-static uschar * op_table_underscore[] = {
-  US("from_utf8"),
-  US("local_part"),
-  US("quote_local_part"),
-  US("reverse_ip"),
-  US("time_eval"),
-  US("time_interval")
+static cuschar * op_table_underscore[] = {
+  cUS("from_utf8"),
+  cUS("local_part"),
+  cUS("quote_local_part"),
+  cUS("reverse_ip"),
+  cUS("time_eval"),
+  cUS("time_interval")
 #ifdef SUPPORT_I18N
- ,US("utf8_domain_from_alabel"),
-  US("utf8_domain_to_alabel"),
-  US("utf8_localpart_from_alabel"),
-  US("utf8_localpart_to_alabel")
+ ,cUS("utf8_domain_from_alabel"),
+  cUS("utf8_domain_to_alabel"),
+  cUS("utf8_localpart_from_alabel"),
+  cUS("utf8_localpart_to_alabel")
 #endif
   };
 
@@ -213,52 +213,52 @@ enum {
 #endif
   };
 
-static uschar *op_table_main[] = {
-  US("address"),
-  US("addresses"),
-  US("base32"),
-  US("base32d"),
-  US("base62"),
-  US("base62d"),
-  US("base64"),
-  US("base64d"),
-  US("domain"),
-  US("escape"),
-  US("escape8bit"),
-  US("eval"),
-  US("eval10"),
-  US("expand"),
-  US("h"),
-  US("hash"),
-  US("hex2b64"),
-  US("hexquote"),
-  US("ipv6denorm"),
-  US("ipv6norm"),
-  US("l"),
-  US("lc"),
-  US("length"),
-  US("listcount"),
-  US("listnamed"),
-  US("mask"),
-  US("md5"),
-  US("nh"),
-  US("nhash"),
-  US("quote"),
-  US("randint"),
-  US("rfc2047"),
-  US("rfc2047d"),
-  US("rxquote"),
-  US("s"),
-  US("sha1"),
-  US("sha2"),
-  US("sha256"),
-  US("sha3"),
-  US("stat"),
-  US("str2b64"),
-  US("strlen"),
-  US("substr"),
-  US("uc"),
-  US("utf8clean") };
+static cuschar *op_table_main[] = {
+  cUS("address"),
+  cUS("addresses"),
+  cUS("base32"),
+  cUS("base32d"),
+  cUS("base62"),
+  cUS("base62d"),
+  cUS("base64"),
+  cUS("base64d"),
+  cUS("domain"),
+  cUS("escape"),
+  cUS("escape8bit"),
+  cUS("eval"),
+  cUS("eval10"),
+  cUS("expand"),
+  cUS("h"),
+  cUS("hash"),
+  cUS("hex2b64"),
+  cUS("hexquote"),
+  cUS("ipv6denorm"),
+  cUS("ipv6norm"),
+  cUS("l"),
+  cUS("lc"),
+  cUS("length"),
+  cUS("listcount"),
+  cUS("listnamed"),
+  cUS("mask"),
+  cUS("md5"),
+  cUS("nh"),
+  cUS("nhash"),
+  cUS("quote"),
+  cUS("randint"),
+  cUS("rfc2047"),
+  cUS("rfc2047d"),
+  cUS("rxquote"),
+  cUS("s"),
+  cUS("sha1"),
+  cUS("sha2"),
+  cUS("sha256"),
+  cUS("sha3"),
+  cUS("stat"),
+  cUS("str2b64"),
+  cUS("strlen"),
+  cUS("substr"),
+  cUS("uc"),
+  cUS("utf8clean") };
 
 enum {
   EOP_ADDRESS =  nelem(op_table_underscore),
@@ -311,57 +311,57 @@ enum {
 /* Table of condition names, and corresponding switch numbers. The names must
 be in alphabetical order. */
 
-static uschar *cond_table[] = {
-  US("<"),
-  US("<="),
-  US("="),
-  US("=="),     /* Backward compatibility */
-  US(">"),
-  US(">="),
-  US("acl"),
-  US("and"),
-  US("bool"),
-  US("bool_lax"),
-  US("crypteq"),
-  US("def"),
-  US("eq"),
-  US("eqi"),
-  US("exists"),
-  US("first_delivery"),
-  US("forall"),
-  US("forall_json"),
-  US("forall_jsons"),
-  US("forany"),
-  US("forany_json"),
-  US("forany_jsons"),
-  US("ge"),
-  US("gei"),
-  US("gt"),
-  US("gti"),
+static cuschar *cond_table[] = {
+  cUS("<"),
+  cUS("<="),
+  cUS("="),
+  cUS("=="),     /* Backward compatibility */
+  cUS(">"),
+  cUS(">="),
+  cUS("acl"),
+  cUS("and"),
+  cUS("bool"),
+  cUS("bool_lax"),
+  cUS("crypteq"),
+  cUS("def"),
+  cUS("eq"),
+  cUS("eqi"),
+  cUS("exists"),
+  cUS("first_delivery"),
+  cUS("forall"),
+  cUS("forall_json"),
+  cUS("forall_jsons"),
+  cUS("forany"),
+  cUS("forany_json"),
+  cUS("forany_jsons"),
+  cUS("ge"),
+  cUS("gei"),
+  cUS("gt"),
+  cUS("gti"),
 #ifdef SUPPORT_SRS
-  US("inbound_srs"),
+  cUS("inbound_srs"),
 #endif
-  US("inlist"),
-  US("inlisti"),
-  US("isip"),
-  US("isip4"),
-  US("isip6"),
-  US("ldapauth"),
-  US("le"),
-  US("lei"),
-  US("lt"),
-  US("lti"),
-  US("match"),
-  US("match_address"),
-  US("match_domain"),
-  US("match_ip"),
-  US("match_local_part"),
-  US("or"),
-  US("pam"),
-  US("pwcheck"),
-  US("queue_running"),
-  US("radius"),
-  US("saslauthd")
+  cUS("inlist"),
+  cUS("inlisti"),
+  cUS("isip"),
+  cUS("isip4"),
+  cUS("isip6"),
+  cUS("ldapauth"),
+  cUS("le"),
+  cUS("lei"),
+  cUS("lt"),
+  cUS("lti"),
+  cUS("match"),
+  cUS("match_address"),
+  cUS("match_domain"),
+  cUS("match_ip"),
+  cUS("match_local_part"),
+  cUS("or"),
+  cUS("pam"),
+  cUS("pwcheck"),
+  cUS("queue_running"),
+  cUS("radius"),
+  cUS("saslauthd")
 };
 
 enum {
@@ -850,14 +850,14 @@ static unsigned int prime[] = {
 
 /* For printing modes in symbolic form */
 
-static uschar *mtable_normal[] =
-  { US("---"), US("--x"), US("-w-"), US("-wx"), US("r--"), US("r-x"), US("rw-"), US("rwx") };
+static cuschar *mtable_normal[] =
+  { cUS("---"), cUS("--x"), cUS("-w-"), cUS("-wx"), cUS("r--"), cUS("r-x"), cUS("rw-"), cUS("rwx") };
 
-static uschar *mtable_setid[] =
-  { US("--S"), US("--s"), US("-wS"), US("-ws"), US("r-S"), US("r-s"), US("rwS"), US("rws") };
+static cuschar *mtable_setid[] =
+  { cUS("--S"), cUS("--s"), cUS("-wS"), cUS("-ws"), cUS("r-S"), cUS("r-s"), cUS("rwS"), cUS("rws") };
 
-static uschar *mtable_sticky[] =
-  { US("--T"), US("--t"), US("-wT"), US("-wt"), US("r-T"), US("r-t"), US("rwT"), US("rwt") };
+static cuschar *mtable_sticky[] =
+  { cUS("--T"), cUS("--t"), cUS("-wT"), cUS("-wt"), cUS("r-T"), cUS("r-t"), cUS("rwT"), cUS("rwt") };
 
 /* flags for find_header() */
 #define FH_EXISTS_ONLY	BIT(0)
@@ -902,7 +902,8 @@ static int utf8_table2[] = { 0xff, 0x1f, 0x0f, 0x07, 0x03, 0x01};
 
 
 
-static uschar * base32_chars = US("abcdefghijklmnopqrstuvwxyz234567");
+//static cuschar * base32_chars = cUS("abcdefghijklmnopqrstuvwxyz234567");
+static cuschar base32_chars[] = "abcdefghijklmnopqrstuvwxyz234567";
 
 /*************************************************
 *           Binary chop search on a table        *
@@ -919,14 +920,14 @@ Returns:      the offset in the table, or -1
 */
 
 static int
-chop_match(uschar *name, uschar **table, int table_size)
+chop_match(cuschar *name, cuschar **table, int table_size)
 {
-uschar **bot = table;
-uschar **top = table + table_size;
+cuschar **bot = table;
+cuschar **top = table + table_size;
 
 while (top > bot)
   {
-  uschar **mid = bot + (top - bot)/2;
+  cuschar **mid = bot + (top - bot)/2;
   int c = Ustrcmp(name, *mid);
   if (c == 0) return mid - table;
   if (c > 0) bot = mid + 1; else top = mid;
@@ -962,7 +963,7 @@ Returns:        TRUE if condition is met, FALSE if not
 BOOL
 expand_check_condition(uschar *condition, uschar *m1, uschar *m2)
 {
-uschar * ss = expand_string(condition);
+cuschar * ss = expand_cstring(condition);
 if (!ss)
   {
   if (!f.expand_string_forcedfail && !f.search_find_defer)
@@ -970,8 +971,8 @@ if (!ss)
       "for %s %s: %s", condition, m1, m2, expand_string_message);
   return FALSE;
   }
-return *ss && Ustrcmp(ss, "0") != 0 && strcmpic(ss, US("no")) != 0 &&
-  strcmpic(ss, US("false")) != 0;
+return *ss && Ustrcmp(ss, "0") != 0 && strcmpic(ss, cUS("no")) != 0 &&
+  strcmpic(ss, cUS("false")) != 0;
 }
 
 
@@ -1070,8 +1071,8 @@ Note: The test for *s != 0 in the while loop is necessary because
 Ustrchr() yields non-NULL if the character is zero (which is not something
 I expected). */
 
-static const uschar *
-read_name(uschar *name, int max, const uschar *s, uschar *extras)
+static cuschar *
+read_name(uschar *name, int max, cuschar *s, cuschar *extras)
 {
 int ptr = 0;
 while (*s && (isalnum(*s) || Ustrchr(extras, *s) != NULL))
@@ -1104,8 +1105,8 @@ Arguments:
 Returns:    a pointer to the first character after the header name
 */
 
-static const uschar *
-read_header_name(uschar *name, int max, const uschar *s)
+static cuschar *
+read_header_name(uschar *name, int max, cuschar *s)
 {
 int prelen = Ustrchr(name, '_') - name + 1;
 int ptr = Ustrlen(name) - prelen;
@@ -1144,8 +1145,8 @@ while (isdigit(*s)) *n = *n * 10 + (*s++ - '0');
 return s;
 }
 
-static const uschar *
-read_cnumber(int *n, const uschar *s)
+static cuschar *
+read_cnumber(int *n, cuschar *s)
 {
 *n = 0;
 while (isdigit(*s)) *n = *n * 10 + (*s++ - '0');
@@ -1169,10 +1170,10 @@ Returns:    NULL if the subfield was not found, or
 */
 
 uschar *
-expand_getkeyed(const uschar * key, const uschar * s)
+expand_getkeyed(cuschar * key, cuschar * s)
 {
 int length = Ustrlen(key);
-Uskip_whitespace(&s);
+cskip_whitespace(&s);
 
 /* Loop to search for the key */
 
@@ -1180,17 +1181,17 @@ while (*s)
   {
   int dkeylength;
   uschar * data;
-  const uschar * dkey = s;
+  cuschar * dkey = s;
 
   while (*s && *s != '=' && !isspace(*s)) s++;
   dkeylength = s - dkey;
-  if (Uskip_whitespace(&s) == '=') while (isspace(*++s));
+  if (cskip_whitespace(&s) == '=') while (isspace(*++s));
 
   data = string_dequote(&s);
   if (length == dkeylength && strncmpic(key, dkey, length) == 0)
     return data;
 
-  Uskip_whitespace(&s);
+  cskip_whitespace(&s);
   }
 
 return NULL;
@@ -1290,9 +1291,9 @@ return fieldtext;
 
 
 static uschar *
-expand_getlistele(int field, const uschar * list)
+expand_getlistele(int field, cuschar * list)
 {
-const uschar * tlist = list;
+cuschar * tlist = list;
 int sep = 0;
 /* Tainted mem for the throwaway element copies */
 uschar * dummy = store_get(2, GET_TAINTED);
@@ -1314,23 +1315,23 @@ return string_nextinlist(&list, &sep, NULL, 0);
 #ifndef DISABLE_TLS
 typedef struct
 {
-uschar * name;
+cuschar * name;
 int      namelen;
 uschar * (*getfn)(void * cert, uschar * mod);
 } certfield;
 static certfield certfields[] =
 {			/* linear search; no special order */
-  { US("version"),	 7,  &tls_cert_version },
-  { US("serial_number"),	 13, &tls_cert_serial_number },
-  { US("subject"),	 7,  &tls_cert_subject },
-  { US("notbefore"),	 9,  &tls_cert_not_before },
-  { US("notafter"),	 8,  &tls_cert_not_after },
-  { US("issuer"),		 6,  &tls_cert_issuer },
-  { US("signature"),	 9,  &tls_cert_signature },
-  { US("sig_algorithm"),	 13, &tls_cert_signature_algorithm },
-  { US("subj_altname"),    12, &tls_cert_subject_altname },
-  { US("ocsp_uri"),	 8,  &tls_cert_ocsp_uri },
-  { US("crl_uri"),	 7,  &tls_cert_crl_uri },
+  { cUS("version"),	 7,  &tls_cert_version },
+  { cUS("serial_number"), 13, &tls_cert_serial_number },
+  { cUS("subject"),	 7,  &tls_cert_subject },
+  { cUS("notbefore"),	 9,  &tls_cert_not_before },
+  { cUS("notafter"),	 8,  &tls_cert_not_after },
+  { cUS("issuer"),	 6,  &tls_cert_issuer },
+  { cUS("signature"),	 9,  &tls_cert_signature },
+  { cUS("sig_algorithm"), 13, &tls_cert_signature_algorithm },
+  { cUS("subj_altname"), 12, &tls_cert_subject_altname },
+  { cUS("ocsp_uri"),	 8,  &tls_cert_ocsp_uri },
+  { cUS("crl_uri"),	 7,  &tls_cert_crl_uri },
 };
 
 static uschar *
@@ -1590,8 +1591,8 @@ Returns:        NULL if the header does not exist, else a pointer to a new
                 store block
 */
 
-static uschar *
-find_header(uschar *name, int *newsize, unsigned flags, const uschar *charset)
+static cuschar *
+find_header(cuschar *name, int *newsize, unsigned flags, cuschar *charset)
 {
 BOOL found = !name;
 int len = name ? Ustrlen(name) : 0;
@@ -1602,16 +1603,17 @@ for (header_line * h = header_list; h; h = h->next)
   if (h->type != htype_old && h->text)  /* NULL => Received: placeholder */
     if (!name || (len <= h->slen && strncmpic(name, h->text, len) == 0))
       {
-      uschar * s, * t;
+      cuschar * s;
+      cuschar * t;
       size_t inc;
 
       if (flags & FH_EXISTS_ONLY)
-	return US("1");  /* don't need actual string */
+	return cUS("1");  /* don't need actual string */
 
       found = TRUE;
       s = h->text + len;		/* text to insert */
       if (!(flags & FH_WANT_RAW))	/* unless wanted raw, */
-	Uskip_whitespace(&s);		/* remove leading white space */
+	cskip_whitespace(&s);		/* remove leading white space */
       t = h->text + h->slen;		/* end-point */
 
       /* Unless wanted raw, remove trailing whitespace, including the
@@ -1647,14 +1649,14 @@ for (header_line * h = header_list; h; h = h->next)
       else if (flags & FH_WANT_RAW)
 	g = string_catn(g, s, (unsigned)inc);
       else if (inc > 0)
-	g = string_append2_listele_n(g, comma ? US(",\n") : US("\n"),
+	g = string_append2_listele_n(g, comma ? cUS(",\n") : cUS("\n"),
 	  s, (unsigned)inc);
 
       if (gstring_length(g) >= header_insert_maxlen) break;
       }
 
 if (!found) return NULL;	/* No header found */
-if (!g) return US("");
+if (!g) return cUS("");
 
 /* That's all we do for raw header expansion. */
 
@@ -1668,7 +1670,8 @@ charset translation fails. If decoding fails, it returns NULL. */
 
 else
   {
-  uschar * error, * decoded = rfc2047_decode2(string_from_gstring(g),
+  cuschar * error;
+  cuschar * decoded = rfc2047_decode2(string_from_gstring(g),
     check_rfc2047_length, charset, '?', NULL, newsize, &error);
   if (error)
     DEBUG(D_any) debug_printf("*** error in RFC 2047 decoding: %s\n"
@@ -1685,11 +1688,11 @@ if this was a non-smtp message.
 */
 
 static gstring *
-authres_local(gstring * g, const uschar * sysname)
+authres_local(gstring * g, cuschar * sysname)
 {
 if (!f.authentication_local)
   return g;
-g = string_append(g, 3, US(";\n\tlocal=pass (non-smtp, "), sysname, US(")"));
+g = string_append(g, 3, cUS(";\n\tlocal=pass (non-smtp, "), sysname, cUS(")"));
 if (authenticated_id) g = string_append(g, 2, " u=", authenticated_id);
 return g;
 }
@@ -1703,16 +1706,16 @@ static gstring *
 authres_iprev(gstring * g)
 {
 if (sender_host_name)
-  g = string_append(g, 3, US(";\n\tiprev=pass ("), sender_host_name, US(")"));
+  g = string_append(g, 3, cUS(";\n\tiprev=pass ("), sender_host_name, cUS(")"));
 else if (host_lookup_deferred)
-  g = string_cat(g, US(";\n\tiprev=temperror"));
+  g = string_cat(g, cUS(";\n\tiprev=temperror"));
 else if (host_lookup_failed)
-  g = string_cat(g, US(";\n\tiprev=fail"));
+  g = string_cat(g, cUS(";\n\tiprev=fail"));
 else
   return g;
 
 if (sender_host_address)
-  g = string_append(g, 2, US(" smtp.remote-ip="), sender_host_address);
+  g = string_append(g, 2, cUS(" smtp.remote-ip="), sender_host_address);
 return g;
 }
 
@@ -1736,7 +1739,7 @@ if (!f.enable_dollar_recipients) return NULL;
 for (int i = 0; i < recipients_count; i++)
   {
   s = recipients_list[i].address;
-  g = string_append2_listele_n(g, US(", "), s, Ustrlen(s));
+  g = string_append2_listele_n(g, cUS(", "), s, Ustrlen(s));
   }
 return g ? g->s : NULL;
 }
@@ -1754,7 +1757,7 @@ struct sockaddr_un sa_un = {.sun_family = AF_UNIX};
 uschar buf[16];
 int fd;
 ssize_t len;
-const uschar * where;
+cuschar * where;
 uschar * sname;
 
 if ((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
@@ -1766,7 +1769,7 @@ if ((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
 len = daemon_client_sockname(&sa_un, &sname);
 
 if (bind(fd, (const struct sockaddr *)&sa_un, (socklen_t)len) < 0)
-  { where = US("bind"); goto bad; }
+  { where = cUS("bind"); goto bad; }
 
 #ifdef notdef
 debug_printf("local addr '%s%s'\n",
@@ -1776,10 +1779,10 @@ debug_printf("local addr '%s%s'\n",
 
 len = daemon_notifier_sockname(&sa_un);
 if (connect(fd, (const struct sockaddr *)&sa_un, len) < 0)
-  { where = US("connect"); goto bad2; }
+  { where = cUS("connect"); goto bad2; }
 
 buf[0] = NOTIFY_QUEUE_SIZE_REQ;
-if (send(fd, buf, 1, 0) < 0) { where = US("send"); goto bad; }
+if (send(fd, buf, 1, 0) < 0) { where = cUS("send"); goto bad; }
 
 if (poll_one_fd(fd, POLLIN, 2 * 1000) != 1)
   {
@@ -1787,7 +1790,7 @@ if (poll_one_fd(fd, POLLIN, 2 * 1000) != 1)
   len = snprintf(CS(buf), sizeof(buf), "%u", queue_count_cached());
   }
 else if ((len = recv(fd, buf, sizeof(buf), 0)) < 0)
-  { where = US("recv"); goto bad2; }
+  { where = cUS("recv"); goto bad2; }
 
 close(fd);
 #ifndef EXIM_HAVE_ABSTRACT_UNIX_SOCKETS
@@ -1828,11 +1831,13 @@ Returns:        NULL if the variable does not exist, or
                 something non-NULL if exists_only is TRUE
 */
 
-static const uschar *
+static cuschar *
 find_variable(uschar *name, BOOL exists_only, BOOL skipping, int *newsize)
 {
 var_entry * vp;
-uschar *s, *domain;
+uschar *s;
+cuschar *cs;
+cuschar *domain;
 uschar **ss;
 void * val;
 
@@ -1852,12 +1857,12 @@ if ((Ustrncmp(name, "acl_c", 5) == 0 || Ustrncmp(name, "acl_m", 5) == 0) &&
   {
   tree_node * node =
     tree_search(name[4] == 'c' ? acl_var_c : acl_var_m, name + 4);
-  return node ? node->data.ptr : strict_acl_vars ? NULL : US("");
+  return node ? node->data.ptr : strict_acl_vars ? NULL : cUS("");
   }
 else if (Ustrncmp(name, "r_", 2) == 0)
   {
   tree_node * node = tree_search(router_var, name + 2);
-  return node ? node->data.ptr : strict_acl_vars ? NULL : US("");
+  return node ? node->data.ptr : strict_acl_vars ? NULL : cUS("");
   }
 
 /* Handle $auth<n> variables. */
@@ -1867,14 +1872,14 @@ if (Ustrncmp(name, "auth", 4) == 0)
   uschar *endptr;
   int n = Ustrtoul(name + 4, &endptr, 10);
   if (!*endptr && n != 0 && n <= AUTH_VARS)
-    return auth_vars[n-1] ? auth_vars[n-1] : US("");
+    return auth_vars[n-1] ? auth_vars[n-1] : cUS("");
   }
 else if (Ustrncmp(name, "regex", 5) == 0)
   {
   uschar *endptr;
   int n = Ustrtoul(name + 5, &endptr, 10);
   if (!*endptr && n != 0 && n <= REGEX_VARS)
-    return regex_vars[n-1] ? regex_vars[n-1] : US("");
+    return regex_vars[n-1] ? regex_vars[n-1] : cUS("");
   }
 
 /* For all other variables, search the table */
@@ -1886,7 +1891,7 @@ if (!(vp = find_var_ent(name)))
 and we want to avoid processing (such as looking up the host name). */
 
 if (skipping)
-  return US("");
+  return cUS("");
 
 val = vp->value;
 switch (vp->type)
@@ -1916,7 +1921,7 @@ switch (vp->type)
     return var_buffer;
 
   case vtype_stringptr:                      /* Pointer to string */
-    return (s = *((uschar **)(val))) ? s : US("");
+    return (cs = *((cuschar **)(val))) ? cs : cUS("");
 
   case vtype_pid:
     sprintf(CS(var_buffer), "%d", (int)getpid()); /* pid */
@@ -1930,20 +1935,20 @@ switch (vp->type)
     if (  !sender_host_name && sender_host_address
        && !host_lookup_failed && host_name_lookup() == OK)
       host_build_sender_fullhost();
-    return sender_host_name ? sender_host_name : US("");
+    return sender_host_name ? sender_host_name : cUS("");
 
   case vtype_localpart:                      /* Get local part from address */
-    if (!(s = *((uschar **)(val)))) return US("");
-    if (!(domain = Ustrrchr(s, '@'))) return s;
-    if (domain - s > sizeof(var_buffer) - 1)
+    if (!(cs = *((cuschar **)(val)))) return cUS("");
+    if (!(domain = Ustrrchr(cs, '@'))) return cs;
+    if (domain - cs > sizeof(var_buffer) - 1)
       log_write(0, LOG_MAIN|LOG_PANIC_DIE, "local part longer than " SIZE_T_FMT
 	  " in string expansion", sizeof(var_buffer));
-    return string_copyn(s, domain - s);
+    return string_copyn(cs, domain - cs);
 
   case vtype_domain:                         /* Get domain from address */
-    if (!(s = *((uschar **)(val)))) return US("");
+    if (!(cs = *((cuschar **)(val)))) return cUS("");
     domain = Ustrrchr(s, '@');
-    return domain ? domain + 1 : US("");
+    return domain ? domain + 1 : cUS("");
 
   case vtype_msgheaders:
     return find_header(NULL, newsize, exists_only ? FH_EXISTS_ONLY : 0, NULL);
@@ -1988,7 +1993,7 @@ switch (vp->type)
 	    { if (body[--len] == '\n' || body[len] == 0) body[len] = ' '; }
 	}
       }
-    return *ss ? *ss : US("");
+    return *ss ? *ss : cUS("");
 
   case vtype_todbsdin:                       /* BSD inbox time of day */
     return tod_stamp(tod_bsdin);
@@ -2015,32 +2020,32 @@ switch (vp->type)
     return tod_stamp(tod_log_datestamp_daily);
 
   case vtype_reply:                          /* Get reply address */
-    s = find_header(US("reply-to:"), newsize,
+    s = (uschar*) find_header(cUS("reply-to:"), newsize,
 		exists_only ? FH_EXISTS_ONLY|FH_WANT_RAW : FH_WANT_RAW,
 		headers_charset);
-    if (s) Uskip_whitespace(&s);
+    if (s) skip_whitespace(&s);
     if (!s || !*s)
       {
       *newsize = 0;                            /* For the *s==0 case */
-      s = find_header(US("from:"), newsize,
+      s = (uschar*) find_header(cUS("from:"), newsize,
 		exists_only ? FH_EXISTS_ONLY|FH_WANT_RAW : FH_WANT_RAW,
 		headers_charset);
       }
     if (s)
       {
-      uschar *t;
-      Uskip_whitespace(&s);
-      for (t = s; *t; t++) if (*t == '\n') *t = ' ';
+      skip_whitespace(&s);
+      uschar *t = s;
+      for (; *t; t++) if (*t == '\n') *t = ' ';
       while (t > s && isspace(t[-1])) t--;
       *t = 0;
       }
-    return s ? s : US("");
+    return s ? s : cUS("");
 
   case vtype_string_func:
     {
     stringptr_fn_t * fn = (stringptr_fn_t *) val;
-    uschar* s = fn();
-    return s ? s : US("");
+    cuschar* s = fn();
+    return s ? s : cUS("");
     }
 
   case vtype_pspace:
@@ -2060,7 +2065,7 @@ switch (vp->type)
   return var_buffer;
 
   case vtype_cert:
-    return *(void **)val ? US("<cert>") : US("");
+    return *(void **)val ? cUS("<cert>") : cUS("");
 
 #ifndef DISABLE_DKIM
   case vtype_dkim:
@@ -2118,13 +2123,13 @@ Returns:     -1 OK; string pointer updated, but in "skipping" mode
 */
 
 static int
-read_subs(uschar ** sub, int n, int m, const uschar ** sptr, esi_flags flags,
-  BOOL check_end, uschar * name, BOOL * resetok, unsigned * textonly_p)
+read_subs(cuschar ** sub, int n, int m, cuschar ** sptr, esi_flags flags,
+  BOOL check_end, cuschar * name, BOOL * resetok, unsigned * textonly_p)
 {
-const uschar * s = *sptr;
+cuschar * s = *sptr;
 unsigned textonly_l = 0;
 
-Uskip_whitespace(&s);
+cskip_whitespace(&s);
 for (int i = 0; i < n; i++)
   {
   BOOL textonly;
@@ -2145,8 +2150,8 @@ for (int i = 0; i < n; i++)
     return 3;
   if (*s++ != '}') return 1;
   if (textonly_p && textonly) textonly_l |= BIT(i);
-  Uskip_whitespace(&s);
-  }						/*{*/
+  cskip_whitespace(&s);
+  }		       /*'{'*/
 if (check_end && *s++ != '}')
   {
   if (s[-1] == '{')
@@ -2186,10 +2191,10 @@ if (Ustrncmp(name, "acl_", 4) == 0)
   expand_string_message = string_sprintf("%s (%s)", expand_string_message,
     (name[4] == 'c' || name[4] == 'm')?
       (isalpha(name[5])?
-        US("6th character of a user-defined ACL variable must be a digit or underscore") :
-        US("strict_acl_vars is set")    /* Syntax is OK, it has to be this */
+        cUS("6th character of a user-defined ACL variable must be a digit or underscore") :
+        cUS("strict_acl_vars is set")    /* Syntax is OK, it has to be this */
       ) :
-      US("user-defined ACL variables must start acl_c or acl_m"));
+      cUS("user-defined ACL variables must start acl_c or acl_m"));
 }
 
 
@@ -2206,18 +2211,18 @@ Returns:       OK         access is granted by an ACCEPT verb
 	       ERROR      disaster
 */
 static int
-eval_acl(uschar ** sub, int nsub, uschar ** user_msgp)
+eval_acl(cuschar ** sub, int nsub, cuschar ** user_msgp)
 {
 int i;
 int sav_narg = acl_narg;
 int ret;
-uschar * dummy_logmsg;
+cuschar * dummy_logmsg;
 extern int acl_where;
 
 if(--nsub > nelem(acl_arg)) nsub = nelem(acl_arg);
 for (i = 0; i < nsub && sub[i+1]; i++)
   {
-  uschar * tmp = acl_arg[i];
+  cuschar * tmp = acl_arg[i];
   acl_arg[i] = sub[i+1];	/* place callers args in the globals */
   sub[i+1] = tmp;		/* stash the old args using our caller's storage */
   }
@@ -2231,7 +2236,7 @@ while (i < nsub)
 DEBUG(D_expand)
   debug_printf_indent("expanding: acl: %s  arg: %s%s\n",
     sub[0],
-    acl_narg>0 ? acl_arg[0] : US("<none>"),
+    acl_narg>0 ? acl_arg[0] : cUS("<none>"),
     acl_narg>1 ? " +more"   : "");
 
 ret = acl_eval(acl_where, sub[0], user_msgp, &dummy_logmsg);
@@ -2263,13 +2268,13 @@ Return:
 */
 
 static uschar *
-dewrap(uschar * s, const uschar * wrap)
+dewrap(uschar * s, cuschar * wrap)
 {
 uschar * p = s;
 unsigned depth = 0;
 BOOL quotesmode = wrap[0] == wrap[1];
 
-if (Uskip_whitespace(&p) == *wrap)
+if (skip_whitespace(&p) == *wrap)
   {
   s = ++p;
   wrap++;
@@ -2300,13 +2305,13 @@ The element may itself be an abject or array.
 Return NULL when the list is empty.
 */
 
-static uschar *
-json_nextinlist(const uschar ** list)
+static cuschar *
+json_nextinlist(cuschar ** list)
 {
 unsigned array_depth = 0, object_depth = 0;
-const uschar * s = *list, * item;
+cuschar * s = *list, * item;
 
-skip_whitespace(&s);
+cskip_whitespace(&s);
 
 for (item = s;
      *s && (*s != ',' || array_depth != 0 || object_depth != 0);
@@ -2322,7 +2327,7 @@ for (item = s;
 if (item == s) return NULL;
 item = string_copyn(item, s - item);
 DEBUG(D_expand) debug_printf_indent("  json ele: '%s'\n", item);
-return US(item);
+return (item);
 }
 
 
@@ -2337,9 +2342,9 @@ Argument:
 */
 
 static int
-identify_operator(const uschar ** ss, uschar ** opname)
+identify_operator(cuschar ** ss, uschar ** opname)
 {
-const uschar * s = *ss;
+cuschar * s = *ss;
 uschar name[256];
 
 /* Numeric comparisons are symbolic */
@@ -2359,7 +2364,7 @@ if (*s == '=' || *s == '>' || *s == '<')
 /* All other conditions are named */
 
 else
-  s = read_name(name, sizeof(name), s, US("_"));
+  s = read_name(name, sizeof(name), s, cUS("_"));
 *ss = s;
 
 /* If we haven't read a name, it means some non-alpha character is first. */
@@ -2401,7 +2406,7 @@ else
 }
 
 static void
-chash_mid(int type, void * base, const uschar * string)
+chash_mid(int type, void * base, cuschar * string)
 {
 if (type == HMAC_MD5)
   md5_mid((md5 *)base, string);
@@ -2410,7 +2415,7 @@ else
 }
 
 static void
-chash_end(int type, void * base, const uschar * string, int length,
+chash_end(int type, void * base, cuschar * string, int length,
   uschar * digest)
 {
 if (type == HMAC_MD5)
@@ -2434,10 +2439,10 @@ Arguments:
 */
 
 static void
-hmac_md5(const uschar * key, const uschar * src, uschar * buf, unsigned len)
+hmac_md5(cuschar * key, cuschar * src, uschar * buf, unsigned len)
 {
 md5 md5_base;
-const uschar * keyptr;
+cuschar * keyptr;
 uschar * p;
 unsigned int keylen;
 
@@ -2519,8 +2524,8 @@ Returns:   a pointer to the first character after the condition, or
            NULL after an error
 */
 
-static const uschar *
-eval_condition(const uschar * s, BOOL * resetok, BOOL * yield)
+static cuschar *
+eval_condition(cuschar * s, BOOL * resetok, BOOL * yield)
 {
 BOOL testfor = TRUE;
 BOOL tempcond, combined_cond;
@@ -2532,11 +2537,11 @@ int_eximarith_t num[2];
 struct stat statbuf;
 uschar * opname;
 uschar name[256];
-const uschar * sub[10];
+cuschar * sub[10];
 unsigned sub_textonly = 0;
 
 for (;;)
-  if (Uskip_whitespace(&s) == '!') { testfor = !testfor; s++; } else break;
+  if (cskip_whitespace(&s) == '!') { testfor = !testfor; s++; } else break;
 
 switch(cond_type = identify_operator(&s, &opname))
   {
@@ -2545,15 +2550,15 @@ switch(cond_type = identify_operator(&s, &opname))
 
   case ECOND_DEF:
     {
-    const uschar * t;
+    cuschar * t;
 
     if (*s != ':')
       {
-      expand_string_message = US("\":\" expected after \"def\"");
+      expand_string_message = cUS("\":\" expected after \"def\"");
       return NULL;
       }
 
-    s = read_name(name, sizeof(name), s+1, US("_"));
+    s = read_name(name, sizeof(name), s+1, cUS("_"));
 
     /* Test for a header's existence. If the name contains a closing brace
     character, this may be a user error where the terminating colon has been
@@ -2581,7 +2586,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	{
 	expand_string_message = name[0]
 	  ? string_sprintf("unknown variable \"%s\" after \"def:\"", name)
-	  : US("variable name omitted after \"def:\"");
+	  : cUS("variable name omitted after \"def:\"");
 	check_variable_error_message(name);
 	return NULL;
 	}
@@ -2625,7 +2630,7 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_LDAPAUTH:
   case ECOND_PWCHECK:
 
-  if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START; /* }-for-text-editors */
+  if (cskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START; /* }-for-text-editors */
 
    {
     BOOL textonly;
@@ -2645,7 +2650,7 @@ switch(cond_type = identify_operator(&s, &opname))
     case ECOND_EXISTS:
     if ((expand_forbid & RDO_EXISTS) != 0)
       {
-      expand_string_message = US("File existence tests are not permitted");
+      expand_string_message = cUS("File existence tests are not permitted");
       return NULL;
       }
     *yield = (Ustat(sub[0], &statbuf) == 0) == testfor;
@@ -2724,18 +2729,18 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_ACL:
     /* ${if acl {{name}{arg1}{arg2}...}  {yes}{no}} */
     {
-    uschar *sub[10];
-    uschar *user_msg;
+    cuschar *sub[10];
+    cuschar *user_msg;
     BOOL cond = FALSE;
 
-    Uskip_whitespace(&s);
+    cskip_whitespace(&s);
     if (*s++ != '{') goto COND_FAILED_CURLY_START;	/*}*/
 
     switch(read_subs(sub, nelem(sub), 1, &s,
 	yield ? ESI_NOFLAGS : ESI_SKIPPING, TRUE, name, resetok, NULL))
       {
-      case 1: expand_string_message = US("too few arguments or bracketing ")
-        "error for acl";
+      case 1: expand_string_message = cUS("too few arguments or bracketing "
+        "error for acl");
       case 2:
       case 3: return NULL;
       }
@@ -2781,13 +2786,13 @@ switch(cond_type = identify_operator(&s, &opname))
 #else
     {
     uschar *sub[4];
-    Uskip_whitespace(&s);
+    cskip_whitespace(&s);
     if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
     switch(read_subs(sub, nelem(sub), 2, &s,
 	yield ? ESI_NOFLAGS : ESI_SKIPPING, TRUE, name, resetok, NULL))
       {
-      case 1: expand_string_message = US("too few arguments or bracketing ")
-	"error for saslauthd";
+      case 1: expand_string_message = cUS("too few arguments or bracketing "
+	"error for saslauthd");
       case 2:
       case 3: return NULL;
       }
@@ -2863,7 +2868,7 @@ switch(cond_type = identify_operator(&s, &opname))
     if (!(i > 0 && !sub2_honour_dollar)) flags |= ESI_HONOR_DOLLAR;
     if (!yield) flags |= ESI_SKIPPING;
 
-    if (Uskip_whitespace(&s) != '{')
+    if (cskip_whitespace(&s) != '{')
       {
       if (i == 0) goto COND_FAILED_CURLY_START;
       expand_string_message = string_sprintf("missing 2nd string in {} "
@@ -2964,12 +2969,12 @@ switch(cond_type = identify_operator(&s, &opname))
 
     case ECOND_MATCH_ADDRESS:  /* Match in an address list */
       rc = match_address_list(sub[0], TRUE, FALSE, &(sub[1]), NULL, -1, 0,
-			      CUSS(&lookup_value));
+			      &lookup_value);
       goto MATCHED_SOMETHING;
 
     case ECOND_MATCH_DOMAIN:   /* Match in a domain list */
       rc = match_isinlist(sub[0], &(sub[1]), 0, &domainlist_anchor, NULL,
-	MCL_DOMAIN + MCL_NOEXPAND, TRUE, CUSS(&lookup_value));
+	MCL_DOMAIN + MCL_NOEXPAND, TRUE, &lookup_value);
       goto MATCHED_SOMETHING;
 
     case ECOND_MATCH_IP:       /* Match IP address in a host list */
@@ -2984,7 +2989,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	unsigned int *nullcache = NULL;
 	check_host_block cb;
 
-	cb.host_name = US("");
+	cb.host_name = cUS("");
 	cb.host_address = sub[0];
 
 	/* If the host address starts off ::ffff: it is an IPv6 address in
@@ -3003,13 +3008,13 @@ switch(cond_type = identify_operator(&s, &opname))
 	       &cb,                       /* argument for function */
 	       MCL_HOST,                  /* type of check */
 	       sub[0],                    /* text for debugging */
-	       CUSS(&lookup_value));       /* where to pass back data */
+	       &lookup_value);            /* where to pass back data */
 	}
       goto MATCHED_SOMETHING;
 
     case ECOND_MATCH_LOCAL_PART:
       rc = match_isinlist(sub[0], &(sub[1]), 0, &localpartlist_anchor, NULL,
-	MCL_LOCALPART + MCL_NOEXPAND, TRUE, CUSS(&lookup_value));
+	MCL_LOCALPART + MCL_NOEXPAND, TRUE, &lookup_value);
       /* Fall through */
       /* VVVVVVVVVVVV */
       MATCHED_SOMETHING:
@@ -3035,7 +3040,7 @@ switch(cond_type = identify_operator(&s, &opname))
     #ifndef SUPPORT_CRYPTEQ
       goto COND_FAILED_NOT_COMPILED;
     #else
-      if (strncmpic(sub[1], US("{md5}"), 5) == 0)
+      if (strncmpic(sub[1], cUS("{md5}"), 5) == 0)
 	{
 	int sublen = Ustrlen(sub[1]+5);
 	md5 base;
@@ -3073,7 +3078,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	  }
 	}
 
-      else if (strncmpic(sub[1], US("{sha1}"), 6) == 0)
+      else if (strncmpic(sub[1], cUS("{sha1}"), 6) == 0)
 	{
 	int sublen = Ustrlen(sub[1]+6);
 	hctx h;
@@ -3116,12 +3121,12 @@ switch(cond_type = identify_operator(&s, &opname))
 	int which = 0;
 	uschar *coded;
 
-	if (strncmpic(sub[1], US("{crypt}"), 7) == 0)
+	if (strncmpic(sub[1], cUS("{crypt}"), 7) == 0)
 	  {
 	  sub[1] += 7;
 	  which = 1;
 	  }
-	else if (strncmpic(sub[1], US("{crypt16}"), 9) == 0)
+	else if (strncmpic(sub[1], cUS("{crypt16}"), 9) == 0)
 	  {
 	  sub[1] += 9;
 	  which = 2;
@@ -3170,16 +3175,16 @@ switch(cond_type = identify_operator(&s, &opname))
     case ECOND_INLIST:
     case ECOND_INLISTI:
       {
-      const uschar * list = sub[1];
+      cuschar * list = sub[1];
       int sep = 0;
-      uschar *save_iterate_item = iterate_item;
-      int (*compare)(const uschar *, const uschar *);
+      cuschar *save_iterate_item = iterate_item;
+      int (*compare)(cuschar *, cuschar *);
 
       DEBUG(D_expand) debug_printf_indent("condition: %s  item: %s\n", opname, sub[0]);
 
       tempcond = FALSE;
       compare = cond_type == ECOND_INLISTI
-        ? strcmpic : (int (*)(const uschar *, const uschar *)) strcmp;
+        ? strcmpic : (int (*)(cuschar *, cuschar *)) strcmp;
 
       while ((iterate_item = string_nextinlist(&list, &sep, NULL, 0)))
 	{
@@ -3207,13 +3212,13 @@ switch(cond_type = identify_operator(&s, &opname))
   subcondptr = (yield == NULL) ? NULL : &tempcond;
   combined_cond = (cond_type == ECOND_AND);
 
-  Uskip_whitespace(&s);
+  cskip_whitespace(&s);
   if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
 
   for (;;)
     {
     /* {-for-text-editors */
-    if (Uskip_whitespace(&s) == '}') break;
+    if (cskip_whitespace(&s) == '}') break;
     if (*s != '{')					/* }-for-text-editors */
       {
       expand_string_message = string_sprintf("each subcondition "
@@ -3227,7 +3232,7 @@ switch(cond_type = identify_operator(&s, &opname))
         expand_string_message, opname);
       return NULL;
       }
-    Uskip_whitespace(&s);
+    cskip_whitespace(&s);
 
     /* {-for-text-editors */
     if (*s++ != '}')
@@ -3266,23 +3271,23 @@ switch(cond_type = identify_operator(&s, &opname))
 
   FORMANY:
     {
-    const uschar * list;
+    cuschar * list;
     int sep = 0;
-    uschar *save_iterate_item = iterate_item;
+    cuschar *save_iterate_item = iterate_item;
 
     DEBUG(D_expand) debug_printf_indent("condition: %s\n", opname);
 
-    Uskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    cskip_whitespace(&s);
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
     if (!(sub[0] = expand_string_internal(s,
       ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | (yield ? ESI_NOFLAGS : ESI_SKIPPING),
       &s, resetok, NULL)))
       return NULL;
-    /* {-for-text-editors */
+    /* '{'-for-text-editors */
     if (*s++ != '}') goto COND_FAILED_CURLY_END;
 
-    Uskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    cskip_whitespace(&s);
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
 
     sub[1] = s;
 
@@ -3296,12 +3301,12 @@ switch(cond_type = identify_operator(&s, &opname))
         expand_string_message, opname);
       return NULL;
       }
-    Uskip_whitespace(&s);
+    cskip_whitespace(&s);
 
-    /* {-for-text-editors */
+    /* '{'-for-text-editors */
     if (*s++ != '}')
       {
-      /* {-for-text-editors */
+      /* "{"-for-text-editors */
       expand_string_message = string_sprintf("missing } at end of condition "
         "inside \"%s\"", opname);
       return NULL;
@@ -3309,12 +3314,12 @@ switch(cond_type = identify_operator(&s, &opname))
 
     if (yield) *yield = !testfor;
     list = sub[0];
-    if (is_json) list = dewrap(string_copy(list), US("[]"));
+    if (is_json) list = dewrap(string_copy(list), cUS("[]"));
     while ((iterate_item = is_json
       ? json_nextinlist(&list) : string_nextinlist(&list, &sep, NULL, 0)))
       {
       if (is_jsons)
-	if (!(iterate_item = dewrap(iterate_item, US("\"\""))))
+	if (!(iterate_item = dewrap((uschar*)iterate_item, cUS("\"\""))))
 	  {
 	  expand_string_message =
 	    string_sprintf("%s wrapping string result for extract jsons",
@@ -3358,13 +3363,13 @@ switch(cond_type = identify_operator(&s, &opname))
     {
     uschar *sub_arg[1];
     uschar *t, *t2;
-    uschar *ourname;
+    cuschar *ourname;
     size_t len;
     BOOL boolvalue = FALSE;
 
-    if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
-    ourname = cond_type == ECOND_BOOL_LAX ? US("bool_lax") : US("bool");
-    switch(read_subs(sub_arg, 1, 1, &s,
+    if (cskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    ourname = cond_type == ECOND_BOOL_LAX ? cUS("bool_lax") : cUS("bool");
+    switch(read_subs((cuschar **)sub_arg, 1, 1, &s,
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, ourname, resetok, NULL))
       {
       case 1: expand_string_message = string_sprintf(
@@ -3375,7 +3380,7 @@ switch(cond_type = identify_operator(&s, &opname))
       case 3: return NULL;
       }
     t = sub_arg[0];
-    Uskip_whitespace(&t);
+    skip_whitespace(&t);
     if ((len = Ustrlen(t)))
       {
       /* trailing whitespace: seems like a good idea to ignore it too */
@@ -3388,7 +3393,7 @@ switch(cond_type = identify_operator(&s, &opname))
         }
       }
     DEBUG(D_expand)
-      debug_printf_indent("considering %s: %s\n", ourname, len ? t : US("<empty>"));
+      debug_printf_indent("considering %s: %s\n", ourname, len ? t : cUS("<empty>"));
     /* logic for the lax case from expand_check_condition(), which also does
     expands, and the logic is both short and stable enough that there should
     be no maintenance burden from replicating it. */
@@ -3403,9 +3408,9 @@ switch(cond_type = identify_operator(&s, &opname))
       if ((cond_type == ECOND_BOOL_LAX) && (len > 1))
         boolvalue = TRUE;
       }
-    else if (strcmpic(t, US("true")) == 0 || strcmpic(t, US("yes")) == 0)
+    else if (strcmpic(t, cUS("true")) == 0 || strcmpic(t, cUS("yes")) == 0)
       boolvalue = TRUE;
-    else if (strcmpic(t, US("false")) == 0 || strcmpic(t, US("no")) == 0)
+    else if (strcmpic(t, cUS("false")) == 0 || strcmpic(t, cUS("no")) == 0)
       boolvalue = FALSE;
     else if (cond_type == ECOND_BOOL_LAX)
       boolvalue = TRUE;
@@ -3433,18 +3438,18 @@ switch(cond_type = identify_operator(&s, &opname))
     uschar cksum[4];
     BOOL boolvalue = FALSE;
 
-    switch(read_subs(sub, 2, 2, CUSS(&s),
+    switch(read_subs((cuschar **)sub, 2, 2, CUSS(&s),
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, name, resetok, NULL))
       {
-      case 1: expand_string_message = US("too few arguments or bracketing ")
-	"error for inbound_srs";
+      case 1: expand_string_message = cUS("too few arguments or bracketing "
+	"error for inbound_srs");
       case 2:
       case 3: return NULL;
       }
 
     /* Match the given local_part against the SRS-encoded pattern */
 
-    re = regex_must_compile(US("^(?i)SRS0=([^=]+)=([A-Z2-7]+)=([^=]*)=(.*)$"),
+    re = regex_must_compile(cUS("^(?i)SRS0=([^=]+)=([A-Z2-7]+)=([^=]*)=(.*)$"),
 			    MCS_CASELESS | MCS_CACHEABLE, FALSE);
     md = pcre2_match_data_create(4+1, pcre_gen_ctx);
     if (pcre2_match(re, sub[0], PCRE2_ZERO_TERMINATED, 0, PCRE_EOPT,
@@ -3580,7 +3585,7 @@ Returns:                the value of expand max to save
 */
 
 static int
-save_expand_strings(const uschar **save_expand_nstring, int *save_expand_nlength)
+save_expand_strings(cuschar **save_expand_nstring, int *save_expand_nlength)
 {
 for (int i = 0; i <= expand_nmax; i++)
   {
@@ -3607,7 +3612,7 @@ Returns:                nothing
 */
 
 static void
-restore_expand_strings(int save_expand_nmax, const uschar **save_expand_nstring,
+restore_expand_strings(int save_expand_nmax, cuschar **save_expand_nstring,
   int *save_expand_nlength)
 {
 expand_nmax = save_expand_nmax;
@@ -3650,13 +3655,13 @@ Returns:         0 OK; lookup_value has been reset to save_lookup
 */
 
 static int
-process_yesno(esi_flags flags, BOOL yes, uschar *save_lookup, const uschar **sptr,
+process_yesno(esi_flags flags, BOOL yes, uschar *save_lookup, cuschar **sptr,
   gstring ** yieldptr, uschar *type, BOOL *resetok)
 {
 int rc = 0;
-const uschar *s = *sptr;    /* Local value */
+cuschar *s = *sptr;    /* Local value */
 uschar *sub1, *sub2;
-const uschar * errwhere;
+cuschar * errwhere;
 
 flags &= ESI_SKIPPING;		/* Ignore all buf the skipping flag */
 
@@ -3665,12 +3670,12 @@ lookups and for extractions in the success case. For the ${if item, the string
 "true" is substituted. In the fail case, nothing is substituted for all three
 items. */
 
-if (skip_whitespace(&s) == '}')
+if (cskip_whitespace(&s) == '}')
   {
   if (type[0] == 'i')
     {
     if (yes && !(flags & ESI_SKIPPING))
-      *yieldptr = string_catn(*yieldptr, US("true"), 4);
+      *yieldptr = string_catn(*yieldptr, cUS("true"), 4);
     }
   else
     {
@@ -3686,7 +3691,7 @@ if (skip_whitespace(&s) == '}')
 
 if (*s++ != '{')
   {
-  errwhere = US("'yes' part did not start with '{'");		/*}}*/
+  errwhere = cUS("'yes' part did not start with '{'");		/*}}*/
   goto FAILED_CURLY;
   }
 
@@ -3702,7 +3707,7 @@ f.expand_string_forcedfail = FALSE;
 								/*{{*/
 if (*s++ != '}')
   {
-  errwhere = US("'yes' part did not end with '}'");
+  errwhere = cUS("'yes' part did not end with '}'");
   goto FAILED_CURLY;
   }
 
@@ -3724,7 +3729,7 @@ time, forced failures are noticed only if we want the second string. We must
 set skipping in the nested call if we don't want this string, or if we were
 already skipping. */
 
-if (skip_whitespace(&s) == '{')					/*}*/
+if (cskip_whitespace(&s) == '{')					/*}*/
   {
   esi_flags s_flags = ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags;
   if (yes) s_flags |= ESI_SKIPPING;
@@ -3733,7 +3738,7 @@ if (skip_whitespace(&s) == '{')					/*}*/
   f.expand_string_forcedfail = FALSE;				/*{*/
   if (*s++ != '}')
     {
-    errwhere = US("'no' part did not start with '{'");		/*}*/
+    errwhere = cUS("'no' part did not start with '{'");		/*}*/
     goto FAILED_CURLY;
     }
 
@@ -3752,15 +3757,15 @@ else if (*s != '}')
   {
   uschar name[256];
   /* deconst cast ok here as source is s anyway */
-  s = US(read_name(name, sizeof(name), s, US("_")));
+  s = read_name(name, sizeof(name), s, cUS("_"));
   if (Ustrcmp(name, "fail") == 0)
     {
     if (!yes && !(flags & ESI_SKIPPING))
       {
-      Uskip_whitespace(&s);					/*{{*/
+      cskip_whitespace(&s);					/*{{*/
       if (*s++ != '}')
         {
-	errwhere = US("did not close with '}' after forcedfail");
+	errwhere = cUS("did not close with '}' after forcedfail");
 	goto FAILED_CURLY;
 	}
       expand_string_message =
@@ -3779,10 +3784,10 @@ else if (*s != '}')
 
 /* All we have to do now is to check on the final closing brace. */
 
-skip_whitespace(&s);						/*{{*/
+cskip_whitespace(&s);						/*{{*/
 if (*s++ != '}')
   {
-  errwhere = US("did not close with '}'");
+  errwhere = cUS("did not close with '}'");
   goto FAILED_CURLY;
   }
 
@@ -3826,13 +3831,13 @@ Returns:  pointer to string containing the last three
 
 */
 
-static uschar *
+static cuschar *
 prvs_daystamp(int day_offset)
 {
 uschar * days = store_get(32, GET_UNTAINTED);      /* Need at least 24 for cases */
 (void)string_format(days, 32, TIME_T_FMT, 	   /* where TIME_T_FMT is %lld */
   (time(NULL) + day_offset*86400)/86400);
-return (Ustrlen(days) >= 3) ? &days[Ustrlen(days)-3] : US("100");
+return (Ustrlen(days) >= 3) ? &days[Ustrlen(days)-3] : cUS("100");
 }
 
 
@@ -3857,7 +3862,7 @@ Returns:  pointer to string containing the first three
 */
 
 static uschar *
-prvs_hmac_sha1(uschar *address, uschar *key, uschar *key_num, uschar *daystamp)
+prvs_hmac_sha1(uschar *address, cuschar *key, cuschar *key_num, cuschar *daystamp)
 {
 gstring * hash_source;
 uschar * p;
@@ -3869,7 +3874,7 @@ uschar outerkey[64];
 uschar *finalhash_hex;
 
 if (!key_num)
-  key_num = US("0");
+  key_num = cUS("0");
 
 if (Ustrlen(key) > 64)
   return NULL;
@@ -3988,11 +3993,11 @@ Returns:      on success: the value of the expression, with *error still NULL
               on failure: an undefined value, with *error = a message
 */
 
-static int_eximarith_t eval_op_or(uschar **, BOOL, uschar **);
+static int_eximarith_t eval_op_or(uschar **, BOOL, cuschar **);
 
 
 static int_eximarith_t
-eval_expr(uschar **sptr, BOOL decimal, uschar **error, BOOL endket)
+eval_expr(uschar **sptr, BOOL decimal, cuschar const **error, BOOL endket)
 {
 uschar *s = *sptr;
 int_eximarith_t x = eval_op_or(&s, decimal, error);
@@ -4000,24 +4005,24 @@ int_eximarith_t x = eval_op_or(&s, decimal, error);
 if (!*error)
   if (endket)
     if (*s != ')')
-      *error = US("expecting closing parenthesis");
+      *error = cUS("expecting closing parenthesis");
     else
       while (isspace(*++s));
   else if (*s)
-    *error = US("expecting operator");
+    *error = cUS("expecting operator");
 *sptr = s;
 return x;
 }
 
 
 static int_eximarith_t
-eval_number(uschar **sptr, BOOL decimal, uschar **error)
+eval_number(uschar **sptr, BOOL decimal, cuschar **error)
 {
 int c;
 int_eximarith_t n;
 uschar *s = *sptr;
 
-if (isdigit((c = Uskip_whitespace(&s))))
+if (isdigit((c = skip_whitespace(&s))))
   {
   int count;
   (void)sscanf(CS(s), (decimal? SC_EXIM_DEC "%n" : SC_EXIM_ARITH "%n"), &n, &count);
@@ -4029,7 +4034,7 @@ if (isdigit((c = Uskip_whitespace(&s))))
     case 'm': n *= 1024*1024; s++; break;
     case 'g': n *= 1024*1024*1024; s++; break;
     }
-  Uskip_whitespace(&s);
+  skip_whitespace(&s);
   }
 else if (c == '(')
   {
@@ -4038,7 +4043,7 @@ else if (c == '(')
   }
 else
   {
-  *error = US("expecting number or opening parenthesis");
+  *error = cUS("expecting number or opening parenthesis");
   n = 0;
   }
 *sptr = s;
@@ -4047,11 +4052,11 @@ return n;
 
 
 static int_eximarith_t
-eval_op_unary(uschar **sptr, BOOL decimal, uschar **error)
+eval_op_unary(uschar **sptr, BOOL decimal, cuschar **error)
 {
 uschar *s = *sptr;
 int_eximarith_t x;
-Uskip_whitespace(&s);
+skip_whitespace(&s);
 if (*s == '+' || *s == '-' || *s == '~')
   {
   int op = *s++;
@@ -4068,7 +4073,7 @@ return x;
 
 
 static int_eximarith_t
-eval_op_mult(uschar **sptr, BOOL decimal, uschar **error)
+eval_op_mult(uschar **sptr, BOOL decimal, cuschar **error)
 {
 uschar *s = *sptr;
 int_eximarith_t x = eval_op_unary(&s, decimal, error);
@@ -4111,7 +4116,7 @@ if (!*error)
       {
       if (y == 0)
         {
-        *error = (op == '/') ? US("divide by zero") : US("modulo by zero");
+        *error = (op == '/') ? cUS("divide by zero") : cUS("modulo by zero");
         x = 0;
         break;
         }
@@ -4128,7 +4133,7 @@ return x;
 
 
 static int_eximarith_t
-eval_op_sum(uschar **sptr, BOOL decimal, uschar **error)
+eval_op_sum(uschar **sptr, BOOL decimal, cuschar **error)
 {
 uschar *s = *sptr;
 int_eximarith_t x = eval_op_mult(&s, decimal, error);
@@ -4143,7 +4148,7 @@ if (!*error)
        || (x <= -(EXIM_ARITH_MAX/2) && y <= -(EXIM_ARITH_MAX/2)))
       {			/* over-conservative check */
       *error = op == '+'
-	? US("overflow in sum") : US("overflow in difference");
+	? cUS("overflow in sum") : cUS("overflow in difference");
       break;
       }
     if (op == '+') x += y; else x -= y;
@@ -4155,7 +4160,7 @@ return x;
 
 
 static int_eximarith_t
-eval_op_shift(uschar **sptr, BOOL decimal, uschar **error)
+eval_op_shift(uschar **sptr, BOOL decimal, cuschar **error)
 {
 uschar *s = *sptr;
 int_eximarith_t x = eval_op_sum(&s, decimal, error);
@@ -4177,7 +4182,7 @@ return x;
 
 
 static int_eximarith_t
-eval_op_and(uschar **sptr, BOOL decimal, uschar **error)
+eval_op_and(uschar **sptr, BOOL decimal, cuschar **error)
 {
 uschar *s = *sptr;
 int_eximarith_t x = eval_op_shift(&s, decimal, error);
@@ -4198,7 +4203,7 @@ return x;
 
 
 static int_eximarith_t
-eval_op_xor(uschar **sptr, BOOL decimal, uschar **error)
+eval_op_xor(uschar **sptr, BOOL decimal, cuschar **error)
 {
 uschar *s = *sptr;
 int_eximarith_t x = eval_op_and(&s, decimal, error);
@@ -4219,7 +4224,7 @@ return x;
 
 
 static int_eximarith_t
-eval_op_or(uschar **sptr, BOOL decimal, uschar **error)
+eval_op_or(uschar **sptr, BOOL decimal, cuschar **error)
 {
 uschar *s = *sptr;
 int_eximarith_t x = eval_op_xor(&s, decimal, error);
@@ -4253,7 +4258,7 @@ Return true iff (leftarg compare rightarg)
 
 static BOOL
 sortsbefore(int cond_type, BOOL alpha_cond,
-  const uschar * leftarg, const uschar * rightarg)
+  cuschar * leftarg, cuschar * rightarg)
 {
 int_eximarith_t l_num, r_num;
 
@@ -4292,10 +4297,10 @@ return FALSE;	/* should not happen */
 
 /* Expand a named list.  Return false on failure. */
 static gstring *
-expand_listnamed(gstring * yield, const uschar * name, const uschar * listtype)
+expand_listnamed(gstring * yield, cuschar * name, cuschar * listtype)
 {
 tree_node *t = NULL;
-const uschar * list;
+cuschar * list;
 int sep = 0;
 uschar * item;
 BOOL needsep = FALSE;
@@ -4318,7 +4323,7 @@ else switch(*listtype)	/* specific list-type version */
   case 'h': t = tree_search(hostlist_anchor,      name); break;
   case 'l': t = tree_search(localpartlist_anchor, name); break;
   default:
-    expand_string_message = US("bad suffix on \"list\" operator");
+    expand_string_message = cUS("bad suffix on \"list\" operator");
     return yield;
   }
 
@@ -4342,7 +4347,7 @@ rather than getting each in new memory */
 if (is_tainted(list)) buffer = store_get(LISTNAMED_BUF_SIZE, GET_TAINTED);
 while ((item = string_nextinlist(&list, &sep, buffer, LISTNAMED_BUF_SIZE)))
   {
-  uschar * buf = US(" : ");
+  cuschar * buf = cUS(" : ");
   if (needsep)
     yield = string_catn(yield, buf, 3);
   else
@@ -4364,7 +4369,7 @@ while ((item = string_nextinlist(&list, &sep, buffer, LISTNAMED_BUF_SIZE)))
       {
       yield = string_catn(yield, item, cp - CS(item));
       if (*cp++ == ':')	/* colon in a non-colon-sep list item, needs doubling */
-	yield = string_catn(yield, US("::"), 2);
+	yield = string_catn(yield, cUS("::"), 2);
       else		/* sep in item; should already be doubled; emit once */
 	{
 	yield = string_catn(yield, US(tok), 1);
@@ -4383,7 +4388,7 @@ return yield;
 
 /************************************************/
 static void
-debug_expansion_interim(const uschar * what, const uschar * value, int nchar,
+debug_expansion_interim(cuschar * what, cuschar * value, int nchar,
   BOOL skipping)
 {
 DEBUG(D_noutf8)
@@ -4477,20 +4482,20 @@ Returns:         NULL if expansion fails:
 */
 
 static uschar *
-expand_string_internal(const uschar * string, esi_flags flags, const uschar ** left,
+expand_string_internal(cuschar * string, esi_flags flags, cuschar ** left,
   BOOL *resetok_p, BOOL * textonly_p)
 {
 rmark reset_point = store_mark();
 gstring * yield = string_get(Ustrlen(string) + 64);
 int item_type;
-const uschar * s = string;
-const uschar * save_expand_nstring[EXPAND_MAXN+1];
+cuschar * s = string;
+cuschar * save_expand_nstring[EXPAND_MAXN+1];
 int save_expand_nlength[EXPAND_MAXN+1];
 BOOL resetok = TRUE, first = TRUE, textonly = TRUE;
 
 expand_level++;
 f.expand_string_forcedfail = FALSE;
-expand_string_message = US("");
+expand_string_message = cUS("");
 
 if (is_tainted(string))
   {
@@ -4529,17 +4534,17 @@ while (*s)
     {
     if (s[1] == 0)
       {
-      expand_string_message = US("\\ at end of string");
+      expand_string_message = cUS("\\ at end of string");
       goto EXPAND_FAILED;
       }
 
     if (s[1] == 'N')
       {
-      const uschar * t = s + 2;
+      cuschar * t = s + 2;
       for (s = t; *s ; s++) if (*s == '\\' && s[1] == 'N') break;
 
       DEBUG(D_expand)
-	debug_expansion_interim(US("protected"), t, (int)(s - t), !!(flags & ESI_SKIPPING));
+	debug_expansion_interim(cUS("protected"), t, (int)(s - t), !!(flags & ESI_SKIPPING));
       yield = string_catn(yield, t, s - t);
       if (*s) s += 2;
       }
@@ -4567,10 +4572,10 @@ while (*s)
   if (*s != '$' || !(flags & ESI_HONOR_DOLLAR))
     {
     int i = 1;								/*{*/
-    for (const uschar * t = s+1;
+    for (cuschar * t = s+1;
 	*t && *t != '$' && *t != '}' && *t != '\\'; t++) i++;
 
-    DEBUG(D_expand) debug_expansion_interim(US("text"), s, i, !!(flags & ESI_SKIPPING));
+    DEBUG(D_expand) debug_expansion_interim(cUS("text"), s, i, !!(flags & ESI_SKIPPING));
 
     yield = string_catn(yield, s, i);
     s += i;
@@ -4588,12 +4593,12 @@ while (*s)
 
   if (isalpha(*++s))
     {
-    const uschar * value;
+    cuschar * value;
     int newsize = 0, len;
     gstring * g = NULL;
     uschar * t;
 
-    s = read_name(name, sizeof(name), s, US("_"));
+    s = read_name(name, sizeof(name), s, cUS("_"));
 
     /* If this is the first thing to be expanded, release the pre-allocated
     buffer. */
@@ -4619,7 +4624,7 @@ while (*s)
       unsigned flags = *name == 'r' ? FH_WANT_RAW
 		      : *name == 'l' ? FH_WANT_RAW|FH_WANT_LIST
 		      : 0;
-      const uschar * charset = *name == 'b' ? NULL : headers_charset;
+      cuschar * charset = *name == 'b' ? NULL : headers_charset;
 
       s = read_header_name(name, sizeof(name), s);
       value = find_header(name, &newsize, flags, charset);
@@ -4660,7 +4665,7 @@ while (*s)
       yield = g;
       yield->size = newsize;
       yield->ptr = len;
-      yield->s = US(value); /* known to be in new store i.e. a copy, so deconst safe */
+      yield->s = (uschar*) value; /* known to be in new store i.e. a copy, so deconst safe */
       }
     else
       yield = string_catn(yield, value, len);
@@ -4681,7 +4686,7 @@ while (*s)
 
   if (*s != '{')							/*}*/
     {
-    expand_string_message = US("$ not followed by letter, digit, or {");	/*}*/
+    expand_string_message = cUS("$ not followed by letter, digit, or {");	/*}*/
     goto EXPAND_FAILED;
     }
 
@@ -4694,7 +4699,7 @@ while (*s)
     s = read_cnumber(&n, s);						/*{{*/
     if (*s++ != '}')
       {
-      expand_string_message = US("} expected after number");
+      expand_string_message = cUS("} expected after number");
       goto EXPAND_FAILED;
       }
     if (n >= 0 && n <= expand_nmax)
@@ -4704,7 +4709,7 @@ while (*s)
 
   if (!isalpha(*s))
     {
-    expand_string_message = US("letter or digit expected after ${");	/*}*/
+    expand_string_message = cUS("letter or digit expected after ${");	/*}*/
     goto EXPAND_FAILED;
     }
 
@@ -4712,7 +4717,7 @@ while (*s)
   arguments. Since we are checking for known names after { this is
   OK. */								/*}*/
 
-  s = read_name(name, sizeof(name), s, US("_-"));
+  s = read_name(name, sizeof(name), s, cUS("_-"));
   item_type = chop_match(name, item_table, nelem(item_table));
 
   /* Switch on item type.  All nondefault choices should "continue* when
@@ -4738,7 +4743,7 @@ while (*s)
       uschar * user_msg;
       int rc;
 
-      switch(read_subs(sub, nelem(sub), 1, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs((cuschar **)sub, nelem(sub), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;		/* skipping */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -4773,7 +4778,7 @@ while (*s)
       {
       uschar * sub_arg[1];
 
-      switch(read_subs(sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs((cuschar **)sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
         case 1: goto EXPAND_FAILED_CURLY;
         case 2:
@@ -4782,7 +4787,7 @@ while (*s)
       /*XXX no skipping-optimisation? */
 
       yield = string_append(yield, 3,
-			US("Authentication-Results: "), sub_arg[0], US("; none"));
+			cUS("Authentication-Results: "), sub_arg[0], cUS("; none"));
       yield->ptr -= 6;
 
       yield = authres_local(yield, sub_arg[0]);
@@ -4811,20 +4816,20 @@ while (*s)
     case EITEM_IF:
       {
       BOOL cond = FALSE;
-      const uschar *next_s;
+      cuschar *next_s;
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
       uschar * save_lookup_value = lookup_value;
 
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
       if (!(next_s = eval_condition(s, &resetok, flags & ESI_SKIPPING ? NULL : &cond)))
 	goto EXPAND_FAILED;  /* message already set */
 
       DEBUG(D_expand)
 	{
-	debug_expansion_interim(US("condition"), s, (int)(next_s - s), !!(flags & ESI_SKIPPING));
-	debug_expansion_interim(US("result"),
-	  cond ? US("true") : US("false"), cond ? 4 : 5, !!(flags & ESI_SKIPPING));
+	debug_expansion_interim(cUS("condition"), s, (int)(next_s - s), !!(flags & ESI_SKIPPING));
+	debug_expansion_interim(cUS("result"),
+	  cond ? cUS("true") : cUS("false"), cond ? 4 : 5, !!(flags & ESI_SKIPPING));
 	}
 
       s = next_s;
@@ -4838,7 +4843,7 @@ while (*s)
                lookup_value,			/* value to reset for string2 */
                &s,			/* input pointer */
                &yield,			/* output pointer */
-               US("if"),			/* condition type */
+               cUS("if"),			/* condition type */
 	       &resetok))
         {
         case 1: goto EXPAND_FAILED;          /* when all is well, the */
@@ -4860,7 +4865,7 @@ while (*s)
       uschar *sub_arg[3];
       uschar *encoded;
 
-      switch(read_subs(sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs((cuschar **)sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
         case 1: goto EXPAND_FAILED_CURLY;
         case 2:
@@ -4870,7 +4875,7 @@ while (*s)
 
       if (!sub_arg[1])			/* One argument */
 	{
-	sub_arg[1] = US("/");		/* default separator */
+	sub_arg[1] = cUS("/");		/* default separator */
 	sub_arg[2] = NULL;
 	}
       else if (Ustrlen(sub_arg[1]) != 1)
@@ -4905,31 +4910,31 @@ while (*s)
       int expand_setup = 0;
       int nameptr = 0;
       uschar * key, * filename;
-      const uschar * affix, * opts;
+      cuschar * affix, * opts;
       uschar * save_lookup_value = lookup_value;
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
 
       if (expand_forbid & RDO_LOOKUP)
         {
-        expand_string_message = US("lookup expansions are not permitted");
+        expand_string_message = cUS("lookup expansions are not permitted");
         goto EXPAND_FAILED;
         }
 
       /* Get the key we are to look up for single-key+file style lookups.
       Otherwise set the key NULL pro-tem. */
 
-      if (Uskip_whitespace(&s) == '{')					/*}*/
+      if (skip_whitespace(&s) == '{')					/*}*/
         {
         key = expand_string_internal(s+1,
 		ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL);
         if (!key) goto EXPAND_FAILED;			/*{{*/
         if (*s++ != '}')
 	  {
-	  expand_string_message = US("missing '}' after lookup key");
+	  expand_string_message = cUS("missing '}' after lookup key");
 	  goto EXPAND_FAILED_CURLY;
 	  }
-        Uskip_whitespace(&s);
+        skip_whitespace(&s);
         }
       else key = NULL;
 
@@ -4937,7 +4942,7 @@ while (*s)
 
       if (!isalpha(*s))
         {
-        expand_string_message = US("missing lookup type");
+        expand_string_message = cUS("missing lookup type");
         goto EXPAND_FAILED;
         }
 
@@ -4951,7 +4956,7 @@ while (*s)
         s++;
         }
       name[nameptr] = '\0';
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
 
       /* Now check for the individual search type and any partial or default
       options. Only those types that are actually in the binary are valid. */
@@ -4989,7 +4994,7 @@ while (*s)
 
       if (*s != '{')
         {
-	expand_string_message = US("missing '{' for lookup file-or-query arg");
+	expand_string_message = cUS("missing '{' for lookup file-or-query arg");
 	goto EXPAND_FAILED_CURLY;						/*}}*/
 	}
       if (!(filename = expand_string_internal(s+1,
@@ -4998,10 +5003,10 @@ while (*s)
       										/*{{*/
       if (*s++ != '}')
         {
-	expand_string_message = US("missing '}' closing lookup file-or-query arg");
+	expand_string_message = cUS("missing '}' closing lookup file-or-query arg");
 	goto EXPAND_FAILED_CURLY;
 	}
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
 
       /* If this isn't a single-key+file lookup, re-arrange the variables
       to be appropriate for the search_ functions. For query-style lookups,
@@ -5055,7 +5060,7 @@ while (*s)
                save_lookup_value,	/* value to reset for string2 */
                &s,			/* input pointer */
                &yield,			/* output pointer */
-               US("lookup"),		/* condition type */
+               cUS("lookup"),		/* condition type */
 	       &resetok))
         {
         case 1: goto EXPAND_FAILED;          /* when all is well, the */
@@ -5081,7 +5086,7 @@ while (*s)
 
     case EITEM_PERL:
 #ifndef EXIM_PERL
-      expand_string_message = US("\"${perl\" encountered, but this facility "	/*}*/
+      expand_string_message = cUS("\"${perl\" encountered, but this facility "	/*}*/
 	"is not included in this binary");
       goto EXPAND_FAILED;
 
@@ -5092,11 +5097,11 @@ while (*s)
 
       if (expand_forbid & RDO_PERL)
         {
-        expand_string_message = US("Perl calls are not permitted");
+        expand_string_message = cUS("Perl calls are not permitted");
         goto EXPAND_FAILED;
         }
 
-      switch(read_subs(sub_arg, EXIM_PERL_MAX_ARGS + 1, 1, &s, flags, TRUE,
+      switch(read_subs((cuschar **)sub_arg, EXIM_PERL_MAX_ARGS + 1, 1, &s, flags, TRUE,
            name, &resetok, NULL))
         {
 	case -1: continue;	/* If skipping, we don't actually do anything */
@@ -5112,8 +5117,8 @@ while (*s)
         uschar * initerror;
         if (!opt_perl_startup)
           {
-          expand_string_message = US("A setting of perl_startup is needed when ")
-            "using the Perl interpreter";
+          expand_string_message = cUS("A setting of perl_startup is needed when "
+            "using the Perl interpreter");
           goto EXPAND_FAILED;
           }
         DEBUG(D_any) debug_printf("Starting Perl interpreter\n");
@@ -5164,7 +5169,7 @@ while (*s)
       {
       uschar * sub_arg[3], * p, * domain;
 
-      switch(read_subs(sub_arg, 3, 2, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs((cuschar **)sub_arg, 3, 2, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;	/* If skipping, we don't actually do anything */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -5176,7 +5181,7 @@ while (*s)
       if (  !(domain = Ustrrchr(sub_arg[0],'@'))
 	 || domain == sub_arg[0] || Ustrlen(domain) == 1)
         {
-        expand_string_message = US("prvs first argument must be a qualified email address");
+        expand_string_message = cUS("prvs first argument must be a qualified email address");
         goto EXPAND_FAILED;
         }
 
@@ -5186,27 +5191,27 @@ while (*s)
       if (  sub_arg[2]
          && (!isdigit(sub_arg[2][0]) || sub_arg[2][1] != 0))
         {
-        expand_string_message = US("prvs third argument must be a single digit");
+        expand_string_message = cUS("prvs third argument must be a single digit");
         goto EXPAND_FAILED;
         }
 
       p = prvs_hmac_sha1(sub_arg[0], sub_arg[1], sub_arg[2], prvs_daystamp(7));
       if (!p)
         {
-        expand_string_message = US("prvs hmac-sha1 conversion failed");
+        expand_string_message = cUS("prvs hmac-sha1 conversion failed");
         goto EXPAND_FAILED;
         }
 
       /* Now separate the domain from the local part */
       *domain++ = '\0';
 
-      yield = string_catn(yield, US("prvs="), 5);
-      yield = string_catn(yield, sub_arg[2] ? sub_arg[2] : US("0"), 1);
+      yield = string_catn(yield, cUS("prvs="), 5);
+      yield = string_catn(yield, sub_arg[2] ? sub_arg[2] : cUS("0"), 1);
       yield = string_catn(yield, prvs_daystamp(7), 3);
       yield = string_catn(yield, p, 6);
-      yield = string_catn(yield, US("="), 1);
+      yield = string_catn(yield, cUS("="), 1);
       yield = string_cat (yield, sub_arg[0]);
-      yield = string_catn(yield, US("@"), 1);
+      yield = string_catn(yield, cUS("@"), 1);
       yield = string_cat (yield, domain);
 
       break;
@@ -5225,7 +5230,7 @@ while (*s)
       prvscheck_address = NULL;
       prvscheck_keynum = NULL;
 
-      switch(read_subs(sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
+      switch(read_subs((cuschar **)sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
         {
         case 1: goto EXPAND_FAILED_CURLY;
         case 2:
@@ -5233,7 +5238,7 @@ while (*s)
         }
 
       re = regex_must_compile(
-	US("^prvs\\=([0-9])([0-9]{3})([A-F0-9]{6})\\=(.+)\\@(.+)$"),
+	cUS("^prvs\\=([0-9])([0-9]{3})([A-F0-9]{6})\\=(.+)\\@(.+)$"),
 	MCS_CASELESS | MCS_CACHEABLE, FALSE);
 
       if (regex_match_and_setup(re,sub_arg[0],0,-1))
@@ -5255,13 +5260,13 @@ while (*s)
 
         /* Set up expansion variables */
         g = string_cat (NULL, local_part);
-        g = string_catn(g, US("@"), 1);
+        g = string_catn(g, cUS("@"), 1);
         g = string_cat (g, domain);
         prvscheck_address = string_from_gstring(g);
         prvscheck_keynum = string_copy(key_num);
 
         /* Now expand the second argument */
-        switch(read_subs(sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
+        switch(read_subs((cuschar **)sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
           {
           case 1: goto EXPAND_FAILED_CURLY;
           case 2:
@@ -5274,7 +5279,7 @@ while (*s)
           daystamp);
         if (!p)
           {
-          expand_string_message = US("hmac-sha1 conversion failed");
+          expand_string_message = cUS("hmac-sha1 conversion failed");
           goto EXPAND_FAILED;
           }
 
@@ -5296,7 +5301,7 @@ while (*s)
 
           if (iexpire >= inow)
             {
-            prvscheck_result = US("1");
+            prvscheck_result = cUS("1");
             DEBUG(D_expand) debug_printf_indent("prvscheck: success, $pvrs_result set to 1\n");
             }
 	  else
@@ -5355,7 +5360,7 @@ while (*s)
 
       if ((expand_forbid & RDO_READFILE) != 0)
         {
-        expand_string_message = US("file insertions are not permitted");
+        expand_string_message = cUS("file insertions are not permitted");
         goto EXPAND_FAILED;
         }
 
@@ -5393,7 +5398,7 @@ while (*s)
 
       if (expand_forbid & RDO_READSOCK)
         {
-        expand_string_message = US("socket insertions are not permitted");
+        expand_string_message = cUS("socket insertions are not permitted");
         goto EXPAND_FAILED;
         }
 
@@ -5412,7 +5417,7 @@ while (*s)
 
       if (!(flags & ESI_SKIPPING))
         {
-	int stype = search_findtype(US("readsock"), 8);
+	int stype = search_findtype(cUS("readsock"), 8);
 	gstring * g = NULL;
 	void * handle;
 	int expand_setup = -1;
@@ -5422,15 +5427,15 @@ while (*s)
 
 	if (!sub_arg[1][0])
 	  {
-	  g = string_append_listele(g, ',', US("send=no"));
-	  sub_arg[1] = US("DUMMY");
+	  g = string_append_listele(g, ',', cUS("send=no"));
+	  sub_arg[1] = cUS("DUMMY");
 	  }
 
 	/* Re-marshall the options */
 
 	if (sub_arg[2])
 	  {
-	  const uschar * list = sub_arg[2];
+	  cuschar * list = sub_arg[2];
 	  uschar * item;
 	  int sep = 0;
 
@@ -5493,16 +5498,16 @@ while (*s)
           goto EXPAND_FAILED;						/*{*/
         if (*s++ != '}')
 	  {								/*{*/
-	  expand_string_message = US("missing '}' closing failstring for readsocket");
+	  expand_string_message = cUS("missing '}' closing failstring for readsocket");
 	  goto EXPAND_FAILED_CURLY;
 	  }
-        Uskip_whitespace(&s);
+        skip_whitespace(&s);
         }
 
     READSOCK_DONE:							/*{*/
       if (*s++ != '}')
         {								/*{*/
-	expand_string_message = US("missing '}' closing readsocket");
+	expand_string_message = cUS("missing '}' closing readsocket");
 	goto EXPAND_FAILED_CURLY;
 	}
       if (flags & ESI_SKIPPING) continue;
@@ -5521,10 +5526,10 @@ while (*s)
       yield = string_cat(yield, arg);					/*{*/
       if (*s++ != '}')
         {								/*{*/
-	expand_string_message = US("missing '}' closing failstring for readsocket");
+	expand_string_message = cUS("missing '}' closing failstring for readsocket");
 	goto EXPAND_FAILED_CURLY;
 	}
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
       goto READSOCK_DONE;
       }
 
@@ -5533,12 +5538,12 @@ while (*s)
     case EITEM_RUN:
       {
       FILE * f;
-      const uschar * arg, ** argv;
+      cuschar * arg, ** argv;
       BOOL late_expand = TRUE;
 
       if ((expand_forbid & RDO_RUN) != 0)
         {
-        expand_string_message = US("running a command is not permitted");
+        expand_string_message = cUS("running a command is not permitted");
         goto EXPAND_FAILED;
         }
 
@@ -5550,18 +5555,18 @@ while (*s)
 	  { late_expand = FALSE; s += 9; }
 	else
 	  {
-	  const uschar * t = s;
+	  cuschar * t = s;
 	  while (isalpha(*++t)) ;
 	  expand_string_message = string_sprintf("bad option '%.*s' for run",
 						  (int)(t-s), s);
 	  goto EXPAND_FAILED;
 	  }
 	}
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
 
       if (*s != '{')					/*}*/
         {
-	expand_string_message = US("missing '{' for command arg of run");
+	expand_string_message = cUS("missing '{' for command arg of run");
 	goto EXPAND_FAILED_CURLY;			/*"}*/
 	}
       s++;
@@ -5577,12 +5582,12 @@ while (*s)
 	if (!(arg = expand_string_internal(s,
 		ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL)))
 	  goto EXPAND_FAILED;
-	Uskip_whitespace(&s);
+	skip_whitespace(&s);
 	}
 							/*{*/
       if (*s++ != '}')
         {						/*{*/
-	expand_string_message = US("missing '}' closing command arg of run");
+	expand_string_message = cUS("missing '}' closing command arg of run");
 	goto EXPAND_FAILED_CURLY;
 	}
 
@@ -5602,14 +5607,14 @@ while (*s)
             0,                          /* not relevant when... */
             NULL,                       /* no transporting address */
 	    late_expand,		/* allow tainted args, when expand-after-split */
-            US("${run} expansion"),       /* for error messages */
+            cUS("${run} expansion"),       /* for error messages */
             &expand_string_message))    /* where to put error message */
           goto EXPAND_FAILED;
 
         /* Create the child process, making it a group leader. */
 
         if ((pid = child_open(USS(argv), NULL, 0077, &fd_in, &fd_out, TRUE,
-			      US("expand-run"))) < 0)
+			      cUS("expand-run"))) < 0)
           {
           expand_string_message =
             string_sprintf("couldn't create child process: %s", strerror(errno));
@@ -5641,7 +5646,7 @@ while (*s)
           {
           if (sigalrm_seen || runrc == -256)
             {
-            expand_string_message = US("command timed out");
+            expand_string_message = cUS("command timed out");
             killpg(pid, SIGKILL);       /* Kill the whole process group */
             }
 
@@ -5665,7 +5670,7 @@ while (*s)
                lookup_value,		/* value to reset for string2 */
                &s,			/* input pointer */
                &yield,			/* output pointer */
-               US("run"),			/* condition type */
+               cUS("run"),			/* condition type */
 	       &resetok))
         {
         case 1: goto EXPAND_FAILED;          /* when all is well, the */
@@ -5890,7 +5895,8 @@ while (*s)
       int moffset, moffsetextra, slen;
       pcre2_match_data * md;
       int emptyopt;
-      uschar * subject, * sub[3];
+      cuschar * subject;
+      cuschar * sub[3];
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
       unsigned sub_textonly = 0;
@@ -6014,7 +6020,7 @@ while (*s)
 
       /* Check for a format-variant specifier */
 
-      if (Uskip_whitespace(&s) != '{')					/*}*/
+      if (skip_whitespace(&s) != '{')					/*}*/
 	if (Ustrncmp(s, "json", 4) == 0)
 	  if (*(s += 4) == 's')
 	    {fmt = extract_jsons; s++;}
@@ -6034,28 +6040,28 @@ while (*s)
 	    goto EXPAND_FAILED;					/*'{'*/
           if (*s++ != '}')
 	    {
-	    expand_string_message = US("missing '{' for arg of extract");
+	    expand_string_message = cUS("missing '{' for arg of extract");
 	    goto EXPAND_FAILED_CURLY;
 	    }
-	  Uskip_whitespace(&s);
+	  skip_whitespace(&s);
 	  }
 	if (  Ustrncmp(s, "fail", 4) == 0				/*'{'*/
 	   && (s[4] == '}' || s[4] == ' ' || s[4] == '\t' || !s[4])
 	   )
 	  {
 	  s += 4;
-	  Uskip_whitespace(&s);
+	  skip_whitespace(&s);
 	  }								/*'{'*/
 	if (*s != '}')
 	  {
-	  expand_string_message = US("missing '}' closing extract");
+	  expand_string_message = cUS("missing '}' closing extract");
 	  goto EXPAND_FAILED_CURLY;
 	  }
 	}
 
       else for (int i = 0, j = 2; i < j; i++) /* Read the proper number of arguments */
         {
-	if (Uskip_whitespace(&s) == '{') 				/*'}'*/
+	if (skip_whitespace(&s) == '{') 				/*'}'*/
           {
           if (!(sub[i] = expand_string_internal(s+1,
 		ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL)))
@@ -6078,7 +6084,7 @@ while (*s)
             int x = 0;
             uschar * p = sub[0];
 
-            Uskip_whitespace(&p);
+            skip_whitespace(&p);
             sub[0] = p;
 
             len = Ustrlen(p);
@@ -6087,8 +6093,8 @@ while (*s)
 
 	    if (!*p)
 	      {
-	      expand_string_message = US("first argument of \"extract\" must ")
-		"not be empty";
+	      expand_string_message = cUS("first argument of \"extract\" must "
+		"not be empty");
 	      goto EXPAND_FAILED;
 	      }
 
@@ -6131,12 +6137,12 @@ while (*s)
 	case extract_jsons:
 	  {
 	  uschar * s, * item;
-	  const uschar * list;
+	  cuschar * list;
 
 	  /* Array: Bracket-enclosed and comma-separated.
 	  Object: Brace-enclosed, comma-sep list of name:value pairs */
 
-	  if (!(s = dewrap(sub[1], field_number_set ? US("[]") : US("{}"))))
+	  if (!(s = dewrap(sub[1], field_number_set ? cUS("[]") : cUS("{}"))))
 	    {
 	    expand_string_message =
 	      string_sprintf("%s wrapping %s for extract json",
@@ -6150,8 +6156,8 @@ while (*s)
 	    {
 	    if (field_number <= 0)
 	      {
-	      expand_string_message = US("first argument of \"extract\" must ")
-		"be greater than zero";
+	      expand_string_message = cUS("first argument of \"extract\" must "
+		"be greater than zero");
 	      goto EXPAND_FAILED;
 	      }
 	    while (field_number > 0 && (item = json_nextinlist(&list)))
@@ -6170,7 +6176,7 @@ while (*s)
 	      /* Item is:  string name-sep value.  string is quoted.
 	      Dequote the string and compare with the search key. */
 
-	      if (!(item = dewrap(item, US("\"\""))))
+	      if (!(item = dewrap(item, cUS("\"\""))))
 		{
 		expand_string_message =
 		  string_sprintf("%s wrapping string key for extract json",
@@ -6180,14 +6186,14 @@ while (*s)
 	      if (Ustrcmp(item, sub[0]) == 0)	/*XXX should be a UTF8-compare */
 		{
 		s = item + Ustrlen(item) + 1;
-		if (Uskip_whitespace(&s) != ':')
+		if (skip_whitespace(&s) != ':')
 		  {
 		  expand_string_message =
-		    US("missing object value-separator for extract json");
+		    cUS("missing object value-separator for extract json");
 		  goto EXPAND_FAILED_CURLY;
 		  }
 		s++;
-		Uskip_whitespace(&s);
+		skip_whitespace(&s);
 		lookup_value = s;
 		break;
 		}
@@ -6197,7 +6203,7 @@ while (*s)
 
 	  if (  fmt == extract_jsons
 	     && lookup_value
-	     && !(lookup_value = dewrap(lookup_value, US("\"\""))))
+	     && !(lookup_value = dewrap(lookup_value, cUS("\"\""))))
 	    {
 	    expand_string_message =
 	      string_sprintf("%s wrapping string result for extract jsons",
@@ -6216,7 +6222,7 @@ while (*s)
                save_lookup_value,	/* value to reset for string2 */
                &s,			/* input pointer */
                &yield,			/* output pointer */
-               US("extract"),		/* condition type */
+               cUS("extract"),		/* condition type */
 	       &resetok))
         {
         case 1: goto EXPAND_FAILED;          /* when all is well, the */
@@ -6245,7 +6251,7 @@ while (*s)
 
       for (int i = 0; i < 2; i++)
         {
-        if (Uskip_whitespace(&s) != '{')				/*}*/
+        if (skip_whitespace(&s) != '{')				/*}*/
 	  {
 	  expand_string_message = string_sprintf(
 	    "missing '{' for arg %d of listextract", i+1);		/*}*/
@@ -6271,7 +6277,7 @@ while (*s)
 	  int x = 0;
 	  uschar *p = sub[0];
 
-	  Uskip_whitespace(&p);
+	  skip_whitespace(&p);
 	  sub[0] = p;
 
 	  len = Ustrlen(p);
@@ -6280,8 +6286,8 @@ while (*s)
 
 	  if (!*p && !(flags & ESI_SKIPPING))
 	    {
-	    expand_string_message = US("first argument of \"listextract\" must ")
-	      "not be empty";
+	    expand_string_message = cUS("first argument of \"listextract\" must "
+	      "not be empty");
 	    goto EXPAND_FAILED;
 	    }
 
@@ -6293,8 +6299,8 @@ while (*s)
 	  while (*p && isdigit(*p)) x = x * 10 + *p++ - '0';
 	  if (*p)
 	    {
-	    expand_string_message = US("first argument of \"listextract\" must ")
-	      "be numeric";
+	    expand_string_message = cUS("first argument of \"listextract\" must "
+	      "be numeric");
 	    goto EXPAND_FAILED;
 	    }
 	  field_number *= x;
@@ -6315,7 +6321,7 @@ while (*s)
                save_lookup_value,		/* value to reset for string2 */
                &s,				/* input pointer */
                &yield,				/* output pointer */
-               US("listextract"),			/* condition type */
+               cUS("listextract"),			/* condition type */
 	       &resetok))
         {
         case 1: goto EXPAND_FAILED;          /* when all is well, the */
@@ -6333,7 +6339,7 @@ while (*s)
 
     case EITEM_LISTQUOTE:
       {
-      uschar * sub[2];
+      cuschar * sub[2];
       switch(read_subs(sub, 2, 2, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;	/* skipping */
@@ -6346,7 +6352,7 @@ while (*s)
 	if (c == sep) yield = string_catn(yield, sub[1], 1);
 	yield = string_catn(yield, sub[1], 1);
 	}
-      else yield = string_catn(yield, US(" "), 1);
+      else yield = string_catn(yield, cUS(" "), 1);
       break;
       }
 
@@ -6358,9 +6364,9 @@ while (*s)
         save_expand_strings(save_expand_nstring, save_expand_nlength);
 
       /* Read the field argument */
-      if (Uskip_whitespace(&s) != '{')					/*}*/
+      if (skip_whitespace(&s) != '{')					/*}*/
 	{
-	expand_string_message = US("missing '{' for field arg of certextract");
+	expand_string_message = cUS("missing '{' for field arg of certextract");
 	goto EXPAND_FAILED_CURLY;					/*}*/
 	}
       sub[0] = expand_string_internal(s+1,
@@ -6368,7 +6374,7 @@ while (*s)
       if (!sub[0])     goto EXPAND_FAILED;				/*{{*/
       if (*s++ != '}')
         {
-	expand_string_message = US("missing '}' closing field arg of certextract");
+	expand_string_message = cUS("missing '}' closing field arg of certextract");
 	goto EXPAND_FAILED_CURLY;
 	}
       /* strip spaces fore & aft */
@@ -6376,7 +6382,7 @@ while (*s)
       int len;
       uschar *p = sub[0];
 
-      Uskip_whitespace(&p);
+      skip_whitespace(&p);
       sub[0] = p;
 
       len = Ustrlen(p);
@@ -6385,15 +6391,15 @@ while (*s)
       }
 
       /* inspect the cert argument */
-      if (Uskip_whitespace(&s) != '{')					/*}*/
+      if (skip_whitespace(&s) != '{')					/*}*/
 	{
-	expand_string_message = US("missing '{' for cert variable arg of certextract");
+	expand_string_message = cUS("missing '{' for cert variable arg of certextract");
 	goto EXPAND_FAILED_CURLY;					/*}*/
 	}
       if (*++s != '$')
         {
-	expand_string_message = US("second argument of \"certextract\" must ")
-	  "be a certificate variable";
+	expand_string_message = cUS("second argument of \"certextract\" must "
+	  "be a certificate variable");
 	goto EXPAND_FAILED;
 	}
       sub[1] = expand_string_internal(s+1,
@@ -6401,7 +6407,7 @@ while (*s)
       if (!sub[1])     goto EXPAND_FAILED;				/*{{*/
       if (*s++ != '}')
         {
-	expand_string_message = US("missing '}' closing cert variable arg of certextract");
+	expand_string_message = cUS("missing '}' closing cert variable arg of certextract");
 	goto EXPAND_FAILED_CURLY;
 	}
 
@@ -6418,7 +6424,7 @@ while (*s)
                save_lookup_value,		/* value to reset for string2 */
                &s,				/* input pointer */
                &yield,				/* output pointer */
-               US("certextract"),			/* condition type */
+               cUS("certextract"),			/* condition type */
 	       &resetok))
         {
         case 1: goto EXPAND_FAILED;          /* when all is well, the */
@@ -6440,11 +6446,11 @@ while (*s)
       {
       int sep = 0, save_ptr = gstring_length(yield);
       uschar outsep[2] = { '\0', '\0' };
-      const uschar *list, *expr, *temp;
+      cuschar *list, *expr, *temp;
       uschar * save_iterate_item = iterate_item;
       uschar * save_lookup_value = lookup_value;
 
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
 	expand_string_message =
@@ -6465,10 +6471,10 @@ while (*s)
       if (item_type == EITEM_REDUCE)
         {
 	uschar * t;
-        Uskip_whitespace(&s);
+        skip_whitespace(&s);
         if (*s++ != '{')						/*}*/
 	  {
-	  expand_string_message = US("missing '{' for second arg of reduce");
+	  expand_string_message = cUS("missing '{' for second arg of reduce");
 	  goto EXPAND_FAILED_CURLY;					/*}*/
 	  }
         t = expand_string_internal(s,
@@ -6477,12 +6483,12 @@ while (*s)
         lookup_value = t;						/*{{*/
         if (*s++ != '}')
 	  {
-	  expand_string_message = US("missing '}' closing second arg of reduce");
+	  expand_string_message = cUS("missing '}' closing second arg of reduce");
 	  goto EXPAND_FAILED_CURLY;
 	  }
         }
 
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
 	expand_string_message =
@@ -6511,7 +6517,7 @@ while (*s)
         goto EXPAND_FAILED;
         }
 
-      Uskip_whitespace(&s);						/*{{{*/
+      skip_whitespace(&s);						/*{{{*/
       if (*s++ != '}')
         {
         expand_string_message = string_sprintf("missing } at end of condition "
@@ -6520,7 +6526,7 @@ while (*s)
         goto EXPAND_FAILED;
         }
 
-      Uskip_whitespace(&s);						/*{{*/
+      skip_whitespace(&s);						/*{{*/
       if (*s++ != '}')
         {
         expand_string_message = string_sprintf("missing } at end of \"%s\"",
@@ -6591,7 +6597,7 @@ while (*s)
 
         if (  yield && yield->ptr != save_ptr
 	   && (temp[0] == *outsep || temp[0] == 0))
-          yield = string_catn(yield, US(" "), 1);
+          yield = string_catn(yield, cUS(" "), 1);
 
         /* Add the string in "temp" to the output list that we are building,
         This is done in chunks by searching for the separator character. */
@@ -6642,15 +6648,15 @@ while (*s)
     case EITEM_SORT:
       {
       int sep = 0, cond_type;
-      const uschar * srclist, * cmp, * xtract;
+      cuschar * srclist, * cmp, * xtract;
       uschar * opname, * srcitem;
-      const uschar * dstlist = NULL, * dstkeylist = NULL;
+      cuschar * dstlist = NULL, * dstkeylist = NULL;
       uschar * tmp, * save_iterate_item = iterate_item;
 
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
-        expand_string_message = US("missing '{' for list arg of sort");
+        expand_string_message = cUS("missing '{' for list arg of sort");
 	goto EXPAND_FAILED_CURLY;					/*}*/
 	}
 
@@ -6659,14 +6665,14 @@ while (*s)
       if (!srclist) goto EXPAND_FAILED;					/*{{*/
       if (*s++ != '}')
         {
-        expand_string_message = US("missing '}' closing list arg of sort");
+        expand_string_message = cUS("missing '}' closing list arg of sort");
 	goto EXPAND_FAILED_CURLY;
 	}
 
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
-        expand_string_message = US("missing '{' for comparator arg of sort");
+        expand_string_message = cUS("missing '{' for comparator arg of sort");
 	goto EXPAND_FAILED_CURLY;					/*}*/
 	}
 
@@ -6675,7 +6681,7 @@ while (*s)
       if (!cmp) goto EXPAND_FAILED;					/*{{*/
       if (*s++ != '}')
         {
-        expand_string_message = US("missing '}' closing comparator arg of sort");
+        expand_string_message = cUS("missing '}' closing comparator arg of sort");
 	goto EXPAND_FAILED_CURLY;
 	}
 
@@ -6694,14 +6700,14 @@ while (*s)
 	  break;
 
 	default:
-	  expand_string_message = US("comparator not handled for sort");
+	  expand_string_message = cUS("comparator not handled for sort");
 	  goto EXPAND_FAILED;
 	}
 
-      Uskip_whitespace(&s);
+      skip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
-        expand_string_message = US("missing '{' for extractor arg of sort");
+        expand_string_message = cUS("missing '{' for extractor arg of sort");
 	goto EXPAND_FAILED_CURLY;					/*}*/
 	}
 
@@ -6713,13 +6719,13 @@ while (*s)
 									/*{{*/
       if (*s++ != '}')
         {
-        expand_string_message = US("missing '}' closing extractor arg of sort");
+        expand_string_message = cUS("missing '}' closing extractor arg of sort");
 	goto EXPAND_FAILED_CURLY;
 	}
 									/*{{*/
       if (*s++ != '}')
         {
-        expand_string_message = US("missing } at end of \"sort\"");
+        expand_string_message = cUS("missing } at end of \"sort\"");
         goto EXPAND_FAILED;
         }
 
@@ -6807,7 +6813,7 @@ while (*s)
       break;
 
       SORT_MISMATCH:
-	expand_string_message = US("Internal error in sort (list mismatch)");
+	expand_string_message = cUS("Internal error in sort (list mismatch)");
 	goto EXPAND_FAILED;
       }
 
@@ -6821,7 +6827,7 @@ while (*s)
 
     case EITEM_DLFUNC:
 #ifndef EXPAND_DLFUNC
-      expand_string_message = US("\"${dlfunc\" encountered, but this facility "	/*}*/
+      expand_string_message = cUS("\"${dlfunc\" encountered, but this facility "	/*}*/
 	"is not included in this binary");
       goto EXPAND_FAILED;
 
@@ -6831,12 +6837,12 @@ while (*s)
       exim_dlfunc_t * func;
       uschar * result;
       int status, argc;
-      uschar * argv[EXPAND_DLFUNC_MAX_ARGS + 3];
+      cuschar * argv[EXPAND_DLFUNC_MAX_ARGS + 3];
 
       if (expand_forbid & RDO_DLFUNC)
         {
         expand_string_message =
-          US("dynamically-loaded functions are not permitted");
+          cUS("dynamically-loaded functions are not permitted");
         goto EXPAND_FAILED;
         }
 
@@ -6892,7 +6898,7 @@ while (*s)
 
       if ((status = func(&result, argc - 2, &argv[2])) != OK)
         {
-        expand_string_message = result ? result : US("(no message)");
+        expand_string_message = result ? result : cUS("(no message)");
         if (status == FAIL_FORCED)
 	  f.expand_string_forcedfail = TRUE;
 	else if (status != FAIL)
@@ -6911,7 +6917,7 @@ while (*s)
       uschar * key;
       uschar *save_lookup_value = lookup_value;
 
-      if (Uskip_whitespace(&s) != '{')					/*}*/
+      if (skip_whitespace(&s) != '{')					/*}*/
 	goto EXPAND_FAILED;
 
       key = expand_string_internal(s+1,
@@ -6919,7 +6925,7 @@ while (*s)
       if (!key) goto EXPAND_FAILED;					/*{{*/
       if (*s++ != '}')
         {
-        expand_string_message = US("missing '}' for name arg of env");
+        expand_string_message = cUS("missing '}' for name arg of env");
 	goto EXPAND_FAILED_CURLY;
 	}
 
@@ -6931,7 +6937,7 @@ while (*s)
                save_lookup_value,		/* value to reset for string2 */
                &s,				/* input pointer */
                &yield,				/* output pointer */
-               US("env"),				/* condition type */
+               cUS("env"),				/* condition type */
 	       &resetok))
         {
         case 1: goto EXPAND_FAILED;          /* when all is well, the */
@@ -6945,7 +6951,7 @@ while (*s)
     case EITEM_SRS_ENCODE:
       /* ${srs_encode {secret} {return_path} {orig_domain}} */
       {
-      uschar * sub[3];
+      cuschar * sub[3];
       uschar cksum[4];
       gstring * g = NULL;
       BOOL quoted = FALSE;
@@ -6960,12 +6966,12 @@ while (*s)
 
       if (sub[1] && *(sub[1]))
 	{
-	g = string_catn(g, US("SRS0="), 5);
+	g = string_catn(g, cUS("SRS0="), 5);
 
 	/* ${l_4:${hmac{md5}{SRS_SECRET}{${lc:$return_path}}}}= */
 	hmac_md5(sub[0], string_copylc(sub[1]), cksum, sizeof(cksum));
 	g = string_catn(g, cksum, sizeof(cksum));
-	g = string_catn(g, US("="), 1);
+	g = string_catn(g, cUS("="), 1);
 
 	/* ${base32:${eval:$tod_epoch/86400&0x3ff}}= */
 	  {
@@ -6979,7 +6985,7 @@ while (*s)
 	  if (h) while (h->ptr > 0)
 	    g = string_catn(g, &h->s[--h->ptr], 1);
 	  }
-	g = string_catn(g, US("="), 1);
+	g = string_catn(g, cUS("="), 1);
 
 	/* ${domain:$return_path}=${local_part:$return_path} */
 	  {
@@ -6992,7 +6998,7 @@ while (*s)
 	    goto EXPAND_FAILED;
 
 	  if (domain > 0) g = string_cat(g, t + domain);
-	  g = string_catn(g, US("="), 1);
+	  g = string_catn(g, cUS("="), 1);
 
 	  s = domain > 0 ? string_copyn(t, domain - 1) : t;
 	  if ((quoted = Ustrchr(s, '"') != NULL))
@@ -7015,12 +7021,12 @@ while (*s)
 	/* Assume that if the original local_part had quotes
 	it was for good reason */
 
-	if (quoted) yield = string_catn(yield, US("\""), 1);
+	if (quoted) yield = string_catn(yield, cUS("\""), 1);
 	yield = string_catn(yield, g->s, g->ptr);
-	if (quoted) yield = string_catn(yield, US("\""), 1);
+	if (quoted) yield = string_catn(yield, cUS("\""), 1);
 
 	/* @$original_domain */
-	yield = string_catn(yield, US("@"), 1);
+	yield = string_catn(yield, cUS("@"), 1);
 	yield = string_cat(yield, sub[2]);
 	}
       else
@@ -7037,7 +7043,7 @@ while (*s)
 
   DEBUG(D_expand)
     if (yield && (start > 0 || *s))	/* only if not the sole expansion of the line */
-      debug_expansion_interim(US("item-res"),
+      debug_expansion_interim(cUS("item-res"),
 			      yield->s + start, yield->ptr - start, !!(flags & ESI_SKIPPING));
   continue;
 
@@ -7083,7 +7089,7 @@ NOT_ITEM: ;
       case EOP_BASE64:
 	if (s[1] == '$')
 	  {
-	  const uschar * s1 = s;
+	  cuschar * s1 = s;
 	  sub = expand_string_internal(s+2,
 	      ESI_BRACE_ENDS | flags & ESI_SKIPPING, &s1, &resetok, NULL);
 	  if (!sub)       goto EXPAND_FAILED;		/*{*/
@@ -7277,7 +7283,7 @@ NOT_ITEM: ;
 	  if (c == EOP_SHA256)
 	    yield = string_cat(yield, tls_cert_fprt_sha256(*(void **)vp->value));
 	  else
-	    expand_string_message = US("sha2_N not supported with certificates");
+	    expand_string_message = cUS("sha2_N not supported with certificates");
 	else
 	  {
 	  hctx h;
@@ -7290,7 +7296,7 @@ NOT_ITEM: ;
 
 	  if (m == HASH_BADTYPE || !exim_sha_init(&h, m))
 	    {
-	    expand_string_message = US("unrecognised sha2 variant");
+	    expand_string_message = cUS("unrecognised sha2 variant");
 	    goto EXPAND_FAILED;
 	    }
 
@@ -7300,7 +7306,7 @@ NOT_ITEM: ;
 	    yield = string_fmt_append(yield, "%02X", *b.data++);
 	  }
 #else
-	  expand_string_message = US("sha256 only supported with TLS");
+	  expand_string_message = cUS("sha256 only supported with TLS");
 #endif
 	break;
 
@@ -7318,7 +7324,7 @@ NOT_ITEM: ;
 
 	if (m == HASH_BADTYPE || !exim_sha_init(&h, m))
 	  {
-	  expand_string_message = US("unrecognised sha3 variant");
+	  expand_string_message = cUS("unrecognised sha3 variant");
 	  goto EXPAND_FAILED;
 	  }
 
@@ -7329,7 +7335,7 @@ NOT_ITEM: ;
 	}
 	break;
 #else
-	expand_string_message = US("sha3 only supported with GnuTLS 3.5.0 + or OpenSSL 1.1.1 +");
+	expand_string_message = cUS("sha3 only supported with GnuTLS 3.5.0 + or OpenSSL 1.1.1 +");
 	goto EXPAND_FAILED;
 #endif
 
@@ -7534,7 +7540,7 @@ NOT_ITEM: ;
 	int save_ptr = gstring_length(yield);
 	int start, end, domain;  /* Not really used */
 
-	if (Uskip_whitespace(&sub) == '>')
+	if (skip_whitespace(&sub) == '>')
 	  if (*outsep = *++sub) ++sub;
 	  else
 	    {
@@ -7562,7 +7568,7 @@ NOT_ITEM: ;
 	  if (address)
 	    {
 	    if (yield && yield->ptr != save_ptr && address[0] == *outsep)
-	      yield = string_catn(yield, US(" "), 1);
+	      yield = string_catn(yield, cUS(" "), 1);
 
 	    for (;;)
 	      {
@@ -7624,20 +7630,20 @@ NOT_ITEM: ;
 
 	  if (needs_quote)
 	    {
-	    yield = string_catn(yield, US("\""), 1);
+	    yield = string_catn(yield, cUS("\""), 1);
 	    t = sub - 1;
 	    while (*++t)
 	      if (*t == '\n')
-		yield = string_catn(yield, US("\\n"), 2);
+		yield = string_catn(yield, cUS("\\n"), 2);
 	      else if (*t == '\r')
-		yield = string_catn(yield, US("\\r"), 2);
+		yield = string_catn(yield, cUS("\\r"), 2);
 	      else
 		{
 		if (*t == '\\' || *t == '"')
-		  yield = string_catn(yield, US("\\"), 1);
+		  yield = string_catn(yield, cUS("\\"), 1);
 		yield = string_catn(yield, t, 1);
 		}
-	    yield = string_catn(yield, US("\""), 1);
+	    yield = string_catn(yield, cUS("\""), 1);
 	    }
 	  else
 	    yield = string_cat(yield, sub);
@@ -7685,7 +7691,7 @@ NOT_ITEM: ;
 	  while (*(++t) != 0)
 	    {
 	    if (!isalnum(*t))
-	      yield = string_catn(yield, US("\\"), 1);
+	      yield = string_catn(yield, cUS("\\"), 1);
 	    yield = string_catn(yield, t, 1);
 	    }
 	  break;
@@ -7736,7 +7742,7 @@ NOT_ITEM: ;
 
 	/* replace illegal UTF-8 sequences by replacement character  */
 
-	#define UTF8_REPLACEMENT_CHAR US("?")
+	#define UTF8_REPLACEMENT_CHAR cUS("?")
 
 	case EOP_UTF8CLEAN:
 	  {
@@ -7899,7 +7905,7 @@ NOT_ITEM: ;
 
 	case EOP_ESCAPE:
 	  {
-	  const uschar * t = string_printing(sub);
+	  cuschar * t = string_printing(sub);
 	  yield = string_cat(yield, t);
 	  break;
 	  }
@@ -7908,7 +7914,7 @@ NOT_ITEM: ;
 	  {
 	  uschar c;
 
-	  for (const uschar * s = sub; (c = *s); s++)
+	  for (cuschar * s = sub; (c = *s); s++)
 	    yield = c < 127 && c != '\\'
 	      ? string_catn(yield, s, 1)
 	      : string_fmt_append(yield, "\\%03o", c);
@@ -8101,7 +8107,7 @@ NOT_ITEM: ;
 
 	  if (expand_forbid & RDO_EXISTS)
 	    {
-	    expand_string_message = US("Use of the stat() expansion is not permitted");
+	    expand_string_message = cUS("Use of the stat() expansion is not permitted");
 	    goto EXPAND_FAILED;
 	    }
 
@@ -8184,7 +8190,7 @@ NOT_ITEM: ;
 
        DEBUG(D_expand)
 	{
-	const uschar * s = yield->s + start;
+	cuschar * s = yield->s + start;
 	int i = yield->ptr - start;
 	BOOL tainted = is_tainted(s);
 
@@ -8225,7 +8231,7 @@ NOT_ITEM: ;
 						/*{*/
   if (*s++ == '}')
     {
-    const uschar * value;
+    cuschar * value;
     int len;
     int newsize = 0;
     gstring * g = NULL;
@@ -8273,8 +8279,8 @@ terminating brace. */
 if (flags & ESI_BRACE_ENDS && !*s)
   {							/*{{*/
   expand_string_message = malformed_header
-    ? US("missing } at end of string - could be header name not terminated by colon")
-    : US("missing } at end of string");
+    ? cUS("missing } at end of string - could be header name not terminated by colon")
+    : cUS("missing } at end of string");
   goto EXPAND_FAILED;
   }
 
@@ -8342,10 +8348,10 @@ to update the pointer to the terminator, for cases of nested calls with "fail".
 EXPAND_FAILED_CURLY:
 if (malformed_header)
   expand_string_message =
-    US("missing or misplaced { or } - could be header name not terminated by colon");
+    cUS("missing or misplaced { or } - could be header name not terminated by colon");
 
 else if (!expand_string_message || !*expand_string_message)
-  expand_string_message = US("missing or misplaced { or }");
+  expand_string_message = cUS("missing or misplaced { or }");
 
 /* At one point, Exim reset the store to yield (if yield was not NULL), but
 that is a bad idea, because expand_string_message is in dynamic store. */
@@ -8392,8 +8398,8 @@ Returns:  the expanded string, or NULL if expansion failed; if failure was
           due to a lookup deferring, search_find_defer will be TRUE
 */
 
-const uschar *
-expand_string_2(const uschar * string, BOOL * textonly_p)
+cuschar *
+expand_string_2(cuschar * string, BOOL * textonly_p)
 {
 if (Ustrpbrk(string, "$\\") != NULL)
   {
@@ -8411,16 +8417,6 @@ if (textonly_p) *textonly_p = TRUE;
 return string;
 }
 
-const uschar *
-expand_cstring(const uschar * string)
-{ return expand_string_2(string, NULL); }
-
-uschar *
-expand_string(uschar * string)
-{ return US(expand_string_2(CUS(string), NULL)); }
-
-
-
 
 
 
@@ -8437,9 +8433,9 @@ Returns:  the expanded string, always in a new bit of store, or NULL
 */
 
 uschar *
-expand_string_copy(const uschar *string)
+expand_string_copy(cuschar *string)
 {
-const uschar *yield = expand_cstring(string);
+cuschar *yield = expand_cstring(string);
 if (yield == string) yield = string_copy(string);
 return US(yield);
 }
@@ -8488,10 +8484,10 @@ Returns:  the integer value, or
 */
 
 static int_eximarith_t
-expanded_string_integer(const uschar *s, BOOL isplus)
+expanded_string_integer(cuschar *s, BOOL isplus)
 {
 int_eximarith_t value;
-uschar *msg = US("invalid integer \"%s\"");
+uschar *msg = cUS("invalid integer \"%s\"");
 uschar *endptr;
 
 /* If expansion failed, expand_string_message will be set. */
@@ -8511,7 +8507,7 @@ the behaviour explicitly.  Stripping leading whitespace is a harmless
 noop change since strtol skips it anyway (provided that there is a number
 to find at all). */
 if (isspace(*s))
-  if (Uskip_whitespace(&s) == '\0')
+  if (skip_whitespace(&s) == '\0')
     {
       DEBUG(D_expand)
        debug_printf_indent("treating blank string as number 0\n");
@@ -8521,9 +8517,9 @@ if (isspace(*s))
 value = strtoll(CS(s), CSS(&endptr), 10);
 
 if (endptr == s)
-  msg = US("integer expected but \"%s\" found");
+  msg = cUS("integer expected but \"%s\" found");
 else if (value < 0 && isplus)
-  msg = US("non-negative integer expected but \"%s\" found");
+  msg = cUS("non-negative integer expected but \"%s\" found");
 else
   {
   switch (tolower(*endptr))
@@ -8547,9 +8543,9 @@ else
       break;
     }
   if (errno == ERANGE)
-    msg = US("absolute value of integer \"%s\" is too large (overflow)");
+    msg = cUS("absolute value of integer \"%s\" is too large (overflow)");
   else
-    if (Uskip_whitespace(&endptr) == 0) return value;
+    if (skip_whitespace(&endptr) == 0) return value;
   }
 
 expand_string_message = string_sprintf(CS(msg), s);
@@ -8600,9 +8596,9 @@ if (!(expanded = expand_string(svalue)))
 DEBUG(dbg_opt) debug_printf("expansion of \"%s\" yields \"%s\"\n", oname,
   expanded);
 
-if (strcmpic(expanded, US("true")) == 0 || strcmpic(expanded, US("yes")) == 0)
+if (strcmpic(expanded, cUS("true")) == 0 || strcmpic(expanded, cUS("yes")) == 0)
   *rvalue = TRUE;
-else if (strcmpic(expanded, US("false")) == 0 || strcmpic(expanded, US("no")) == 0)
+else if (strcmpic(expanded, cUS("false")) == 0 || strcmpic(expanded, cUS("no")) == 0)
   *rvalue = FALSE;
 else
   {
@@ -8634,7 +8630,7 @@ return (  (  Ustrstr(s, "failed to expand") != NULL
 	  || Ustrstr(s, "ldapdn:") != NULL
 	  || Ustrstr(s, "ldapm:")  != NULL
        )  )
-  ? US("Temporary internal error") : s;
+  ? cUS("Temporary internal error") : s;
 }
 
 
@@ -8648,7 +8644,7 @@ Return:  pointer to buffer, or NULL on error.
 */
 
 uschar *
-expand_file_big_buffer(const uschar * filename)
+expand_file_big_buffer(cuschar * filename)
 {
 int fd, off = 0, len;
 
@@ -8684,8 +8680,8 @@ return big_buffer;
 typedef struct {
   uschar * 	region_start;
   uschar *	region_end;
-  const uschar *var_name;
-  const uschar *var_data;
+  cuschar *var_name;
+  cuschar *var_data;
 } err_ctx;
 
 /* Called via tree_walk, which allows nonconst name/data.  Our usage is const. */
@@ -8713,11 +8709,11 @@ tree_walk(acl_var_m, assert_variable_notin, &e);
 /* check auth<n> variables.
 assert_variable_notin() treats as const, so deconst is safe. */
 for (int i = 0; i < AUTH_VARS; i++) if (auth_vars[i])
-  assert_variable_notin(US("auth<n>"), US(auth_vars[i]), &e);
+  assert_variable_notin(cUS("auth<n>"), US(auth_vars[i]), &e);
 
 /* check regex<n> variables. assert_variable_notin() treats as const. */
 for (int i = 0; i < REGEX_VARS; i++) if (regex_vars[i])
-  assert_variable_notin(US("regex<n>"), US(regex_vars[i]), &e);
+  assert_variable_notin(cUS("regex<n>"), US(regex_vars[i]), &e);
 
 /* check known-name variables */
 for (var_entry * v = var_table; v < var_table + var_table_size; v++)
@@ -8812,7 +8808,7 @@ for (int i = 1; i < argc; i++)
 
 printf("Testing string expansion: debug_level = %d\n\n", debug_level);
 
-expand_nstring[1] = US("string 1....");
+expand_nstring[1] = cUS("string 1....");
 expand_nlength[1] = 8;
 expand_nmax = 1;
 

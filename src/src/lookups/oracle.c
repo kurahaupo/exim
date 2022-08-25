@@ -197,7 +197,7 @@ return col;
 /* See local README for interface description. */
 
 static void *
-oracle_open(const uschar * filename, uschar ** errmsg)
+oracle_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(1);    /* Just return something non-null */
 }
@@ -323,7 +323,7 @@ if (!cn)
          (ub4)OCI_LM_DEF) != 0)
     {
     *errmsg = oracle_error(oracle_handle, oracle_handle->rc,
-      US("connection failed"));
+      cUS("connection failed"));
     *defer_break = FALSE;
     goto ORACLE_EXIT_NO_VALS;
     }
@@ -413,7 +413,7 @@ while (cda->rc != NO_DATA_FOUND)  /* Loop for each row */
     slen = Ustrlen(s);
     while (slen > 0 && isspace(s[slen-1])) slen--;
     result = string_catn(result, s, slen);
-    result = string_catn(result, US("="), 1);
+    result = string_catn(result, cUS("="), 1);
 
     /* int and float type won't ever need escaping. Otherwise, quote the value
     if it contains spaces or is empty. */
@@ -504,8 +504,8 @@ arguments are not used. Loop through a list of servers while the query is
 deferred with a retryable error. */
 
 static int
-oracle_find(void * handle, const uschar * filename, uschar * query, int length,
-  uschar ** result, uschar ** errmsg, uint * do_cache, const uschar * opts)
+oracle_find(void * handle, cuschar * filename, uschar * query, int length,
+  uschar ** result, uschar ** errmsg, uint * do_cache, cuschar * opts)
 {
 int sep = 0;
 uschar *server;
@@ -607,7 +607,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("oracle"),			/* lookup name */
+  .name = cUS("oracle"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = oracle_open,			/* open function */
   .check = NULL,			/* check function */

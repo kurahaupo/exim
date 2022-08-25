@@ -39,7 +39,7 @@ Side effect: sets errno to ERRNO_BADUGID, ERRNO_NOTREGULAR or ERRNO_BADMODE for
 */
 
 int
-lf_check_file(int fd, const uschar * filename, int s_type, int modemask,
+lf_check_file(int fd, cuschar * filename, int s_type, int modemask,
   uid_t * owners, gid_t * owngroups, const char * type, uschar ** errmsg)
 {
 struct stat statbuf;

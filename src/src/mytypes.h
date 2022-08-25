@@ -69,6 +69,7 @@ the standard header files, so we use "uschar". Solaris has u_char in
 sys/types.h. This is just a typing convenience, of course. */
 
 typedef unsigned char uschar;
+typedef const uschar cuschar;
 typedef unsigned BOOL;
 /* We also have SIGNAL_BOOL, which requires signal.h be included, so is defined
 elsewhere */
@@ -80,37 +81,43 @@ systems where "char" is actually signed, I've converted Exim to use entirely
 unsigned chars, except in a few special places such as arguments that are
 almost always literal strings. */
 
+#ifndef CS
 #if defined __GNUC__ || __STDC_VERSION__ >= 199901L
 /* safer casts: check the source types */
 static inline char         * CS (uschar       *p) { return (void*)p; }
-static inline char   const *CCS (uschar const *p) { return (void*)p; }
+static inline char   const *CCS (cuschar *p) { return (void*)p; }
 static inline char        ** CSS(uschar      **p) { return (void*)p; }
-static inline char   const**CCSS(uschar const**p) { return (void*)p; }
+static inline char   const**CCSS(cuschar**p) { return (void*)p; }
 static inline uschar       * US (char         *p) { return (void*)p; }
-static inline uschar const *CUS (char   const *p) { return (void*)p; }
+static inline cuschar *CUS (char   const *p) { return (void*)p; }
 static inline uschar      ** USS(char        **p) { return (void*)p; }
-static inline uschar const**CUSS(char   const**p) { return (void*)p; }
+static inline cuschar**CUSS(char   const**p) { return (void*)p; }
+#define CS CS
 #elif !defined CHAR_MIN || CHAR_MIN < 0
 /* only use casts when needed */
 # define CS(S)   ((char *)(S))
 # define CCS(S)  ((const char *)(S))
 # define CSS(S)  ((char **)(S))
+# define CCSS(S) ((const char **)(S))
 # define US(S)   ((unsigned char *)(S))
 # define CUS(S)  ((const unsigned char *)(S))
 # define USS(S)  ((unsigned char **)(S))
 # define CUSS(S) ((const unsigned char **)(S))
-# define CCSS(S) ((const char **)(S))
 #else
 /* char is already unsigned, don't cast */
 # define CS(S)   (S)
 # define CCS(S)  (S)
 # define CSS(S)  (S)
+# define CCSS(S) (S)
 # define US(S)   (S)
 # define CUS(S)  (S)
 # define USS(S)  (S)
 # define CUSS(S) (S)
-# define CCSS(S) (S)
 #endif
+#endif
+
+/* Use this for constant string initializers in static structs */
+# define cUS(S)  ( (S) != "" ? (const unsigned char *)(S) : (const unsigned char *)(S) )
 
 /* The C library string functions expect "char *" arguments. Use macros to
 avoid having to write a cast each time. We do this for string and file

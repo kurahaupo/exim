@@ -66,7 +66,7 @@ if (add_environment)
   {
   uschar * p;
   int sep = 0;
-  const uschar * envlist = add_environment;
+  cuschar * envlist = add_environment;
 
   while ((p = string_nextinlist(&envlist, &sep, NULL, 0)))
     {

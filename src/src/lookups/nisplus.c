@@ -19,7 +19,7 @@
 /* See local README for interface description. */
 
 static void *
-nisplus_open(const uschar * filename, uschar ** errmsg)
+nisplus_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(1);    /* Just return something non-null */
 }
@@ -43,18 +43,18 @@ yield is the concatenation of all the fields, preceded by their names and an
 equals sign. */
 
 static int
-nisplus_find(void * handle, const uschar * filename, const uschar * query,
+nisplus_find(void * handle, cuschar * filename, cuschar * query,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 int error_error = FAIL;
-const uschar * field_name = NULL;
+cuschar * field_name = NULL;
 nis_result *nrt = NULL;
 nis_result *nre = NULL;
 nis_object *tno, *eno;
 struct entry_obj *eo;
 struct table_obj *ta;
-const uschar * p = query + length;
+cuschar * p = query + length;
 gstring * yield = NULL;
 
 do_cache = do_cache;   /* Placate picky compilers */
@@ -80,7 +80,7 @@ table name. */
 while (p > query && p[-1] != ',') p--;
 if (p <= query)
   {
-  *errmsg = US("NIS+ query malformed");
+  *errmsg = cUS("NIS+ query malformed");
   error_error = DEFER;
   goto NISPLUS_EXIT;
   }
@@ -150,7 +150,7 @@ for (int i = 0; i < eo->en_cols.en_cols_len; i++)
   empty string for consistency. Remove trailing whitespace and zero
   bytes. */
 
-  if (!value) value = US("");
+  if (!value) value = cUS("");
   else
     while (len > 0 && (value[len-1] == 0 || isspace(value[len-1])))
       len--;
@@ -160,25 +160,25 @@ for (int i = 0; i < eo->en_cols.en_cols_len; i++)
   if (!field_name)
     {
     yield = string_cat (yield, US(tc->tc_name));
-    yield = string_catn(yield, US("="), 1);
+    yield = string_catn(yield, cUS("="), 1);
 
     /* Quote the value if it contains spaces or is empty */
 
     if (value[0] == 0 || Ustrchr(value, ' ') != NULL)
       {
-      yield = string_catn(yield, US("\""), 1);
+      yield = string_catn(yield, cUS("\""), 1);
       for (int j = 0; j < len; j++)
         {
         if (value[j] == '\"' || value[j] == '\\')
-          yield = string_catn(yield, US("\\"), 1);
+          yield = string_catn(yield, cUS("\\"), 1);
         yield = string_catn(yield, value+j, 1);
         }
-      yield = string_catn(yield, US("\""), 1);
+      yield = string_catn(yield, cUS("\""), 1);
       }
     else
       yield = string_catn(yield, value, len);
 
-    yield = string_catn(yield, US(" "), 1);
+    yield = string_catn(yield, cUS(" "), 1);
     }
 
   /* When the specified field is found, grab its data and finish */
@@ -273,7 +273,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("nisplus"),			/* lookup name */
+  .name = cUS("nisplus"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = nisplus_open,			/* open function */
   .check = NULL,			/* check function */

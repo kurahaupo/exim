@@ -20,12 +20,12 @@
 the "nis" and "nis0" lookup types. */
 
 static void *
-nis_open(const uschar * filename, uschar ** errmsg)
+nis_open(cuschar * filename, uschar ** errmsg)
 {
 char *nis_domain;
 if (yp_get_default_domain(&nis_domain) != 0)
   {
-  *errmsg = US("failed to get default NIS domain");
+  *errmsg = cUS("failed to get default NIS domain");
   return NULL;
   }
 return nis_domain;
@@ -42,9 +42,9 @@ for nis0 because they are so short it isn't worth trying to use any common
 code. */
 
 static int
-nis_find(void * handle, const uschar * filename, const uschar * keystring,
+nis_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 int rc;
 uschar *nis_data;
@@ -69,9 +69,9 @@ return (rc == YPERR_KEY || rc == YPERR_MAP)? FAIL : DEFER;
 /* See local README for interface description. */
 
 static int
-nis0_find(void * handle, const uschar * filename, const uschar * keystring,
+nis0_find(void * handle, cuschar * filename, cuschar * keystring,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 int rc;
 uschar *nis_data;
@@ -108,7 +108,7 @@ return g;
 
 
 static lookup_info nis_lookup_info = {
-  .name = US("nis"),			/* lookup name */
+  .name = cUS("nis"),			/* lookup name */
   .type = 0,				/* not abs file, not query style*/
   .open = nis_open,			/* open function */
   .check = NULL,			/* check function */
@@ -120,7 +120,7 @@ static lookup_info nis_lookup_info = {
 };
 
 static lookup_info nis0_lookup_info = {
-  .name = US("nis0"),			/* lookup name */
+  .name = cUS("nis0"),			/* lookup name */
   .type = 0,				/* not absfile, not query style */
   .open = nis_open,			/* sic */         /* open function */
   .check = NULL,			/* check function */

@@ -156,13 +156,13 @@ options_routers(void)
 {
 uschar buf[64];
 
-options_from_list(optionlist_routers, nelem(optionlist_routers), US("ROUTERS"), NULL);
+options_from_list(optionlist_routers, nelem(optionlist_routers), cUS("ROUTERS"), NULL);
 
 for (router_info * ri = routers_available; ri->driver_name[0]; ri++)
   {
-  spf(buf, sizeof(buf), US("_DRIVER_ROUTER_%T"), ri->driver_name);
+  spf(buf, sizeof(buf), cUS("_DRIVER_ROUTER_%T"), ri->driver_name);
   builtin_macro_create(buf);
-  options_from_list(ri->options, (unsigned)*ri->options_count, US("ROUTER"), ri->driver_name);
+  options_from_list(ri->options, (unsigned)*ri->options_count, cUS("ROUTER"), ri->driver_name);
   }
 }
 
@@ -225,7 +225,7 @@ function. */
 void
 route_init(void)
 {
-readconf_driver_init(US("router"),
+readconf_driver_init(cUS("router"),
   (driver_instance **)(&routers),     /* chain anchor */
   (driver_info *)routers_available,   /* available drivers */
   sizeof(router_info),                /* size of info blocks */
@@ -347,12 +347,12 @@ Returns:        length of matching prefix or zero
 */
 
 int
-route_check_prefix(const uschar * local_part, const uschar * prefixes,
+route_check_prefix(cuschar * local_part, cuschar * prefixes,
   unsigned * vp)
 {
 int sep = 0;
 uschar *prefix;
-const uschar *listptr = prefixes;
+cuschar *listptr = prefixes;
 
 while ((prefix = string_nextinlist(&listptr, &sep, NULL, 0)))
   {
@@ -360,7 +360,7 @@ while ((prefix = string_nextinlist(&listptr, &sep, NULL, 0)))
   if (prefix[0] == '*')
     {
     prefix++;
-    for (const uschar * p = local_part + Ustrlen(local_part) - (--plen);
+    for (cuschar * p = local_part + Ustrlen(local_part) - (--plen);
          p >= local_part; p--)
       if (strncmpic(prefix, p, plen) == 0)
 	{
@@ -399,21 +399,21 @@ Returns:        length of matching suffix or zero
 */
 
 int
-route_check_suffix(const uschar * local_part, const uschar * suffixes,
+route_check_suffix(cuschar * local_part, cuschar * suffixes,
   unsigned * vp)
 {
 int sep = 0;
 int alen = Ustrlen(local_part);
 uschar *suffix;
-const uschar *listptr = suffixes;
+cuschar *listptr = suffixes;
 
 while ((suffix = string_nextinlist(&listptr, &sep, NULL, 0)))
   {
   int slen = Ustrlen(suffix);
   if (suffix[slen-1] == '*')
     {
-    const uschar * pend = local_part + alen - (--slen) + 1;
-    for (const uschar * p = local_part; p < pend; p++)
+    cuschar * pend = local_part + alen - (--slen) + 1;
+    for (cuschar * p = local_part; p < pend; p++)
       if (strncmpic(suffix, p, slen) == 0)
 	{
 	int tlen = alen - (p - local_part);
@@ -462,9 +462,9 @@ Returns:         OK     item is in list
 */
 
 static int
-route_check_dls(uschar *rname, uschar *type, const uschar *list,
+route_check_dls(uschar *rname, uschar *type, cuschar *list,
   tree_node **anchorptr, unsigned int *cache_bits, int listtype,
-  const uschar *domloc, const uschar **ldata, BOOL caseless, uschar **perror)
+  cuschar *domloc, cuschar **ldata, BOOL caseless, uschar **perror)
 {
 if (!list) return OK;   /* Empty list always succeeds */
 
@@ -476,7 +476,7 @@ has its own code. */
 switch(domloc
   ? match_isinlist(domloc, &list, 0, anchorptr, cache_bits, listtype,
     caseless, ldata)
-  : match_address_list(sender_address ? sender_address : US(""),
+  : match_address_list(sender_address ? sender_address : cUS(""),
     TRUE, TRUE, &list, cache_bits, -1, 0, CUSS(&sender_data))
       )
   {
@@ -604,13 +604,13 @@ Returns:   OK if s == NULL or all tests are as required
 */
 
 static int
-check_files(const uschar *s, uschar **perror)
+check_files(cuschar *s, uschar **perror)
 {
 int sep = 0;              /* List has default separators */
 uid_t uid = 0;            /* For picky compilers */
 gid_t gid = 0;            /* For picky compilers */
 BOOL ugid_set = FALSE;
-const uschar *listptr;
+cuschar *listptr;
 uschar *check;
 
 if (!s) return OK;
@@ -741,7 +741,7 @@ while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
     otherwise. Save the old state for resetting on the wait. */
 
     oldsignal = signal(SIGCHLD, SIG_DFL);
-    pid = exim_fork(US("require-files"));
+    pid = exim_fork(cUS("require-files"));
 
     /* If fork() fails, reinstate the original error and behave as if
     this block of code were not present. This is the same behaviour as happens
@@ -915,7 +915,7 @@ if (verify == v_expn && !r->expn)
 
 /* Skip this router if there's a domain mismatch. */
 
-if ((rc = route_check_dls(r->name, US("domains"), r->domains, &domainlist_anchor,
+if ((rc = route_check_dls(r->name, cUS("domains"), r->domains, &domainlist_anchor,
      addr->domain_cache, TRUE, addr->domain, CUSS(&deliver_domain_data),
      MCL_DOMAIN, perror)) != OK)
   return rc;
@@ -942,7 +942,7 @@ else
     check_local_part[Ustrlen(check_local_part) - Ustrlen(addr->suffix)] = 0;
   }
 
-if ((rc = route_check_dls(r->name, US("local_parts"), r->local_parts,
+if ((rc = route_check_dls(r->name, cUS("local_parts"), r->local_parts,
        &localpartlist_anchor, localpart_cache, MCL_LOCALPART,
        check_local_part, CUSS(&deliver_localpart_data),
        !r->caseful_local_part, perror)) != OK)
@@ -997,7 +997,7 @@ if (r->router_home_directory)
 local user check so that $home is set - enabling the possibility of letting
 individual recipients specify lists of acceptable/unacceptable senders. */
 
-if ((rc = route_check_dls(r->name, US("senders"), r->senders, NULL,
+if ((rc = route_check_dls(r->name, cUS("senders"), r->senders, NULL,
      sender_address_cache, MCL_ADDRESS, NULL, NULL, FALSE, perror)) != OK)
   return rc;
 
@@ -1021,11 +1021,11 @@ if ((rc = check_files(r->require_files, perror)) != OK)
 if (r->condition)
   {
   DEBUG(D_route) debug_printf("checking \"condition\" \"%.80s\"...\n", r->condition);
-  if (!expand_check_condition(r->condition, r->name, US("router")))
+  if (!expand_check_condition(r->condition, r->name, cUS("router")))
     {
     if (f.search_find_defer)
       {
-      *perror = US("condition check lookup defer");
+      *perror = cUS("condition check lookup defer");
       DEBUG(D_route) debug_printf("%s\n", *perror);
       return DEFER;
       }
@@ -1120,7 +1120,7 @@ static uschar lastgecos[128];
 static uschar lastshell[128];
 
 BOOL
-route_finduser(const uschar *s, struct passwd **pw, uid_t *return_uid)
+route_finduser(cuschar *s, struct passwd **pw, uid_t *return_uid)
 {
 BOOL cache_set = (Ustrcmp(lastname, s) == 0);
 
@@ -1438,7 +1438,7 @@ Return OK/DEFER/FAIL/PASS */
 static int
 set_router_vars(address_item * addr, const router_instance * r)
 {
-const uschar * varlist = r->set;
+cuschar * varlist = r->set;
 tree_node ** root = (tree_node **) &addr->prop.variables;
 int sep = ';';
 
@@ -1448,7 +1448,7 @@ if (!varlist) return OK;
 
 for (uschar * ele; (ele = string_nextinlist(&varlist, &sep, NULL, 0)); )
   {
-  const uschar * assignment = ele;
+  cuschar * assignment = ele;
   int esep = '=';
   uschar * name = string_nextinlist(&assignment, &esep, NULL, 0);
   uschar * val;
@@ -1476,8 +1476,8 @@ for (uschar * ele; (ele = string_nextinlist(&varlist, &sep, NULL, 0)); )
 
       /* Expand "more" if necessary; DEFER => an expansion failed */
 
-      yield = exp_bool(addr, US("router"), r->name, D_route,
-		      US("more"), r->more, r->expand_more, &more);
+      yield = exp_bool(addr, cUS("router"), r->name, D_route,
+		      cUS("more"), r->more, r->expand_more, &more);
       if (yield != OK) return yield;
 
       if (!more)
@@ -1549,7 +1549,7 @@ route_address(address_item *addr, address_item **paddr_local,
 int yield = OK;
 BOOL unseen;
 router_instance *r, *nextr;
-const uschar *old_domain = addr->domain;
+cuschar *old_domain = addr->domain;
 
 HDEBUG(D_route)
   {
@@ -1762,8 +1762,8 @@ for (r = addr->start_router ? addr->start_router : routers; r; r = nextr)
 
         /* Expand "more" if necessary; DEFER => an expansion failed */
 
-        yield = exp_bool(addr, US("router"), r->name, D_route,
-			US("more"), r->more, r->expand_more, &more);
+        yield = exp_bool(addr, cUS("router"), r->name, D_route,
+			cUS("more"), r->more, r->expand_more, &more);
         if (yield != OK) goto ROUTE_EXIT;
 
         if (!more)
@@ -1870,8 +1870,8 @@ for (r = addr->start_router ? addr->start_router : routers; r; r = nextr)
     {
     /* Expand "more" if necessary */
 
-    yield = exp_bool(addr, US("router"), r->name, D_route,
-		       	US("more"), r->more, r->expand_more, &more);
+    yield = exp_bool(addr, cUS("router"), r->name, D_route,
+		       	cUS("more"), r->more, r->expand_more, &more);
     if (yield != OK) goto ROUTE_EXIT;
 
     if (!more)
@@ -1895,7 +1895,7 @@ if (!r)
   HDEBUG(D_route) debug_printf("no more routers\n");
   if (!addr->message)
     {
-    uschar *message = US("Unrouteable address");
+    uschar *message = cUS("Unrouteable address");
     if (addr->router && addr->router->cannot_route_message)
       {
       uschar *expmessage = expand_string(addr->router->cannot_route_message);
@@ -1918,7 +1918,7 @@ if (!r)
 if (yield == DEFER)
   {
   HDEBUG(D_route) debug_printf("%s router: defer for %s\n  message: %s\n",
-      r->name, addr->address, addr->message ? addr->message : US("<none>"));
+      r->name, addr->address, addr->message ? addr->message : cUS("<none>"));
   goto ROUTE_EXIT;
   }
 
@@ -2006,8 +2006,8 @@ if (r->translate_ip_address)
 /* See if this is an unseen routing; first expand the option if necessary.
 DEFER can be given if the expansion fails */
 
-yield = exp_bool(addr, US("router"), r->name, D_route,
-	       	US("unseen"), r->unseen, r->expand_unseen, &unseen);
+yield = exp_bool(addr, cUS("router"), r->name, D_route,
+	       	cUS("unseen"), r->unseen, r->expand_unseen, &unseen);
 if (yield != OK) goto ROUTE_EXIT;
 
 /* Debugging output recording a successful routing */
@@ -2019,7 +2019,7 @@ DEBUG(D_route)
   {
   debug_printf("  envelope to: %s\n", addr->address);
   debug_printf("  transport: %s\n", addr->transport
-    ? addr->transport->name : US("<none>"));
+    ? addr->transport->name : cUS("<none>"));
 
   if (addr->prop.errors_address)
     debug_printf("  errors to %s\n", addr->prop.errors_address);

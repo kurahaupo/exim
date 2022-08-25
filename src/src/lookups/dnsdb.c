@@ -78,7 +78,7 @@ static int type_values[] = {
 /* See local README for interface description. */
 
 static void *
-dnsdb_open(const uschar * filename, uschar **errmsg)
+dnsdb_open(cuschar * filename, uschar **errmsg)
 {
 return (void *)(-1);   /* Any non-0 value */
 }
@@ -129,9 +129,9 @@ which may start with '<' in order to set a specific separator. The default
 separator, as always, is colon. */
 
 static int
-dnsdb_find(void * handle, const uschar * filename, const uschar * keystring,
+dnsdb_find(void * handle, cuschar * filename, cuschar * keystring,
  int length, uschar ** result, uschar ** errmsg, uint * do_cache,
- const uschar * opts)
+ cuschar * opts)
 {
 int rc;
 int sep = 0;
@@ -141,8 +141,8 @@ int save_retrans = dns_retrans;
 int save_retry =   dns_retry;
 int type;
 int failrc = FAIL;
-const uschar *outsep = CUS("\n");
-const uschar *outsep2 = NULL;
+cuschar *outsep = cUS("\n");
+cuschar *outsep2 = NULL;
 uschar *equals, *domain, *found;
 
 dns_answer * dnsa = store_get_dns_answer();
@@ -168,7 +168,7 @@ if (*keystring == '>')
     }
   else if (*keystring == ';')
     {
-    outsep2 = US("");
+    outsep2 = cUS("");
     keystring++;
     }
   while (isspace(*keystring)) keystring++;
@@ -178,56 +178,56 @@ if (*keystring == '>')
 
 for (;;)
   {
-  if (strncmpic(keystring, US("defer_"), 6) == 0)
+  if (strncmpic(keystring, cUS("defer_"), 6) == 0)
     {
     keystring += 6;
-    if (strncmpic(keystring, US("strict"), 6) == 0)
+    if (strncmpic(keystring, cUS("strict"), 6) == 0)
       { defer_mode = DEFER; keystring += 6; }
-    else if (strncmpic(keystring, US("lax"), 3) == 0)
+    else if (strncmpic(keystring, cUS("lax"), 3) == 0)
       { defer_mode = PASS; keystring += 3; }
-    else if (strncmpic(keystring, US("never"), 5) == 0)
+    else if (strncmpic(keystring, cUS("never"), 5) == 0)
       { defer_mode = OK; keystring += 5; }
     else
       {
-      *errmsg = US("unsupported dnsdb defer behaviour");
+      *errmsg = cUS("unsupported dnsdb defer behaviour");
       rc = DEFER;
       goto out;
       }
     }
-  else if (strncmpic(keystring, US("dnssec_"), 7) == 0)
+  else if (strncmpic(keystring, cUS("dnssec_"), 7) == 0)
     {
     keystring += 7;
-    if (strncmpic(keystring, US("strict"), 6) == 0)
+    if (strncmpic(keystring, cUS("strict"), 6) == 0)
       { dnssec_mode = DEFER; keystring += 6; }
-    else if (strncmpic(keystring, US("lax"), 3) == 0)
+    else if (strncmpic(keystring, cUS("lax"), 3) == 0)
       { dnssec_mode = PASS; keystring += 3; }
-    else if (strncmpic(keystring, US("never"), 5) == 0)
+    else if (strncmpic(keystring, cUS("never"), 5) == 0)
       { dnssec_mode = OK; keystring += 5; }
     else
       {
-      *errmsg = US("unsupported dnsdb dnssec behaviour");
+      *errmsg = cUS("unsupported dnsdb dnssec behaviour");
       rc = DEFER;
       goto out;
       }
     }
-  else if (strncmpic(keystring, US("retrans_"), 8) == 0)
+  else if (strncmpic(keystring, cUS("retrans_"), 8) == 0)
     {
     int timeout_sec;
     if ((timeout_sec = readconf_readtime(keystring += 8, ',', FALSE)) <= 0)
       {
-      *errmsg = US("unsupported dnsdb timeout value");
+      *errmsg = cUS("unsupported dnsdb timeout value");
       rc = DEFER;
       goto out;
       }
     dns_retrans = timeout_sec;
     while (*keystring != ',') keystring++;
     }
-  else if (strncmpic(keystring, US("retry_"), 6) == 0)
+  else if (strncmpic(keystring, cUS("retry_"), 6) == 0)
     {
     int retries;
     if ((retries = (int)strtol(CCS(keystring) + 6, CSS(&keystring), 0)) < 0)
       {
-      *errmsg = US("unsupported dnsdb retry count");
+      *errmsg = cUS("unsupported dnsdb retry count");
       rc = DEFER;
       goto out;
       }
@@ -239,7 +239,7 @@ for (;;)
   while (isspace(*keystring)) keystring++;
   if (*keystring++ != ',')
     {
-    *errmsg = US("dnsdb modifier syntax error");
+    *errmsg = cUS("dnsdb modifier syntax error");
     rc = DEFER;
     goto out;
     }
@@ -268,7 +268,7 @@ if ((equals = Ustrchr(keystring, '=')) != NULL)
 
   if (i >= nelem(type_names))
     {
-    *errmsg = US("unsupported DNS record type");
+    *errmsg = cUS("unsupported DNS record type");
     rc = DEFER;
     goto out;
     }
@@ -305,8 +305,8 @@ SRV and TLSA record parts are space-separated by default. */
 
 if (!outsep2) switch(type)
   {
-  case T_SPF:                         outsep2 = US("");  break;
-  case T_SRV: case T_MX: case T_TLSA: outsep2 = US(" "); break;
+  case T_SPF:                         outsep2 = cUS("");  break;
+  case T_SRV: case T_MX: case T_TLSA: outsep2 = cUS(" "); break;
   }
 
 /* Now scan the list and do a lookup for each item */
@@ -353,7 +353,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
       rc = dns_special_lookup(dnsa, domain, type, CUSS(&found));
 
     lookup_dnssec_authenticated = dnssec_mode==OK ? NULL
-      : dns_is_secure(dnsa) ? US("yes") : US("no");
+      : dns_is_secure(dnsa) ? cUS("yes") : cUS("no");
 
     if (rc == DNS_NOMATCH || rc == DNS_NODATA) continue;
     if (  rc != DNS_SUCCEED
@@ -591,7 +591,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("dnsdb"),			/* lookup name */
+  .name = cUS("dnsdb"),			/* lookup name */
   .type = lookup_querystyle,		/* query style */
   .open = dnsdb_open,			/* open function */
   .check = NULL,			/* check function */

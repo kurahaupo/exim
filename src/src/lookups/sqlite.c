@@ -19,7 +19,7 @@
 /* See local README for interface description. */
 
 static void *
-sqlite_open(const uschar * filename, uschar ** errmsg)
+sqlite_open(cuschar * filename, uschar ** errmsg)
 {
 sqlite3 *db = NULL;
 int ret;
@@ -30,7 +30,7 @@ if (!filename || !*filename)
   filename = sqlite_dbfile;
   }
 if (!filename || *filename != '/')
-  *errmsg = US("absolute file name expected for \"sqlite\" lookup");
+  *errmsg = cUS("absolute file name expected for \"sqlite\" lookup");
 else if ((ret = sqlite3_open(CCS(filename), &db)) != 0)
   {
   *errmsg = (void *)sqlite3_errmsg(db);
@@ -59,7 +59,7 @@ gstring * res = *(gstring **)arg;
 /* For second and subsequent results, insert \n */
 
 if (res)
-  res = string_catn(res, US("\n"), 1);
+  res = string_catn(res, cUS("\n"), 1);
 
 if (argc > 1)
   {
@@ -72,7 +72,7 @@ if (argc > 1)
   }
 
 else
-  res = string_cat(res, argv[0] ? US(argv[0]) : US("<NULL>"));
+  res = string_cat(res, argv[0] ? US(argv[0]) : cUS("<NULL>"));
 
 /* always return a non-null gstring, even for a zero-length string result */
 *(gstring **)arg = res ? res : string_get(1);
@@ -81,9 +81,9 @@ return 0;
 
 
 static int
-sqlite_find(void * handle, const uschar * filename, const uschar * query,
+sqlite_find(void * handle, cuschar * filename, cuschar * query,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 int ret;
 gstring * res = NULL;
@@ -179,7 +179,7 @@ return g;
 }
 
 static lookup_info _lookup_info = {
-  .name = US("sqlite"),			/* lookup name */
+  .name = cUS("sqlite"),			/* lookup name */
   .type = lookup_absfilequery,		/* query-style lookup, starts with file name */
   .open = sqlite_open,			/* open function */
   .check = NULL,			/* no check function */

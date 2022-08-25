@@ -74,7 +74,7 @@ determine whether the facilities are actually supported or not. */
 static int retry_read(int, void *, unsigned );
 static int retry_writev(int, struct iovec *, int );
 static int read_string(int, uschar **);
-static int write_string(int, const uschar *, int);
+static int write_string(int, cuschar *, int);
 
 #endif
 
@@ -156,13 +156,13 @@ return PWCHECK_FAIL;
 wanted. */
 
 #ifndef CYRUS_SASLAUTHD_SOCKET
-int saslauthd_verify_password(const uschar *userid,
-                const uschar *passwd,
-                const uschar *service,
-                const uschar *realm,
-                const uschar **reply)
+int saslauthd_verify_password(cuschar *userid,
+                cuschar *passwd,
+                cuschar *service,
+                cuschar *realm,
+                cuschar **reply)
 {
-*reply = US("saslauthd support is not included in this Exim binary");
+*reply = cUS("saslauthd support is not included in this Exim binary");
 return PWCHECK_FAIL;
 }
 
@@ -173,11 +173,11 @@ return PWCHECK_FAIL;
  /* written from scratch  */
  /* saslauthd daemon-authenticated login */
 
-int saslauthd_verify_password(const uschar *userid,
-                const uschar *password,
-                const uschar *service,
-                const uschar *realm,
-                const uschar **reply)
+int saslauthd_verify_password(cuschar *userid,
+                cuschar *password,
+                cuschar *service,
+                cuschar *realm,
+                cuschar **reply)
 {
     uschar *daemon_reply = NULL;
     int s, r;
@@ -309,7 +309,7 @@ static int read_string(int fd, uschar **retval) {
  * written bytes on success, -1 on failure.
  * END SYNOPSIS */
 
-static int write_string(int fd, const uschar *string, int len) {
+static int write_string(int fd, cuschar *string, int len) {
     unsigned short count;
     int rc;
     struct iovec iov[2];

@@ -18,21 +18,21 @@ uschar *mime_current_boundary = NULL;
 
 static mime_header mime_header_list[] = {
   /*	name			namelen		value */
-  { US("content-type:"),              13, &mime_content_type },
-  { US("content-disposition:"),       20, &mime_content_disposition },
-  { US("content-transfer-encoding:"), 26, &mime_content_transfer_encoding },
-  { US("content-id:"),                11, &mime_content_id },
-  { US("content-description:"),       20, &mime_content_description }
+  { cUS("content-type:"),              13, &mime_content_type },
+  { cUS("content-disposition:"),       20, &mime_content_disposition },
+  { cUS("content-transfer-encoding:"), 26, &mime_content_transfer_encoding },
+  { cUS("content-id:"),                11, &mime_content_id },
+  { cUS("content-description:"),       20, &mime_content_description }
 };
 
 static int mime_header_list_size = nelem(mime_header_list);
 
 static mime_parameter mime_parameter_list[] = {
   /*	name	namelen	 value */
-  { US("name="),     5, &mime_filename },
-  { US("filename="), 9, &mime_filename },
-  { US("charset="),  8, &mime_charset  },
-  { US("boundary="), 9, &mime_boundary }
+  { cUS("name="),     5, &mime_filename },
+  { cUS("filename="), 9, &mime_filename },
+  { cUS("charset="),  8, &mime_charset  },
+  { cUS("boundary="), 9, &mime_boundary }
 };
 
 
@@ -49,9 +49,9 @@ mime_set_anomaly(int idx)
 {
 struct anom {
   int level;
-  const uschar * text;
-} anom[] = { {1, CUS("Broken Quoted-Printable encoding detected")},
-	     {2, CUS("Broken BASE64 encoding detected")} };
+  cuschar * text;
+} anom[] = { {1, cUS("Broken Quoted-Printable encoding detected")},
+	     {2, cUS("Broken BASE64 encoding detected")} };
 
 mime_anomaly_level = anom[idx].level;
 mime_anomaly_text =  anom[idx].text;
@@ -216,10 +216,10 @@ return modefopen(mime_decoded_filename, "wb+", SPOOL_MODE);
 
 
 int
-mime_decode(const uschar **listptr)
+mime_decode(cuschar **listptr)
 {
 int sep = 0;
-const uschar *list = *listptr;
+cuschar *list = *listptr;
 uschar * option;
 uschar * decode_path;
 FILE *decode_file = NULL;
@@ -468,26 +468,26 @@ return s;
 
 
 static uschar *
-rfc2231_to_2047(const uschar * fname, const uschar * charset, int * len)
+rfc2231_to_2047(cuschar * fname, cuschar * charset, int * len)
 {
-gstring * val = string_catn(NULL, US("=?"), 2);
+gstring * val = string_catn(NULL, cUS("=?"), 2);
 uschar c;
 
 if (charset)
   val = string_cat(val, charset);
-val = string_catn(val, US("?Q?"), 3);
+val = string_catn(val, cUS("?Q?"), 3);
 
 while ((c = *fname))
   if (c == '%' && isxdigit(fname[1]) && isxdigit(fname[2]))
     {
-    val = string_catn(val, US("="), 1);
+    val = string_catn(val, cUS("="), 1);
     val = string_catn(val, ++fname, 2);
     fname += 2;
     }
   else
     val = string_catn(val, fname++, 1);
 
-val = string_catn(val, US("?="), 2);
+val = string_catn(val, cUS("?="), 2);
 *len = val->ptr;
 return string_from_gstring(val);
 }
@@ -589,8 +589,8 @@ while(1)
 	  DEBUG(D_acl) debug_printf_indent("MIME:   considering paramlist '%s'\n", p);
 
 	  if (  !mime_filename
-	     && strncmpic(CUS("content-disposition:"), header, 20) == 0
-	     && strncmpic(CUS("filename*"), p, 9) == 0
+	     && strncmpic(cUS("content-disposition:"), header, 20) == 0
+	     && strncmpic(cUS("filename*"), p, 9) == 0
 	     )
 	    {					/* RFC 2231 filename */
 	    uschar * q;
@@ -632,7 +632,7 @@ while(1)
 		  p = q;
 
 		DEBUG(D_acl) debug_printf_indent("MIME:    charset %s fname '%s'\n",
-		  mime_filename_charset ? mime_filename_charset : US("<NULL>"), p);
+		  mime_filename_charset ? mime_filename_charset : cUS("<NULL>"), p);
 
 		temp_string = rfc2231_to_2047(p, mime_filename_charset, &slen);
 		DEBUG(D_acl) debug_printf_indent("MIME:    2047-name %s\n", temp_string);
@@ -686,7 +686,7 @@ while(1)
 	  if (*p) p++;
 	  }				/* param scan on line */
 
-	if (strncmpic(CUS("content-disposition:"), header, 20) == 0)
+	if (strncmpic(cUS("content-disposition:"), header, 20) == 0)
 	  {
 	  if (decoding_failed) mime_filename = mime_fname_rfc2231;
 
@@ -748,7 +748,7 @@ while(1)
   else if (  mime_content_type
 	  && Ustrncmp(mime_content_type,"message/rfc822",14) == 0)
     {
-    const uschar * rfc822name = NULL;
+    cuschar * rfc822name = NULL;
     uschar * filename;
     int file_nr = 0;
     int result = 0;

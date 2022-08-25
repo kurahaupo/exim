@@ -30,7 +30,7 @@ Returns:        TRUE if the ultimate timeout has been reached
 */
 
 BOOL
-retry_ultimate_address_timeout(uschar *retry_key, const uschar *domain,
+retry_ultimate_address_timeout(uschar *retry_key, cuschar *domain,
   dbdata_retry *retry_record, time_t now)
 {
 BOOL address_timeout;
@@ -122,7 +122,7 @@ Returns:    TRUE if the host has expired but is usable because
 */
 
 BOOL
-retry_check_address(const uschar *domain, host_item *host, uschar *portstring,
+retry_check_address(cuschar *domain, host_item *host, uschar *portstring,
   BOOL include_ip_address, uschar **retry_host_key, uschar **retry_message_key)
 {
 BOOL yield = FALSE;
@@ -170,7 +170,7 @@ if ((node = tree_search(tree_unusable, host_key)))
 /* Open the retry database, giving up if there isn't one. Otherwise, search for
 the retry records, and then close the database again. */
 
-if (!(dbm_file = dbfn_open(US("retry"), O_RDONLY, &dbblock, FALSE, TRUE)))
+if (!(dbm_file = dbfn_open(cUS("retry"), O_RDONLY, &dbblock, FALSE, TRUE)))
   {
   DEBUG(D_deliver|D_retry|D_hints_lookup)
     debug_printf("no retry data available\n");
@@ -342,10 +342,10 @@ Returns:       pointer to retry rule, or NULL
 */
 
 retry_config *
-retry_find_config(const uschar *key, const uschar *alternate, int basic_errno,
+retry_find_config(cuschar *key, cuschar *alternate, int basic_errno,
   int more_errno)
 {
-const uschar *colon = Ustrchr(key, ':');
+cuschar *colon = Ustrchr(key, ':');
 retry_config *yield;
 
 /* If there's a colon in the key, there are two possibilities:
@@ -379,8 +379,8 @@ if (alternate)    alternate = string_sprintf("*@%s", alternate);
 
 for (yield = retries; yield; yield = yield->next)
   {
-  const uschar *plist = yield->pattern;
-  const uschar *slist = yield->senders;
+  cuschar *plist = yield->pattern;
+  cuschar *slist = yield->senders;
 
   /* If a specific error is set for this item, check that we are handling that
   specific error, and if so, check any additional error information if
@@ -580,7 +580,7 @@ for (int i = 0; i < 3; i++)
         reached their retry next try time. */
 
         if (!dbm_file)
-          dbm_file = dbfn_open(US("retry"), O_RDWR, &dbblock, TRUE, TRUE);
+          dbm_file = dbfn_open(cUS("retry"), O_RDWR, &dbblock, TRUE, TRUE);
 
         if (!dbm_file)
           {
@@ -629,8 +629,8 @@ for (int i = 0; i < 3; i++)
           {
           DEBUG(D_retry) debug_printf("No configured retry item for %s%s%s\n",
             rti->key,
-            rti->flags & rf_host ? US(" or ") : US(""),
-            rti->flags & rf_host ? addr->domain : US(""));
+            rti->flags & rf_host ? cUS(" or ") : cUS(""),
+            rti->flags & rf_host ? addr->domain : cUS(""));
           if (addr == endaddr) timedout_count++;
           continue;
           }
@@ -652,7 +652,7 @@ for (int i = 0; i < 3; i++)
 	  ? US(strerror(rti->basic_errno))
 	  : rti->message
 	  ? US(string_printing(rti->message))
-	  : US("unknown error");
+	  : cUS("unknown error");
         message_length = Ustrlen(message);
         if (message_length > EXIM_DB_RLIMIT) message_length = EXIM_DB_RLIMIT;
 
@@ -891,15 +891,15 @@ for (int i = 0; i < 3; i++)
           setflag(addr, af_retry_timedout);
           addr->message = addr->message
             ? string_sprintf("%s: retry timeout exceeded", addr->message)
-	    : US("retry timeout exceeded");
+	    : cUS("retry timeout exceeded");
           addr->user_message = addr->user_message
 	    ? string_sprintf("%s: retry timeout exceeded", addr->user_message)
-	    : US("retry timeout exceeded");
+	    : cUS("retry timeout exceeded");
           log_write(0, LOG_MAIN, "** %s%s%s%s: retry timeout exceeded",
             addr->address,
-            addr->parent ? US(" <") : US(""),
-            addr->parent ? addr->parent->address : US(""),
-            addr->parent ? US(">") : US(""));
+            addr->parent ? cUS(" <") : cUS(""),
+            addr->parent ? addr->parent->address : cUS(""),
+            addr->parent ? cUS(">") : cUS(""));
 
           if (addr == endaddr) break;
           }

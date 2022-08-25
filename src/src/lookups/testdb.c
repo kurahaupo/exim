@@ -22,7 +22,7 @@ the find function. */
 /* See local README for interface description. */
 
 static void *
-testdb_open(const uschar * filename, uschar ** errmsg)
+testdb_open(cuschar * filename, uschar ** errmsg)
 {
 return (void *)(1);    /* Just return something non-null */
 }
@@ -36,19 +36,19 @@ return (void *)(1);    /* Just return something non-null */
 /* See local README for interface description. */
 
 static int
-testdb_find(void * handle, const uschar * filename, const uschar * query,
+testdb_find(void * handle, cuschar * filename, cuschar * query,
   int length, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 if (Ustrcmp(query, "fail") == 0)
   {
-  *errmsg = US("testdb lookup forced FAIL");
+  *errmsg = cUS("testdb lookup forced FAIL");
   DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
   return FAIL;
   }
 if (Ustrcmp(query, "defer") == 0)
   {
-  *errmsg = US("testdb lookup forced DEFER");
+  *errmsg = cUS("testdb lookup forced DEFER");
   DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
   return DEFER;
   }
@@ -79,7 +79,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("testdb"),			/* lookup name */
+  .name = cUS("testdb"),			/* lookup name */
   .type = lookup_querystyle,		/* query-style lookup */
   .open = testdb_open,			/* open function */
   .check = NULL,			/* check function */

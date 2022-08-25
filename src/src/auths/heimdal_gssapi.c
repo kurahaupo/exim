@@ -72,9 +72,9 @@ int auth_heimdal_gssapi_options_count =
 
 /* Defaults for the authenticator-specific options. */
 auth_heimdal_gssapi_options_block auth_heimdal_gssapi_option_defaults = {
-  US("$primary_hostname"),    /* server_hostname */
+  cUS("$primary_hostname"),    /* server_hostname */
   NULL,                     /* server_keytab */
-  US("smtp"),                 /* server_service */
+  cUS("smtp"),                 /* server_service */
 };
 
 
@@ -322,7 +322,7 @@ while (step < 4)
 	  }
 
 	HDEBUG(D_auth) debug_printf("gssapi: missing initial response, nudging.\n");
-	if ((error_out = auth_get_data(&from_client, US(""), 0)) != OK)
+	if ((error_out = auth_get_data(&from_client, cUS(""), 0)) != OK)
 	  goto ERROR_OUT;
 	handled_empty_ir = TRUE;
 	continue;

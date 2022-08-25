@@ -28,20 +28,20 @@ static const char *rrname[] = {
 
 typedef struct where_list_block {
   int bit;
-  const uschar *string;
+  cuschar *string;
 } where_list_block;
 
 static where_list_block where_list[] = {
-  { rewrite_sender,  CUS("sender:") },
-  { rewrite_from,    CUS("from:") },
-  { rewrite_to,      CUS("to:") },
-  { rewrite_cc,      CUS("cc:") },
-  { rewrite_bcc,     CUS("bcc:") },
-  { rewrite_replyto, CUS("reply-to:") },
-  { rewrite_envfrom, CUS("env-from") },
-  { rewrite_envto,   CUS("env-to") },
-  { rewrite_smtp,    CUS("smtp recipient") },
-  { rewrite_smtp|rewrite_smtp_sender, CUS("smtp sender") }
+  { rewrite_sender,  cUS("sender:") },
+  { rewrite_from,    cUS("from:") },
+  { rewrite_to,      cUS("to:") },
+  { rewrite_cc,      cUS("cc:") },
+  { rewrite_bcc,     cUS("bcc:") },
+  { rewrite_replyto, cUS("reply-to:") },
+  { rewrite_envfrom, cUS("env-from") },
+  { rewrite_envto,   cUS("env-to") },
+  { rewrite_smtp,    cUS("smtp recipient") },
+  { rewrite_smtp|rewrite_smtp_sender, cUS("smtp sender") }
 };
 
 static int where_list_size = sizeof(where_list)/sizeof(where_list_block);
@@ -60,8 +60,8 @@ Arguments:
 Returns:         fully-qualified address
 */
 
-const uschar *
-rewrite_address_qualify(const uschar *s, BOOL is_recipient)
+cuschar *
+rewrite_address_qualify(cuschar *s, BOOL is_recipient)
 {
 return parse_find_at(s)
   ? s : string_sprintf("%s@%s", s,
@@ -97,12 +97,12 @@ Returns:         new address if rewritten; the input address if no change;
                  rewritten address is returned, not just the active bit.
 */
 
-const uschar *
-rewrite_one(const uschar *s, int flag, BOOL *whole, BOOL add_header, uschar *name,
+cuschar *
+rewrite_one(cuschar *s, int flag, BOOL *whole, BOOL add_header, uschar *name,
   rewrite_rule *rewrite_rules)
 {
-const uschar *yield = s;
-const uschar *subject = s;
+cuschar *yield = s;
+cuschar *subject = s;
 uschar *domain = NULL;
 BOOL done = FALSE;
 int rule_number = 1;
@@ -119,9 +119,9 @@ for (rewrite_rule * rule = rewrite_rules;
   int start, end, pdomain;
   int count = 0;
   uschar *save_localpart;
-  const uschar *save_domain;
+  cuschar *save_domain;
   uschar *error, *new;
-  const uschar * newparsed;
+  cuschar * newparsed;
 
   /* Come back here for a repeat after a successful rewrite. We do this
   only so many times. */
@@ -137,7 +137,7 @@ for (rewrite_rule * rule = rewrite_rules;
   if (flag & rewrite_smtp)
     {
     BOOL textonly_re;
-    const uschar * key = expand_string_2(rule->key, &textonly_re);
+    cuschar * key = expand_string_2(rule->key, &textonly_re);
     if (!key)
       {
       if (!f.expand_string_forcedfail)
@@ -251,7 +251,7 @@ for (rewrite_rule * rule = rewrite_rules;
 
   if (LOGGING(address_rewrite) || (debug_selector & D_rewrite) != 0)
     {
-    const uschar *where = CUS("?");
+    cuschar *where = cUS("?");
 
     for (int i = 0; i < where_list_size; i++)
       if (flag == where_list[i].bit)
@@ -291,7 +291,7 @@ for (rewrite_rule * rule = rewrite_rules;
         {
         uschar *p1 = new + start - 1;
         uschar *p2 = new + end + 1;
-        const uschar *pf1, *pf2;
+        cuschar *pf1, *pf2;
 
         while (p1 > new && p1[-1] == ' ') p1--;
         pf1 = parse_fix_phrase(new, p1 - new);
@@ -390,8 +390,8 @@ Arguments:
 Returns:         possibly rewritten address
 */
 
-const uschar *
-rewrite_address(const uschar *s, BOOL is_recipient, BOOL add_header,
+cuschar *
+rewrite_address(cuschar *s, BOOL is_recipient, BOOL add_header,
   rewrite_rule *rewrite_rules, int existflags)
 {
 int flag = is_recipient ? rewrite_envto : rewrite_envfrom;
@@ -399,8 +399,8 @@ int flag = is_recipient ? rewrite_envto : rewrite_envfrom;
 s = rewrite_address_qualify(s, is_recipient);
 if (existflags & flag)
   {
-  const uschar *new = rewrite_one(s, flag, NULL, add_header, is_recipient?
-    US("original-recipient") : US("sender"), rewrite_rules);
+  cuschar *new = rewrite_one(s, flag, NULL, add_header, is_recipient?
+    cUS("original-recipient") : cUS("sender"), rewrite_rules);
   if (new != s) s = new;
   }
 return s;
@@ -445,7 +445,7 @@ Returns:         NULL if header unchanged; otherwise the rewritten header
 
 static header_line *
 rewrite_one_header(header_line *h, int flag,
-  const uschar *routed_old, const uschar *routed_new,
+  cuschar *routed_old, cuschar *routed_new,
   rewrite_rule *rewrite_rules, int existflags, BOOL replace)
 {
 int lastnewline = 0;
@@ -644,7 +644,7 @@ while (*s)
       if (*p != '\n')
         {
         lastnewline = newt - newtstart;
-        Ustrcat(newt, US("\n\t"));
+        Ustrcat(newt, cUS("\n\t"));
         slen += 2;
         }
       }
@@ -676,7 +676,7 @@ while (*s)
     /* Set up for scanning the rest of the header */
 
     s = newh->text + remlen;
-    DEBUG(D_rewrite) debug_printf("remainder: %s", *s ? s : US("\n"));
+    DEBUG(D_rewrite) debug_printf("remainder: %s", *s ? s : cUS("\n"));
     }
   }
 
@@ -729,7 +729,7 @@ Returns:         NULL if header unchanged; otherwise the rewritten header
 
 header_line *
 rewrite_header(header_line *h,
-  const uschar *routed_old, const uschar *routed_new,
+  cuschar *routed_old, cuschar *routed_new,
   rewrite_rule *rewrite_rules, int existflags, BOOL replace)
 {
 int flag;
@@ -761,7 +761,7 @@ Returns:  nothing
 */
 
 void
-rewrite_test(const uschar *s)
+rewrite_test(cuschar *s)
 {
 uschar *recipient, *error;
 int start, end, domain;
@@ -778,8 +778,8 @@ pretending it is a sender. */
 
 if ((rewrite_existflags & rewrite_smtp) != 0)
   {
-  const uschar * new = rewrite_one(s, rewrite_smtp|rewrite_smtp_sender, NULL,
-    FALSE, US(""), global_rewrite_rules);
+  cuschar * new = rewrite_one(s, rewrite_smtp|rewrite_smtp_sender, NULL,
+    FALSE, cUS(""), global_rewrite_rules);
   if (new != s)
     {
     if (*new == 0)
@@ -812,7 +812,7 @@ for (int i = 0; i < 8; i++)
   {
   BOOL whole = FALSE;
   int flag = 1 << i;
-  const uschar * new = rewrite_one(recipient, flag, &whole, FALSE, US(""),
+  cuschar * new = rewrite_one(recipient, flag, &whole, FALSE, cUS(""),
     global_rewrite_rules);
   printf("%s: ", rrname[i]);
   if (*new == 0)

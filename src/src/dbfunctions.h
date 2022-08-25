@@ -12,12 +12,12 @@
 /* Functions for reading/writing exim database files */
 
 void     dbfn_close(open_db *);
-int      dbfn_delete(open_db *, const uschar *);
-open_db *dbfn_open(uschar *, int, open_db *, BOOL, BOOL);
-void    *dbfn_read_with_length(open_db *, const uschar *, int *);
-void    *dbfn_read_enforce_length(open_db *, const uschar *, size_t);
+int      dbfn_delete(open_db *, cuschar *);
+open_db *dbfn_open(cuschar *, int, open_db *, BOOL, BOOL);
+void    *dbfn_read_with_length(open_db *, cuschar *, int *);
+void    *dbfn_read_enforce_length(open_db *, cuschar *, size_t);
 uschar  *dbfn_scan(open_db *, BOOL, EXIM_CURSOR **);
-int      dbfn_write(open_db *, const uschar *, void *, int);
+int      dbfn_write(open_db *, cuschar *, void *, int);
 
 /* Macro for the common call to read without wanting to know the length. */
 

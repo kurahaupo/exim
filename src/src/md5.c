@@ -60,7 +60,7 @@ Returns:     nothing
 */
 
 void
-md5_mid(md5 *base, const uschar *text)
+md5_mid(md5 *base, cuschar *text)
 {
 register unsigned int a = base->abcd[0];
 register unsigned int b = base->abcd[1];
@@ -229,7 +229,7 @@ Returns:    nothing
 */
 
 void
-md5_end(md5 *base, const uschar *text, int length, uschar *digest)
+md5_end(md5 *base, cuschar *text, int length, uschar *digest)
 {
 uschar work[64];
 

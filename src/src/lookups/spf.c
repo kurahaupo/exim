@@ -34,7 +34,7 @@ extern SPF_dns_server_t * SPF_dns_exim_new(int);
 
 
 static void *
-spf_open(const uschar * filename, uschar ** errmsg)
+spf_open(cuschar * filename, uschar ** errmsg)
 {
 SPF_dns_server_t * dc;
 SPF_server_t *spf_server = NULL;
@@ -48,7 +48,7 @@ if ((dc = SPF_dns_exim_new(debug)))
 
 if (!spf_server)
   {
-  *errmsg = US("SPF_dns_exim_nnew() failed");
+  *errmsg = cUS("SPF_dns_exim_nnew() failed");
   return NULL;
   }
 return (void *) spf_server;
@@ -63,9 +63,9 @@ if (spf_server) SPF_server_free(spf_server);
 }
 
 static int
-spf_find(void * handle, const uschar * filename, const uschar * keystring,
+spf_find(void * handle, cuschar * filename, cuschar * keystring,
   int key_len, uschar ** result, uschar ** errmsg, uint * do_cache,
-  const uschar * opts)
+  cuschar * opts)
 {
 SPF_server_t *spf_server = handle;
 SPF_request_t *spf_request;
@@ -73,7 +73,7 @@ SPF_response_t *spf_response = NULL;
 
 if (!(spf_request = SPF_request_new(spf_server)))
   {
-  *errmsg = US("SPF_request_new() failed");
+  *errmsg = cUS("SPF_request_new() failed");
   return FAIL;
   }
 
@@ -138,7 +138,7 @@ return g;
 
 
 static lookup_info _lookup_info = {
-  .name = US("spf"),			/* lookup name */
+  .name = cUS("spf"),			/* lookup name */
   .type = 0,				/* not absfile, not query style */
   .open = spf_open,			/* open function */
   .check = NULL,			/* no check function */

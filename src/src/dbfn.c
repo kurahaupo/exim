@@ -93,7 +93,7 @@ snprintf(CS(filename), sizeof(filename), "%s/%s.lockfile", dirname, name);
 priv_drop_temp(exim_uid, exim_gid);
 if ((dbblock->lockfd = Uopen(filename, O_RDWR, EXIMDB_LOCKFILE_MODE)) < 0)
   {
-  (void)directory_make(spool_directory, US("db"), EXIMDB_DIRECTORY_MODE, panic);
+  (void)directory_make(spool_directory, cUS("db"), EXIMDB_DIRECTORY_MODE, panic);
   dbblock->lockfd = Uopen(filename, O_RDWR|O_CREAT, EXIMDB_LOCKFILE_MODE);
   }
 priv_restore();
@@ -238,7 +238,7 @@ Returns: a pointer to the retrieved record, or
 */
 
 void *
-dbfn_read_with_length(open_db *dbblock, const uschar *key, int *length)
+dbfn_read_with_length(open_db *dbblock, cuschar *key, int *length)
 {
 void *yield;
 EXIM_DATUM key_datum, result_datum;
@@ -282,7 +282,7 @@ Returns: a pointer to the retrieved record, or
 */
 
 void *
-dbfn_read_enforce_length(open_db * dbblock, const uschar * key, size_t length)
+dbfn_read_enforce_length(open_db * dbblock, cuschar * key, size_t length)
 {
 int rlen;
 void * yield = dbfn_read_with_length(dbblock, key, &rlen);
@@ -313,7 +313,7 @@ Returns:    the yield of the underlying dbm or db "write" function. If this
 */
 
 int
-dbfn_write(open_db *dbblock, const uschar *key, void *ptr, int length)
+dbfn_write(open_db *dbblock, cuschar *key, void *ptr, int length)
 {
 EXIM_DATUM key_datum, value_datum;
 dbdata_generic *gptr = (dbdata_generic *)ptr;
@@ -349,7 +349,7 @@ Returns: the yield of the underlying dbm or db "delete" function.
 */
 
 int
-dbfn_delete(open_db *dbblock, const uschar *key)
+dbfn_delete(open_db *dbblock, cuschar *key)
 {
 int klen = Ustrlen(key) + 1;
 uschar * key_copy = store_get(klen, key);

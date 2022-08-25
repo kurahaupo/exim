@@ -22,8 +22,8 @@ if (dkim->dkim_strict)
   uschar * dkim_strict_result = expand_string(dkim->dkim_strict);
 
   if (dkim_strict_result)
-    if (  strcmpic(dkim_strict_result, US("1")) == 0
-       || strcmpic(dkim_strict_result, US("true")) == 0)
+    if (  strcmpic(dkim_strict_result, cUS("1")) == 0
+       || strcmpic(dkim_strict_result, cUS("true")) == 0)
       {
       /* Set errno to something halfway meaningful */
       *errp = EACCES;
@@ -121,7 +121,7 @@ Returns:       TRUE on success; FALSE (with errno) for any failure
 
 static BOOL
 dkt_direct(transport_ctx * tctx, struct ob_dkim * dkim,
-  const uschar ** err)
+  cuschar ** err)
 {
 int save_fd = tctx->u.fd;
 int save_options = tctx->options;
@@ -129,7 +129,7 @@ BOOL save_wireformat = f.spool_file_wireformat;
 uschar * hdrs;
 gstring * dkim_signature;
 int hsize;
-const uschar * errstr;
+cuschar * errstr;
 BOOL rc;
 
 DEBUG(D_transport) debug_printf("dkim signing direct-mode\n");
@@ -225,7 +225,7 @@ Returns:       TRUE on success; FALSE (with errno) for any failure
 */
 
 static BOOL
-dkt_via_kfile(transport_ctx * tctx, struct ob_dkim * dkim, const uschar ** err)
+dkt_via_kfile(transport_ctx * tctx, struct ob_dkim * dkim, cuschar ** err)
 {
 int dkim_fd;
 int save_errno = 0;
@@ -234,9 +234,9 @@ uschar * dkim_spool_name;
 gstring * dkim_signature;
 int options, dlen;
 off_t k_file_size;
-const uschar * errstr;
+cuschar * errstr;
 
-dkim_spool_name = spool_fname(US("input"), message_subdir, message_id,
+dkim_spool_name = spool_fname(cUS("input"), message_subdir, message_id,
 		    string_sprintf("-%d-K", (int)getpid()));
 
 DEBUG(D_transport) debug_printf("dkim signing via file %s\n", dkim_spool_name);
@@ -381,7 +381,7 @@ Returns:       TRUE on success; FALSE (with errno) for any failure
 
 BOOL
 dkim_transport_write_message(transport_ctx * tctx,
-  struct ob_dkim * dkim, const uschar ** err)
+  struct ob_dkim * dkim, cuschar ** err)
 {
 /* If we can't sign, just call the original function. */
 

@@ -151,7 +151,7 @@ static uschar dec64table[] = {
 };
 
 int
-b64decode(const uschar *code, uschar **ptr)
+b64decode(cuschar *code, uschar **ptr)
 {
 
 int x, y;
@@ -241,10 +241,10 @@ Returns:      a pointer to the zero-terminated base 64 string, which
 */
 
 static uschar *enc64table =
-  US("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
+  cUS("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
 uschar *
-b64encode_taint(const uschar * clear, int len, const void * proto_mem)
+b64encode_taint(cuschar * clear, int len, const void * proto_mem)
 {
 uschar * code = store_get(4*((len+2)/3) + 1, proto_mem);
 uschar * p = code;
@@ -286,7 +286,7 @@ return code;
 }
 
 uschar *
-b64encode(const uschar * clear, int len)
+b64encode(cuschar * clear, int len)
 {
 return b64encode_taint(clear, len, clear);
 }

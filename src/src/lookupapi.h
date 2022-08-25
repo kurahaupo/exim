@@ -19,24 +19,24 @@ typedef struct lookup_info {
   uschar *name;                   /* e.g. "lsearch" */
   int type;                       /* query/singlekey/abs-file */
   void *(*open)(                  /* open function */
-    const uschar *,               /* file name for those that have one */
+    cuschar *,               /* file name for those that have one */
     uschar **);                   /* for error message */
   BOOL (*check)(                  /* file checking function */
     void *,                       /* handle */
-    const uschar *,               /* file name */
+    cuschar *,               /* file name */
     int,                          /* modemask for file checking */
     uid_t *,                      /* owners for file checking */
     gid_t *,                      /* owngroups for file checking */
     uschar **);                   /* for error messages */
   int (*find)(                    /* find function */
     void *,                       /* handle */
-    const uschar *,               /* file name or NULL */
-    const uschar *,               /* key or query */
+    cuschar *,               /* file name or NULL */
+    cuschar *,               /* key or query */
     int,                          /* length of key or query */
     uschar **,                    /* for returning answer */
     uschar **,                    /* for error message */
     uint *,                       /* cache TTL, seconds */
-    const uschar *);		  /* options */
+    cuschar *);		  /* options */
   void (*close)(                  /* close function */
     void *);                      /* handle */
   void (*tidy)(void);             /* tidy function */

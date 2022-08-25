@@ -62,7 +62,7 @@ if (s == NULL)
 if (*s == 0)
   {
   addr->prop.ignore_error = TRUE;   /* For locally detected errors */
-  *errors_to = US("");                   /* Return path for SMTP */
+  *errors_to = cUS("");                   /* Return path for SMTP */
   return OK;
   }
 
@@ -85,8 +85,8 @@ else
   BOOL save_address_test_mode = f.address_test_mode;
   int save1 = 0;
   int i;
-  const uschar ***p;
-  const uschar *address_expansions_save[ADDRESS_EXPANSIONS_COUNT];
+  cuschar ***p;
+  cuschar *address_expansions_save[ADDRESS_EXPANSIONS_COUNT];
   address_item *snew = deliver_make_addr(s, FALSE);
 
   if (sender_address)

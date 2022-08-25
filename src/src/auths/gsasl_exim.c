@@ -109,9 +109,9 @@ int auth_gsasl_options_count =
 
 /* Defaults for the authenticator-specific options. */
 auth_gsasl_options_block auth_gsasl_option_defaults = {
-  .server_service = US("smtp"),
-  .server_hostname = US("$primary_hostname"),
-  .server_scram_iter = US("4096"),
+  .server_service = cUS("smtp"),
+  .server_hostname = cUS("$primary_hostname"),
+  .server_scram_iter = cUS("4096"),
   /* all others zero/null */
 };
 
@@ -130,10 +130,10 @@ void
 auth_gsasl_macros(void)
 {
 # ifdef EXIM_GSASL_HAVE_SCRAM_SHA_256
-  builtin_macro_create(US("_HAVE_AUTH_GSASL_SCRAM_SHA_256"));
+  builtin_macro_create(cUS("_HAVE_AUTH_GSASL_SCRAM_SHA_256"));
 # endif
 # ifdef EXIM_GSASL_SCRAM_S_KEY
-  builtin_macro_create(US("_HAVE_AUTH_GSASL_SCRAM_S_KEY"));
+  builtin_macro_create(cUS("_HAVE_AUTH_GSASL_SCRAM_S_KEY"));
 # endif
 }
 
@@ -219,10 +219,10 @@ if (!gsasl_client_support_p(gsasl_ctx, CCS(ob->server_mech)))
 if (ablock->server_condition)
   ablock->server = TRUE;
 else if(  ob->server_mech
-       && !STREQIC(ob->server_mech, US("EXTERNAL"))
-       && !STREQIC(ob->server_mech, US("ANONYMOUS"))
-       && !STREQIC(ob->server_mech, US("PLAIN"))
-       && !STREQIC(ob->server_mech, US("LOGIN"))
+       && !STREQIC(ob->server_mech, cUS("EXTERNAL"))
+       && !STREQIC(ob->server_mech, cUS("ANONYMOUS"))
+       && !STREQIC(ob->server_mech, cUS("PLAIN"))
+       && !STREQIC(ob->server_mech, cUS("LOGIN"))
        )
   {
   /* At present, for mechanisms we don't panic on absence of server_condition;
@@ -241,7 +241,7 @@ else if(  ob->server_mech
 which properties will be needed. */
 
 if (  !ob->server_realm
-   && STREQIC(ob->server_mech, US("DIGEST-MD5")))
+   && STREQIC(ob->server_mech, cUS("DIGEST-MD5")))
   {
   ablock->server = FALSE;
   HDEBUG(D_auth) debug_printf("%s authenticator:  "
@@ -319,55 +319,55 @@ return rc;
 /*************************************************
 *             Debug service function             *
 *************************************************/
-static const uschar * 
+static cuschar * 
 gsasl_prop_code_to_name(Gsasl_property prop)
 {
 switch (prop)
   {
-  case GSASL_AUTHID:			return US("AUTHID");
-  case GSASL_AUTHZID:			return US("AUTHZID");
-  case GSASL_PASSWORD:			return US("PASSWORD");
-  case GSASL_ANONYMOUS_TOKEN:		return US("ANONYMOUS_TOKEN");
-  case GSASL_SERVICE:			return US("SERVICE");
-  case GSASL_HOSTNAME:			return US("HOSTNAME");
-  case GSASL_GSSAPI_DISPLAY_NAME:	return US("GSSAPI_DISPLAY_NAME");
-  case GSASL_PASSCODE:			return US("PASSCODE");
-  case GSASL_SUGGESTED_PIN:		return US("SUGGESTED_PIN");
-  case GSASL_PIN:			return US("PIN");
-  case GSASL_REALM:			return US("REALM");
-  case GSASL_DIGEST_MD5_HASHED_PASSWORD:	return US("DIGEST_MD5_HASHED_PASSWORD");
-  case GSASL_QOPS:			return US("QOPS");
-  case GSASL_QOP:			return US("QOP");
-  case GSASL_SCRAM_ITER:		return US("SCRAM_ITER");
-  case GSASL_SCRAM_SALT:		return US("SCRAM_SALT");
-  case GSASL_SCRAM_SALTED_PASSWORD:	return US("SCRAM_SALTED_PASSWORD");
+  case GSASL_AUTHID:			return cUS("AUTHID");
+  case GSASL_AUTHZID:			return cUS("AUTHZID");
+  case GSASL_PASSWORD:			return cUS("PASSWORD");
+  case GSASL_ANONYMOUS_TOKEN:		return cUS("ANONYMOUS_TOKEN");
+  case GSASL_SERVICE:			return cUS("SERVICE");
+  case GSASL_HOSTNAME:			return cUS("HOSTNAME");
+  case GSASL_GSSAPI_DISPLAY_NAME:	return cUS("GSSAPI_DISPLAY_NAME");
+  case GSASL_PASSCODE:			return cUS("PASSCODE");
+  case GSASL_SUGGESTED_PIN:		return cUS("SUGGESTED_PIN");
+  case GSASL_PIN:			return cUS("PIN");
+  case GSASL_REALM:			return cUS("REALM");
+  case GSASL_DIGEST_MD5_HASHED_PASSWORD:	return cUS("DIGEST_MD5_HASHED_PASSWORD");
+  case GSASL_QOPS:			return cUS("QOPS");
+  case GSASL_QOP:			return cUS("QOP");
+  case GSASL_SCRAM_ITER:		return cUS("SCRAM_ITER");
+  case GSASL_SCRAM_SALT:		return cUS("SCRAM_SALT");
+  case GSASL_SCRAM_SALTED_PASSWORD:	return cUS("SCRAM_SALTED_PASSWORD");
 #ifdef EXIM_GSASL_SCRAM_S_KEY
-  case GSASL_SCRAM_STOREDKEY:		return US("SCRAM_STOREDKEY");
-  case GSASL_SCRAM_SERVERKEY:		return US("SCRAM_SERVERKEY");
+  case GSASL_SCRAM_STOREDKEY:		return cUS("SCRAM_STOREDKEY");
+  case GSASL_SCRAM_SERVERKEY:		return cUS("SCRAM_SERVERKEY");
 #endif
 #ifdef EXIM_GSASL_HAVE_EXPORTER		/* v. 2.1.0 */
-  case GSASL_CB_TLS_EXPORTER:		return US("CB_TLS_EXPORTER");
+  case GSASL_CB_TLS_EXPORTER:		return cUS("CB_TLS_EXPORTER");
 #endif
-  case GSASL_CB_TLS_UNIQUE:		return US("CB_TLS_UNIQUE");
-  case GSASL_SAML20_IDP_IDENTIFIER:	return US("SAML20_IDP_IDENTIFIER");
-  case GSASL_SAML20_REDIRECT_URL:	return US("SAML20_REDIRECT_URL");
-  case GSASL_OPENID20_REDIRECT_URL:	return US("OPENID20_REDIRECT_URL");
-  case GSASL_OPENID20_OUTCOME_DATA:	return US("OPENID20_OUTCOME_DATA");
-  case GSASL_SAML20_AUTHENTICATE_IN_BROWSER:	return US("SAML20_AUTHENTICATE_IN_BROWSER");
-  case GSASL_OPENID20_AUTHENTICATE_IN_BROWSER:	return US("OPENID20_AUTHENTICATE_IN_BROWSER");
-  case GSASL_VALIDATE_SIMPLE:		return US("VALIDATE_SIMPLE");
-  case GSASL_VALIDATE_EXTERNAL:		return US("VALIDATE_EXTERNAL");
-  case GSASL_VALIDATE_ANONYMOUS:	return US("VALIDATE_ANONYMOUS");
-  case GSASL_VALIDATE_GSSAPI:		return US("VALIDATE_GSSAPI");
-  case GSASL_VALIDATE_SECURID:		return US("VALIDATE_SECURID");
-  case GSASL_VALIDATE_SAML20:		return US("VALIDATE_SAML20");
-  case GSASL_VALIDATE_OPENID20:		return US("VALIDATE_OPENID20");
+  case GSASL_CB_TLS_UNIQUE:		return cUS("CB_TLS_UNIQUE");
+  case GSASL_SAML20_IDP_IDENTIFIER:	return cUS("SAML20_IDP_IDENTIFIER");
+  case GSASL_SAML20_REDIRECT_URL:	return cUS("SAML20_REDIRECT_URL");
+  case GSASL_OPENID20_REDIRECT_URL:	return cUS("OPENID20_REDIRECT_URL");
+  case GSASL_OPENID20_OUTCOME_DATA:	return cUS("OPENID20_OUTCOME_DATA");
+  case GSASL_SAML20_AUTHENTICATE_IN_BROWSER:	return cUS("SAML20_AUTHENTICATE_IN_BROWSER");
+  case GSASL_OPENID20_AUTHENTICATE_IN_BROWSER:	return cUS("OPENID20_AUTHENTICATE_IN_BROWSER");
+  case GSASL_VALIDATE_SIMPLE:		return cUS("VALIDATE_SIMPLE");
+  case GSASL_VALIDATE_EXTERNAL:		return cUS("VALIDATE_EXTERNAL");
+  case GSASL_VALIDATE_ANONYMOUS:	return cUS("VALIDATE_ANONYMOUS");
+  case GSASL_VALIDATE_GSSAPI:		return cUS("VALIDATE_GSSAPI");
+  case GSASL_VALIDATE_SECURID:		return cUS("VALIDATE_SECURID");
+  case GSASL_VALIDATE_SAML20:		return cUS("VALIDATE_SAML20");
+  case GSASL_VALIDATE_OPENID20:		return cUS("VALIDATE_OPENID20");
   }
 return CUS(string_sprintf("(unknown prop: %d)", (int)prop));
 }
 
 static void
-preload_prop(Gsasl_session * sctx, Gsasl_property propcode, const uschar * val)
+preload_prop(Gsasl_session * sctx, Gsasl_property propcode, cuschar * val)
 {
 DEBUG(D_auth) debug_printf("preloading prop %s val %s\n",
   gsasl_prop_code_to_name(propcode), val);
@@ -440,7 +440,7 @@ if (ob->server_realm)
     preload_prop(sctx, GSASL_REALM, tmps);
   }
 /* We don't support protection layers. */
-preload_prop(sctx, GSASL_QOPS, US("qop-auth"));
+preload_prop(sctx, GSASL_QOPS, cUS("qop-auth"));
 
 #ifndef DISABLE_TLS
 if (tls_in.channelbinding)
@@ -557,7 +557,7 @@ auth_result = rc;
 
 HDEBUG(D_auth)
   {
-  const uschar * s;
+  cuschar * s;
   if ((s = CUS(gsasl_property_fast(sctx, GSASL_SCRAM_ITER))))
     debug_printf(" - itercnt:   '%s'\n", s);
   if ((s = CUS(gsasl_property_fast(sctx, GSASL_SCRAM_SALT))))
@@ -621,7 +621,7 @@ set_exim_authvar_from_prop(Gsasl_session * sctx, Gsasl_property prop)
 {
 uschar * propval = US(gsasl_property_fast(sctx, prop);
 int i = expand_nmax, j = i + 1;
-propval = propval ? string_copy(propval) : US("");
+propval = propval ? string_copy(propval) : cUS("");
 HDEBUG(D_auth) debug_printf("auth[%d] <=  %s'%s'\n",
 			    j, gsasl_prop_code_to_name(prop), propval);
 expand_nstring[j] = propval;
@@ -650,7 +650,7 @@ set_exim_authvar_from_prop(sctx, GSASL_REALM);
 
 static int
 prop_from_option(Gsasl_session * sctx, Gsasl_property prop,
-  const uschar * option)
+  cuschar * option)
 {
 HDEBUG(D_auth) debug_printf(" %s\n", gsasl_prop_code_to_name(prop));
 if (option)
@@ -690,7 +690,7 @@ switch (prop)
     set_exim_authvar_from_prop(sctx, GSASL_AUTHZID);
     set_exim_authvar_from_prop(sctx, GSASL_PASSWORD);
 
-    cbrc = condition_check(ablock, US("server_condition"), ablock->server_condition);
+    cbrc = condition_check(ablock, cUS("server_condition"), ablock->server_condition);
     checked_server_condition = TRUE;
     break;
 
@@ -704,7 +704,7 @@ switch (prop)
     set_exim_authvar_from_prop(sctx, GSASL_AUTHZID);
 
     cbrc = condition_check(ablock,
-	US("server_condition (EXTERNAL)"), ablock->server_condition);
+	cUS("server_condition (EXTERNAL)"), ablock->server_condition);
     checked_server_condition = TRUE;
     break;
 
@@ -718,7 +718,7 @@ switch (prop)
     set_exim_authvar_from_prop(sctx, GSASL_ANONYMOUS_TOKEN);
 
     cbrc = condition_check(ablock,
-	US("server_condition (ANONYMOUS)"), ablock->server_condition);
+	cUS("server_condition (ANONYMOUS)"), ablock->server_condition);
     checked_server_condition = TRUE;
     break;
 
@@ -739,7 +739,7 @@ switch (prop)
     But for consistency, let's just mandate server_condition here too. */
 
     cbrc = condition_check(ablock,
-	US("server_condition (GSSAPI family)"), ablock->server_condition);
+	cUS("server_condition (GSSAPI family)"), ablock->server_condition);
     checked_server_condition = TRUE;
     break;
 

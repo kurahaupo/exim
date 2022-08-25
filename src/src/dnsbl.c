@@ -222,7 +222,7 @@ if (cb->rc == DNS_SUCCEED)
     for (da = cb->rhs; da; da = da->next)
       {
       int ipsep = ',';
-      const uschar *ptr = iplist;
+      cuschar *ptr = iplist;
       uschar *res;
 
       /* Handle exact matching */
@@ -292,13 +292,13 @@ if (cb->rc == DNS_SUCCEED)
         switch(match_type)
           {
           case 0:
-	    res = US("was no match"); break;
+	    res = cUS("was no match"); break;
           case MT_NOT:
-	    res = US("was an exclude match"); break;
+	    res = cUS("was an exclude match"); break;
           case MT_ALL:
-	    res = US("was an IP address that did not match"); break;
+	    res = cUS("was an IP address that did not match"); break;
           case MT_NOT|MT_ALL:
-	    res = US("were no IP addresses that did not match"); break;
+	    res = cUS("were no IP addresses that did not match"); break;
           }
         debug_printf("=> but we are not accepting this block class because\n");
         debug_printf("=> there %s for %s%c%s\n",
@@ -383,9 +383,9 @@ if (cb->rc != DNS_NOMATCH && cb->rc != DNS_NODATA)
   {
   log_write(L_dnslist_defer, LOG_MAIN,
     "DNS list lookup defer (probably timeout) for %s: %s", query,
-    defer_return == OK ?   US("assumed in list") :
-    defer_return == FAIL ? US("assumed not in list") :
-                            US("returned DEFER"));
+    defer_return == OK ?   cUS("assumed in list") :
+    defer_return == FAIL ? cUS("assumed not in list") :
+                            cUS("returned DEFER"));
   yield = defer_return;
   goto out;
   }
@@ -463,11 +463,11 @@ Returns:    OK      successful lookup (i.e. the address is on the list), or
 */
 
 int
-verify_check_dnsbl(int where, const uschar ** listptr, uschar ** log_msgptr)
+verify_check_dnsbl(int where, cuschar ** listptr, uschar ** log_msgptr)
 {
 int sep = 0;
 int defer_return = FAIL;
-const uschar *list = *listptr;
+cuschar *list = *listptr;
 uschar *domain;
 uschar revadd[128];        /* Long enough for IPv6 address */
 
@@ -497,9 +497,9 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
 
   if (domain[0] == '+')
     {
-    if      (strcmpic(domain, US("+include_unknown")) == 0) defer_return = OK;
-    else if (strcmpic(domain, US("+exclude_unknown")) == 0) defer_return = FAIL;
-    else if (strcmpic(domain, US("+defer_unknown")) == 0)   defer_return = DEFER;
+    if      (strcmpic(domain, cUS("+include_unknown")) == 0) defer_return = OK;
+    else if (strcmpic(domain, cUS("+exclude_unknown")) == 0) defer_return = FAIL;
+    else if (strcmpic(domain, cUS("+defer_unknown")) == 0)   defer_return = DEFER;
     else
       log_write(0, LOG_MAIN|LOG_PANIC, "unknown item in dnslist (ignored): %s",
         domain);
