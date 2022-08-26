@@ -2107,7 +2107,7 @@ Returns:             TRUE if all went well; otherwise an error will be
 BOOL
 transport_set_up_command(cuschar *** argvptr, cuschar * cmd,
   BOOL expand_arguments, int expand_failed, address_item * addr,
-  BOOL allow_tainted_args, cuschar * etext, uschar ** errptr)
+  BOOL allow_tainted_args, cuschar * etext, cuschar ** errptr)
 {
 cuschar ** argv, * s;
 int address_count = 0, argcount = 0, max_args;

@@ -714,7 +714,7 @@ Returns:         a pointer to a dynamic string containing the answer,
 */
 
 uschar *
-search_find(void * handle, cuschar * filename, uschar * keystring,
+search_find(void * handle, cuschar * filename, cuschar * keystring,
   int partial, cuschar * affix, int affixlen, int starflags,
   int * expand_setup, cuschar * opts)
 {
@@ -753,7 +753,7 @@ if (opts)
 /* Arrange to put this database at the top of the LRU chain if it is a type
 that opens real files. */
 
-if (  open_top != (tree_node *)handle 
+if (  open_top != (tree_node *)handle
    && lookup_list[t->name[0]-'0']->type == lookup_absfile)
   {
   search_cache *c = (search_cache *)(t->data.ptr);

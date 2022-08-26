@@ -488,7 +488,7 @@ extern void    route_tidyup(void);
 extern uschar *router_current_name(void);
 
 extern uschar *search_args(int, uschar *, uschar *, uschar **, cuschar *);
-extern uschar *search_find(void *, cuschar *, uschar *, int,
+extern uschar *search_find(void *, cuschar *, cuschar *, int,
 		 cuschar *, int, int, int *, cuschar *);
 extern int     search_findtype(cuschar *, int);
 extern int     search_findtype_partial(cuschar *, int *, cuschar **, int *,
@@ -639,7 +639,7 @@ extern BOOL    transport_pass_socket(cuschar *, cuschar *, cuschar *, uschar *, 
 			);
 extern uschar *transport_rcpt_address(address_item *, BOOL);
 extern BOOL    transport_set_up_command(cuschar ***, cuschar *,
-		 BOOL, int, address_item *, BOOL, cuschar *, uschar **);
+		 BOOL, int, address_item *, BOOL, cuschar *, cuschar **);
 extern void    transport_update_waiting(host_item *, uschar *);
 extern BOOL    transport_write_block(transport_ctx *, uschar *, int, BOOL);
 extern void    transport_write_reset(int);

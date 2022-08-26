@@ -2305,11 +2305,12 @@ The element may itself be an abject or array.
 Return NULL when the list is empty.
 */
 
-static cuschar *
+static uschar *
 json_nextinlist(cuschar ** list)
 {
 unsigned array_depth = 0, object_depth = 0;
 cuschar * s = *list, * item;
+uschar *res;
 
 cskip_whitespace(&s);
 
@@ -2325,9 +2326,9 @@ for (item = s;
     }
 *list = *s ? s+1 : s;
 if (item == s) return NULL;
-item = string_copyn(item, s - item);
-DEBUG(D_expand) debug_printf_indent("  json ele: '%s'\n", item);
-return (item);
+res = string_copyn(item, s - item);
+DEBUG(D_expand) debug_printf_indent("  json ele: '%s'\n", res);
+return res;
 }
 
 
@@ -2787,8 +2788,9 @@ switch(cond_type = identify_operator(&s, &opname))
 #else
     {
     uschar *sub[4];
+    const uschar ** const csub = (const uschar **)sub;
     cskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
     switch(read_subs(sub, nelem(sub), 2, &s,
 	yield ? ESI_NOFLAGS : ESI_SKIPPING, TRUE, name, resetok, NULL))
       {
@@ -2800,7 +2802,7 @@ switch(cond_type = identify_operator(&s, &opname))
     if (!sub[2]) sub[3] = NULL;  /* realm if no service */
     if (yield)
       {
-      int rc = auth_call_saslauthd(sub[0], sub[1], sub[2], sub[3],
+      int rc = auth_call_saslauthd(csub[0], csub[1], csub[2], csub[3],
 	&expand_string_message);
       if (rc == ERROR || rc == DEFER) return NULL;
       *yield = (rc == OK) == testfor;
@@ -3320,7 +3322,7 @@ switch(cond_type = identify_operator(&s, &opname))
       ? json_nextinlist(&list) : string_nextinlist(&list, &sep, NULL, 0)))
       {
       if (is_jsons)
-	if (!(iterate_item = dewrap((uschar*)iterate_item, cUS("\"\""))))
+	if (!(iterate_item = dewrap((uschar*)iterate_item, cUS("\"\"")))) /* TODO fix const-cast */
 	  {
 	  expand_string_message =
 	    string_sprintf("%s wrapping string result for extract jsons",
@@ -3362,13 +3364,14 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_BOOL:
   case ECOND_BOOL_LAX:
     {
-    cuschar *sub_arg[1];
-    cuschar *t, *t2;
+    uschar *sub_arg[1];
+  //cuschar const **const csub_arg = (cuschar const **)sub_arg;
+    uschar *t, *t2;
     cuschar *ourname;
     size_t len;
     BOOL boolvalue = FALSE;
 
-    if (cskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    if (cskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
     ourname = cond_type == ECOND_BOOL_LAX ? cUS("bool_lax") : cUS("bool");
     switch(read_subs(sub_arg, 1, 1, &s,
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, ourname, resetok, NULL))
@@ -3381,7 +3384,7 @@ switch(cond_type = identify_operator(&s, &opname))
       case 3: return NULL;
       }
     t = sub_arg[0];
-    cskip_whitespace(&t);
+    skip_whitespace(&t);
     if ((len = Ustrlen(t)))
       {
       /* trailing whitespace: seems like a good idea to ignore it too */
@@ -4740,7 +4743,8 @@ while (*s)
     case EITEM_ACL:
       /* ${acl {name} {arg1}{arg2}...} */
       {
-      cuschar * sub[10];	/* name + arg1-arg9 (which must match number of acl_arg[]) */
+      uschar * sub[10];	/* name + arg1-arg9 (which must match number of acl_arg[]) */
+      cuschar const **const csub = (cuschar const **)sub;
       cuschar * user_msg;
       int rc;
 
@@ -4753,7 +4757,7 @@ while (*s)
         }
 
       resetok = FALSE;
-      switch(rc = eval_acl(sub, nelem(sub), &user_msg))
+      switch(rc = eval_acl(csub, nelem(sub), &user_msg))
 	{
 	case OK:
 	case FAIL:
@@ -4768,7 +4772,7 @@ while (*s)
 	  /*FALLTHROUGH*/
 	default:
           expand_string_message = string_sprintf("%s from acl \"%s\"",
-	    rc_names[rc], sub[0]);
+	    rc_names[rc], csub[0]);
 	  goto EXPAND_FAILED;
 	}
       break;
@@ -4777,7 +4781,8 @@ while (*s)
     case EITEM_AUTHRESULTS:
       /* ${authresults {mysystemname}} */
       {
-      cuschar * sub_arg[1];
+      uschar * sub_arg[1];
+      cuschar const **const csub_arg = (cuschar const **)sub_arg;
 
       switch(read_subs(sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
@@ -5168,9 +5173,10 @@ while (*s)
 
     case EITEM_PRVS:
       {
-      cuschar * sub_arg[3];
+      uschar * sub_arg[3];
+      cuschar const **const csub_arg = (cuschar const **)sub_arg;
       uschar * p;
-      cuschar * domain;
+      uschar * domain;
 
       switch(read_subs(sub_arg, 3, 2, &s, flags, TRUE, name, &resetok, NULL))
         {
@@ -5191,14 +5197,14 @@ while (*s)
       /* Calculate the hash. The third argument must be a single-digit
       key number, or unset. */
 
-      if (  sub_arg[2]
-         && (!isdigit(sub_arg[2][0]) || sub_arg[2][1] != 0))
+      if (  csub_arg[2]
+         && (!isdigit(csub_arg[2][0]) || csub_arg[2][1] != 0))
         {
         expand_string_message = cUS("prvs third argument must be a single digit");
         goto EXPAND_FAILED;
         }
 
-      p = prvs_hmac_sha1(sub_arg[0], sub_arg[1], sub_arg[2], prvs_daystamp(7));
+      p = prvs_hmac_sha1(csub_arg[0], csub_arg[1], csub_arg[2], prvs_daystamp(7));
       if (!p)
         {
         expand_string_message = cUS("prvs hmac-sha1 conversion failed");
@@ -5209,11 +5215,11 @@ while (*s)
       *domain++ = '\0';
 
       yield = string_catn(yield, cUS("prvs="), 5);
-      yield = string_catn(yield, sub_arg[2] ? sub_arg[2] : cUS("0"), 1);
+      yield = string_catn(yield, csub_arg[2] ? csub_arg[2] : cUS("0"), 1);
       yield = string_catn(yield, prvs_daystamp(7), 3);
       yield = string_catn(yield, p, 6);
       yield = string_catn(yield, cUS("="), 1);
-      yield = string_cat (yield, sub_arg[0]);
+      yield = string_cat (yield, csub_arg[0]);
       yield = string_catn(yield, cUS("@"), 1);
       yield = string_cat (yield, domain);
 
@@ -5224,7 +5230,8 @@ while (*s)
 
     case EITEM_PRVSCHECK:
       {
-      cuschar * sub_arg[3], * p;
+      uschar * sub_arg[3], * p;
+      cuschar const **const csub_arg = (cuschar const **)sub_arg;
       gstring * g;
       const pcre2_code * re;
 
@@ -5244,7 +5251,7 @@ while (*s)
 	cUS("^prvs\\=([0-9])([0-9]{3})([A-F0-9]{6})\\=(.+)\\@(.+)$"),
 	MCS_CASELESS | MCS_CACHEABLE, FALSE);
 
-      if (regex_match_and_setup(re,sub_arg[0],0,-1))
+      if (regex_match_and_setup(re,csub_arg[0],0,-1))
         {
         uschar * local_part = string_copyn(expand_nstring[4],expand_nlength[4]);
         uschar * key_num = string_copyn(expand_nstring[1],expand_nlength[1]);
@@ -5278,7 +5285,7 @@ while (*s)
 
         /* Now we have the key and can check the address. */
 
-        p = prvs_hmac_sha1(prvscheck_address, sub_arg[0], prvscheck_keynum,
+        p = prvs_hmac_sha1(prvscheck_address, csub_arg[0], prvscheck_keynum,
           daystamp);
         if (!p)
           {
@@ -5330,7 +5337,7 @@ while (*s)
           }
 
 	yield = string_cat(yield,
-	  !sub_arg[0] || !*sub_arg[0] ? prvscheck_address : sub_arg[0]);
+	  !csub_arg[0] || !*csub_arg[0] ? prvscheck_address : csub_arg[0]);
 
         /* Reset the "internal" variables afterwards, because they are in
         dynamic store that will be reclaimed if the expansion succeeded. */
@@ -5359,7 +5366,8 @@ while (*s)
     case EITEM_READFILE:
       {
       FILE * f;
-      cuschar * sub_arg[2];
+      uschar * sub_arg[2];
+      cuschar const **const csub_arg = (cuschar const **)sub_arg;
 
       if ((expand_forbid & RDO_READFILE) != 0)
         {
@@ -5380,9 +5388,9 @@ while (*s)
 
       /* Open the file and read it */
 
-      if (!(f = Ufopen(sub_arg[0], "rb")))
+      if (!(f = Ufopen(csub_arg[0], "rb")))
         {
-        expand_string_message = string_open_failed("%s", sub_arg[0]);
+        expand_string_message = string_open_failed("%s", csub_arg[0]);
         goto EXPAND_FAILED;
         }
 
@@ -5397,7 +5405,8 @@ while (*s)
     case EITEM_READSOCK:
       {
       uschar * arg;
-      cuschar * sub_arg[4];
+      uschar * sub_arg[4];
+      cuschar const **const csub_arg = (cuschar const **)sub_arg;
 
       if (expand_forbid & RDO_READSOCK)
         {
@@ -5428,17 +5437,17 @@ while (*s)
 
 	/* If the reqstr is empty, flag that and set a dummy */
 
-	if (!sub_arg[1][0])
+	if (!csub_arg[1][0])
 	  {
 	  g = string_append_listele(g, ',', cUS("send=no"));
-	  sub_arg[1] = cUS("DUMMY");
+	  csub_arg[1] = cUS("DUMMY");
 	  }
 
 	/* Re-marshall the options */
 
-	if (sub_arg[2])
+	if (csub_arg[2])
 	  {
-	  cuschar * list = sub_arg[2];
+	  cuschar * list = csub_arg[2];
 	  uschar * item;
 	  int sep = 0;
 
@@ -5455,15 +5464,15 @@ while (*s)
 	  from list-processing.  The only current user of eol= in search
 	  options is the readsock expansion. */
 
-	  if (sub_arg[3] && *sub_arg[3])
+	  if (csub_arg[3] && *csub_arg[3])
 	    g = string_append_listele(g, ',',
 		  string_sprintf("eol=%s",
-		    string_printing2(sub_arg[3], SP_TAB|SP_SPACE)));
+		    string_printing2(csub_arg[3], SP_TAB|SP_SPACE)));
 	  }
 
 	/* Gat a (possibly cached) handle for the connection */
 
-	if (!(handle = search_open(sub_arg[0], stype, 0, NULL, NULL)))
+	if (!(handle = search_open(csub_arg[0], stype, 0, NULL, NULL)))
 	  {
 	  if (*expand_string_message) goto EXPAND_FAILED;
 	  expand_string_message = search_error_message;
@@ -5472,9 +5481,9 @@ while (*s)
 	  }
 
 	/* Get (possibly cached) results for the lookup */
-	/* sspec: sub_arg[0]  req: sub_arg[1]  opts: g */
+	/* sspec: csub_arg[0]  req: csub_arg[1]  opts: g */
 
-	if ((s = search_find(handle, sub_arg[0], sub_arg[1], -1, NULL, 0, 0,
+	if ((s = search_find(handle, csub_arg[0], csub_arg[1], -1, NULL, 0, 0,
 				    &expand_setup, string_from_gstring(g))))
 	  yield = string_cat(yield, s);
 	else if (f.search_find_defer)
@@ -5616,7 +5625,7 @@ while (*s)
 
         /* Create the child process, making it a group leader. */
 
-        if ((pid = child_open(USS(argv), NULL, 0077, &fd_in, &fd_out, TRUE,
+        if ((pid = child_open(argv, NULL, 0077, &fd_in, &fd_out, TRUE,
 			      cUS("expand-run"))) < 0)
           {
           expand_string_message =
@@ -5899,12 +5908,13 @@ while (*s)
       pcre2_match_data * md;
       int emptyopt;
       cuschar * subject;
-      cuschar * sub[3];
+      uschar * sub_arg[3];
+      cuschar const **const csub_arg = (cuschar const **)sub_arg;
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
       unsigned sub_textonly = 0;
 
-      switch(read_subs(sub, 3, 3, &s, flags, TRUE, name, &resetok, &sub_textonly))
+      switch(read_subs(sub_arg, 3, 3, &s, flags, TRUE, name, &resetok, &sub_textonly))
         {
 	case -1: continue;	/* skipping */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -5914,7 +5924,7 @@ while (*s)
 
       /* Compile the regular expression */
 
-      re = regex_compile(sub[1],
+      re = regex_compile(csub_arg[1],
 	      sub_textonly & BIT(1) ? MCS_CACHEABLE : MCS_NOFLAGS,
 	      &expand_string_message, pcre_gen_cmp_ctx);
       if (!re)
@@ -5926,8 +5936,8 @@ while (*s)
       when there are no more matches. Take care over matches of the null string;
       do the same thing as Perl does. */
 
-      subject = sub[0];
-      slen = Ustrlen(sub[0]);
+      subject = csub_arg[0];
+      slen = Ustrlen(csub_arg[0]);
       moffset = moffsetextra = 0;
       emptyopt = 0;
 
@@ -5936,7 +5946,7 @@ while (*s)
 	PCRE2_SIZE * ovec = pcre2_get_ovector_pointer(md);
 	int n = pcre2_match(re, (PCRE2_SPTR)subject, slen, moffset + moffsetextra,
 	  PCRE_EOPT | emptyopt, md, pcre_gen_mtc_ctx);
-        uschar * insert;
+        cuschar * insert;
 
         /* No match - if we previously set PCRE_NOTEMPTY after a null match, this
         is not necessarily the end. We want to repeat the match from one
@@ -5973,7 +5983,7 @@ while (*s)
 
 	yield = string_catn(yield, subject + moffset, ovec[0] - moffset);
 
-        if (!(insert = expand_string(sub[2])))
+        if (!(insert = expand_cstring(csub_arg[2])))
 	  goto EXPAND_FAILED;
         yield = string_cat(yield, insert);
 
@@ -6024,7 +6034,7 @@ while (*s)
 
       /* Check for a format-variant specifier */
 
-      if (cskip_whitespace(&s) != '{')					/*}*/
+      if (cskip_whitespace(&s) != '{')					/*'}'*/
 	if (Ustrncmp(s, "json", 4) == 0)
 	  if (*(s += 4) == 's')
 	    {fmt = extract_jsons; s++;}
@@ -6072,7 +6082,7 @@ while (*s)
 	    goto EXPAND_FAILED;						/*'{'*/
           if (*s++ != '}')
 	    {
-	    expand_string_message = string_sprintf(
+	    expand_string_message = string_sprintf(                     /*"{"*/
 	      "missing '}' closing arg %d of extract", i+1);
 	    goto EXPAND_FAILED_CURLY;
 	    }
@@ -6088,7 +6098,7 @@ while (*s)
             int x = 0;
             uschar * p = sub[0];
 
-            cskip_whitespace(&p);
+            skip_whitespace(&p);
             sub[0] = p;
 
             len = Ustrlen(p);
@@ -6190,14 +6200,14 @@ while (*s)
 	      if (Ustrcmp(item, sub[0]) == 0)	/*XXX should be a UTF8-compare */
 		{
 		s = item + Ustrlen(item) + 1;
-		if (cskip_whitespace(&s) != ':')
+		if (skip_whitespace(&s) != ':')
 		  {
 		  expand_string_message =
 		    cUS("missing object value-separator for extract json");
 		  goto EXPAND_FAILED_CURLY;
 		  }
 		s++;
-		cskip_whitespace(&s);
+		skip_whitespace(&s);
 		lookup_value = s;
 		break;
 		}
@@ -6256,10 +6266,10 @@ while (*s)
 
       for (int i = 0; i < 2; i++)
         {
-        if (cskip_whitespace(&s) != '{')				/*}*/
+        if (cskip_whitespace(&s) != '{')				/*'}'*/
 	  {
 	  expand_string_message = string_sprintf(
-	    "missing '{' for arg %d of listextract", i+1);		/*}*/
+	    "missing '{' for arg %d of listextract", i+1);		/*"}"*/
 	  goto EXPAND_FAILED_CURLY;
 	  }
 
