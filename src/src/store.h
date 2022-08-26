@@ -67,7 +67,7 @@ tracing information for debugging. */
 typedef void ** rmark;
 
 extern BOOL    store_extend_3(void *, int, int, const char *, int);
-extern void    store_free_3(void *, const char *, int);
+extern void    store_free_3(const void *, const char *, int);
 /* store_get_3 & store_get_perm_3 are in local_scan.h */
 extern void *  store_get_quoted_3(int, const void *, unsigned, const char *, int);
 extern void *  store_malloc_3(size_t, const char *, int)		ALLOC ALLOC_SIZE(1) WARN_UNUSED_RESULT;

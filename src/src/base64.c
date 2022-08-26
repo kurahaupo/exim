@@ -240,8 +240,8 @@ Returns:      a pointer to the zero-terminated base 64 string, which
               is in working store
 */
 
-static uschar *enc64table =
-  cUS("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
+static char enc64table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+//static char *enc64table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 uschar *
 b64encode_taint(cuschar * clear, int len, const void * proto_mem)

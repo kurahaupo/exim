@@ -1763,7 +1763,7 @@ while (commands)
 
       if (s != NULL && !f.system_filtering)
 	{
-	uschar *ownaddress = expand_string(cUS("$local_part@$domain"));
+	cuschar *ownaddress = expand_cstring(cUS("$local_part@$domain"));
 	if (strcmpic(ownaddress, s) != 0)
 	  {
 	  *error_pointer = cUS("errors_to must point to the caller's address");
@@ -2208,7 +2208,7 @@ while (commands)
 	  cuschar *to = commands->args[mailarg_index_to].u;
 	  gstring * log_addr = NULL;
 
-	  if (!to) to = expand_string(cUS("$reply_address"));
+	  if (!to) to = expand_cstring(cUS("$reply_address"));
 	  while (isspace(*to)) to++;
 
 	  for (tt = to; *tt; tt++)     /* Get rid of newlines */

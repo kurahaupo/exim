@@ -483,7 +483,7 @@ static config_line_item* config_lines;
 /* Structure of table of conditional words and their state transitions */
 
 typedef struct cond_item {
-  uschar *name;
+  cuschar *name;
   int    namelen;
   int    action1;
   int    action2;
@@ -493,7 +493,7 @@ typedef struct cond_item {
 /* Structure of table of syslog facility names and values */
 
 typedef struct syslog_fac_item {
-  uschar *name;
+  cuschar *name;
   int    value;
 } syslog_fac_item;
 
@@ -594,11 +594,11 @@ Arguments:   a value that is presumed to be in the table above
 Returns:     the option name, or an empty string
 */
 
-uschar *
+cuschar *
 readconf_find_option(void *p)
 {
 for (int i = 0; i < nelem(optionlist_config); i++)
-  if (p == optionlist_config[i].v.value) return US(optionlist_config[i].name);
+  if (p == optionlist_config[i].v.value) return CUS(optionlist_config[i].name);
 
 for (router_instance * r = routers; r; r = r->next)
   {
@@ -607,7 +607,7 @@ for (router_instance * r = routers; r; r = r->next)
     {
     if ((ri->options[i].type & opt_mask) != opt_stringptr) continue;
     if (p == CS(r->options_block) + ri->options[i].v.offset)
-      return US(ri->options[i].name);
+      return CUS(ri->options[i].name);
     }
   }
 
@@ -619,11 +619,11 @@ for (transport_instance * t = transports; t; t = t->next)
     optionlist * op = &ti->options[i];
     if ((op->type & opt_mask) != opt_stringptr) continue;
     if (p == (  op->type & opt_public
-	     ? CS(t)
-	     : CS(t->options_block)
+	     ? (char*)(t)
+	     : (char*)(t->options_block)
 	     )
 	     + op->v.offset)
-	return US(op->name);
+	return CUS(op->name);
     }
   }
 
@@ -699,7 +699,7 @@ while (isalnum(*s) || *s == '_')
   }
 name[namelen] = 0;
 
-Uskip_whitespace(&s);
+skip_whitespace(&s);
 if (*s++ != '=')
   {
   log_write(0, LOG_PANIC|LOG_CONFIG_IN, "malformed macro definition");
@@ -711,7 +711,7 @@ if (*s == '=')
   redef = TRUE;
   s++;
   }
-Uskip_whitespace(&s);
+skip_whitespace(&s);
 
 /* If an existing macro of the same name was defined on the command line, we
 just skip this definition. It's an error to attempt to redefine a macro without
@@ -794,16 +794,16 @@ Arguments:
 Return: pointer to first nonblank char in line
 */
 
-uschar *
+cuschar *
 macros_expand(int len, int * newlen, BOOL * macro_found)
 {
-uschar * ss = big_buffer + len;
-uschar * s;
+cuschar * ss = big_buffer + len;
+cuschar * s;
 
 /* Find the true start of the physical line - leading spaces are always
 ignored. */
 
-Uskip_whitespace(&ss);
+cskip_whitespace(&ss);
 
 /* Process the physical line for macros. If this is the start of the logical
 line, skip over initial text at the start of the line if it starts with an
@@ -815,7 +815,7 @@ s = ss;
 if (len == 0 && isupper(*s))
   {
   while (isalnum(*s) || *s == '_') s++;
-  if (Uskip_whitespace(&s) != '=') s = ss;          /* Not a macro definition */
+  if (cskip_whitespace(&s) != '=') s = ss;          /* Not a macro definition */
   }
 
 /* Skip leading chars which cannot start a macro name, to avoid multiple
@@ -878,7 +878,7 @@ if (*s) for (macro_item * m = *s == '_' ? macros : macros_user; m; m = m->next)
 /* An empty macro replacement at the start of a line could mean that ss no
 longer points to the first non-blank character. */
 
-Uskip_whitespace(&ss);
+cskip_whitespace(&ss);
 return ss;
 }
 
@@ -1051,7 +1051,7 @@ for (;;)
     struct stat statbuf;
 
     ss += 9 + include_if_exists;
-    Uskip_whitespace(&ss);
+    skip_whitespace(&ss);
     t = ss + Ustrlen(ss);
     while (t > ss && isspace(t[-1])) t--;
     if (*ss == '\"' && t[-1] == '\"')
@@ -1142,7 +1142,7 @@ if (config_lines)
 if (strncmpic(s, cUS("begin "), 6) == 0)
   {
   s += 6;
-  Uskip_whitespace(&s);
+  skip_whitespace(&s);
   if (big_buffer + len - s > sizeof(next_section) - 2)
     s[sizeof(next_section) - 2] = 0;
   Ustrcpy(next_section, s);
@@ -1178,7 +1178,7 @@ readconf_readname(uschar * name, int len, cuschar * s)
 int p = 0;
 BOOL broken = FALSE;
 
-if (isalpha(Uskip_whitespace(&s)))
+if (isalpha(skip_whitespace(&s)))
   while (isalnum(*s) || *s == '_')
     {
     if (p < len-1) name[p++] = *s;
@@ -1195,7 +1195,7 @@ if (broken) {
             "exim item name too long (>%d), unable to use \"%s\" (truncated)",
             len, name);
 }
-Uskip_whitespace(&s);
+skip_whitespace(&s);
 return s;
 }
 
@@ -1431,7 +1431,7 @@ rewrite_rule * next = store_get(sizeof(rewrite_rule), GET_UNTAINTED);
 next->next = NULL;
 next->key = string_dequote(&p);
 
-Uskip_whitespace(&p);
+skip_whitespace(&p);
 if (!*p)
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
     "missing rewrite replacement string");
@@ -3019,13 +3019,13 @@ if (*numberp >= max)
  log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "too many named %ss (max is %d)\n",
    tname, max);
 
-Uskip_whitespace(&s);
+skip_whitespace(&s);
 ss = s;
 while (isalnum(*s) || *s == '_') s++;
 t = store_get(sizeof(tree_node) + s-ss, ss);
 Ustrncpy(t->name, ss, s-ss);
 t->name[s-ss] = 0;
-Uskip_whitespace(&s);
+skip_whitespace(&s);
 
 if (!tree_insertnode(anchorp, t))
   log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
@@ -3038,7 +3038,7 @@ nb->hide = hide;
 
 if (*s++ != '=') log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
   "missing '=' after \"%s\"", t->name);
-Uskip_whitespace(&s);
+skip_whitespace(&s);
 nb->string = read_string(s, t->name);
 nb->cache_data = NULL;
 
@@ -3780,7 +3780,7 @@ while ((buffer = get_config_line()))
 
     /* Check nothing more on this line, then do the next loop iteration. */
 
-    Uskip_whitespace(&s);
+    skip_whitespace(&s);
     if (*s) extra_chars_error(s, cUS("driver name "), name, cUS(""));
     continue;
     }
@@ -3840,7 +3840,7 @@ Returns:   TRUE if a dependency is found
 */
 
 BOOL
-readconf_depends(driver_instance *d, uschar *s)
+readconf_depends(driver_instance *d, cuschar *s)
 {
 int count = *(d->info->options_count);
 uschar *ss;
@@ -4028,7 +4028,7 @@ cuschar *pp;
 
 if (*p++ != ',') log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "comma expected");
 
-Uskip_whitespace(&p);
+skip_whitespace(&p);
 pp = p;
 while (isalnum(*p) || (type == 1 && *p == '.')) p++;
 
@@ -4069,7 +4069,7 @@ while ((p = get_config_line()))
   rchain = &(next->rules);
 
   next->pattern = string_dequote(&p);
-  Uskip_whitespace(&p);
+  skip_whitespace(&p);
   pp = p;
   while (mac_isgraph(*p)) p++;
   if (p - pp <= 0) log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
@@ -4086,20 +4086,20 @@ while ((p = get_config_line()))
   fudge. Anything that is not a retry rule starting "F," or "G," is treated as
   an address list. */
 
-  Uskip_whitespace(&p);
+  skip_whitespace(&p);
   if (Ustrncmp(p, "senders", 7) == 0)
     {
     p += 7;
-    Uskip_whitespace(&p);
+    skip_whitespace(&p);
     if (*p++ != '=') log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
       "\"=\" expected after \"senders\" in retry rule");
-    Uskip_whitespace(&p);
+    skip_whitespace(&p);
     next->senders = string_dequote(&p);
     }
 
   /* Now the retry rules. Keep the maximum timeout encountered. */
 
-  Uskip_whitespace(&p);
+  skip_whitespace(&p);
 
   while (*p)
     {
@@ -4134,10 +4134,10 @@ while ((p = get_config_line()))
       log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
         "bad parameters for retry rule");
 
-    if (Uskip_whitespace(&p) == ';')
+    if (skip_whitespace(&p) == ';')
       {
       p++;
-      Uskip_whitespace(&p);
+      skip_whitespace(&p);
       }
     else if (*p)
       log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "semicolon expected");
@@ -4222,13 +4222,12 @@ First, we have a function for acl_read() to call back to get the next line. We
 need to remember the line we passed, because at the end it will contain the
 name of the next ACL. */
 
-static uschar *acl_line;
-
 static uschar *
-acl_callback(void)
+acl_callback(void *context)
 {
-acl_line = get_config_line();
-return acl_line;
+uschar **ref_acl_line = context;
+**ref_acl_line = get_config_line();
+return *ref_acl_line;
 }
 
 
@@ -4244,13 +4243,13 @@ readconf_acl(void)
 /* Read each ACL and add it into the tree. Macro (re)definitions are allowed
 between ACLs. */
 
-acl_line = get_config_line();
+uschar *acl_line = get_config_line();
 
 while(acl_line)
   {
   uschar name[EXIM_DRIVERNAME_MAX];
   tree_node * node;
-  uschar * error;
+  cuschar * error;
   cuschar * p = readconf_readname(name, sizeof(name), acl_line);
 
   if (isupper(*name) && *p == '=')
@@ -4269,7 +4268,7 @@ while(acl_line)
     log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN,
       "there are two ACLs called \"%s\"", name);
 
-  node->data.ptr = acl_read(acl_callback, &error);
+  node->data.ptr = acl_read(acl_callback, &acl_line, &error);
 
   if (node->data.ptr == NULL && error != NULL)
     log_write(0, LOG_PANIC_DIE|LOG_CONFIG_IN, "error in ACL: %s", error);
@@ -4327,7 +4326,7 @@ Arguments:   none
 Returns:     nothing
 */
 
-static uschar *section_list[] = {
+static cuschar *section_list[] = {
   cUS("acls"),
   cUS("authenticators"),
   cUS("local_scans"),

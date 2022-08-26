@@ -656,7 +656,7 @@ Returns:      a chain of ip_address_items, each containing to a textual
 */
 
 ip_address_item *
-host_build_ifacelist(cuschar *list, uschar *name)
+host_build_ifacelist(cuschar *list, cuschar *name)
 {
 int sep = 0;
 uschar *s;

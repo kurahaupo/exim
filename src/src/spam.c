@@ -360,13 +360,13 @@ if (sd->is_rspamd)
   for (int i = 0; i < recipients_count; i++)
     req_str = string_append(req_str, 3,
       "Rcpt: <", recipients_list[i].address, ">\r\n");
-  if ((s = expand_string(cUS("$sender_helo_name"))) && *s)
+  if ((s = expand_cstring(cUS("$sender_helo_name"))) && *s)
     req_str = string_append(req_str, 3, "Helo: ", s, "\r\n");
-  if ((s = expand_string(cUS("$sender_host_name"))) && *s)
+  if ((s = expand_cstring(cUS("$sender_host_name"))) && *s)
     req_str = string_append(req_str, 3, "Hostname: ", s, "\r\n");
   if (sender_host_address)
     req_str = string_append(req_str, 3, "IP: ", sender_host_address, "\r\n");
-  if ((s = expand_string(cUS("$authenticated_id"))) && *s)
+  if ((s = expand_cstring(cUS("$authenticated_id"))) && *s)
     req_str = string_append(req_str, 3, "User: ", s, "\r\n");
   req_str = string_catn(req_str, cUS("\r\n"), 2);
   wrote = send(spamd_cctx.sock, req_str->s, req_str->ptr, 0);

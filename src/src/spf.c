@@ -406,7 +406,7 @@ g = string_append(g, 2, cUS(";\n\tspf="), spf_result);
 if (spf_result_guessed)
   g = string_cat(g, cUS(" (best guess record for domain)"));
 
-s = expand_string(cUS("$sender_address_domain"));
+s = expand_cstring(cUS("$sender_address_domain"));
 if (s && *s)
   return string_append(g, 2, cUS(" smtp.mailfrom="), s);
 

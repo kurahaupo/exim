@@ -65,7 +65,7 @@ moment I haven't changed them.
 */
 
 open_db *
-dbfn_open(uschar *name, int flags, open_db *dbblock, BOOL lof, BOOL panic)
+dbfn_open(cuschar *name, int flags, open_db *dbblock, BOOL lof, BOOL panic)
 {
 int rc, save_errno;
 BOOL read_only = flags == O_RDONLY;

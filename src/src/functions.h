@@ -96,8 +96,8 @@ extern int     tlsa_lookup(const host_item *, dns_answer *, BOOL);
 
 /* Everything else... */
 
-extern acl_block *acl_read(uschar *(*)(void), cuschar **);
-extern int     acl_check(int, uschar *, uschar *, uschar **, uschar **);
+extern acl_block *acl_read(cuschar *(*)(void*), void *context, cuschar **);
+extern int     acl_check(int, cuschar *, cuschar *, cuschar **, cuschar **);
 extern cuschar *acl_current_verb(void);
 extern int     acl_eval(int, cuschar *, cuschar **, cuschar **);
 extern uschar *acl_standalone_setvar(cuschar *);
@@ -165,14 +165,14 @@ extern void    cancel_cutthrough_connection(BOOL, cuschar *);
 extern gstring *cat_file(FILE *, gstring *, uschar *);
 extern gstring *cat_file_tls(void *, gstring *, uschar *);
 extern int     check_host(void *, cuschar *, cuschar **, uschar **);
-extern uschar **child_exec_exim(int, BOOL, int *, BOOL, int, ...);
+extern cuschar **child_exec_exim(int, BOOL, int *, BOOL, int, ...);
 extern pid_t   child_open_exim_function(int *, cuschar *);
-extern pid_t   child_open_exim2_function(int *, uschar *, uschar *,
+extern pid_t   child_open_exim2_function(int *, cuschar *, cuschar *,
 		 cuschar *);
-extern pid_t   child_open_function(uschar **, uschar **, int,
+extern pid_t   child_open_function(cuschar **, cuschar **, int,
 		 int *, int *, BOOL, cuschar *);
 extern pid_t   child_open_uid(cuschar **, cuschar **, int,
-		 uid_t *, gid_t *, int *, int *, uschar *, BOOL, cuschar *);
+		 uid_t *, gid_t *, int *, int *, cuschar *, BOOL, cuschar *);
 extern BOOL    cleanup_environment(void);
 extern void    cutthrough_data_puts(uschar *, int);
 extern void    cutthrough_data_put_nl(void);
@@ -196,9 +196,9 @@ extern void    debug_logging_activate(cuschar *, cuschar *);
 extern void    debug_logging_from_spool(cuschar *);
 extern void    debug_logging_stop(BOOL);
 extern void    debug_print_argv(cuschar **);
-extern void    debug_print_ids(uschar *);
+extern void    debug_print_ids(cuschar *);
 extern void    debug_printf_indent(const char *, ...) PRINTF_FUNCTION(1,2);
-extern void    debug_print_string(uschar *);
+extern void    debug_print_string(cuschar *);
 extern void    debug_print_tree(const char *, tree_node *);
 extern void    debug_vprintf(int, const char *, va_list);
 extern void    debug_pretrigger_setup(cuschar *);
@@ -211,8 +211,8 @@ extern void    decode_bits(unsigned int *, size_t, int *,
 extern void    delete_pid_file(void);
 extern void    deliver_local(address_item *, BOOL);
 extern address_item *deliver_make_addr(cuschar *, BOOL);
-extern void    delivery_log(int, address_item *, int, uschar *);
-extern int     deliver_message(uschar *, BOOL, BOOL);
+extern void    delivery_log(int, const address_item *, int, cuschar *);
+extern int     deliver_message(cuschar *, BOOL, BOOL);
 extern void    deliver_msglog(const char *, ...) PRINTF_FUNCTION(1,2);
 extern void    deliver_set_expansions(address_item *);
 extern int     deliver_split_address(address_item *);
@@ -247,7 +247,7 @@ extern BOOL    dscp_lookup(cuschar *, int, int *, int *, int *);
 extern void    enq_end(uschar *);
 extern BOOL    enq_start(uschar *, unsigned);
 #ifndef DISABLE_EVENT
-extern uschar *event_raise(uschar *, cuschar *, uschar *, int *);
+extern cuschar *event_raise(cuschar *, cuschar *, cuschar *, int *);
 extern void    msg_event_raise(cuschar *, const address_item *);
 #endif
 
@@ -260,9 +260,9 @@ extern void    exim_setugid(uid_t, gid_t, BOOL, cuschar *);
 extern void    exim_underbar_exit(int) NORETURN;
 extern void    exim_wait_tick(struct timeval *, int);
 extern int     exp_bool(address_item *addr,
-  uschar *mtype, uschar *mname, unsigned dgb_opt, uschar *oname, BOOL bvalue,
-  uschar *svalue, BOOL *rvalue);
-extern BOOL    expand_check_condition(uschar *, uschar *, uschar *);
+  cuschar *mtype, cuschar *mname, unsigned dgb_opt, cuschar *oname, BOOL bvalue,
+  cuschar *svalue, BOOL *rvalue);
+extern BOOL    expand_check_condition(uschar *, cuschar *, cuschar *);
 extern uschar *expand_file_big_buffer(cuschar *);
 
 #ifndef expand_string_2
@@ -277,7 +277,7 @@ static inline cuschar *expand_cstring_2(cuschar *s, BOOL *b) { return expand_str
 
 extern uschar *expand_getkeyed(cuschar *, cuschar *);
 
-extern uschar *expand_hide_passwords(uschar * );
+extern cuschar *expand_hide_passwords(cuschar * );
 extern uschar *expand_string_copy(cuschar *);
 extern int_eximarith_t expand_string_integer(uschar *, BOOL);
 extern void    modify_variable(uschar *, void *);
@@ -300,7 +300,7 @@ extern int     host_address_extract_port(uschar *);
 extern uschar *host_and_ident(BOOL);
 extern int     host_aton(cuschar *, int *);
 extern void    host_build_hostlist(host_item **, cuschar *, BOOL);
-extern ip_address_item *host_build_ifacelist(cuschar *, uschar *);
+extern ip_address_item *host_build_ifacelist(cuschar *, cuschar *);
 extern void    host_build_log_info(void);
 extern void    host_build_sender_fullhost(void);
 extern int     host_find_byname(host_item *, cuschar *, int,
@@ -343,7 +343,7 @@ extern void    log_close_all(void);
 
 extern macro_item * macro_create(cuschar *, cuschar *, BOOL);
 extern BOOL    macro_read_assignment(uschar *);
-extern uschar *macros_expand(int, int *, BOOL *);
+extern cuschar *macros_expand(int, int *, BOOL *);
 extern void    mainlog_close(void);
 #ifdef WITH_CONTENT_SCAN
 extern int     malware(cuschar *, BOOL, int);
@@ -426,10 +426,10 @@ extern int     rda_interpret(redirect_block *, int, cuschar *, cuschar *,
                  cuschar *, cuschar *, cuschar *, const ugid_block *, address_item **,
                  uschar **, error_block **, int *, cuschar *);
 extern int     rda_is_filter(cuschar *);
-extern BOOL    readconf_depends(driver_instance *, uschar *);
+extern BOOL    readconf_depends(driver_instance *, cuschar *);
 extern void    readconf_driver_init(uschar *, driver_instance **,
                  driver_info *, int, void *, int, optionlist *, int);
-extern uschar *readconf_find_option(void *);
+extern cuschar *readconf_find_option(void *);
 extern void    readconf_main(BOOL);
 extern void    readconf_options_from_list(optionlist *, unsigned, cuschar *, uschar *);
 extern BOOL    readconf_print(cuschar *, uschar *, BOOL);
@@ -476,12 +476,12 @@ extern int     route_address(address_item *, address_item **, address_item **,
                  address_item **, address_item **, int);
 extern int     route_check_prefix(cuschar *, cuschar *, unsigned *);
 extern int     route_check_suffix(cuschar *, cuschar *, unsigned *);
-extern BOOL    route_findgroup(uschar *, gid_t *);
+extern BOOL    route_findgroup(cuschar *, gid_t *);
 extern BOOL    route_finduser(cuschar *, struct passwd **, uid_t *);
-extern BOOL    route_find_expanded_group(uschar *, uschar *, uschar *, gid_t *,
-                 uschar **);
-extern BOOL    route_find_expanded_user(uschar *, uschar *, uschar *,
-                 struct passwd **, uid_t *, uschar **);
+extern BOOL    route_find_expanded_group(cuschar *, cuschar *, cuschar *, gid_t *,
+                 cuschar **);
+extern BOOL    route_find_expanded_user(cuschar *, cuschar *, cuschar *,
+                 struct passwd **, uid_t *, cuschar **);
 extern void    route_init(void);
 extern gstring * route_show_supported(gstring *);
 extern void    route_tidyup(void);
@@ -580,8 +580,10 @@ extern int     string_is_ip_address(cuschar *, int *);
 extern BOOL    string_is_utf8(cuschar *);
 #endif
 extern cuschar *string_printing2(cuschar *, int);
-extern uschar *string_split_message(uschar *);
+extern cuschar *string_split_message(cuschar *);
 extern uschar *string_unprinting(uschar *);
+/* string_unprinting doesn't mutate its arg, but it returns is */
+static inline cuschar *cstring_unprinting(cuschar *p) { return (cuschar*) string_unprinting((uschar*)p); }
 #ifdef SUPPORT_I18N
 extern uschar *string_address_utf8_to_alabel(cuschar *, uschar **);
 extern uschar *string_domain_alabel_to_utf8(cuschar *, uschar **);
@@ -669,7 +671,7 @@ extern int     verify_check_header_address(cuschar **, cuschar **,
                  int, int, int, cuschar *, cuschar *, int, int *);
 extern int     verify_check_headers(cuschar **);
 extern int     verify_check_header_names_ascii(cuschar **);
-extern int     verify_check_host(uschar **);
+extern int     verify_check_host(cuschar **);
 extern int     verify_check_notblind(BOOL);
 extern int     verify_check_given_host(cuschar **, const host_item *);
 extern int     verify_check_this_host(cuschar **, unsigned int *,
@@ -1265,12 +1267,12 @@ child_open_exim(int * fdptr, cuschar * purpose)
 { return child_open_exim_function(fdptr, purpose); }
 
 static inline pid_t
-child_open_exim2(int * fdptr, uschar * sender,
-  uschar * sender_auth, cuschar * purpose)
+child_open_exim2(int * fdptr, cuschar * sender,
+  cuschar * sender_auth, cuschar * purpose)
 { return child_open_exim2_function(fdptr, sender, sender_auth, purpose); }
 
 static inline pid_t
-child_open(uschar **argv, uschar **envp, int newumask, int *infdptr,
+child_open(cuschar **argv, cuschar **envp, int newumask, int *infdptr,
   int *outfdptr, BOOL make_leader, cuschar * purpose)
 { return child_open_function(argv, envp, newumask, infdptr,
   outfdptr, make_leader, purpose);

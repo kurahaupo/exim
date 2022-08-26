@@ -424,7 +424,7 @@ if (bounce_return_message)
     /*XXX limit line length here? */
     /* This doesn't print newlines, disable until can parse and fix
      * output to be legible.  */
-    fprintf(fp, "%s", expand_string(cUS("$message_body")));
+    fprintf(fp, "%s", expand_cstring(cUS("$message_body")));
     }
 #endif
   }

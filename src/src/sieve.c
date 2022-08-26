@@ -2969,9 +2969,9 @@ while (*filter->pc)
     struct String header;
     struct String subject;
     struct String body;
-    uschar *envelope_from;
+    cuschar *envelope_from;
     struct String auto_submitted_value;
-    uschar *auto_submitted_def;
+    cuschar *auto_submitted_def;
 
     if (!filter->require_enotify)
       {
@@ -2992,7 +2992,7 @@ while (*filter->pc)
     body.length=-1;
     body.character=(uschar*)0;
     envelope_from = sender_address && sender_address[0]
-     ? expand_string(cUS("$local_part_prefix$local_part$local_part_suffix@$domain")) : cUS("");
+     ? expand_cstring(cUS("$local_part_prefix$local_part$local_part_suffix@$domain")) : cUS("");
     if (!envelope_from)
       {
       filter->errmsg=cUS("expansion failure for envelope from");
@@ -3053,7 +3053,7 @@ while (*filter->pc)
       if (message.length==-1) message=subject;
       if (message.length==-1) expand_header(&message,&str_subject);
       expand_header(&auto_submitted_value,&str_auto_submitted);
-      auto_submitted_def=expand_string(cUS("${if def:header_auto-submitted {true}{false}}"));
+      auto_submitted_def=expand_cstring(cUS("${if def:header_auto-submitted {true}{false}}"));
       if (!auto_submitted_value.character || !auto_submitted_def)
         {
         filter->errmsg=cUS("header string expansion failed");
@@ -3091,7 +3091,7 @@ while (*filter->pc)
               FILE * f = fdopen(fd, "wb");
 
               fprintf(f,"From: %s\n", from.length == -1
-		? expand_string(cUS("$local_part_prefix$local_part$local_part_suffix@$domain"))
+		? expand_cstring(cUS("$local_part_prefix$local_part$local_part_suffix@$domain"))
 		: from.character);
               for (string_item * p = recipient; p; p=p->next)
 	       	fprintf(f, "To: %s\n",p->text);
@@ -3302,9 +3302,9 @@ while (*filter->pc)
 
           if (subject.length==-1)
             {
-            uschar *subject_def;
+            cuschar *subject_def;
 
-            subject_def = expand_string(cUS("${if def:header_subject {true}{false}}"));
+            subject_def = expand_cstring(cUS("${if def:header_subject {true}{false}}"));
             if (subject_def && Ustrcmp(subject_def,"true")==0)
               {
 	      gstring * g = string_catn(NULL, cUS("Auto: "), 6);
@@ -3332,7 +3332,7 @@ while (*filter->pc)
           memset(addr->reply,0,sizeof(reply_item)); /* XXX */
           addr->reply->to = string_copy(sender_address);
           if (from.length==-1)
-            addr->reply->from = expand_string(cUS("$local_part@$domain"));
+            addr->reply->from = expand_cstring(cUS("$local_part@$domain"));
           else
             addr->reply->from = from.character;
 	  /* deconst cast safe as we pass in a non-const item */

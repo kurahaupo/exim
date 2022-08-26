@@ -8,6 +8,9 @@
 
 /* Code for handling Access Control Lists (ACLs) */
 
+#error Skip compilation
+#if 0
+
 #include "exim.h"
 
 #ifndef MACRO_PREDEF
@@ -818,6 +821,7 @@ blank lines (where relevant).
 
 Arguments:
   func        function to get next line of ACL
+  context     context parameter for func
   error       where to put an error message
 
 Returns:      pointer to ACL, or NULL
@@ -825,7 +829,7 @@ Returns:      pointer to ACL, or NULL
 */
 
 acl_block *
-acl_read(uschar *(*func)(void), cuschar **error)
+acl_read(cuschar *(*func)(void*), void *context, cuschar **error)
 {
 acl_block *yield = NULL;
 acl_block **lastp = &yield;
@@ -836,7 +840,7 @@ cuschar * s;
 
 *error = NULL;
 
-while ((s = (*func)()))
+while ((s = func(context)))
   {
   int v, c;
   BOOL negated = FALSE;
@@ -4138,29 +4142,31 @@ Returns:   a pointer to the next line
 */
 
 
-static uschar *acl_text;          /* Current pointer in the text */
-static uschar *acl_text_end;      /* Points one past the terminating '0' */
+typedef struct {
+  uschar *acl_text;          /* Current pointer in the text */
+  uschar *acl_text_end;      /* Points one past the terminating '0' */
+} acl_getline_context;
 
-
-static uschar *
-acl_getline(void)
+static cuschar *
+acl_getline(void *context)
 {
-uschar *yield;
+acl_getline_context *c = context;
+cuschar *yield;
 
 /* This loop handles leading blank lines and comments. */
 
 for(;;)
   {
-  skip_whitespace(&acl_text);   	/* Leading spaces/empty lines */
-  if (!*acl_text) return NULL;		/* No more data */
-  yield = acl_text;			/* Potential data line */
+  skip_whitespace(&c->acl_text);   	/* Leading spaces/empty lines */
+  if (!*c->acl_text) return NULL;		/* No more data */
+  yield = c->acl_text;			/* Potential data line */
 
-  while (*acl_text && *acl_text != '\n') acl_text++;
+  while (*c->acl_text && *c->acl_text != '\n') c->acl_text++;
 
   /* If we hit the end before a newline, we have the whole logical line. If
   it's a comment, there's no more data to be given. Otherwise, yield it. */
 
-  if (!*acl_text) return *yield == '#' ? NULL : yield;
+  if (!*c->acl_text) return *yield == '#' ? NULL : yield;
 
   /* After reaching a newline, end this loop if the physical line does not
   start with '#'. If it does, it's a comment, and the loop continues. */
@@ -4176,14 +4182,14 @@ cont > yield in the backwards scanning loop. */
 for(;;)
   {
   uschar *cont;
-  for (cont = acl_text - 1; isspace(*cont); cont--);
+  for (cont = c->acl_text - 1; isspace(*cont); cont--);
 
   /* If no continuation follows, we are done. Mark the end of the line and
   return it. */
 
   if (*cont != '\\')
     {
-    *acl_text++ = 0;
+    *c->acl_text++ = 0;
     return yield;
     }
 
@@ -4193,20 +4199,20 @@ for(;;)
 
   for (;;)
     {
-    while (*(++acl_text) == ' ' || *acl_text == '\t');
-    if (*acl_text != '#') break;
-    while (*(++acl_text) != 0 && *acl_text != '\n');
+    while (*(++c->acl_text) == ' ' || *c->acl_text == '\t');
+    if (*c->acl_text != '#') break;
+    while (*(++c->acl_text) != 0 && *c->acl_text != '\n');
     }
 
   /* We have the start of a continuation line. Move all the rest of the data
   to join onto the previous line, and then find its end. If the end is not a
   newline, we are done. Otherwise loop to look for another continuation. */
 
-  memmove(cont, acl_text, acl_text_end - acl_text);
-  acl_text_end -= acl_text - cont;
-  acl_text = cont;
-  while (*acl_text != 0 && *acl_text != '\n') acl_text++;
-  if (*acl_text == 0) return yield;
+  memmove(cont, c->acl_text, c->acl_text_end - c->acl_text);
+  c->acl_text_end -= c->acl_text - cont;
+  c->acl_text = cont;
+  while (*c->acl_text != 0 && *c->acl_text != '\n') c->acl_text++;
+  if (*c->acl_text == 0) return yield;
   }
 
 /* Control does not reach here */
@@ -4258,13 +4264,13 @@ Returns:       OK         access is granted
 */
 
 static int
-acl_check_internal(int where, address_item *addr, uschar *s,
+acl_check_internal(int where, address_item *addr, cuschar *s,
   cuschar **user_msgptr, cuschar **log_msgptr)
 {
 int fd = -1;
 acl_block *acl = NULL;
 cuschar *acl_name = cUS("inline ACL");
-uschar *ss;
+cuschar *ss;
 
 /* Catch configuration loops */
 
@@ -4285,7 +4291,7 @@ been expanded as part of condition processing. */
 
 if (acl_level == 0)
   {
-  if (!(ss = expand_string(s)))
+  if (!(ss = expand_cstring(s)))
     {
     if (f.expand_string_forcedfail) return OK;
     *log_msgptr = string_sprintf("failed to expand ACL string \"%s\": %s", s,
@@ -4300,12 +4306,12 @@ while (isspace(*ss)) ss++;
 /* If we can't find a named ACL, the default is to parse it as an inline one.
 (Unless it begins with a slash; non-existent files give rise to an error.) */
 
-acl_text = ss;
+acl_getline_context ctx = { .acl_text = ss, .acl_text_end = NULL };
 
-if (is_tainted(acl_text) && !f.running_in_test_harness)
+if (is_tainted(ctx.acl_text) && !f.running_in_test_harness)
   {
   log_write(0, LOG_MAIN|LOG_PANIC,
-    "attempt to use tainted ACL text \"%s\"", acl_text);
+    "attempt to use tainted ACL text \"%s\"", ctx.acl_text);
   /* Avoid leaking info to an attacker */
   *log_msgptr = cUS("internal configuration error");
   return ERROR;
@@ -4348,16 +4354,16 @@ if (Ustrchr(ss, ' ') == NULL)
       }
 
     /* If the string being used as a filename is tainted, so is the file content */
-    acl_text = store_get(statbuf.st_size + 1, ss);
-    acl_text_end = acl_text + statbuf.st_size + 1;
+    ctx.acl_text = store_get(statbuf.st_size + 1, ss);
+    ctx.acl_text_end = ctx.acl_text + statbuf.st_size + 1;
 
-    if (read(fd, acl_text, statbuf.st_size) != statbuf.st_size)
+    if (read(fd, ctx.acl_text, statbuf.st_size) != statbuf.st_size)
       {
       *log_msgptr = string_sprintf("failed to read ACL file \"%s\": %s",
         ss, strerror(errno));
       return ERROR;
       }
-    acl_text[statbuf.st_size] = 0;
+    ctx.acl_text[statbuf.st_size] = 0;
     (void)close(fd);
 
     acl_name = string_sprintf("ACL \"%s\"", ss);
@@ -4373,7 +4379,7 @@ if (!acl)
   {
   int old_pool = store_pool;
   if (fd >= 0) store_pool = POOL_PERM;
-  acl = acl_read(acl_getline, log_msgptr);
+  acl = acl_read(acl_getline, &ctx, log_msgptr);
   store_pool = old_pool;
   if (!acl && *log_msgptr) return ERROR;
   if (fd >= 0)
@@ -4575,7 +4581,7 @@ cuschar * tmp;
 cuschar * tmp_arg[9];	/* must match acl_arg[] */
 cuschar * sav_arg[9];	/* must match acl_arg[] */
 int sav_narg;
-uschar * name;
+cuschar * name;
 int i;
 int ret;
 
@@ -4644,7 +4650,7 @@ if (where == ACL_WHERE_RCPT)
   {
   adb = address_defaults;
   addr = &adb;
-  addr->address = expand_string(cUS("$local_part@$domain"));
+  addr->address = expand_cstring(cUS("$local_part@$domain"));
   addr->domain = deliver_domain;
   addr->local_part = deliver_localpart;
   addr->cc_local_part = deliver_localpart;
@@ -4680,7 +4686,7 @@ Returns:       OK         access is granted by an ACCEPT verb
 int acl_where = ACL_WHERE_UNKNOWN;
 
 int
-acl_check(int where, uschar *recipient, uschar *s, cuschar **user_msgptr,
+acl_check(int where, cuschar *recipient, cuschar *s, cuschar **user_msgptr,
   cuschar **log_msgptr)
 {
 int rc;
@@ -4760,7 +4766,7 @@ switch (where)
       if ((rc = open_cutthrough_connection(addr)) == DEFER)
 	if (cutthrough.defer_pass)
 	  {
-	  uschar * s = addr->message;
+	  cuschar * s = addr->message;
 	  /* Horrid kludge to recover target's SMTP message */
 	  while (*s) s++;
 	  do --s; while (!isdigit(*s));

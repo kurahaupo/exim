@@ -37,8 +37,8 @@ enum { RECIP_ACCEPT, RECIP_IGNORE, RECIP_DEFER,
 
 /* Mutually recursive functions for marking addresses done. */
 
-static void child_done(address_item *, uschar *);
-static void address_done(address_item *, uschar *);
+static void child_done(address_item *, cuschar *);
+static void address_done(address_item *, cuschar *);
 
 /* Table for turning base-62 numbers into binary */
 
@@ -76,8 +76,8 @@ static int  parcount = 0;
 static pardata *parlist = NULL;
 static struct pollfd *parpoll;
 static int  return_count;
-static uschar *frozen_info = cUS("");
-static uschar *used_return_path = NULL;
+static cuschar *frozen_info = cUS("");
+static cuschar *used_return_path = NULL;
 
 
 
@@ -144,7 +144,7 @@ Returns:      a pointer to an initialized address_item
 */
 
 address_item *
-deliver_make_addr(uschar *address, BOOL copy)
+deliver_make_addr(cuschar *address, BOOL copy)
 {
 address_item * addr = store_get(sizeof(address_item), GET_UNTAINTED);
 *addr = address_defaults;
@@ -248,12 +248,11 @@ if (!addr->next)
 
   if (addr->parent)
     {
-    deliver_domain_parent = addr->parent->domain;
-    deliver_localpart_parent = !addr->parent->router
-      ? addr->parent->local_part
-      : addr->parent->router->caseful_local_part
-      ? addr->parent->cc_local_part
-      : addr->parent->lc_local_part;
+    const address_item *parent = addr->parent;
+    deliver_domain_parent = parent->domain;
+    deliver_localpart_parent = !parent->router                     ? parent->local_part
+                              : parent->router->caseful_local_part ? parent->cc_local_part
+                              :                                      parent->lc_local_part;
 
     /* File deliveries have their own flag because they need to be picked out
     as special more often. */
@@ -262,11 +261,11 @@ if (!addr->next)
       {
       if (testflag(addr, af_file))	    address_file = addr->local_part;
       else if (deliver_localpart[0] == '|') address_pipe = addr->local_part;
-      deliver_localpart = addr->parent->local_part;
-      deliver_localpart_prefix = addr->parent->prefix;
-      deliver_localpart_prefix_v = addr->parent->prefix_v;
-      deliver_localpart_suffix = addr->parent->suffix;
-      deliver_localpart_suffix_v = addr->parent->suffix_v;
+      deliver_localpart = parent->local_part;
+      deliver_localpart_prefix = parent->prefix;
+      deliver_localpart_prefix_v = parent->prefix_v;
+      deliver_localpart_suffix = parent->suffix;
+      deliver_localpart_suffix_v = parent->suffix_v;
       }
     }
 
@@ -332,7 +331,7 @@ Returns:    a file descriptor, or -1 (with errno set)
 */
 
 static int
-open_msglog_file(uschar *filename, int mode, uschar **error)
+open_msglog_file(cuschar *filename, int mode, cuschar **error)
 {
 if (Ustrstr(filename, cUS("/../")))
   log_write(0, LOG_MAIN|LOG_PANIC_DIE,
@@ -668,7 +667,7 @@ Returns:      nothing
 */
 
 static void
-address_done(address_item *addr, uschar *now)
+address_done(address_item *addr, cuschar *now)
 {
 update_spool = TRUE;        /* Ensure spool gets updated */
 
@@ -725,7 +724,7 @@ Returns:    nothing
 */
 
 static void
-child_done(address_item *addr, uschar *now)
+child_done(address_item *addr, cuschar *now)
 {
 while (addr->parent)
   {
@@ -783,7 +782,7 @@ return g;
 
 
 static gstring *
-d_hostlog(gstring * g, address_item * addr)
+d_hostlog(gstring * g, const address_item * addr)
 {
 host_item * h = addr->host_used;
 
@@ -823,7 +822,7 @@ return g;
 
 #ifndef DISABLE_TLS
 static gstring *
-d_tlslog(gstring * g, address_item * addr)
+d_tlslog(gstring * g, const address_item * addr)
 {
 if (LOGGING(tls_cipher) && addr->cipher)
   {
@@ -864,10 +863,10 @@ Args:	action	config option specifying listener
 Return: string expansion from listener, or NULL
 */
 
-uschar *
-event_raise(uschar * action, cuschar * event, uschar * ev_data, int * errnop)
+cuschar *
+event_raise(cuschar * action, cuschar * event, cuschar * ev_data, int * errnop)
 {
-uschar * s;
+cuschar * s;
 if (action)
   {
   DEBUG(D_deliver)
@@ -878,7 +877,7 @@ if (action)
   event_name = event;
   event_data = ev_data;
 
-  if (!(s = expand_string(action)) && *expand_string_message)
+  if (!(s = expand_cstring(action)) && *expand_string_message)
     log_write(0, LOG_MAIN|LOG_PANIC,
       "failed to expand event_action %s in %s: %s\n",
       event, transport_name ? transport_name : cUS("main"), expand_string_message);
@@ -904,7 +903,7 @@ void
 msg_event_raise(cuschar * event, const address_item * addr)
 {
 cuschar * save_domain = deliver_domain;
-uschar * save_local =  deliver_localpart;
+cuschar * save_local =  deliver_localpart;
 cuschar * save_host = deliver_host;
 cuschar * save_address = deliver_host_address;
 const int      save_port =   deliver_host_port;
@@ -956,8 +955,8 @@ router_name = transport_name = NULL;
 *        Generate local part for logging         *
 *************************************************/
 
-static uschar *
-string_get_lpart_sub(const address_item * addr, uschar * s)
+static cuschar *
+string_get_lpart_sub(const address_item * addr, cuschar * s)
 {
 #ifdef SUPPORT_I18N
 if (testflag(addr, af_utf8_downcvt))
@@ -979,9 +978,9 @@ Returns:      the new value of the buffer pointer
 */
 
 static gstring *
-string_get_localpart(address_item * addr, gstring * yield)
+string_get_localpart(const address_item * addr, gstring * yield)
 {
-uschar * s;
+cuschar * s;
 
 if (testflag(addr, af_include_affixes) && (s = addr->prefix))
   yield = string_cat(yield, string_get_lpart_sub(addr, s));
@@ -1016,10 +1015,10 @@ Returns:        a growable string in dynamic store
 
 static gstring *
 string_log_address(gstring * g,
-  address_item *addr, BOOL all_parents, BOOL success)
+  const address_item *addr, BOOL all_parents, BOOL success)
 {
 BOOL add_topaddr = TRUE;
-address_item *topaddr;
+const address_item *topaddr;
 
 /* Find the ultimate parent */
 
@@ -1090,7 +1089,7 @@ if (  (all_parents || testflag(addr, af_pfr))
    && addr->parent
    && addr->parent != topaddr)
   {
-  uschar *s = cUS(" (");
+  cuschar *s = cUS(" (");
   for (address_item * addr2 = addr->parent; addr2 != topaddr; addr2 = addr2->parent)
     {
     g = string_catn(g, s, 2);
@@ -1126,7 +1125,7 @@ Arguments:
   flags		passed to log_write()
 */
 void
-delivery_log(int flags, address_item * addr, int logchar, uschar * msg)
+delivery_log(int flags, const address_item * addr, int logchar, cuschar * msg)
 {
 gstring * g; /* Used for a temporary, expanding buffer, for building log lines  */
 rmark reset_point;
@@ -1260,7 +1259,7 @@ if (  LOGGING(smtp_confirmation)
   {
   unsigned lim = big_buffer_size < 1024 ? big_buffer_size : 1024;
   uschar *p = big_buffer;
-  uschar *ss = addr->message;
+  cuschar *ss = addr->message;
   *p++ = '\"';
   for (int i = 0; i < lim && ss[i] != 0; i++)	/* limit logged amount */
     {
@@ -1297,8 +1296,8 @@ return;
 
 
 static void
-deferral_log(address_item * addr, uschar * now,
-  int logflags, uschar * driver_name, uschar * driver_kind)
+deferral_log(const address_item * addr, cuschar * now,
+  int logflags, cuschar * driver_name, cuschar * driver_kind)
 {
 rmark reset_point = store_mark();
 gstring * g = string_get(256);
@@ -1368,7 +1367,7 @@ return;
 
 
 static void
-failure_log(address_item * addr, uschar * driver_kind, uschar * now)
+failure_log(const address_item * addr, cuschar * driver_kind, cuschar * now)
 {
 rmark reset_point = store_mark();
 gstring * g = string_get(256);
@@ -1463,8 +1462,8 @@ post_process_one(address_item *addr, int result, int logflags, int driver_type,
   int logchar)
 {
 uschar *now = tod_stamp(tod_log);
-uschar *driver_kind = NULL;
-uschar *driver_name = NULL;
+cuschar *driver_kind = NULL;
+cuschar *driver_name = NULL;
 
 DEBUG(D_deliver) debug_printf("post-process %s (%d)\n", addr->address, result);
 
@@ -1504,7 +1503,7 @@ if (addr->message)
   cuschar * s = string_printing(addr->message);
 
   /* deconst cast ok as string_printing known to have alloc'n'copied */
-  addr->message = expand_hide_passwords(US(s));
+  addr->message = expand_hide_passwords(s);
   }
 
 /* If we used a transport that has one of the "return_output" options set, and
@@ -1765,7 +1764,7 @@ Returns:       nothing
 */
 
 static void
-common_error(BOOL logit, address_item *addr, int code, uschar *format, ...)
+common_error(BOOL logit, address_item *addr, int code, cuschar *format, ...)
 {
 addr->basic_errno = code;
 
@@ -1775,7 +1774,7 @@ if (format)
   gstring * g;
 
   va_start(ap, format);
-  g = string_vformat(NULL, SVFMT_EXTEND|SVFMT_REBUFFER, CS(format), ap);
+  g = string_vformat(NULL, SVFMT_EXTEND|SVFMT_REBUFFER, CCS(format), ap);
   va_end(ap);
   addr->message = string_from_gstring(g);
   }
@@ -1837,13 +1836,15 @@ Arguments:
   igfp         pointer to the use_initgroups field
 
 Returns:       FALSE if failed - error has been set in address(es)
+
+Side-effects:  modifies addr->message upon failure
 */
 
 static BOOL
 findugid(address_item *addr, transport_instance *tp, uid_t *uidp, gid_t *gidp,
   BOOL *igfp)
 {
-uschar *nuname;
+cuschar *nuname;
 BOOL gid_set = FALSE;
 
 /* Default initgroups flag comes from the transport */
@@ -1940,23 +1941,21 @@ a uid, it must also provide a gid. */
 
 if (!gid_set)
   {
-  common_error(TRUE, addr, ERRNO_GIDFAIL, cUS("User set without group for ")
-    "%s transport", tp->name);
+  common_error(TRUE, addr, ERRNO_GIDFAIL, cUS("User set without group for "
+    "%s transport"), tp->name);
   return FALSE;
   }
 
 /* Check that the uid is not on the lists of banned uids that may not be used
 for delivery processes. */
 
-nuname = check_never_users(*uidp, never_users)
-  ? cUS("never_users")
-  : check_never_users(*uidp, fixed_never_users)
-  ? cUS("fixed_never_users")
-  : NULL;
+nuname = check_never_users(*uidp, never_users)       ? cUS("never_users")
+       : check_never_users(*uidp, fixed_never_users) ? cUS("fixed_never_users")
+       :                                               NULL;
 if (nuname)
   {
-  common_error(TRUE, addr, ERRNO_UIDFAIL, cUS("User %ld set for %s transport ")
-    "is on the %s list", (long int)(*uidp), tp->name, nuname);
+  common_error(TRUE, addr, ERRNO_UIDFAIL, cUS("User %ld set for %s transport "
+    "is on the %s list"), (long int)(*uidp), tp->name, nuname);
   return FALSE;
   }
 
@@ -2072,10 +2071,10 @@ Returns:      TRUE  the header is in the string
 */
 
 static BOOL
-contains_header(uschar *hdr, uschar *hstring)
+contains_header(cuschar *hdr, cuschar *hstring)
 {
 int len = Ustrlen(hdr);
-uschar *p = hstring;
+cuschar *p = hstring;
 while (*p != 0)
   {
   if (strncmpic(p, hdr, len) == 0)
@@ -2140,7 +2139,7 @@ gid_t gid;
 int status, len, rc;
 int pfd[2];
 pid_t pid;
-uschar *working_directory;
+cuschar *working_directory;
 address_item *addr2;
 transport_instance *tp = addr->transport;
 
@@ -2186,19 +2185,19 @@ if (  (deliver_home = tp->home_dir)		/* Set in transport, or */
       && !testflag(addr, af_home_expanded)	/*   not expanded */
    )  )
   {
-  uschar *rawhome = deliver_home;
+  cuschar *rawhome = deliver_home;
   deliver_home = NULL;                      /* in case it contains $home */
-  if (!(deliver_home = expand_string(rawhome)))
+  if (!(deliver_home = expand_cstring(rawhome)))
     {
-    common_error(TRUE, addr, ERRNO_EXPANDFAIL, cUS("home directory \"%s\" failed ")
-      "to expand for %s transport: %s", rawhome, tp->name,
+    common_error(TRUE, addr, ERRNO_EXPANDFAIL, cUS("home directory \"%s\" failed "
+      "to expand for %s transport: %s"), rawhome, tp->name,
       expand_string_message);
     return;
     }
   if (*deliver_home != '/')
     {
-    common_error(TRUE, addr, ERRNO_NOTABSOLUTE, cUS("home directory path \"%s\" ")
-      "is not absolute for %s transport", deliver_home, tp->name);
+    common_error(TRUE, addr, ERRNO_NOTABSOLUTE, cUS("home directory path \"%s\" "
+      "is not absolute for %s transport"), deliver_home, tp->name);
     return;
     }
   }
@@ -2213,18 +2212,18 @@ operating systems when running pipes, as some commands (e.g. "rm" under Solaris
 working_directory = tp->current_dir ? tp->current_dir : addr->current_dir;
 if (working_directory)
   {
-  uschar *raw = working_directory;
-  if (!(working_directory = expand_string(raw)))
+  cuschar *raw = working_directory;
+  if (!(working_directory = expand_cstring(raw)))
     {
-    common_error(TRUE, addr, ERRNO_EXPANDFAIL, cUS("current directory \"%s\" ")
-      "failed to expand for %s transport: %s", raw, tp->name,
+    common_error(TRUE, addr, ERRNO_EXPANDFAIL, cUS("current directory \"%s\" "
+      "failed to expand for %s transport: %s"), raw, tp->name,
       expand_string_message);
     return;
     }
   if (*working_directory != '/')
     {
-    common_error(TRUE, addr, ERRNO_NOTABSOLUTE, cUS("current directory path ")
-      "\"%s\" is not absolute for %s transport", working_directory, tp->name);
+    common_error(TRUE, addr, ERRNO_NOTABSOLUTE, cUS("current directory path "
+      "\"%s\" is not absolute for %s transport"), working_directory, tp->name);
     return;
     }
   }
@@ -2240,7 +2239,7 @@ if (  !shadowing
       || tp->log_output || tp->log_fail_output || tp->log_defer_output
    )  )
   {
-  uschar * error;
+  cuschar * error;
 
   addr->return_filename =
     spool_fname(cUS("msglog"), message_subdir, message_id,
@@ -2248,8 +2247,8 @@ if (  !shadowing
 
   if ((addr->return_file = open_msglog_file(addr->return_filename, 0400, &error)) < 0)
     {
-    common_error(TRUE, addr, errno, cUS("Unable to %s file for %s transport ")
-      "to return message: %s", error, tp->name, strerror(errno));
+    common_error(TRUE, addr, errno, cUS("Unable to %s file for %s transport "
+      "to return message: %s"), error, tp->name, strerror(errno));
     return;
     }
   }
@@ -2409,7 +2408,7 @@ if ((pid = exim_fork(cUS("delivery-local"))) == 0)
     {
     int i;
     int local_part_length = Ustrlen(addr2->local_part);
-    uschar *s;
+    cuschar *s;
     int ret;
 
     if(  (i = addr2->transport_return, (ret = write(pfd[pipe_write], &i, sizeof(int))) != sizeof(int))
@@ -2477,7 +2476,7 @@ for (addr2 = addr; addr2; addr2 = addr2->next)
   if ((len = read(pfd[pipe_read], &status, sizeof(int))) > 0)
     {
     int i;
-    uschar **sptr;
+    cuschar **sptr;
 
     addr2->transport_return = status;
     len = read(pfd[pipe_read], &transport_count,
@@ -2608,12 +2607,12 @@ if ((status & 0xffff) != 0)
 if (addr->special_action == SPECIAL_WARN && addr->transport->warn_message)
   {
   int fd;
-  uschar *warn_message;
+  cuschar *warn_message;
   pid_t pid;
 
   DEBUG(D_deliver) debug_printf("Warning message requested by transport\n");
 
-  if (!(warn_message = expand_string(addr->transport->warn_message)))
+  if (!(warn_message = expand_cstring(addr->transport->warn_message)))
     log_write(0, LOG_MAIN|LOG_PANIC, "Failed to expand \"%s\" (warning "
       "message for %s transport): %s", addr->transport->warn_message,
       addr->transport->name, expand_string_message);
@@ -2626,7 +2625,7 @@ if (addr->special_action == SPECIAL_WARN && addr->transport->warn_message)
     fprintf(f, "Auto-Submitted: auto-replied\n");
     if (!contains_header(cUS("From"), warn_message))
       moan_write_from(f);
-    fprintf(f, "%s", CS(warn_message));
+    fprintf(f, "%s", CCS(warn_message));
 
     /* Close and wait for child process to complete, without a timeout. */
 
@@ -3048,7 +3047,7 @@ while (addr_local)
 	addr3 = store_get(sizeof(address_item), GET_UNTAINTED);
 	*addr3 = *addr2;
 	addr3->next = NULL;
-	addr3->shadow_message = US(&addr2->shadow_message);
+	addr3->shadow_message = (cuschar*)(&addr2->shadow_message); /* TODO fix pointer mangling */
 	addr3->transport = stp;
 	addr3->transport_return = DEFER;
 	addr3->return_filename = NULL;
@@ -5271,7 +5270,7 @@ print_address_information(address_item *addr, FILE *f, uschar *si, uschar *sc,
   uschar *se)
 {
 BOOL yield = TRUE;
-uschar *printed = cUS("");
+cuschar *printed = cUS("");
 address_item *ancestor = addr;
 while (ancestor->parent) ancestor = ancestor->parent;
 
@@ -5288,7 +5287,7 @@ else if (!testflag(addr, af_pfr) || !addr->parent)
 else
   {
   uschar *s = addr->address;
-  uschar *ss;
+  cuschar *ss;
 
   if (addr->address[0] == '>') { ss = cUS("mail"); s++; }
   else if (addr->address[0] == '|') ss = cUS("pipe");
@@ -5879,7 +5878,7 @@ done by rewriting the header spool file. */
 if (message_logs)
   {
   uschar * fname = spool_fname(cUS("msglog"), message_subdir, id, cUS(""));
-  uschar * error;
+  cuschar * error;
   int fd;
 
   if ((fd = open_msglog_file(fname, SPOOL_MODE, &error)) < 0)
@@ -6030,8 +6029,8 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
 
   else if (rc == FF_FAIL)
     {
-    uschar *colon = cUS("");
-    uschar *logmsg = cUS("");
+    cuschar *colon = cUS("");
+    cuschar *logmsg = cUS("");
     int loglen = 0;
 
     process_recipients = RECIP_FAIL_FILTER;
@@ -7990,7 +7989,7 @@ wording. */
 
       if (rc != 0)
         {
-        uschar *s = cUS("");
+        cuschar *s = cUS("");
         if (now - received_time.tv_sec < retry_maximum_timeout && !addr_defer)
           {
           addr_defer = (address_item *)(+1);
@@ -8119,7 +8118,7 @@ was set just to keep the message on the spool, so there is nothing to do here.
 
 else if (addr_defer != (address_item *)(+1))
   {
-  uschar *recipients = cUS("");
+  cuschar *recipients = cUS("");
   BOOL want_warning_msg = FALSE;
 
   deliver_domain = testflag(addr_defer, af_pfr)

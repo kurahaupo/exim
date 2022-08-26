@@ -961,7 +961,7 @@ Returns:        TRUE if condition is met, FALSE if not
 */
 
 BOOL
-expand_check_condition(uschar *condition, uschar *m1, uschar *m2)
+expand_check_condition(uschar *condition, cuschar *m1, cuschar *m2)
 {
 cuschar * ss = expand_cstring(condition);
 if (!ss)
@@ -1200,7 +1200,7 @@ return NULL;
 
 
 static var_entry *
-find_var_ent(uschar * name)
+find_var_ent(cuschar * name)
 {
 int first = 0;
 int last = var_table_size;
@@ -1832,12 +1832,12 @@ Returns:        NULL if the variable does not exist, or
 */
 
 static cuschar *
-find_variable(uschar *name, BOOL exists_only, BOOL skipping, int *newsize)
+find_variable(cuschar *name, BOOL exists_only, BOOL skipping, int *newsize)
 {
 var_entry * vp;
 uschar *s;
 cuschar *cs;
-cuschar *domain;
+uschar *domain;
 uschar **ss;
 void * val;
 
@@ -2123,7 +2123,7 @@ Returns:     -1 OK; string pointer updated, but in "skipping" mode
 */
 
 static int
-read_subs(cuschar ** sub, int n, int m, cuschar ** sptr, esi_flags flags,
+read_subs(uschar ** sub, int n, int m, cuschar ** sptr, esi_flags flags,
   BOOL check_end, cuschar * name, BOOL * resetok, unsigned * textonly_p)
 {
 cuschar * s = *sptr;
@@ -2729,7 +2729,8 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_ACL:
     /* ${if acl {{name}{arg1}{arg2}...}  {yes}{no}} */
     {
-    cuschar *sub[10];
+    uschar *sub[10];
+    const uschar ** const csub = (const uschar **)sub;
     cuschar *user_msg;
     BOOL cond = FALSE;
 
@@ -2749,7 +2750,7 @@ switch(cond_type = identify_operator(&s, &opname))
       {
       int rc;
       *resetok = FALSE;	/* eval_acl() might allocate; do not reclaim */
-      switch(rc = eval_acl(sub, nelem(sub), &user_msg))
+      switch(rc = eval_acl(csub, nelem(sub), &user_msg))
 	{
 	case OK:
 	  cond = TRUE;
@@ -2765,7 +2766,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	  /*FALLTHROUGH*/
 	default:
           expand_string_message = string_sprintf("%s from acl \"%s\"",
-	    rc_names[rc], sub[0]);
+	    rc_names[rc], csub[0]);
 	  return NULL;
 	}
       }
@@ -3361,15 +3362,15 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_BOOL:
   case ECOND_BOOL_LAX:
     {
-    uschar *sub_arg[1];
-    uschar *t, *t2;
+    cuschar *sub_arg[1];
+    cuschar *t, *t2;
     cuschar *ourname;
     size_t len;
     BOOL boolvalue = FALSE;
 
     if (cskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
     ourname = cond_type == ECOND_BOOL_LAX ? cUS("bool_lax") : cUS("bool");
-    switch(read_subs((cuschar **)sub_arg, 1, 1, &s,
+    switch(read_subs(sub_arg, 1, 1, &s,
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, ourname, resetok, NULL))
       {
       case 1: expand_string_message = string_sprintf(
@@ -3380,7 +3381,7 @@ switch(cond_type = identify_operator(&s, &opname))
       case 3: return NULL;
       }
     t = sub_arg[0];
-    skip_whitespace(&t);
+    cskip_whitespace(&t);
     if ((len = Ustrlen(t)))
       {
       /* trailing whitespace: seems like a good idea to ignore it too */
@@ -3430,7 +3431,7 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_INBOUND_SRS:
     /* ${if inbound_srs {local_part}{secret}  {yes}{no}} */
     {
-    uschar * sub[2];
+    cuschar * sub[2];
     const pcre2_code * re;
     pcre2_match_data * md;
     PCRE2_SIZE * ovec;
@@ -3438,7 +3439,7 @@ switch(cond_type = identify_operator(&s, &opname))
     uschar cksum[4];
     BOOL boolvalue = FALSE;
 
-    switch(read_subs((cuschar **)sub, 2, 2, CUSS(&s),
+    switch(read_subs(sub, 2, 2, CUSS(&s),
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, name, resetok, NULL))
       {
       case 1: expand_string_message = cUS("too few arguments or bracketing "
@@ -3655,8 +3656,8 @@ Returns:         0 OK; lookup_value has been reset to save_lookup
 */
 
 static int
-process_yesno(esi_flags flags, BOOL yes, uschar *save_lookup, cuschar **sptr,
-  gstring ** yieldptr, uschar *type, BOOL *resetok)
+process_yesno(esi_flags flags, BOOL yes, cuschar *save_lookup, cuschar **sptr,
+  gstring ** yieldptr, cuschar *type, BOOL *resetok)
 {
 int rc = 0;
 cuschar *s = *sptr;    /* Local value */
@@ -3666,7 +3667,7 @@ cuschar * errwhere;
 flags &= ESI_SKIPPING;		/* Ignore all buf the skipping flag */
 
 /* If there are no following strings, we substitute the contents of $value for
-lookups and for extractions in the success case. For the ${if item, the string
+lookups and for extractions in the success case. For the ${if ...} item, the string
 "true" is substituted. In the fail case, nothing is substituted for all three
 items. */
 
@@ -3691,7 +3692,7 @@ if (cskip_whitespace(&s) == '}')
 
 if (*s++ != '{')
   {
-  errwhere = cUS("'yes' part did not start with '{'");		/*}}*/
+  errwhere = cUS("'yes' part did not start with '{'");		/*"}"'}'*/
   goto FAILED_CURLY;
   }
 
@@ -3747,12 +3748,12 @@ if (cskip_whitespace(&s) == '{')					/*}*/
   if (!yes)
     *yieldptr = string_cat(*yieldptr, sub2);
   }
-								/*{{*/
+
 /* If there is no second string, but the word "fail" is present when the use of
 the second string is wanted, set a flag indicating it was a forced failure
 rather than a syntactic error. Swallow the terminating } in case this is nested
 inside another lookup or if or extract. */
-
+								/*'{'*/
 else if (*s != '}')
   {
   uschar name[256];
@@ -3762,9 +3763,9 @@ else if (*s != '}')
     {
     if (!yes && !(flags & ESI_SKIPPING))
       {
-      cskip_whitespace(&s);					/*{{*/
+      cskip_whitespace(&s);					/*'{'*/
       if (*s++ != '}')
-        {
+        {                                                       /*"{"*/
 	errwhere = cUS("did not close with '}' after forcedfail");
 	goto FAILED_CURLY;
 	}
@@ -3784,7 +3785,7 @@ else if (*s != '}')
 
 /* All we have to do now is to check on the final closing brace. */
 
-cskip_whitespace(&s);						/*{{*/
+cskip_whitespace(&s);						/*"{"'{'*/
 if (*s++ != '}')
   {
   errwhere = cUS("did not close with '}'");
@@ -3862,7 +3863,7 @@ Returns:  pointer to string containing the first three
 */
 
 static uschar *
-prvs_hmac_sha1(uschar *address, cuschar *key, cuschar *key_num, cuschar *daystamp)
+prvs_hmac_sha1(cuschar *address, cuschar *key, cuschar *key_num, cuschar *daystamp)
 {
 gstring * hash_source;
 uschar * p;
@@ -4739,11 +4740,11 @@ while (*s)
     case EITEM_ACL:
       /* ${acl {name} {arg1}{arg2}...} */
       {
-      uschar * sub[10];	/* name + arg1-arg9 (which must match number of acl_arg[]) */
-      uschar * user_msg;
+      cuschar * sub[10];	/* name + arg1-arg9 (which must match number of acl_arg[]) */
+      cuschar * user_msg;
       int rc;
 
-      switch(read_subs((cuschar **)sub, nelem(sub), 1, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs(sub, nelem(sub), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;		/* skipping */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -4776,9 +4777,9 @@ while (*s)
     case EITEM_AUTHRESULTS:
       /* ${authresults {mysystemname}} */
       {
-      uschar * sub_arg[1];
+      cuschar * sub_arg[1];
 
-      switch(read_subs((cuschar **)sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs(sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
         case 1: goto EXPAND_FAILED_CURLY;
         case 2:
@@ -4819,9 +4820,9 @@ while (*s)
       cuschar *next_s;
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
-      uschar * save_lookup_value = lookup_value;
+      cuschar *save_lookup_value = lookup_value;
 
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
       if (!(next_s = eval_condition(s, &resetok, flags & ESI_SKIPPING ? NULL : &cond)))
 	goto EXPAND_FAILED;  /* message already set */
 
@@ -4862,10 +4863,10 @@ while (*s)
 #ifdef SUPPORT_I18N
     case EITEM_IMAPFOLDER:
       {				/* ${imapfolder {name}{sep}{specials}} */
-      uschar *sub_arg[3];
-      uschar *encoded;
+      cuschar *sub_arg[3];
+      cuschar *encoded;
 
-      switch(read_subs((cuschar **)sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs(sub_arg, nelem(sub_arg), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
         case 1: goto EXPAND_FAILED_CURLY;
         case 2:
@@ -4911,7 +4912,7 @@ while (*s)
       int nameptr = 0;
       uschar * key, * filename;
       cuschar * affix, * opts;
-      uschar * save_lookup_value = lookup_value;
+      cuschar *save_lookup_value = lookup_value;
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
 
@@ -4924,7 +4925,7 @@ while (*s)
       /* Get the key we are to look up for single-key+file style lookups.
       Otherwise set the key NULL pro-tem. */
 
-      if (skip_whitespace(&s) == '{')					/*}*/
+      if (cskip_whitespace(&s) == '{')					/*}*/
         {
         key = expand_string_internal(s+1,
 		ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL);
@@ -4934,7 +4935,7 @@ while (*s)
 	  expand_string_message = cUS("missing '}' after lookup key");
 	  goto EXPAND_FAILED_CURLY;
 	  }
-        skip_whitespace(&s);
+        cskip_whitespace(&s);
         }
       else key = NULL;
 
@@ -4956,7 +4957,7 @@ while (*s)
         s++;
         }
       name[nameptr] = '\0';
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
 
       /* Now check for the individual search type and any partial or default
       options. Only those types that are actually in the binary are valid. */
@@ -5006,7 +5007,7 @@ while (*s)
 	expand_string_message = cUS("missing '}' closing lookup file-or-query arg");
 	goto EXPAND_FAILED_CURLY;
 	}
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
 
       /* If this isn't a single-key+file lookup, re-arrange the variables
       to be appropriate for the search_ functions. For query-style lookups,
@@ -5092,7 +5093,7 @@ while (*s)
 
 #else   /* EXIM_PERL */
       {
-      uschar * sub_arg[EXIM_PERL_MAX_ARGS + 2];
+      cuschar * sub_arg[EXIM_PERL_MAX_ARGS + 2];
       gstring * new_yield;
 
       if (expand_forbid & RDO_PERL)
@@ -5101,7 +5102,7 @@ while (*s)
         goto EXPAND_FAILED;
         }
 
-      switch(read_subs((cuschar **)sub_arg, EXIM_PERL_MAX_ARGS + 1, 1, &s, flags, TRUE,
+      switch(read_subs(sub_arg, EXIM_PERL_MAX_ARGS + 1, 1, &s, flags, TRUE,
            name, &resetok, NULL))
         {
 	case -1: continue;	/* If skipping, we don't actually do anything */
@@ -5167,9 +5168,11 @@ while (*s)
 
     case EITEM_PRVS:
       {
-      uschar * sub_arg[3], * p, * domain;
+      cuschar * sub_arg[3];
+      uschar * p;
+      cuschar * domain;
 
-      switch(read_subs((cuschar **)sub_arg, 3, 2, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs(sub_arg, 3, 2, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;	/* If skipping, we don't actually do anything */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -5221,7 +5224,7 @@ while (*s)
 
     case EITEM_PRVSCHECK:
       {
-      uschar * sub_arg[3], * p;
+      cuschar * sub_arg[3], * p;
       gstring * g;
       const pcre2_code * re;
 
@@ -5230,7 +5233,7 @@ while (*s)
       prvscheck_address = NULL;
       prvscheck_keynum = NULL;
 
-      switch(read_subs((cuschar **)sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
+      switch(read_subs(sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
         {
         case 1: goto EXPAND_FAILED_CURLY;
         case 2:
@@ -5266,7 +5269,7 @@ while (*s)
         prvscheck_keynum = string_copy(key_num);
 
         /* Now expand the second argument */
-        switch(read_subs((cuschar **)sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
+        switch(read_subs(sub_arg, 1, 1, &s, flags, FALSE, name, &resetok, NULL))
           {
           case 1: goto EXPAND_FAILED_CURLY;
           case 2:
@@ -5289,11 +5292,11 @@ while (*s)
         if (Ustrcmp(p,hash) == 0)
           {
           /* Success, valid BATV address. Now check the expiry date. */
-          uschar *now = prvs_daystamp(0);
+          cuschar *now = prvs_daystamp(0);
           unsigned int inow = 0,iexpire = 1;
 
-          (void)sscanf(CS(now),"%u",&inow);
-          (void)sscanf(CS(daystamp),"%u",&iexpire);
+          (void)sscanf(CCS(now),"%u",&inow);
+          (void)sscanf(CCS(daystamp),"%u",&iexpire);
 
           /* When "iexpire" is < 7, a "flip" has occurred.
              Adjust "inow" accordingly. */
@@ -5356,7 +5359,7 @@ while (*s)
     case EITEM_READFILE:
       {
       FILE * f;
-      uschar * sub_arg[2];
+      cuschar * sub_arg[2];
 
       if ((expand_forbid & RDO_READFILE) != 0)
         {
@@ -5394,7 +5397,7 @@ while (*s)
     case EITEM_READSOCK:
       {
       uschar * arg;
-      uschar * sub_arg[4];
+      cuschar * sub_arg[4];
 
       if (expand_forbid & RDO_READSOCK)
         {
@@ -5501,7 +5504,7 @@ while (*s)
 	  expand_string_message = cUS("missing '}' closing failstring for readsocket");
 	  goto EXPAND_FAILED_CURLY;
 	  }
-        skip_whitespace(&s);
+        cskip_whitespace(&s);
         }
 
     READSOCK_DONE:							/*{*/
@@ -5529,7 +5532,7 @@ while (*s)
 	expand_string_message = cUS("missing '}' closing failstring for readsocket");
 	goto EXPAND_FAILED_CURLY;
 	}
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
       goto READSOCK_DONE;
       }
 
@@ -5562,7 +5565,7 @@ while (*s)
 	  goto EXPAND_FAILED;
 	  }
 	}
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
 
       if (*s != '{')					/*}*/
         {
@@ -5582,7 +5585,7 @@ while (*s)
 	if (!(arg = expand_string_internal(s,
 		ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL)))
 	  goto EXPAND_FAILED;
-	skip_whitespace(&s);
+	cskip_whitespace(&s);
 	}
 							/*{*/
       if (*s++ != '}')
@@ -6007,7 +6010,8 @@ while (*s)
       {
       int field_number = 1;
       BOOL field_number_set = FALSE;
-      uschar * save_lookup_value = lookup_value, * sub[3];
+      cuschar *save_lookup_value = lookup_value;
+      uschar * sub[3];
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
 
@@ -6020,7 +6024,7 @@ while (*s)
 
       /* Check for a format-variant specifier */
 
-      if (skip_whitespace(&s) != '{')					/*}*/
+      if (cskip_whitespace(&s) != '{')					/*}*/
 	if (Ustrncmp(s, "json", 4) == 0)
 	  if (*(s += 4) == 's')
 	    {fmt = extract_jsons; s++;}
@@ -6043,14 +6047,14 @@ while (*s)
 	    expand_string_message = cUS("missing '{' for arg of extract");
 	    goto EXPAND_FAILED_CURLY;
 	    }
-	  skip_whitespace(&s);
+	  cskip_whitespace(&s);
 	  }
 	if (  Ustrncmp(s, "fail", 4) == 0				/*'{'*/
 	   && (s[4] == '}' || s[4] == ' ' || s[4] == '\t' || !s[4])
 	   )
 	  {
 	  s += 4;
-	  skip_whitespace(&s);
+	  cskip_whitespace(&s);
 	  }								/*'{'*/
 	if (*s != '}')
 	  {
@@ -6061,7 +6065,7 @@ while (*s)
 
       else for (int i = 0, j = 2; i < j; i++) /* Read the proper number of arguments */
         {
-	if (skip_whitespace(&s) == '{') 				/*'}'*/
+	if (cskip_whitespace(&s) == '{') 				/*'}'*/
           {
           if (!(sub[i] = expand_string_internal(s+1,
 		ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL)))
@@ -6084,7 +6088,7 @@ while (*s)
             int x = 0;
             uschar * p = sub[0];
 
-            skip_whitespace(&p);
+            cskip_whitespace(&p);
             sub[0] = p;
 
             len = Ustrlen(p);
@@ -6186,14 +6190,14 @@ while (*s)
 	      if (Ustrcmp(item, sub[0]) == 0)	/*XXX should be a UTF8-compare */
 		{
 		s = item + Ustrlen(item) + 1;
-		if (skip_whitespace(&s) != ':')
+		if (cskip_whitespace(&s) != ':')
 		  {
 		  expand_string_message =
 		    cUS("missing object value-separator for extract json");
 		  goto EXPAND_FAILED_CURLY;
 		  }
 		s++;
-		skip_whitespace(&s);
+		cskip_whitespace(&s);
 		lookup_value = s;
 		break;
 		}
@@ -6243,7 +6247,8 @@ while (*s)
     case EITEM_LISTEXTRACT:
       {
       int field_number = 1;
-      uschar * save_lookup_value = lookup_value, * sub[2];
+      cuschar *save_lookup_value = lookup_value;
+      uschar * sub[2];
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
 
@@ -6251,7 +6256,7 @@ while (*s)
 
       for (int i = 0; i < 2; i++)
         {
-        if (skip_whitespace(&s) != '{')				/*}*/
+        if (cskip_whitespace(&s) != '{')				/*}*/
 	  {
 	  expand_string_message = string_sprintf(
 	    "missing '{' for arg %d of listextract", i+1);		/*}*/
@@ -6277,7 +6282,7 @@ while (*s)
 	  int x = 0;
 	  uschar *p = sub[0];
 
-	  skip_whitespace(&p);
+	  cskip_whitespace(&p);
 	  sub[0] = p;
 
 	  len = Ustrlen(p);
@@ -6359,12 +6364,13 @@ while (*s)
 #ifndef DISABLE_TLS
     case EITEM_CERTEXTRACT:
       {
-      uschar * save_lookup_value = lookup_value, * sub[2];
+      cuschar *save_lookup_value = lookup_value;
+      uschar * sub[2];
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
 
       /* Read the field argument */
-      if (skip_whitespace(&s) != '{')					/*}*/
+      if (cskip_whitespace(&s) != '{')					/*}*/
 	{
 	expand_string_message = cUS("missing '{' for field arg of certextract");
 	goto EXPAND_FAILED_CURLY;					/*}*/
@@ -6382,7 +6388,7 @@ while (*s)
       int len;
       uschar *p = sub[0];
 
-      skip_whitespace(&p);
+      cskip_whitespace(&p);
       sub[0] = p;
 
       len = Ustrlen(p);
@@ -6391,7 +6397,7 @@ while (*s)
       }
 
       /* inspect the cert argument */
-      if (skip_whitespace(&s) != '{')					/*}*/
+      if (cskip_whitespace(&s) != '{')					/*}*/
 	{
 	expand_string_message = cUS("missing '{' for cert variable arg of certextract");
 	goto EXPAND_FAILED_CURLY;					/*}*/
@@ -6447,10 +6453,10 @@ while (*s)
       int sep = 0, save_ptr = gstring_length(yield);
       uschar outsep[2] = { '\0', '\0' };
       cuschar *list, *expr, *temp;
-      uschar * save_iterate_item = iterate_item;
-      uschar * save_lookup_value = lookup_value;
+      uschar *save_iterate_item = iterate_item;
+      cuschar *save_lookup_value = lookup_value;
 
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
 	expand_string_message =
@@ -6471,7 +6477,7 @@ while (*s)
       if (item_type == EITEM_REDUCE)
         {
 	uschar * t;
-        skip_whitespace(&s);
+        cskip_whitespace(&s);
         if (*s++ != '{')						/*}*/
 	  {
 	  expand_string_message = cUS("missing '{' for second arg of reduce");
@@ -6488,7 +6494,7 @@ while (*s)
 	  }
         }
 
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
 	expand_string_message =
@@ -6517,7 +6523,7 @@ while (*s)
         goto EXPAND_FAILED;
         }
 
-      skip_whitespace(&s);						/*{{{*/
+      cskip_whitespace(&s);						/*{{{*/
       if (*s++ != '}')
         {
         expand_string_message = string_sprintf("missing } at end of condition "
@@ -6526,7 +6532,7 @@ while (*s)
         goto EXPAND_FAILED;
         }
 
-      skip_whitespace(&s);						/*{{*/
+      cskip_whitespace(&s);						/*{{*/
       if (*s++ != '}')
         {
         expand_string_message = string_sprintf("missing } at end of \"%s\"",
@@ -6653,7 +6659,7 @@ while (*s)
       cuschar * dstlist = NULL, * dstkeylist = NULL;
       uschar * tmp, * save_iterate_item = iterate_item;
 
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
         expand_string_message = cUS("missing '{' for list arg of sort");
@@ -6669,7 +6675,7 @@ while (*s)
 	goto EXPAND_FAILED_CURLY;
 	}
 
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
         expand_string_message = cUS("missing '{' for comparator arg of sort");
@@ -6704,7 +6710,7 @@ while (*s)
 	  goto EXPAND_FAILED;
 	}
 
-      skip_whitespace(&s);
+      cskip_whitespace(&s);
       if (*s++ != '{')							/*}*/
         {
         expand_string_message = cUS("missing '{' for extractor arg of sort");
@@ -6915,9 +6921,9 @@ while (*s)
     case EITEM_ENV:	/* ${env {name} {val_if_found} {val_if_unfound}} */
       {
       uschar * key;
-      uschar *save_lookup_value = lookup_value;
+      cuschar *save_lookup_value = lookup_value;
 
-      if (skip_whitespace(&s) != '{')					/*}*/
+      if (cskip_whitespace(&s) != '{')					/*}*/
 	goto EXPAND_FAILED;
 
       key = expand_string_internal(s+1,
@@ -7540,7 +7546,7 @@ NOT_ITEM: ;
 	int save_ptr = gstring_length(yield);
 	int start, end, domain;  /* Not really used */
 
-	if (skip_whitespace(&sub) == '>')
+	if (cskip_whitespace(&sub) == '>')
 	  if (*outsep = *++sub) ++sub;
 	  else
 	    {
@@ -8277,7 +8283,7 @@ NOT_ITEM: ;
 terminating brace. */
 
 if (flags & ESI_BRACE_ENDS && !*s)
-  {							/*{{*/
+  {							/*"{{"*/
   expand_string_message = malformed_header
     ? cUS("missing } at end of string - could be header name not terminated by colon")
     : cUS("missing } at end of string");
@@ -8572,14 +8578,14 @@ Returns:     OK     value placed in rvalue
 
 int
 exp_bool(address_item *addr,
-  uschar *mtype, uschar *mname, unsigned dbg_opt,
-  uschar *oname, BOOL bvalue,
-  uschar *svalue, BOOL *rvalue)
+  cuschar *mtype, cuschar *mname, unsigned dbg_opt,
+  cuschar *oname, BOOL bvalue,
+  cuschar *svalue, BOOL *rvalue)
 {
-uschar *expanded;
+cuschar *expanded;
 if (!svalue) { *rvalue = bvalue; return OK; }
 
-if (!(expanded = expand_string(svalue)))
+if (!(expanded = expand_cstring(svalue)))
   {
   if (f.expand_string_forcedfail)
     {
@@ -8614,8 +8620,8 @@ return OK;
 
 /* Avoid potentially exposing a password in a string about to be logged */
 
-uschar *
-expand_hide_passwords(uschar * s)
+cuschar *
+expand_hide_passwords(cuschar * s)
 {
 return (  (  Ustrstr(s, "failed to expand") != NULL
 	  || Ustrstr(s, "expansion of ")    != NULL

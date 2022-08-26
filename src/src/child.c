@@ -67,14 +67,14 @@ Returns:         if CEE_RETURN_ARGV is given, returns a pointer to argv;
                  otherwise, does not return
 */
 
-uschar **
+cuschar **
 child_exec_exim(int exec_type, BOOL kill_v, int *pcount, BOOL minimal,
   int acount, ...)
 {
 int first_special = -1;
 int n = 0;
 int extra = pcount ? *pcount : 0;
-uschar **argv;
+cuschar **argv;
 
 argv = store_get((extra + acount + MAX_CLMACROS + 24) * sizeof(char *), GET_UNTAINTED);
 
@@ -124,7 +124,7 @@ if (!minimal)
   DEBUG(D_any)
     {
     argv[n++] = cUS("-MCd");
-    argv[n++] = US(process_purpose);
+    argv[n++] = CUS(process_purpose);
     }
   if (!f.testsuite_delays)	argv[n++] = cUS("-odd");
   if (f.dont_deliver)		argv[n++] = cUS("-N");
@@ -162,9 +162,9 @@ if (exec_type == CEE_RETURN_ARGV)
 failure. We know that there will always be at least one extra option in the
 call when exec() is done here, so it can be used to add to the panic data. */
 
-DEBUG(D_exec) debug_print_argv(CUSS(argv));
+DEBUG(D_exec) debug_print_argv(argv);
 exim_nullstd();                            /* Make sure std{in,out,err} exist */
-execv(CS(argv[0]), (char *const *)argv);
+execv(CCS(argv[0]), (char *const *)argv);
 
 log_write(0,
   LOG_MAIN | (exec_type == CEE_EXEC_EXIT ? LOG_PANIC : LOG_PANIC_DIE),
@@ -224,8 +224,8 @@ Returns:          pid of the created process or -1 if anything has gone wrong
 */
 
 pid_t
-child_open_exim2_function(int * fdptr, uschar * sender,
-  uschar * sender_authentication, cuschar * purpose)
+child_open_exim2_function(int * fdptr, cuschar * sender,
+  cuschar * sender_authentication, cuschar * purpose)
 {
 int pfd[2];
 int save_errno;
@@ -336,7 +336,7 @@ Returns:      the pid of the created process or -1 if anything has gone wrong
 
 pid_t
 child_open_uid(cuschar **argv, cuschar **envp, int newumask,
-  uid_t *newuid, gid_t *newgid, int *infdptr, int *outfdptr, uschar *wd,
+  uid_t *newuid, gid_t *newgid, int *infdptr, int *outfdptr, cuschar *wd,
   BOOL make_leader, cuschar * purpose)
 {
 int save_errno;
@@ -422,8 +422,8 @@ if (pid == 0)
 
   /* Now do the exec */
 
-  if (envp) execve(CS(argv[0]), (char *const *)argv, (char *const *)envp);
-  else execv(CS(argv[0]), (char *const *)argv);
+  if (envp) execve(CCS(argv[0]), (char *const *)argv, (char *const *)envp);
+  else execv(CCS(argv[0]), (char *const *)argv);
 
   /* Failed to execv. Signal this failure using EX_EXECFAILED. We are
   losing the actual errno we got back, because there is no way to return
@@ -484,10 +484,10 @@ Returns:      the pid of the created process or -1 if anything has gone wrong
 */
 
 pid_t
-child_open_function(uschar **argv, uschar **envp, int newumask, int *infdptr,
+child_open_function(cuschar **argv, cuschar **envp, int newumask, int *infdptr,
   int *outfdptr, BOOL make_leader, cuschar * purpose)
 {
-return child_open_uid(CUSS(argv), CUSS(envp), newumask, NULL, NULL,
+return child_open_uid(argv, envp, newumask, NULL, NULL,
   infdptr, outfdptr, NULL, make_leader, purpose);
 }
 

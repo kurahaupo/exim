@@ -52,8 +52,8 @@ cuschar *list = *listptr;
 FILE *data_file;
 uschar *dcc_default_ip_option = cUS("127.0.0.1");
 uschar *dcc_helo_option = cUS("localhost");
-uschar *xtra_hdrs = NULL;
-uschar *override_client_ip  = NULL;
+cuschar *xtra_hdrs = NULL;
+cuschar *override_client_ip  = NULL;
 
 /* from local_scan */
 int dcc_resplen, retval, sockfd, resp;
@@ -127,7 +127,7 @@ if (dccifd_address)
 /* We don't support any other option than 'header' so just copy that */
 dcc_headers = string_cat(NULL, dccifd_options);
 /* if $acl_m_dcc_override_client_ip is set use it */
-if (((override_client_ip = expand_string(cUS("$acl_m_dcc_override_client_ip"))) != NULL) &&
+if (((override_client_ip = expand_cstring(cUS("$acl_m_dcc_override_client_ip"))) != NULL) &&
      (override_client_ip[0] != '\0'))
   {
   Ustrncpy(client_ip, override_client_ip, sizeof(client_ip)-1);
@@ -465,7 +465,7 @@ else
 /* check if we should add additional headers passed in acl_m_dcc_add_header */
 if (dcc_direct_add_header)
   {
-  if (((xtra_hdrs = expand_string(cUS("$acl_m_dcc_add_header"))) != NULL) && (xtra_hdrs[0] != '\0'))
+  if (((xtra_hdrs = expand_cstring(cUS("$acl_m_dcc_add_header"))) != NULL) && (xtra_hdrs[0] != '\0'))
     {
     dcc_xtra_hdrs = string_cat(NULL, xtra_hdrs);
     if (dcc_xtra_hdrs->s[dcc_xtra_hdrs->ptr - 1] != '\n')

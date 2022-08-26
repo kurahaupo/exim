@@ -114,9 +114,9 @@ Returns:         nothing
 */
 
 static void
-never_error(uschar *log_msg, uschar *smtp_msg, int was_errno)
+never_error(cuschar *log_msg, cuschar *smtp_msg, int was_errno)
 {
-uschar *emsg = was_errno <= 0
+cuschar *emsg = was_errno <= 0
   ? cUS("") : string_sprintf(": %s", strerror(was_errno));
 log_write(0, LOG_MAIN|LOG_PANIC, "%s%s", log_msg, emsg);
 if (smtp_out) smtp_printf("421 %s\r\n", FALSE, smtp_msg);
@@ -132,7 +132,7 @@ if (smtp_out) smtp_printf("421 %s\r\n", FALSE, smtp_msg);
 static void
 unlink_notifier_socket(void)
 {
-uschar * s = expand_string(notifier_socket);
+cuschar * s = expand_cstring(notifier_socket);
 DEBUG(D_any) debug_printf("unlinking notifier socket %s\n", s);
 Uunlink(s);
 }
@@ -297,7 +297,7 @@ checks) should be used. The documentation is full of warnings. */
 
 if (smtp_accept_max_per_host)
   {
-  uschar *expanded = expand_string(smtp_accept_max_per_host);
+  cuschar *expanded = expand_cstring(smtp_accept_max_per_host);
   if (!expanded)
     {
     if (!f.expand_string_forcedfail)
@@ -307,7 +307,7 @@ if (smtp_accept_max_per_host)
   /* For speed, interpret a decimal number inline here */
   else
     {
-    uschar *s = expanded;
+    cuschar *s = expanded;
     while (isdigit(*s))
       max_for_this_host = max_for_this_host * 10 + *s++ - '0';
     if (*s)
@@ -372,7 +372,7 @@ arrange to unset the selector in the subprocess. */
 
 if (LOGGING(smtp_connection))
   {
-  uschar *list = hosts_connection_nolog;
+  cuschar *list = hosts_connection_nolog;
   memset(sender_host_cache, 0, sizeof(sender_host_cache));
   if (list && verify_check_host(&list) == OK)
     save_log_selector &= ~L_smtp_connection;
@@ -429,7 +429,7 @@ if (pid == 0)
   smtp_active_hostname = primary_hostname;
   if (raw_active_hostname)
     {
-    uschar * nah = expand_string(raw_active_hostname);
+    cuschar * nah = expand_cstring(raw_active_hostname);
     if (!nah)
       {
       if (!f.expand_string_forcedfail)
@@ -922,7 +922,7 @@ while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
 
   if (queue_pid_slots)
     {
-    int max = atoi(CS(expand_string(queue_run_max)));
+    int max = atoi(CCS(expand_cstring(queue_run_max)));
     for (int i = 0; i < max; i++)
       if (queue_pid_slots[i] == pid)
         {
@@ -965,7 +965,8 @@ operate_on_pid_file(const enum pid_op operation, const pid_t pid)
 char pid_line[sizeof(int) * 3 + 2];
 const int pid_len = snprintf(pid_line, sizeof(pid_line), "%d\n", (int)pid);
 BOOL lines_match = FALSE;
-uschar * path, * base, * dir;
+uschar * path, * base;
+cuschar * dir;
 
 const int dir_flags = O_RDONLY | O_NONBLOCK;
 const int base_flags = O_NOFOLLOW | O_NONBLOCK;
@@ -991,12 +992,12 @@ if (!base || !*base || Ustrchr(base, '/') != NULL) goto cleanup;
 
 cwd_fd = open(".", dir_flags);
 if (cwd_fd < 0 || fstat(cwd_fd, &sb) != 0 || !S_ISDIR(sb.st_mode)) goto cleanup;
-dir_fd = open(CS(dir), dir_flags);
+dir_fd = open(CCS(dir), dir_flags);
 if (dir_fd < 0 || fstat(dir_fd, &sb) != 0 || !S_ISDIR(sb.st_mode)) goto cleanup;
 
 /* emulate openat */
 if (fchdir(dir_fd) != 0) goto cleanup;
-base_fd = open(CS(base), O_RDONLY | base_flags);
+base_fd = open(CCS(base), O_RDONLY | base_flags);
 if (fchdir(cwd_fd) != 0)
   log_write(0, LOG_MAIN|LOG_PANIC_DIE, "can't return to previous working dir: %s", strerror(errno));
 
@@ -1036,7 +1037,7 @@ if (operation == PID_WRITE)
      }
     /* emulate openat */
     if (fchdir(dir_fd) != 0) goto cleanup;
-    base_fd = open(CS(base), O_WRONLY | O_CREAT | O_EXCL | base_flags, base_mode);
+    base_fd = open(CCS(base), O_WRONLY | O_CREAT | O_EXCL | base_flags, base_mode);
     if (fchdir(cwd_fd) != 0)
         log_write(0, LOG_MAIN|LOG_PANIC_DIE, "can't return to previous working dir: %s", strerror(errno));
     if (base_fd < 0) goto cleanup;
@@ -1153,11 +1154,11 @@ daemon_notifier_sockname(struct sockaddr_un * sup)
 sup->sun_path[0] = 0;  /* Abstract local socket addr - Linux-specific? */
 return offsetof(struct sockaddr_un, sun_path) + 1
   + snprintf(sup->sun_path+1, sizeof(sup->sun_path)-1, "%s",
-              expand_string(notifier_socket));
+              expand_cstring(notifier_socket));
 #else
 return offsetof(struct sockaddr_un, sun_path)
   + snprintf(sup->sun_path, sizeof(sup->sun_path), "%s",
-              expand_string(notifier_socket));
+              expand_cstring(notifier_socket));
 #endif
 }
 
@@ -1364,7 +1365,7 @@ struct pollfd * fd_polls, * tls_watch_poll = NULL, * dnotify_poll = NULL;
 int listen_socket_count = 0, poll_fd_count;
 ip_address_item * addresses = NULL;
 time_t last_connection_time = (time_t)0;
-int local_queue_run_max = atoi(CS(expand_string(queue_run_max)));
+int local_queue_run_max = atoi(CCS(expand_cstring(queue_run_max)));
 
 process_purpose = cUS("daemon");
 
@@ -1411,7 +1412,7 @@ if (f.inetd_wait_mode)
   our own buffering; we assume though that inetd set the socket REUSEADDR. */
 
   if (tcp_nodelay)
-    if (setsockopt(3, IPPROTO_TCP, TCP_NODELAY, US(&on), sizeof(on)))
+    if (setsockopt(3, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)))
       log_write(0, LOG_MAIN|LOG_PANIC_DIE, "failed to set socket NODELAY: %s",
 	strerror(errno));
   }
@@ -1506,7 +1507,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
   int pct = 0;
   uschar *s;
   cuschar * list;
-  uschar *local_iface_source = cUS("local_interfaces");
+  cuschar *local_iface_source = cUS("local_interfaces");
   ip_address_item *ipa;
   ip_address_item **pipa;
 
@@ -1872,7 +1873,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
 #endif
     for(;;)
       {
-      uschar *msg, *addr;
+      cuschar *msg, *addr;
       if (ip_bind(fd, af, ipa->address, ipa->port) >= 0) break;
       if (check_special_case(errno, addresses, ipa, TRUE))
         {
@@ -2067,7 +2068,7 @@ else if (f.daemon_listen)
   int smtps_ports = 0;
   ip_address_item * ipa;
   uschar * p;
-  uschar * qinfo = queue_interval > 0
+  cuschar * qinfo = queue_interval > 0
     ? string_sprintf("-q%s%s",
 	f.queue_2stage ? "q" : "", readconf_printtime(queue_interval))
     : cUS("no queue runs");
@@ -2341,7 +2342,7 @@ for (;;)
             {
             uschar opt[8];
             uschar *p = opt;
-            uschar *extra[7];
+            cuschar *extra[7];
             int extracount = 1;
 
             signal(SIGALRM, SIG_DFL);
@@ -2618,7 +2619,7 @@ for (;;)
 #ifdef TCP_QUICKACK /* Avoid pure-ACKs while in tls protocol pingpong phase */
 	/* Unfortunately we cannot be certain to do this before a TLS-on-connect
 	Client Hello arrives and is acked. We do it as early as possible. */
-	(void) setsockopt(accept_socket, IPPROTO_TCP, TCP_QUICKACK, US(&off), sizeof(off));
+	(void) setsockopt(accept_socket, IPPROTO_TCP, TCP_QUICKACK, &off, sizeof(off));
 #endif
         if (inetd_wait_timeout)
           last_connection_time = time(NULL);
@@ -2668,7 +2669,7 @@ for (;;)
     signal(SIGHUP, SIG_IGN);
     sighup_argv[0] = exim_path;
     exim_nullstd();
-    execv(CS(exim_path), (char *const *)sighup_argv);
+    execv(CCS(exim_path), (char *const *)sighup_argv);
     log_write(0, LOG_MAIN|LOG_PANIC_DIE, "pid %d: exec of %s failed: %s",
       getpid(), exim_path, strerror(errno));
     log_close_all();

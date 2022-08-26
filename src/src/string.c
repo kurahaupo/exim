@@ -498,13 +498,13 @@ Argument:  pointer to the string
 Returns:   pointer to the possibly altered string
 */
 
-uschar *
-string_split_message(uschar * msg)
+cuschar *
+string_split_message(cuschar * msg)
 {
 uschar *s, *ss;
 
 if (!msg || Ustrlen(msg) <= 75) return msg;
-s = ss = msg = string_copy(msg);
+msg = s = ss = string_copy(msg);
 
 for (;;)
   {

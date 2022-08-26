@@ -127,12 +127,12 @@ Returns:     nothing
 */
 
 void
-debug_print_string(uschar *debug_string)
+debug_print_string(cuschar *debug_string)
 {
 if (!debug_string) return;
 HDEBUG(D_any|D_v)
   {
-  uschar *s = expand_string(debug_string);
+  cuschar *s = expand_cstring(debug_string);
   if (!s)
     debug_printf("failed to expand debug_output \"%s\": %s\n", debug_string,
       expand_string_message);
@@ -153,7 +153,7 @@ Returns:    nothing
 */
 
 void
-debug_print_ids(uschar *s)
+debug_print_ids(cuschar *s)
 {
 debug_printf("%s uid=%ld gid=%ld euid=%ld egid=%ld\n", s,
   (long int)getuid(), (long int)getgid(), (long int)geteuid(),
@@ -283,7 +283,7 @@ we trust that we will never expand the results. */
 		.s = debug_buffer };
   if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, format, ap))
     {
-    uschar * s = cUS("**** debug string too long - truncated ****\n");
+    cuschar * s = cUS("**** debug string too long - truncated ****\n");
     uschar * p = gs.s + gs.ptr;
     int maxlen = gs.size - Ustrlen(s) - 2;
     if (p > gs.s + maxlen) p = gs.s + maxlen;

@@ -248,7 +248,7 @@ static cuschar * poolclass[N_PAIRED_POOLS] = {
 
 
 static void * internal_store_malloc(size_t, const char *, int);
-static void   internal_store_free(void *, const char *, int linenumber);
+static void   internal_store_free(const void *, const char *, int linenumber);
 
 /******************************************************************************/
 
@@ -1255,9 +1255,9 @@ Returns:      nothing
 */
 
 static void
-internal_store_free(void * block, const char * func, int linenumber)
+internal_store_free(const void * block, const char * func, int linenumber)
 {
-uschar * p = US(block) - sizeof(size_t);
+uschar * p = (uschar*)block - sizeof(size_t);
 #ifndef COMPILE_UTILITY
 DEBUG(D_any) nonpool_malloc -= *(size_t *)p;
 DEBUG(D_memory) debug_printf("----Free %6p %5ld bytes\t%-20s %4d\n",
@@ -1267,7 +1267,7 @@ free(p);
 }
 
 void
-store_free_3(void * block, const char * func, int linenumber)
+store_free_3(const void * block, const char * func, int linenumber)
 {
 n_nonpool_blocks--;
 internal_store_free(block, func, linenumber);

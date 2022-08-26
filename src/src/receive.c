@@ -1544,7 +1544,7 @@ void
 received_header_gen(void)
 {
 uschar * received;
-uschar * timestamp = expand_string(cUS("${tod_full}"));
+cuschar * timestamp = expand_cstring(cUS("${tod_full}"));
 header_line * received_header= header_list;
 
 if (recipients_count == 1) received_for = recipients_list[0].address;
@@ -3958,7 +3958,7 @@ if (bmi_run == 1)
 an ACL or by local_scan(). The new time is the time that all reception
 processing is complete. */
 
-timestamp = expand_string(cUS("${tod_full}"));
+timestamp = expand_cstring(cUS("${tod_full}"));
 tslen = Ustrlen(timestamp);
 
 memcpy(received_header->text + received_header->slen - tslen - 1,
@@ -4158,7 +4158,7 @@ text. By expanding $h_subject: we make use of the MIME decoding. */
 if (LOGGING(subject) && subject_header)
   {
   uschar *p = big_buffer;
-  uschar *ss = expand_string(cUS("$h_subject:"));
+  cuschar *ss = expand_cstring(cUS("$h_subject:"));
 
   /* Backslash-quote any double quotes or backslashes so as to make a
   a C-like string, and turn any non-printers into escape sequences. */

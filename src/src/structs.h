@@ -176,7 +176,7 @@ typedef struct transport_instance {
     struct transport_feedback *,  /* For passing back config data */
     uid_t,                        /* The uid that will be used */
     gid_t,                        /* The gid that will be used */
-    uschar **);                   /* For an error message */
+    cuschar **);                  /* For an error message */
                                   /**************************************/
   int     batch_max;              /* )                                  */
   uschar *batch_id;               /* )                                  */
@@ -833,10 +833,10 @@ typedef struct {
   void *		ob;	/* smtp_transport_options_block * */
   host_item *           host;
   int                   host_af;
-  uschar *              interface;
+  cuschar *              interface;
 
   int			sock;	/* used for a bound but not connected socket */
-  uschar *		sending_ip_address;	/* used for TLS resumption */
+  cuschar *		sending_ip_address;	/* used for TLS resumption */
   cuschar *	host_lbserver;		/* ditto, for server-behind LB */
   BOOL			have_lbserver:1;	/* host_lbserver is valid */
 

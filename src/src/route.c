@@ -1213,7 +1213,7 @@ Returns:      TRUE if the group was found; FALSE otherwise
 */
 
 BOOL
-route_findgroup(uschar *s, gid_t *return_gid)
+route_findgroup(cuschar *s, gid_t *return_gid)
 {
 int i = 0;
 struct group *gr;
@@ -1260,8 +1260,8 @@ Returns:       TRUE if user found, FALSE otherwise
 */
 
 BOOL
-route_find_expanded_user(uschar *string, uschar *driver_name,
-  uschar *driver_type, struct passwd **pw, uid_t *uid, uschar **errmsg)
+route_find_expanded_user(cuschar *string, cuschar *driver_name,
+  cuschar *driver_type, struct passwd **pw, uid_t *uid, cuschar **errmsg)
 {
 uschar *user = expand_string(string);
 
@@ -1301,11 +1301,11 @@ Returns:       TRUE if found group, FALSE otherwise
 */
 
 BOOL
-route_find_expanded_group(uschar *string, uschar *driver_name, uschar *driver_type,
-  gid_t *gid, uschar **errmsg)
+route_find_expanded_group(cuschar *string, cuschar *driver_name, cuschar *driver_type,
+  gid_t *gid, cuschar **errmsg)
 {
 BOOL yield = TRUE;
-uschar *group = expand_string(string);
+cuschar *group = expand_cstring(string);
 
 if (!group)
   {

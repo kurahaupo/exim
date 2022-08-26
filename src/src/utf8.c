@@ -132,7 +132,7 @@ return s;
 
 
 uschar *
-string_localpart_utf8_to_alabel(cuschar * utf8, uschar ** err)
+string_localpart_utf8_to_alabel(cuschar * utf8, cuschar ** err)
 {
 size_t ucs4_len = 0;
 punycode_uint * p;

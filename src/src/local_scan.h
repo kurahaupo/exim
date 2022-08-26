@@ -52,13 +52,13 @@ compatibility). */
 extern int local_scan(int, uschar **);
 
 enum {
-  LOCAL_SCAN_ACCEPT,              /* Accept */
-  LOCAL_SCAN_ACCEPT_FREEZE,       /* Accept, but freeze */
-  LOCAL_SCAN_ACCEPT_QUEUE,        /* Accept, but no immediate delivery */
-  LOCAL_SCAN_REJECT,              /* Permanent rejection */
-  LOCAL_SCAN_REJECT_NOLOGHDR,     /* Permanent rejection, no log header */
-  LOCAL_SCAN_TEMPREJECT,          /* Temporary rejection */
-  LOCAL_SCAN_TEMPREJECT_NOLOGHDR  /* Temporary rejection, no log header */
+  LOCAL_SCAN_ACCEPT,                    /* Accept */
+  LOCAL_SCAN_ACCEPT_FREEZE,             /* Accept, but freeze */
+  LOCAL_SCAN_ACCEPT_QUEUE,              /* Accept, but no immediate delivery */
+  LOCAL_SCAN_REJECT,                    /* Permanent rejection */
+  LOCAL_SCAN_REJECT_NOLOGHDR,           /* Permanent rejection, no log header */
+  LOCAL_SCAN_TEMPREJECT,                /* Temporary rejection */
+  LOCAL_SCAN_TEMPREJECT_NOLOGHDR        /* Temporary rejection, no log header */
 };
 
 
@@ -74,22 +74,25 @@ typedef int exim_dlfunc_t(uschar **yield, int argc, uschar *argv[]);
 /* Return codes from the support functions lss_match_xxx(). These are also the
 codes that dynamically-loaded ${dlfunc functions must return. */
 
-#define  OK            0          /* Successful match */
-#define  DEFER         1          /* Defer - some problem */
-#define  FAIL          2          /* Matching failed */
-#define  ERROR         3          /* Internal or config error */
+enum {
+  OK          = 0,                      /* Successful match */
+  DEFER       = 1,                      /* Defer - some problem */
+  FAIL        = 2,                      /* Matching failed */
+  ERROR       = 3,                      /* Internal or config error */
 
 /* Extra return code for ${dlfunc functions */
 
-#define  FAIL_FORCED   4          /* "Forced" failure */
+  FAIL_FORCED = 4                       /* "Forced" failure */
+};
 
 
 /* Available logging destinations */
 
-#define LOG_MAIN        1    /* Write to the main log */
-#define LOG_PANIC       2    /* Write to the panic log */
-#define LOG_REJECT     16    /* Write to the reject log, with headers */
-
+enum {
+  LOG_MAIN   =  1,                      /* Write to the main log */
+  LOG_PANIC  =  2,                      /* Write to the panic log */
+  LOG_REJECT = 16                       /* Write to the reject log, with headers */
+};
 
 /* Accessible debugging bits */
 
@@ -127,12 +130,12 @@ typedef struct header_line {
 /* Entries in lists options are in this form. */
 
 typedef struct {
-  const char *	name; /* should have been uschar but too late now */
-  int		type;
+  const char *name;                     /* should have been uschar but too late now */
+  int         type;
   union {
-    void *	value;
-    long	offset;
-    void (*	fn)();
+    void     *value;
+    long      offset;
+    void    (*fn)();
   } v;
 } optionlist;
 #define OPT_OFF(s, field) {.offset = offsetof(s, field)}
@@ -142,11 +145,11 @@ field is always NULL except for one_time aliases that had errors_to on the
 routers that generated them. */
 
 typedef struct recipient_item {
-  uschar *address;              /* the recipient address */
-  int     pno;                  /* parent number for "one_time" alias, or -1 */
-  uschar *errors_to;            /* the errors_to address or NULL */
-  uschar *orcpt;                /* DSN orcpt */
-  int     dsn_flags;            /* DSN flags */
+  uschar *address;                      /* the recipient address */
+  int     pno;                          /* parent number for "one_time" alias, or -1 */
+  uschar *errors_to;                    /* the errors_to address or NULL */
+  uschar *orcpt;                        /* DSN orcpt */
+  int     dsn_flags;                    /* DSN flags */
 #ifdef EXPERIMENTAL_BRIGHTMAIL
   uschar *bmi_optin;
 #endif
@@ -155,28 +158,28 @@ typedef struct recipient_item {
 
 /* Global variables that are documented as visible in the function. */
 
-extern unsigned int debug_selector;    /* Debugging bits */
+extern unsigned int debug_selector;         /* Debugging bits */
 
-extern int     body_linecount;         /* Line count in body */
-extern int     body_zerocount;         /* Binary zero count in body */
-extern cuschar *expand_string_message;  /* Error info for failing expansion */
-extern cuschar *headers_charset;  /* Charset for RFC 2047 decoding */
-extern header_line *header_last;       /* Final header */
-extern header_line *header_list;       /* First header */
-extern BOOL    host_checking;          /* Set when checking a host */
-extern cuschar *interface_address;      /* Interface for incoming call */
-extern int     interface_port;         /* Port number for incoming call */
-extern cuschar *message_id;             /* Internal id of message being handled */
-extern cuschar *received_protocol;      /* Name of incoming protocol */
-extern int     recipients_count;       /* Number of recipients */
-extern recipient_item *recipients_list;/* List of recipient addresses */
-extern cuschar *sender_address;    /* Sender address */
-extern cuschar *sender_host_address;    /* IP address of sender, as chars */
-extern cuschar *sender_host_authenticated; /* Name of authentication mechanism */
-extern cuschar *sender_host_name;       /* Host name from lookup */
-extern int     sender_host_port;       /* Port number of sender */
-extern BOOL    smtp_batched_input;     /* TRUE if SMTP batch (no interaction) */
-extern BOOL    smtp_input;             /* TRUE if input is via SMTP */
+extern int     body_linecount;              /* Line count in body */
+extern int     body_zerocount;              /* Binary zero count in body */
+extern cuschar *expand_string_message;      /* Error info for failing expansion */
+extern cuschar *headers_charset;            /* Charset for RFC 2047 decoding */
+extern header_line *header_last;            /* Final header */
+extern header_line *header_list;            /* First header */
+extern BOOL    host_checking;               /* Set when checking a host */
+extern cuschar *interface_address;          /* Interface for incoming call */
+extern int     interface_port;              /* Port number for incoming call */
+extern uschar *message_id;                  /* Internal id of message being handled */
+extern cuschar *received_protocol;          /* Name of incoming protocol */
+extern int     recipients_count;            /* Number of recipients */
+extern recipient_item *recipients_list;     /* List of recipient addresses */
+extern cuschar *sender_address;             /* Sender address */
+extern cuschar *sender_host_address;        /* IP address of sender, as chars */
+extern cuschar *sender_host_authenticated;  /* Name of authentication mechanism */
+extern cuschar *sender_host_name;           /* Host name from lookup */
+extern int     sender_host_port;            /* Port number of sender */
+extern BOOL    smtp_batched_input;          /* TRUE if SMTP batch (no interaction) */
+extern BOOL    smtp_input;                  /* TRUE if input is via SMTP */
 
 
 /* Functions that are documented as visible in local_scan(). */
@@ -207,21 +210,21 @@ extern int     lss_match_host(uschar *, uschar *, uschar *);
 extern void    receive_add_recipient(uschar *, int);
 extern BOOL    receive_remove_recipient(uschar *);
 extern uschar *rfc2047_decode(uschar *, BOOL, cuschar *, int, int *,
-			      uschar **);
+                              uschar **);
 extern int     smtp_fflush(void);
 extern void    smtp_printf(const char *, BOOL, ...) PRINTF_FUNCTION(1,3);
 extern void    smtp_vprintf(const char *, BOOL, va_list);
 
 #define string_sprintf(fmt, ...) \
-	string_sprintf_trc(fmt, cUS(__FUNCTION__), __LINE__, __VA_ARGS__)
+        string_sprintf_trc(fmt, cUS(__FUNCTION__), __LINE__, __VA_ARGS__)
 extern uschar *string_sprintf_trc(const char *, cuschar *, unsigned, ...) ALMOST_PRINTF(1,4);
 
 #define store_get(size, proto_mem) \
-	store_get_3((size), (proto_mem), __FUNCTION__, __LINE__)
-extern void   *store_get_3(int, const void *, const char *, int)	ALLOC ALLOC_SIZE(1) WARN_UNUSED_RESULT;
+        store_get_3((size), (proto_mem), __FUNCTION__, __LINE__)
+extern void   *store_get_3(int, const void *, const char *, int)        ALLOC ALLOC_SIZE(1) WARN_UNUSED_RESULT;
 #define store_get_perm(size, proto_mem) \
-	store_get_perm_3((size), (proto_mem), __FUNCTION__, __LINE__)
-extern void   *store_get_perm_3(int, const void *, const char *, int)	ALLOC ALLOC_SIZE(1) WARN_UNUSED_RESULT;
+        store_get_perm_3((size), (proto_mem), __FUNCTION__, __LINE__)
+extern void   *store_get_perm_3(int, const void *, const char *, int)   ALLOC ALLOC_SIZE(1) WARN_UNUSED_RESULT;
 
 
 #if defined(LOCAL_SCAN) || defined(DLFUNC_IMPL)
@@ -240,8 +243,8 @@ extern uschar * string_copy_function(cuschar *);
 extern uschar * string_copyn_function(cuschar *, int n);
 extern uschar * string_copy_taint_function(cuschar *, const void * proto_mem);
 extern pid_t    child_open_exim_function(int *, cuschar *);
-extern pid_t    child_open_exim2_function(int *, uschar *, uschar *, cuschar *);
-extern pid_t    child_open_function(uschar **, uschar **, int, int *, int *, BOOL, cuschar *);
+extern pid_t    child_open_exim2_function(int *, cuschar *, cuschar *, cuschar *);
+extern pid_t    child_open_function(cuschar **, cuschar **, int, int *, int *, BOOL, cuschar *);
 #endif
 
 /* End of local_scan.h */

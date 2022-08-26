@@ -32,7 +32,7 @@ uschar *dmarc_pass_fail = cUS("skipped");
 header_line *from_header   = NULL;
 extern SPF_response_t   *spf_response;
 int dmarc_spf_ares_result  = 0;
-uschar *spf_sender_domain  = NULL;
+cuschar *spf_sender_domain = NULL;
 uschar *spf_human_readable = NULL;
 u_char *header_from_sender = NULL;
 int history_file_status    = DMARC_HIST_OK;
@@ -265,7 +265,7 @@ if (history_file_fd < 0)
 history_buffer = string_sprintf(
   "job %s\nreporter %s\nreceived %ld\nipaddr %s\nfrom %s\nmfrom %s\n",
   message_id, primary_hostname, time(NULL), sender_host_address,
-  header_from_sender, expand_string(cUS("$sender_address_domain")));
+  header_from_sender, expand_cstring(cUS("$sender_address_domain")));
 
 if (spf_response)
   history_buffer = string_sprintf("%sspf %d\n", history_buffer, dmarc_spf_ares_result);
@@ -394,7 +394,7 @@ if (!dmarc_abort && !sender_host_authenticated)
   uschar * dmarc_domain;
 
   /* Use the envelope sender domain for this part of DMARC */
-  spf_sender_domain = expand_string(cUS("$sender_address_domain"));
+  spf_sender_domain = expand_cstring(cUS("$sender_address_domain"));
   if (!spf_response)
     {
     /* No spf data means null envelope sender so generate a domain name
