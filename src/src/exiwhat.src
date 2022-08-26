@@ -57,13 +57,13 @@ signal=EXIWHAT_KILL_SIGNAL
 
 if test "x$1" = x--version
 then
-    echo "`basename $0`: $0"
+    echo "$( basename $0 ): $0"
     echo "build: EXIM_RELEASE_VERSIONEXIM_VARIANT_VERSION"
     exit 0
 fi
 
 if [ "CONFIGURE_FILE_USE_NODE" = "yes" ]; then
-  hostsuffix=.`uname -n`
+  hostsuffix=.$( uname -n )
 fi
 
 # Now find the configuration file name. This has got complicated because
@@ -71,11 +71,11 @@ fi
 # one that exists. Mimic the code in readconf.c by testing first for the
 # suffixed file in each case.
 
-set `awk -F: '{ for (i = 1; i <= NF; i++) print $i }' <<End
+set $( awk -F: '{ for (i = 1; i <= NF; i++) print $i }' <<End
 CONFIGURE_FILE
 End
-`
-while [ "$config" = "" -a $# -gt 0 ] ; do
+)
+while [ "$config" = "" ] && [ $# -gt 0 ] ; do
   if [ -f "$1$hostsuffix" ] ; then
     config="$1$hostsuffix"
   elif [ -f "$1" ] ; then
@@ -85,7 +85,7 @@ while [ "$config" = "" -a $# -gt 0 ] ; do
 done
 
 # check we have a config file
-if [ "$config" = "" -o ! -f "$config" ]; then
+if [ "$config" = "" ] || [ ! -f "$config" ]; then
   echo Config file not found.
   exit 1
 fi
@@ -97,10 +97,10 @@ fi
 # a variable to hold a space and a tab. This is less likely to be touched.
 
 st='	 '
-exim_path=`grep "^[$st]*exim_path" $config | sed "s/.*=[$st]*//"`
+exim_path=$( grep "^[$st]*exim_path" <"$config" | sed "s/.*=[$st]*//" )
 if test "$exim_path" = ""; then exim_path=BIN_DIRECTORY/exim; fi
-spool_directory=`$exim_path -C $config -bP spool_directory | sed "s/.*=[ ]*//"`
-process_log_path=`$exim_path -C $config -bP process_log_path | sed "s/.*=[ ]*//"`
+spool_directory=$( $exim_path -C $config -bP spool_directory | sed "s/.*=[ ]*//" )
+process_log_path=$( $exim_path -C $config -bP process_log_path | sed "s/.*=[ ]*//" )
 
 # The file that Exim writes when sent the SIGUSR1 signal is specified by
 # the process_log_path option. If that is not defined, Exim uses the file

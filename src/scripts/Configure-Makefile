@@ -12,7 +12,7 @@ export LC_ALL
 
 # First off, get the OS type, and check that there is a make file for it.
 
-ostype=`../scripts/os-type -generic` || exit 1
+ostype=$( ../scripts/os-type -generic ) || exit 1
 
 if [ ! -r ../OS/Makefile-$ostype ] ; then
   echo ""
@@ -25,7 +25,7 @@ fi
 # We also need the architecture type, in order to test for any architecture-
 # specific configuration files.
 
-archtype=`../scripts/arch-type` || exit 1
+archtype=$( ../scripts/arch-type ) || exit 1
 
 # Now test for either the non-existence of Makefile, or for any of its
 # components being newer. Note that the "newer" script gives the right
@@ -128,7 +128,7 @@ sed -n "s/^[$st]*PKG_CONFIG_PATH[$st]*[+]*=[$st]*//p" $mft | \
 if test -s ./$mftepcp
 then
   # expand any wildcards and strip spaces, to make it a real PATH-like variable
-  ( IFS=":${IFS-$st}"; for P in `cat ./$mftepcp`; do echo "$P"; done ) | xargs | sed "s/[$st]/:/g" >./$mftepcp2
+  ( IFS=":${IFS-$st}"; for P in $( cat ./$mftepcp ); do echo "$P"; done ) | xargs | sed "s/[$st]/:/g" >./$mftepcp2
   sed "s/^/PKG_CONFIG_PATH='/" < ./$mftepcp2 | sed "s/\$/'/" > ./$mftepcp
   . ./$mftepcp
   export PKG_CONFIG_PATH
@@ -158,7 +158,7 @@ then
   (
   echo "# pkg-config fixups"
   . ./$mftt
-  for var in `cut -d = -f 1 < $mftt`; do
+  for var in $( cut -d = -f 1 < $mftt ); do
     case $var in
 
       USE_*_PC)
@@ -176,12 +176,12 @@ then
           need_core=t
         fi
         if [ ".$need_this" != "." ]; then
-          tls_include=`pkg-config --cflags $pc_value`
+          tls_include=$( pkg-config --cflags $pc_value )
           if [ $? -ne 0 ]; then
             echo >&2 "*** Missing pkg-config for package $pc_value (for Exim $var build option)"
             exit 1
           fi
-          tls_libs=`pkg-config --libs $pc_value`
+          tls_libs=$( pkg-config --libs $pc_value )
           echo "TLS_INCLUDE=$tls_include"
           echo "TLS_LIBS=$tls_libs"
           # With hash.h pulling crypto into the core, we need to also handle that
@@ -193,8 +193,8 @@ then
               echo "CFLAGS += $tls_include"
               echo "LDFLAGS += $tls_libs"
             else
-              echo "CFLAGS += `libgcrypt-config --cflags`"
-              echo "LDFLAGS += `libgcrypt-config --libs`"
+              echo "CFLAGS += $( libgcrypt-config --cflags )"
+              echo "LDFLAGS += $( libgcrypt-config --libs )"
             fi
           fi
         fi
@@ -202,7 +202,7 @@ then
 
       *_PC)
         eval "pc_value=\"\$$var\""
-        base=`echo $var | sed 's/_PC$//'`
+        base=$( echo $var | sed 's/_PC$//' )
         eval "basevalue=\"\$$base\""
         if [ ".$basevalue" = "." ]; then
           # not pulling in this module, _PC defined as default? Ignore
@@ -212,12 +212,12 @@ then
           true
         else
           # main binary
-          cflags=`pkg-config --cflags $pc_value`
+          cflags=$( pkg-config --cflags $pc_value )
           if [ $? -ne 0 ]; then
             echo >&2 "*** Missing pkg-config for package $pc_value (for Exim $var build option)"
             exit 1
           fi
-          libs=`pkg-config --libs $pc_value`
+          libs=$( pkg-config --libs $pc_value )
           if [ "$var" != "${var#LOOKUP_}" ]; then
             echo "LOOKUP_INCLUDE += $cflags"
             echo "LOOKUP_LIBS += $libs"
@@ -236,12 +236,12 @@ then
 	     echo >&2 "pcre is no longer supported; migrate to pcre2"
 	     exit 1
 
-#            cflags=`pcre-config --cflags`
+#            cflags=$( pcre-config --cflags )
 #            if [ $? -ne 0 ]; then
 #              echo >&2 "*** Missing pcre-config for regular expression support"
 #              exit 1
 #            fi
-#            libs=`pcre-config --libs`
+#            libs=$( pcre-config --libs )
 #            if [ ".$cflags" != "." ]; then
 #              echo "INCLUDE += $cflags"
 #            fi
@@ -253,12 +253,12 @@ then
       PCRE2_CONFIG)
         case $PCRE2_CONFIG in
           yes|YES|y|Y)
-            cflags=`pcre2-config --cflags`
+            cflags=$( pcre2-config --cflags )
             if [ $? -ne 0 ]; then
               echo >&2 "*** Missing pcre2-config for regular expression support"
               exit 1
             fi
-            libs=`pcre2-config --libs8`
+            libs=$( pcre2-config --libs8 )
             if [ ".$cflags" != "." ]; then
               echo "INCLUDE += $cflags"
             fi
@@ -295,30 +295,30 @@ cp ../src/lookups/Makefile $look_mf_pre
 # what we have so far and then copy it afterwards. Use the value of PERL_COMMAND
 # if it has been defined.
 
-EXIM_PERL=`grep EXIM_PERL $mft`
+EXIM_PERL=$( grep EXIM_PERL $mft )
 
-PERL_COMMAND=`grep PERL_COMMAND $mft | sed -e "\\$!d;s/^[$st]*PERL_COMMAND[$st]*=[$st]*//"`
+PERL_COMMAND=$( grep PERL_COMMAND $mft | sed -e "\\$!d;s/^[$st]*PERL_COMMAND[$st]*=[$st]*//" )
 if [ "${PERL_COMMAND}" = "" ] ; then
   PERL_COMMAND='perl'
 fi
 
 if [ "${EXIM_PERL}" != "" ] ; then
-  testperl=`$PERL_COMMAND --version`
+  testperl=$( $PERL_COMMAND --version )
   if [ "$testperl" = "" ] ; then
     echo "*** EXIM_PERL is set, but '$PERL_COMMAND --version' failed"
     exit 1
   fi
 
-  EXTUTILS_EMBED_NOT_INSTALLED=`$PERL_COMMAND -MExtUtils::Embed -e ";" 2>&1`
+  EXTUTILS_EMBED_NOT_INSTALLED=$( $PERL_COMMAND -MExtUtils::Embed -e ";" 2>&1 )
   if [ "${EXTUTILS_EMBED_NOT_INSTALLED}" != "" ] ; then
     echo "Please install ExtUtils::Embed for $PERL_COMMAND"
     exit 1;
   fi
 
   mv $mft $mftt
-  echo "PERL_CC=`$PERL_COMMAND -MConfig -e 'print $Config{cc}'`" >>$mft
-  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts`" >>$mft
-  echo "PERL_LIBS=`$PERL_COMMAND -MExtUtils::Embed -e ldopts`" >>$mft
+  echo "PERL_CC=$( $PERL_COMMAND -MConfig -e 'print $Config{cc}' )" >>$mft
+  echo "PERL_CCOPTS=$( $PERL_COMMAND -MExtUtils::Embed -e ccopts )" >>$mft
+  echo "PERL_LIBS=$( $PERL_COMMAND -MExtUtils::Embed -e ldopts )" >>$mft
   echo "" >>$mft
   cat $mftt >> $mft
   rm -f $mftt

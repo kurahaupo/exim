@@ -66,12 +66,12 @@ set -eu
 readonly FullTargetPath="${StateDir}/${TargetShortFile}"
 readonly WorkingFile="${FullTargetPath}.$$"
 
-progname="$(basename "$0")"
+progname=${0##*/}
 note() { printf >&2 '%s: %s\n' "$progname" "$*"; }
 die() { note "$@"; exit 1; }
 
 # guard against stomping on file-permissions
-[ ".$(id -un)" = ".${RuntimeUser:?}" ] || \
+[ ".$( id -un )" = ".${RuntimeUser:?}" ] || \
   die "must be invoked as ${RuntimeUser}"
 
 fetch_candidate() {
@@ -110,8 +110,8 @@ sanity_check_candidate() {
 		return 0
 	fi
 	local ratio
-	ratio=$(expr $new_size \* 100 / $prev_size)
-	if [ $ratio -lt $MinNewSizeRation ]; then
+	ratio=$(( new_size * 100 / prev_size ))
+	if [ "$ratio" -lt "$MinNewSizeRation" ]; then
 		die "New $TargetShortFile candidate only ${ratio}% size of old; $new_size vs $prev_size"
 	fi
 }

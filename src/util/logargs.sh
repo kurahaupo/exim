@@ -17,10 +17,10 @@ LOGFILE=/home/ph10/tmp/zz
 
 # The arguments are copied to the log file
 
-echo $@ >>$LOGFILE
+echo "$@" >>$LOGFILE
 
 # The real program is now called
 
-exec $CALL $@
+exec "$CALL" "$@"
 
 # End
