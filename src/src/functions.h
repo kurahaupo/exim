@@ -812,11 +812,11 @@ The result is explicitly nul-terminated.
 */
 
 static inline uschar *
-string_copyn_taint_trc(cuschar * s, unsigned len,
+string_copyn_taint_trc(cuschar * s, size_t len,
 	const void * proto_mem, const char * func, int line)
 {
 uschar * ss;
-unsigned slen = Ustrlen(s);
+size_t slen = Ustrlen(s);
 if (len > slen) len = slen;
 ss = store_get_3(len + 1, proto_mem, func, line);
 memcpy(ss, s, len);
@@ -829,7 +829,7 @@ string_copy_taint_trc(cuschar * s, const void * proto_mem, const char * func, in
 { return string_copyn_taint_trc(s, Ustrlen(s), proto_mem, func, line); }
 
 static inline uschar *
-string_copyn_trc(cuschar * s, unsigned len, const char * func, int line)
+string_copyn_trc(cuschar * s, size_t len, const char * func, int line)
 { return string_copyn_taint_trc(s, len, s, func, line); }
 static inline uschar *
 string_copy_trc(cuschar * s, const char * func, int line)
@@ -948,7 +948,7 @@ va_end(ap);
 	string_get_tainted_trc((size), (proto_mem), __FUNCTION__, __LINE__)
 
 static inline gstring *
-string_get_tainted_trc(unsigned size, const void * proto_mem, const char * func, unsigned line)
+string_get_tainted_trc(size_t size, const void * proto_mem, const char * func, unsigned line)
 {
 gstring * g = store_get_3(sizeof(gstring) + size, proto_mem, func, line);
 g->size = size;		/*XXX would be good if we could see the actual alloc size */
@@ -963,7 +963,7 @@ return g;
 	string_get_trc((size), __FUNCTION__, __LINE__)
 
 static inline gstring *
-string_get_trc(unsigned size, const char * func, unsigned line)
+string_get_trc(size_t size, const char * func, unsigned line)
 {
 return string_get_tainted_trc(size, GET_UNTAINTED, func, line);
 }
@@ -978,10 +978,10 @@ g->s[g->ptr] = '\0';
 return g->s;
 }
 
-static inline unsigned
+static inline size_t
 gstring_length(const gstring * g)
 {
-return g ? (unsigned)g->ptr : 0;
+return g ? g->ptr : 0U;  /* despite its name, ptr is an int type */
 }
 
 

@@ -28,8 +28,8 @@ struct router_info;
 
 /* Growable-string */
 typedef struct gstring {
-  int	size;		/* Current capacity of string memory */
-  int	ptr;		/* Offset at which to append further chars */
+  size_t size;		/* Current capacity of string memory */
+  ptrdiff_t ptr;	/* Offset at which to append further chars */
 #ifdef HAS_FAM
   uschar s[];		/* The string memory */
 #else
@@ -266,7 +266,7 @@ typedef int (*tpt_chunk_cmd_cb)(struct transport_context *, unsigned, unsigned);
 typedef struct transport_context {
   union {			/* discriminated by option topt_output_string */
     int			  fd;	/* file descriptor to write message to */
-    gstring *		  msg;	/* allocated string with written message */
+    gstring 		* msg;	/* allocated string with written message */
   } u;
   transport_instance	* tblock;		/* transport */
   struct address_item	* addr;
