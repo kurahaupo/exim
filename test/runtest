@@ -15,8 +15,8 @@
 # Placed in the Exim CVS: 06 February 2006                                    #
 ###############################################################################
 
-#use strict;
 use v5.10.1;
+use strict;
 use warnings;
 use if $^V >= v5.19.11, experimental => 'smartmatch';
 
@@ -78,7 +78,6 @@ my $have_largefiles = 0;
 
 my @test_list = ();
 
-
 # Networks to use for DNS tests. We need to choose some networks that will
 # never be used so that there is no chance that the host on which we are
 # running is actually in one of the test networks. Private networks such as
@@ -100,7 +99,7 @@ my $parm_port_d = 1225;         # Used for the Exim daemon
 my $parm_port_d2 = 1226;        # Additional for daemon
 my $parm_port_d3 = 1227;        # Additional for daemon
 my $parm_port_d4 = 1228;        # Additional for daemon
-my $dynamic_socket;          # allocated later for PORT_DYNAMIC
+my $dynamic_socket;             # allocated later for PORT_DYNAMIC
 
 # Find a suiteable group name for test (currently only 0001
 # uses a group name. A numeric group id would do
@@ -112,9 +111,41 @@ $ENV{LC_ALL} = 'C';
 # In some environments USER does not exist, but we need it for some test(s)
 $ENV{USER} = getpwuid($>) if not exists $ENV{USER};
 
-my ($parm_configure_owner, $parm_configure_group);
-my ($parm_ipv4, $parm_ipv6, $parm_ipv6_stripped);
-my $parm_hostname;
+# Additional params used by do_substitute
+my ($parm_caller, $parm_caller_gid, $parm_caller_group, $parm_caller_uid,
+    $parm_clamsocket, $parm_cwd, $parm_eximgroup, $parm_eximuser,
+    $parm_hostname, $parm_ipv4, $parm_ipv6);
+
+# These are localized
+our (
+    $commandno, $lineno, $server_pid, $sortlog, $subtestno, $testno,
+);
+
+my (
+    $args, $basedir, $c, $cachekey, $cmd, $comp, $count, $date,
+    $dbm_build_deleted, $dlfunc_deleted, $f, $file, $i, $ifname, $is_ipv6test,
+    $item, $key, $leadin, $len, $mail, $message_skip, $missing, $msgid,
+    $msglog, $msglog_skip, $munged_msglog, $munges, $next_msgid,
+    $next_pid, $next_port, $oldmail, $oldmsglog,
+
+    $parm_caller_gecos, $parm_caller_home, $parm_configure_group,
+    $parm_configure_owner, $parm_exim_dir, $parm_exim_gid, $parm_exim_uid,
+    $parm_ipv4r, $parm_ipv6_stripped, $parm_ipv6r, $parm_shell,
+    $parm_trusted_config_list,
+
+    $pid, $pidfile, $prog, $pwcomm, $pwpw, $pwquota, $rc, $retry,
+    $rmfiltertest, $saved_mail, $sf_current, $sf_flavour, $sf_generic,
+    $sigpipehappened, $stderr_skip, $stderrsuffix, $stdout_skip,
+    $test, $wait_time,
+);
+
+my ( @mails, @msglogs, @oldmails, @oldmsglogs, @sizes, @temp );
+
+my (
+    %cache, %expected_mails, %expected_msglogs, %parm_authenticators,
+    %parm_lookups, %parm_malware, %parm_routers, %parm_running, %parm_support,
+    %parm_transports
+);
 
 ###############################################################################
 ###############################################################################
@@ -190,8 +221,9 @@ my $TEST_STATE = {};
 #    $_[0] < 0 for a "die" exit; $_[1] contains a message
 
 sub tests_exit{
-my($rc) = $_[0];
-my($spool);
+my $rc = $_[0];
+my $spool;
+my $pid;
 
 # Search for daemon pid files and kill the daemons. We kill with SIGINT rather
 # than SIGTERM to stop it outputting "Terminated" to the terminal when not in
@@ -206,7 +238,7 @@ if (exists $TEST_STATE->{exim_pid})
 
 if (opendir(DIR, "spool"))
   {
-  my(@spools) = sort readdir(DIR);
+  my @spools = sort readdir(DIR);
   closedir(DIR);
   foreach $spool (@spools)
     {
@@ -253,7 +285,7 @@ die "** runtest error: $_[1]\n";
 
 sub new_value {
 my($oldid, $base, $sequence) = @_;
-my($newid) = $cache{$oldid};
+my $newid = $cache{$oldid};
 if (! defined $newid)
   {
   $newid = sprintf($base, $$sequence++);
@@ -269,7 +301,7 @@ return $newid;
 sub date_seconds {
 my($day,$month,$year,$hour,$min,$sec) =
   $_[0] =~ /^(\d\d)-(\w\w\w)-(\d{4})\s(\d\d):(\d\d):(\d\d)/;
-my($mon);
+my $mon;
 if   ($month =~ /Jan/) {$mon = 0;}
 elsif($month =~ /Feb/) {$mon = 1;}
 elsif($month =~ /Mar/) {$mon = 2;}
@@ -308,8 +340,8 @@ return ($x1 != $x2)? ($x1 <=> $x2) : ($y1 <=> $y2);
 # maildir mailboxes.
 
 sub list_files_below {
-my($dir) = $_[0];
-my(@yield) = ();
+my $dir = $_[0];
+my @yield = ();
 my(@sublist, $file);
 
 opendir(DIR, $dir) || tests_exit(-1, "Failed to open $dir: $!");
@@ -351,19 +383,19 @@ return @yield;
 # ***" is encountered; otherwise it is 0.
 
 sub munge {
-my($file) = $_[0];
-my($extra) = $_[1];
-my($yield) = 0;
-my(@saved) = ();
+my $file = $_[0];
+my $extra = $_[1];
+my $yield = 0;
+my @saved = ();
 
 local $_;
 
 open(IN, "$file") || tests_exit(-1, "Failed to open $file: $!");
 
-my($is_log) = $file =~ /log/;
-my($is_stdout) = $file =~ /stdout/;
-my($is_stderr) = $file =~ /stderr/;
-my($is_mail) = $file =~ /mail/;
+my $is_log = $file =~ /log/;
+my $is_stdout = $file =~ /stdout/;
+my $is_stderr = $file =~ /stderr/;
+my $is_mail = $file =~ /mail/;
 
 # Date pattern
 
@@ -371,12 +403,12 @@ $date = "\\d{2}-\\w{3}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}";
 
 # Debug time & pid
 
-$time_pid = "(?:\\d{2}:\\d{2}:\\d{2}\\s+\\d+\\s)";
+my $time_pid = qr/(?:\\d{2}:\\d{2}:\\d{2}\\s+\\d+\\s)/;
 
 # Pattern for matching pids at start of stderr lines; initially something
 # that won't match.
 
-$spid = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+my $spid = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
 # Scan the file and make the changes. Near the bottom there are some changes
 # that are specific to certain file types, though there are also some of those
@@ -469,7 +501,7 @@ RESET_AFTER_EXTRA_LINE_READ:
     $expired = '' if !defined $expired;
 
     # Round the time-difference up to nearest even value
-    my($increment) = ((date_seconds($date3) - date_seconds($date2) + 1) >> 1) << 1;
+    my $increment = ((date_seconds($date3) - date_seconds($date2) + 1) >> 1) << 1;
 
     # We used to use globally unique replacement values, but timing
     # differences make this impossible. Just show the increment on the
@@ -531,7 +563,7 @@ RESET_AFTER_EXTRA_LINE_READ:
   # Dates/times in debugging output for writing retry records
   if (/^  first failed=(\d+) last try=(\d+) next try=(\d+) (.*)$/)
     {
-    my($next) = $3 - $2;
+    my $next = $3 - $2;
     $_ = "  first failed=dddd last try=dddd next try=+$next $4\n";
     }
   s/^(\s*)now=\d+ first_failed=\d+ next_try=\d+ expired=(\w)/$1now=tttt first_failed=tttt next_try=tttt expired=$2/;
@@ -1735,7 +1767,7 @@ if (! -e $sf_current)
 # data that does exist.
 
 open(MUNGED, '>', $mf) || tests_exit(-1, "Failed to open $mf: $!");
-my($truncated) = munge($rf, $extra) if -e $rf;
+my $truncated = munge($rf, $extra) if -e $rf;
 
 # Append the raw server log, if it is non-empty
 if (defined $rsf && -e $rsf)
@@ -1993,9 +2025,9 @@ sub max {
 #            2 if re-run needed (files may have been updated)
 
 sub check_output{
-my($mungename) = $_[0];
-my($yield) = 0;
-my($munge) = $munges->{$mungename} if defined $mungename;
+my $mungename = $_[0];
+my $yield = 0;
+my $munge = $munges->{$mungename} if defined $mungename;
 
 $yield = max($yield,  check_file("spool/log/paniclog",
                        "spool/log/serverpaniclog",
@@ -2037,7 +2069,7 @@ if (!$stderr_skip)
 
 if (! $message_skip)
   {
-  my($msgno) = 0;
+  my $msgno = 0;
 
   # Get a list of expected mailbox files for this script. We don't bother with
   # directories, just the files within them.
@@ -2099,9 +2131,8 @@ if (! $message_skip)
         {
         foreach $key (keys %expected_mails)
           {
-          my($i);
           tests_exit(-1, "Failed to unlink $key") if !unlink("$key");
-          for ($i = 0; $i < @oldmails; $i++)
+          for (my $i = 0; $i < @oldmails; $i++)
             {
             if ($oldmails[$i] eq $key)
               {
@@ -2205,11 +2236,11 @@ return $yield;
 # Argument: the command to be run
 # Returns:  nothing
 
-sub run_system {
-my($cmd) = $_[0];
+sub run_system(@) {
+my $cmd = $_[0];
 if ($debug)
   {
-  my($prcmd) = $cmd;
+  my $prcmd = $cmd;
   $prcmd =~ s/; /;\n>> /;
   print ">> $prcmd\n";
   }
@@ -2246,17 +2277,14 @@ system($cmd);
 #            munge: name of a post-script results munger
 
 sub run_command{
-my($testno) = $_[0];
-my($subtestref) = $_[1];
-my($commandnameref) = $_[3];
-my($aux_info) = $_[4];
-my($yield) = 1;
+my ($testno, $subtestref, undef, $commandnameref, $aux_info) = @_;
+my $yield = 1;
 
 our %ENV = map { $_ => $ENV{$_} } grep { /^(?:USER|SHELL|PATH|TERM|EXIM_TEST_.*)$/ } keys %ENV;
 
 if (/^(\d+)\s*$/)                # Handle unusual return code
   {
-  my($r) = $_[2];
+  my $r = $_[2];
   $$r = $1 << 8;
   $_ = <SCRIPT>;
   return 4 if !defined $_;       # Missing command
@@ -2271,7 +2299,7 @@ $wait_time = 0;
 s/\s+$//;
 while (substr($_, -1) eq"\\")
   {
-  my($temp);
+  my $temp;
   $_ = substr($_, 0, -1);
   chomp($temp = <SCRIPT>);
   if (defined $temp)
@@ -2353,8 +2381,8 @@ if (/^dump\s+(\S+)/)
     if ($which eq "callout")
       {
       @temp = sort {
-                   my($aa) = substr $a, 21;
-                   my($bb) = substr $b, 21;
+                   my $aa = substr $a, 21;
+                   my $bb = substr $b, 21;
                    return $aa cmp $bb;
                    } @temp;
       }
@@ -2602,7 +2630,7 @@ if (/^server\s+(.*)$/)
 
 if (/^(cat)?write\s+(\S+)(?:\s+(.*))?\s*$/)
   {
-  my($cat) = defined $1;
+  my $cat = defined $1;
   @sizes = ();
   @sizes = split /\s+/, $3 if defined $3;
   open FILE, ">$2" || tests_exit(-1, "Failed to open \"$2\": $!");
@@ -2690,10 +2718,10 @@ if (/^client/ || /^(sudo\s+)?perl\b/)
 elsif (/^((?i:[A-Z\d_]+=\S+\s+)+)?(\d+)?\s*(sudo(?:\s+-u\s+(\w+))?\s+)?exim(_\S+)?\s+(.*)$/)
   {
   $args = $6;
-  my($envset) = (defined $1)? $1      : '';
-  my($sudo)   = (defined $3)? "sudo " . (defined $4 ? "-u $4 ":'')  : '';
-  my($special)= (defined $5)? $5      : '';
-  $wait_time  = (defined $2)? $2      : 0;
+  my $envset  = $1 // '';
+  $wait_time  = $2 // 0;
+  my $sudo    = defined $3 ? "sudo " . (defined $4 ? "-u $4 ":'')  : '';
+  my $special = $5 // '';
 
   # Return 2 rather than 1 afterwards
 
@@ -3029,7 +3057,7 @@ GetOptions(
     },
 ) or pod2usage;
 
-($parm_exim, @ARGV) = Exim::Runtest::exim_binary(@ARGV);
+(my $parm_exim, @ARGV) = Exim::Runtest::exim_binary(@ARGV);
 print "Exim binary is `$parm_exim'\n" if defined $parm_exim;
 
 
@@ -3065,7 +3093,7 @@ else
 
 # After doing so, we find its absolute path name.
 
-$cwd = $0;
+my $cwd = $0;
 $cwd = '.' if ($cwd !~ s|/[^/]+$||);
 chdir($cwd) || die "** Failed to chdir to \"$cwd\": $!\n";
 $parm_cwd = Cwd::getcwd();
@@ -3729,15 +3757,16 @@ if ($parm_ipv6 =~ /^[\da-f]/)
 
 # Find the host name, fully qualified.
 
-chomp($temp = `hostname`);
-die "'hostname' didn't return anything\n" unless defined $temp and length $temp;
-if ($temp =~ /\./)
+
+chomp($parm_hostname = `hostname`);
+die "'hostname' didn't return anything\n" unless defined $parm_hostname and length $parm_hostname;
+if ($parm_hostname =~ /\./)
   {
-  $parm_hostname = $temp;
+  $parm_hostname = $parm_hostname;
   }
 else
   {
-  $parm_hostname = (gethostbyname($temp))[0];
+  $parm_hostname = (gethostbyname($parm_hostname))[0];
   $parm_hostname = "no.host.name.found" unless defined $parm_hostname and length $parm_hostname;
   }
 print "Hostname is $parm_hostname\n";
@@ -3915,7 +3944,7 @@ my @test_dirs = grep { not /^CVS$/ } map { basename $_ } glob 'scripts/*'
 DIR: for (my $i = 0; $i < @test_dirs; $i++)
   {
   my($testdir) = $test_dirs[$i];
-  my($wantthis) = 1;
+  my $wantthis = 1;
 
   print ">>Checking $testdir\n" if $debug;
 
@@ -4019,7 +4048,7 @@ DIR: for (my $i = 0; $i < @test_dirs; $i++)
   # We want the tests from this subdirectory, provided they are in the
   # range that was selected.
 
-  @testlist = grep { $_ ~~ @wanted } grep { /^\d+(?:\.\d+)?$/ } map { basename $_ } glob "scripts/$testdir/*";
+  my @testlist = grep { $_ ~~ @wanted } grep { /^\d+(?:\.\d+)?$/ } map { basename $_ } glob "scripts/$testdir/*";
   tests_exit(-1, "Failed to read test scripts from `scripts/$testdir/*': $!")
     if not @testlist;
 
