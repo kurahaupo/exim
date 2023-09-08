@@ -1975,10 +1975,9 @@ my $munges =
   };
 
 sub max {
-  my ($a, $b) = @_;
-
-  return $a if ($a > $b);
-  return $b;
+  my $r = shift;
+  $r < $_ and $r = $_ for @_;
+  return $r;
 }
 
 ##################################################
