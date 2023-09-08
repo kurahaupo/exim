@@ -41,7 +41,6 @@ use if $ENV{DEBUG} && scalar($ENV{DEBUG} =~ /\bruntest\b/) => 'Data::Dumper';
 use constant TEST_TOP => 8999;
 use constant TEST_SPECIAL_TOP => 9999;
 
-
 # Start by initializing some global variables
 
 chomp(my $testversion = `git describe --always --dirty 2>&1` || '<unknown>');
@@ -77,7 +76,6 @@ my $have_ipv6 = 1;
 my $have_largefiles = 0;
 
 my @test_list = ();
-
 
 # Networks to use for DNS tests. We need to choose some networks that will
 # never be used so that there is no chance that the host on which we are
@@ -124,7 +122,6 @@ my $parm_hostname;
 ###############################################################################
 ###############################################################################
 
-
 ##################################################
 #              Handle signals                    #
 ##################################################
@@ -132,7 +129,6 @@ my $parm_hostname;
 sub pipehandler { $sigpipehappened = 1; }
 
 sub inthandler { print "\n"; tests_exit(-1, "Caught SIGINT"); }
-
 
 ##################################################
 #       Do global macro substitutions            #
@@ -168,13 +164,11 @@ sub do_substitute {
   s?\bMAILGROUP\b?$parm_mailgroup?g;
 }
 
-
 ##################################################
 #     Any state to be preserved across tests     #
 ##################################################
 
 my $TEST_STATE = {};
-
 
 ##################################################
 #        Subroutine to tidy up and exit          #
@@ -237,8 +231,6 @@ sub tests_exit {
   die "** runtest error: $_[1]\n";
 }
 
-
-
 ##################################################
 #   Subroutines used by the munging subroutine   #
 ##################################################
@@ -262,7 +254,6 @@ sub new_value {
   return $newid;
 }
 
-
 # This is used while munging the output from exim_dumpdb.
 # May go wrong across DST changes.
 
@@ -285,7 +276,6 @@ sub date_seconds {
   return timelocal($sec,$min,$hour,$day,$mon,$year);
 }
 
-
 # This is a subroutine to sort maildir files into time-order. The second field
 # is the microsecond field, and may vary in length, so must be compared
 # numerically.
@@ -296,8 +286,6 @@ sub maildirsort {
   my($x2,$y2) = $b =~ /^(\d+)\.H(\d+)/;
   return ($x1 != $x2)? ($x1 <=> $x2) : ($y1 <=> $y2);
 }
-
-
 
 ##################################################
 #   Subroutine list files below a directory      #
@@ -327,8 +315,6 @@ sub list_files_below {
 
   return @yield;
 }
-
-
 
 ##################################################
 #         Munge a file before comparing          #
@@ -468,7 +454,6 @@ sub munge {
     s/^writing data block fd=\d+/writing data block fd=dddd/;
     s/(running as transport filter:) fd_write=\d+ fd_read=\d+/$1 fd_write=dddd fd_read=dddd/;
 
-
     # ======== Dumpdb output ========
     # This must be before the general date/date munging.
     # Time data lines, which look like this:
@@ -499,7 +484,6 @@ sub munge {
     # port numbers in stderr
     s/^set_process_info: .*\]:\K$parm_port_d /PORT_D /;
     s/^set_process_info: .*\]:\K$parm_port_s /PORT_S /;
-
 
     # ======== Dates and times ========
 
@@ -694,7 +678,6 @@ sub munge {
     # signature algorithm names
     s/RSA-SHA1/RSA-SHA/;
 
-
     # ======== Caller's login, uid, gid, home, gecos ========
 
     s/\Q$parm_caller_home\E/CALLER_HOME/g;   # NOTE: these must be done
@@ -721,7 +704,6 @@ sub munge {
 
     s/^spaced user $> \d+$/CALLER UID GID/;
 
-
     # ======== Exim's login ========
     # For messages received by the daemon, this is in the -H file, which some
     # tests inspect. For bounce messages, this will appear on the U= lines in
@@ -744,7 +726,6 @@ sub munge {
     s/\bgid=$parm_exim_gid\b/gid=EXIM_GID/g;
 
     s/^$parm_eximuser $parm_exim_uid $parm_exim_gid/EXIMUSER EXIM_UID EXIM_GID/;
-
 
     # ======== General uids, gids, and pids ========
     # Note: this must come after munges for caller's and exim's uid/gid
@@ -810,7 +791,6 @@ sub munge {
       s/^Connecting to 127\.0\.0\.1 port \K$port/<dynamic port>/;
     }
 
-
     # ======== Local IP addresses ========
     # The amount of space between "host" and the address in verification output
     # depends on the length of the host name. We therefore reduce it to one space
@@ -837,11 +817,9 @@ sub munge {
     s/(^|\W)\K\Q$parm_ipv6r\E/ip6-reverse/g;
     s/^\s+host\s\S+\s+\[\S+\]\K +$//;     # strip, not collapse the trailing whitespace
 
-
     # ======== Test network IP addresses ========
     s/(\b|_)\Q$parm_ipv4_test_net\E(?=\.\d+\.\d+\.\d+\b|_|\.rbl|\.in-addr|\.test\.again\.dns)/$1V4NET/g;
     s/\b\Q$parm_ipv6_test_net\E(?=:[\da-f]+:[\da-f]+:[\da-f]+)/V6NET/gi;
-
 
     # ======== IP error numbers and messages ========
     # These vary between operating systems
@@ -856,7 +834,6 @@ sub munge {
     s/\(\d+\): Connection timed out/(dd): Connection timed out/;
     s/\d+ 65 Connection refused/dd 65 Connection refused/;
     s/\d+ 321 Connection timed out/dd 321 Connection timed out/;
-
 
     # ======== Other error numbers ========
     s/errno=\d+/errno=dd/g;
@@ -875,7 +852,6 @@ sub munge {
     if (s/^([-d](?:[-r][-w][-SsTtx]){3})[.+@]?( +|$)/$1$2/) {
       s/ +/ /g;
     }
-
 
     # ======== Message sizes =========
     # Message sizes vary, owing to different logins and host names that get
@@ -901,17 +877,14 @@ sub munge {
     s/Received\s+\d+/Received               nnn/;
     s/Delivered\s+\d+/Delivered              nnn/;
 
-
     # ======== Values in spool space failure message ========
     s/space=\d+ inodes=[+-]?\d+/space=xxxxx inodes=xxxxx/;
-
 
     # ======== Filter sizes ========
     # The sizes of filter files may vary because of the substitution of local
     # filenames, logins, etc.
 
     s/^\d+(?= (\(tainted\) )?bytes read from )/ssss/;
-
 
     # ======== OpenSSL error messages ========
     # Different releases of the OpenSSL libraries seem to give different error
@@ -958,11 +931,9 @@ sub munge {
     }
     last if !defined $_;
 
-
     # SRS timestamps and signatures vary by hostname and from run to run
 
     s/(?i)SRS0=....=.[^=]?=([^=]+)=([^@]+)\@([^ ]+)/SRS0=ZZZZ=YY=$1=$2\@$3/g;
-
 
     # ======== Output from the "fd" program about open descriptors ========
     # The statuses seem to be different on different operating systems, but
@@ -971,12 +942,10 @@ sub munge {
     s/max fd = \d+/max fd = dddd/;
     s/status=[0-9a-f]+ (?:RDONLY|WRONLY|RDWR)/STATUS/g;
 
-
     # ======== Contents of spool files ========
     # A couple of tests dump the contents of the -H file. The length fields
     # will be wrong because of different user names, etc.
     s/^\d\d\d(?=[PFS*])/ddd/;
-
 
     # ==========================================================
     # MIME boundaries in RFC3461 DSN messages
@@ -1167,7 +1136,6 @@ sub munge {
       next if /^GnuTLS<3>: ASSERT: \.\.\/\.\.\/\.\.\/lib\/x509\//;
       next if /^GnuTLS<2>: Initializing PKCS #11 modules/;
 
-
       # only kevent platforms (FreeBSD, OpenBSD) say this
       next if /^watch dir/;
       next if /^watch file .*\/usr\/local/;
@@ -1264,7 +1232,6 @@ sub munge {
         $_= <IN>; $_= <IN>; $_= <IN>; $_= <IN>;
         $_= <IN>; $_= <IN>; $_= <IN>; $_= <IN>; $_= <IN>; next;
       }
-
 
       # Skip tls_advertise_hosts and hosts_require_tls checks when the options
       # are unset, because tls ain't always there.
@@ -1631,9 +1598,6 @@ sub munge {
   return $yield;
 }
 
-
-
-
 ##################################################
 #        Subroutine to interact with caller      #
 ##################################################
@@ -1661,8 +1625,6 @@ sub interact {
   return lc <T>;
 }
 
-
-
 ##################################################
 #    Subroutine to log in force_continue mode    #
 ##################################################
@@ -1674,8 +1636,6 @@ sub interact {
 # Arguments: [0] the logfile to append to
 #            [1] the testno that failed
 # Returns:   nothing
-
-
 
 sub log_failure {
   my ($logfile, $testno, $detail) = @_;
@@ -1695,8 +1655,6 @@ sub log_test {
   open(my $fh, '>>', $logfile) or return;
   print $fh "$testno $resultchar\n";
 }
-
-
 
 ##################################################
 #    Subroutine to compare one output file       #
@@ -1923,8 +1881,6 @@ sub check_file {
   return 2;
 }
 
-
-
 ##################################################
 # Custom munges
 # keyed by name of munge; value is a ref to a hash
@@ -2020,7 +1976,6 @@ $munges =
     'perl_variants' =>		# result of hash-in-scalar-context changed from bucket-fill to keycount
     { 'stdout' => 's%^> X/X$%> X%' },
   };
-
 
 sub max {
   my ($a, $b) = @_;
@@ -2248,8 +2203,6 @@ sub check_output {
   return $yield;
 }
 
-
-
 ##################################################
 #     Subroutine to run one "system" command     #
 ##################################################
@@ -2270,8 +2223,6 @@ sub run_system {
   }
   system($cmd);
 }
-
-
 
 ##################################################
 #      Subroutine to run one script command      #
@@ -2352,7 +2303,6 @@ sub run_command {
   # supported by this script. The first group of commands are all freestanding
   # in that they share no common code and are not followed by any data lines.
 
-
   ###################
   ###################
 
@@ -2366,7 +2316,6 @@ sub run_command {
                ">>test-stdout");
     return 1;
   }
-
 
   # The "dump" command runs exim_dumpdb. On different systems, the output for
   # some types of dump may appear in a different order because it's just hauled
@@ -2430,7 +2379,6 @@ sub run_command {
     return 1;
   }
 
-
   # verbose comments start with ###
   if (/^###\s/) {
     for my $file (qw(test-stdout test-stderr test-stderr-server test-stdout-server)) {
@@ -2446,7 +2394,6 @@ sub run_command {
     print "$1\n";
     return 0;
   }
-
 
   # The "exim_lock" command runs exim_lock in the same manner as "server",
   # but it doesn't use any input.
@@ -2464,7 +2411,6 @@ sub run_command {
     return 3;
   }
 
-
   # The "exinext" command runs exinext
 
   if (/^exinext\s+(.*)/)
@@ -2477,7 +2423,6 @@ sub run_command {
     return 1;
   }
 
-
   # The "exigrep" command runs exigrep on the current mainlog
 
   if (/^exigrep\s+(.*)/)
@@ -2489,7 +2434,6 @@ sub run_command {
     return 1;
   }
 
-
   # The "exiqgrep" command runs exiqgrep on the current spool
 
   if (/^exiqgrep(\s+.*)?/)
@@ -2499,7 +2443,6 @@ sub run_command {
                ">>test-stdout");
     return 1;
   }
-
 
   # The "eximstats" command runs eximstats on the current mainlog
 
@@ -2512,7 +2455,6 @@ sub run_command {
     return 1;
   }
 
-
   # The "gnutls" command makes a copy of saved GnuTLS parameter data in the
   # spool directory, to save Exim from re-creating it each time.
 
@@ -2524,7 +2466,6 @@ sub run_command {
                "sudo chmod 0400 $gen_fn";
     return 1;
   }
-
 
   # The "killdaemon" command should ultimately follow the starting of any Exim
   # daemon with the -bd option.
@@ -2554,7 +2495,6 @@ sub run_command {
     return (1, $return_extra);
   }
 
-
   # The "millisleep" command is like "sleep" except that its argument is in
   # milliseconds, thus allowing for a subsecond sleep, which is, in fact, all it
   # is used for.
@@ -2564,7 +2504,6 @@ sub run_command {
     select(undef, undef, undef, $1/1000);
     return 0;
   }
-
 
   # The "munge" command selects one of a hardwired set of test-result modifications
   # to be made before result compares are run against the golden set.  This lets
@@ -2576,7 +2515,6 @@ sub run_command {
   {
     return (0, { munge => $1 });
   }
-
 
   # The "sleep" command does just that. For sleeps longer than 1 second we
   # tell the user what's going on.
@@ -2600,7 +2538,6 @@ sub run_command {
     return 0;
   }
 
-
   # Various Unix management commands are recognized
 
   if (/^(ln|ls|du|mkdir|mkfifo|touch|cp|cat)\s/ ||
@@ -2610,14 +2547,11 @@ sub run_command {
     return 1;
   }
 
-
-
   ###################
   ###################
 
   # The next group of commands are also freestanding, but they are all followed
   # by data lines.
-
 
   # The "server" command starts up a script-driven server that runs in parallel
   # with the following exim command. Therefore, we want to run a subprocess and
@@ -2649,7 +2583,6 @@ sub run_command {
     while (! stat("$pidfile") ) { select(undef, undef, undef, 0.3); }
     return 3;
   }
-
 
   # The "write" command is a way of creating files of specific sizes for
   # buffering tests, or containing specific data lines from within the script
@@ -2717,7 +2650,6 @@ sub run_command {
 
     return 0;
   }
-
 
   ###################
   ###################
@@ -2940,12 +2872,9 @@ sub run_command {
     return (3, { exim_pid => $pid });             # Don't wait
   }
 
-
-
   # Unknown command
 
   else { tests_exit(-1, "Command unrecognized in line $lineno: $_"); }
-
 
   # Run the command, with stdin connected to a pipe, and write the stdin data
   # to it, with appropriate substitutions. If a starts with '>>> ', process it
@@ -3002,9 +2931,6 @@ sub run_command {
   close CMD;                # Waits for command to finish
   return $yield;            # Ran command and waited
 }
-
-
-
 
 ###############################################################################
 ###############################################################################
@@ -3212,7 +3138,6 @@ sub check_running_clamav
   }
 }
 
-
 sub check_running_redis
 {
   if (defined $parm_lookups{redis})
@@ -3243,8 +3168,6 @@ sub check_running_dovecot
   }
 }
 
-
-
 ###############################################################################
 ###############################################################################
 
@@ -3273,14 +3196,11 @@ sub check_running_dovecot
 
   umask 022;
 
-
   ##################################################
   #       Check for the "less" command             #
   ##################################################
 
   @more = 'more' if system('which less >/dev/null 2>&1') != 0;
-
-
 
   ##################################################
   #      See if an Exim binary has been given      #
@@ -3289,7 +3209,6 @@ sub check_running_dovecot
   # If the first character of the first argument is '/', the argument is taken
   # as the path to the binary. If the first argument does not start with a
   # '/' but exists in the file system, it's assumed to be the Exim binary.
-
 
   ##################################################
   # Sort out options and which tests are to be run #
@@ -3327,7 +3246,6 @@ sub check_running_dovecot
   ($parm_exim, @ARGV) = Exim::Runtest::exim_binary(@ARGV);
   print "Exim binary is `$parm_exim'\n" if defined $parm_exim;
 
-
   my @wanted = sort numerically uniq
     @tests_wanted ? @tests_wanted : (),
     @range_wanted ? $range_wanted[0] .. $range_wanted[1] : (),
@@ -3351,9 +3269,6 @@ sub check_running_dovecot
     print "Test for sudo OK\n";
   }
 
-
-
-
   ##################################################
   #      Make the command's directory current      #
   ##################################################
@@ -3364,7 +3279,6 @@ sub check_running_dovecot
   $cwd = '.' if ($cwd !~ s|/[^/]+$||);
   chdir($cwd) || die "** Failed to chdir to \"$cwd\": $!\n";
   $parm_cwd = Cwd::getcwd();
-
 
   ##################################################
   #     Search for an Exim binary to test          #
@@ -3398,8 +3312,6 @@ sub check_running_dovecot
     }
     die "** Too many tries\n" if $parm_exim eq '';
   }
-
-
 
   ##################################################
   #          Find what is in the binary            #
@@ -3507,7 +3419,6 @@ XXX
   die "aux-fixed file is group-writeable; best to strip them all, recursively\n"
           if 0020 & (stat "aux-fixed/0037.f-1")[2];
 
-
   open(EXIMINFO, "$parm_exim -d-all+transport -bV -C $parm_cwd/test-config -DDIR=$parm_cwd |") ||
     die "** Cannot run $parm_exim: $!\n";
 
@@ -3597,8 +3508,6 @@ XXX
 
   unlink("$parm_cwd/test-config");
 
-
-
   if (defined $parm_support{Content_Scanning})
   {
     check_running_spamassassin();
@@ -3640,7 +3549,6 @@ XXX
     die "** Test script abandoned\n";
   }
 
-
   ##################################################
   #      Check for the auxiliary programs          #
   ##################################################
@@ -3670,7 +3578,6 @@ XXX
     delete $parm_support{Expand_dlfunc};
     $dlfunc_deleted = 1;
   }
-
 
   ##################################################
   #          Find environmental details            #
@@ -3848,8 +3755,6 @@ XXX
           . "    Please change the host's name (or comment out this check, and fail several testcases)\n";
   }
 
-
-
   ##################################################
   #     Create a testing version of Exim           #
   ##################################################
@@ -3931,7 +3836,6 @@ XXX
   }
   print '-' x 78, "\n";
 
-
   ##################################################
   #    Check that the Exim user can access stuff   #
   ##################################################
@@ -3995,7 +3899,6 @@ XXX
     if $dlfunc_deleted;
   print "Omitting dbm tests (unable to copy exim_dbmbuild)\n"
     if $dbm_build_deleted;
-
 
   my @test_dirs = grep { not /^CVS$/ } map { basename $_ } glob 'scripts/*'
     or die tests_exit(-1, "Failed to find test scripts in 'scripts/*`: $!");
@@ -4127,7 +4030,6 @@ XXX
   }
 
   print ">>Test List:\n", join "\n", @test_list, '' if $debug;
-
 
   ##################################################
   #         Munge variable auxiliary data          #
@@ -4278,8 +4180,6 @@ XXX
     $" = " ";
   }
 
-
-
   ##################################################
   #    Create lists of mailboxes and message logs  #
   ##################################################
@@ -4293,8 +4193,6 @@ XXX
   opendir(DIR, "msglog") || tests_exit(-1, "Failed to opendir msglog: $!");
   @oldmsglogs = readdir(DIR);
   closedir(DIR);
-
-
 
   ##################################################
   #         Run the required tests                 #
@@ -4311,7 +4209,6 @@ XXX
     print "\nPress RETURN to run the tests: ";
     <T>;
   }
-
 
   my $failures = 0;
   foreach $test (@test_list)
@@ -4679,7 +4576,6 @@ XXX
     }
   }
 
-
   ##################################################
   #         Exit from the test script              #
   ##################################################
@@ -4764,6 +4660,5 @@ Start Exim wrapped by I<valgrind>. (default: don't use valgrind)
 =back
 
 =cut
-
 
 # End of runtest script
