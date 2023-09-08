@@ -112,12 +112,35 @@ $ENV{USER} = getpwuid($>) if not exists $ENV{USER};
 
 # All the other test parameters, which will be computed as we go along
 
+my %parm_authenticators;
+my $parm_caller;
+my $parm_caller_gecos;
+my $parm_caller_gid;
+my $parm_caller_group;
+my $parm_caller_home;
+my $parm_caller_uid;
+my $parm_clamsocket;
 my $parm_configure_group;
 my $parm_configure_owner;
+my $parm_cwd;
+my $parm_exim_gid;
+my $parm_exim_uid;
+my $parm_eximgroup;
+my $parm_eximuser;
 my $parm_hostname;
 my $parm_ipv4;
+my $parm_ipv4r;
 my $parm_ipv6;
 my $parm_ipv6_stripped;
+my $parm_ipv6r;
+my %parm_lookups;
+my %parm_malware;
+my %parm_routers;
+my %parm_running;
+my $parm_shell;
+my %parm_support;
+my %parm_transports;
+my $parm_trusted_config_list;
 
 ###############################################################################
 ###############################################################################
