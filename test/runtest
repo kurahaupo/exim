@@ -1689,7 +1689,7 @@ sub log_test {
 my $testno;
 
 sub check_file {
-  my ($rf,$rsf,$mf,$sf,$sortfile,$extra) = @_;
+  my ($rf, $rsf, $mf, $sf, $sortfile, $extra) = @_;
 
   # If there is no saved file, the raw files must either not exist, or be
   # empty. The test ! -s is TRUE if the file does not exist or is empty.
