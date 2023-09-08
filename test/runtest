@@ -1246,7 +1246,7 @@ sub munge {
         next;
       }
 
-      # Non-TLS builds have a different default Recieved: header expansion {{{
+      # Non-TLS builds have a different default Received: header expansion {{{
       s/^((.*)\t\}\}\}\}by \$primary_hostname \$\{if def:received_protocol \{with \$received_protocol \}\})\(Exim \$version_number\)$/$1\$\{if def:tls_in_ver        \{ (\$tls_in_ver)\}\}\$\{if def:tls_in_cipher_std \{ tls \$tls_in_cipher_std\n$2\t\}\}(Exim \$version_number)/;
       s/^((\s*).*considering: with \$received_protocol \}\})\(Exim \$version_number\)$/$1\$\{if def:tls_in_ver        \{ (\$tls_in_ver)\}\}\$\{if def:tls_in_cipher_std \{ tls \$tls_in_cipher_std\n$2\t\}\}(Exim \$version_number)/;
       # }}}
