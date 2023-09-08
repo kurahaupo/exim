@@ -110,9 +110,14 @@ $ENV{LC_ALL} = 'C';
 # In some environments USER does not exist, but we need it for some test(s)
 $ENV{USER} = getpwuid($>) if not exists $ENV{USER};
 
-my ($parm_configure_owner, $parm_configure_group);
-my ($parm_ipv4, $parm_ipv6, $parm_ipv6_stripped);
+# All the other test parameters, which will be computed as we go along
+
+my $parm_configure_group;
+my $parm_configure_owner;
 my $parm_hostname;
+my $parm_ipv4;
+my $parm_ipv6;
+my $parm_ipv6_stripped;
 
 ###############################################################################
 ###############################################################################
