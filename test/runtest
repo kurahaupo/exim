@@ -296,7 +296,7 @@ sub new_value {
 sub date_seconds {
   my ($str) = @_;
 
-  my ($day,$month,$year,$hour,$min,$sec) =
+  my ($day, $month, $year, $hour, $min, $sec) =
     $str =~ /^(\d\d)-(\w\w\w)-(\d{4})\s(\d\d):(\d\d):(\d\d)/;
   state $monmap = {
     Jan => 0, Feb => 1, Mar => 2, Apr => 3,
@@ -304,7 +304,7 @@ sub date_seconds {
     Sep => 8, Oct => 9, Nov => 10, Dec => 11,
   };
   my $mon = $monmap->{$month};
-  return timelocal($sec,$min,$hour,$day,$mon,$year);
+  return timelocal($sec, $min, $hour, $day, $mon, $year);
 }
 
 # This is a subroutine to sort maildir files into time-order. The second field
@@ -313,8 +313,8 @@ sub date_seconds {
 
 sub maildirsort {
   return $a cmp $b if ($a !~ /^\d+\.H\d/ || $b !~ /^\d+\.H\d/);
-  my ($x1,$y1) = $a =~ /^(\d+)\.H(\d+)/;
-  my ($x2,$y2) = $b =~ /^(\d+)\.H(\d+)/;
+  my ($x1, $y1) = $a =~ /^(\d+)\.H(\d+)/;
+  my ($x2, $y2) = $b =~ /^(\d+)\.H(\d+)/;
   return ($x1 != $x2)? ($x1 <=> $x2) : ($y1 <=> $y2);
 }
 
@@ -497,7 +497,7 @@ sub munge {
     # Time data lines, which look like this:
     # 25-Aug-2000 12:11:37  25-Aug-2000 12:11:37  26-Aug-2000 12:11:37
     if (/^($date)\s+($date)\s+($date)(\s+\*)?\s*$/) {
-      my ($date1,$date2,$date3,$expired) = ($1,$2,$3,$4);
+      my ($date1, $date2, $date3, $expired) = ($1, $2, $3, $4);
       $expired = '' if !defined $expired;
 
       # Round the time-difference up to nearest even value
@@ -2570,7 +2570,7 @@ sub run_command {
       # Sized data
 
       while (scalar @sizes > 0) {
-        my ($count,$len,$leadin) = (shift @sizes) =~ /(\d+)x(\d+)(?:=(.*))?/;
+        my ($count, $len, $leadin) = (shift @sizes) =~ /(\d+)x(\d+)(?:=(.*))?/;
         $leadin = '' if !defined $leadin;
         $leadin =~ s/_/ /g;
         $len -= length($leadin) + 1;
@@ -2680,7 +2680,7 @@ sub run_command {
       my @msglist =
         map { $_->[1] }                                   # extract the values
         sort { $a->[0] cmp $b->[0] }                      # sort by key
-        map { [join('.' => (split /-/, $_)[0,2]) => $_] } # key (timestamp.fractional-time) => value(message_id)
+        map { [join('.' => (split /-/, $_)[0, 2]) => $_] } # key (timestamp.fractional-time) => value(message_id)
         map { /^\s*\d+[smhdw]\s+\S+\s+(\S+)/ } `@listcmd` or tests_exit(-1, "No output from `exim -bp` (@listcmd)\n");
 
       # Done backwards just in case there are more than 9
@@ -2891,7 +2891,7 @@ sub check_running_spamassassin {
     # clamd does, but it does respond to errors in an informative manner,
     # so use that.
 
-    my ($sint,$sport) = ('127.0.0.1',783);
+    my ($sint, $sport) = ('127.0.0.1', 783);
     eval {
       my $sin = sockaddr_in($sport, inet_aton($sint))
           or die "** Failed packing $sint:$sport\n";
@@ -2999,7 +2999,7 @@ sub check_running_clamav {
             $socket = sockaddr_un($parm_clamsocket) or die "** Failed packing '$parm_clamsocket'\n";
           }
           elsif ($socket_domain == AF_INET) {
-            my ($ca_host, $ca_port) = split(/\s+/,$parm_clamsocket);
+            my ($ca_host, $ca_port) = split(/\s+/, $parm_clamsocket);
             my $ca_hostent = gethostbyname($ca_host) or die "** Failed to get raw address for host '$ca_host'\n";
             $socket = sockaddr_in($ca_port, $ca_hostent) or die "** Failed packing '$parm_clamsocket'\n";
           }
@@ -3367,14 +3367,13 @@ XXX
     elsif (/^Transports: (.*)/) {
       print;
       @temp = split /(\s+)/, $1;
-      my ($i,$k);
       push(@temp, ' ');
       %parm_transports = @temp;
       foreach my $k (keys %parm_transports) {
         if ($k =~ "/") {
           @temp = split /\//, $k;
           $parm_transports{$temp[0]} = " ";
-          for ($i = 1; $i < @temp; $i++) {
+          for (my $i = 1; $i < @temp; $i++) {
             $parm_transports{"$temp[0]/$temp[$i]"} = " ";
           }
         }
