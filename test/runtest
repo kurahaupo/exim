@@ -192,7 +192,7 @@ my $TEST_STATE = {};
 sub tests_exit {
   my ($rc, $msg) = @_;
 
-  my($spool);
+  my ($spool);
 
   # Search for daemon pid files and kill the daemons. We kill with SIGINT rather
   # than SIGTERM to stop it outputting "Terminated" to the terminal when not in
@@ -205,7 +205,7 @@ sub tests_exit {
   }
 
   if (opendir(DIR, "spool")) {
-    my(@spools) = sort readdir(DIR);
+    my (@spools) = sort readdir(DIR);
     closedir(DIR);
     foreach $spool (@spools) {
       next if $spool !~ /^exim-daemon./;
@@ -251,7 +251,7 @@ sub tests_exit {
 sub new_value {
   my ($oldid, $base, $sequence) = @_;
 
-  my($newid) = $cache{$oldid};
+  my ($newid) = $cache{$oldid};
   if (! defined $newid) {
     $newid = sprintf($base, $$sequence++);
     $cache{$oldid} = $newid;
@@ -265,9 +265,9 @@ sub new_value {
 sub date_seconds {
   my ($str) = @_;
 
-  my($day,$month,$year,$hour,$min,$sec) =
+  my ($day,$month,$year,$hour,$min,$sec) =
     $str =~ /^(\d\d)-(\w\w\w)-(\d{4})\s(\d\d):(\d\d):(\d\d)/;
-  my($mon);
+  my ($mon);
   if   ($month =~ /Jan/) {$mon = 0;}
   elsif($month =~ /Feb/) {$mon = 1;}
   elsif($month =~ /Mar/) {$mon = 2;}
@@ -289,8 +289,8 @@ sub date_seconds {
 
 sub maildirsort {
   return $a cmp $b if ($a !~ /^\d+\.H\d/ || $b !~ /^\d+\.H\d/);
-  my($x1,$y1) = $a =~ /^(\d+)\.H(\d+)/;
-  my($x2,$y2) = $b =~ /^(\d+)\.H(\d+)/;
+  my ($x1,$y1) = $a =~ /^(\d+)\.H(\d+)/;
+  my ($x2,$y2) = $b =~ /^(\d+)\.H(\d+)/;
   return ($x1 != $x2)? ($x1 <=> $x2) : ($y1 <=> $y2);
 }
 
@@ -305,8 +305,8 @@ sub maildirsort {
 sub list_files_below {
   my ($dir) = @_;
 
-  my(@yield) = ();
-  my(@sublist, $file);
+  my (@yield) = ();
+  my (@sublist, $file);
 
   opendir(DIR, $dir) || tests_exit(-1, "Failed to open $dir: $!");
   @sublist = sort maildirsort readdir(DIR);
@@ -348,17 +348,17 @@ sub list_files_below {
 sub munge {
   my ($file, $extra) = @_;
 
-  my($yield) = 0;
-  my(@saved) = ();
+  my ($yield) = 0;
+  my (@saved) = ();
 
   local $_;
 
   open(IN, "$file") || tests_exit(-1, "Failed to open $file: $!");
 
-  my($is_log) = $file =~ /log/;
-  my($is_stdout) = $file =~ /stdout/;
-  my($is_stderr) = $file =~ /stderr/;
-  my($is_mail) = $file =~ /mail/;
+  my ($is_log) = $file =~ /log/;
+  my ($is_stdout) = $file =~ /stdout/;
+  my ($is_stderr) = $file =~ /stderr/;
+  my ($is_mail) = $file =~ /mail/;
 
   # Date pattern
 
@@ -465,11 +465,11 @@ sub munge {
     # Time data lines, which look like this:
     # 25-Aug-2000 12:11:37  25-Aug-2000 12:11:37  26-Aug-2000 12:11:37
     if (/^($date)\s+($date)\s+($date)(\s+\*)?\s*$/) {
-      my($date1,$date2,$date3,$expired) = ($1,$2,$3,$4);
+      my ($date1,$date2,$date3,$expired) = ($1,$2,$3,$4);
       $expired = '' if !defined $expired;
 
       # Round the time-difference up to nearest even value
-      my($increment) = ((date_seconds($date3) - date_seconds($date2) + 1) >> 1) << 1;
+      my ($increment) = ((date_seconds($date3) - date_seconds($date2) + 1) >> 1) << 1;
 
       # We used to use globally unique replacement values, but timing
       # differences make this impossible. Just show the increment on the
@@ -529,7 +529,7 @@ sub munge {
 
     # Dates/times in debugging output for writing retry records
     if (/^  first failed=(\d+) last try=(\d+) next try=(\d+) (.*)$/) {
-      my($next) = $3 - $2;
+      my ($next) = $3 - $2;
       $_ = "  first failed=dddd last try=dddd next try=+$next $4\n";
     }
     s/^(\s*)now=\d+ first_failed=\d+ next_try=\d+ expired=(\w)/$1now=tttt first_failed=tttt next_try=tttt expired=$2/;
@@ -1656,7 +1656,7 @@ sub log_test {
 # Does not return if the user replies "Q" to a prompt.
 
 sub check_file {
-  my($rf,$rsf,$mf,$sf,$sortfile,$extra) = @_;
+  my ($rf,$rsf,$mf,$sf,$sortfile,$extra) = @_;
 
   # If there is no saved file, the raw files must either not exist, or be
   # empty. The test ! -s is TRUE if the file does not exist or is empty.
@@ -1714,7 +1714,7 @@ sub check_file {
   # data that does exist.
 
   open(MUNGED, '>', $mf) || tests_exit(-1, "Failed to open $mf: $!");
-  my($truncated) = munge($rf, $extra) if -e $rf;
+  my ($truncated) = munge($rf, $extra) if -e $rf;
 
   # Append the raw server log, if it is non-empty
   if (defined $rsf && -e $rsf) {
@@ -1741,7 +1741,7 @@ sub check_file {
     # Deal with truncated text items
 
     if ($truncated) {
-      my(@munged, @saved, $i, $j, $k);
+      my (@munged, @saved, $i, $j, $k);
 
       open(MUNGED, $mf) || tests_exit(-1, "Failed to open $mf: $!");
       @munged = <MUNGED>;
@@ -1969,8 +1969,8 @@ sub max {
 sub check_output {
   my ($mungename) = @_;
 
-  my($yield) = 0;
-  my($munge) = $munges->{$mungename} if defined $mungename;
+  my ($yield) = 0;
+  my ($munge) = $munges->{$mungename} if defined $mungename;
 
   $yield = max($yield,  check_file("spool/log/paniclog",
                          "spool/log/serverpaniclog",
@@ -2009,7 +2009,7 @@ sub check_output {
   # Compare any delivered messages, unless this test is skipped.
 
   if (! $message_skip) {
-    my($msgno) = 0;
+    my ($msgno) = 0;
 
     # Get a list of expected mailbox files for this script. We don't bother with
     # directories, just the files within them.
@@ -2160,7 +2160,7 @@ sub run_system {
   my ($cmd) = @_;
 
   if ($debug) {
-    my($prcmd) = $cmd;
+    my ($prcmd) = $cmd;
     $prcmd =~ s/; /;\n>> /;
     print ">> $prcmd\n";
   }
@@ -2197,7 +2197,7 @@ sub run_system {
 sub run_command {
   my ($testno, $subtestref, $R, $commandnameref, $aux_info) = @_;
 
-  my($yield) = 1;
+  my ($yield) = 1;
 
   our %ENV = map { $_ => $ENV{$_} } grep { /^(?:USER|SHELL|PATH|TERM|EXIM_TEST_.*)$/ } keys %ENV;
 
@@ -2218,7 +2218,7 @@ sub run_command {
 
   s/\s+$//;
   while (substr($_, -1) eq"\\") {
-    my($temp);
+    my ($temp);
     $_ = substr($_, 0, -1);
     chomp($temp = <SCRIPT>);
     if (defined $temp) {
@@ -2291,8 +2291,8 @@ sub run_command {
       my @temp = <$in>;
       if ($which eq "callout") {
         @temp = sort {
-                     my($aa) = substr $a, 21;
-                     my($bb) = substr $b, 21;
+                     my ($aa) = substr $a, 21;
+                     my ($bb) = substr $b, 21;
                      return $aa cmp $bb;
                      } @temp;
       }
@@ -2502,7 +2502,7 @@ sub run_command {
   # same, but it also copies the lines to test-stdout.
 
   if (/^(cat)?write\s+(\S+)(?:\s+(.*))?\s*$/) {
-    my($cat) = defined $1;
+    my ($cat) = defined $1;
     @sizes = ();
     @sizes = split /\s+/, $3 if defined $3;
     open FILE, ">$2" || tests_exit(-1, "Failed to open \"$2\": $!");
@@ -2580,9 +2580,9 @@ sub run_command {
 
   elsif (/^((?i:[A-Z\d_]+=\S+\s+)+)?(\d+)?\s*(sudo(?:\s+-u\s+(\w+))?\s+)?exim(_\S+)?\s+(.*)$/) {
     $args = $6;
-    my($envset) = (defined $1)? $1      : '';
-    my($sudo)   = (defined $3)? "sudo " . (defined $4 ? "-u $4 ":'')  : '';
-    my($special)= (defined $5)? $5      : '';
+    my ($envset) = (defined $1)? $1      : '';
+    my ($sudo)   = (defined $3)? "sudo " . (defined $4 ? "-u $4 ":'')  : '';
+    my ($special)= (defined $5)? $5      : '';
     $wait_time  = (defined $2)? $2      : 0;
 
     # Return 2 rather than 1 afterwards
@@ -2611,7 +2611,7 @@ sub run_command {
     # message on the queue, and so on. */
 
     if ($args =~ /\$msg/) {
-      my($queuespec);
+      my ($queuespec);
       if ($args =~ /-qG\w+/) { $queuespec = $&; }
 
       my @listcmd;
@@ -2847,7 +2847,7 @@ sub check_running_spamassassin {
     # clamd does, but it does respond to errors in an informative manner,
     # so use that.
 
-    my($sint,$sport) = ('127.0.0.1',783);
+    my ($sint,$sport) = ('127.0.0.1',783);
     eval {
       my $sin = sockaddr_in($sport, inet_aton($sint))
           or die "** Failed packing $sint:$sport\n";
@@ -2896,7 +2896,7 @@ sub check_running_clamav {
   # configuration. Search for the clamd configuration file.
 
   if (system("clamscan -h 2>/dev/null >/dev/null") == 0) {
-    my($f, $clamconf, $test_prefix);
+    my ($clamconf, $test_prefix);
 
     print "The clamscan command works";
 
@@ -3150,7 +3150,7 @@ sub check_running_dovecot {
   if (not $parm_exim) {
     print "** Did not find an Exim binary to test\n";
     for ($i = 0; $i < 5; $i++) {
-      my($trybin);
+      my ($trybin);
       print "** Enter pathname for Exim binary: ";
       chomp($trybin = <STDIN>);
       if (-e $trybin) {
@@ -3276,7 +3276,7 @@ XXX
   print "-" x 78, "\n";
 
   while (<EXIMINFO>) {
-    my(@temp);
+    my (@temp);
 
     if (/^(Exim|Library) version/) { print; }
     if (/Runtime: /) {print; }
@@ -3323,7 +3323,7 @@ XXX
     elsif (/^Transports: (.*)/) {
       print;
       @temp = split /(\s+)/, $1;
-      my($i,$k);
+      my ($i,$k);
       push(@temp, ' ');
       %parm_transports = @temp;
       foreach $k (keys %parm_transports) {
@@ -3536,8 +3536,8 @@ XXX
 
   $parm_ipv6r = $parm_ipv6;             # Appropriate if not in use
   if ($parm_ipv6 =~ /^[\da-f]/) {
-    my(@comps) = split /:/, $parm_ipv6_stripped;
-    my(@nibbles);
+    my (@comps) = split /:/, $parm_ipv6_stripped;
+    my (@nibbles);
     foreach $comp (@comps) {
       push @nibbles, sprintf("%lx", hex($comp) >> 8);
       push @nibbles, sprintf("%lx", hex($comp) & 0xff);
@@ -3674,7 +3674,7 @@ XXX
   print "The Exim user needs access to the test suite directory. Checking ...";
 
   if (($rc = system("sudo bin/checkaccess $parm_cwd/eximdir/exim $parm_eximuser $parm_eximgroup")) != 0) {
-    my($why) = "unknown failure $rc";
+    my ($why) = "unknown failure $rc";
     $rc >>= 8;
     $why = "Couldn't find user \"$parm_eximuser\"" if $rc == 1;
     $why = "Couldn't find group \"$parm_eximgroup\"" if $rc == 2;
@@ -3719,8 +3719,8 @@ XXX
   # Scan for relevant tests
   # HS12: Needs to be reworked.
   DIR: for (my $i = 0; $i < @test_dirs; $i++) {
-    my($testdir) = $test_dirs[$i];
-    my($wantthis) = 1;
+    my ($testdir) = $test_dirs[$i];
+    my ($wantthis) = 1;
 
     print ">>Checking $testdir\n" if $debug;
 
@@ -3848,18 +3848,18 @@ XXX
 
     opendir(AUX, "$parm_cwd/$basedir-src") ||
       tests_exit(-1, "Failed to opendir $parm_cwd/$basedir-src: $!");
-    my(@filelist) = readdir(AUX);
+    my (@filelist) = readdir(AUX);
     close(AUX);
 
     foreach $file (@filelist) {
-      my($outfile) = $file;
+      my ($outfile) = $file;
       next if $file =~ /^\./;
 
       if ($file eq "db.ip4.V4NET") {
         $outfile = "db.ip4.$parm_ipv4_test_net";
       }
       elsif ($file eq "db.ip6.V6NET") {
-        my(@nibbles) = reverse(split /\s*/, $parm_ipv6_test_net);
+        my (@nibbles) = reverse(split /\s*/, $parm_ipv6_test_net);
         $" = '.';
         $outfile = "db.ip6.@nibbles";
         $" = ' ';
@@ -3893,7 +3893,7 @@ XXX
   # its real IP addresses. Dynamically created zone files achieve this.
 
   if ($have_ipv4 || $have_ipv6) {
-    my($shortname,$domain) = $parm_hostname =~ /^([^.]+)(.*)/;
+    my ($shortname,$domain) = $parm_hostname =~ /^([^.]+)(.*)/;
     open(OUT, ">$parm_cwd/dnszones/db$domain") ||
       tests_exit(-1, "Failed to open $parm_cwd/dnszones/db$domain: $!");
     print OUT "; This is a dynamically constructed fake zone file.\n" .
@@ -3907,7 +3907,7 @@ XXX
   }
 
   if ($have_ipv4 && $parm_ipv4 ne "127.0.0.1") {
-    my(@components) = $parm_ipv4 =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)/;
+    my (@components) = $parm_ipv4 =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)/;
 
     if ($components[0]=='10') {
       open(OUT, ">>$parm_cwd/dnszones/db.ip4.$components[0]") ||
@@ -3928,7 +3928,7 @@ XXX
   }
 
   if ($have_ipv6 && $parm_ipv6_stripped ne "::1") {
-    my($exp_v6) = $parm_ipv6_stripped;
+    my ($exp_v6) = $parm_ipv6_stripped;
     $exp_v6 =~ s/[^:]//g;
     if ( $parm_ipv6_stripped =~ /^([^:].+)::$/ ) {
       $exp_v6 = $1 . ':0' x (9-length($exp_v6));
@@ -3939,9 +3939,9 @@ XXX
     } else {
       $exp_v6 = $parm_ipv6_stripped;
     }
-    my(@components) = split /:/, $exp_v6;
-    my(@nibbles) = reverse (split /\s*/, shift @components);
-    my($sep) =  '';
+    my (@components) = split /:/, $exp_v6;
+    my (@nibbles) = reverse (split /\s*/, shift @components);
+    my ($sep) =  '';
 
     $" = ".";
     open(OUT, ">$parm_cwd/dnszones/db.ip6.@nibbles") ||
@@ -4154,17 +4154,17 @@ XXX
       }
       last if !defined $_;  # Hit EOF
 
-      my($subtest_startline) = $lineno;
+      my ($subtest_startline) = $lineno;
 
       # Now run the command. The function returns 0 for an inline command,
       # 1 if a non-exim command was run and waited for, 2 if an exim
       # command was run and waited for, and 3 if a command
       # was run and not waited for (usually a daemon or server startup).
 
-      my($commandname) = '';
-      my($expectrc) = 0;
-      my($rc, $run_extra) = run_command($testno, \$subtestno, \$expectrc, \$commandname, $TEST_STATE);
-      my($cmdrc) = $?;
+      my ($commandname) = '';
+      my ($expectrc) = 0;
+      my ($rc, $run_extra) = run_command($testno, \$subtestno, \$expectrc, \$commandname, $TEST_STATE);
+      my ($cmdrc) = $?;
 
       if ($debug) {
         print ">> rc=$rc cmdrc=$cmdrc\n";
