@@ -144,6 +144,8 @@ sub inthandler {
 # setting up files before running any tests.
 
 sub do_substitute {
+  my ($testno) = @_;
+
   s?\bCALLER\b?$parm_caller?g;
   s?\bCALLERGROUP\b?$parm_caller_group?g;
   s?\bCALLER_UID\b?$parm_caller_uid?g;
@@ -161,7 +163,7 @@ sub do_substitute {
   s?\bPORT_D4\b?$parm_port_d4?g;
   s?\bPORT_N\b?$parm_port_n?g;
   s?\bPORT_S\b?$parm_port_s?g;
-  s?\bTESTNUM\b?$_[0]?g;
+  s?\bTESTNUM\b?$testno?g;
   s?(\b|_)V4NET([\._])?$1$parm_ipv4_test_net$2?g;
   s?\bV6NET:?$parm_ipv6_test_net:?g;
   s?\bPORT_DYNAMIC\b?$dynamic_socket->sockport()?eg;
@@ -188,7 +190,8 @@ my $TEST_STATE = {};
 #    $_[0] < 0 for a "die" exit; $_[1] contains a message
 
 sub tests_exit {
-  my($rc) = $_[0];
+  my ($rc, $msg) = @_;
+
   my($spool);
 
   # Search for daemon pid files and kill the daemons. We kill with SIGINT rather
@@ -230,7 +233,7 @@ sub tests_exit {
 
   print "\nYou were in test $test at the end there.\n\n" if defined $test;
   exit $rc if ($rc >= 0);
-  die "** runtest error: $_[1]\n";
+  die "** runtest error: $msg\n";
 }
 
 ##################################################
@@ -246,7 +249,8 @@ sub tests_exit {
 #   $sequence     the address of the current sequence counter
 
 sub new_value {
-  my($oldid, $base, $sequence) = @_;
+  my ($oldid, $base, $sequence) = @_;
+
   my($newid) = $cache{$oldid};
   if (! defined $newid) {
     $newid = sprintf($base, $$sequence++);
@@ -259,8 +263,10 @@ sub new_value {
 # May go wrong across DST changes.
 
 sub date_seconds {
+  my ($str) = @_;
+
   my($day,$month,$year,$hour,$min,$sec) =
-    $_[0] =~ /^(\d\d)-(\w\w\w)-(\d{4})\s(\d\d):(\d\d):(\d\d)/;
+    $str =~ /^(\d\d)-(\w\w\w)-(\d{4})\s(\d\d):(\d\d):(\d\d)/;
   my($mon);
   if   ($month =~ /Jan/) {$mon = 0;}
   elsif($month =~ /Feb/) {$mon = 1;}
@@ -297,7 +303,8 @@ sub maildirsort {
 # maildir mailboxes.
 
 sub list_files_below {
-  my($dir) = $_[0];
+  my ($dir) = @_;
+
   my(@yield) = ();
   my(@sublist, $file);
 
@@ -339,8 +346,8 @@ sub list_files_below {
 # ***" is encountered; otherwise it is 0.
 
 sub munge {
-  my($file) = $_[0];
-  my($extra) = $_[1];
+  my ($file, $extra) = @_;
+
   my($yield) = 0;
   my(@saved) = ();
 
@@ -1935,6 +1942,7 @@ $munges =
 
 sub max {
   my ($a, $b) = @_;
+
   return $a if ($a > $b);
   return $b;
 }
@@ -1959,7 +1967,8 @@ sub max {
 #            2 if re-run needed (files may have been updated)
 
 sub check_output {
-  my($mungename) = $_[0];
+  my ($mungename) = @_;
+
   my($yield) = 0;
   my($munge) = $munges->{$mungename} if defined $mungename;
 
@@ -2148,7 +2157,8 @@ sub check_output {
 # Returns:  nothing
 
 sub run_system {
-  my($cmd) = $_[0];
+  my ($cmd) = @_;
+
   if ($debug) {
     my($prcmd) = $cmd;
     $prcmd =~ s/; /;\n>> /;
@@ -2185,17 +2195,15 @@ sub run_system {
 #            munge: name of a post-script results munger
 
 sub run_command {
-  my($testno) = $_[0];
-  my($subtestref) = $_[1];
-  my($commandnameref) = $_[3];
-  my($aux_info) = $_[4];
+  my ($testno, $subtestref, $R, $commandnameref, $aux_info) = @_;
+
   my($yield) = 1;
 
   our %ENV = map { $_ => $ENV{$_} } grep { /^(?:USER|SHELL|PATH|TERM|EXIM_TEST_.*)$/ } keys %ENV;
 
   # Handle unusual return code
   if (/^(\d+)\s*(?:([A-Z]+)=(\S+))?$/) {
-    my ($r) = $_[2];
+    my ($r) = $R;
     $$r = $1 << 8;
     $ENV{$2} = $3 if (defined $2);
     $_ = <SCRIPT>;
