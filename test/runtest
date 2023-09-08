@@ -256,13 +256,13 @@ sub tests_exit {
 
   close(T);
   system("sudo /bin/rm -rf ./spool test-* ./dnszones/*")
-    if ($rc == 0 && !$save_output);
+    if $rc == 0 && !$save_output;
 
   system("sudo /bin/rm -rf ./eximdir/*")
-    if (!$save_output);
+    if !$save_output;
 
   print "\nYou were in test $test at the end there.\n\n" if defined $test;
-  exit $rc if ($rc >= 0);
+  exit $rc if $rc >= 0;
   die "** runtest error: $msg\n";
 }
 
@@ -312,7 +312,7 @@ sub date_seconds {
 # numerically.
 
 sub maildirsort {
-  return $a cmp $b if ($a !~ /^\d+\.H\d/ || $b !~ /^\d+\.H\d/);
+  return $a cmp $b if $a !~ /^\d+\.H\d/ || $b !~ /^\d+\.H\d/;
   my ($x1, $y1) = $a =~ /^(\d+)\.H(\d+)/;
   my ($x2, $y2) = $b =~ /^(\d+)\.H(\d+)/;
   return ($x1 != $x2)? ($x1 <=> $x2) : ($y1 <=> $y2);
@@ -1224,7 +1224,7 @@ sub munge {
       # the IPv4-only case.
 
       print MUNGED "MUNGED: ::1 will be omitted in what follows\n"
-        if (/looked up these IP addresses/);
+        if /looked up these IP addresses/;
       next if /name=localhost address=::1/;
 
       # drop pdkim debugging header
@@ -1701,28 +1701,28 @@ sub check_file {
   my $sf_current = -e $sf_flavour ? $sf_flavour : $sf_generic;
 
   if (! -e $sf_current) {
-    return 0 if (! -s $rf && (! defined $rsf || ! -s $rsf));
+    return 0 if ! -s $rf && (! defined $rsf || ! -s $rsf);
 
     print "\n";
-    print "** $rf is not empty\n" if (-s $rf);
-    print "** $rsf is not empty\n" if (defined $rsf && -s $rsf);
+    print "** $rf is not empty\n" if -s $rf;
+    print "** $rsf is not empty\n" if defined $rsf && -s $rsf;
 
     for (;;) {
       $_ = interact('Continue, Show, or Quit? [Q] ', undef, $force_continue);
       tests_exit(1) if /^q?$/;
       if (/^c$/ && $force_continue) {
         log_failure($log_failed_filename, $testno, $rf);
-        log_test($log_summary_filename, $testno, 'F') if ($force_continue);
+        log_test($log_summary_filename, $testno, 'F') if $force_continue;
       }
       return 1 if /^c$/i && $rf !~ /paniclog/ && (!defined $rsf || $rsf !~ /paniclog/);
-      last if (/^[sc]$/);
+      last if /^[sc]$/;
     }
 
     foreach my $f ($rf, $rsf) {
       if (defined $f && -s $f) {
         print "\n";
         print "------------ $f -----------\n"
-          if (defined $rf && -s $rf && defined $rsf && -s $rsf);
+          if defined $rf && -s $rf && defined $rsf && -s $rsf;
         system @more => $f;
       }
     }
@@ -1736,7 +1736,7 @@ sub check_file {
         log_test($log_summary_filename, $testno, 'F')
       }
       return 1 if /^c$/i;
-      last if (/^u$/i);
+      last if /^u$/i;
     }
   }
 
@@ -1833,7 +1833,7 @@ sub check_file {
 
     # Do the comparison
 
-    return 0 if (system("$cf '$mf' '$sf_current' >test-cf") == 0);
+    return 0 if system("$cf '$mf' '$sf_current' >test-cf") == 0;
 
     # Handle comparison failure
 
@@ -1852,7 +1852,7 @@ sub check_file {
       }
       return 1 if /^c$/i;
       return 2 if /^r$/i;
-      last if (/^[us]$/i);
+      last if /^[us]$/i;
     }
   }
 
@@ -2141,7 +2141,7 @@ sub check_output {
       closedir(DIR);
 
       foreach my $msglog (@msglogs) {
-        next if ($msglog eq "." || $msglog eq ".." || $msglog eq "CVS");
+        next if $msglog eq "." || $msglog eq ".." || $msglog eq "CVS";
         (my $munged_msglog = $msglog) =~
           s/((?:[^\W_]{6}-){2}[^\W_]{2})
             /new_value($1, "10Hm%s-0005vi-00", \$next_msgid)/egx;
@@ -2252,7 +2252,7 @@ sub run_command {
   if (/^(\d+)\s*(?:([A-Z]+)=(\S+))?$/) {
     my $r = $R;
     $$r = $1 << 8;
-    $ENV{$2} = $3 if (defined $2);
+    $ENV{$2} = $3 if defined $2;
     $_ = <SCRIPT>;
     return 4 if !defined $_;       # Missing command
     $lineno++;
@@ -2526,7 +2526,7 @@ sub run_command {
   if (/^server\s+(.*)$/) {
     my $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
     $cmd = "./bin/server $server_opts -oP $pidfile $1 >>test-stdout-server";
-    print ">> $cmd\n" if ($debug);
+    print ">> $cmd\n" if $debug;
     $server_pid = open SERVERCMD, "|$cmd" || tests_exit(-1, "Failed to run $cmd");
     SERVERCMD->autoflush(1);
     print ">> Server pid is $server_pid\n" if $debug;
@@ -2738,7 +2738,7 @@ sub run_command {
         $pidfile = "$parm_cwd/spool/exim-daemon.pid";
         $cmd =~ s!\s-bd\s! -bdf -oP $pidfile !;
       }
-      print ">> |${cmd}-server\n" if ($debug);
+      print ">> |${cmd}-server\n" if $debug;
       open DAEMONCMD, "|${cmd}-server" || tests_exit(-1, "Failed to run $cmd");
       DAEMONCMD->autoflush(1);
       while (<SCRIPT>) { $lineno++; last if /^\*{4}\s*$/; }   # Ignore any input
@@ -2765,7 +2765,7 @@ sub run_command {
         close(STDIN);
         open(STDIN, '<&', $dynamic_socket) or die "** dup sock to stdin failed: $!\n";
         close($dynamic_socket);
-        print "[$$]>> ${cmd}-server\n" if ($debug);
+        print "[$$]>> ${cmd}-server\n" if $debug;
         exec "exec ${cmd}-server";
         die "Can't exec ${cmd}-server: $!\n";
       }
@@ -2791,7 +2791,7 @@ sub run_command {
     my $pid = fork();
     if (not defined $pid) { die "** fork failed: $!\n" }
     if (not $pid) {
-      print "[$$]>> ${line}\n" if ($debug);
+      print "[$$]>> ${line}\n" if $debug;
       close(STDIN);
       open(STDIN, "<", "test-stdout");
       close(STDOUT);
@@ -2826,7 +2826,7 @@ sub run_command {
   # for the stderr file. See comment above about the use of -DSERVER.
 
   my $stderrsuffix = ($cmd =~ /\s-DSERVER=server\s/)? "-server" : '';
-  print ">> |${cmd}${stderrsuffix}\n" if ($debug);
+  print ">> |${cmd}${stderrsuffix}\n" if $debug;
   open CMD, "|${cmd}${stderrsuffix}" || tests_exit(1, "Failed to run $cmd");
 
   CMD->autoflush(1);
@@ -3178,7 +3178,7 @@ sub check_running_dovecot {
   # After doing so, we find its absolute path name.
 
   my $cwd = $0;
-  $cwd = '.' if ($cwd !~ s|/[^/]+$||);
+  $cwd = '.' if $cwd !~ s|/[^/]+$||;
   chdir($cwd) || die "** Failed to chdir to \"$cwd\": $!\n";
   $parm_cwd = Cwd::getcwd();
 
@@ -3292,11 +3292,11 @@ XXX
     die sprintf "TRUSTED_CONFIG_LIST: $parm_trusted_config_list %d is group writable, but not owned by group '%s' or '%s'.\n",
     (stat _)[1],
       scalar(getgrgid 0), scalar(getgrgid $>)
-      if (020 & (stat _)[2]) and not ((stat _)[5] == $> or (stat _)[5] == 0);
+      if 020 & (stat _)[2] && (stat _)[5] != $> && (stat _)[5] != 0;
 
     die sprintf "TRUSTED_CONFIG_LIST: $parm_trusted_config_list is not owned by user '%s' or '%s'.\n",
     scalar(getpwuid 0), scalar(getpwuid $>)
-       if (not (-o _ or (stat _)[4] == 0));
+       unless -o _ || (stat _)[4] == 0;
 
     open(TCL, $parm_trusted_config_list) or die "Can't open $parm_trusted_config_list: $!\n";
     my $test_config = getcwd() . '/test-config';
@@ -3332,7 +3332,7 @@ XXX
       print;
       $have_largefiles = 1 if $1 > 4;
       die "** Size of off_t > 32 which seems improbable, not running tests\n"
-          if ($1 > 32);
+          if $1 > 32;
     }
 
     elsif (/^Support for: (.*)/) {
@@ -3412,17 +3412,17 @@ XXX
 
   my $missing = '';
 
-  $missing .= "     Lookup: lsearch\n" if (!defined $parm_lookups{lsearch});
+  $missing .= "     Lookup: lsearch\n" if !defined $parm_lookups{lsearch};
 
-  $missing .= "     Router: accept\n" if (!defined $parm_routers{accept});
-  $missing .= "     Router: dnslookup\n" if (!defined $parm_routers{dnslookup});
-  $missing .= "     Router: manualroute\n" if (!defined $parm_routers{manualroute});
-  $missing .= "     Router: redirect\n" if (!defined $parm_routers{redirect});
+  $missing .= "     Router: accept\n" if !defined $parm_routers{accept};
+  $missing .= "     Router: dnslookup\n" if !defined $parm_routers{dnslookup};
+  $missing .= "     Router: manualroute\n" if !defined $parm_routers{manualroute};
+  $missing .= "     Router: redirect\n" if !defined $parm_routers{redirect};
 
-  $missing .= "     Transport: appendfile\n" if (!defined $parm_transports{appendfile});
-  $missing .= "     Transport: autoreply\n" if (!defined $parm_transports{autoreply});
-  $missing .= "     Transport: pipe\n" if (!defined $parm_transports{pipe});
-  $missing .= "     Transport: smtp\n" if (!defined $parm_transports{smtp});
+  $missing .= "     Transport: appendfile\n" if !defined $parm_transports{appendfile};
+  $missing .= "     Transport: autoreply\n" if !defined $parm_transports{autoreply};
+  $missing .= "     Transport: pipe\n" if !defined $parm_transports{pipe};
+  $missing .= "     Transport: smtp\n" if !defined $parm_transports{smtp};
 
   if ($missing ne '') {
     print "\n";
@@ -3444,8 +3444,8 @@ XXX
   for my $prog ("cf", "checkaccess", "client",
                 "client-ssl", "client-gnutls",
                 "fakens", "iefbr14", "server") {
-    next if ($prog eq "client-ssl" && !defined $parm_support{OpenSSL});
-    next if ($prog eq "client-gnutls" && !defined $parm_support{GnuTLS});
+    next if $prog eq "client-ssl" && !defined $parm_support{OpenSSL};
+    next if $prog eq "client-gnutls" && !defined $parm_support{GnuTLS};
     if (!-e "bin/$prog") {
       print "\n";
       print "** bin/$prog does not exist. Have you run ./configure and make?\n";
@@ -3649,7 +3649,7 @@ XXX
   # of the message, which breaks certain comparisons.
 
   die "** Unable to make patched exim: $!\n"
-    if (system("sudo ./patchexim $parm_exim") != 0);
+    if system("sudo ./patchexim $parm_exim") != 0;
 
   # From this point on, exits from the program must go via the subroutine
   # tests_exit(), so that suitable cleaning up can be done when required.
@@ -3771,8 +3771,8 @@ XXX
     # Skip this directory if the first test is equal or greater than the first
     # test in the next directory.
 
-    next DIR if ($i < @test_dirs - 1) &&
-            ($wanted[0] >= substr($test_dirs[$i+1], 0, 4));
+    next DIR if $i+1 < @test_dirs
+             && $wanted[0] >= substr($test_dirs[$i+1], 0, 4);
 
     # No need to carry on if the end test is less than the first test in this
     # subdirectory.
@@ -4133,7 +4133,7 @@ XXX
 
     $_ = <SCRIPT>;
     $lineno++;
-    tests_exit(-1, "Missing identifying comment at start of $test") if (!/^#/);
+    tests_exit(-1, "Missing identifying comment at start of $test") if !/^#/;
     printf("%s %s", (substr $test, 5), (substr $_, 2));
 
     # Loop for each of the subtests within the script. The variable $server_pid
@@ -4235,13 +4235,13 @@ XXX
 
       # Hit EOF after an initial return code number
 
-      tests_exit(-1, "Unexpected EOF in script") if ($rc == 4);
+      tests_exit(-1, "Unexpected EOF in script") if $rc == 4;
 
       # Carry on with the next command if we did not wait for this one. $rc == 0
       # if no subprocess was run; $rc == 3 if we started a process but did not
       # wait for it.
 
-      next if ($rc == 0 || $rc == 3);
+      next if $rc == 0 || $rc == 3;
 
       # We ran and waited for a command. Check for the expected result unless
       # it died.
