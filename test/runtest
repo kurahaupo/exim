@@ -394,10 +394,10 @@ sub munge {
 
   open(IN, "$file") || tests_exit(-1, "Failed to open $file: $!");
 
-  my ($is_log) = $file =~ /log/;
-  my ($is_stdout) = $file =~ /stdout/;
-  my ($is_stderr) = $file =~ /stderr/;
-  my ($is_mail) = $file =~ /mail/;
+  my $is_log    = $file =~ /log/;
+  my $is_stdout = $file =~ /stdout/;
+  my $is_stderr = $file =~ /stderr/;
+  my $is_mail   = $file =~ /mail/;
 
   # Date pattern
 
@@ -3993,7 +3993,7 @@ XXX
     }
     my @components = split /:/, $exp_v6;
     my @nibbles = reverse (split /\s*/, shift @components);
-    my ($sep) =  '';
+    my $sep =  '';
 
     $" = ".";
     open(OUT, ">$parm_cwd/dnszones/db.ip6.@nibbles") ||
@@ -4207,17 +4207,17 @@ XXX
       }
       last if !defined $_;  # Hit EOF
 
-      my ($subtest_startline) = $lineno;
+      my $subtest_startline = $lineno;
 
       # Now run the command. The function returns 0 for an inline command,
       # 1 if a non-exim command was run and waited for, 2 if an exim
       # command was run and waited for, and 3 if a command
       # was run and not waited for (usually a daemon or server startup).
 
-      my ($commandname) = '';
-      my ($expectrc) = 0;
+      my $commandname = '';
+      my $expectrc = 0;
       my ($rc, $run_extra) = run_command($testno, \$subtestno, \$expectrc, \$commandname, $TEST_STATE);
-      my ($cmdrc) = $?;
+      my $cmdrc = $?;
 
       if ($debug) {
         print ">> rc=$rc cmdrc=$cmdrc\n";
