@@ -1782,13 +1782,11 @@ sub check_file {
     # Deal with truncated text items
 
     if ($truncated) {
-      my (@munged, @saved);
-
       open(MUNGED, $mf) || tests_exit(-1, "Failed to open $mf: $!");
-      @munged = <MUNGED>;
+      my @munged = <MUNGED>;
       close(MUNGED);
       open(SAVED, $sf_current) || tests_exit(-1, "Failed to open $sf_current: $!");
-      @saved = <SAVED>;
+      my @saved = <SAVED>;
       close(SAVED);
 
       my $j = 0;
@@ -2557,8 +2555,7 @@ sub run_command {
 
   if (/^(cat)?write\s+(\S+)(?:\s+(.*))?\s*$/) {
     my ($cat) = defined $1;
-    @sizes = ();
-    @sizes = split /\s+/, $3 if defined $3;
+    my @sizes = split /\s+/, $3 if defined $3;
     open FILE, ">$2" || tests_exit(-1, "Failed to open \"$2\": $!");
 
     if ($cat) {
