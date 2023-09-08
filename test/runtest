@@ -2208,8 +2208,7 @@ sub run_system {
   my ($cmd) = @_;
 
   if ($debug) {
-    my ($prcmd) = $cmd;
-    $prcmd =~ s/; /;\n>> /;
+    (my $prcmd = $cmd) =~ s/; /;\n>> /;
     print ">> $prcmd\n";
   }
   system($cmd);
