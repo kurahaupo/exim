@@ -239,9 +239,9 @@ sub tests_exit {
     closedir(DIR);
     foreach my $spool (@spools) {
       next if $spool !~ /^exim-daemon./;
-      open(PID, "spool/$spool") || die "** Failed to open \"spool/$spool\": $!\n";
+      open PID, '<', "spool/$spool" or die "** Failed to open \"spool/$spool\": $!\n";
       chomp($pid = <PID>);
-      close(PID);
+      close PID;
       print "Tidyup: killing daemon pid=$pid\n";
       system("sudo rm -f spool/$spool; sudo kill -INT $pid");
     }
@@ -254,7 +254,7 @@ sub tests_exit {
   # the option to save them is set. Always remove the patched Exim binary. Then
   # exit normally, or die.
 
-  close(T);
+  close T;
   system("sudo /bin/rm -rf ./spool test-* ./dnszones/*")
     if $rc == 0 && !$save_output;
 
@@ -385,7 +385,7 @@ sub munge {
 
   local $_;
 
-  open(IN, "$file") || tests_exit(-1, "Failed to open $file: $!");
+  open IN, '<', $file or tests_exit(-1, "Failed to open $file: $!");
 
   my $is_log    = $file =~ /log/;
   my $is_stdout = $file =~ /stdout/;
@@ -1603,7 +1603,7 @@ sub munge {
     print MUNGED;
   }
 
-  close(IN);
+  close IN;
   return $yield;
 }
 
@@ -1649,7 +1649,7 @@ sub interact {
 sub log_failure {
   my ($logfile, $testno, $detail) = @_;
 
-  open(my $fh, '>>', $logfile) or return;
+  open my $fh, '>>', $logfile or return;
 
   print $fh "Test $testno "
         . (defined $detail ? "$detail " : '')
@@ -1661,7 +1661,7 @@ sub log_failure {
 sub log_test {
   my ($logfile, $testno, $resultchar) = @_;
 
-  open(my $fh, '>>', $logfile) or return;
+  open my $fh, '>>', $logfile or return;
   print $fh "$testno $resultchar\n";
 }
 
@@ -1746,7 +1746,7 @@ sub check_file {
   # was a request to create a saved file. First, create the munged file from any
   # data that does exist.
 
-  open(MUNGED, '>', $mf) || tests_exit(-1, "Failed to open $mf: $!");
+  open MUNGED, '>', $mf or tests_exit(-1, "Failed to open $mf: $!");
   my $truncated = munge($rf, $extra) if -e $rf;
 
   # Append the raw server log, if it is non-empty
@@ -1754,7 +1754,7 @@ sub check_file {
     print MUNGED "\n******** SERVER ********\n";
     $truncated |= munge($rsf, $extra);
   }
-  close(MUNGED);
+  close MUNGED;
 
   # If a saved file exists, do the comparison. There are two awkward cases:
   #
@@ -1774,12 +1774,12 @@ sub check_file {
     # Deal with truncated text items
 
     if ($truncated) {
-      open(MUNGED, $mf) || tests_exit(-1, "Failed to open $mf: $!");
+      open MUNGED, '<', $mf or tests_exit(-1, "Failed to open $mf: $!");
       my @munged = <MUNGED>;
-      close(MUNGED);
-      open(SAVED, $sf_current) || tests_exit(-1, "Failed to open $sf_current: $!");
+      close MUNGED;
+      open SAVED, '<', $sf_current or tests_exit(-1, "Failed to open $sf_current: $!");
       my @saved = <SAVED>;
-      close(SAVED);
+      close SAVED;
 
       my $j = 0;
       for (my $i = 0; $i < @munged; $i++) {
@@ -1800,7 +1800,7 @@ sub check_file {
         }
       }
 
-      open(my $fh, '>', $mf) or tests_exit(-1, "Failed to open $mf: $!");
+      open my $fh, '>', $mf or tests_exit(-1, "Failed to open $mf: $!");
       print $fh @munged;
     }
 
@@ -1809,7 +1809,7 @@ sub check_file {
     if ($sortfile) {
 
       my @munged = do {
-        open(my $fh, '<', $mf) or tests_exit(-1, "Failed to open $mf: $!");
+        open my $fh, '<', $mf or tests_exit(-1, "Failed to open $mf: $!");
         <$fh>;
       };
 
@@ -1826,7 +1826,7 @@ sub check_file {
         }
       }
 
-      open(my $fh, '>', $mf) or tests_exit(-1, "Failed to open $mf: $!");
+      open my $fh, '>', $mf or tests_exit(-1, "Failed to open $mf: $!");
       print $fh "**NOTE: The delivery lines in this file have been sorted.\n";
       print $fh @munged;
     }
@@ -1866,7 +1866,7 @@ sub check_file {
     # if we deal with a flavour file, we can't delete it, because next time the generic
     # file would be used again
     if ($sf_current eq $sf_flavour) {
-      open(my $fh, '>', $sf_current);
+      open my $fh, '>', $sf_current;
     }
     else {
       tests_exit(-1, "Failed to unlink $sf_current") if !unlink($sf_current);
@@ -2310,8 +2310,8 @@ sub run_command {
   if (/^dump\s+(\S+)/) {
     my $which  = $1;
     print ">> ./eximdir/exim_dumpdb $parm_cwd/spool $which\n" if $debug;
-    open(my $in, "-|", './eximdir/exim_dumpdb', "$parm_cwd/spool", $which) or die "Can't run exim_dumpdb: $!";
-    open(my $out, ">>test-stdout");
+    open my $in, "-|", './eximdir/exim_dumpdb', "$parm_cwd/spool", $which or die "Can't run exim_dumpdb: $!";
+    open my $out, '>>', "test-stdout";
     print $out "+++++++++++++++++++++++++++\n";
 
     if ($which eq "retry") {
@@ -2643,16 +2643,16 @@ sub run_command {
 
     # Copy the configuration file, making the usual substitutions.
 
-    open (IN, "$parm_cwd/confs/$testno") ||
+    open IN, '<', "$parm_cwd/confs/$testno" or
       tests_exit(-1, "Couldn't open $parm_cwd/confs/$testno: $!\n");
-    open (OUT, ">test-config") ||
+    open OUT, '>', "test-config" or
       tests_exit(-1, "Couldn't open test-config: $!\n");
     while (<IN>) {
       do_substitute($testno);
       print OUT;
     }
-    close(IN);
-    close(OUT);
+    close IN;
+    close OUT;
 
     # The string $msg1 in args substitutes the message id of the first
     # message on the queue, and so on. */
@@ -2762,8 +2762,8 @@ sub run_command {
       my $pid = fork();
       if (not defined $pid) { die "** fork failed: $!\n" }
       if (not $pid) {
-        close(STDIN);
-        open(STDIN, '<&', $dynamic_socket) or die "** dup sock to stdin failed: $!\n";
+        close STDIN;
+        open STDIN, '<&', $dynamic_socket or die "** dup sock to stdin failed: $!\n";
         close($dynamic_socket);
         print "[$$]>> ${cmd}-server\n" if $debug;
         exec "exec ${cmd}-server";
@@ -2792,17 +2792,17 @@ sub run_command {
     if (not defined $pid) { die "** fork failed: $!\n" }
     if (not $pid) {
       print "[$$]>> ${line}\n" if $debug;
-      close(STDIN);
-      open(STDIN, "<", "test-stdout");
-      close(STDOUT);
-      open(STDOUT, ">>", "test-stdout");
-      close(STDERR);
-      open(STDERR, ">>", "test-stderr-server");
+      close STDIN;
+      open STDIN, '<', "test-stdout";
+      close STDOUT;
+      open STDOUT, '>>', "test-stdout";
+      close STDERR;
+      open STDERR, '>>', "test-stderr-server";
       exec "exec ${line}";
       exit(1);
     }
 
-  #  open(my $fh, ">", $pidfile) ||
+  #  open my $fh, ">", $pidfile or
   #      tests_exit(-1, "Failed to open $pidfile: $!");
   #  printf($fh, "%d\n", $pid);
   #  close($fh);
@@ -2963,7 +2963,7 @@ sub check_running_clamav {
 
     if ($clamconf ne '') {
       my $socket_domain;
-      open(IN, "$clamconf") || die "\n** Unable to open $clamconf: $!\n";
+      open IN, '<', $clamconf or die "\n** Unable to open $clamconf: $!\n";
       while (<IN>) {
         if (/^LocalSocket\s+(.*)/) {
           $parm_clamsocket = $1;
@@ -2991,7 +2991,7 @@ sub check_running_clamav {
           }
         }
       }
-      close(IN);
+      close IN;
 
       if (defined $socket_domain) {
         print ":\n  The clamd socket is $parm_clamsocket\n";
@@ -3217,13 +3217,13 @@ sub check_running_dovecot {
 
   # deal with TRUSTED_CONFIG_LIST restrictions
   unlink("$parm_cwd/test-config") if -e "$parm_cwd/test-config";
-  open (IN, "$parm_cwd/confs/0000") ||
+  open IN, '<', "$parm_cwd/confs/0000" or
     tests_exit(-1, "Couldn't open $parm_cwd/confs/0000: $!\n");
-  open (OUT, ">test-config") ||
+  open OUT, '>', "test-config" or
     tests_exit(-1, "Couldn't open test-config: $!\n");
   while (<IN>) { print OUT; }
-  close(IN);
-  close(OUT);
+  close IN;
+  close OUT;
 
   print("Probing with config file: $parm_cwd/test-config\n");
 
@@ -3298,7 +3298,7 @@ XXX
     scalar(getpwuid 0), scalar(getpwuid $>)
        unless -o _ || (stat _)[4] == 0;
 
-    open(TCL, $parm_trusted_config_list) or die "Can't open $parm_trusted_config_list: $!\n";
+    open TCL, '<', $parm_trusted_config_list or die "Can't open $parm_trusted_config_list: $!\n";
     my $test_config = getcwd() . '/test-config';
     die "Can't find '$test_config' in TRUSTED_CONFIG_LIST $parm_trusted_config_list."
       if not grep { /^\Q$test_config\E$/ } <TCL>;
@@ -3317,8 +3317,11 @@ XXX
   die "aux-fixed file is group-writeable; best to strip them all, recursively\n"
           if 0020 & (stat "aux-fixed/0037.f-1")[2];
 
-  open(EXIMINFO, "$parm_exim -d-all+transport -bV -C $parm_cwd/test-config -DDIR=$parm_cwd |") ||
-    die "** Cannot run $parm_exim: $!\n";
+  open EXIMINFO, '-|',  $parm_exim, '-d-all+transport',
+                                    '-bV',
+                                    -C => "$parm_cwd/test-config",
+                                    "-DDIR=$parm_cwd"
+    or die "** Cannot run $parm_exim: $!\n";
 
   print "-" x 78, "\n";
 
@@ -3391,7 +3394,7 @@ XXX
     }
 
   }
-  close(EXIMINFO);
+  close EXIMINFO;
   print "-" x 78, "\n";
 
   unlink("$parm_cwd/test-config");
@@ -3501,7 +3504,9 @@ XXX
   # one of each type (IPv4 and IPv6).
   #XXX it would be good to avoid non-UP interfaces
 
-  open(IFCONFIG, '-|', (grep { -x "$_/ip" } split /:/, $ENV{PATH}) ? 'ip address' : 'ifconfig -a')
+  open IFCONFIG, '-|',
+        (grep { -x "$_/ip" } split /:/, $ENV{PATH}) ? 'ip address'
+                                                    : 'ifconfig -a'
     or die "** Cannot run 'ip address' or 'ifconfig -a'\n";
   while (not ($parm_ipv4 and $parm_ipv6) and defined($_ = <IFCONFIG>)) {
     my $ifname;
@@ -3522,7 +3527,7 @@ XXX
       if ($1 =~ /^fe80/i) { $parm_ipv6 .= '%' . $ifname; }
     }
   }
-  close(IFCONFIG);
+  close IFCONFIG;
 
   # Use private IP addresses if there are no public ones.
 
@@ -3810,16 +3815,16 @@ XXX
           # move to a subroutine?
           my $eximinfo = "$parm_exim -C $parm_cwd/test-config -DDIR=$parm_cwd -bP macro $2";
 
-          open (IN, "$parm_cwd/confs/0000") ||
+          open IN, '<', "$parm_cwd/confs/0000" or
             tests_exit(-1, "Couldn't open $parm_cwd/confs/0000: $!\n");
-          open (OUT, ">test-config") ||
+          open OUT, '>', "test-config" or
             tests_exit(-1, "Couldn't open test-config: $!\n");
           while (<IN>) {
             do_substitute($testno);
             print OUT;
           }
-          close(IN);
-          close(OUT);
+          close IN;
+          close OUT;
 
           system($eximinfo . " >/dev/null 2>&1");
           if (!defined $1 && $? != 0 || defined $1 && $? == 0) {
@@ -3893,7 +3898,7 @@ XXX
     opendir(AUX, "$parm_cwd/$basedir-src") ||
       tests_exit(-1, "Failed to opendir $parm_cwd/$basedir-src: $!");
     my @filelist = readdir(AUX);
-    close(AUX);
+    close AUX;
 
     foreach my $file (@filelist) {
       my $outfile = $file;
@@ -3910,16 +3915,16 @@ XXX
       }
 
       print ">>Copying $basedir-src/$file to $basedir/$outfile\n" if $debug;
-      open(IN, "$parm_cwd/$basedir-src/$file") ||
+      open IN, '<', "$parm_cwd/$basedir-src/$file" or
         tests_exit(-1, "Failed to open $parm_cwd/$basedir-src/$file: $!");
-      open(OUT, ">$parm_cwd/$basedir/$outfile") ||
+      open OUT, '>', "$parm_cwd/$basedir/$outfile" or
         tests_exit(-1, "Failed to open $parm_cwd/$basedir/$outfile: $!");
       while (<IN>) {
         do_substitute(0);
         print OUT;
       }
-      close(IN);
-      close(OUT);
+      close IN;
+      close OUT;
     }
   }
 
@@ -3938,7 +3943,7 @@ XXX
 
   if ($have_ipv4 || $have_ipv6) {
     my ($shortname,$domain) = $parm_hostname =~ /^([^.]+)(.*)/;
-    open(OUT, ">$parm_cwd/dnszones/db$domain") ||
+    open OUT, '>', "$parm_cwd/dnszones/db$domain" or
       tests_exit(-1, "Failed to open $parm_cwd/dnszones/db$domain: $!");
     print OUT "; This is a dynamically constructed fake zone file.\n" .
       "; The following line causes fakens to return PASS_ON\n" .
@@ -3947,27 +3952,27 @@ XXX
     print OUT "$shortname  A     $parm_ipv4\n" if $have_ipv4;
     print OUT "$shortname  AAAA  $parm_ipv6_stripped\n" if $have_ipv6;
     print OUT "\n; End\n";
-    close(OUT);
+    close OUT;
   }
 
   if ($have_ipv4 && $parm_ipv4 ne "127.0.0.1") {
     my @components = $parm_ipv4 =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)/;
 
     if ($components[0]=='10') {
-      open(OUT, ">>$parm_cwd/dnszones/db.ip4.$components[0]") ||
+      open OUT, '>>', "$parm_cwd/dnszones/db.ip4.$components[0]" or
         tests_exit(-1, "Failed  to open $parm_cwd/dnszones/db.ip4.$components[0]: $!");
       print OUT "$components[3].$components[2].$components[1]  PTR  $parm_hostname.\n\n";
-      close(OUT);
+      close OUT;
     }
     else {
-      open(OUT, ">$parm_cwd/dnszones/db.ip4.$components[0]") ||
+      open OUT, '>', "$parm_cwd/dnszones/db.ip4.$components[0]" or
         tests_exit(-1,
           "Failed  to open $parm_cwd/dnszones/db.ip4.$components[0]: $!");
       print OUT "; This is a dynamically constructed fake zone file.\n" .
         "; The zone is $components[0].in-addr.arpa.\n\n" .
         "$components[3].$components[2].$components[1]  PTR  $parm_hostname.\n\n" .
         "; End\n";
-      close(OUT);
+      close OUT;
     }
   }
 
@@ -3988,7 +3993,7 @@ XXX
     my $sep =  '';
 
     $" = ".";
-    open(OUT, ">$parm_cwd/dnszones/db.ip6.@nibbles") ||
+    open OUT, '>', "$parm_cwd/dnszones/db.ip6.@nibbles" or
       tests_exit(-1,
         "Failed  to open $parm_cwd/dnszones/db.ip6.@nibbles: $!");
     print OUT "; This is a dynamically constructed fake zone file.\n" .
@@ -4003,7 +4008,7 @@ XXX
     }
 
     print OUT "  PTR  $parm_hostname.\n\n; End\n";
-    close(OUT);
+    close OUT;
     $" = " ";
   }
 
@@ -4032,7 +4037,7 @@ XXX
   if (not $force_continue) {
     # runtest needs to interact if we're not in continue
     # mode. It does so by communicate to /dev/tty
-    open(T, '<', '/dev/tty') or tests_exit(-1, "Failed to open /dev/tty: $!");
+    open T, '<', '/dev/tty' or tests_exit(-1, "Failed to open /dev/tty: $!");
     print "\nPress RETURN to run the tests: ";
     <T>;
   }
@@ -4063,7 +4068,7 @@ XXX
       if (-s "scripts/$thistestdir/REQUIRES") {
         my $indent = '';
         print "\n>>> The following tests require: ";
-        open(my $requires, '<', "scripts/$thistestdir/REQUIRES") ||
+        open my $requires, '<', "scripts/$thistestdir/REQUIRES" or
           tests_exit(-1, "Failed to open scripts/$thistestdir/REQUIRES: $!");
         while (<$requires>) {
           $gnutls = 1 if /^support GnuTLS/;
@@ -4112,7 +4117,7 @@ XXX
     undef %expected_msglogs;
 
     # Open the test's script
-    open(SCRIPT, "scripts/$test") ||
+    open SCRIPT, '<', "scripts/$test" or
       tests_exit(-1, "Failed to open \"scripts/$test\": $!");
     # Run through the script once to set variables which should be global
     while (<SCRIPT>) {
@@ -4336,10 +4341,10 @@ XXX
             last if /^[rc]$/i;
 
             if (/^s$/i) {
-              open(S, "test-stdout-server") ||
+              open S, '<', "test-stdout-server" or
                 tests_exit(-1, "Failed to open test-stdout-server: $!");
               print while <S>;
-              close(S);
+              close S;
             }
           }
           $retry = 1 if /^r$/i;
