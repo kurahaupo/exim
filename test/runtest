@@ -2526,6 +2526,7 @@ sub run_command {
   # options to disable IPv4 or IPv6 if necessary.
   # This works because "server" swallows its stdin before waiting for a connection.
 
+  my $cmd;
   if (/^server\s+(.*)$/) {
     my $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
     $cmd = "./bin/server $server_opts -oP $pidfile $1 >>test-stdout-server";
@@ -3150,7 +3151,7 @@ sub check_running_dovecot {
       },
   ) or pod2usage;
 
-  ($parm_exim, @ARGV) = Exim::Runtest::exim_binary(@ARGV);
+  (my $parm_exim, @ARGV) = Exim::Runtest::exim_binary(@ARGV);
   print "Exim binary is `$parm_exim'\n" if defined $parm_exim;
 
   my @wanted = sort numerically uniq
@@ -3180,7 +3181,7 @@ sub check_running_dovecot {
 
   # After doing so, we find its absolute path name.
 
-  $cwd = $0;
+  my $cwd = $0;
   $cwd = '.' if ($cwd !~ s|/[^/]+$||);
   chdir($cwd) || die "** Failed to chdir to \"$cwd\": $!\n";
   $parm_cwd = Cwd::getcwd();
@@ -3414,7 +3415,7 @@ XXX
   # This test suite assumes that Exim has been built with at least the "usual"
   # set of routers, transports, and lookups. Ensure that this is so.
 
-  $missing = '';
+  my $missing = '';
 
   $missing .= "     Lookup: lsearch\n" if (!defined $parm_lookups{lsearch});
 
@@ -3473,12 +3474,8 @@ XXX
 
   # Find the caller of this program.
 
-  ($parm_caller,$pwpw,$parm_caller_uid,$parm_caller_gid,$pwquota,$pwcomm,
+  ($parm_caller, undef, $parm_caller_uid, $parm_caller_gid, undef, undef,
    $parm_caller_gecos, $parm_caller_home) = getpwuid($>);
-
-  $pwpw = $pwpw;       # Kill Perl warnings
-  $pwquota = $pwquota;
-  $pwcomm = $pwcomm;
 
   $parm_caller_group = getgrgid($parm_caller_gid);
 
@@ -3512,6 +3509,7 @@ XXX
   open(IFCONFIG, '-|', (grep { -x "$_/ip" } split /:/, $ENV{PATH}) ? 'ip address' : 'ifconfig -a')
     or die "** Cannot run 'ip address' or 'ifconfig -a'\n";
   while (not ($parm_ipv4 and $parm_ipv6) and defined($_ = <IFCONFIG>)) {
+    my $ifname;
     if (/^(?:[0-9]+: )?([a-z0-9]+): /) { $ifname = $1; }
 
     if (not $parm_ipv4 and /^\s*inet(?:\saddr(?:ess))?:?\s*(\d+\.\d+\.\d+\.\d+)(?:\/\d+)?\s/i) {
@@ -3598,7 +3596,7 @@ XXX
 
   # Find the host name, fully qualified.
 
-  chomp($temp = `hostname`);
+  chomp(my $temp = `hostname`);
   die "'hostname' didn't return anything\n" unless defined $temp and length $temp;
   if ($temp =~ /\./) {
     $parm_hostname = $temp;
@@ -3680,9 +3678,9 @@ XXX
   # Certain of the tests make use of some of Exim's utilities. We do not need
   # to be root to copy these.
 
-  ($parm_exim_dir) = $parm_exim =~ m?^(.*)/exim?;
+  my ($parm_exim_dir) = $parm_exim =~ m?^(.*)/exim?;
 
-  $dbm_build_deleted = 0;
+  my $dbm_build_deleted = 0;
   if (defined $parm_lookups{dbm} && not cp("$parm_exim_dir/exim_dbmbuild", "eximdir/exim_dbmbuild")) {
     delete $parm_lookups{dbm};
     $dbm_build_deleted = 1;
@@ -3724,7 +3722,7 @@ XXX
 
   print "The Exim user needs access to the test suite directory. Checking ...";
 
-  if (($rc = system("sudo bin/checkaccess $parm_cwd/eximdir/exim $parm_eximuser $parm_eximgroup")) != 0) {
+  if ((my $rc = system("sudo bin/checkaccess $parm_cwd/eximdir/exim $parm_eximuser $parm_eximgroup")) != 0) {
     my $why = "unknown failure $rc";
     $rc >>= 8;
     $why = "Couldn't find user \"$parm_eximuser\"" if $rc == 1;
