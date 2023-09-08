@@ -192,8 +192,6 @@ my $TEST_STATE = {};
 sub tests_exit {
   my ($rc, $msg) = @_;
 
-  my ($spool);
-
   # Search for daemon pid files and kill the daemons. We kill with SIGINT rather
   # than SIGTERM to stop it outputting "Terminated" to the terminal when not in
   # the background.
@@ -205,9 +203,9 @@ sub tests_exit {
   }
 
   if (opendir(DIR, "spool")) {
-    my (@spools) = sort readdir(DIR);
+    my @spools = sort readdir(DIR);
     closedir(DIR);
-    foreach $spool (@spools) {
+    foreach my $spool (@spools) {
       next if $spool !~ /^exim-daemon./;
       open(PID, "spool/$spool") || die "** Failed to open \"spool/$spool\": $!\n";
       chomp($pid = <PID>);
@@ -251,7 +249,7 @@ sub tests_exit {
 sub new_value {
   my ($oldid, $base, $sequence) = @_;
 
-  my ($newid) = $cache{$oldid};
+  my $newid = $cache{$oldid};
   if (! defined $newid) {
     $newid = sprintf($base, $$sequence++);
     $cache{$oldid} = $newid;
@@ -267,7 +265,7 @@ sub date_seconds {
 
   my ($day,$month,$year,$hour,$min,$sec) =
     $str =~ /^(\d\d)-(\w\w\w)-(\d{4})\s(\d\d):(\d\d):(\d\d)/;
-  my ($mon);
+  my $mon;
   if   ($month =~ /Jan/) {$mon = 0;}
   elsif($month =~ /Feb/) {$mon = 1;}
   elsif($month =~ /Mar/) {$mon = 2;}
@@ -305,8 +303,9 @@ sub maildirsort {
 sub list_files_below {
   my ($dir) = @_;
 
-  my (@yield) = ();
-  my (@sublist, $file);
+  my $file;
+  my @sublist;
+  my @yield;
 
   opendir(DIR, $dir) || tests_exit(-1, "Failed to open $dir: $!");
   @sublist = sort maildirsort readdir(DIR);
@@ -348,8 +347,8 @@ sub list_files_below {
 sub munge {
   my ($file, $extra) = @_;
 
-  my ($yield) = 0;
-  my (@saved) = ();
+  my $yield = 0;
+  my @saved;
 
   local $_;
 
@@ -469,7 +468,7 @@ sub munge {
       $expired = '' if !defined $expired;
 
       # Round the time-difference up to nearest even value
-      my ($increment) = ((date_seconds($date3) - date_seconds($date2) + 1) >> 1) << 1;
+      my $increment = ((date_seconds($date3) - date_seconds($date2) + 1) >> 1) << 1;
 
       # We used to use globally unique replacement values, but timing
       # differences make this impossible. Just show the increment on the
@@ -529,7 +528,7 @@ sub munge {
 
     # Dates/times in debugging output for writing retry records
     if (/^  first failed=(\d+) last try=(\d+) next try=(\d+) (.*)$/) {
-      my ($next) = $3 - $2;
+      my $next = $3 - $2;
       $_ = "  first failed=dddd last try=dddd next try=+$next $4\n";
     }
     s/^(\s*)now=\d+ first_failed=\d+ next_try=\d+ expired=(\w)/$1now=tttt first_failed=tttt next_try=tttt expired=$2/;
@@ -1685,7 +1684,7 @@ sub check_file {
       last if (/^[sc]$/);
     }
 
-    foreach $f ($rf, $rsf) {
+    foreach my $f ($rf, $rsf) {
       if (defined $f && -s $f) {
         print "\n";
         print "------------ $f -----------\n"
@@ -1714,7 +1713,7 @@ sub check_file {
   # data that does exist.
 
   open(MUNGED, '>', $mf) || tests_exit(-1, "Failed to open $mf: $!");
-  my ($truncated) = munge($rf, $extra) if -e $rf;
+  my $truncated = munge($rf, $extra) if -e $rf;
 
   # Append the raw server log, if it is non-empty
   if (defined $rsf && -e $rsf) {
@@ -1741,7 +1740,7 @@ sub check_file {
     # Deal with truncated text items
 
     if ($truncated) {
-      my (@munged, @saved, $i, $j, $k);
+      my (@munged, @saved);
 
       open(MUNGED, $mf) || tests_exit(-1, "Failed to open $mf: $!");
       @munged = <MUNGED>;
@@ -1750,14 +1749,15 @@ sub check_file {
       @saved = <SAVED>;
       close(SAVED);
 
-      $j = 0;
-      for ($i = 0; $i < @munged; $i++) {
+      my $j = 0;
+      for (my $i = 0; $i < @munged; $i++) {
         if ($munged[$i] =~ /\*\*\* truncated \*\*\*/) {
           for (; $j < @saved; $j++) {
             last if $saved[$j] =~ /\*\*\* truncated \*\*\*/;
           }
           last if $j >= @saved;     # not found in saved
 
+          my $k;
           for ($k = $i - 1; $k >= 0; $k--) {
             last if $munged[$k] eq $saved[$j - 1];
           }
@@ -1969,8 +1969,8 @@ sub max {
 sub check_output {
   my ($mungename) = @_;
 
-  my ($yield) = 0;
-  my ($munge) = $munges->{$mungename} if defined $mungename;
+  my $yield = 0;
+  my $munge = $munges->{$mungename} if defined $mungename;
 
   $yield = max($yield,  check_file("spool/log/paniclog",
                          "spool/log/serverpaniclog",
@@ -2009,12 +2009,12 @@ sub check_output {
   # Compare any delivered messages, unless this test is skipped.
 
   if (! $message_skip) {
-    my ($msgno) = 0;
+    my $msgno = 0;
 
     # Get a list of expected mailbox files for this script. We don't bother with
     # directories, just the files within them.
 
-    foreach $oldmail (@oldmails) {
+    foreach my $oldmail (@oldmails) {
       next unless $oldmail =~ /^mail\/$testno\./;
       print ">> EXPECT $oldmail\n" if $debug;
       $expected_mails{$oldmail} = 1;
@@ -2025,7 +2025,7 @@ sub check_output {
 
     @mails = list_files_below("test-mail");
 
-    foreach $mail (@mails) {
+    foreach my $mail (@mails) {
       next if $mail =~ /^test-mail\/oncelog(.(dir|pag|db))?$/;
 
       $saved_mail = substr($mail, 10);               # Remove "test-mail/"
@@ -2064,10 +2064,9 @@ sub check_output {
         # checked for when we re-run the test.
 
         if (/^u$/) {
-          foreach $key (keys %expected_mails) {
-            my($i);
+          foreach my $key (keys %expected_mails) {
             tests_exit(-1, "Failed to unlink $key") if !unlink("$key");
-            for ($i = 0; $i < @oldmails; $i++) {
+            for (my $i = 0; $i < @oldmails; $i++) {
               if ($oldmails[$i] eq $key) {
                 splice @oldmails, $i, 1;
                 last;
@@ -2085,7 +2084,7 @@ sub check_output {
   if (! $msglog_skip) {
     # Get a list of expected msglog files for this test
 
-    foreach $oldmsglog (@oldmsglogs) {
+    foreach my $oldmsglog (@oldmsglogs) {
       next unless $oldmsglog =~ /^$testno\./;
       $expected_msglogs{$oldmsglog} = 1;
     }
@@ -2098,7 +2097,7 @@ sub check_output {
       @msglogs = sort readdir(DIR);
       closedir(DIR);
 
-      foreach $msglog (@msglogs) {
+      foreach my $msglog (@msglogs) {
         next if ($msglog eq "." || $msglog eq ".." || $msglog eq "CVS");
         ($munged_msglog = $msglog) =~
           s/((?:[^\W_]{6}-){2}[^\W_]{2})
@@ -2113,10 +2112,10 @@ sub check_output {
     # Complain if not all expected msglogs have been found
 
     if (scalar(keys %expected_msglogs) != 0) {
-      foreach $key (keys %expected_msglogs) {
+      foreach my $key (keys %expected_msglogs) {
         print "** no test msglog found for msglog/$key\n";
         ($msgid) = $key =~ /^\d+\.(.*)$/;
-        foreach $cachekey (keys %cache) {
+        foreach my $cachekey (keys %cache) {
           if ($cache{$cachekey} eq $msgid) {
             print "** original msgid $cachekey\n";
             last;
@@ -2133,7 +2132,7 @@ sub check_output {
         }
         last if /^c$/;
         if (/^u$/) {
-          foreach $key (keys %expected_msglogs) {
+          foreach my $key (keys %expected_msglogs) {
             tests_exit(-1, "Failed to unlink msglog/$key")
               if !unlink("msglog/$key");
           }
@@ -2282,7 +2281,7 @@ sub run_command {
                   [ $k, $_ ]
                  }
                  do { local $/ = "\n  "; <$in> };
-      foreach $item (@temp) {
+      foreach my $item (@temp) {
         $item =~ s/^\s*(.*)\n(.*)\n?\s*$/$1\n$2/m;
         print $out "  $item\n";
       }
@@ -2903,9 +2902,9 @@ sub check_running_clamav {
     $test_prefix = $ENV{EXIM_TEST_PREFIX};
     $test_prefix = '' if !defined $test_prefix;
 
-    foreach $f ("$test_prefix/etc/clamd.conf",
-                "$test_prefix/usr/local/etc/clamd.conf",
-                "$test_prefix/etc/clamav/clamd.conf", '') {
+    foreach my $f ("$test_prefix/etc/clamd.conf",
+                   "$test_prefix/usr/local/etc/clamd.conf",
+                   "$test_prefix/etc/clamav/clamd.conf", '') {
       if (-e $f) {
         $clamconf = $f;
         last;
@@ -3326,7 +3325,7 @@ XXX
       my ($i,$k);
       push(@temp, ' ');
       %parm_transports = @temp;
-      foreach $k (keys %parm_transports) {
+      foreach my $k (keys %parm_transports) {
         if ($k =~ "/") {
           @temp = split /\//, $k;
           $parm_transports{$temp[0]} = " ";
@@ -3395,8 +3394,9 @@ XXX
 
   # These are always required:
 
-  for $prog ("cf", "checkaccess", "client", "client-ssl", "client-gnutls",
-             "fakens", "iefbr14", "server") {
+  for my $prog ("cf", "checkaccess", "client",
+                "client-ssl", "client-gnutls",
+                "fakens", "iefbr14", "server") {
     next if ($prog eq "client-ssl" && !defined $parm_support{OpenSSL});
     next if ($prog eq "client-gnutls" && !defined $parm_support{GnuTLS});
     if (!-e "bin/$prog") {
@@ -3538,7 +3538,7 @@ XXX
   if ($parm_ipv6 =~ /^[\da-f]/) {
     my (@comps) = split /:/, $parm_ipv6_stripped;
     my (@nibbles);
-    foreach $comp (@comps) {
+    foreach my $comp (@comps) {
       push @nibbles, sprintf("%lx", hex($comp) >> 8);
       push @nibbles, sprintf("%lx", hex($comp) & 0xff);
     }
@@ -3841,7 +3841,7 @@ XXX
   # files of the same name, but db.ipv4.V4NET and db.ipv6.V6NET use the testing
   # networks that are defined by parameter.
 
-  foreach $basedir ("aux-var", "dnszones") {
+  foreach my $basedir ("aux-var", "dnszones") {
     system("sudo rm -rf $parm_cwd/$basedir");
     mkdir("$parm_cwd/$basedir", 0777);
     chmod(0755, "$parm_cwd/$basedir");
@@ -3851,7 +3851,7 @@ XXX
     my (@filelist) = readdir(AUX);
     close(AUX);
 
-    foreach $file (@filelist) {
+    foreach my $file (@filelist) {
       my ($outfile) = $file;
       next if $file =~ /^\./;
 
@@ -3951,7 +3951,7 @@ XXX
       "; The zone is @nibbles.ip6.arpa.\n\n";
 
     @components = reverse @components;
-    foreach $c (@components) {
+    foreach my $c (@components) {
       $c = "0$c" until $c =~ /^..../;
       @nibbles = reverse(split /\s*/, $c);
       print OUT "$sep@nibbles";
@@ -4098,7 +4098,7 @@ XXX
     # wait until we have waited for a subsequent command.
 
     local($server_pid) = 0;
-    for ($commandno = 1; !eof SCRIPT; $commandno++) {
+    for (my $commandno = 1; !eof SCRIPT; $commandno++) {
       # Skip further leading comments and blank lines, handle the flag setting
       # commands, and deal with tests for IP support.
 
