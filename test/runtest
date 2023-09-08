@@ -217,8 +217,12 @@ my $TEST_STATE = {};
 #    $_[0] > 0 for an error exit; no files cleaned up
 #    $_[0] < 0 for a "die" exit; $_[1] contains a message
 
+my $test;
+
 sub tests_exit {
   my ($rc, $msg) = @_;
+
+  my $pid;
 
   # Search for daemon pid files and kill the daemons. We kill with SIGINT rather
   # than SIGTERM to stop it outputting "Terminated" to the terminal when not in
@@ -274,6 +278,7 @@ sub tests_exit {
 #   $base         a base string into which we insert a sequence
 #   $sequence     the address of the current sequence counter
 
+my %cache;
 sub new_value {
   my ($oldid, $base, $sequence) = @_;
 
@@ -371,6 +376,13 @@ sub list_files_below {
 # Certain actions are taken only when the name contains "stderr", "stdout",
 # or "log". The yield of the function is 1 if a line matching "*** truncated
 # ***" is encountered; otherwise it is 0.
+
+my $is_ipv6test;
+my $munge_skip;
+my $next_msgid;
+my $next_pid;
+my $next_port;
+my $rmfiltertest;
 
 sub munge {
   my ($file, $extra) = @_;
@@ -1682,6 +1694,8 @@ sub log_test {
 #
 # Does not return if the user replies "Q" to a prompt.
 
+my $testno;
+
 sub check_file {
   my ($rf,$rsf,$mf,$sf,$sortfile,$extra) = @_;
 
@@ -1690,9 +1704,9 @@ sub check_file {
 
   # we check if there is a flavour specific file, but we remember
   # the original file name as "generic"
-  $sf_generic = $sf;
-  $sf_flavour = "$sf_generic.$flavour";
-  $sf_current = -e $sf_flavour ? $sf_flavour : $sf_generic;
+  my $sf_generic = $sf;
+  my $sf_flavour = "$sf_generic.$flavour";
+  my $sf_current = -e $sf_flavour ? $sf_flavour : $sf_generic;
 
   if (! -e $sf_current) {
     return 0 if (! -s $rf && (! defined $rsf || ! -s $rsf));
@@ -1883,10 +1897,9 @@ sub check_file {
 # with 'R' run given code.
 # Triggered by a scriptfile line "munge <name>"
 ##################################################
-$munges =
+my $munges =
   { 'dnssec' =>
     { 'stderr' => '/^Reverse DNS security status: unverified\n/' },
-
     'gnutls_unexpected' =>
     { 'mainlog' => '/\(recv\): A TLS packet with unexpected length was received./' },
 
@@ -1994,6 +2007,16 @@ sub max {
 #            1 if comparison failed; differences to be ignored
 #            2 if re-run needed (files may have been updated)
 
+my %expected_mails;
+my %expected_msglogs;
+my $message_skip;
+my $msglog_skip;
+my @oldmails;
+my @oldmsglogs;
+my $sortlog;
+my $stderr_skip;
+my $stdout_skip;
+
 sub check_output {
   my ($mungename) = @_;
 
@@ -2051,12 +2074,12 @@ sub check_output {
     # If there are any files in test-mail, compare them. Note that "." and
     # ".." are automatically omitted by list_files_below().
 
-    @mails = list_files_below("test-mail");
+    my @mails = list_files_below("test-mail");
 
     foreach my $mail (@mails) {
       next if $mail =~ /^test-mail\/oncelog(.(dir|pag|db))?$/;
 
-      $saved_mail = substr($mail, 10);               # Remove "test-mail/"
+      my $saved_mail = substr($mail, 10);               # Remove "test-mail/"
       $saved_mail =~ s/^$parm_caller(\/|$)/CALLER/;  # Convert caller name
 
       if ($saved_mail =~ /(\d+\.[^.]+\.)/) {
@@ -2122,12 +2145,12 @@ sub check_output {
     # time dependent.
 
     if (opendir(DIR, "spool/msglog")) {
-      @msglogs = sort readdir(DIR);
+      my @msglogs = sort readdir(DIR);
       closedir(DIR);
 
       foreach my $msglog (@msglogs) {
         next if ($msglog eq "." || $msglog eq ".." || $msglog eq "CVS");
-        ($munged_msglog = $msglog) =~
+        (my $munged_msglog = $msglog) =~
           s/((?:[^\W_]{6}-){2}[^\W_]{2})
             /new_value($1, "10Hm%s-0005vi-00", \$next_msgid)/egx;
         $yield = max($yield,  check_file("spool/msglog/$msglog", undef,
@@ -2142,7 +2165,7 @@ sub check_output {
     if (scalar(keys %expected_msglogs) != 0) {
       foreach my $key (keys %expected_msglogs) {
         print "** no test msglog found for msglog/$key\n";
-        ($msgid) = $key =~ /^\d+\.(.*)$/;
+        my ($msgid) = $key =~ /^\d+\.(.*)$/;
         foreach my $cachekey (keys %cache) {
           if ($cache{$cachekey} eq $msgid) {
             print "** original msgid $cachekey\n";
@@ -2221,6 +2244,10 @@ sub run_system {
 #            exim_pid: pid of a run process
 #            munge: name of a post-script results munger
 
+my $lineno;
+my $server_pid;
+my $sigpipehappened;
+
 sub run_command {
   my ($testno, $subtestref, $R, $commandnameref, $aux_info) = @_;
 
@@ -2239,7 +2266,7 @@ sub run_command {
   }
 
   chomp;
-  $wait_time = 0;
+  my $wait_time = 0;
 
   # Handle concatenated command lines
 
@@ -2357,7 +2384,7 @@ sub run_command {
   # but it doesn't use any input.
 
   if (/^exim_lock\s+(.*)$/) {
-    $cmd = "./eximdir/exim_lock $1 >>test-stdout";
+    my $cmd = "./eximdir/exim_lock $1 >>test-stdout";
     $server_pid = open SERVERCMD, "|$cmd" ||
       tests_exit(-1, "Failed to run $cmd\n");
 
@@ -2425,7 +2452,7 @@ sub run_command {
   if (/^killdaemon/) {
     my $return_extra = {};
     if (exists $aux_info->{exim_pid}) {
-      $pid = $aux_info->{exim_pid};
+      my $pid = $aux_info->{exim_pid};
       $return_extra->{exim_pid} = undef;
       print ">> killdaemon: recovered pid $pid\n" if $debug;
       if ($pid) {
@@ -2433,7 +2460,7 @@ sub run_command {
         wait;
       }
     } else {
-      $pid = `cat $parm_cwd/spool/exim-daemon.*`;
+      my $pid = `cat $parm_cwd/spool/exim-daemon.*`;
       if ($pid) {
         run_system("sudo /bin/kill -TERM $pid");
         close DAEMONCMD;                                   # Waits for process
@@ -2503,7 +2530,7 @@ sub run_command {
   # This works because "server" swallows its stdin before waiting for a connection.
 
   if (/^server\s+(.*)$/) {
-    $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
+    my $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
     $cmd = "./bin/server $server_opts -oP $pidfile $1 >>test-stdout-server";
     print ">> $cmd\n" if ($debug);
     $server_pid = open SERVERCMD, "|$cmd" || tests_exit(-1, "Failed to run $cmd");
@@ -2553,7 +2580,7 @@ sub run_command {
       # Sized data
 
       while (scalar @sizes > 0) {
-        ($count,$len,$leadin) = (shift @sizes) =~ /(\d+)x(\d+)(?:=(.*))?/;
+        my ($count,$len,$leadin) = (shift @sizes) =~ /(\d+)x(\d+)(?:=(.*))?/;
         $leadin = '' if !defined $leadin;
         $leadin =~ s/_/ /g;
         $len -= length($leadin) + 1;
@@ -2606,11 +2633,11 @@ sub run_command {
   # command as root, we use sudo.
 
   elsif (/^((?i:[A-Z\d_]+=\S+\s+)+)?(\d+)?\s*(sudo(?:\s+-u\s+(\w+))?\s+)?exim(_\S+)?\s+(.*)$/) {
-    $args = $6;
     my ($envset) = (defined $1)? $1      : '';
+    $wait_time   = (defined $2)? $2      : 0;
     my ($sudo)   = (defined $3)? "sudo " . (defined $4 ? "-u $4 ":'')  : '';
     my ($special)= (defined $5)? $5      : '';
-    $wait_time  = (defined $2)? $2      : 0;
+    my $args     = $6;
 
     # Return 2 rather than 1 afterwards
 
@@ -2709,6 +2736,7 @@ sub run_command {
       # file is written to the spool directory, in case the Exim binary was
       # built with PID_FILE_PATH pointing somewhere else.
 
+      my $pidfile;
       if ($cmd =~ /\s-oP\s/) {
         ($pidfile = $cmd) =~ s/^.*-oP ([^ ]+).*$/$1/;
         $cmd =~ s!\s-bd\s! -bdf !;
@@ -2759,13 +2787,12 @@ sub run_command {
   # killdaemon.
 
   elsif (/^background$/) {
-    my $line;
-  #  $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
+ #  $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
 
     $_ = <SCRIPT>; $lineno++;
     chomp;
     do_substitute($testno);
-    $line = $_;
+    my $line = $_;
     if ($debug) { printf ">> daemon: $line >>test-stdout 2>>test-stderr\n"; }
 
     my $pid = fork();
@@ -2805,7 +2832,7 @@ sub run_command {
   # -DSERVER=server add "-server" to the command, where it will adjoin the name
   # for the stderr file. See comment above about the use of -DSERVER.
 
-  $stderrsuffix = ($cmd =~ /\s-DSERVER=server\s/)? "-server" : '';
+  my $stderrsuffix = ($cmd =~ /\s-DSERVER=server\s/)? "-server" : '';
   print ">> |${cmd}${stderrsuffix}\n" if ($debug);
   open CMD, "|${cmd}${stderrsuffix}" || tests_exit(1, "Failed to run $cmd");
 
@@ -4025,12 +4052,11 @@ XXX
   foreach $test (@test_list) {
     state $lasttestdir = '';
 
-    local $lineno     = 0;
-    local $commandno  = 0;
-    local $subtestno  = 0;
-    local $sortlog    = 0;
+    $lineno  = 0;
+    $sortlog = 0;
+    my $subtestno = 0;
 
-    (local $testno = $test) =~ s|.*/||;
+    ($testno = $test) =~ s|.*/||;
 
     # Leaving traces in the process table and in the environment
     # gives us a chance to identify hanging processes (exim daemons)
@@ -4125,7 +4151,9 @@ XXX
     # is used to remember the pid of a "server" process, for which we do not
     # wait until we have waited for a subsequent command.
 
-    local($server_pid) = 0;
+    $server_pid = 0;
+
+    my $retry = 0;
     for (my $commandno = 1; !eof SCRIPT; $commandno++) {
       # Skip further leading comments and blank lines, handle the flag setting
       # commands, and deal with tests for IP support.
