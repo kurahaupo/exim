@@ -100,7 +100,7 @@ my $parm_port_d = 1225;         # Used for the Exim daemon
 my $parm_port_d2 = 1226;        # Additional for daemon
 my $parm_port_d3 = 1227;        # Additional for daemon
 my $parm_port_d4 = 1228;        # Additional for daemon
-my $dynamic_socket;          # allocated later for PORT_DYNAMIC
+my $dynamic_socket;             # allocated later for PORT_DYNAMIC
 
 # Find a suiteable group name for test (currently only 0001
 # uses a group name. A numeric group id would do
