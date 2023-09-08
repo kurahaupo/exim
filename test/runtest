@@ -401,16 +401,16 @@ sub munge {
 
   # Date pattern
 
-  $date = "\\d{2}-\\w{3}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}";
+  my $date = "\\d{2}-\\w{3}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}";
 
   # Debug time & pid
 
-  $time_pid = "(?:\\d{2}:\\d{2}:\\d{2}\\s+\\d+\\s)";
+  my $time_pid = "(?:\\d{2}:\\d{2}:\\d{2}\\s+\\d+\\s)";
 
   # Pattern for matching pids at start of stderr lines; initially something
   # that won't match.
 
-  $spid = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  my $spid = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
   # Scan the file and make the changes. Near the bottom there are some changes
   # that are specific to certain file types, though there are also some of those
