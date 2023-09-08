@@ -2012,42 +2012,42 @@ my $stdout_skip;
 sub check_output {
   my ($mungename) = @_;
 
-  my $yield = 0;
   my $munge = $munges->{$mungename} if defined $mungename;
 
-  $yield = max($yield,  check_file("spool/log/paniclog",
-                         "spool/log/serverpaniclog",
-                         "test-paniclog-munged",
-                         "paniclog/$testno", 0,
-                         $munge->{paniclog}));
+  my $yield = max(0,
 
-  $yield = max($yield,  check_file("spool/log/rejectlog",
-                         "spool/log/serverrejectlog",
-                         "test-rejectlog-munged",
-                         "rejectlog/$testno", 0,
-                         $munge->{rejectlog}));
+                  check_file("spool/log/paniclog",
+                             "spool/log/serverpaniclog",
+                             "test-paniclog-munged",
+                             "paniclog/$testno", 0,
+                             $munge->{paniclog}),
 
-  $yield = max($yield,  check_file("spool/log/mainlog",
-                         "spool/log/servermainlog",
-                         "test-mainlog-munged",
-                         "log/$testno", $sortlog,
-                         $munge->{mainlog}));
+                  check_file("spool/log/rejectlog",
+                             "spool/log/serverrejectlog",
+                             "test-rejectlog-munged",
+                             "rejectlog/$testno", 0,
+                             $munge->{rejectlog}),
 
-  if (!$stdout_skip) {
-    $yield = max($yield,  check_file("test-stdout",
-                         "test-stdout-server",
-                         "test-stdout-munged",
-                         "stdout/$testno", 0,
-                         $munge->{stdout}));
-  }
+                  check_file("spool/log/mainlog",
+                             "spool/log/servermainlog",
+                             "test-mainlog-munged",
+                             "log/$testno", $sortlog,
+                             $munge->{mainlog}),
 
-  if (!$stderr_skip) {
-    $yield = max($yield,  check_file("test-stderr",
-                         "test-stderr-server",
-                         "test-stderr-munged",
-                         "stderr/$testno", 0,
-                         $munge->{stderr}));
-  }
+                  $stdout_skip ? () :
+                  check_file("test-stdout",
+                             "test-stdout-server",
+                             "test-stdout-munged",
+                             "stdout/$testno", 0,
+                             $munge->{stdout}),
+
+                  $stderr_skip ? () :
+                  check_file("test-stderr",
+                             "test-stderr-server",
+                             "test-stderr-munged",
+                             "stderr/$testno", 0,
+                             $munge->{stderr}),
+                  );
 
   # Compare any delivered messages, unless this test is skipped.
 
@@ -2080,9 +2080,10 @@ sub check_output {
       }
 
       print ">> COMPARE $mail mail/$testno.$saved_mail\n" if $debug;
-      $yield = max($yield,  check_file($mail, undef, "test-mail-munged",
-        "mail/$testno.$saved_mail", 0,
-        $munge->{mail}));
+      $yield = max($yield,
+                   check_file($mail, undef, "test-mail-munged",
+                              "mail/$testno.$saved_mail", 0,
+                              $munge->{mail}));
       delete $expected_mails{"mail/$testno.$saved_mail"};
     }
 
@@ -2145,9 +2146,11 @@ sub check_output {
         (my $munged_msglog = $msglog) =~
           s/((?:[^\W_]{6}-){2}[^\W_]{2})
             /new_value($1, "10Hm%s-0005vi-00", \$next_msgid)/egx;
-        $yield = max($yield,  check_file("spool/msglog/$msglog", undef,
-          "test-msglog-munged", "msglog/$testno.$munged_msglog", 0,
-          $munge->{msglog}));
+        $yield = max($yield,
+                     check_file("spool/msglog/$msglog", undef,
+                                "test-msglog-munged",
+                                "msglog/$testno.$munged_msglog", 0,
+                                $munge->{msglog}));
         delete $expected_msglogs{"$testno.$munged_msglog"};
       }
     }
