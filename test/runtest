@@ -410,7 +410,6 @@ sub munge {
   # inline too.
 
   LINE: while(<IN>) {
-  RESET_AFTER_EXTRA_LINE_READ:
     if ($munge_skip) {
       # Munging is a no-op.
       # Useful when testing exim_msgdate so that
@@ -1196,7 +1195,7 @@ sub munge {
         while (1) {
           $_ = <IN>;
           next if /^$time_pid?\s/;
-          goto RESET_AFTER_EXTRA_LINE_READ;
+          redo LINE;
         }
       }
 
@@ -1361,7 +1360,7 @@ sub munge {
       if ( /^(>>>)?\s*host in pipelining_connect_advertise_hosts\?$/ ) {
         $_ = <IN>;
         while ( /^(>>>)?\s*list element:/ ) { $_ = <IN>; }
-        goto RESET_AFTER_EXTRA_LINE_READ;
+        redo LINE;
       }
       next if / in (?:pipelining_connect_advertise_hosts|hosts_pipe_connect)?\? no /;
 
@@ -1375,7 +1374,7 @@ sub munge {
       if ( /^((>>>)?\s*host)? in limits_advertise_hosts\?$/ ) {
         $_ = <IN>;
         while ( /^(>>>)?\s*list element: !\*$/ ) { $_ = <IN>; }
-        goto RESET_AFTER_EXTRA_LINE_READ;
+        redo LINE;
       }
       next if / in limits_advertise_hosts?\? no \(matched "!\*"\)/;
 
@@ -1541,7 +1540,7 @@ sub munge {
         $_ = <IN>;
         if (/error on first read/) {
           s/TLS session: \Kerror on first read:/(gnutls_handshake): A TLS fatal alert has been received.:/;
-          goto RESET_AFTER_EXTRA_LINE_READ;
+          redo LINE;
         }
         else {
           $_ = $prev;
@@ -1937,7 +1936,7 @@ my $munges =
                       while (1) {
                         $_ = <IN>;
                         next if /^ /;
-                        goto RESET_AFTER_EXTRA_LINE_READ;
+                        redo LINE;
                       }
                     }'
       },
