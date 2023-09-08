@@ -2434,9 +2434,9 @@ sub run_command {
 
   if (/^gnutls/) {
     my $gen_fn = "spool/gnutls-params-$gnutls_dh_bits_normal";
-    run_system "sudo cp -p aux-fixed/gnutls-params $gen_fn;" .
+    run_system("sudo cp -p aux-fixed/gnutls-params $gen_fn;" .
                "sudo chown $parm_eximuser:$parm_eximgroup $gen_fn;" .
-               "sudo chmod 0400 $gen_fn";
+               "sudo chmod 0400 $gen_fn");
     return 1;
   }
 
