@@ -1251,9 +1251,11 @@ RESET_AFTER_EXTRA_LINE_READ:
       next;
       }
 
-    # Non-TLS builds have a different default Recieved: header expansion
-    s/^((.*)\t}}}}by \$primary_hostname \$\{if def:received_protocol \{with \$received_protocol }})\(Exim \$version_number\)$/$1\${if def:tls_in_ver        { (\$tls_in_ver)}}\${if def:tls_in_cipher_std { tls \$tls_in_cipher_std\n$2\t}}(Exim \$version_number)/;
-    s/^((\s*).*considering: with \$received_protocol }})\(Exim \$version_number\)$/$1\${if def:tls_in_ver        { (\$tls_in_ver)}}\${if def:tls_in_cipher_std { tls \$tls_in_cipher_std\n$2\t}}(Exim \$version_number)/;
+    # Non-TLS builds have a different default Recieved: header expansion {{{
+    s/^((.*)\t\}\}\}\}by \$primary_hostname \$\{if def:received_protocol \{with \$received_protocol \}\})\(Exim \$version_number\)$/$1\$\{if def:tls_in_ver        \{ (\$tls_in_ver)\}\}\$\{if def:tls_in_cipher_std \{ tls \$tls_in_cipher_std\n$2\t\}\}(Exim \$version_number)/;
+    s/^((\s*).*considering: with \$received_protocol \}\})\(Exim \$version_number\)$/$1\$\{if def:tls_in_ver        \{ (\$tls_in_ver)\}\}\$\{if def:tls_in_cipher_std \{ tls \$tls_in_cipher_std\n$2\t\}\}(Exim \$version_number)/;
+    # }}}
+
     if (/condition: def:tls_in_ver$/)
       {
       $_= <IN>; $_= <IN>; $_= <IN>; $_= <IN>;
@@ -3658,7 +3660,7 @@ for $prog ("cf", "checkaccess", "client", "client-ssl", "client-gnutls",
     }
   }
 
-# If the "loaded" binary is missing, we cut out tests for ${dlfunc. It isn't
+# If the "loaded" binary is missing, we cut out tests for ${dlfunc...} It isn't
 # compiled on systems where we don't know how to. However, if Exim does not
 # have that functionality compiled, we needn't bother.
 
@@ -4136,7 +4138,7 @@ print ">>Test List:\n", join "\n", @test_list, '' if $debug;
 # stored in the aux-var-src directory. At this point, we copy each of them
 # to the aux-var directory, making appropriate substitutions. There aren't very
 # many of them, so it's easiest just to do this every time. Ensure the mode
-# is standardized, as this path is used as a test for the ${stat: expansion.
+# is standardized, as this path is used as a test for the ${stat:...} expansion.
 
 # A similar job has to be done for the files in the dnszones-src directory, to
 # make the fake DNS zones for testing. Most of the zone files are copied to
