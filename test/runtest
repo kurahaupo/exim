@@ -298,19 +298,12 @@ sub date_seconds {
 
   my ($day,$month,$year,$hour,$min,$sec) =
     $str =~ /^(\d\d)-(\w\w\w)-(\d{4})\s(\d\d):(\d\d):(\d\d)/;
-  my $mon;
-  if   ($month =~ /Jan/) {$mon = 0;}
-  elsif($month =~ /Feb/) {$mon = 1;}
-  elsif($month =~ /Mar/) {$mon = 2;}
-  elsif($month =~ /Apr/) {$mon = 3;}
-  elsif($month =~ /May/) {$mon = 4;}
-  elsif($month =~ /Jun/) {$mon = 5;}
-  elsif($month =~ /Jul/) {$mon = 6;}
-  elsif($month =~ /Aug/) {$mon = 7;}
-  elsif($month =~ /Sep/) {$mon = 8;}
-  elsif($month =~ /Oct/) {$mon = 9;}
-  elsif($month =~ /Nov/) {$mon = 10;}
-  elsif($month =~ /Dec/) {$mon = 11;}
+  state $monmap = {
+    Jan => 0, Feb => 1, Mar => 2, Apr => 3,
+    May => 4, Jun => 5, Jul => 6, Aug => 7,
+    Sep => 8, Oct => 9, Nov => 10, Dec => 11,
+  };
+  my $mon = $monmap->{$month};
   return timelocal($sec,$min,$hour,$day,$mon,$year);
 }
 
