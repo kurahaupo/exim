@@ -151,18 +151,6 @@ my $parm_trusted_config_list;
 ###############################################################################
 
 ##################################################
-#              Handle signals                    #
-##################################################
-
-sub pipehandler {
-  $sigpipehappened = 1;
-}
-
-sub inthandler {
-  print "\n"; tests_exit(-1, "Caught SIGINT");
-}
-
-##################################################
 #       Do global macro substitutions            #
 ##################################################
 
@@ -3660,8 +3648,8 @@ XXX
   # tests_exit(), so that suitable cleaning up can be done when required.
   # Arrange to catch interrupting signals, to assist with this.
 
-  $SIG{INT} = \&inthandler;
-  $SIG{PIPE} = \&pipehandler;
+  $SIG{INT} = sub { print "\n"; tests_exit(-1, "Caught SIGINT"); };
+  $SIG{PIPE} = sub { $sigpipehappened = 1 };
 
   # For some tests, we need another copy of the binary that is setuid exim rather
   # than root.
