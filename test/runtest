@@ -2071,8 +2071,8 @@ sub check_output {
     foreach my $mail (@mails) {
       next if $mail =~ /^test-mail\/oncelog(.(dir|pag|db))?$/;
 
-      my $saved_mail = substr($mail, 10);               # Remove "test-mail/"
-      $saved_mail =~ s/^$parm_caller(\/|$)/CALLER/;  # Convert caller name
+      my $saved_mail = substr($mail, 10);             # Remove "test-mail/"
+      $saved_mail =~ s/^$parm_caller(\/|$)/CALLER/;   # Convert caller name
 
       if ($saved_mail =~ /(\d+\.[^.]+\.)/) {
         $msgno++;
