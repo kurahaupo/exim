@@ -18,7 +18,6 @@
 #use strict;
 use v5.10.1;
 use warnings;
-use if $^V >= v5.19.11, experimental => 'smartmatch';
 
 use Errno;
 use FileHandle;
@@ -3147,6 +3146,8 @@ sub check_running_dovecot {
           : ();
   @wanted = 1..TEST_TOP if not @wanted;
 
+  my %is_wanted = map { ( $_ => 1 ) } @wanted;
+
   ##################################################
   #        Check for sudo access to root           #
   ##################################################
@@ -3846,7 +3847,7 @@ XXX
     # We want the tests from this subdirectory, provided they are in the
     # range that was selected.
 
-    @testlist = grep { $_ ~~ @wanted } grep { /^\d+(?:\.\d+)?$/ } map { basename $_ } glob "scripts/$testdir/*";
+    @testlist = grep { $is_wanted{$_} } grep { /^\d+(?:\.\d+)?$/ } map { basename $_ } glob "scripts/$testdir/*";
     tests_exit(-1, "Failed to read test scripts from `scripts/$testdir/*': $!")
       if not @testlist;
 
