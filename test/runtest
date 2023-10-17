@@ -3416,7 +3416,7 @@ XXX
   if ($missing ne '') {
     print "\n";
     print "** Many features can be included or excluded from Exim binaries.\n";
-    print "** This test suite requires that Exim is built to contain a certain\n";
+    print "** This test suite requires that Exim be built containing a certain\n";
     print "** set of basic facilities. It seems that some of these are missing\n";
     print "** from the binary that is under test, so the test cannot proceed.\n";
     print "** The missing facilities are:\n";
