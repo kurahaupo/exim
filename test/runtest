@@ -3931,7 +3931,7 @@ XXX
   # its real IP addresses. Dynamically created zone files achieve this.
 
   if ($have_ipv4 || $have_ipv6) {
-    my ($shortname,$domain) = $parm_hostname =~ /^([^.]+)(.*)/;
+    my ($shortname, $domain) = $parm_hostname =~ /^([^.]+)(.*)/;
     open OUT, '>', "$parm_cwd/dnszones/db$domain" or
       tests_exit(-1, "Failed to open $parm_cwd/dnszones/db$domain: $!");
     print OUT "; This is a dynamically constructed fake zone file.\n" .
