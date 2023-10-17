@@ -2610,10 +2610,10 @@ sub run_command {
   # command as root, we use sudo.
 
   elsif (/^((?i:[A-Z\d_]+=\S+\s+)+)?(\d+)?\s*(sudo(?:\s+-u\s+(\w+))?\s+)?exim(_\S+)?\s+(.*)$/) {
-    my $envset  = (defined $1)? $1      : '';
-    $wait_time  = (defined $2)? $2      : 0;
-    my $sudo    = (defined $3)? "sudo " . (defined $4 ? "-u $4 ":'')  : '';
-    my $special = (defined $5)? $5      : '';
+    my $envset  = $1 // '';
+    $wait_time  = $2 // 0;
+    my $sudo    = $3 ? "sudo " . (defined $4 ? "-u $4 ":'')  : '';
+    my $special = $5 // '';
     my $args    = $6;
 
     # Return 2 rather than 1 afterwards
