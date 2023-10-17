@@ -1769,12 +1769,12 @@ sub check_file {
       close SAVED;
 
       my $j = 0;
-      for (my $i = 0; $i < @munged; $i++) {
+      Munge: for (my $i = 0; $i < @munged; $i++) {
         if ($munged[$i] =~ /\*\*\* truncated \*\*\*/) {
-          for (; $j < @saved; $j++) {
+          for (;; $j++) {
+            last Munge if $j >= @saved;     # not found in saved
             last if $saved[$j] =~ /\*\*\* truncated \*\*\*/;
           }
-          last if $j >= @saved;     # not found in saved
 
           my $k;
           for ($k = $i - 1; $k >= 0; $k--) {
@@ -1800,16 +1800,13 @@ sub check_file {
         <$fh>;
       };
 
+      my $Q = qr/^[-\d]{10}\s[:\d]{8}\s[-A-Za-z\d]{16}\s[-=*]>/;
       for (my $i = 0; $i < @munged; $i++) {
-        if ($munged[$i] =~ /^[-\d]{10}\s[:\d]{8}\s[-A-Za-z\d]{16}\s[-=*]>/) {
-          my $j;
-          for ($j = $i + 1; $j < @munged; $j++) {
-            last if $munged[$j] !~
-              /^[-\d]{10}\s[:\d]{8}\s[-A-Za-z\d]{16}\s[-=*]>/;
-          }
-          @temp = splice(@munged, $i, $j - $i);
-          @temp = sort(@temp);
-          splice(@munged, $i, 0, @temp);
+        if ($munged[$i] =~ $Q) {
+          my $k = $i++;
+          for (; $i < @munged && $munged[$i] =~ $Q ; $i++) {}
+          splice @munged, $k, $i - $k, sort @munged[$k .. $i-1]
+            if $i - $k > 1; # one item doesn't need sorting
         }
       }
 
