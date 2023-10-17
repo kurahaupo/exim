@@ -15,7 +15,7 @@
 # Placed in the Exim CVS: 06 February 2006                                    #
 ###############################################################################
 
-#use strict;
+use strict;
 use v5.10.1;
 use warnings;
 
@@ -141,6 +141,26 @@ my %parm_support;
 my %parm_transports;
 my $parm_trusted_config_list;
 
+## per-test globals (must be reset between tests)
+
+my %cache;
+my %expected_mails;
+my %expected_msglogs;
+my $is_ipv6test;
+my $message_skip;
+my $msglog_skip;
+my $munge_skip;
+my $next_msgid;
+my $next_pid;
+my $next_port;
+my @oldmails;
+my @oldmsglogs;
+my $rmfiltertest;
+my $sortlog;
+my $stderr_skip;
+my $stdout_skip;
+my $test;
+
 ###############################################################################
 ###############################################################################
 
@@ -204,8 +224,6 @@ my $TEST_STATE = {};
 #    $_[0] > 0 for an error exit; no files cleaned up
 #    $_[0] < 0 for a "die" exit; $_[1] contains a message
 
-my $test;
-
 sub tests_exit {
   my ($rc, $msg) = @_;
 
@@ -266,7 +284,6 @@ sub tests_exit {
 #   $base         a base string into which we insert a sequence
 #   $sequence     the address of the current sequence counter
 
-my %cache;
 sub new_value {
   my ($oldid, $base, $sequence) = @_;
 
@@ -357,13 +374,6 @@ sub list_files_below {
 # Certain actions are taken only when the name contains "stderr", "stdout",
 # or "log". The yield of the function is 1 if a line matching "*** truncated
 # ***" is encountered; otherwise it is 0.
-
-my $is_ipv6test;
-my $munge_skip;
-my $next_msgid;
-my $next_pid;
-my $next_port;
-my $rmfiltertest;
 
 sub munge {
   my ($file, $extra) = @_;
@@ -1982,16 +1992,6 @@ sub max {
 # Returns:   0 if the output compared equal
 #            1 if comparison failed; differences to be ignored
 #            2 if re-run needed (files may have been updated)
-
-my %expected_mails;
-my %expected_msglogs;
-my $message_skip;
-my $msglog_skip;
-my @oldmails;
-my @oldmsglogs;
-my $sortlog;
-my $stderr_skip;
-my $stdout_skip;
 
 sub check_output {
   my ($mungename) = @_;
