@@ -2092,7 +2092,7 @@ sub check_output {
 
         if (/^u$/) {
           foreach my $key (keys %expected_mails) {
-            tests_exit(-1, "Failed to unlink $key") if !unlink("$key");
+            tests_exit(-1, "Failed to unlink $key") if !unlink($key);
             for (my $i = 0; $i < @oldmails; $i++) {
               if ($oldmails[$i] eq $key) {
                 splice @oldmails, $i, 1;
@@ -2294,7 +2294,7 @@ sub run_command {
   if (/^dump\s+(\S+)/) {
     my $which  = $1;
     print ">> ./eximdir/exim_dumpdb $parm_cwd/spool $which\n" if $debug;
-    open my $in, "-|", './eximdir/exim_dumpdb', "$parm_cwd/spool", $which or die "Can't run exim_dumpdb: $!";
+    open my $in, '-|', './eximdir/exim_dumpdb', "$parm_cwd/spool", $which or die "Can't run exim_dumpdb: $!";
     open my $out, '>>', "test-stdout";
     print $out "+++++++++++++++++++++++++++\n";
 
@@ -3420,7 +3420,7 @@ XXX
     print "** set of basic facilities. It seems that some of these are missing\n";
     print "** from the binary that is under test, so the test cannot proceed.\n";
     print "** The missing facilities are:\n";
-    print "$missing";
+    print $missing;
     die "** Test script abandoned\n";
   }
 
