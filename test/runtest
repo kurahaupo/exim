@@ -2093,7 +2093,7 @@ sub check_output {
         if (/^u$/) {
           foreach my $key (keys %expected_mails) {
             tests_exit(-1, "Failed to unlink $key") if !unlink($key);
-            for (my $i = 0; $i < @oldmails; $i++) {
+            for my $i (0 .. $#oldmails) {
               if ($oldmails[$i] eq $key) {
                 splice @oldmails, $i, 1;
                 last;
@@ -3182,7 +3182,7 @@ sub check_running_dovecot {
 
   if (not $parm_exim) {
     print "** Did not find an Exim binary to test\n";
-    for ($i = 0; $i < 5; $i++) {
+    for my $i (0..4) {
       my $trybin;
       print "** Enter pathname for Exim binary: ";
       chomp($trybin = <STDIN>);
