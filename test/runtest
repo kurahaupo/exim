@@ -249,7 +249,7 @@ sub tests_exit {
     if !$save_output;
 
   print "\nYou were in test $test at the end there.\n\n" if defined $test;
-  exit $rc if $rc >= 0;
+  exit $rc if ($rc // -1) >= 0;
   die "** runtest error: $msg\n";
 }
 
@@ -320,7 +320,7 @@ sub list_files_below {
   my @sublist;
   my @yield;
 
-  opendir(DIR, $dir) || tests_exit(-1, "Failed to open $dir: $!");
+  opendir DIR, $dir or tests_exit(-1, "Failed to open $dir: $!");
   @sublist = sort maildirsort readdir(DIR);
   closedir(DIR);
 
@@ -2362,8 +2362,8 @@ sub run_command {
 
   if (/^exim_lock\s+(.*)$/) {
     my $cmd = "./eximdir/exim_lock $1 >>test-stdout";
-    $server_pid = open SERVERCMD, "|$cmd" ||
-      tests_exit(-1, "Failed to run $cmd\n");
+    $server_pid = open SERVERCMD, "|$cmd"
+        or tests_exit(-1, "Failed to run $cmd\n");
 
     # This gives the process time to get started; otherwise the next
     # process may not find it there when it expects it.
@@ -2511,7 +2511,7 @@ sub run_command {
     my $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
     $cmd = "./bin/server $server_opts -oP $pidfile $1 >>test-stdout-server";
     print ">> $cmd\n" if $debug;
-    $server_pid = open SERVERCMD, "|$cmd" || tests_exit(-1, "Failed to run $cmd");
+    $server_pid = open SERVERCMD, "|$cmd" or tests_exit(-1, "Failed to run $cmd");
     SERVERCMD->autoflush(1);
     print ">> Server pid is $server_pid\n" if $debug;
     while (<SCRIPT>) {
@@ -2536,10 +2536,11 @@ sub run_command {
   if (/^(cat)?write\s+(\S+)(?:\s+(.*))?\s*$/) {
     my $cat = defined $1;
     my @sizes = split /\s+/, $3 if defined $3;
-    open FILE, ">$2" || tests_exit(-1, "Failed to open \"$2\": $!");
+    open FILE, '>', $2 or
+      tests_exit(-1, "Failed to open \"$2\": $!");
 
     if ($cat) {
-      open CAT, ">>test-stdout" ||
+      open CAT, '>>', "test-stdout" or
         tests_exit(-1, "Failed to open test-stdout: $!");
       print CAT "==========\n";
     }
@@ -2723,7 +2724,7 @@ sub run_command {
         $cmd =~ s!\s-bd\s! -bdf -oP $pidfile !;
       }
       print ">> |${cmd}-server\n" if $debug;
-      open DAEMONCMD, "|${cmd}-server" || tests_exit(-1, "Failed to run $cmd");
+      open DAEMONCMD, "|${cmd}-server" or tests_exit(-1, "Failed to run $cmd");
       DAEMONCMD->autoflush(1);
       while (<SCRIPT>) { $lineno++; last if /^\*{4}\s*$/; }   # Ignore any input
 
@@ -2811,7 +2812,7 @@ sub run_command {
 
   my $stderrsuffix = ($cmd =~ /\s-DSERVER=server\s/)? "-server" : '';
   print ">> |${cmd}${stderrsuffix}\n" if $debug;
-  open CMD, "|${cmd}${stderrsuffix}" || tests_exit(1, "Failed to run $cmd");
+  open CMD, "|${cmd}${stderrsuffix}" or tests_exit(1, "Failed to run $cmd");
 
   CMD->autoflush(1);
   LINE: while (<SCRIPT>) {
@@ -3165,7 +3166,7 @@ sub check_running_dovecot {
 
   my $cwd = $0;
   $cwd = '.' if $cwd !~ s|/[^/]+$||;
-  chdir($cwd) || die "** Failed to chdir to \"$cwd\": $!\n";
+  chdir $cwd or die "** Failed to chdir to \"$cwd\": $!\n";
   $parm_cwd = Cwd::getcwd();
 
   ##################################################
@@ -3881,8 +3882,8 @@ XXX
     mkdir("$parm_cwd/$basedir", 0777);
     chmod(0755, "$parm_cwd/$basedir");
 
-    opendir(AUX, "$parm_cwd/$basedir-src") ||
-      tests_exit(-1, "Failed to opendir $parm_cwd/$basedir-src: $!");
+    opendir AUX, "$parm_cwd/$basedir-src"
+      or tests_exit(-1, "Failed to opendir $parm_cwd/$basedir-src: $!");
     my @filelist = readdir(AUX);
     close AUX;
 
@@ -4008,7 +4009,7 @@ XXX
   # is just a flat list of files.
 
   @oldmails = list_files_below("mail");
-  opendir(DIR, "msglog") || tests_exit(-1, "Failed to opendir msglog: $!");
+  opendir DIR, "msglog" or tests_exit(-1, "Failed to opendir msglog: $!");
   @oldmsglogs = readdir(DIR);
   closedir(DIR);
 
