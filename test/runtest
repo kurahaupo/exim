@@ -2966,7 +2966,7 @@ LINE: while (<SCRIPT>)
   do_substitute($testno);
   if (my ($cmd, $line) = /^(:\S+?:)(.*)/) {
     $_ = $line;
-      {
+      { # TODO: check whether "last" is intended to exit this monoloop
       $cmd eq ':eval:' and do {
         $_ = eval "\"$_\"";
         last;
