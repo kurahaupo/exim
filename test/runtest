@@ -216,7 +216,7 @@ sub tests_exit {
   # the background.
 
   if (exists $TEST_STATE->{exim_pid}) {
-    $pid = $TEST_STATE->{exim_pid};
+    my $pid = $TEST_STATE->{exim_pid};
     print "Tidyup: killing wait-mode daemon pid=$pid\n";
     system("sudo kill -INT $pid");
   }
@@ -227,6 +227,7 @@ sub tests_exit {
     foreach my $spool (@spools) {
       next if $spool !~ /^exim-daemon./;
       open PID, '<', "spool/$spool" or die "** Failed to open \"spool/$spool\": $!\n";
+      my $pid;
       chomp($pid = <PID>);
       close PID;
       print "Tidyup: killing daemon pid=$pid\n";
@@ -3447,7 +3448,7 @@ XXX
   # compiled on systems where we don't know how to. However, if Exim does not
   # have that functionality compiled, we needn't bother.
 
-  $dlfunc_deleted = 0;
+  my $dlfunc_deleted = 0;
   if (defined $parm_support{Expand_dlfunc} && !-e 'bin/loaded') {
     delete $parm_support{Expand_dlfunc};
     $dlfunc_deleted = 1;
@@ -3845,7 +3846,7 @@ XXX
     # We want the tests from this subdirectory, provided they are in the
     # range that was selected.
 
-    @testlist = grep { $is_wanted{$_} } grep { /^\d+(?:\.\d+)?$/ } map { basename $_ } glob "scripts/$testdir/*";
+    my @testlist = grep { $is_wanted{$_} } grep { /^\d+(?:\.\d+)?$/ } map { basename $_ } glob "scripts/$testdir/*";
     tests_exit(-1, "Failed to read test scripts from `scripts/$testdir/*': $!")
       if not @testlist;
 
@@ -4030,8 +4031,8 @@ XXX
   }
 
   my $failures = 0;
+  my $prevtestdir = '';
   foreach $test (@test_list) {
-    state $lasttestdir = '';
 
     $lineno  = 0;
     $sortlog = 0;
@@ -4050,7 +4051,7 @@ XXX
 
     $dynamic_socket->close() if $dynamic_socket;
 
-    if ($lasttestdir ne $thistestdir) {
+    if ($prevtestdir ne $thistestdir) {
       $gnutls = 0;
       if (-s "scripts/$thistestdir/REQUIRES") {
         my $indent = '';
@@ -4063,7 +4064,7 @@ XXX
           $indent = ">>>                              ";
         }
       }
-      $lasttestdir = $thistestdir;
+      $prevtestdir = $thistestdir;
     }
 
     # Remove any debris in the spool directory and the test-mail directory
