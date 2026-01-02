@@ -1,4 +1,4 @@
-# Exim test configuration 0640
+# Exim test configuration 4517
 # Mem corruption in transport
 
 .include DIR/aux-var/std_conf_prefix
@@ -34,6 +34,7 @@ begin transports
 rewrite:
   driver =	smtp
   headers_rewrite = someone@some.domain someone@some.domain f
+  hosts_try_fastopen = :
 
   dkim_domain =	test.ex
   dkim_selector = sel
@@ -42,6 +43,7 @@ rewrite:
 env_to_add:
   driver =	smtp
   envelope_to_add = true
+  hosts_try_fastopen = :
 
   dkim_domain =	test.ex
   dkim_selector = sel
