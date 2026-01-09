@@ -462,15 +462,14 @@ to create the file; if running as root, this must be done in a subprocess to
 avoid races.
 
 Arguments:
-  fd         where to return the resulting file descriptor
   type       lt_main, lt_reject, lt_panic, or lt_debug
   tag        optional tag to include in the name (only hooked up for debug)
 
-Returns:   nothing
+Returns:   fd
 */
 
-static void
-open_log(int * fd, int type, const uschar * tag)
+static int
+open_log(int type, const uschar * tag)
 {
 uid_t euid;
 BOOL ok, ok2;
@@ -555,8 +554,10 @@ if (!ok)
 
 /* We now have the file name. After a successful open, return. */
 
-if ((*fd = log_open_as_exim(buffer)) >= 0)
-  return;
+ {
+  int fd = log_open_as_exim(buffer);
+  if (fd >= 0) return fd;
+ }
 
 euid = geteuid();
 
@@ -567,10 +568,7 @@ just bombing out, force the log to stderr and carry on if stderr is available.
 */
 
 if (euid != root_uid && euid != exim_uid && log_stderr)
-  {
-  *fd = fileno(log_stderr);
-  return;
-  }
+  return fileno(log_stderr);
 
 /* Otherwise this is a disaster. This call is deliberately ONLY to the panic
 log. If possible, save a copy of the original line that was being logged. If we
@@ -1144,7 +1142,7 @@ if (  flags & LOG_MAIN
 
     if (mainlogfd < 0)
       {
-      open_log(&mainlogfd, lt_main, NULL);     /* No return on error */
+      mainlogfd = open_log(lt_main, NULL);     /* No return on error */
       if (fstat(mainlogfd, &statbuf) >= 0) mainlog_inode = statbuf.st_ino;
       }
 
@@ -1247,7 +1245,7 @@ if (flags & LOG_REJECT)
 
     if (rejectlogfd < 0)
       {
-      open_log(&rejectlogfd, lt_reject, NULL); /* No return on error */
+      rejectlogfd = open_log(lt_reject, NULL); /* No return on error */
       if (fstat(rejectlogfd, &statbuf) >= 0) rejectlog_inode = statbuf.st_ino;
       }
 
@@ -1280,7 +1278,7 @@ if (flags & LOG_PANIC)
   if (logging_mode & LOG_MODE_FILE)
     {
     panic_recurseflag = TRUE;
-    open_log(&paniclogfd, lt_panic, NULL);  /* Won't return on failure */
+    paniclogfd = open_log(lt_panic, NULL);  /* Won't return on failure */
     panic_recurseflag = FALSE;
 
     if (panic_save_buffer)
@@ -1560,13 +1558,12 @@ if (opts)
 
 /* When activating from a transport process we may never have logged at all
 resulting in certain setup not having been done.  Hack this for now so we
-do not segfault; note that nondefault log locations will not work */
+do not segfault; note that nondefault log locations (set via log_file_path)
+will not work for that case. */
 
 if (!*file_path) set_file_path();
 
-open_log(&debug_fd, lt_debug, tag_name);
-
-if (debug_fd != -1)
+if ((debug_fd = open_log(lt_debug, tag_name)) != -1)
   debug_file = fdopen(debug_fd, "w");
 else
   log_write(0, LOG_MAIN|LOG_PANIC, "unable to open debug log");
