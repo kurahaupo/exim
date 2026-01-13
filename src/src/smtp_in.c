@@ -3786,6 +3786,185 @@ if (!(s = expand_string(s)))
 return *s ? Uatoi(s) : 0;
 }
 
+
+
+static int
+etrn_handle(uschar ** user_msgp, uschar ** log_msgp)
+{
+int rc;
+uschar * etrn_command, * etrn_serialize_key = NULL;
+const uschar ** argv;
+void (*oldsignal)(int);
+pid_t pid;
+
+if (sender_address)
+  return synprot_error(L_smtp_protocol_error, 503, NULL,
+    US"ETRN is not permitted inside a transaction");
+
+log_write(L_etrn, LOG_MAIN, "ETRN %s received from %s", smtp_cmd_argument,
+  host_and_ident(FALSE));
+
+GET_OPTION("acl_smtp_etrn");
+if ((rc = acl_check(ACL_WHERE_ETRN, NULL, acl_smtp_etrn,
+	    user_msgp, log_msgp)) != OK)
+  return smtp_handle_acl_fail(ACL_WHERE_ETRN, rc, *user_msgp, *log_msgp);
+
+/* Compute the serialization key for this command. We used (all the way
+back to 4.00) to include the given string as part of the key, but this
+opens a security hole for hintsdb types that use a command-string for
+operations. So, use a hash of the string. All ETRN with the same command
+hash are serialized */
+
+if (smtp_etrn_serialize)
+  {
+  md5 hash;
+  uschar * digest = store_get(16, GET_TAINTED);
+
+  md5_start(&hash);
+  md5_end(&hash, smtp_cmd_argument, Ustrlen(smtp_cmd_argument), digest);
+
+  etrn_serialize_key = string_sprintf("etrn-%.16H", digest);
+  }
+
+/* If a command has been specified for running as a result of ETRN, we
+permit any argument to ETRN. If not, only the # standard form is
+permitted, since that is strictly the only kind of ETRN that can be
+implemented according to the RFC. */
+
+GET_OPTION("smtp_etrn_command");
+if (smtp_etrn_command)
+  {
+  uschar * error;
+  BOOL rc;
+  etrn_command = smtp_etrn_command;
+  deliver_domain = smtp_cmd_data;
+  rc = transport_set_up_command(&argv, smtp_etrn_command,
+		  TSUC_EXPAND_ARGS, 0, NULL, US"ETRN processing", &error);
+  deliver_domain = NULL;
+  if (!rc)
+    {
+    log_write(0, LOG_MAIN|LOG_PANIC, "failed to set up ETRN command: %s",
+      error);
+    smtp_printf("458 Internal failure\r\n", SP_NO_MORE);
+    return 0;
+    }
+  }
+
+/* Else set up to call Exim with the -R option. */
+
+else
+  {
+  if (*smtp_cmd_data++ != '#')
+    return synprot_error(L_smtp_syntax_error, 501, NULL,
+      US"argument must begin with #");
+
+  etrn_command = US"exim -R";
+  argv = CUSS child_exec_exim(CEE_RETURN_ARGV, TRUE, NULL, TRUE,
+    *queue_name ? 4 : 2,
+    US"-R", smtp_cmd_data,
+    US"-MCG", queue_name);
+  }
+
+/* If we are host-testing, don't actually do anything. */
+
+if (host_checking)
+  {
+  HDEBUG(D_any)
+    {
+    debug_printf("ETRN command is: %s\n", etrn_command);
+    debug_printf("ETRN command execution skipped\n");
+    }
+  if (*user_msgp)
+    smtp_user_msg(US"250", *user_msgp);
+  else
+    smtp_printf("250 OK\r\n", SP_NO_MORE);
+  return 0;
+  }
+
+
+/* If ETRN queue runs are to be serialized, check the database to
+ensure one isn't already running. */
+
+if (smtp_etrn_serialize && !enq_start(etrn_serialize_key, 1))
+  {
+  smtp_printf("458 Already processing %s\r\n", SP_NO_MORE, smtp_cmd_data);
+  return 0;
+  }
+
+/* Fork a child process and run the command. We don't want to have to
+wait for the process at any point, so set SIGCHLD to SIG_IGN before
+forking. It should be set that way anyway for external incoming SMTP,
+but we save and restore to be tidy. If serialization is required, we
+actually run the command in yet another process, so we can wait for it
+to complete and then remove the serialization lock. */
+
+oldsignal = signal(SIGCHLD, SIG_IGN);
+
+if ((pid = exim_fork(US"etrn-command")) == 0)
+  {
+  smtp_input = FALSE;       /* This process is not associated with the */
+  smtp_inout_close();	  /* SMTP call any more. */
+
+  signal(SIGCHLD, SIG_DFL);      /* Want to catch child */
+
+  /* If not serializing, do the exec right away. Otherwise, fork down
+  into another process. */
+
+  if (  !smtp_etrn_serialize
+     || (pid = exim_fork(US"etrn-serialised-command")) == 0)
+    {
+    DEBUG(D_exec) debug_print_argv(argv);
+    exim_nullstd();                   /* Ensure std{in,out,err} exist */
+    /* argv[0] should be untainted, from child_exec_exim() */
+    execv(CS argv[0], (char *const *)argv);
+    log_write_die(0, LOG_MAIN, "exec of %q (ETRN) failed: %s",
+      etrn_command, strerror(errno));
+    _exit(EXIT_FAILURE);         /* paranoia */
+    }
+
+  /* Obey this if smtp_serialize and the 2nd fork yielded non-zero. That
+  is, we are in the first subprocess, after forking again. All we can do
+  for a failing fork is to log it. Otherwise, wait for the 2nd process to
+  complete, before removing the serialization. */
+
+  if (pid < 0)
+    log_write(0, LOG_MAIN|LOG_PANIC, "2nd fork for serialized ETRN "
+      "failed: %s", strerror(errno));
+  else
+    {
+    int status;
+    DEBUG(D_any) debug_printf("waiting for serialized ETRN process %d\n",
+      (int)pid);
+    (void)wait(&status);
+    DEBUG(D_any) debug_printf("serialized ETRN process %d ended\n",
+      (int)pid);
+    }
+
+  if (smtp_etrn_serialize) enq_end(etrn_serialize_key);
+  exim_underbar_exit(EXIT_SUCCESS);
+  }
+
+/* Back in the top level SMTP process. Check that we started a subprocess
+and restore the signal state. */
+
+if (pid < 0)
+  {
+  log_write(0, LOG_MAIN|LOG_PANIC, "fork of process for ETRN failed: %s",
+    strerror(errno));
+  smtp_printf("458 Unable to fork process\r\n", SP_NO_MORE);
+  if (smtp_etrn_serialize) enq_end(etrn_serialize_key);
+  }
+else
+  if (*user_msgp)
+    smtp_user_msg(US"250", *user_msgp);
+  else
+    smtp_printf("250 OK\r\n", SP_NO_MORE);
+
+signal(SIGCHLD, oldsignal);
+return 0;
+}
+
+
 /*************************************************
 *       Initialize for SMTP incoming message     *
 *************************************************/
@@ -3870,14 +4049,10 @@ value. The values are 2 larger than the required yield of the function. */
 
 while (done <= 0)
   {
-  const uschar ** argv;
-  uschar * etrn_command, * etrn_serialize_key, * errmess;
-  uschar * log_msg, * smtp_code;
+  uschar * errmess, * log_msg, * smtp_code;
   uschar * user_msg = NULL, * recipient = NULL, * hello = NULL;
   uschar * s, * ss;
   BOOL was_rej_mail = FALSE, was_rcpt = FALSE;
-  void (*oldsignal)(int);
-  pid_t pid;
   int start, end, sender_domain, recipient_domain;
   int rc, c, dsn_flags;
   uschar * orcpt = NULL;
@@ -5723,175 +5898,8 @@ while (done <= 0)
 
     case ETRN_CMD:
       HAD(SCH_ETRN);
-      if (sender_address)
-	{
-	done = synprot_error(L_smtp_protocol_error, 503, NULL,
-	  US"ETRN is not permitted inside a transaction");
-	break;
-	}
-
-      log_write(L_etrn, LOG_MAIN, "ETRN %s received from %s", smtp_cmd_argument,
-	host_and_ident(FALSE));
-
-      GET_OPTION("acl_smtp_etrn");
-      if ((rc = acl_check(ACL_WHERE_ETRN, NULL, acl_smtp_etrn,
-		  &user_msg, &log_msg)) != OK)
-	{
-	done = smtp_handle_acl_fail(ACL_WHERE_ETRN, rc, user_msg, log_msg);
-	break;
-	}
-
-      /* Compute the serialization key for this command. We used (all the way
-      back to 4.00) to include the given string as part of the key, but this
-      opens a security hole for hintsdb types that use a command-string for
-      operations. So, use a hash of the string. All ETRN with the same command
-      hash are serialized */
-
-      md5 hash;
-      uschar *digest = store_get(16, GET_TAINTED);
-
-      md5_start(&hash);
-      md5_end(&hash, smtp_cmd_argument, Ustrlen(smtp_cmd_argument), digest);
-
-      etrn_serialize_key = string_sprintf("etrn-%.16H", digest);
-
-      /* If a command has been specified for running as a result of ETRN, we
-      permit any argument to ETRN. If not, only the # standard form is
-      permitted, since that is strictly the only kind of ETRN that can be
-      implemented according to the RFC. */
-
-      GET_OPTION("smtp_etrn_command");
-      if (smtp_etrn_command)
-	{
-	uschar * error;
-	BOOL rc;
-	etrn_command = smtp_etrn_command;
-	deliver_domain = smtp_cmd_data;
-	rc = transport_set_up_command(&argv, smtp_etrn_command,
-			TSUC_EXPAND_ARGS, 0, NULL, US"ETRN processing", &error);
-	deliver_domain = NULL;
-	if (!rc)
-	  {
-	  log_write(0, LOG_MAIN|LOG_PANIC, "failed to set up ETRN command: %s",
-	    error);
-	  smtp_printf("458 Internal failure\r\n", SP_NO_MORE);
-	  break;
-	  }
-	}
-
-      /* Else set up to call Exim with the -R option. */
-
-      else
-	{
-	if (*smtp_cmd_data++ != '#')
-	  {
-	  done = synprot_error(L_smtp_syntax_error, 501, NULL,
-	    US"argument must begin with #");
-	  break;
-	  }
-	etrn_command = US"exim -R";
-	argv = CUSS child_exec_exim(CEE_RETURN_ARGV, TRUE, NULL, TRUE,
-	  *queue_name ? 4 : 2,
-	  US"-R", smtp_cmd_data,
-	  US"-MCG", queue_name);
-	}
-
-      /* If we are host-testing, don't actually do anything. */
-
-      if (host_checking)
-	{
-	HDEBUG(D_any)
-	  {
-	  debug_printf("ETRN command is: %s\n", etrn_command);
-	  debug_printf("ETRN command execution skipped\n");
-	  }
-	if (user_msg == NULL) smtp_printf("250 OK\r\n", SP_NO_MORE);
-	  else smtp_user_msg(US"250", user_msg);
-	break;
-	}
-
-
-      /* If ETRN queue runs are to be serialized, check the database to
-      ensure one isn't already running. */
-
-      if (smtp_etrn_serialize && !enq_start(etrn_serialize_key, 1))
-	{
-	smtp_printf("458 Already processing %s\r\n", SP_NO_MORE, smtp_cmd_data);
-	break;
-	}
-
-      /* Fork a child process and run the command. We don't want to have to
-      wait for the process at any point, so set SIGCHLD to SIG_IGN before
-      forking. It should be set that way anyway for external incoming SMTP,
-      but we save and restore to be tidy. If serialization is required, we
-      actually run the command in yet another process, so we can wait for it
-      to complete and then remove the serialization lock. */
-
-      oldsignal = signal(SIGCHLD, SIG_IGN);
-
-      if ((pid = exim_fork(US"etrn-command")) == 0)
-	{
-	smtp_input = FALSE;       /* This process is not associated with the */
-	smtp_inout_close();	  /* SMTP call any more. */
-
-	signal(SIGCHLD, SIG_DFL);      /* Want to catch child */
-
-	/* If not serializing, do the exec right away. Otherwise, fork down
-	into another process. */
-
-	if (  !smtp_etrn_serialize
-	   || (pid = exim_fork(US"etrn-serialised-command")) == 0)
-	  {
-	  DEBUG(D_exec) debug_print_argv(argv);
-	  exim_nullstd();                   /* Ensure std{in,out,err} exist */
-	  /* argv[0] should be untainted, from child_exec_exim() */
-	  execv(CS argv[0], (char *const *)argv);
-	  log_write_die(0, LOG_MAIN, "exec of %q (ETRN) failed: %s",
-	    etrn_command, strerror(errno));
-	  _exit(EXIT_FAILURE);         /* paranoia */
-	  }
-
-	/* Obey this if smtp_serialize and the 2nd fork yielded non-zero. That
-	is, we are in the first subprocess, after forking again. All we can do
-	for a failing fork is to log it. Otherwise, wait for the 2nd process to
-	complete, before removing the serialization. */
-
-	if (pid < 0)
-	  log_write(0, LOG_MAIN|LOG_PANIC, "2nd fork for serialized ETRN "
-	    "failed: %s", strerror(errno));
-	else
-	  {
-	  int status;
-	  DEBUG(D_any) debug_printf("waiting for serialized ETRN process %d\n",
-	    (int)pid);
-	  (void)wait(&status);
-	  DEBUG(D_any) debug_printf("serialized ETRN process %d ended\n",
-	    (int)pid);
-	  }
-
-	enq_end(etrn_serialize_key);
-	exim_underbar_exit(EXIT_SUCCESS);
-	}
-
-      /* Back in the top level SMTP process. Check that we started a subprocess
-      and restore the signal state. */
-
-      if (pid < 0)
-	{
-	log_write(0, LOG_MAIN|LOG_PANIC, "fork of process for ETRN failed: %s",
-	  strerror(errno));
-	smtp_printf("458 Unable to fork process\r\n", SP_NO_MORE);
-	if (smtp_etrn_serialize) enq_end(etrn_serialize_key);
-	}
-      else
-	if (!user_msg)
-	  smtp_printf("250 OK\r\n", SP_NO_MORE);
-	else
-	  smtp_user_msg(US"250", user_msg);
-
-      signal(SIGCHLD, oldsignal);
+      done = etrn_handle(&user_msg, &log_msg);
       break;
-
 
     case BADARG_CMD:
       done = synprot_error(L_smtp_syntax_error, 501, NULL,
