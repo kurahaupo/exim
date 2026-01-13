@@ -131,11 +131,6 @@ time_t  deliver_frozen_at      = 0;
 BOOL    deliver_manual_thaw    = FALSE;
 
 #ifndef DISABLE_DKIM
-uschar *dkim_cur_signer          = NULL;
-uschar *dkim_signers             = NULL;
-uschar *dkim_signing_domain      = NULL;
-uschar *dkim_signing_selector    = NULL;
-uschar *dkim_verify_signers      = US"$dkim_signers";
 unsigned dkim_collect_input      = 0;
 BOOL    dkim_disable_verify      = FALSE;
 #endif

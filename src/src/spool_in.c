@@ -266,7 +266,6 @@ tree_nonrecipients = NULL;
 #ifndef DISABLE_DKIM
 f.dkim_disable_verify = FALSE;
 # ifdef COMPILE_UTILITY
-dkim_signers = NULL;
 dkim_collect_input = 0;
 #else
   {
