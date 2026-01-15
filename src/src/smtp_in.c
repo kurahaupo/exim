@@ -1423,6 +1423,11 @@ for (;;) switch(smtp_read_command(FALSE, GETC_BUFFER_UNLIMITED))
     smtp_printf("250 Reset OK\r\n", SP_NO_MORE);
     break;
 
+  case BADARG_CMD:
+    if (synprot_error(L_smtp_syntax_error, 501, NULL,
+      US"unexpected argument data") > 0) return;
+    break;
+
   default:
     smtp_printf("421 %s\r\n", SP_NO_MORE, message);
     break;
@@ -2888,15 +2893,16 @@ int
 synprot_error(int type, int code, uschar *data, uschar *errmess)
 {
 int yield = -1;
+BOOL syntax_error = type == L_smtp_syntax_error;
 
 #ifndef DISABLE_EVENT
 event_raise(event_action,
-  L_smtp_syntax_error ? US"smtp:fail:syntax" : US"smtp:fail:protocol",
+  syntax_error ? US"smtp:fail:syntax" : US"smtp:fail:protocol",
   errmess, NULL);
 #endif
 
 log_write(type, LOG_MAIN, "SMTP %s error in %q %s %s",
-  type == L_smtp_syntax_error ? "syntax" : "protocol",
+  syntax_error ? "syntax" : "protocol",
   string_printing(smtp_cmd_buffer), host_and_ident(TRUE), errmess);
 
 GET_OPTION("smtp_max_synprot_errors");
@@ -4051,7 +4057,7 @@ while (done <= 0)
   {
   uschar * errmess, * log_msg, * smtp_code;
   uschar * user_msg = NULL, * recipient = NULL, * hello = NULL;
-  uschar * s, * ss;
+  uschar * s;
   BOOL was_rej_mail = FALSE, was_rcpt = FALSE;
   int start, end, sender_domain, recipient_domain;
   int rc, c, dsn_flags;
@@ -4079,9 +4085,10 @@ while (done <= 0)
 	  done = smtp_handle_acl_fail(ACL_WHERE_AUTH, rc, user_msg, log_msg);
 	else
 	  {
-	  smtp_cmd_data = NULL;
+	  uschar * dummy_errmsg;
 
-	  if (smtp_in_auth(au, &s, &ss) == OK)
+	  smtp_cmd_data = NULL;
+	  if (smtp_in_auth(au, &s, &dummy_errmsg) == OK)
 	    { DEBUG(D_auth) debug_printf("tls auth succeeded\n"); }
 	  else
 	    {
