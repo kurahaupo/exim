@@ -19,6 +19,11 @@ of Exim. */
 #include "exim.h"
 
 
+static int
+host_find_bydns_internal(host_item *, const uschar *,
+  int, const uschar *, const uschar *, const uschar *, const dnssec_domains *,
+  const uschar **, BOOL *, dns_answer *);
+
 /* Static variable for preserving the list of interface addresses in case it is
 used more than once. */
 
@@ -1770,8 +1775,9 @@ for (uschar * hname = sender_host_name; hname; hname = *aliases++)
   dnssec_domains d =
     { .request = sender_host_dnssec ? US"*" : NULL, .require = NULL };
 
-  if (  (rc = host_find_bydns(&h, NULL, HOST_FIND_BY_A | HOST_FIND_BY_AAAA,
-	  NULL, NULL, NULL, &d, NULL, NULL)) == HOST_FOUND
+  if (  (rc = host_find_bydns_internal(&h, NULL,
+	  HOST_FIND_BY_A | HOST_FIND_BY_AAAA,
+	  NULL, NULL, NULL, &d, NULL, NULL, dnsa)) == HOST_FOUND
      || rc == HOST_FOUND_LOCAL
      )
     {
@@ -1851,6 +1857,7 @@ yield = FAIL;
 
 out:
   expand_level--;
+  store_free_dns_answer(dnsa);
   return yield;
 }
 
@@ -2198,6 +2205,7 @@ function as it may be called to set the addresses of hosts taken from MX
 records.
 
 Arguments:
+  dnsa			a dns_answer area to use (avoid alloc another)
   host                  points to the host item we're filling in
   lastptr               points to pointer to last host item in a chain of
                           host items (may be updated if host is last and gets
@@ -2219,7 +2227,7 @@ Returns:       HOST_FIND_FAILED     couldn't find A record
 */
 
 static int
-set_address_from_dns(host_item *host, host_item **lastptr,
+set_address_from_dns(dns_answer * dnsa, host_item *host, host_item **lastptr,
   const uschar *ignore_target_hosts, BOOL allow_ip,
   const uschar **fully_qualified_name,
   BOOL dnssec_request, BOOL dnssec_require, int whichrrs)
@@ -2228,7 +2236,6 @@ host_item * thishostlast = NULL;    /* Indicates not yet filled in anything */
 BOOL v6_find_again = FALSE;
 BOOL dnssec_fail = FALSE;
 int i;
-dns_answer * dnsa;
 
 #ifndef DISABLE_TLS
 /* Copy the host name at this point to the value which is used for
@@ -2253,8 +2260,6 @@ if (allow_ip && string_is_ip_address(host->name, NULL) != 0)
   host->address = host->name;
   return HOST_FOUND;
   }
-
-dnsa = store_get_dns_answer();
 
 /* On an IPv6 system, unless IPv6 is disabled, go round the loop up to twice,
 looking for AAAA records the first time. However, unless doing standalone
@@ -2467,7 +2472,6 @@ i = host->address
   : HOST_IGNORED;
 
 out:
-  store_free_dns_answer(dnsa);
   return i;
 }
 
@@ -2518,19 +2522,19 @@ Returns:                HOST_FIND_FAILED  Failed to find the host or domain;
                                           an address of the local host
 */
 
-int
-host_find_bydns(host_item * host, const uschar * ignore_target_hosts,
+static int
+host_find_bydns_internal(host_item * host, const uschar * ignore_target_hosts,
   int whichrrs,
   const uschar * srv_svclist, const uschar * srv_fail_domains,
   const uschar * mx_fail_domains, const dnssec_domains * dnssec_d,
-  const uschar ** fully_qualified_name, BOOL * removed)
+  const uschar ** fully_qualified_name, BOOL * removed,
+  dns_answer * dnsa)
 {
 host_item * h, * last;
 #ifdef EXPERIMENTAL_SRV_SMTPS
 BOOL srv_smtps = FALSE;
 #endif
 int rc = DNS_FAIL, ind_type = 0, yield;
-dns_answer * dnsa = store_get_dns_answer();
 dns_scan dnss = {0};
 BOOL dnssec_require, dnssec_request;
 dnssec_status_t dnssec;
@@ -2726,7 +2730,7 @@ if (rc != DNS_SUCCEED)
   host->tls_needs = SRV_TLS_UNK;
 #endif
   lookup_dnssec_authenticated = NULL;
-  rc = set_address_from_dns(host, &last, ignore_target_hosts, FALSE,
+  rc = set_address_from_dns(dnsa, host, &last, ignore_target_hosts, FALSE,
     fully_qualified_name, dnssec_request, dnssec_require, whichrrs);
 
   /* If one or more address records have been found, check that none of them
@@ -3047,7 +3051,7 @@ for (h = host; h != last->next; h = h->next)
   {
   if (h->address) continue;  /* Inserted by a multihomed host */
 
-  rc = set_address_from_dns(h, &last, ignore_target_hosts, allow_mx_to_ip,
+  rc = set_address_from_dns(dnsa, h, &last, ignore_target_hosts, allow_mx_to_ip,
     NULL, dnssec_request, dnssec_require,
     whichrrs & HOST_FIND_IPV4_ONLY
     ?  HOST_FIND_BY_A  :  HOST_FIND_BY_A | HOST_FIND_BY_AAAA);
@@ -3172,6 +3176,20 @@ DEBUG(D_host_lookup)
 out:
 
 dns_init(FALSE, FALSE, FALSE);	/* clear the dnssec bit for getaddrbyname */
+return yield;
+}
+
+int
+host_find_bydns(host_item * host, const uschar * ignore_target_hosts,
+  int whichrrs,
+  const uschar * srv_svclist, const uschar * srv_fail_domains,
+  const uschar * mx_fail_domains, const dnssec_domains * dnssec_d,
+  const uschar ** fully_qualified_name, BOOL * removed)
+{
+dns_answer * dnsa = store_get_dns_answer();
+int yield = host_find_bydns_internal(host, ignore_target_hosts, whichrrs,
+  srv_svclist, srv_fail_domains, mx_fail_domains, dnssec_d,
+  fully_qualified_name, removed, dnsa);
 store_free_dns_answer(dnsa);
 return yield;
 }

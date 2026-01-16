@@ -80,6 +80,10 @@ JH/19 Support for DSCP, SOCKS, Proxy-Protocol and (the experimental) XCLIENT
 JH/20 Bug 3184: Disable the -bI:sieve command-line option when built without
       Sieve support.  Previously it was available but would crash.
 
+JH/21 Fix memory leak in DNS lookups. From 4.95 onwards, certain lookup types
+      failed to free an allocated buffer. Credit: Mythic-Beasts for discovery.
+      While in that code, reduce overall memory use.
+
 
 Exim version 4.99.1
 -------------------
