@@ -192,24 +192,30 @@ tag policy_tags[] = {
 
 /* Handle one potential tag
 Return: boolean success; else parsing error
-
-RFC 7489 6.3 :- unknown tags are ignored
 */
-static int
+static BOOL
 parse_tag(const uschar * tagrecord, dmarc_policy_record * prp)
 {
 const uschar * e = Ustrchr(tagrecord, '='), * s;
 
 /* RFC 6736 3.2 tagspec must have = */
-if (!*e)
+if (!e)
+  {
+  DEBUG(D_receive)
+    debug_printf_indent("DMARC: missing '=' for tag in %q\n", tagrecord);
   return FALSE;
+  }
 
 /* RFC 6736 3.2 ignore whitespace between tag name and = */
 for (s = e; s > tagrecord && isspace(s[-1]); ) s--;
 
 /* RFC 6736 3.2 tag name at least 1 char */
 if (s == tagrecord)
+  {
+  DEBUG(D_receive)
+    debug_printf_indent("DMARC: missing tag name in %q\n", tagrecord);
   return FALSE;
+  }
 
 /* search for tag name in our table of known ones */
 for (tag * ptp = policy_tags; ptp < policy_tags + nelem(policy_tags); ptp++)
@@ -226,13 +232,20 @@ for (tag * ptp = policy_tags; ptp < policy_tags + nelem(policy_tags); ptp++)
     s = e + 1;
     Uskip_whitespace(&s);
 
-    if (!ptp->verify(s)) DEBUG(D_receive)
+    if (ptp->verify(s))
+      {
+      *vp = string_copy(s);
+      return TRUE;
+      }
+    DEBUG(D_receive)
       debug_printf_indent("DMARC: bad value for tag %q: %q\n", ptp->name, s);
-    *vp = string_copy(s);
-    break;
+    return FALSE;
     }
  }
-return TRUE;
+
+DEBUG(D_receive)
+  debug_printf_indent("DMARC: no recognised tag in %q\n", tagrecord);
+return FALSE;
 }
 
 static BOOL
@@ -242,10 +255,10 @@ dmarc_local_parse_policy(const uschar * rr, dmarc_policy_record * prp)
 int sep = ';';
 
 /* RFC 6736 3.2 :- ignore whitespace preceding tag-name and after value */
+/* RFC 7489 6.3 :- syntax errors and unknown tags are ignored */
 
 for (uschar * tagspec; tagspec = string_nextinlist(&rr, &sep, NULL, 0); )
-  if (!parse_tag(tagspec, prp))
-    return FALSE;
+  (void) parse_tag(tagspec, prp);
 
 return TRUE;
 }
