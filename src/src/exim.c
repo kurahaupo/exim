@@ -2822,7 +2822,7 @@ on the second character (the one after '-'), to save some effort. */
       /* Use an intermediate variable so that we don't set debugging while
       decoding the debugging bits. */
 
-      unsigned int selector = D_default;
+      unsigned long selector = D_default;
       debug_selector = 0;
       debug_file = NULL;
       if (*argrest == 'd')

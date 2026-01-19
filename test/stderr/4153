@@ -1,6 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 readconf_rest: routers
@@ -10,7 +9,6 @@ LOG: MAIN
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -27,7 +25,6 @@ LOG: MAIN
   ** userx@test.ex R=r1 : forced fail
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -37,7 +34,6 @@ LOG: MAIN
   <= <> R=10HmaX-000000005vi-0000 U=EXIMUSER P=local S=sss
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -60,7 +56,6 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid

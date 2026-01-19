@@ -1,4 +1,3 @@
-macro 'EXIM_PATH' -> 'TESTSUITE/eximdir/exim'
 > userx, usery
 > userx, usery
 > userx

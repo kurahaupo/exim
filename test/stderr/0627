@@ -1,0 +1,4 @@
+Exim version x.yz ....
+Hints DB:
+macro_create: 'CONFIG_MACRO' 'this'
+macro_create: 'FOO_2' 'baz'

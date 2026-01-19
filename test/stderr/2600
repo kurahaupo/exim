@@ -143,8 +143,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1235
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'OPTION' in '.ifdef OPTION'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -281,7 +279,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1236
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -418,7 +415,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1237
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -542,8 +538,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1238
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'OPTION' in '.ifdef OPTION'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -598,8 +592,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1239
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'OPTION' in '.ifdef OPTION'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user

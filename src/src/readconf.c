@@ -786,7 +786,7 @@ macro_create(const uschar * name, const uschar * val, BOOL command_line)
 {
 macro_item * m = store_get(sizeof(macro_item), GET_UNTAINTED);
 
-EARLY_DEBUG(D_any, "%s: '%s' '%s'\n", __FUNCTION__, name, val);
+EARLY_DEBUG(D_macro, "%s: '%s' '%s'\n", __FUNCTION__, name, val);
 m->next = NULL;
 m->command_line = command_line;
 m->namelen = Ustrlen(name);
@@ -979,11 +979,11 @@ if (*s) for (macro_item * m = *s == '_' ? macros : macros_user; m; m = m->next)
     {
     int moveby;
 
-    DEBUG(D_any)
+    DEBUG(D_macro)
       if (f.expansion_test)
 	printf("macro '%s' -> '%s'\n", m->name, m->replacement);
       else
-	EARLY_DEBUG(D_any, "%s: matched '%s' in '%.*s'\n", __FUNCTION__,
+	EARLY_DEBUG(D_macro, "%s: matched '%s' in '%.*s'\n", __FUNCTION__,
 	  m->name, (int) Ustrlen(ss)-1, ss);
 
     /* Expand the buffer if necessary */

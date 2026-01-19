@@ -2,8 +2,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1234
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -12,7 +10,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@test.ex
@@ -59,8 +56,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1235
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -69,7 +64,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 set_process_info: pppp delivering specified messages
 set_process_info: pppp delivering 10HmaX-000000005vi-0000
@@ -201,8 +195,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1237
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -211,7 +203,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@test.ex
@@ -257,8 +248,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1238
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -267,7 +256,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 set_process_info: pppp delivering specified messages
 set_process_info: pppp delivering 10HmaY-000000005vi-0000
@@ -401,8 +389,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1240
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -411,7 +397,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@test.ex
@@ -457,8 +442,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1241
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -467,7 +450,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 set_process_info: pppp delivering specified messages
 set_process_info: pppp delivering 10HmaZ-000000005vi-0000
@@ -606,8 +588,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1243
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -616,7 +596,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@test.ex
@@ -662,8 +641,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1244
-macro_create: 'QUOTA' '500'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -672,7 +649,6 @@ readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
- macros_expand: matched 'QUOTA' in 'quota = QUOTA'
 readconf_rest: retry
 set_process_info: pppp delivering specified messages
 set_process_info: pppp delivering 10HmbA-000000005vi-0000

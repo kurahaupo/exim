@@ -1,6 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
@@ -38,7 +37,6 @@ receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME

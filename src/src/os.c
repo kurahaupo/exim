@@ -12,8 +12,8 @@
 # include <stdio.h>
 # include <time.h>
 #else
-# define IS_DEBUG(x) (debug_selector & (x))
-# define DEBUG(x) if (IS_DEBUG(x))
+# define IS_DEBUG(x) (debug_selector & (x ? x : D_any))
+# define DEBUG(x) if (IS_DEBUG(x))	/* for cppcheck */
 #endif
 
 #ifndef CS

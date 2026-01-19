@@ -101,7 +101,7 @@ don't make the file descriptors two-way. */
 /* Debugging control */
 
 #define LOG_NAME_SIZE 256
-#define IS_DEBUG(x)	(debug_selector & (x))
+#define IS_DEBUG(x)	(debug_selector & (x ? x : D_any))
 #define DEBUG(x)	if (IS_DEBUG(x))
 #define HDEBUG(x)	if (host_checking || IS_DEBUG(x))
 
@@ -327,17 +327,21 @@ for having to swallow the rest of an SMTP message is whether the value is
 
 /* Bit masks for debug and log selectors */
 
-/* Assume words are 32 bits wide. Tiny waste of space on 64 bit
+/* Assume words are at least 32 bits wide. Tiny waste of space on 64 bit
 platforms, but this ensures bit vectors always work the same way. */
-#define BITWORDSIZE 32
+#ifdef EXIM_ULONG_BITS
+  #define BITWORDSIZE EXIM_ULONG_BITS
+#else
+  #define BITWORDSIZE 64
+#endif
 
 /* This macro is for single-word bit vectors: the debug selector,
 and the first word of the log selector. */
 #define BIT(n) (1UL << (n))
 
 /* And these are for multi-word vectors. */
-#define BITWORD(n) (      (n) / BITWORDSIZE)
-#define BITMASK(n) (1U << (n) % BITWORDSIZE)
+#define BITWORD(n) (       (n) / BITWORDSIZE)
+#define BITMASK(n) (1UL << (n) % BITWORDSIZE)
 
 #define BIT_CLEAR(s,z,n) ((s)[BITWORD(n)] &= ~BITMASK(n))
 #define BIT_SET(s,z,n)   ((s)[BITWORD(n)] |=  BITMASK(n))
@@ -362,9 +366,13 @@ These must match the debug_options table in globals.c .
 
 Exim's code assumes in a number of places that the debug_selector is one
 word, and this is exposed in the local_scan ABI. The D_v and D_local_scan bit
-masks are part of the local_scan API so are #defined in local_scan.h */
+masks are part of the local_scan API so are #defined in local_scan.h .
 
-#define DEBUG_BIT(name) Di_##name = IOTA(Di_iota), D_##name = (int)BIT(Di_##name)
+Thanks to the "one word", debug bits beyond 31 are not available on 32b-int
+systems, and coding must account for that. */
+
+#define DEBUG_BIT(name) Di_##name = IOTA(Di_iota), D_##name = (unsigned long)BIT(Di_##name)
+#define DEBUG_Z_BIT(name) Di_##name = 0, D_##name = 0
 
 enum {
   Di_all        = -1,
@@ -402,7 +410,13 @@ enum {
   DEBUG_BIT(transport),
   DEBUG_BIT(uid),
   DEBUG_BIT(verify),		/* 31 */
+#if EXIM_ULONG_BITS > 32
+  DEBUG_BIT(macro),		/* 33 */
+#else
+  DEBUG_Z_BIT(macro),
+#endif
 };
+
 
 /* Multi-bit debug masks */
 

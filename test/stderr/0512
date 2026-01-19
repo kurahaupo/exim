@@ -1,13 +1,10 @@
 Exim version x.yz ....
 Hints DB:
-macro_create: 'HARDLIMIT' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
- macros_expand: matched 'HARDLIMIT' in 'HARDLIMIT'
 readconf_rest: retry
 LOG: queue_run MAIN
   Start queue run: pid=p1234 -qf
@@ -84,14 +81,11 @@ LOG: MAIN
   ** userx@myhost.test.ex: retry timeout exceeded
 Exim version x.yz ....
 Hints DB:
-macro_create: 'HARDLIMIT' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
 readconf_rest: routers
 readconf_rest: transports
- macros_expand: matched 'HARDLIMIT' in 'HARDLIMIT'
 readconf_rest: retry
 cannot use sendfile for body: spoolfile not wireformat
 writing data block fd=dddd size=sss timeout=0
@@ -99,15 +93,12 @@ LOG: MAIN
   <= <> R=10HmaX-000000005vi-0000 U=EXIMUSER P=local S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'HARDLIMIT' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
- macros_expand: matched 'HARDLIMIT' in 'HARDLIMIT'
 readconf_rest: retry
 LOG: MAIN
   => :blackhole: <CALLER@myhost.test.ex> R=r0
@@ -123,13 +114,11 @@ LOG: queue_run MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
- macros_expand: matched 'HARDLIMIT' in 'HARDLIMIT'
 readconf_rest: retry
 LOG: queue_run MAIN
   Start queue run: pid=p1235 -qf
@@ -180,13 +169,11 @@ LOG: MAIN
   ** userx@myhost.test.ex: retry timeout exceeded
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
 readconf_rest: routers
 readconf_rest: transports
- macros_expand: matched 'HARDLIMIT' in 'HARDLIMIT'
 readconf_rest: retry
 cannot use sendfile for body: spoolfile not wireformat
 writing data block fd=dddd size=sss timeout=0
@@ -194,14 +181,12 @@ LOG: MAIN
   <= <> R=10HmaZ-000000005vi-0000 U=EXIMUSER P=local S=sss
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
- macros_expand: matched 'HARDLIMIT' in 'HARDLIMIT'
 readconf_rest: retry
 LOG: MAIN
   => :blackhole: <CALLER@myhost.test.ex> R=r0

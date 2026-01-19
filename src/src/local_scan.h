@@ -44,7 +44,7 @@ each time a new feature is added (in a way that doesn't break backward
 compatibility). */
 
 #define LOCAL_SCAN_ABI_VERSION_MAJOR 7
-#define LOCAL_SCAN_ABI_VERSION_MINOR 0
+#define LOCAL_SCAN_ABI_VERSION_MINOR 1
 #define LOCAL_SCAN_ABI_VERSION \
   LOCAL_SCAN_ABI_VERSION_MAJOR.LOCAL_SCAN_ABI_VERSION_MINOR
 
@@ -165,7 +165,7 @@ typedef struct recipient_item {
 
 /* Global variables that are documented as visible in the function. */
 
-extern unsigned int debug_selector;    /* Debugging bits */
+extern unsigned long debug_selector;   /* Debugging bits */
 
 extern int     body_linecount;         /* Line count in body */
 extern int     body_zerocount;         /* Binary zero count in body */

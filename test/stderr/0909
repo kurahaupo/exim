@@ -1,9 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -17,10 +13,6 @@ LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -85,10 +77,6 @@ LOG: smtp_connection MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -101,10 +89,6 @@ LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -168,10 +152,6 @@ LOG: smtp_connection MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -184,10 +164,6 @@ LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -254,10 +230,6 @@ LOG: smtp_connection MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -270,10 +242,6 @@ LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -342,10 +310,6 @@ LOG: smtp_connection MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -358,10 +322,6 @@ LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user

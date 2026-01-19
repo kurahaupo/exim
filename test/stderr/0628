@@ -36,10 +36,6 @@
 01:01:01 p1238  macros_trusted overridden to true by whitelisting
 01:01:01 p1238  changed uid/gid: forcing real = effective
 01:01:01 p1238    uid=uuuu gid=EXIM_GID pid=p1238
-01:01:01 p1238  macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-01:01:01 p1238  macros_expand: matched 'SERVER' in '.ifdef SERVER'
-01:01:01 p1238  macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-01:01:01 p1238  macros_expand: matched '_HAVE_PIPE_CONNECT' in '.ifdef _HAVE_PIPE_CONNECT'
 01:01:01 p1238  environment after trimming:
 01:01:01 p1238   PATH=<munged>
 01:01:01 p1238  adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys

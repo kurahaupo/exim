@@ -17,7 +17,6 @@ exim_dbmbuild exit code = 0
 > [a "b" c]
 > [a 'b' c]
 > 
-macro 'EXIM_PATH' -> 'TESTSUITE/eximdir/exim'
 [abc]
 #xyz:	[#xyz:]
 a "b" c	[a "b" c]

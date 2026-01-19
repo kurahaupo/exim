@@ -139,8 +139,8 @@ extern BOOL    bdat_hasc(void);
 extern int     bdat_ungetc(int);
 extern void    bdat_flush_data(void);
 
-extern void    bits_clear(unsigned int *, size_t, int *);
-extern void    bits_set(unsigned int *, size_t, int *);
+extern void    bits_clear(unsigned long *, size_t, int *);
+extern void    bits_set(unsigned long *, size_t, int *);
 
 extern void    cancel_cutthrough_connection(BOOL, const uschar *);
 extern gstring *cat_file(FILE *, gstring *, const uschar *);
@@ -188,7 +188,7 @@ extern void    debug_pretrigger_discard(void);
 extern void    debug_print_socket(int);
 extern void    debug_trigger_fire(void);
 
-extern void    decode_bits(unsigned int *, size_t, int *,
+extern void    decode_bits(unsigned long *, size_t, int *,
 	           const uschar *, bit_table *, int, uschar *, int);
 extern void    delete_pid_file(void);
 extern void    deliver_local(address_item *, BOOL);

@@ -2,7 +2,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1234
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 seeking password data for user "root": cache not available
 getpwnam() succeeded uid=uuuu gid=gggg
 configuration file is TESTSUITE/test-config
@@ -23,7 +22,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1235
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 seeking password data for user "root": cache not available
 getpwnam() succeeded uid=uuuu gid=gggg
 configuration file is TESTSUITE/test-config
@@ -51,7 +49,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1237
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 seeking password data for user "root": cache not available
 getpwnam() succeeded uid=uuuu gid=gggg
 configuration file is TESTSUITE/test-config
@@ -72,7 +69,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1238
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 seeking password data for user "root": cache not available
 getpwnam() succeeded uid=uuuu gid=gggg
 configuration file is TESTSUITE/test-config
@@ -106,7 +102,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1240
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 seeking password data for user "root": cache not available
 getpwnam() succeeded uid=uuuu gid=gggg
 configuration file is TESTSUITE/test-config
@@ -126,7 +121,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1241
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 seeking password data for user "root": cache not available
 getpwnam() succeeded uid=uuuu gid=gggg
 configuration file is TESTSUITE/test-config

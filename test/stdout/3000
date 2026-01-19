@@ -25,7 +25,6 @@
 > local:    exim.example.com.
 > external: a.iana-servers.net.
 > 
-macro 'EXIM_PATH' -> 'TESTSUITE/eximdir/exim'
 > Subroutine foo called with args: arg1
 > Failed: Perl subroutine "foo_undef" returned undef to force failure
 > Wrote debug

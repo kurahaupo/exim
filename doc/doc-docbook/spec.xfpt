@@ -3731,6 +3731,7 @@ are:
 .irow local_scan     "can be used by &[local_scan()]& (see chapter &&&
                     &<<CHAPlocalscan>>&)"
 .irow lookup         "general lookup code and all lookups"
+.irow macro          "macro definition and expansion"
 .irow memory         "memory handling"
 .irow noutf8         "modifier: avoid UTF-8 line-drawing"
 .irow pid            "modifier: add pid to debug output lines"
@@ -3748,7 +3749,11 @@ are:
 .irow verify         "address verification logic"
 .irow all            "almost all of the above (see below), and also &%-v%&"
 .endtable
-The &`all`& option excludes &`memory`& when used as &`+all`&, but includes it
+The &`all`& option excludes &`memory`&
+.new
+and &`macro`&
+.wen
+when used as &`+all`&, but includes it
 for &`-all`&. The reason for this is that &`+all`& is something that people
 tend to use when generating debug output for Exim maintainers. If &`+memory`&
 is included, an awful lot of output that is very rarely of interest is

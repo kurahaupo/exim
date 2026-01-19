@@ -3,8 +3,6 @@ WARNING: enabling "trust" authentication for local connections
 initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
 Exim version x.yz ....
 Hints DB:
-macro_create: 'PARTIAL' 'localhost::PORT_N'
-macro_create: 'SERVERS' 'localhost::PORT_N/test/CALLER/'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
@@ -260,21 +258,11 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1236
-macro_create: 'PARTIAL' 'localhost::PORT_N'
-macros_expand: matched 'PARTIAL' in 'SERVERS=PARTIAL/test/CALLER/'
-macro_create: 'SERVERS' 'localhost::PORT_N/test/CALLER/'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVERS' in 'pgsql_servers = SERVERS'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
   uid=EXIM_UID gid=EXIM_GID pid=p1236
 readconf_rest: acl
- macros_expand: matched 'SERVERS' in 'set acl_m0 =	ok:   ${lookup pgsql,servers=SERVERS      {select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'PARTIAL' in 'set acl_m0 =	ok:   ${lookup pgsql,servers=PARTIAL    {select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'SERVERS' in 'set acl_m0 =	FAIL: ${lookup pgsql     {servers=SERVERS; select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'SERVERS' in 'hosts =	<& net-pgsql;servers=SERVERS; select * from them where id='${quote_pgsql:$local_part}''
- macros_expand: matched 'SERVERS' in 'hosts =	<& net-pgsql,servers=SERVERS; select * from them where id='${quote_pgsql:$local_part}''
 readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
@@ -693,21 +681,11 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1237
-macro_create: 'PARTIAL' 'localhost::PORT_N'
-macros_expand: matched 'PARTIAL' in 'SERVERS=PARTIAL/test/CALLER/'
-macro_create: 'SERVERS' 'localhost::PORT_N/test/CALLER/'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVERS' in 'pgsql_servers = SERVERS'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
   uid=EXIM_UID gid=EXIM_GID pid=p1237
 readconf_rest: acl
- macros_expand: matched 'SERVERS' in 'set acl_m0 =	ok:   ${lookup pgsql,servers=SERVERS      {select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'PARTIAL' in 'set acl_m0 =	ok:   ${lookup pgsql,servers=PARTIAL    {select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'SERVERS' in 'set acl_m0 =	FAIL: ${lookup pgsql     {servers=SERVERS; select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'SERVERS' in 'hosts =	<& net-pgsql;servers=SERVERS; select * from them where id='${quote_pgsql:$local_part}''
- macros_expand: matched 'SERVERS' in 'hosts =	<& net-pgsql,servers=SERVERS; select * from them where id='${quote_pgsql:$local_part}''
 readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
@@ -757,21 +735,11 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=EXIM_GID pid=p1238
-macro_create: 'PARTIAL' 'localhost::PORT_N'
-macros_expand: matched 'PARTIAL' in 'SERVERS=PARTIAL/test/CALLER/'
-macro_create: 'SERVERS' 'localhost::PORT_N/test/CALLER/'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVERS' in 'pgsql_servers = SERVERS'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: acl
- macros_expand: matched 'SERVERS' in 'set acl_m0 =	ok:   ${lookup pgsql,servers=SERVERS      {select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'PARTIAL' in 'set acl_m0 =	ok:   ${lookup pgsql,servers=PARTIAL    {select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'SERVERS' in 'set acl_m0 =	FAIL: ${lookup pgsql     {servers=SERVERS; select name from them where id = '${quote_pgsql:$local_part}'}}'
- macros_expand: matched 'SERVERS' in 'hosts =	<& net-pgsql;servers=SERVERS; select * from them where id='${quote_pgsql:$local_part}''
- macros_expand: matched 'SERVERS' in 'hosts =	<& net-pgsql,servers=SERVERS; select * from them where id='${quote_pgsql:$local_part}''
 readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
@@ -908,7 +876,6 @@ search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'PARTIAL' 'localhost::PORT_N'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid

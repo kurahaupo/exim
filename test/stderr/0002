@@ -1,7 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
 environment after trimming:
  USER=CALLER
 configuration file is TESTSUITE/test-config
@@ -204,8 +202,6 @@ LOG: MAIN PANIC
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
 environment after trimming:
  USER=CALLER
 configuration file is TESTSUITE/test-config
@@ -365,7 +361,6 @@ LOG: MAIN PANIC
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'LENCHECK' ''
 environment after trimming:
  USER=CALLER
 configuration file is TESTSUITE/test-config
@@ -389,8 +384,6 @@ try option 'unknown_login'
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
 environment after trimming:
  USER=CALLER
 configuration file is TESTSUITE/test-config
@@ -472,8 +465,6 @@ try option 'unknown_login'
 1999-03-02 09:44:33 no host name found for IP address V4NET.11.12.13
 Exim version x.yz ....
 Hints DB:
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
 environment after trimming:
  USER=CALLER
 configuration file is TESTSUITE/test-config
@@ -603,11 +594,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1239
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'PTBC' in 'PTBC'
-macros_expand: matched 'LENCHECK' in 'LENCHECK'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -681,11 +667,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
   uid=uuuu gid=CALLER_GID pid=p1240
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'PTBC' in 'PTBC'
-macros_expand: matched 'LENCHECK' in 'LENCHECK'
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -898,8 +879,6 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: -C, -D, -be or -bf forces real uid
   uid=CALLER_UID gid=CALLER_GID pid=p1241
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
@@ -920,8 +899,6 @@ set_process_info: pppp expansion-test
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'LENCHECK' ''
-macro_create: 'PTBC' ''
 environment after trimming:
  USER=CALLER
 configuration file is TESTSUITE/test-config

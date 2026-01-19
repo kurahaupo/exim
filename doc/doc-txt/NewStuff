@@ -16,7 +16,9 @@ Since Version 4.99
 
  3. Log selectors "spf", "spf_verbose", "dmarc", "dmarc_verbose".
 
- 4. Ommandline option "-bI:modules" for listing installed dynamic-load modules.
+ 4. Commandline option "-bI:modules" for listing installed dynamic-load modules.
+
+ 5. Debug channel "macro".
 
 
 Version 4.99

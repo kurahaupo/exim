@@ -6,5 +6,5 @@ FOO = bar
 baz foo FOO
 ****
 #
-exim -be 'FOO_2 = baz'
+exim -d-all+macro -be 'FOO_2 = baz'
 ****

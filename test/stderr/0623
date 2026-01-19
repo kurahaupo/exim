@@ -1,9 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 admin user
 readconf_rest: routers
@@ -13,10 +9,6 @@ LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -82,10 +74,6 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 admin user
 readconf_rest: routers
@@ -95,10 +83,6 @@ LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -166,10 +150,6 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 admin user
 readconf_rest: routers
@@ -179,10 +159,6 @@ LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user

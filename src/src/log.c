@@ -1366,14 +1366,14 @@ Arguments:
 */
 
 void
-bits_clear(unsigned int *selector, size_t selsize, int *bits)
+bits_clear(unsigned long * selector, size_t selsize, int * bits)
 {
 for(; *bits != -1; ++bits)
   BIT_CLEAR(selector, selsize, *bits);
 }
 
 void
-bits_set(unsigned int *selector, size_t selsize, int *bits)
+bits_set(unsigned long * selector, size_t selsize, int * bits)
 {
 for(; *bits != -1; ++bits)
   BIT_SET(selector, selsize, *bits);
@@ -1403,7 +1403,7 @@ we treat it as an unknown option: error message to stderr and die.
 Arguments:
   selector       address of the bit string
   selsize        number of words in the bit string
-  notall         list of bits to exclude from "all"
+  notall         list of bit-numbers to exclude from "all"
   string         the configured string
   options        the table of option names
   count          size of table
@@ -1414,11 +1414,12 @@ Returns:         nothing on success - bomb out on failure
 */
 
 void
-decode_bits(unsigned int * selector, size_t selsize, int * notall,
+decode_bits(unsigned long * selector, size_t selsize, int * notall,
   const uschar * string, bit_table * options, int count, uschar * which,
   int flags)
 {
-uschar *errmsg;
+uschar * errmsg;
+
 if (!string) return;
 
 if (*string == '=')

@@ -657,6 +657,7 @@ FILE   *debug_file             = NULL;
 int     debug_notall[]         = {
   Di_memory,
   Di_noutf8,
+  Di_macro,
   -1
 };
 bit_table debug_options[]      = { /* must be in alphabetical order and use
@@ -678,6 +679,7 @@ bit_table debug_options[]      = { /* must be in alphabetical order and use
   BIT_TABLE(D, load),
   BIT_TABLE(D, local_scan),
   BIT_TABLE(D, lookup),
+  BIT_TABLE(D, macro),
   BIT_TABLE(D, memory),
   BIT_TABLE(D, noutf8),
   BIT_TABLE(D, pid),
@@ -698,7 +700,7 @@ int      debug_options_count	= nelem(debug_options);
 uschar   debuglog_name[LOG_NAME_SIZE] = {0};
 unsigned debug_pretrigger_bsize	= 0;
 uschar * debug_pretrigger_buf	= NULL;
-unsigned int debug_selector	= 0;
+unsigned long debug_selector	= 0;
 BOOL	 debug_startup		= FALSE;
 
 int     delay_warning[DELAY_WARNING_SIZE] = { DELAY_WARNING_SIZE, 1, 24*60*60 };
@@ -1013,7 +1015,7 @@ int     log_options_count      = nelem(log_options);
 
 const uschar *log_ports	       = NULL;
 int     log_reject_target      = 0;
-unsigned int log_selector[log_selector_size]; /* initialized in main() */
+unsigned long log_selector[log_selector_size]; /* initialized in main() */
 uschar *log_selector_string    = NULL;
 FILE   *log_stderr             = NULL;
 uschar *login_sender_address   = NULL;

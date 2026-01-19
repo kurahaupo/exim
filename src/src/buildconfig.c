@@ -207,6 +207,9 @@ else
   fprintf(new, "#define SSIZE_T_FMT  \"%%d\"\n");
 #endif
 
+fprintf(new, "#define EXIM_ULONG_BITS	%u\n",
+		sizeof(unsigned long) == 8 ? 64 : 32);
+
 /* Now search the makefile for certain settings */
 
 if (!(base = fopen("Makefile", "rb")))

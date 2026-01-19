@@ -1,11 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macro_create: 'D6' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-macros_expand: matched 'D6' in 'D6'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
@@ -34,11 +28,6 @@ readconf_rest: transports
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'SERVER' ''
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-macros_expand: matched 'D6' in 'D6'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid

@@ -1,6 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 environment after trimming:
  PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
@@ -640,7 +639,6 @@ LOG: smtp_connection MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 environment after trimming:
  PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
@@ -1232,7 +1230,6 @@ LOG: smtp_connection MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 environment after trimming:
  PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys

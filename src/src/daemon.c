@@ -188,7 +188,7 @@ pid_t pid;
 union sockaddr_46 interface_sockaddr;
 EXIM_SOCKLEN_T ifsize = sizeof(interface_sockaddr);
 int max_for_this_host = 0;
-int save_log_selector = *log_selector;
+unsigned long save_log_selector = *log_selector;
 gstring * whofrom;
 
 rmark reset_point = store_mark();

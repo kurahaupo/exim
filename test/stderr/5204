@@ -2,13 +2,10 @@ LOG: MAIN
   remote host address is the local host: some.host (while routing <"ACCEPT hosts=localhost lookup=byname"@some.host>)
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -34,13 +31,10 @@ no more routers
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=2 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -64,13 +58,10 @@ command wrote: FAIL cannot route this one (FAIL)
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=2 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -97,13 +88,10 @@ q router: defer for "ERROR cannot route this one (ERROR)"@some.host
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=1 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -128,13 +116,10 @@ q router: defer for "DEFER cannot route this one (DEFER)"@some.host
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=1 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -167,13 +152,10 @@ routed by q router
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -219,13 +201,10 @@ routed by s router
 >>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -250,13 +229,10 @@ q router: defer for "FREEZE cannot route this one (FREEZE)"@some.host
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=1 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macro_create: 'COMMAND_USER' 'exim'
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -318,11 +294,9 @@ routed by pm router
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 readconf_rest: routers
- macros_expand: matched 'COMMAND_USER' in 'command_user = COMMAND_USER'
 readconf_rest: transports
 readconf_rest: retry
 host in hosts_connection_nolog? no (option unset)

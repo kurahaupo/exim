@@ -2,19 +2,11 @@
 ******** SERVER ********
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SRV' in 'SRV'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: acl
 readconf_rest: routers
- macros_expand: matched 'SERVER' in 'condition =	${if or {{eq {SERVER}{server}} {queue_running}}}'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>> Exim pid=p1238 (cipher-validate) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -89,21 +81,12 @@ p1236 1 SMTP accept process now running
 p1244 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1244 D=20080000
 p1244 Hints DB:
 p1244 macros_trusted overridden to true by whitelisting
-p1244 macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-p1244 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1244 macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-p1244 macros_expand: matched '_HAVE_PIPE_CONNECT' in '.ifdef _HAVE_PIPE_CONNECT'
-p1244 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1244 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1244 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1244 macros_expand: matched 'SRV' in 'SRV'
 p1244 configuration file is TESTSUITE/test-config
 p1244 trusted user
 p1244 admin user
 p1244 dropping to exim gid; retaining priv uid
 p1244 readconf_rest: acl
 p1244 readconf_rest: routers
-p1244  macros_expand: matched 'SERVER' in 'condition =	${if or {{eq {SERVER}{server}} {queue_running}}}'
 p1244 readconf_rest: transports
 p1244 readconf_rest: retry
 p1244 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
@@ -147,21 +130,12 @@ LOG: MAIN
 p1248 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1248 D=20080000
 p1248 Hints DB:
 p1248 macros_trusted overridden to true by whitelisting
-p1248 macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-p1248 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1248 macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-p1248 macros_expand: matched '_HAVE_PIPE_CONNECT' in '.ifdef _HAVE_PIPE_CONNECT'
-p1248 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1248 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1248 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1248 macros_expand: matched 'SRV' in 'SRV'
 p1248 configuration file is TESTSUITE/test-config
 p1248 trusted user
 p1248 admin user
 p1248 dropping to exim gid; retaining priv uid
 p1248 readconf_rest: acl
 p1248 readconf_rest: routers
-p1248  macros_expand: matched 'SERVER' in 'condition =	${if or {{eq {SERVER}{server}} {queue_running}}}'
 p1248 readconf_rest: transports
 p1248 readconf_rest: retry
 LOG: MAIN
@@ -180,19 +154,11 @@ p1236 SIGTERM/SIGINT seen
 p1236 >>>>>>>>>>>>>>>> Exim pid=p1236 (daemon) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SERVER' in '.ifdef SERVER'
-macros_expand: matched 'SRV' in 'SRV'
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: acl
 readconf_rest: routers
- macros_expand: matched 'SERVER' in 'condition =	${if or {{eq {SERVER}{server}} {queue_running}}}'
 readconf_rest: transports
 readconf_rest: retry
 >>>>>>>>>>>>>>>> Exim pid=p1250 (cipher-validate) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -267,21 +233,12 @@ p1237 1 SMTP accept process now running
 p1256 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1256 D=20080000
 p1256 Hints DB:
 p1256 macros_trusted overridden to true by whitelisting
-p1256 macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-p1256 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1256 macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-p1256 macros_expand: matched '_HAVE_PIPE_CONNECT' in '.ifdef _HAVE_PIPE_CONNECT'
-p1256 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1256 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1256 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1256 macros_expand: matched 'SRV' in 'SRV'
 p1256 configuration file is TESTSUITE/test-config
 p1256 trusted user
 p1256 admin user
 p1256 dropping to exim gid; retaining priv uid
 p1256 readconf_rest: acl
 p1256 readconf_rest: routers
-p1256  macros_expand: matched 'SERVER' in 'condition =	${if or {{eq {SERVER}{server}} {queue_running}}}'
 p1256 readconf_rest: transports
 p1256 readconf_rest: retry
 p1256 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
@@ -325,21 +282,12 @@ LOG: MAIN
 p1260 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1260 D=20080000
 p1260 Hints DB:
 p1260 macros_trusted overridden to true by whitelisting
-p1260 macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
-p1260 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1260 macros_expand: matched 'SERVER' in 'log_file_path = TESTSUITE/spool/log/SERVER%slog'
-p1260 macros_expand: matched '_HAVE_PIPE_CONNECT' in '.ifdef _HAVE_PIPE_CONNECT'
-p1260 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1260 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1260 macros_expand: matched 'SERVER' in '.ifdef SERVER'
-p1260 macros_expand: matched 'SRV' in 'SRV'
 p1260 configuration file is TESTSUITE/test-config
 p1260 trusted user
 p1260 admin user
 p1260 dropping to exim gid; retaining priv uid
 p1260 readconf_rest: acl
 p1260 readconf_rest: routers
-p1260  macros_expand: matched 'SERVER' in 'condition =	${if or {{eq {SERVER}{server}} {queue_running}}}'
 p1260 readconf_rest: transports
 p1260 readconf_rest: retry
 LOG: MAIN

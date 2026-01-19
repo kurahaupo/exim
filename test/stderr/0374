@@ -1,6 +1,5 @@
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 admin user
 readconf_rest: routers
@@ -11,7 +10,6 @@ LOG: MAIN
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -405,7 +403,6 @@ LOG: MAIN
   ** d3@myhost.test.ex R=ut4 T=ut4 H=127.0.0.1 [127.0.0.1] : SMTP error from remote mail server after RCPT TO:<d3@myhost.test.ex>: 550 hard error
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -416,7 +413,6 @@ LOG: MAIN
   <= <> R=10HmaX-000000005vi-0000 U=EXIMUSER P=local S=sss
 Exim version x.yz ....
 Hints DB:
-macros_expand: matched 'EXIM_PATH' in 'exim_path = EXIM_PATH'
 configuration file is TESTSUITE/test-config
 trusted user
 admin user

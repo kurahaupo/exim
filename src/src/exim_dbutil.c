@@ -65,7 +65,7 @@ const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
 {return NULL; }
 
 struct global_flags	f;
-unsigned int		log_selector[1];
+unsigned long		log_selector[1];
 uschar *		queue_name;
 BOOL			split_spool_directory;
 
@@ -113,7 +113,7 @@ exit(EXIT_FAILURE);
 *   Debug output   *
 *******************/
 
-unsigned int debug_selector = 0;	/* set -1 for debugging */
+unsigned long debug_selector = 0;	/* set -1 for debugging */
 
 void
 debug_printf(const char * fmt, ...)
