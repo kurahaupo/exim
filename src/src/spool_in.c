@@ -620,7 +620,7 @@ for (;;)
       dsn_envid = string_copy_taint(var + 10, proto_mem);
 #ifndef COMPILE_UTILITY
     else if (Ustrncmp(p, "ebug_selector ", 14) == 0)
-      debug_selector = strtol(CS var + 15, NULL, 0);
+      debug_selector = strtoul(CS var + 15, NULL, 0);
     else if (Ustrncmp(p, "ebuglog_name ", 13) == 0)
       debug_logging_from_spool(var + 14);
 #endif

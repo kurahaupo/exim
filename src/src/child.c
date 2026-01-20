@@ -107,7 +107,7 @@ if (!minimal)
     {
     if (debug_selector != 0)
       {
-      argv[n++] = string_sprintf("-d=0x%x", debug_selector);
+      argv[n++] = string_sprintf("-d=0x%lx", debug_selector);
       if (debug_fd > 2)
 	{
 	int flags = fcntl(debug_fd, F_GETFD);

@@ -365,9 +365,8 @@ if (pid == 0)
   {
   int queue_only_reason = 0;
   int old_pool = store_pool;
-  int save_debug_selector = debug_selector;
-  BOOL local_queue_only;
-  BOOL session_local_queue_only;
+  unsigned long save_debug_selector = debug_selector;
+  BOOL local_queue_only,  session_local_queue_only;
 #ifdef SA_NOCLDWAIT
   struct sigaction act;
 #endif

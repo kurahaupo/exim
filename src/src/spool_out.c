@@ -232,7 +232,7 @@ tree_walk(acl_var_m, &acl_var_write, fp);
 
 if (*debuglog_name)
   {
-  fprintf(fp, "-debug_selector 0x%x\n", debug_selector);
+  fprintf(fp, "-debug_selector 0x%lx\n", debug_selector);
   fprintf(fp, "-debuglog_name %s\n", debuglog_name);
   }
 

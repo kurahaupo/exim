@@ -4464,10 +4464,10 @@ a debugging feature for finding out what arguments certain MUAs actually use.
 Don't attempt it if logging is disabled, or if listing variables or if
 verifying/testing addresses or expansions. */
 
-if (  (debug_selector & D_any  ||  LOGGING(arguments))
+if (  (IS_DEBUG(D_any)  ||  LOGGING(arguments))
    && f.really_exim && !list_options && !checking)
   {
-  uschar *p = big_buffer;
+  uschar * p = big_buffer;
   Ustrcpy(p, US"cwd= (failed)");
 
   if (!initial_cwd)
