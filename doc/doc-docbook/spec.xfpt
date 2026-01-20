@@ -3738,6 +3738,7 @@ are:
 .irow process_info   "setting info for the process log"
 .irow queue_run      "queue runs"
 .irow receive        "general message reception logic"
+.irow regex          "regular expressions"
 .irow resolver       "turn on the DNS resolver's debugging output"
 .irow retry          "retry handling"
 .irow rewrite        "address rewriting"
@@ -3749,9 +3750,9 @@ are:
 .irow verify         "address verification logic"
 .irow all            "almost all of the above (see below), and also &%-v%&"
 .endtable
-The &`all`& option excludes &`memory`&
+The &`all`& option excludes &`memory`&,
 .new
-and &`macro`&
+&`macro`& and &`regex`&
 .wen
 when used as &`+all`&, but includes it
 for &`-all`&. The reason for this is that &`+all`& is something that people

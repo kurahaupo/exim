@@ -131,7 +131,6 @@ created directory TESTSUITE/test-mail/nofile
 created directory TESTSUITE/test-mail/nofile/tmp
 created directory TESTSUITE/test-mail/nofile/new
 created directory TESTSUITE/test-mail/nofile/cur
-compiling RE '^(?:cur|new|\..*)$'
 using regex for maildir directory selection: ^(?:cur|new|\..*)$
 looking for maildirsize in TESTSUITE/test-mail/nofile
 TESTSUITE/test-mail/nofile/maildirsize does not exist: recalculating
@@ -322,7 +321,6 @@ ensuring maildir directories exist in TESTSUITE/test-mail/userx
 created directory TESTSUITE/test-mail/userx/tmp
 created directory TESTSUITE/test-mail/userx/new
 created directory TESTSUITE/test-mail/userx/cur
-compiling RE '^(?:cur|new|\..*)$'
 using regex for maildir directory selection: ^(?:cur|new|\..*)$
 looking for maildirsize in TESTSUITE/test-mail/userx
 reading quota parameters from maildirsize data
@@ -513,7 +511,6 @@ appendfile: mode=600 notify_comsat=0 quota=500 warning=0
   maildir_use_size_file=yes
 below-home: de-tainting path 'TESTSUITE/test-mail/userx'
 ensuring maildir directories exist in TESTSUITE/test-mail/userx
-compiling RE '^(?:cur|new|\..*)$'
 using regex for maildir directory selection: ^(?:cur|new|\..*)$
 looking for maildirsize in TESTSUITE/test-mail/userx
 reading quota parameters from maildirsize data
@@ -720,7 +717,6 @@ appendfile: mode=600 notify_comsat=0 quota=500 warning=0
   maildir_use_size_file=yes
 below-home: de-tainting path 'TESTSUITE/test-mail/userx'
 ensuring maildir directories exist in TESTSUITE/test-mail/userx
-compiling RE '^(?:cur|new|\..*)$'
 using regex for maildir directory selection: ^(?:cur|new|\..*)$
 looking for maildirsize in TESTSUITE/test-mail/userx
 reading quota parameters from maildirsize data

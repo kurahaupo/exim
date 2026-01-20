@@ -655,9 +655,10 @@ uschar *dccifd_options         = US"header";
 int     debug_fd               = -1;
 FILE   *debug_file             = NULL;
 int     debug_notall[]         = {
+  Di_macro,
   Di_memory,
   Di_noutf8,
-  Di_macro,
+  Di_regex,
   -1
 };
 bit_table debug_options[]      = { /* must be in alphabetical order and use
@@ -686,6 +687,7 @@ bit_table debug_options[]      = { /* must be in alphabetical order and use
   BIT_TABLE(D, process_info),
   BIT_TABLE(D, queue_run),
   BIT_TABLE(D, receive),
+  BIT_TABLE(D, regex),
   BIT_TABLE(D, resolver),
   BIT_TABLE(D, retry),
   BIT_TABLE(D, rewrite),

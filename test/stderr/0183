@@ -22,8 +22,6 @@ routing userx@test.again.dns
  checking local_parts
  userx in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' not found in local cache
-  compiled RE '^srv' saved in local cache
  userx in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -69,7 +67,6 @@ routing abcd@test.again.dns
  checking local_parts
  abcd in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  abcd in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -111,7 +108,6 @@ routing abcd@ten-1.test.ex
  checking local_parts
  abcd in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  abcd in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -168,7 +164,6 @@ routing usery@test.again.dns
  checking local_parts
  usery in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  usery in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -213,7 +208,6 @@ routing userz@test.again.dns
  checking local_parts
  userz in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  userz in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -254,7 +248,6 @@ routing xyz@ten-1.test.ex
  checking local_parts
  xyz in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  xyz in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -320,8 +313,6 @@ routing userx@test.fail.dns
  checking local_parts
  userx in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' not found in local cache
-  compiled RE '^srv' saved in local cache
  userx in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -366,7 +357,6 @@ routing abcd@test.fail.dns
  checking local_parts
  abcd in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  abcd in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -408,7 +398,6 @@ routing abcd@ten-1.test.ex
  checking local_parts
  abcd in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  abcd in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -465,7 +454,6 @@ routing usery@test.fail.dns
  checking local_parts
  usery in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  usery in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -509,7 +497,6 @@ routing userz@test.fail.dns
  checking local_parts
  userz in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  userz in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -550,7 +537,6 @@ routing xyz@ten-1.test.ex
  checking local_parts
  xyz in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  xyz in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -616,8 +602,6 @@ routing userx@nonexist.test.ex
  checking local_parts
  userx in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' not found in local cache
-  compiled RE '^srv' saved in local cache
  userx in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -663,7 +647,6 @@ routing abcd@nonexist.test.ex
  checking local_parts
  abcd in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  abcd in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -705,7 +688,6 @@ routing abcd@ten-1.test.ex
  checking local_parts
  abcd in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  abcd in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -762,7 +744,6 @@ routing usery@nonexist.test.ex
  checking local_parts
  usery in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  usery in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -807,7 +788,6 @@ routing userz@nonexist.test.ex
  checking local_parts
  userz in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  userz in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -848,7 +828,6 @@ routing xyz@ten-1.test.ex
  checking local_parts
  xyz in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  xyz in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -914,8 +893,6 @@ routing srv@test.again.dns
  checking local_parts
  srv in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' not found in local cache
-  compiled RE '^srv' saved in local cache
   srv in local_parts? yes (matched "^srv")
  calling srv router
  srv router called for srv@test.again.dns
@@ -948,7 +925,6 @@ routing srv@test.fail.dns
  checking local_parts
  srv in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
   srv in local_parts? yes (matched "^srv")
  calling srv router
  srv router called for srv@test.fail.dns
@@ -1008,8 +984,6 @@ routing userx@nonexist.example.com
  checking local_parts
  userx in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' not found in local cache
-  compiled RE '^srv' saved in local cache
  userx in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------
@@ -1055,7 +1029,6 @@ routing userd@nonexist.example.com
  checking local_parts
  userd in local_parts?
   list element: ^srv
-  compiled caseless RE '^srv' found in local cache
  userd in local_parts? no (end of list)
  srv router skipped: local_parts mismatch
 --------> useryz router <--------

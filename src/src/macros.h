@@ -412,8 +412,10 @@ enum {
   DEBUG_BIT(verify),		/* 31 */
 #if EXIM_ULONG_BITS > 32
   DEBUG_BIT(macro),		/* 33 */
+  DEBUG_BIT(regex),
 #else
   DEBUG_Z_BIT(macro),
+  DEBUG_Z_BIT(regex),
 #endif
 };
 

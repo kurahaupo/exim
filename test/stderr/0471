@@ -104,8 +104,6 @@ qualify & rewrite recipients list
  r1@test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=r1@test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' not found in local cache
-  compiled RE '^.{40,}@*' saved in local cache
  r1@test.ex in "^.{40,}@*"? no (end of list)
  r1@test.ex in "*@*"?
   list element: *@*
@@ -137,7 +135,6 @@ rewrite rules on sender address
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -258,7 +255,6 @@ qualify and rewrite headers
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -447,7 +443,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -635,7 +630,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -823,7 +817,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -1011,7 +1004,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -1199,7 +1191,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -1387,7 +1378,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -1575,7 +1565,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -1763,7 +1752,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -1951,7 +1939,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -2138,7 +2125,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -2325,7 +2311,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -2512,7 +2497,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -2699,7 +2683,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -2886,7 +2869,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -3073,7 +3055,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -3260,7 +3241,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -3447,7 +3427,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -3634,7 +3613,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -3821,7 +3799,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -4008,7 +3985,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -4195,7 +4171,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -4382,7 +4357,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -4568,7 +4542,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -4754,7 +4727,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -4940,7 +4912,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -5126,7 +5097,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -5312,7 +5282,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -5498,7 +5467,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -5684,7 +5652,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -5870,7 +5837,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -6056,7 +6022,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -6242,7 +6207,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -6428,7 +6392,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -6614,7 +6577,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -6799,7 +6761,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -6984,7 +6945,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -7169,7 +7129,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -7354,7 +7313,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -7539,7 +7497,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -7724,7 +7681,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -7909,7 +7865,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -8094,7 +8049,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -8279,7 +8233,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -8464,7 +8417,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -8649,7 +8601,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -8834,7 +8785,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -9019,7 +8969,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -9203,7 +9152,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -9387,7 +9335,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -9571,7 +9518,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -9755,7 +9701,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -9939,7 +9884,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -10123,7 +10067,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -10307,7 +10250,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -10491,7 +10433,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -10675,7 +10616,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -10859,7 +10799,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -11043,7 +10982,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -11227,7 +11165,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -11410,7 +11347,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -11593,7 +11529,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -11776,7 +11711,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -11959,7 +11893,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -12142,7 +12075,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -12325,7 +12257,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -12508,7 +12439,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -12691,7 +12621,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -12874,7 +12803,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -13057,7 +12985,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -13240,7 +13167,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -13423,7 +13349,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -13606,7 +13531,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -13788,7 +13712,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -13970,7 +13893,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -14152,7 +14074,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -14334,7 +14255,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -14516,7 +14436,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -14698,7 +14617,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -14880,7 +14798,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -15062,7 +14979,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -15244,7 +15160,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -15425,7 +15340,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -15605,7 +15519,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -15784,7 +15697,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -15962,7 +15874,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -16139,7 +16050,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -16315,7 +16225,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -16490,7 +16399,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -16664,7 +16572,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -16837,7 +16744,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -17009,7 +16915,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -17180,7 +17085,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -17350,7 +17254,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -17519,7 +17422,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -17687,7 +17589,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -17854,7 +17755,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -18020,7 +17920,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -18185,7 +18084,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -18349,7 +18247,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -18512,7 +18409,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -18674,7 +18570,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -18835,7 +18730,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -18995,7 +18889,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -19154,7 +19047,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -19312,7 +19204,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -19469,7 +19360,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -19625,7 +19515,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -19780,7 +19669,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -19934,7 +19822,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -20087,7 +19974,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -20239,7 +20125,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -20390,7 +20275,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -20540,7 +20424,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -20689,7 +20572,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -20837,7 +20719,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -20984,7 +20865,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -21130,7 +21010,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -21275,7 +21154,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -21419,7 +21297,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -21562,7 +21439,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -21704,7 +21580,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -21845,7 +21720,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -21985,7 +21859,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -22124,7 +21997,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -22262,7 +22134,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -22399,7 +22270,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -22535,7 +22405,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -22670,7 +22539,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -22804,7 +22672,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -22937,7 +22804,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23069,7 +22935,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23200,7 +23065,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23330,7 +23194,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23459,7 +23322,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23587,7 +23449,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23714,7 +23575,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23840,7 +23700,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -23965,7 +23824,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24089,7 +23947,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24212,7 +24069,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24334,7 +24190,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24455,7 +24310,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24575,7 +24429,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24694,7 +24547,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24812,7 +24664,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -24929,7 +24780,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25045,7 +24895,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25160,7 +25009,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25274,7 +25122,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25387,7 +25234,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25499,7 +25345,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25610,7 +25455,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25720,7 +25564,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25829,7 +25672,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -25937,7 +25779,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -26044,7 +25885,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -26150,7 +25990,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -26255,7 +26094,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -26359,7 +26197,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -26462,7 +26299,6 @@ remainder: random@test.example,
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -26564,7 +26400,6 @@ remainder: random@test.example
  random@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=random@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  random@test.example in "^.{40,}@*"? no (end of list)
  random@test.example in "*@*"?
   list element: *@*
@@ -26668,7 +26503,6 @@ remainder:
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -26914,8 +26748,6 @@ qualify & rewrite recipients list
  r2@test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=r2@test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' not found in local cache
-  compiled RE '^.{40,}@*' saved in local cache
  r2@test.ex in "^.{40,}@*"? no (end of list)
  r2@test.ex in "*@*"?
   list element: *@*
@@ -26947,7 +26779,6 @@ rewrite rules on sender address
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -26989,7 +26820,6 @@ qualify and rewrite headers
  localpart_with_056_chars_56789012345678901234567890123456@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=localpart_with_056_chars_56789012345678901234567890123456@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
   localpart_with_056_chars_56789012345678901234567890123456@test.example in "^.{40,}@*"? yes (matched "^.{40,}@*")
 LOG: address_rewrite MAIN
   "localpart_with_056_chars_56789012345678901234567890123456@test.example" from to: rewritten as "deny_me@test.example" by rule 1
@@ -27023,7 +26853,6 @@ remainder:
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27114,8 +26943,6 @@ qualify & rewrite recipients list
  r3@test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=r3@test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' not found in local cache
-  compiled RE '^.{40,}@*' saved in local cache
  r3@test.ex in "^.{40,}@*"? no (end of list)
  r3@test.ex in "*@*"?
   list element: *@*
@@ -27147,7 +26974,6 @@ rewrite rules on sender address
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27189,7 +27015,6 @@ qualify and rewrite headers
  localpart_with_236_chars_56789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456@test.example in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=localpart_with_236_chars_56789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456@test.example pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
   localpart_with_236_chars_56789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456@test.example in "^.{40,}@*"? yes (matched "^.{40,}@*")
 LOG: address_rewrite MAIN
   "localpart_with_236_chars_56789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456@test.example" from to: rewritten as "deny_me@test.example" by rule 1
@@ -27223,7 +27048,6 @@ remainder:
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27314,8 +27138,6 @@ qualify & rewrite recipients list
  r4@test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=r4@test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' not found in local cache
-  compiled RE '^.{40,}@*' saved in local cache
  r4@test.ex in "^.{40,}@*"? no (end of list)
  r4@test.ex in "*@*"?
   list element: *@*
@@ -27347,7 +27169,6 @@ rewrite rules on sender address
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27393,7 +27214,6 @@ LOG: MAIN
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27486,8 +27306,6 @@ qualify & rewrite recipients list
  r5@test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=r5@test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' not found in local cache
-  compiled RE '^.{40,}@*' saved in local cache
  r5@test.ex in "^.{40,}@*"? no (end of list)
  r5@test.ex in "*@*"?
   list element: *@*
@@ -27519,7 +27337,6 @@ rewrite rules on sender address
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27563,7 +27380,6 @@ qualify and rewrite headers
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27653,8 +27469,6 @@ qualify & rewrite recipients list
  r6@test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=r6@test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' not found in local cache
-  compiled RE '^.{40,}@*' saved in local cache
  r6@test.ex in "^.{40,}@*"? no (end of list)
  r6@test.ex in "*@*"?
   list element: *@*
@@ -27686,7 +27500,6 @@ rewrite rules on sender address
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*
@@ -27732,7 +27545,6 @@ LOG: MAIN
  CALLER@myhost.test.ex in "^.{40,}@*"?
   list element: ^.{40,}@*
   address match test: subject=CALLER@myhost.test.ex pattern=^.{40,}@*
-  compiled RE '^.{40,}@*' found in local cache
  CALLER@myhost.test.ex in "^.{40,}@*"? no (end of list)
  CALLER@myhost.test.ex in "*@*"?
   list element: *@*

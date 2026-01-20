@@ -1,6 +1,6 @@
 # regex caching
 #
-exim -d-all+queue_run+expand+lookup -DSERVER=server -bd -oX PORT_D
+exim -d-all+queue_run+expand+lookup+regex -DSERVER=server -bd -oX PORT_D
 ****
 #
 client 127.0.0.1 PORT_D
