@@ -1277,7 +1277,9 @@ if (fixed_never_users[0] > 0)
 
 g = string_fmt_append(g, "Configure owner: %d:%d\n", config_uid, config_gid);
 
-g = string_fmt_append(g, "Size of off_t: " SIZE_T_FMT "\n", sizeof(off_t));
+g = string_fmt_append(g, "Size of off_t:" SIZE_T_FMT
+      " ptr:" SIZE_T_FMT " long:" SIZE_T_FMT " int:" SIZE_T_FMT "\n",
+      sizeof(off_t), sizeof(void *), sizeof(long), sizeof(int));
 
 /* Everything else is details which are only worth reporting when debugging.
 Perhaps the tls_version_report should move into this too. */
