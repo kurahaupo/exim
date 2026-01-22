@@ -1311,8 +1311,8 @@ report_time_since(const struct timeval * t0, const uschar * where)
 # ifdef MEASURE_TIMING
 struct timeval diff;
 timesince(&diff, t0);
-fprintf(stderr, "%d %s:\t%ld.%06ld\n",
-       (uint)getpid(), where, (long)diff.tv_sec, (long)diff.tv_usec);
+fprintf(stderr, PID_T_FMT " %s:\t%ld.%06ld\n",
+       getpid(), where, (long)diff.tv_sec, (long)diff.tv_usec);
 # endif
 }
 
@@ -1405,7 +1405,7 @@ the generator for it at any time. */
 static inline void
 set_connection_id(void)
 {
-connection_id = string_sprintf("%lu", (u_long)getpid());
+connection_id = string_sprintf(PID_T_FMT, getpid());
 }
 
 

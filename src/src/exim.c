@@ -224,7 +224,7 @@ int len;
 uschar * s;
 va_list ap;
 
-g = string_fmt_append(&gs, "%5d ", (int)getpid());
+g = string_fmt_append(&gs, PID_T_FMT " ", getpid());
 len = gstring_length(g);
 va_start(ap, format);
 if (!string_vformat(g, 0, format, ap))
@@ -803,8 +803,8 @@ DEBUG(D_uid)
   {
   int group_count, save_errno;
   gid_t group_list[EXIM_GROUPLIST_SIZE];
-  debug_printf("changed uid/gid: %s\n  uid=%ld gid=%ld pid=%ld\n", msg,
-    (long int)geteuid(), (long int)getegid(), (long int)getpid());
+  debug_printf("changed uid/gid: %s\n  uid=%ld gid=%ld pid=" PID_T_FMT "\n",
+    msg, (long int)geteuid(), (long int)getegid(), getpid());
   group_count = getgroups(nelem(group_list), group_list);
   save_errno = errno;
   debug_printf("  auxiliary group list:");
@@ -840,9 +840,9 @@ smtp_fflush(SFF_NO_UNCORK);
 search_tidyup();
 store_exit();
 DEBUG(D_any)
-  debug_printf(">>>>>>>>>>>>>>>> Exim pid=%d (%s) terminating with rc=%d "
+  debug_printf(">>>>>>>>>>>>>>>> Exim pid=" PID_T_FMT " (%s) terminating with rc=%d "
     ">>>>>>>>>>>>>>>>\n",
-    (int)getpid(), process_purpose, rc);
+    getpid(), process_purpose, rc);
 exit(rc);
 }
 
@@ -852,9 +852,9 @@ exim_underbar_exit(int rc)
 {
 store_exit();
 DEBUG(D_any)
-  debug_printf(">>>>>>>>>>>>>>>> Exim pid=%d (%s) terminating with rc=%d "
+  debug_printf(">>>>>>>>>>>>>>>> Exim pid=" PID_T_FMT " (%s) terminating with rc=%d "
     ">>>>>>>>>>>>>>>>\n",
-    (int)getpid(), process_purpose, rc);
+    getpid(), process_purpose, rc);
 _exit(rc);
 }
 

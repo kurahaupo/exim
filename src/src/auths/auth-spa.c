@@ -1407,7 +1407,7 @@ spa_build_auth_challenge(SPAAuthRequest * request, SPAAuthChallenge * challenge)
 {
 char chalstr[8];
 int i;
-int p = (int)getpid();
+pid_t p = getpid();
 int random_seed = (int)time(NULL) ^ ((p << 16) | p);
 
 /* Ensure challenge data is cleared, in case it isn't all used. This

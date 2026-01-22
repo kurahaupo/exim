@@ -305,7 +305,7 @@ if (use_lockfile)
 
   /* Presumably, this must match appendfile.c */
   sprintf(hitchname, "%s.%s.%08x.%08x", lockname, primary_hostname,
-    (unsigned int)now, (unsigned int)getpid());
+    (unsigned int)now, (unsigned long)getpid());
 
   if (verbose)
     printf("exim_lock: lockname =  %s\n           hitchname = %s\n", lockname,

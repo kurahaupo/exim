@@ -493,8 +493,8 @@ if (pid == 0)
   debug_selector = save_debug_selector;
 
   DEBUG(D_any)
-    debug_printf("Process %d is handling incoming connection from %s\n",
-      (int)getpid(), sender_fullhost);
+    debug_printf("Process " PID_T_FMT " is handling incoming connection"
+      " from %s\n", getpid(), sender_fullhost);
 
   /* Now disable debugging permanently if it's required only for the daemon
   process. */
@@ -538,7 +538,7 @@ if (pid == 0)
     reset_point = store_mark();   /* Save current store high water point */
 
     DEBUG(D_any)
-      debug_printf("Process %d is ready for new message\n", (int)getpid());
+      debug_printf("Process " PID_T_FMT " is ready for new message\n", getpid());
 
     /* Smtp_setup_msg() returns 0 on QUIT or if the call is from an
     unacceptable host or if an ACL "drop" command was triggered, -1 on
@@ -971,7 +971,7 @@ static BOOL
 operate_on_pid_file(const enum pid_op operation, const pid_t pid)
 {
 char pid_line[sizeof(int) * 3 + 2];
-const int pid_len = snprintf(pid_line, sizeof(pid_line), "%ld\n", (long)pid);
+const int pid_len = snprintf(pid_line, sizeof(pid_line), PID_T_FMT "\n", pid);
 BOOL lines_match = FALSE;
 uschar * path, * base, * dir;
 
@@ -1144,9 +1144,10 @@ daemon_client_sockname(struct sockaddr_un * sup, uschar ** sname)
 #ifdef EXIM_HAVE_ABSTRACT_UNIX_SOCKETS
 sup->sun_path[0] = 0;  /* Abstract local socket addr - Linux-specific? */
 return offsetof(struct sockaddr_un, sun_path) + 1
-  + snprintf(sup->sun_path+1, sizeof(sup->sun_path)-1, "exim_%d", getpid());
+  + snprintf(sup->sun_path+1, sizeof(sup->sun_path)-1,
+	      "exim_" PID_T_FMT, getpid());
 #else
-*sname = string_sprintf("%s/p_%d", spool_directory, getpid());
+*sname = string_sprintf("%s/p_" PID_T_FMT, spool_directory, getpid());
 return offsetof(struct sockaddr_un, sun_path)
   + snprintf(sup->sun_path, sizeof(sup->sun_path), "%s", CS *sname);
 #endif
@@ -2373,7 +2374,9 @@ if (f.running_in_test_harness || write_pid)
      || real_uid == root_uid
      || (real_uid == exim_uid && !override_pid_file_path)) ? PID_WRITE : PID_CHECK;
   if (!operate_on_pid_file(operation, getpid()))
-    DEBUG(D_any) debug_printf("%s pid file %s: %s\n", (operation == PID_WRITE) ? "write" : "check", pid_file_path, strerror(errno));
+    DEBUG(D_any) debug_printf("%s pid file %s: %s\n",
+			      operation == PID_WRITE ? "write" : "check",
+			      pid_file_path, strerror(errno));
   }
 
 /* Set up the handler for SIGHUP, which causes a restart of the daemon. */
@@ -2437,8 +2440,8 @@ if (f.inetd_wait_mode)
   else
     sprintf(CS p, "with no wait timeout");
 
-  log_write(0, LOG_MAIN,
-    "exim %s daemon started: pid=%ld, launched with listening socket, %s",
+  log_write(0, LOG_MAIN, "exim %s daemon started: pid=" PID_T_FMT
+			  ", launched with listening socket, %s",
     version_string, getpid(), big_buffer);
   set_process_info("daemon(%s): pre-listening socket", version_string);
 
@@ -2544,7 +2547,7 @@ else if (f.daemon_listen)
     }
 
   log_write(0, LOG_MAIN,
-    "exim %s daemon started: pid=%ld, %s, listening for %s",
+    "exim %s daemon started: pid=" PID_T_FMT ", %s, listening for %s",
     version_string, getpid(), qinfo, big_buffer);
   set_process_info("daemon(%s): %s, listening for %s",
     version_string, qinfo, big_buffer);
@@ -2554,7 +2557,7 @@ else	/* no listening sockets, only queue-runs */
   {
   const uschar * s = describe_queue_runners();
   log_write(0, LOG_MAIN,
-    "exim %s daemon started: pid=%ld, %s, not listening for SMTP",
+    "exim %s daemon started: pid=" PID_T_FMT ", %s, not listening for SMTP",
     version_string, getpid(), s);
   set_process_info("daemon(%s): %s, not listening", version_string, s);
   }
@@ -2859,7 +2862,7 @@ for (;;)
 
   if (sighup_seen)
     {
-    log_write(0, LOG_MAIN, "pid %ld: SIGHUP received: re-exec daemon",
+    log_write(0, LOG_MAIN, "pid " PID_T_FMT ": SIGHUP received: re-exec daemon",
       getpid());
     close_daemon_sockets(daemon_notifier_fd, fd_polls, listen_socket_count);
     unlink_notifier_socket();
@@ -2868,7 +2871,7 @@ for (;;)
     sighup_argv[0] = exim_path;
     exim_nullstd();
     execv(CS exim_path, (char *const *)sighup_argv);
-    log_write_die(0, LOG_MAIN, "pid %ld: exec of %s failed: %s",
+    log_write_die(0, LOG_MAIN, "pid " PID_T_FMT ": exec of %s failed: %s",
       getpid(), exim_path, strerror(errno));
     /*NOTREACHED*/
     }

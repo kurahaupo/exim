@@ -2004,7 +2004,7 @@ switch (vp->type)
     return (s = *((uschar **)(val))) ? s : US"";
 
   case vtype_pid:
-    sprintf(CS var_buffer, "%d", (int)getpid()); /* pid */
+    sprintf(CS var_buffer, PID_T_FMT, getpid()); /* pid */
     return var_buffer;
 
   case vtype_load_avg:

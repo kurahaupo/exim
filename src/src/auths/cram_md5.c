@@ -173,8 +173,8 @@ int
 auth_cram_md5_server(auth_instance * ablock, uschar * data)
 {
 auth_cram_md5_options_block * ob = ablock->drinst.options_block;
-uschar * challenge = string_sprintf("<%d.%ld@%s>", getpid(),
-    (long int) time(NULL), primary_hostname);
+uschar * challenge = string_sprintf("<" PID_T_FMT ".%ld@%s>",
+    getpid(), (long int) time(NULL), primary_hostname);
 uschar * clear, * secret;
 uschar digest[16];
 int i, rc, len;

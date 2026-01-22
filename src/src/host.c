@@ -94,7 +94,7 @@ if (random_seed == 0)
     random_seed = 42;
   else
     {
-    int p = (int)getpid();
+    pid_t p = getpid();
     random_seed = (int)time(NULL) ^ ((p << 16) | p);
     }
 random_seed = 1103515245 * random_seed + 12345;

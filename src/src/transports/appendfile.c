@@ -1564,7 +1564,7 @@ if (!isdirectory)
     /* cf. exim_lock.c */
     lockname = string_sprintf("%s.lock", filename);
     hitchname = string_sprintf( "%s.%s.%08x.%08x", lockname, primary_hostname,
-      (unsigned int)(time(NULL)), (unsigned int)getpid());
+      (unsigned int)(time(NULL)), (unsigned long)getpid());
 
     DEBUG(D_transport) debug_printf("lock name: %s\nhitch name: %s\n", lockname,
       hitchname);
@@ -2419,8 +2419,8 @@ else
     {
     DEBUG(D_transport)
       debug_printf("delivering to new file in %s\n", path);
-    filename = dataname =
-      string_sprintf("%s/temp.%d.%s", path, (int)getpid(), primary_hostname);
+    filename = dataname = string_sprintf("%s/temp." PID_T_FMT ".%s",
+					path, getpid(), primary_hostname);
     fd = Uopen(filename, O_WRONLY|O_CREAT, mode);
     if (fd < 0 &&                                 /* failed to open, and */
         (errno != ENOENT ||                       /* either not non-exist */

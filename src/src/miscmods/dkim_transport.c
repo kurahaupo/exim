@@ -264,7 +264,7 @@ off_t k_file_size;
 const uschar * errstr;
 
 dkim_spool_name = spool_fname(US"input", message_subdir, message_id,
-		    string_sprintf("-%d-K", (int)getpid()));
+		    string_sprintf("-" PID_T_FMT "-K", getpid()));
 
 DEBUG(D_transport) debug_printf("dkim signing via file %s\n", dkim_spool_name);
 

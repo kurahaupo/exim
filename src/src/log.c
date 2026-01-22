@@ -1023,7 +1023,7 @@ string_fmt_append_noextend(&gs, "%s ", tod_stamp(tod_log));
 if (LOGGING(pid))
   {
   if (!syslog_pid) pid_position[0] = gstring_length(g);	/* remember begin … */
-  string_fmt_append_noextend(g, "[%ld] ", (long)getpid());
+  string_fmt_append_noextend(g, "[" PID_T_FMT "] ", getpid());
   if (!syslog_pid) pid_position[1] = gstring_length(g);	/*  … and end+1 of the PID */
   }
 

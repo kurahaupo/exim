@@ -55,7 +55,7 @@ int cygwin_setuid(uid_t uid )
   if (fakesetugid == 0) { 
     res = setuid(uid);
     if (cygwin_debug)
-      fprintf(stderr, "setuid %u %u %d pid: %d\n",
+      fprintf(stderr, "setuid %u %u %d pid: " PID_T_FMT "\n",
               uid, getuid(),res, getpid());
   }
   return res;
@@ -68,7 +68,7 @@ int cygwin_setgid(gid_t gid )
   if (fakesetugid == 0) { 
     res = setgid(gid);
     if (cygwin_debug)
-      fprintf(stderr, "setgid %u %u %d pid: %d\n",
+      fprintf(stderr, "setgid %u %u %d pid: " PID_T_FMT "\n",
               gid, getgid(), res, getpid());
   }
   return res;

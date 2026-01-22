@@ -2240,7 +2240,7 @@ if (  !shadowing
 
   addr->return_filename =
     spool_fname(US"msglog", message_subdir, message_id,
-      string_sprintf("-%ld-%d", (long)getpid(), return_count++));
+      string_sprintf("-" PID_T_FMT "-%d", getpid(), return_count++));
 
   if ((addr->return_file = open_msglog_file(addr->return_filename, 0400, &error)) < 0)
     {
@@ -5919,9 +5919,10 @@ if (!(bounce_recipient = addr_failed->prop.errors_address))
 /* Make a subprocess to send a message, using its stdin */
 
 if ((pid = child_open_exim(&fd, US"bounce-message")) < 0)
-  log_write_die(0, LOG_MAIN, "Process %ld (parent %ld) failed to "
+  log_write_die(0, LOG_MAIN,
+    "Process " PID_T_FMT " (parent " PID_T_FMT ") failed to "
     "create child process to send failure message: %s",
-    (long)getpid(), (long)getppid(), strerror(errno));
+    getpid(), getppid(), strerror(errno));
 
 /* Creation of child succeeded */
 
@@ -6577,9 +6578,10 @@ if (addr_senddsn)
 
   if (pid < 0)  /* Creation of child failed */
     {
-    log_write_die(0, LOG_MAIN, "Process %ld (parent %ld) failed to "
+    log_write_die(0, LOG_MAIN,
+      "Process " PID_T_FMT " (parent " PID_T_FMT ") failed to "
       "create child process to send success-dsn message: %s",
-      (long)getpid(), (long)getppid(), strerror(errno));
+      getpid(), getppid(), strerror(errno));
 
     DEBUG(D_deliver) debug_printf("DSN: child_open_exim failed\n");
     }

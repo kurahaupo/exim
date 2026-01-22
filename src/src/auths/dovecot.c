@@ -441,7 +441,7 @@ Subsequently, the command was modified to add "secured" and "valid-client-
 cert" when relevant.
 ****************************************************************************/
 
-auth_command = string_sprintf("CPID\t%d\n"
+auth_command = string_sprintf("CPID\t" PID_T_FMT "\n"
        "AUTH\t%d\t%s\tservice=smtp\t%srip=%s\tlip=%s\tnologin\tresp=%s\n",
        getpid(), crequid,
        ablock->public_name, auth_extra_data, sender_host_address,
