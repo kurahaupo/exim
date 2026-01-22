@@ -188,7 +188,7 @@ pid_t pid;
 union sockaddr_46 interface_sockaddr;
 EXIM_SOCKLEN_T ifsize = sizeof(interface_sockaddr);
 int max_for_this_host = 0;
-unsigned long save_log_selector = *log_selector;
+bitmask_word_t save_log_selector = *log_selector;
 gstring * whofrom;
 
 rmark reset_point = store_mark();
@@ -365,7 +365,7 @@ if (pid == 0)
   {
   int queue_only_reason = 0;
   int old_pool = store_pool;
-  unsigned long save_debug_selector = debug_selector;
+  bitmask_word_t save_debug_selector = debug_selector;
   BOOL local_queue_only,  session_local_queue_only;
 #ifdef SA_NOCLDWAIT
   struct sigaction act;

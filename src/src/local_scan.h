@@ -29,6 +29,7 @@ store.c
 settings, and the store functions. */
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include "config.h"
 #include "mytypes.h"
@@ -165,7 +166,7 @@ typedef struct recipient_item {
 
 /* Global variables that are documented as visible in the function. */
 
-extern unsigned long debug_selector;   /* Debugging bits */
+extern bitmask_word_t debug_selector;   /* Debugging bits */
 
 extern int     body_linecount;         /* Line count in body */
 extern int     body_zerocount;         /* Binary zero count in body */
@@ -211,7 +212,7 @@ extern void    header_add_at_position(BOOL, uschar *, BOOL, int, const char *, .
 extern void    header_remove(int, const uschar *);
 extern BOOL    header_testname(const header_line *, const uschar *, int, BOOL);
 extern BOOL    header_testname_incomplete(const header_line *, const uschar *, int, BOOL);
-extern void    log_write(unsigned int, int, const char *format, ...) PRINTF_FUNCTION(3,4);
+extern void    log_write(bitmask_word_t, int, const char *format, ...) PRINTF_FUNCTION(3,4);
 extern int     lss_b64decode(uschar *, uschar **);
 extern uschar *lss_b64encode(uschar *, int);
 extern int     lss_match_domain(uschar *, uschar *);

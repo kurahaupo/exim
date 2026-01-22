@@ -673,7 +673,7 @@ extern int     log_notall[];           /* Log options excluded from +all */
 extern bit_table log_options[];        /* Table of options */
 extern int     log_options_count;      /* Size of table */
 extern int     log_reject_target;      /* Target log for ACL rejections */
-extern unsigned long log_selector[];   /* Bit map of logging options */
+extern bitmask_word_t log_selector[];  /* Bit map of logging options */
 extern uschar *log_selector_string;    /* As supplied in the config */
 extern FILE   *log_stderr;             /* Copy of stderr for log use, or NULL */
 extern BOOL    log_timezone;           /* TRUE to include the timezone in log lines */

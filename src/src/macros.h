@@ -329,10 +329,10 @@ for having to swallow the rest of an SMTP message is whether the value is
 
 /* Assume words are at least 32 bits wide. Tiny waste of space on 64 bit
 platforms, but this ensures bit vectors always work the same way. */
-#ifdef EXIM_ULONG_BITS
-  #define BITWORDSIZE EXIM_ULONG_BITS
+#ifdef EXIM_BITMAP_WORD_BITS
+# define BITWORDSIZE EXIM_BITMAP_WORD_BITS
 #else
-  #define BITWORDSIZE 64
+# define BITWORDSIZE 64
 #endif
 
 /* This macro is for single-word bit vectors: the debug selector,
@@ -410,7 +410,7 @@ enum {
   DEBUG_BIT(transport),
   DEBUG_BIT(uid),
   DEBUG_BIT(verify),		/* 31 */
-#if EXIM_ULONG_BITS > 32
+#if BITWORDSIZE > 32
   DEBUG_BIT(macro),		/* 33 */
   DEBUG_BIT(regex),
 #else

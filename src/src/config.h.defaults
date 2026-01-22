@@ -247,4 +247,11 @@ for EXIM_ARITH_MAX and _MIN in OS/oh.h-FOO */
 #define SC_EXIM_ARITH "%" SCNi64		/* scanf incl. 0x prefix */
 #define SC_EXIM_DEC   "%" SCNd64		/* scanf decimal */
 
+/* Word size for debug and logging channel bitmaps.
+Change as above (but expect debugging to become odd). */
+#define bitmask_word_t		uint64_t
+#define EXIM_BITMAP_WORD_BITS	64
+#define PR_EXIM_BITMASK		"%" PRIx64
+#define SC_EXIM_BITMASK		"%" SCNx64
+
 /* End of config.h.defaults */

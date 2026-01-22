@@ -843,7 +843,7 @@ Returns:    nothing
 */
 
 static void
-log_vwrite(unsigned int selector, int flags, const char * format, va_list ap)
+log_vwrite(bitmask_word_t selector, int flags, const char * format, va_list ap)
 {
 int paniclogfd;
 ssize_t written_len;
@@ -1307,7 +1307,7 @@ if (flags & LOG_PANIC)
 /* The public interface */
 
 void
-log_write(unsigned int selector, int flags, const char * format, ...)
+log_write(bitmask_word_t selector, int flags, const char * format, ...)
 {
 va_list ap;
 va_start(ap, format);
@@ -1320,7 +1320,7 @@ We have this as a wrapper so that we can mark it as never returning,
 for the benefit of static analysers. */
 
 void
-log_write_die(unsigned int selector, int flags, const char * format, ...)
+log_write_die(bitmask_word_t selector, int flags, const char * format, ...)
 {
 va_list ap;
 va_start(ap, format);
@@ -1361,14 +1361,14 @@ Arguments:
 */
 
 void
-bits_clear(unsigned long * selector, size_t selsize, int * bits)
+bits_clear(bitmask_word_t * selector, size_t selsize, int * bits)
 {
 for(; *bits != -1; ++bits)
   BIT_CLEAR(selector, selsize, *bits);
 }
 
 void
-bits_set(unsigned long * selector, size_t selsize, int * bits)
+bits_set(bitmask_word_t * selector, size_t selsize, int * bits)
 {
 for(; *bits != -1; ++bits)
   BIT_SET(selector, selsize, *bits);
@@ -1409,7 +1409,7 @@ Returns:         nothing on success - bomb out on failure
 */
 
 void
-decode_bits(unsigned long * selector, size_t selsize, int * notall,
+decode_bits(bitmask_word_t * selector, size_t selsize, int * notall,
   const uschar * string, bit_table * options, int count, uschar * which,
   int flags)
 {
@@ -1419,12 +1419,14 @@ if (!string) return;
 
 if (*string == '=')
   {
-  char *end;    /* Not uschar */
+  int n;
   memset(selector, 0, sizeof(*selector)*selsize);
-  *selector = strtoul(CCS string+1, &end, 0);
-  if (!*end) return;
-  errmsg = string_sprintf("malformed numeric %s_selector setting: %s", which,
-    string);
+  if (  sscanf(CCS string+1, SC_EXIM_BITMASK "%n", selector, &n) == 1
+     && !string[1+n])
+    return;
+
+  errmsg = string_sprintf("malformed numeric %s_selector setting: %q (n %d, fmt %q)", which,
+    string, n, SC_EXIM_BITMASK);
   goto ERROR_RETURN;
   }
 
@@ -1487,7 +1489,7 @@ else for(;;)
   if (start >= end)
     {
     errmsg = string_sprintf("unknown %s_selector setting: %c%.*s", which,
-      adding? '+' : '-', len, s);
+      adding ? '+' : '-', len, s);
     goto ERROR_RETURN;
     }
   }    /* Loop for selector names */

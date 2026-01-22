@@ -9135,7 +9135,7 @@ for (int i = 1; i < argc; i++)
     argv[i]++;
     }
   if (isdigit(argv[i][0]))
-    debug_selector = Ustrtol(argv[i], NULL, 0);
+    debug_selector = Ustrtoul(argv[i], NULL, 0);
   else
     if (Ustrspn(argv[i], "abcdefghijklmnopqrtsuvwxyz0123456789-.:/") ==
         Ustrlen(argv[i]))

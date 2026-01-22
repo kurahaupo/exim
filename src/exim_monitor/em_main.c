@@ -168,7 +168,7 @@ Returns:    nothing
 */
 
 void
-log_write(unsigned int selector, int flags, const char *format, ...)
+log_write(bitmask_word_t selector, int flags, const char *format, ...)
 {
 va_list ap;
 va_start(ap, format);
@@ -179,7 +179,7 @@ va_end(ap);
 
 
 void
-log_write_die(unsigned int selector, int flags, const char *format, ...)
+log_write_die(bitmask_word_t selector, int flags, const char *format, ...)
 {
 va_list ap;
 va_start(ap, format);

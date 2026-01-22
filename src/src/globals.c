@@ -702,7 +702,7 @@ int      debug_options_count	= nelem(debug_options);
 uschar   debuglog_name[LOG_NAME_SIZE] = {0};
 unsigned debug_pretrigger_bsize	= 0;
 uschar * debug_pretrigger_buf	= NULL;
-unsigned long debug_selector	= 0;
+bitmask_word_t debug_selector	= 0;
 BOOL	 debug_startup		= FALSE;
 
 int     delay_warning[DELAY_WARNING_SIZE] = { DELAY_WARNING_SIZE, 1, 24*60*60 };
@@ -1017,7 +1017,7 @@ int     log_options_count      = nelem(log_options);
 
 const uschar *log_ports	       = NULL;
 int     log_reject_target      = 0;
-unsigned long log_selector[log_selector_size]; /* initialized in main() */
+bitmask_word_t log_selector[log_selector_size]; /* initialized in main() */
 uschar *log_selector_string    = NULL;
 FILE   *log_stderr             = NULL;
 uschar *login_sender_address   = NULL;

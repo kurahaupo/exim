@@ -302,7 +302,7 @@ extern const uschar *local_part_quote(const uschar *);
 extern void    log_close_all(void);
 extern int     log_open_as_exim(const uschar * const);
 extern gstring *log_portnum(gstring *, int);
-extern void    log_write_die(unsigned, int, const char * format, ...)
+extern void    log_write_die(bitmask_word_t, int, const char * format, ...)
 		PRINTF_FUNCTION(3,4) NORETURN;
 
 extern const lookup_info * lookup_with_acq_num(unsigned);

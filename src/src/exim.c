@@ -3982,8 +3982,9 @@ if (debug_selector != 0)
   testharness_pause_ms(100);   /* lets caller finish */
   if (debug_selector != D_v)    /* -v only doesn't show this */
     {
-    debug_printf("Exim version %s uid=%ld gid=%ld pid=%d D=%x\n",
-      version_string, (long int)real_uid, (long int)real_gid, (int)getpid(),
+    debug_printf("Exim version %s uid=%ld gid=%ld pid=" PID_T_FMT
+      " D=0x" PR_EXIM_BITMASK "\n",
+      version_string, (long int)real_uid, (long int)real_gid, getpid(),
       debug_selector);
     if (!version_printed)
       show_whats_supported(FALSE);
@@ -4290,7 +4291,7 @@ DEBUG(D_any)
   debug_printf("configuration file is %s\n", config_main_filename);
   debug_printf("log selectors =");
   for (int i = 0; i < log_selector_size; i++)
-    debug_printf(" %08x", log_selector[i]);
+    debug_printf(" 0x" PR_EXIM_BITMASK, log_selector[i]);
   debug_printf("\n");
   }
 

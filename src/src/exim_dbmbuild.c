@@ -69,7 +69,7 @@ string_format_trc(uschar * buf, int len, const uschar * func, unsigned line,
   const char * fmt, ...)
 { return FALSE; }
 void
-log_write(unsigned int selector, int flags, const char *format, ...)
+log_write(bitmask_word_t selector, int flags, const char *format, ...)
 { }
 const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
 {return NULL; }
@@ -77,7 +77,7 @@ const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
 
 
 struct global_flags	f;
-unsigned long		log_selector[1];
+bitmask_word_t		log_selector[1];
 uschar *		queue_name;
 BOOL			split_spool_directory;
 
@@ -98,7 +98,7 @@ const uschar *hex_digits = CUS"0123456789abcdef";
 *   Debug output   *
 *******************/
 
-unsigned long debug_selector = 0;	/* set -1 for debugging */
+bitmask_word_t debug_selector = 0;	/* set -1 for debugging */
 
 void
 debug_printf(const char * fmt, ...)

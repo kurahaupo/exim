@@ -42,7 +42,7 @@ if (!keep_environment || !*keep_environment)
 else if (Ustrcmp(keep_environment, "*") != 0)
   {
   rmark reset_point = store_mark();
-  unsigned long deb = debug_selector;
+  bitmask_word_t deb = debug_selector;
   BOOL hc = host_checking;
   debug_selector = 0;			/* quieten this clearout */
   host_checking = FALSE;

@@ -65,7 +65,7 @@ const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
 {return NULL; }
 
 struct global_flags	f;
-unsigned long		log_selector[1];
+bitmask_word_t		log_selector[1];
 uschar *		queue_name;
 BOOL			split_spool_directory;
 
@@ -113,7 +113,7 @@ exit(EXIT_FAILURE);
 *   Debug output   *
 *******************/
 
-unsigned long debug_selector = 0;	/* set -1 for debugging */
+bitmask_word_t debug_selector = 0;	/* set -1 for debugging */
 
 void
 debug_printf(const char * fmt, ...)
@@ -195,7 +195,7 @@ Returns:    nothing
 */
 
 void
-log_write(unsigned int selector, int flags, const char *format, ...)
+log_write(bitmask_word_t selector, int flags, const char *format, ...)
 {
 va_list ap;
 va_start(ap, format);
@@ -205,7 +205,7 @@ va_end(ap);
 }
 
 void
-log_write_die(unsigned int selector, int flags, const char *format, ...)
+log_write_die(bitmask_word_t selector, int flags, const char *format, ...)
 {
 va_list ap;
 va_start(ap, format);
