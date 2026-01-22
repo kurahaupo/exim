@@ -763,27 +763,22 @@ static void
 set_file_path(void)
 {
 int sep = ':';              /* Fixed separator - outside use */
-uschar *t;
-const uschar *tt = US LOG_FILE_PATH;
+const uschar * t, * tt = US LOG_FILE_PATH;
 while ((t = string_nextinlist(&tt, &sep, log_buffer, LOG_BUFFER_SIZE)))
-  {
-  if (Ustrcmp(t, "syslog") == 0 || t[0] == 0) continue;
-  file_path = string_copy(t);
-  break;
-  }
+  if (Ustrcmp(t, "syslog") != 0 && *t)
+    { file_path = string_copy(t); break; }
 }
 
 
 /* Close mainlog, unless we do not see a chance to open the file mainlog later
 again.  This will happen if we log from a transport process (which has dropped
 privs); something we traditionally avoid, but the introduction of taint-tracking
-and resulting detection of errors is makinng harder. */
+and resulting detection of errors is making harder. */
 
 void
 mainlog_close(void)
 {
-if (mainlogfd < 0
-   || !(geteuid() == 0 || geteuid() == exim_uid))
+if (mainlogfd < 0 || !(geteuid() == 0 || geteuid() == exim_uid))
   return;
 (void)close(mainlogfd);
 mainlogfd = -1;
@@ -852,8 +847,7 @@ log_vwrite(unsigned int selector, int flags, const char * format, va_list ap)
 {
 int paniclogfd;
 ssize_t written_len;
-gstring gs = { .size = LOG_BUFFER_SIZE-2, .ptr = 0, .s = log_buffer };
-gstring * g = &gs;
+gstring gs = { .size = LOG_BUFFER_SIZE-2 }, * g = &gs;
 
 /* If panic_recurseflag is set, we have failed to open the panic log. This is
 the ultimate disaster. First try to write the message to a debug file and/or
@@ -881,6 +875,7 @@ if (!log_buffer)
     fprintf(stderr, "exim: failed to get store for log buffer\n");
     exim_exit(EXIT_FAILURE);
     }
+gs.s = log_buffer;
 
 /* If we haven't already done so, inspect the setting of log_file_path to
 determine whether to log to files and/or to syslog. Bits in logging_mode
