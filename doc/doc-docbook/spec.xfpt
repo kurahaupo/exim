@@ -16466,6 +16466,9 @@ all the continuations have been joined together. Messages with individual
 header lines that are longer than the limit are rejected. The default value of
 zero means &"no limit"&.
 
+&*Note*&: The SMTP standards have a 998 character limit.
+See also the &%messsage_linelength_limit%& smtp transport option.
+
 
 
 
