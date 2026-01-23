@@ -32,7 +32,7 @@ routing x@y
  calling r1 router
  r1 router called for x@y
    domain = y
-route_item = * "127.0.0.1 : V4NET.0.0.0"
+ route_item = * "127.0.0.1 : V4NET.0.0.0"
  y in "*"?
   list element: *
   y in "*"? yes (matched "*")

@@ -834,8 +834,13 @@ for (header_line * h = header_list; h; h = h->next) if (h->type != htype_old)
 		  tblock->rewrite_existflags, FALSE)))
 	{
 	len = hh->slen;
-	if (tctx->options & topt_truncate_headers && len > 998) len = 998;
-	if (!sendfn(tctx, hh->text, len)) return FALSE;
+	if (tctx->options & topt_truncate_headers && len > 998)
+	  {
+	  if (  !sendfn(tctx, hh->text, 991)
+	     || !sendfn(tctx, US"<trunc>\n", 8)) return FALSE;
+	  }
+	else
+	  if (!sendfn(tctx, hh->text, len)) return FALSE;
 	store_reset(reset_point);
 	continue;     /* With the next header line */
 	}
@@ -844,8 +849,13 @@ for (header_line * h = header_list; h; h = h->next) if (h->type != htype_old)
     /* Either no rewriting rules, or it didn't get rewritten */
 
     len = h->slen;
-    if (tctx->options & topt_truncate_headers && len > 998) len = 998;
-    if (!sendfn(tctx, h->text, len)) return FALSE;
+    if (tctx->options & topt_truncate_headers && len > 998)
+      {
+      if (  !sendfn(tctx, h->text, 991)
+	 || !sendfn(tctx, US"<trunc>\n", 8)) return FALSE;
+      }
+    else
+      if (!sendfn(tctx, h->text, len)) return FALSE;
     }
 
   /* Header removed */

@@ -362,7 +362,7 @@ routing unknown@test.ex
  calling r1 router
  r1 router called for unknown@test.ex
    domain = test.ex
-route_item = never
+ route_item = never
  test.ex in "never"?
   list element: never
  test.ex in "never"? no (end of list)

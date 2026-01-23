@@ -183,7 +183,7 @@ command wrote: PASS
  calling s router
  s router called for PASS@some.host
    domain = some.host
-route_item = * 127.0.0.1 byname
+ route_item = * 127.0.0.1 byname
  original list of hosts = '127.0.0.1' options = 'byname'
  expanded list of hosts = '127.0.0.1' options = 'byname'
  set transport 'smtp'

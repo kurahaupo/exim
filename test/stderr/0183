@@ -175,7 +175,7 @@ routing usery@test.again.dns
  calling useryz router
  useryz router called for usery@test.again.dns
    domain = test.again.dns
-route_item = * $domain bydns
+ route_item = * $domain bydns
  test.again.dns in "*"?
   list element: *
   test.again.dns in "*"? yes (matched "*")
@@ -220,7 +220,7 @@ routing userz@test.again.dns
  calling useryz router
  useryz router called for userz@test.again.dns
    domain = test.again.dns
-route_item = * $domain bydns
+ route_item = * $domain bydns
  test.again.dns in "*"?
   list element: *
   test.again.dns in "*"? yes (matched "*")
@@ -465,7 +465,7 @@ routing usery@test.fail.dns
  calling useryz router
  useryz router called for usery@test.fail.dns
    domain = test.fail.dns
-route_item = * $domain bydns
+ route_item = * $domain bydns
  test.fail.dns in "*"?
   list element: *
   test.fail.dns in "*"? yes (matched "*")
@@ -509,7 +509,7 @@ routing userz@test.fail.dns
  calling useryz router
  useryz router called for userz@test.fail.dns
    domain = test.fail.dns
-route_item = * $domain bydns
+ route_item = * $domain bydns
  test.fail.dns in "*"?
   list element: *
   test.fail.dns in "*"? yes (matched "*")
@@ -755,7 +755,7 @@ routing usery@nonexist.test.ex
  calling useryz router
  useryz router called for usery@nonexist.test.ex
    domain = nonexist.test.ex
-route_item = * $domain bydns
+ route_item = * $domain bydns
  nonexist.test.ex in "*"?
   list element: *
   nonexist.test.ex in "*"? yes (matched "*")
@@ -800,7 +800,7 @@ routing userz@nonexist.test.ex
  calling useryz router
  useryz router called for userz@nonexist.test.ex
    domain = nonexist.test.ex
-route_item = * $domain bydns
+ route_item = * $domain bydns
  nonexist.test.ex in "*"?
   list element: *
   nonexist.test.ex in "*"? yes (matched "*")

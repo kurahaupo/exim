@@ -60,7 +60,7 @@ Considering qq@remote
   calling r2 router
   r2 router called for qq@remote
     domain = remote
-route_item = * 127.0.0.1
+  route_item = * 127.0.0.1
   remote in "*"?
    list element: *
    remote in "*"? yes (matched "*")
@@ -119,7 +119,7 @@ Considering qq@remote
   calling r2 router
   r2 router called for qq@remote
     domain = remote
-route_item = * 127.0.0.1
+  route_item = * 127.0.0.1
   remote in "*"?
    list element: *
    remote in "*"? yes (matched "*")
@@ -245,7 +245,7 @@ Considering qq@remote
   calling r2 router
   r2 router called for qq@remote
     domain = remote
-route_item = * 127.0.0.1
+  route_item = * 127.0.0.1
   remote in "*"?
    list element: *
    remote in "*"? yes (matched "*")

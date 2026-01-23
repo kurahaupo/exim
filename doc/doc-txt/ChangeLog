@@ -84,6 +84,10 @@ JH/21 Fix memory leak in DNS lookups. From 4.95 onwards, certain lookup types
       failed to free an allocated buffer. Credit: Mythic-Beasts for discovery.
       While in that code, reduce overall memory use.
 
+JH/22 Bug 3192: Fix header collapse in auto-generated bounce message.
+      Previously, when an overlong header from the original was truncated for
+      for reporting in a bounce, no terminating line-ending was supplied.
+
 
 Exim version 4.99.1
 -------------------

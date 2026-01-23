@@ -263,7 +263,7 @@ if (ob->route_list)
     {
     int rc;
 
-    DEBUG(D_route) debug_printf("route_item = %s\n", route_item);
+    DEBUG(D_route) debug_printf_indent("route_item = %s\n", route_item);
     if (!parse_route_item(route_item, &domain, &hostlist, &options))
       continue;     /* Ignore blank items */
 
@@ -276,10 +276,7 @@ if (ob->route_list)
     /* If there was a problem doing the check, defer */
 
     if (rc == DEFER)
-      {
-      addr->message = US"lookup defer in route_list";
-      return DEFER;
-      }
+      { addr->message = US"lookup defer in route_list"; return DEFER; }
     }
 
   if (!route_item) return DECLINE;  /* No pattern in the list matched */

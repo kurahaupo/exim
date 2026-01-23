@@ -1,0 +1,76 @@
+From MAILER-DAEMON Tue Mar 02 09:44:33 1999
+Received: from EXIMUSER by myhost.test.ex with local (Exim x.yz)
+	id 10HmbC-000000005vi-0000
+	for hdr_limited@myhost.test.ex;
+	Tue, 2 Mar 1999 09:44:33 +0000
+X-Failed-Recipients: fred@undeliverable.org
+Auto-Submitted: auto-replied
+From: Mail Delivery System <Mailer-Daemon@myhost.test.ex>
+To: hdr_limited@myhost.test.ex
+References: <E10HmbB-000000005vi-0000@myhost.test.ex>
+Content-Type: multipart/report; report-type=delivery-status; boundary=NNNNNNNNNN-eximdsn-MMMMMMMMMM
+MIME-Version: 1.0
+Subject: Mail delivery failed: returning message to sender
+Message-Id: <E10HmbC-000000005vi-0000@myhost.test.ex>
+Date: Tue, 2 Mar 1999 09:44:33 +0000
+
+--NNNNNNNNNN-eximdsn-MMMMMMMMMM
+Content-type: text/plain; charset=us-ascii
+
+This message was created automatically by mail delivery software.
+
+A message that you sent could not be delivered to one or more of its
+recipients. This is a permanent error. The following address(es) failed:
+
+  fred@undeliverable.org
+    Unrouteable address
+
+--NNNNNNNNNN-eximdsn-MMMMMMMMMM
+Content-type: message/delivery-status
+
+Reporting-MTA: dns; myhost.test.ex
+
+Action: failed
+Final-Recipient: rfc822;fred@undeliverable.org
+Status: 5.0.0
+
+--NNNNNNNNNN-eximdsn-MMMMMMMMMM
+Content-type: message/rfc822
+
+Return-path: <hdr_limited@myhost.test.ex>
+Received: from CALLER by myhost.test.ex with local (Exim x.yz)
+	(envelope-from <hdr_limited@myhost.test.ex>)
+	id 10HmbB-000000005vi-0000
+	for fred@undeliverable.org;
+	Tue, 2 Mar 1999 09:44:33 +0000
+Subject: test
+X-Long-Header:  A01 B01 C01 D01 E01 F01 G01 H01 I01 J01 K01 L01 M01 N01
+ A02 B02 C02 D02 E02 F02 G02 H02 I02 J02 K02 L02 M02 N02
+ A03 B03 C03 D03 E03 F03 G03 H03 I03 J03 K03 L03 M03 N03
+ A04 B04 C04 D04 E04 F04 G04 H04 I04 J04 K04 L04 M04 N04
+ A05 B05 C05 D05 E05 F05 G05 H05 I05 J05 K05 L05 M05 N05
+ A06 B06 C06 D06 E06 F06 G06 H06 I06 J06 K06 L06 M06 N06
+ A07 B07 C07 D07 E07 F07 G07 H07 I07 J07 K07 L07 M07 N07
+ A08 B08 C08 D08 E08 F08 G08 H08 I08 J08 K08 L08 M08 N08
+ A09 B09 C09 D09 E09 F09 G09 H09 I09 J09 K09 L09 M09 N09
+ A10 B10 C10 D10 E10 F10 G10 H10 I10 J10 K10 L10 M10 N10
+ A11 B11 C11 D11 E11 F11 G11 H11 I11 J11 K11 L11 M11 N11
+ A12 B12 C12 D12 E12 F12 G12 H12 I12 J12 K12 L12 M12 N12
+ A13 B13 C13 D13 E13 F13 G13 H13 I13 J13 K13 L13 M13 N13
+ A14 B14 C14 D14 E14 F14 G14 H14 I14 J14 K14 L14 M14 N14
+ A15 B15 C15 D15 E15 F15 G15 H15 I15 J15 K15 L15 M15 N15
+ A16 B16 C16 D16 E16 F16 G16 H16 I16 J16 K16 L16 M16 N16
+ A17 B17 C17 D17 E17 F17 G17 H17 I17 J17 K17 L17 M17 N17
+ A18 B1<trunc>
+Content-Type: text-plain
+MIME-Version: 1.0
+Message-Id: <E10HmbB-000000005vi-0000@myhost.test.ex>
+From: hdr_limited@myhost.test.ex
+Date: Tue, 2 Mar 1999 09:44:33 +0000
+
+msg with ok lines
+00000000001111111
+01234567890123456
+
+--NNNNNNNNNN-eximdsn-MMMMMMMMMM--
+

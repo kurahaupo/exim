@@ -106,7 +106,7 @@ routing x@smart.domain
  calling smart1 router
  smart1 router called for x@smart.domain
    domain = smart.domain
-route_item = *
+ route_item = *
  smart.domain in "*"?
   list element: *
   smart.domain in "*"? yes (matched "*")

@@ -6110,7 +6110,7 @@ wording. */
     else
       fprintf(fp,
 	"The following text was generated during the delivery "
-	"attempt%s:\n", (filecount > 1)? "s" : "");
+	"attempt%s:\n", filecount > 1 ? "s" : "");
 
     for (address_item * addr = msgchain; addr; addr = nextaddr)
       {
