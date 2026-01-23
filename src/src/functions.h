@@ -140,7 +140,7 @@ extern int     bdat_ungetc(int);
 extern void    bdat_flush_data(void);
 
 extern void    bits_clear(unsigned long *, size_t, int *);
-extern void    bits_set(unsigned long *, size_t, int *);
+extern void    bits_set(bitmask_word_t *, size_t, int *);
 
 extern void    cancel_cutthrough_connection(BOOL, const uschar *);
 extern gstring *cat_file(FILE *, gstring *, const uschar *);

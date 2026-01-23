@@ -371,7 +371,16 @@ masks are part of the local_scan API so are #defined in local_scan.h .
 Thanks to the "one word", debug bits beyond 31 are not available on 32b-int
 systems, and coding must account for that. */
 
-#define DEBUG_BIT(name) Di_##name = IOTA(Di_iota), D_##name = (unsigned long)BIT(Di_##name)
+#ifndef bitmask_word_t
+# define bitmask_word_t          uint64_t
+#endif
+
+#define BITMASK_IDX_TO_BIT(idx) ((bitmask_word_t)1 << (idx))
+#define BIT_TABLE_BIT(class, name) \
+			class##i_##name = IOTA(class##i_iota), \
+			class##_##name = BITMASK_IDX_TO_BIT(class##i_##name)
+
+#define DEBUG_BIT(name) BIT_TABLE_BIT(D, name)
 #define DEBUG_Z_BIT(name) Di_##name = 0, D_##name = 0
 
 enum {
@@ -455,7 +464,7 @@ and are only ever tested independently, so they do not need bit mask
 declarations. The Li_all value is recognized specially by decode_bits().
 Add also to log_options[] when creating new ones. */
 
-#define LOG_BIT(name) Li_##name = IOTA(Li_iota), L_##name = BIT(Li_##name)
+#define LOG_BIT(name) BIT_TABLE_BIT(L, name)
 
 enum logbit {
   Li_all = -1,

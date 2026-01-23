@@ -9,12 +9,13 @@
 
 #define EM_VERSION_C
 
+#include <string.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include "mytypes.h"
 #include "store.h"
 #include "path_max.h"
 #include "macros.h"
-#include <string.h>
-#include <stdlib.h>
 
 #include "version.h"
 
