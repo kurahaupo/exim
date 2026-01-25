@@ -65,8 +65,8 @@ Returns:         OK if lookup succeeded
 */
 
 static int
-one_check_dnsbl(uschar *domain, uschar *domain_txt, uschar *keydomain,
-  uschar *prepend, uschar *iplist, BOOL bitmask, int match_type,
+one_check_dnsbl(uschar * domain, uschar * domain_txt, uschar * keydomain,
+  uschar * prepend, uschar * iplist, BOOL bitmask, int match_type,
   int defer_return)
 {
 dns_answer * dnsa = store_get_dns_answer();
@@ -202,17 +202,17 @@ list (introduced by "&"), or a negative bitmask list (introduced by "!&").*/
 
 if (cb->rc == DNS_SUCCEED)
   {
-  dns_address * da = NULL;
-  uschar *addlist = cb->rhs->address;
+  gstring * addlist = NULL;
 
   /* For A and AAAA records, there may be multiple addresses from multiple
   records. For A6 records (currently not expected to be used) there may be
   multiple addresses from a single record. */
 
-  for (da = cb->rhs->next; da; da = da->next)
-    addlist = string_sprintf("%s, %s", addlist, da->address);
+  for (dns_address * da = cb->rhs; da; da = da->next)
+    addlist = string_append2_listele_n(addlist, US", ",
+					da->address, Ustrlen(da->address));
 
-  HDEBUG(D_dnsbl) debug_printf("DNS lookup for %s succeeded (yielding %s)\n",
+  HDEBUG(D_dnsbl) debug_printf("DNS lookup for %s succeeded (yielding %Y)\n",
     query, addlist);
 
   /* Address list check; this can be either for equality, or via a bitmask.
@@ -220,6 +220,7 @@ if (cb->rc == DNS_SUCCEED)
 
   if (iplist)
     {
+    dns_address * da;
     for (da = cb->rhs; da; da = da->next)
       {
       int ipsep = ',';
@@ -315,7 +316,7 @@ if (cb->rc == DNS_SUCCEED)
   else
     {
     BOOL ok = FALSE;
-    for (da = cb->rhs; da; da = da->next)
+    for (dns_address * da = cb->rhs; da; da = da->next)
       {
       int address[4];
 
@@ -371,9 +372,9 @@ if (cb->rc == DNS_SUCCEED)
     }
 
   /* $dnslist_* likely apply to the conn not a message, so we want them not
-  destroyed by reset_store() between messages */
+  destroyed by reset_store() between messages. Use the perm pool. */
 
-  dnslist_value = addlist ? string_copy_perm(addlist, FALSE) : NULL;
+  dnslist_value = addlist ? string_copy_perm(addlist->s, FALSE) : NULL;
   dnslist_text = cb->text ? string_copy_perm(cb->text, FALSE) : NULL;
   yield = OK;
   goto out;
@@ -503,10 +504,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
   int rc;
   BOOL bitmask = FALSE;
   int match_type = 0;
-  uschar *domain_txt;
-  uschar *comma;
-  uschar *iplist;
-  uschar *key;
+  uschar * domain_txt, * comma, * iplist, * key;
 
   HDEBUG(D_dnsbl) debug_printf("dnslists check: %s\n", domain);
 
