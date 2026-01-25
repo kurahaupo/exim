@@ -3388,7 +3388,7 @@ if (verify_check_given_host(CUSS &ob->tls_verify_cert_hostnames, host) == OK)
 
 #ifdef SUPPORT_DANE
 /* Given our list of RRs from the TLSA lookup, build a lookup block in
-GnuTLS-DANE's preferred format.  Hang it on the state str for later
+GnuTLS-DANE's preferred format.  Hang it on the state struct for later
 use in DANE verification.
 
 We point at the dnsa data not copy it, so it must remain valid until
@@ -3416,10 +3416,6 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
     ) if (rr->type == T_TLSA && rr->size > 3)
   {
   const uschar * p = rr->data;
-/*XXX need somehow to mark rr and its data as tainted.
-Doues this mean copying it?  That could actually be preferable, as the 64k
-of dns_annwer could be alloc/free within this func. */
-/*TTT*/
   uint8_t usage = p[0], sel = p[1], type = p[2];
 
   DEBUG(D_tls)
@@ -3441,7 +3437,7 @@ of dns_annwer could be alloc/free within this func. */
     }
 
   tls_out.tlsa_usage |= 1<<usage;
-  dane_data[i] = CS p;			/*TTT*/
+  dane_data[i] = CS p;
   dane_data_len[i++] = rr->size;
   }
 
@@ -3721,7 +3717,7 @@ set but both tls_verify_hosts and tls_try_verify_hosts are unset. Check only
 the specified host patterns if one of them is defined */
 
 #ifdef SUPPORT_DANE
-if (conn_args->dane && dane_tlsa_load(state, &conn_args->tlsa_dnsa))
+if (conn_args->dane && dane_tlsa_load(state, conn_args->tlsa_dnsa))
   {
   DEBUG(D_tls)
     debug_printf("TLS: server certificate DANE required\n");

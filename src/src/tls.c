@@ -850,7 +850,7 @@ exim_sha_init(h, HASH_SHA1);
 exim_sha_update_string(h, conn_args->host_lbserver);
 # ifdef SUPPORT_DANE
 if (conn_args->dane)
-  exim_sha_update(h,  CUS &conn_args->tlsa_dnsa, sizeof(dns_answer));
+  exim_sha_update(h,  CUS conn_args->tlsa_dnsa, sizeof(dns_answer));
 # endif
 exim_sha_update_string(h, conn_args->host->address);
 exim_sha_update(h,   CUS &conn_args->host->port, sizeof(conn_args->host->port));

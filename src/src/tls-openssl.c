@@ -3972,7 +3972,6 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
     }
 
   found++;
-  /*TTT*/
   switch (DANESSL_add_tlsa(ssl, usage, selector, mdname, p, rr->size - 3))
     {
     default:
@@ -4424,7 +4423,7 @@ if (tlsp->sni)
 
 #ifdef SUPPORT_DANE
 if (conn_args->dane)
-  if (dane_tlsa_load(exim_client_ctx->ssl, host, &conn_args->tlsa_dnsa, errstr) != OK)
+  if (dane_tlsa_load(exim_client_ctx->ssl, host, conn_args->tlsa_dnsa, errstr) != OK)
     return FALSE;
 #endif
 

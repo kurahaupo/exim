@@ -2160,7 +2160,11 @@ int rc;
 if(  sx->dane_required
   || verify_check_given_host(CUSS &ob->hosts_try_dane, sx->conn_args.host) == OK
   )
-  switch (rc = tlsa_lookup(sx->conn_args.host, &sx->conn_args.tlsa_dnsa, sx->dane_required))
+  {
+  if (!sx->conn_args.tlsa_dnsa)
+    sx->conn_args.tlsa_dnsa = store_get_dns_answer();
+  switch (rc = tlsa_lookup(sx->conn_args.host,
+			    sx->conn_args.tlsa_dnsa, sx->dane_required))
     {
     case OK:		sx->conn_args.dane = TRUE;
 #ifdef EXPERIMENTAL_SRV_SMTPS
@@ -2182,6 +2186,7 @@ if(  sx->dane_required
 # endif
 			return rc;
     }
+  }
 return OK;
 }
 #endif
@@ -4050,7 +4055,7 @@ int rc;
 
 uschar * message = NULL;
 
-/* Large (12k, 66k if DANE supported).  Tainted, for the data buffers */
+/* Large (12k).  Tainted, for the data buffers */
 smtp_context * sx = store_get(sizeof(*sx), GET_TAINTED);
 
 BOOL pass_message = FALSE;

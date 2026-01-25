@@ -827,10 +827,7 @@ typedef struct {
 
 #ifdef SUPPORT_DANE
   BOOL			dane:1;		/* TLSA says connection must do dane */
-  /*TTT alloc*/
-  /* Strictly, this should use tainted mem. Also, is rather large - 64k - so
-  perhaps should be allocated only when needed (for DANE)? */
-  dns_answer		tlsa_dnsa;	/* strictly, this should use tainted mem */
+  dns_answer *		tlsa_dnsa;
 #endif
 } smtp_connect_args;
 
