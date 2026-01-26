@@ -613,6 +613,8 @@ allow_utf8_domains is set true and UTF-8 characters are used in domain
 names. Backslash can also be used to escape other characters, though we
 shouldn't come across them in domain names.
 
+We always return tainted mem, as some callers use stack-auto source buffers.
+
 Argument:   the domain name string
 Returns:    copy of string in new store, de-escaped
 */
@@ -621,7 +623,6 @@ uschar *
 string_copy_dnsdomain(const uschar * s)
 {
 uschar * yield;
-/*TTT*/
 uschar * ss = yield = store_get(Ustrlen(s) + 1, GET_TAINTED);	/* always treat as tainted */
 
 while (*s)

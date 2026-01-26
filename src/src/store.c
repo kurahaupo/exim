@@ -210,11 +210,16 @@ static const uschar * poolclass[N_PAIRED_POOLS] = {
 [POOL_TAINT_SEARCH] =	US"tainted",
 [POOL_TAINT_MESSAGE] =	US"tainted",
 };
+
+
+static dns_answer * dnsa_tainted = NULL;
+
 #endif
 
 
 static void * internal_store_malloc(size_t, const char *, int);
 static void   internal_store_free(void *, const char *, int linenumber);
+
 
 /******************************************************************************/
 
@@ -285,6 +290,17 @@ log_write_die(0, LOG_MAIN,
 return NULL;
 }
 
+
+/******************************************************************************/
+static BOOL
+is_tainted_dnsa(const void * p)
+{
+#ifndef COMPILE_UTILITY
+for (dns_answer * dnsa = dnsa_tainted; dnsa; dnsa = dnsa->next)
+  if (CS p >= CS dnsa && CS p < CS(dnsa+1)) return TRUE;
+#endif
+return FALSE;
+}
 /******************************************************************************/
 /* Test if a pointer refers to tainted memory.
 
@@ -321,7 +337,7 @@ for (quoted_pooldesc * qp = quoted_pools; qp; qp = qp->next)
   for (b = qp->pool.chainbase; b; b = b->next)
     if (is_pointer_in_block(b, p)) return TRUE;
 
-return FALSE;
+return is_tainted_dnsa(p);
 }
 
 
@@ -1257,6 +1273,29 @@ store_free_3(void * block, const char * func, int linenumber)
 n_nonpool_blocks--;
 internal_store_free(block, func, linenumber);
 }
+
+/******************************************************************************/
+#ifndef COMPILE_UTILITY
+/* Block-handling for dns answers - a bit over 64k each.
+We maintain a list for taint-tracking; these are from the outside so always
+tainted. Expect less than 3, so a linked-list is fine. */
+
+dns_answer *
+store_get_dns_answer_trc(const uschar * func, unsigned line)
+{
+dns_answer * dnsa = store_malloc_3(sizeof(dns_answer), CCS func, line);
+dnsa->next = dnsa_tainted;
+return dnsa_tainted = dnsa;
+}
+
+void
+store_free_dns_answer_trc(dns_answer * dnsa, const uschar * func, unsigned line)
+{
+for (dns_answer ** dp = &dnsa_tainted; *dp; dp = &((*dp)->next))
+  if (*dp == dnsa) { *dp = (*dp)->next; break; }
+store_free_3(dnsa, CCS func, line);
+}
+#endif	/*COMPILE_UTILITY*/
 
 /******************************************************************************/
 /* Stats output on process exit */

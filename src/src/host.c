@@ -1667,7 +1667,6 @@ while ((ordername = string_nextinlist(&list, &sep, NULL, 0)))
         /* If an overlong response was received, the data will have been
         truncated and dn_expand may fail. */
 
-	/*TTT*/
         if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen,
              US rr->data, (DN_EXPAND_ARG4_TYPE)(s), ssize) < 0)
           {
@@ -2395,7 +2394,7 @@ for (; i >= 0; i--)
       if (thishostlast == NULL)
 	{
 	if (strcmpic(host->name, rr->name) != 0)
-	  host->name = string_copy_dnsdomain(rr->name);	/*TTT*/
+	  host->name = string_copy_dnsdomain(rr->name);
 	host->address = da->address;
 	host->sort_key = host->mx * 1000 + random_number(500) + randoffset;
 	host->status = hstatus_unknown;
@@ -2789,7 +2788,10 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   int port = PORT_NONE;		/* MX lookups get PORT_NONE */
   const uschar * s = rr->data;	/* MUST be unsigned for GETSHORT */
   host_item * next;
-  uschar data[256];	/*TTT*/
+
+  /* Properly, should be tainted. string_copy_dnsdomain() call below must be
+  the only outside use if data placed here by dn_expand(). */
+  uschar data[256];
 
   if (rr_bad_size(rr, sizeof(uint16_t))) continue;
   GETSHORT(precedence, s);      /* Pointer s is advanced */
@@ -2816,7 +2818,6 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
 
   /* Get the name of the host pointed to. */
 
-  /*TTT*/
   if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, s,
       (DN_EXPAND_ARG4_TYPE)data, sizeof(data)) < 0)
     continue;
@@ -2858,7 +2859,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   before the first block, copy the first block's data to a new second block. */
 
   next = last ? store_get(sizeof(host_item), GET_UNTAINTED) : host;
-  next->name = string_copy_dnsdomain(data);	/*TTT*/
+  next->name = string_copy_dnsdomain(data);
   next->address = NULL;
   next->port = port;
   next->mx = precedence;

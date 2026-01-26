@@ -140,13 +140,13 @@ int sep = 0, rc, type, failrc = FAIL;
 const uschar * outsep = CUS"\n", * outsep2 = NULL;
 uschar * equals, * domain, * found;
 
-dns_answer * dnsa = store_get_dns_answer();	/*TTT alloc */
+dns_answer * dnsa = store_get_dns_answer();
 dns_scan dnss = {0};
 
 /* Because we're working in the search pool, we try to reclaim as much
 store as possible later, so we preallocate the result here */
 
-gstring * yield = string_get_tainted(256, GET_TAINTED);	/*TTT alloc*/
+gstring * yield = string_get_tainted(256, GET_TAINTED);
 
 /* If the string starts with '>' we change the output separator.
 If it's followed by ';' or ',' we set the TXT output separator. */
@@ -403,7 +403,6 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	  remain = rr->size - ++data_offset;
 	  if (chunk_len > remain)
 	    chunk_len = remain;
-	  /*TTT*/
 	  yield = string_catn(yield, US ((rr->data) + data_offset), chunk_len);
 	  data_offset += chunk_len;
 
@@ -428,7 +427,6 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
 	  if (payload_length > MAX_TLSA_EXPANDED_SIZE)
 	    payload_length = MAX_TLSA_EXPANDED_SIZE;
-	  /*TTT*/
 	  yield = string_fmt_append(yield, "%d%c%d%c%d%c%.*H",
 				      usage, *outsep2,
 				      selector, *outsep2,
@@ -442,8 +440,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
 	/* NB: this memory is released implicitly by the call
 	gstring_release_unused(yield) below. We used to use a stack-auto, but
-	I want to track taint wherever possible. The dnsa is not (yet)
-	allocated using taint-marked memory. */
+	I want to track taint wherever possible. */
 #define LCL_BUF_SIZE 264
 	uschar * buf = store_get(LCL_BUF_SIZE, GET_TAINTED);
 
@@ -504,7 +501,6 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
         /* GETSHORT() has advanced the pointer to the target domain. */
 
-	/*TTT*/
         rc = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, p,
           (DN_EXPAND_ARG4_TYPE)buf, LCL_BUF_SIZE);
 
@@ -526,7 +522,6 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	  p += rc;
 	  yield = string_catn(yield, outsep2, 1);
 
-	  /*TTT*/
 	  rc = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, p,
 	    (DN_EXPAND_ARG4_TYPE)buf, LCL_BUF_SIZE);
 	  if (rc < 0)

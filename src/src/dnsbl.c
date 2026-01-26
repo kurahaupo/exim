@@ -364,8 +364,7 @@ if (cb->rc == DNS_SUCCEED)
 	  int len = (rr->data)[0];
 	  if (len > 511) len = 127;
 	  store_pool = POOL_PERM;
-	  /*TTT*/
-	  cb->text = string_copyn_taint(CUS (rr->data+1), len, GET_TAINTED);
+	  cb->text = string_copyn(CUS (rr->data+1), len);
 	  store_pool = old_pool;
 	  break;
 	  }

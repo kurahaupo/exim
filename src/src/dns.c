@@ -376,7 +376,6 @@ if (reset != RESET_NEXT)
   while (dnss->rrcount-- > 0)
     {
     TRACE trace = "Q-namelen";
-    /*TTT*/
     if ((namelen = dns_rr_expand_taint(dnsa->answer, eom, dnss->aptr, dnss)) <0)
       goto null_return;
     /* skip name & type & class */
@@ -407,7 +406,6 @@ if (reset != RESET_NEXT)
     while (dnss->rrcount-- > 0)
       {
       TRACE trace = "A-namelen";
-      /*TTT*/
       if (  (namelen = dns_rr_expand_taint(dnsa->answer, eom, dnss->aptr, dnss))
 	  < 0)
 	goto null_return;
@@ -442,7 +440,6 @@ if (dnss->rrcount-- <= 0) return NULL;
 (something safe). */
 
 TRACE trace = "R-namelen";
-/*TTT*/
 if ((namelen = dns_rr_expand_taint(dnsa->answer, eom, dnss->aptr, dnss)) < 0)
   goto null_return;
 
@@ -507,7 +504,7 @@ if (h->nscount && h->aa)
   for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_AUTHORITY);
        rr; rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
     if (rr->type == (h->ancount ? T_NS : T_SOA))
-      return string_copy(rr->name);	/*TTT*/
+      return string_copy(rr->name);
 return NULL;
 }
 
@@ -1061,7 +1058,7 @@ former will work. */
 for (int i = 0; i <= dns_cname_loops; i++)
   {
   uschar * data;
-  dns_record cname_rr, type_rr;
+  dns_record cname_rr = {0}, type_rr = {0};
   dns_scan dnss = {0};
 
   /* DNS lookup failures get passed straight back. */
@@ -1075,7 +1072,6 @@ for (int i = 0; i <= dns_cname_loops; i++)
   contents of any rr blocks returned by dns_next_rr() as they use the same
   area in the dnsa block. */
 
-  cname_rr.data = type_rr.data = NULL;
   for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
        rr; rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
     if (rr->type == type)
@@ -1103,7 +1099,7 @@ for (int i = 0; i <= dns_cname_loops; i++)
 	  )
 #endif
        )
-        *fully_qualified_name = string_copy_dnsdomain(rr_name);	/*TTT*/
+        *fully_qualified_name = string_copy_dnsdomain(rr_name);
     }
 
   /* If any data records of the correct type were found, we are done. */
@@ -1127,7 +1123,7 @@ for (int i = 0; i <= dns_cname_loops; i++)
     }
 
   /* DNS data comes from the outside, hence tainted */
-  data = store_get(256, GET_TAINTED);				/*TTT alloc*/
+  data = store_get(256, GET_TAINTED);
   if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen,
       cname_rr.data, (DN_EXPAND_ARG4_TYPE)data, 256) < 0)
     {
@@ -1359,7 +1355,7 @@ switch (type)
 	/* If it's making an interesting assertion, return this response. */
 	if (port & 1)
 	  {
-	  *fully_qualified_name = namesuff + 1;	/*TTT*/
+	  *fully_qualified_name = namesuff + 1;
 	  return DNS_SUCCEED;
 	  }
 	}

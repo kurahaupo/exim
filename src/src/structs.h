@@ -770,7 +770,8 @@ typedef struct {
 /* Structure for holding the result of a DNS query.  A touch over
 64k big, so take care to release as soon as possible. */
 
-typedef struct {
+typedef struct dns_answer {
+  struct dns_answer * next;
   int     answerlen;              /* length of the answer */
   uschar  answer[NS_MAXMSG];      /* the answer itself */
 } dns_answer;

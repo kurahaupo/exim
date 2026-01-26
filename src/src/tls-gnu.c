@@ -3416,7 +3416,10 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
     ) if (rr->type == T_TLSA && rr->size > 3)
   {
   const uschar * p = rr->data;
-/*XXX need somehow to mark rr and its data as tainted.  Doues this mean copying it? *//*TTT*/
+/*XXX need somehow to mark rr and its data as tainted.
+Doues this mean copying it?  That could actually be preferable, as the 64k
+of dns_annwer could be alloc/free within this func. */
+/*TTT*/
   uint8_t usage = p[0], sel = p[1], type = p[2];
 
   DEBUG(D_tls)
