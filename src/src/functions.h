@@ -188,7 +188,7 @@ extern void    debug_pretrigger_discard(void);
 extern void    debug_print_socket(int);
 extern void    debug_trigger_fire(void);
 
-extern void    decode_bits(unsigned long *, size_t, int *,
+extern void    decode_bits(bitmask_word_t *, size_t, int *,
 	           const uschar *, bit_table *, int, uschar *, int);
 extern void    delete_pid_file(void);
 extern void    deliver_local(address_item *, BOOL);

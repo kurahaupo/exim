@@ -337,11 +337,11 @@ platforms, but this ensures bit vectors always work the same way. */
 
 /* This macro is for single-word bit vectors: the debug selector,
 and the first word of the log selector. */
-#define BIT(n) (1UL << (n))
+#define BIT(n) ((bitmask_word_t)1 << (n))
 
 /* And these are for multi-word vectors. */
-#define BITWORD(n) (       (n) / BITWORDSIZE)
-#define BITMASK(n) (1UL << (n) % BITWORDSIZE)
+#define BITWORD(n) (    (n) / BITWORDSIZE)
+#define BITMASK(n) (BIT((n) % BITWORDSIZE))
 
 #define BIT_CLEAR(s,z,n) ((s)[BITWORD(n)] &= ~BITMASK(n))
 #define BIT_SET(s,z,n)   ((s)[BITWORD(n)] |=  BITMASK(n))
