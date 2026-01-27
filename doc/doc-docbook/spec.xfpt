@@ -19067,6 +19067,13 @@ See &<<SECTtlssni>>& for discussion of when this option might be re-expanded.
 A forced expansion failure or setting to an empty string is equivalent to
 being unset.
 
+&*Note*&: For the server to verify the client certificate,
+the server's TLS library
+might require that the certificate includes a Client Authentication
+extension.
+It is up to the Certificate Authority that constructs and signs the
+certificate whether that is included.
+
 
 .option tls_verify_hosts main "host list&!!" unset
 .cindex "TLS" "client certificate verification"
@@ -26555,6 +26562,12 @@ name specifies the certificate for Exim as a server; it is not automatically
 assumed that the same certificate should be used when Exim is operating as a
 client.
 
+&*Note*&: For the peer to verify the certificate, the peer's TLS library
+might require that the certificate includes a Client Authentication
+extension.
+It is up to the Certificate Authority that constructs and signs the
+certificate whether that is included.
+
 
 .option tls_crl smtp string&!! unset
 .cindex "TLS" "client certificate revocation list"
@@ -30121,6 +30134,17 @@ Because it is often a long text string, it is not included in the log line or
 &"DN="&, by setting the &%tls_peerdn%& log selector, and you can use
 &%received_header_text%& to change the &'Received:'& header. When no
 certificate is supplied, &$tls_in_peerdn$& is empty.
+
+.new
+For the server to verify the client certificate,
+the server's TLS library might require that the certificate includes
+a Client Authentication extension.
+It is up to the Certificate Authority that constructs and signs the
+certificate whether that is included.
+As of 2026, public CA's are apparently becoming less amenable to supporting
+such a need.
+Running a private CA is an alternative.
+.wen
 
 
 .subsection "Caching of static server configuration items" "SSECTserverTLScache"
