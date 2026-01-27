@@ -2824,7 +2824,7 @@ on the second character (the one after '-'), to save some effort. */
       /* Use an intermediate variable so that we don't set debugging while
       decoding the debugging bits. */
 
-      unsigned long selector = D_default;
+      bitmask_word_t selector = D_default;
       debug_selector = 0;
       debug_file = NULL;
       if (*argrest == 'd')
