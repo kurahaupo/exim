@@ -29,9 +29,4 @@ as well as any supplementary groups*/
 # define EXIM_HAVE_OPENAT
 #endif
 
-#ifdef PID_T_FMT
-# undef PID_T_FMT
-#endif
-#define PID_T_FMT "%d"
-
 /* End */

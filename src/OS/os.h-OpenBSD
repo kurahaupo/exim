@@ -42,11 +42,6 @@ typedef struct __res_state *res_state;
 #define OFF_T_FMT "%lld"
 #define LONGLONG_T long long int
 
-#ifdef PID_T_FMT
-# undef PID_T_FMT
-#endif
-#define PID_T_FMT "%d"
-
 #ifdef INO_T_FMT
 # undef INO_T_FMT
 #endif

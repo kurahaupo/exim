@@ -180,7 +180,10 @@ else
 fprintf(new, "#endif\n\n");
 
 fprintf(new, "#ifndef PID_T_FMT\n");
-fprintf(new, "# define PID_T_FMT  \"%%lu\"\n");
+if (sizeof(pid_t) == sizeof(int))
+  fprintf(new, "# define PID_T_FMT  \"%%d\"\n");
+else
+  fprintf(new, "# define PID_T_FMT  \"%%lu\"\n");
 fprintf(new, "#endif\n\n");
 
 /* And for sizeof() results, size_t, which should with C99 be just %zu, deal
