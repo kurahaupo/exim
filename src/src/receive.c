@@ -4098,6 +4098,11 @@ if (message_reference)
 g = add_host_info_for_log(g);
 g = add_tls_info_for_log(g);
 
+#ifdef SUPPORT_PROXY
+if (proxy_session && LOGGING(proxy))
+  g = string_append(g, 2, US" PRX=", proxy_local_address);
+#endif
+
 if (sender_host_authenticated)
   {
   g = string_append(g, 2, US" A=", sender_host_authenticated);
@@ -4114,11 +4119,6 @@ if (prdr_requested)
   g = string_catn(g, US" PRDR", 5);
 #endif
 
-#ifdef SUPPORT_PROXY
-if (proxy_session && LOGGING(proxy))
-  g = string_append(g, 2, US" PRX=", proxy_local_address);
-#endif
-
 if (chunking_state > CHUNKING_OFFERED)
   g = string_catn(g, US" K", 2);
 
@@ -4130,6 +4130,9 @@ g = string_fmt_append(g, " S=%d", msg_size);
    8 ... 8BITMIME */
 if (LOGGING(8bitmime))
   g = string_fmt_append(g, " M8S=%d", body_8bitmime);
+
+if (LOGGING(dsn))
+  g = add_dsn_info_for_log(g, ACL_WHERE_DATA);
 
 #ifndef DISABLE_DKIM
 if (LOGGING(dkim))

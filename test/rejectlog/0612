@@ -1,6 +1,6 @@
 
 ******** SERVER ********
-1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<a@dump.ex> rejected RCPT <rmt_reject@test.ex>
-1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<c@dump.ex> temporarily rejected RCPT <rmt_defer@test.ex>
-1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<d@dump.ex> temporarily rejected RCPT <rmt_defer@test.ex>
-1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<e@dump.ex> rejected RCPT <rmt_reject@test.ex>
+1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<a@dump.ex> DSN=notify rejected RCPT <rmt_reject@test.ex>
+1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<c@dump.ex> DSN=notify temporarily rejected RCPT <rmt_defer@test.ex>
+1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<d@dump.ex> DSN=notify temporarily rejected RCPT <rmt_defer@test.ex>
+1999-03-02 09:44:33 H=localhost (myhost.test.ex) [127.0.0.1] F=<e@dump.ex> DSN=notify rejected RCPT <rmt_reject@test.ex>

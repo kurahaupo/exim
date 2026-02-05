@@ -39805,6 +39805,7 @@ the following table:
 &`DKIM`&        domain verified in incoming message
 &`DN  `&        distinguished name from peer certificate
 &`DS  `&        DNSSEC secured lookups
+&`DSN `&        DSN extension information
 &`DT  `&        on &`=>`&, &'=='& and &'**'& lines: time taken for, or to attempt, a delivery
 &`F   `&        sender address (on delivery lines)
 &`H   `&        host name and IP address
@@ -39913,6 +39914,7 @@ selection marked by asterisks:
 .irow &`dmarc_verbose`&			&nbsp; "DMARC status on accept/reject lines"
 .irow &`dnslist_defer`&			*	"defers of DNS list (aka RBL) lookups"
 .irow &`dnssec`&			&nbsp; "DNSSEC secured lookups"
+.irow &`dsn`&				&nbsp; "DSN extension use"
 .irow &`etrn`&				*	"ETRN commands"
 .irow &`host_lookup_failed`&		*	"as it says"
 .irow &`ident_timeout`&			&nbsp; "timeout for ident connection"
@@ -40064,6 +40066,19 @@ dns lookups gave secure results a tag of DS is added.
 For acceptance this covers the reverse and forward lookups for host name verification.
 It does not cover helo-name verification.
 For delivery this covers the SRV, MX, A and/or AAAA lookups.
+.next
+.new
+.cindex log "DSN extension"
+.cindex DSN logging
+&%dsn%&: When a DSN extension was used for a message, an item with
+a tag of DSN is added to accept, reject and delivery log lines.
+For accept and reject the values indicate the MAIL and RCPT extensions
+used.
+For a recipient reject, the RCPT exensions for that recipent are indicated;
+otherwise the aggregate of RCPT extensions received for the message is given.
+For a delivery (success or failure),
+the DSN status for the delivery connection is indicated.
+.wen
 .next
 .cindex "log" "ETRN commands"
 .cindex "ETRN" "logging"

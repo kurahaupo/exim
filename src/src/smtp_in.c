@@ -160,6 +160,9 @@ static uschar *smtp_data_buffer;
 static uschar *smtp_cmd_data;
 static uschar *smtp_resp_buffer;
 
+static uschar * rcpt_orcpt;
+static int rcpt_dsn_flags;
+
 /* We need to know the position of RSET, HELO, EHLO, AUTH, and STARTTLS. Their
 final fields of all except AUTH are forced TRUE at the start of a new message
 setup, to allow one of each between messages that is not counted as a nonmail
@@ -1515,6 +1518,42 @@ if (LOGGING(tls_sni) && tls_in.sni)
   g = string_append(g, 2, US" SNI=", string_printing2(tls_in.sni, SP_TAB|SP_SPACE));
 return g;
 #endif
+}
+
+/* Append DSN information to a log line
+
+Arguments:
+  g		String under construction: allocated string to extend, or NULL
+  where		ACL cause of call
+
+Returns:	Allocated string or NULL
+*/
+gstring *
+add_dsn_info_for_log(gstring * g, int where)
+{
+BOOL has_orcpt = FALSE, has_notify = FALSE;
+
+if (where == ACL_WHERE_RCPT)
+  {
+  if (rcpt_orcpt) has_orcpt = TRUE;
+  if (rcpt_dsn_flags) has_notify = TRUE;
+  }
+else if (recipients_list) for (int i = 0; i < recipients_count; i++)
+  {
+  has_orcpt |= !!recipients_list[i].orcpt;
+  has_notify |= !!recipients_list[i].dsn_flags;
+  }
+
+if (LOGGING(dsn) && (dsn_ret || dsn_envid || has_orcpt || has_notify))
+  {
+  g = string_catn(g, US" DSN=", 5);
+  if (dsn_ret) g = string_catn(g, US"ret,", 4);
+  if (dsn_envid) g = string_catn(g, US"envid,", 6);
+  if (has_orcpt) g = string_catn(g, US"orcpt,", 6);
+  if (has_notify) g = string_catn(g, US"notify,", 7);
+  gstring_trim(g, 1);
+  }
+return g;
 }
 
 
@@ -3113,10 +3152,7 @@ smtp_handle_acl_fail(int where, int rc, uschar * user_msg, uschar * log_msg)
 {
 BOOL drop = rc == FAIL_DROP;
 int codelen = 3;
-uschar *smtp_code;
-uschar *lognl;
-uschar *sender_info = US"";
-uschar *what;
+uschar * smtp_code, * lognl, * sender_info = US"", * what;
 
 if (drop) rc = FAIL;
 
@@ -3263,13 +3299,14 @@ is closing if required and return 2.  */
 
 if (log_reject_target)
   log_write(where == ACL_WHERE_CONNECT ? L_connection_reject : 0,
-    log_reject_target, "%s%s%#Y%s%#Y%#Y %srejected %s%s",
+    log_reject_target, "%s%s%#Y%s%#Y%#Y%#Y %srejected %s%s",
     LOGGING(dnssec) && sender_host_dnssec ? US" DS" : US"",
     host_and_ident(TRUE),
     add_tls_info_for_log(NULL),
     sender_info,
     add_spf_info_for_log(NULL),
     add_dmarc_info_for_log(NULL),
+    add_dsn_info_for_log(NULL, where),
     rc == FAIL ? US"" : US"temporarily ",
     what, log_msg);
 
@@ -3285,7 +3322,7 @@ smtp_notquit_exit(US"acl-drop", NULL, NULL);
 
 /* An overenthusiastic fail2ban/iptables implimentation has been seen to result
 in the TCP conn staying open, and retrying, despite this process exiting. A
-malicious client could possibly do the same, tying up server netowrking
+malicious client could possibly do the same, tying up server networking
 resources. Close the socket explicitly to try to avoid that (there's a note in
 the Linux socket(7) manpage, SO_LINGER para, to the effect that exit() without
 close() results in the socket always lingering). */
@@ -4060,8 +4097,7 @@ while (done <= 0)
   uschar * s;
   BOOL was_rej_mail = FALSE, was_rcpt = FALSE;
   int start, end, sender_domain, recipient_domain;
-  int rc, c, dsn_flags;
-  uschar * orcpt = NULL;
+  int rc, c;
   gstring * g;
 
 #ifdef AUTH_TLS
@@ -4317,11 +4353,11 @@ while (done <= 0)
 	  tls_in.active.sock >= 0 ? " TLS" : "", host_and_ident(FALSE));
 
 	/* Verify if configured. This doesn't give much security, but it does
-	make some people happy to be able to do it. If helo_verify_required is set,
-	(host matches helo_verify_hosts) failure forces rejection. If helo_verify
-	is set (host matches helo_try_verify_hosts), it does not. This is perhaps
-	now obsolescent, since the verification can now be requested selectively
-	at ACL time. */
+	make some people happy to be able to do it. If helo_verify_required is
+	set, (host matches helo_verify_hosts) failure forces rejection. If
+	helo_verify is set (host matches helo_try_verify_hosts), it does not.
+	This is perhaps now obsolescent, since the verification can now be
+	requested selectively at ACL time. */
 
 	f.helo_verified = f.helo_verify_failed = sender_helo_dnssec = FALSE;
 	if (fl.helo_verify_required || fl.helo_verify)
@@ -4856,8 +4892,7 @@ while (done <= 0)
 	    break;
 
 	  /* Handle the two DSN options, but only if configured to do so (which
-	  will have caused "DSN" to be given in the EHLO response). The code
-	  itself is included only if configured in at build time. */
+	  will have caused "DSN" to be given in the EHLO response). */
 
 	  case ENV_MAIL_OPT_RET:
 	    if (fl.dsn_advertised)
@@ -5206,13 +5241,13 @@ while (done <= 0)
 	break;
 	}
 
-      /* Set the DSN flags orcpt and dsn_flags from the session*/
-      orcpt = NULL;
-      dsn_flags = 0;
+      /* Set the DSN flags orcpt and dsn_flags from the session */
+      rcpt_orcpt = NULL;
+      rcpt_dsn_flags = 0;
 
       if (fl.esmtp) for(;;)
 	{
-	uschar *name, *value;
+	uschar * name, * value;
 
 	if (!extract_option(&name, &value))
 	  break;
@@ -5220,49 +5255,49 @@ while (done <= 0)
 	if (fl.dsn_advertised && strcmpic(name, US"ORCPT") == 0)
 	  {
 	  /* Check whether orcpt has been already set */
-	  if (orcpt)
+	  if (rcpt_orcpt)
 	    {
 	    done = synprot_error(L_smtp_syntax_error, 501, NULL,
 	      US"ORCPT can be specified once only");
 	    goto COMMAND_LOOP;
 	    }
-	  orcpt = string_copy(value);
-	  DEBUG(D_receive) debug_printf("DSN orcpt: %s\n", orcpt);
+	  rcpt_orcpt = string_copy(value);
+	  DEBUG(D_receive) debug_printf("DSN orcpt: %s\n", rcpt_orcpt);
 	  }
 
 	else if (fl.dsn_advertised && strcmpic(name, US"NOTIFY") == 0)
 	  {
 	  /* Check if the notify flags have been already set */
-	  if (dsn_flags > 0)
+	  if (rcpt_dsn_flags > 0)
 	    {
 	    done = synprot_error(L_smtp_syntax_error, 501, NULL,
 		US"NOTIFY can be specified once only");
 	    goto COMMAND_LOOP;
 	    }
 	  if (strcmpic(value, US"NEVER") == 0)
-	    dsn_flags |= rf_notify_never;
+	    rcpt_dsn_flags |= rf_notify_never;
 	  else
 	    {
-	    uschar *p = value;
-	    while (*p != 0)
+	    uschar * p = value;
+	    while (*p)
 	      {
 	      uschar *pp = p;
-	      while (*pp != 0 && *pp != ',') pp++;
+	      while (*pp && *pp != ',') pp++;
 	      if (*pp == ',') *pp++ = 0;
 	      if (strcmpic(p, US"SUCCESS") == 0)
 		{
 		DEBUG(D_receive) debug_printf("DSN: Setting notify success\n");
-		dsn_flags |= rf_notify_success;
+		rcpt_dsn_flags |= rf_notify_success;
 		}
 	      else if (strcmpic(p, US"FAILURE") == 0)
 		{
 		DEBUG(D_receive) debug_printf("DSN: Setting notify failure\n");
-		dsn_flags |= rf_notify_failure;
+		rcpt_dsn_flags |= rf_notify_failure;
 		}
 	      else if (strcmpic(p, US"DELAY") == 0)
 		{
 		DEBUG(D_receive) debug_printf("DSN: Setting notify delay\n");
-		dsn_flags |= rf_notify_delay;
+		rcpt_dsn_flags |= rf_notify_delay;
 		}
 	      else
 		{
@@ -5273,7 +5308,7 @@ while (done <= 0)
 		}
 	      p = pp;
 	      }
-	      DEBUG(D_receive) debug_printf("DSN Flags: %x\n", dsn_flags);
+	      DEBUG(D_receive) debug_printf("DSN Flags: %x\n", rcpt_dsn_flags);
 	    }
 	  }
 
@@ -5395,8 +5430,8 @@ while (done <= 0)
 	receive_add_recipient(recipient, -1);
 
 	/* Set the dsn flags in the recipients_list */
-	recipients_list[recipients_count-1].orcpt = orcpt;
-	recipients_list[recipients_count-1].dsn_flags = dsn_flags;
+	recipients_list[recipients_count-1].orcpt = rcpt_orcpt;
+	recipients_list[recipients_count-1].dsn_flags = rcpt_dsn_flags;
 
 	/* DEBUG(D_receive) debug_printf("DSN: orcpt: %s  flags: %d\n",
 	  recipients_list[recipients_count-1].orcpt,

@@ -499,6 +499,7 @@ enum logbit {
   Li_dmarc,
   Li_dmarc_verbose,
   Li_dnssec,
+  Li_dsn,
   Li_ident_timeout,
   Li_incoming_interface,
   Li_incoming_port,

@@ -375,7 +375,7 @@ Returns:       nothing
 */
 
 void
-deliver_msglog(const char *format, ...)
+deliver_msglog(const char * format, ...)
 {
 va_list ap;
 if (!message_logs) return;
@@ -1097,6 +1097,20 @@ return g;
 
 
 
+static gstring *
+delivery_log_dsn(gstring * g, const address_item * addr)
+{
+return LOGGING(dsn)
+  ? dsn_ret || dsn_envid || addr->dsn_flags & rf_dsnflags || addr->dsn_orcpt
+    ? string_append(g, 2, US" DSN=",
+	addr->dsn_flags & rf_dsnlasthop ? US"notrouter"
+	: addr->dsn_aware == dsn_support_unknown ? US"notsmtp"
+	: addr->dsn_aware == dsn_support_no ? US"notpeer"
+	: US"yes")
+    : g
+  : g;
+}
+
 /******************************************************************************/
 
 
@@ -1237,12 +1251,14 @@ else
     g = string_catn(g, US" K", 2);
   }
 
+g = delivery_log_dsn(g, addr);
+
 #ifndef DISABLE_DKIM
-  if (addr->dkim_used && LOGGING(dkim_verbose))
-    {
-    g = string_catn(g, US" DKIM=", 6);
-    g = string_cat(g, addr->dkim_used);
-    }
+if (addr->dkim_used && LOGGING(dkim_verbose))
+  {
+  g = string_catn(g, US" DKIM=", 6);
+  g = string_cat(g, addr->dkim_used);
+  }
 #endif
 
 /* confirmation message (SMTP (host_used) and LMTP (driver_name)) */
@@ -1332,6 +1348,8 @@ if (addr->basic_errno > 0)
 if (addr->host_used)
   g = d_hostlog(g, addr);
 
+g = delivery_log_dsn(g, addr);
+
 if (LOGGING(deliver_time))
   g = string_append(g, 2, US" DT=", string_timediff(&addr->delivery_time));
 
@@ -1408,6 +1426,8 @@ if (LOGGING(protocol_detail) && addr->protocol_sequence)
 #ifndef DISABLE_TLS
 g = d_tlslog(g, addr);
 #endif
+
+g = delivery_log_dsn(g, addr);
 
 if (addr->basic_errno > 0)
   g = string_append(g, 2, US" : ", US strerror(addr->basic_errno));

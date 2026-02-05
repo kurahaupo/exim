@@ -42,7 +42,51 @@ QUIT
 exim -q
 ****
 #
+millisleep 500
+killdaemon
+exim -DSERVER=server -DOPTION=y -DLOG_SELECTOR='+received_recipients' -bd -oX PORT_D
+****
+#
 # Client requests delivery notification; the server supports DSN so takes responsibility
+# However, no logging
+exim -z accept/success
+****
+client HOSTIPV4 PORT_D
+??? 220
+EHLO testclient
+??? 250-
+??? 250-SIZE
+??? 250-DSN
+??? 250 HELP
+MAIL FROM:<b_nolog@dump.ex>
+??? 250
+RCPT TO:<rmt_accept@test.ex> NOTIFY=success
+??? 250
+DATA
+??? 354
+Subject: test
+.
+??? 250
+QUIT
+??? 221
+****
+# MSA send msg to MDA
+exim -q
+****
+# deliver msg at MDA
+exim -q
+****
+# deliver notification from MDA
+exim -q
+****
+#
+millisleep 500
+killdaemon
+exim -DSERVER=server -DOPTION=y -bd -oX PORT_D
+****
+#
+# Client requests delivery notification; the server supports DSN so takes responsibility
+# Back to with-logging on the daemon
 exim -z accept/success
 ****
 client HOSTIPV4 PORT_D

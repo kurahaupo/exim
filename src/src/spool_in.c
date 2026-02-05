@@ -245,7 +245,7 @@ local_scan_data = NULL;
 max_received_linelength = 0;
 message_linecount = 0;
 received_protocol = NULL;
-received_count = 0;
+received_count = recipients_count = 0;
 recipients_list = NULL;
 sender_address = NULL;
 sender_fullhost = NULL;

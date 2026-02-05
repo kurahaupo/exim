@@ -19,7 +19,12 @@ pipelining_advertise_hosts = :
 trusted_users = CALLER
 acl_smtp_rcpt = rcpt
 
-log_selector = +received_recipients
+.ifdef LOG_SELECTOR
+log_selector = LOG_SELECTOR
+.else
+log_selector = +received_recipients +dsn
+.endif
+
 queue_only
 queue_run_in_order
 

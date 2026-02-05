@@ -107,6 +107,7 @@ extern tree_node *acl_var_create(const uschar *);
 extern void    acl_var_write(uschar *, uschar *, void *);
 extern gstring * add_dmarc_info_for_log(gstring *);
 extern void    add_driver_info(driver_info **, const driver_info *, size_t);
+extern gstring * add_dsn_info_for_log(gstring *, int);
 extern gstring * add_spf_info_for_log(gstring *);
 extern gstring * add_tls_info_for_log(gstring *);
 
