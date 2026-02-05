@@ -423,6 +423,7 @@ enum {
   DEBUG_BIT(macro),		/* 33 */
   DEBUG_BIT(regex),
 #else
+# warn BITWORDSIZE <= 32
   DEBUG_Z_BIT(macro),
   DEBUG_Z_BIT(regex),
 #endif
