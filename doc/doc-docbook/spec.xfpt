@@ -441,8 +441,7 @@ available in other formats (HTML, PostScript, PDF, and Texinfo). Section
 .cindex "website"
 .cindex "FTP site"
 The primary site for Exim source distributions is the &%exim.org%& FTP site,
-available over HTTPS, HTTP and FTP.  These services, and the &%exim.org%&
-website, are hosted at the University of Cambridge.
+available over HTTPS, HTTP and FTP.
 
 .cindex "wiki"
 .cindex "FAQ"
@@ -455,10 +454,16 @@ The wiki site should always redirect to the correct place, which is currently
 provided by GitHub, and is open to editing by anyone with a GitHub account.
 
 .cindex Bugzilla
-An Exim Bugzilla exists at &url(https://bugs.exim.org). You can use
+.cindex "wish list"
+.cindex "bug reporting"
+.new
+An issues tracking system exists at
+&url(https://code.exim.org/exim/exim/issues)/
+You can use
 this to report bugs, and also to add items to the wish list. Please search
 first to check that you are not duplicating a previous entry.
-Please do not ask for configuration help in the bug-tracker.
+Please do not ask for configuration help in this system.
+.wen
 
 
 .section "Mailing lists" "SECID3"
@@ -747,7 +752,7 @@ A number of pieces of external code are included in the Exim distribution.
 .ilist
 Regular expressions are supported in the main Exim program and in the
 Exim monitor using the freely-distributable PCRE2 library, copyright
-&copy; University of Cambridge. The source to PCRE2 is not longer shipped with
+&copy; University of Cambridge. The source to PCRE2 is not  shipped with
 Exim, so you will need to use the version of PCRE2 shipped with your system,
 or obtain and install the full version of the library from
 &url(https://github.com/PhilipHazel/pcre2/releases).
