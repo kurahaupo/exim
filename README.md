@@ -42,9 +42,7 @@ The git repository for the project is at
 
 ## Bug Tracking
 
-Currently this is all done using Bugzilla at [https://bugs.exim.org/](https://bugs.exim.org/)
-
-The bug tracking will be migrated to the issues section of the repository in the near future.
+Bugs are managed using Forgejo at [https://code.exim.org/exim/exim/issues](https://code.exim.org/exim/exim/issues)
 
 ## Mailing List
 
