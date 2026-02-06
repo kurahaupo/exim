@@ -634,7 +634,7 @@ nextinput:
 	  }
 
 	  if (rc > 0) inbufferp[rc] = '\0';
-	  if (rc <= 0 || strchr(inbufferp, '\n')) break;
+	  if (rc <= 0 || strchr(CS inbufferp, '\n')) break;
 	  inbufferp += rc;
 	  if (inbufferp >= inbuffer + bsiz)
 	    {

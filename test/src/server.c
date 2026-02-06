@@ -460,7 +460,7 @@ unsigned char buffer[10240];
 
 struct sockaddr_un sockun;            /* don't use "sun" */
 struct sockaddr_un sockun_accepted;
-int sockun_len = sizeof(sockun_accepted);
+unsigned int sockun_len = sizeof(sockun_accepted);
 
 #if HAVE_IPV6
 struct sockaddr_in6 sin6;

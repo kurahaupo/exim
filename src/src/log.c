@@ -1544,8 +1544,13 @@ if (debug_file)
   }
 
 if (tag_name && (Ustrchr(tag_name, '/') != NULL))
-  return log_write(0, LOG_MAIN|LOG_PANIC,
+  {
+  log_write(0, LOG_MAIN|LOG_PANIC, "debug tag may not contain a '/' in: %s",
+      tag_name);
+  log_write(0, LOG_MAIN|LOG_PANIC,
 		  "debug tag may not contain a '/' in: %s", tag_name);
+  return;
+  }
 
 debug_selector = D_default;
 if (opts)
