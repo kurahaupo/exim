@@ -1,11 +1,11 @@
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1234
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1234
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
-  uid=EXIM_UID gid=EXIM_GID pid=p1234
+   uid ROOT->EXIM_UID gid CALLER_GID->EXIM_GID pid=p1234
 readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
@@ -55,7 +55,7 @@ exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=EXIM_GID pid=p1235
+   uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1235
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -116,7 +116,7 @@ search_tidyup called
 no retry data available
 search_tidyup called
 changed uid/gid: local delivery to nofile <nofile@test.ex> transport=t1
-  uid=CALLER_UID gid=CALLER_GID pid=p1236
+   uid ROOT->CALLER_UID gid EXIM_GID->CALLER_GID pid=p1236
   home=NULL current=/
 set_process_info: pppp delivering 10HmaX-000000005vi-0000 to nofile using t1
 appendfile transport entered
@@ -166,7 +166,7 @@ LOG: MAIN
   => nofile <nofile@test.ex> R=r1 T=t1
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
 changed uid/gid: post-delivery tidying
-  uid=EXIM_UID gid=EXIM_GID pid=p1235
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1235
 set_process_info: pppp tidying up after delivering 10HmaX-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -193,11 +193,11 @@ search_tidyup called
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1237
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1237
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
-  uid=EXIM_UID gid=EXIM_GID pid=p1237
+   uid ROOT->EXIM_UID gid CALLER_GID->EXIM_GID pid=p1237
 readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
@@ -246,7 +246,7 @@ exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=EXIM_GID pid=p1238
+   uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1238
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -307,7 +307,7 @@ search_tidyup called
 no retry data available
 search_tidyup called
 changed uid/gid: local delivery to userx <userx@test.ex> transport=t1
-  uid=CALLER_UID gid=CALLER_GID pid=p1239
+   uid ROOT->CALLER_UID gid EXIM_GID->CALLER_GID pid=p1239
   home=NULL current=/
 set_process_info: pppp delivering 10HmaY-000000005vi-0000 to userx using t1
 appendfile transport entered
@@ -359,7 +359,7 @@ LOG: MAIN
   => userx <userx@test.ex> R=r1 T=t1
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
 changed uid/gid: post-delivery tidying
-  uid=EXIM_UID gid=EXIM_GID pid=p1238
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1238
 set_process_info: pppp tidying up after delivering 10HmaY-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -386,11 +386,11 @@ search_tidyup called
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1240
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1240
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
-  uid=EXIM_UID gid=EXIM_GID pid=p1240
+   uid ROOT->EXIM_UID gid CALLER_GID->EXIM_GID pid=p1240
 readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
@@ -439,7 +439,7 @@ exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=EXIM_GID pid=p1241
+   uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1241
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -500,7 +500,7 @@ search_tidyup called
 no retry data available
 search_tidyup called
 changed uid/gid: local delivery to userx <userx@test.ex> transport=t1
-  uid=CALLER_UID gid=CALLER_GID pid=p1242
+   uid ROOT->CALLER_UID gid EXIM_GID->CALLER_GID pid=p1242
   home=NULL current=/
 set_process_info: pppp delivering 10HmaZ-000000005vi-0000 to userx using t1
 appendfile transport entered
@@ -546,7 +546,7 @@ LOG: MAIN
   == userx@test.ex R=r1 T=t1 defer (-22): mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
 changed uid/gid: post-delivery tidying
-  uid=EXIM_UID gid=EXIM_GID pid=p1241
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1241
 set_process_info: pppp tidying up after delivering 10HmaZ-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -584,11 +584,11 @@ search_tidyup called
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1243
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1243
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
-  uid=EXIM_UID gid=EXIM_GID pid=p1243
+   uid ROOT->EXIM_UID gid CALLER_GID->EXIM_GID pid=p1243
 readconf_rest: routers
 readconf_rest: transports
  seeking password data for user "CALLER": cache not available
@@ -637,7 +637,7 @@ exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=EXIM_GID pid=p1244
+   uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1244
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -706,7 +706,7 @@ retry record exists: age=ttt (max 1w)
   time to retry = tttt expired = 0
 search_tidyup called
 changed uid/gid: local delivery to userx <userx@test.ex> transport=t1
-  uid=CALLER_UID gid=CALLER_GID pid=p1245
+   uid ROOT->CALLER_UID gid EXIM_GID->CALLER_GID pid=p1245
   home=NULL current=/
 set_process_info: pppp delivering 10HmbA-000000005vi-0000 to userx using t1
 appendfile transport entered
@@ -739,7 +739,7 @@ LOG: MAIN
   == userx@test.ex R=r1 T=t1 defer (-22): mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
 changed uid/gid: post-delivery tidying
-  uid=EXIM_UID gid=EXIM_GID pid=p1244
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1244
 set_process_info: pppp tidying up after delivering 10HmbA-000000005vi-0000
 Processing retry items
  Succeeded addresses:

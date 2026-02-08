@@ -1,7 +1,7 @@
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: -C, -D, -be or -bf forces real uid
-  uid=CALLER_UID gid=CALLER_GID pid=p1234
+   uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1234
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid

@@ -1,7 +1,7 @@
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1234
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1234
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
@@ -292,7 +292,7 @@ search_tidyup called
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1235
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1235
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
@@ -581,7 +581,7 @@ search_tidyup called
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1236
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1236
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
@@ -872,7 +872,7 @@ search_tidyup called
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1237
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1237
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid
@@ -963,7 +963,7 @@ search_tidyup called
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
-  uid=uuuu gid=CALLER_GID pid=p1238
+   uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1238
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid

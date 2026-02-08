@@ -767,8 +767,10 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/\beuid=$parm_caller_uid\b/euid=CALLER_UID/g;
   s/\begid=$parm_caller_gid\b/egid=CALLER_GID/g;
 
-  s/\buid=$parm_caller_uid\b/uid=CALLER_UID/g;
-  s/\bgid=$parm_caller_gid\b/gid=CALLER_GID/g;
+  s/\buid[= ]\K$parm_caller_uid\b/CALLER_UID/g;
+  s/\buid 0->\K$parm_caller_uid\b/CALLER_UID/g;
+  s/\bgid[= ]\K$parm_caller_gid\b/CALLER_GID/g;
+  s/\bgid (?:\d+|CALLER_GID)->\K$parm_caller_gid\b/CALLER_GID/;
 
   s/\bname="?$parm_caller_gecos"?/name=CALLER_GECOS/g;
 
@@ -803,8 +805,13 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/\beuid=$parm_exim_uid\b/euid=EXIM_UID/g;
   s/\begid=$parm_exim_gid\b/egid=EXIM_GID/g;
 
-  s/\buid=$parm_exim_uid\b/uid=EXIM_UID/g;
-  s/\bgid=$parm_exim_gid\b/gid=EXIM_GID/g;
+  s/\buid \K0\b/ROOT/;
+  s/\buid ROOT->\K0\b/ROOT/;
+
+  s/\buid[= ]\K$parm_exim_uid\b/EXIM_UID/;
+  s/\buid[= ](?:ROOT|EXIM_UID)->\K$parm_exim_uid\b/EXIM_UID/;
+  s/\bgid[= ]\K$parm_exim_gid\b/EXIM_GID/;
+  s/\bgid[= ](?:EXIM|CALLER)_GID->\K$parm_exim_gid\b/EXIM_GID/;
 
   s/^$parm_eximuser $parm_exim_uid $parm_exim_gid/EXIMUSER EXIM_UID EXIM_GID/;
 
@@ -822,7 +829,8 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/\begid=\d+/egid=gggg/;
   s/\b(?:pid=|pid\s|PID:\s|Process\s|child\s)\K(\d+)/new_value($1, "p%s", \$next_pid)/gxe;
   s/ Ci=\K(\d+)/new_value($1, "p%s", \$next_pid)/gxe;
-  s/\buid=\d+/uid=uuuu/;
+  s/\buid[= ]\K\d+/uuuu/;
+  s/\buid[= ]uuuu->\K\d+\b/uuuu/;
   s/\beuid=\d+/euid=uuuu/;
   s/set_process_info:\s+\d+/set_process_info: pppp/;
   s/process \d+ running as transport filter/process pppp running as transport filter/;

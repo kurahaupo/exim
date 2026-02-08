@@ -803,8 +803,10 @@ DEBUG(D_uid)
   {
   int group_count, save_errno;
   gid_t group_list[EXIM_GROUPLIST_SIZE];
-  debug_printf("changed uid/gid: %s\n  uid=%ld gid=%ld pid=" PID_T_FMT "\n",
-    msg, (long int)geteuid(), (long int)getegid(), getpid());
+  debug_printf("changed uid/gid: %s\n"
+      "   uid %ld->%ld gid %ld->%ld pid=" PID_T_FMT "\n",
+    msg, (long)euid, (long)geteuid(),
+    (long)egid, (long)getegid(), getpid());
   group_count = getgroups(nelem(group_list), group_list);
   save_errno = errno;
   debug_printf("  auxiliary group list:");
