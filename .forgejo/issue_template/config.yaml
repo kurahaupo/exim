@@ -1,0 +1,11 @@
+# Disable blank issues to force template usage
+blank_issues_enabled: true
+
+# Provide alternative support channels
+contact_links:
+  - name: User Support Forum
+    url: https://lists.exim.org/lurker/list/exim-users.en.html
+    about: Get help from the community instead of filing a bug
+  - name: Security Team
+    url: mailto:security@exim.org
+    about: Report security vulnerabilities privately
