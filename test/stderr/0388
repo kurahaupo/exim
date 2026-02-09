@@ -286,9 +286,9 @@ routing CALLER@myhost.test.ex
   address match test: subject= pattern=
    in senders? yes (matched "")
  calling r0 router
-rda_interpret (string): ':blackhole:'
-expanded: ':blackhole:'
-file is not a filter file
+ rda_interpret (string): ':blackhole:'
+ expanded: ':blackhole:'
+  file is not a filter file
 parse_forward_list: :blackhole:
 extract item: :blackhole:
 address :blackhole:d

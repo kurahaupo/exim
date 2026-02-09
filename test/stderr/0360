@@ -35,9 +35,9 @@ routing cms@test.ex
 --------> r2 router <--------
  local_part=cms domain=test.ex
  calling r2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
-expanded: 'unknown@recurse.test.ex, defer'
-file is not a filter file
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
+ expanded: 'unknown@recurse.test.ex, defer'
+  file is not a filter file
 parse_forward_list: unknown@recurse.test.ex, defer
 extract item: unknown@recurse.test.ex
 extract item: defer
@@ -89,9 +89,9 @@ routing defer@test.ex
 --------> r2 router <--------
  local_part=defer domain=test.ex
  calling r2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
-expanded: ':defer: Forcibly deferred'
-file is not a filter file
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
+ expanded: ':defer: Forcibly deferred'
+  file is not a filter file
 parse_forward_list: :defer: Forcibly deferred
 extract item: :defer: Forcibly deferred
 r2 router: defer for defer@test.ex
@@ -184,9 +184,9 @@ routing cms@test.ex
 --------> r2 router <--------
  local_part=cms domain=test.ex
  calling r2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
-expanded: 'unknown@recurse.test.ex, defer'
-file is not a filter file
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
+ expanded: 'unknown@recurse.test.ex, defer'
+  file is not a filter file
 parse_forward_list: unknown@recurse.test.ex, defer
 extract item: unknown@recurse.test.ex
 extract item: defer
@@ -238,9 +238,9 @@ routing defer@test.ex
 --------> r2 router <--------
  local_part=defer domain=test.ex
  calling r2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
-expanded: ':defer: Forcibly deferred'
-file is not a filter file
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0360.aliases}}'
+ expanded: ':defer: Forcibly deferred'
+  file is not a filter file
 parse_forward_list: :defer: Forcibly deferred
 extract item: :defer: Forcibly deferred
 r2 router: defer for defer@test.ex

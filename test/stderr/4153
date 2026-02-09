@@ -16,8 +16,8 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: retry
 running system filter
- Filtering did not set up a significant delivery.
- Normal delivery will occur.
+  Filtering did not set up a significant delivery.
+  Normal delivery will occur.
 system filter returned 1
  test.ex in ""? no (end of list)
  CALLER@test.ex in senders? yes (end of list)
@@ -41,8 +41,8 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: retry
 running system filter
- Filtering did not set up a significant delivery.
- Normal delivery will occur.
+  Filtering did not set up a significant delivery.
+  Normal delivery will occur.
 system filter returned 1
 LOG: MAIN
   ** CALLER@test.ex : Unrouteable address

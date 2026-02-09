@@ -172,9 +172,9 @@ routing kilos@recurse.test.ex.test.ex
   list element: kilos
   kilos in local_parts? yes (matched "kilos")
  calling r3 router
-rda_interpret (string): '$local_part@$domain'
-expanded: 'kilos@recurse.test.ex.test.ex' (tainted)
-file is not a filter file
+ rda_interpret (string): '$local_part@$domain'
+ expanded: 'kilos@recurse.test.ex.test.ex' (tainted)
+  file is not a filter file
 parse_forward_list: kilos@recurse.test.ex.test.ex
 extract item: kilos@recurse.test.ex.test.ex
 r3 router generated kilos@recurse.test.ex.test.ex

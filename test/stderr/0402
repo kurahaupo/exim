@@ -546,9 +546,9 @@ routing rd+usery@test.ex
  try option 'set'
  calling r5 router
  try option 'qualify_domain'
-rda_interpret (string): 'TESTSUITE/test-mail/junk'
-expanded: 'TESTSUITE/test-mail/junk'
-file is not a filter file
+ rda_interpret (string): 'TESTSUITE/test-mail/junk'
+ expanded: 'TESTSUITE/test-mail/junk'
+  file is not a filter file
 parse_forward_list: TESTSUITE/test-mail/junk
 extract item: TESTSUITE/test-mail/junk
  try option 'errors_to'
@@ -607,9 +607,9 @@ routing rd+CALLER@test.ex
  try option 'set'
  calling r4 router
  try option 'qualify_domain'
-rda_interpret (string): 'TESTSUITE/test-mail/junk'
-expanded: 'TESTSUITE/test-mail/junk'
-file is not a filter file
+ rda_interpret (string): 'TESTSUITE/test-mail/junk'
+ expanded: 'TESTSUITE/test-mail/junk'
+  file is not a filter file
 parse_forward_list: TESTSUITE/test-mail/junk
 extract item: TESTSUITE/test-mail/junk
  try option 'errors_to'

@@ -805,7 +805,7 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/\beuid=$parm_exim_uid\b/euid=EXIM_UID/g;
   s/\begid=$parm_exim_gid\b/egid=EXIM_GID/g;
 
-  s/\buid \K0\b/ROOT/;
+  s/\be?[ug]id[= ]\K0\b/ROOT/g;
   s/\buid ROOT->\K0\b/ROOT/;
 
   s/\buid[= ]\K$parm_exim_uid\b/EXIM_UID/;
@@ -984,7 +984,7 @@ RESET_AFTER_EXTRA_LINE_READ:
   # The sizes of filter files may vary because of the substitution of local
   # filenames, logins, etc.
 
-  s/^\d+(?= (\(tainted\) )?bytes read from )/ssss/;
+  s/^\s*\K\d+(?= (\(tainted\) )?bytes read from )/ssss/;
 
 
   # ======== OpenSSL error messages ========

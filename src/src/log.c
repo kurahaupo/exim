@@ -1539,15 +1539,12 @@ if (debug_file)
   {
   debug_printf("DEBUGGING ACTIVATED FROM WITHIN CONFIG.\n"
       "DEBUG: Tag=%q opts=%q\n", tag_name, opts ? opts : US"");
-  return;
+  return debug_print_ids(US"");
   }
 
 if (tag_name && (Ustrchr(tag_name, '/') != NULL))
-  {
-  log_write(0, LOG_MAIN|LOG_PANIC, "debug tag may not contain a '/' in: %s",
-      tag_name);
-  return;
-  }
+  return log_write(0, LOG_MAIN|LOG_PANIC,
+		  "debug tag may not contain a '/' in: %s", tag_name);
 
 debug_selector = D_default;
 if (opts)
@@ -1565,6 +1562,8 @@ if ((debug_fd = open_log(lt_debug, tag_name)) != -1)
   debug_file = fdopen(debug_fd, "w");
 else
   log_write(0, LOG_MAIN|LOG_PANIC, "unable to open debug log");
+
+debug_print_ids(US"debug enabled:");
 }
 
 
@@ -1576,7 +1575,7 @@ if (debug_fd < 0)
   Ustrncpy(debuglog_name, filename, sizeof(debuglog_name)-1);
   if ((debug_fd = log_open_as_exim(filename)) >= 0)
     debug_file = fdopen(debug_fd, "w");
-  DEBUG(D_deliver) debug_printf("debug enabled by spoolfile\n");
+  DEBUG(D_deliver) debug_print_ids(US"debug enabled by spoolfile\n");
   }
 /*
 else DEBUG(D_deliver)

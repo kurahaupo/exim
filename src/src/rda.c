@@ -122,7 +122,7 @@ if (saved_errno == ENOENT)
   saved_errno = errno;
   ALARM_CLR(0);
 
-  DEBUG(D_route) debug_printf("stat(%s)=%d\n", s, rc);
+  DEBUG(D_route) debug_printf_indent("stat(%s)=%d\n", s, rc);
   }
 
 if (sigalrm_seen || rc != 0)
@@ -133,7 +133,7 @@ if (sigalrm_seen || rc != 0)
   }
 
 *error = string_sprintf("%s does not exist", filename);
-DEBUG(D_route) debug_printf("%s\n", *error);
+DEBUG(D_route) debug_printf_indent("%s\n", *error);
 return FILE_NOT_EXIST;
 }
 
@@ -200,7 +200,7 @@ directory test. */
 if (!(fwd = Ufopen(filename, "rb"))) switch(errno)
   {
   case ENOENT:          /* File does not exist */
-    DEBUG(D_route) debug_printf("%s does not exist\n%schecking parent directory\n",
+    DEBUG(D_route) debug_printf_indent("%s does not exist\n%schecking parent directory\n",
       filename, options & RDO_ENOTDIR ? "ignore_enotdir set => skip " : "");
     *yield =
 	options & RDO_ENOTDIR || rda_exists(filename, error) == FILE_NOT_EXIST
@@ -209,14 +209,14 @@ if (!(fwd = Ufopen(filename, "rb"))) switch(errno)
 
   case ENOTDIR:         /* Something on the path isn't a directory */
     if (!(options & RDO_ENOTDIR)) goto DEFAULT_ERROR;
-    DEBUG(D_route) debug_printf("non-directory on path %s: file assumed not to "
+    DEBUG(D_route) debug_printf_indent("non-directory on path %s: file assumed not to "
       "exist\n", filename);
     *yield = FF_NONEXIST;
     return NULL;
 
   case EACCES:           /* Permission denied */
     if (!(options & RDO_EACCES)) goto DEFAULT_ERROR;
-    DEBUG(D_route) debug_printf("permission denied for %s: file assumed not to "
+    DEBUG(D_route) debug_printf_indent("permission denied for %s: file assumed not to "
       "exist\n", filename);
     *yield = FF_NONEXIST;
     return NULL;
@@ -295,7 +295,7 @@ if (fread(filebuf, 1, statbuf.st_size, fwd) != statbuf.st_size)
   }
 filebuf[statbuf.st_size] = 0;
 
-DEBUG(D_route) debug_printf(OFF_T_FMT " %sbytes read from %s\n",
+DEBUG(D_route) debug_printf_indent(OFF_T_FMT " %sbytes read from %s\n",
   statbuf.st_size, is_tainted(filename) ? "(tainted) " : "", filename);
 
 (void)fclose(fwd);
@@ -343,14 +343,15 @@ rda_extract(const redirect_block * rdata, int options,
   error_block ** eblockp, int * filtertype)
 {
 const uschar * data;
+int yield = 0;
 
-if (rdata->isfile)
-  {
-  int yield = 0;
+expand_level++;
+
+if (!rdata->isfile)
+  data = rdata->string;
+else
   if (!(data = rda_get_file_contents(rdata, options, error, &yield)))
-    return yield;
-  }
-else data = rdata->string;
+    goto out;
 
 *filtertype = f.system_filtering ? FILTER_EXIM : rda_is_filter(data);
 
@@ -362,10 +363,9 @@ expand_forbid that the expander inspects. */
 
 if (*filtertype != FILTER_FORWARD)
   {
-  int frc;
   int old_expand_forbid = expand_forbid;
 
-  DEBUG(D_route) debug_printf("data is %s filter program\n",
+  DEBUG(D_route) debug_printf_indent("data is %s filter program\n",
     *filtertype == FILTER_EXIM ? "an Exim" : "a Sieve");
 
   /* RDO_FILTER is an "allow" bit */
@@ -373,7 +373,7 @@ if (*filtertype != FILTER_FORWARD)
   if (!(options & RDO_FILTER))
     {
     *error = US"filtering not enabled";
-    return FF_ERROR;
+    goto ff_error;
     }
 
   expand_forbid =
@@ -389,14 +389,14 @@ if (*filtertype != FILTER_FORWARD)
     if (options & RDO_EXIM_FILTER)
       {
       *error = US"Exim filtering not enabled";
-      return FF_ERROR;
+      goto ff_error;
       }
     if (!(mi = misc_mod_find(US"exim_filter", NULL)))
       {
       *error = US"Exim-filtering not available";
-      return FF_ERROR;
+      goto ff_error;
       }
-    frc = (((fn_t *) mi->functions)[EXIM_INTERPRET])
+    yield = (((fn_t *) mi->functions)[EXIM_INTERPRET])
 				      (data, options, generated, error);
     }
   else
@@ -408,32 +408,40 @@ if (*filtertype != FILTER_FORWARD)
     if (options & RDO_SIEVE_FILTER)
       {
       *error = US"Sieve filtering not enabled";
-      return FF_ERROR;
+      goto ff_error;
       }
     if (!(mi = misc_mod_find(US"sieve_filter", NULL)))
       {
       *error = US"Sieve filtering not available";
-      return FF_ERROR;
+      goto ff_error;
       }
-    frc = (((fn_t *) mi->functions)[SIEVE_INTERPRET])
+    yield = (((fn_t *) mi->functions)[SIEVE_INTERPRET])
 				      (data, options, sieve, generated, error);
     }
 
   expand_forbid = old_expand_forbid;
-  return frc;
+  goto out;
   }
 
 /* Not a filter script */
 
-DEBUG(D_route) debug_printf("file is not a filter file\n");
+DEBUG(D_route) debug_printf_indent("file is not a filter file\n");
 
-return parse_forward_list(data,
+yield = parse_forward_list(data,
   options,                           /* specials that are allowed */
   generated,                         /* where to hang them */
   error,                             /* for errors */
   deliver_domain,                    /* to qualify \name */
   include_directory,                 /* restrain to directory */
   eblockp);                          /* for skipped syntax errors */
+
+out:
+  expand_level--;
+  return yield;
+
+ff_error:
+  yield = FF_ERROR;
+  goto out;
 }
 
 
@@ -565,7 +573,7 @@ uschar *data;
 uschar *readerror = US"";
 void (*oldsignal)(int);
 
-DEBUG(D_route) debug_printf("rda_interpret (%s): '%s'\n",
+DEBUG(D_route) debug_printf_indent("rda_interpret (%s): '%s'\n",
   rdata->isfile ? "file" : "string", string_printing(rdata->string));
 
 /* Do the expansions of the file name or data first, while still privileged. */
@@ -580,7 +588,7 @@ if (!(data = expand_string(rdata->string)))
 rdata->string = data;
 
 DEBUG(D_route)
-  debug_printf("expanded: '%s'%s\n", data, is_tainted(data) ? " (tainted)":"");
+  debug_printf_indent("expanded: '%s'%s\n", data, is_tainted(data) ? " (tainted)":"");
 
 if (rdata->isfile && data[0] != '/')
   {
@@ -644,7 +652,7 @@ if ((pid = exim_fork(US"router-interpret")) == 0)
 
   if (ugid->uid != root_uid && ugid->uid != exim_uid)
     {
-    DEBUG(D_rewrite) debug_printf("turned off address rewrite logging (not "
+    DEBUG(D_rewrite) debug_printf_indent("turned off address rewrite logging (not "
       "root or exim in this process)\n");
     BIT_CLEAR(log_selector, log_selector_size, Li_address_rewrite);
     }
@@ -785,7 +793,7 @@ out:
   exim_underbar_exit(EXIT_SUCCESS);
 
 bad:
-  DEBUG(D_rewrite) debug_printf("rda_interpret: failed write to pipe\n");
+  DEBUG(D_rewrite) debug_printf_indent("rda_interpret: failed write to pipe\n");
   goto out;
   }
 
@@ -964,7 +972,7 @@ while ((rc = wait(&status)) != pid)
     }
 
 DEBUG(D_route)
-  debug_printf("rda_interpret: subprocess yield=%d error=%s\n", yield, *error);
+  debug_printf_indent("rda_interpret: subprocess yield=%d error=%s\n", yield, *error);
 
 if (had_disaster)
   {
@@ -1005,3 +1013,5 @@ goto WAIT_EXIT;
 }
 
 /* End of rda.c */
+/* vi: aw ai sw=2
+*/

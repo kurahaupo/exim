@@ -37,9 +37,9 @@ routing aaaa@myhost.test.ex
  local_part=aaaa domain=myhost.test.ex
  checking local_parts
  calling aaaa_redirect router
-rda_interpret (string): 'bbbb@$domain, cccc@$domain'
-expanded: 'bbbb@myhost.test.ex, cccc@myhost.test.ex' (tainted)
-file is not a filter file
+ rda_interpret (string): 'bbbb@$domain, cccc@$domain'
+ expanded: 'bbbb@myhost.test.ex, cccc@myhost.test.ex' (tainted)
+  file is not a filter file
 parse_forward_list: bbbb@myhost.test.ex, cccc@myhost.test.ex
 extract item: bbbb@myhost.test.ex
 extract item: cccc@myhost.test.ex
@@ -58,9 +58,9 @@ routing defer@myhost.test.ex
  local_part=defer domain=myhost.test.ex
  checking local_parts
  calling defer router
-rda_interpret (string): ':defer: forced defer'
-expanded: ':defer: forced defer'
-file is not a filter file
+ rda_interpret (string): ':defer: forced defer'
+ expanded: ':defer: forced defer'
+  file is not a filter file
 parse_forward_list: :defer: forced defer
 extract item: :defer: forced defer
 defer router: defer for defer@myhost.test.ex
@@ -164,9 +164,9 @@ routing defer@myhost.test.ex
  local_part=defer domain=myhost.test.ex
  checking local_parts
  calling defer router
-rda_interpret (string): ':defer: forced defer'
-expanded: ':defer: forced defer'
-file is not a filter file
+ rda_interpret (string): ':defer: forced defer'
+ expanded: ':defer: forced defer'
+  file is not a filter file
 parse_forward_list: :defer: forced defer
 extract item: :defer: forced defer
 defer router: defer for defer@myhost.test.ex

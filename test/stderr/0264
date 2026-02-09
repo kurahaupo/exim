@@ -70,9 +70,9 @@ routing rz.b@outside
 --------> r_remain router <--------
  local_part=rz.b domain=outside
  calling r_remain router
-rda_interpret (string): ':defer: not just now'
-expanded: ':defer: not just now'
-file is not a filter file
+ rda_interpret (string): ':defer: not just now'
+ expanded: ':defer: not just now'
+  file is not a filter file
 parse_forward_list: :defer: not just now
 extract item: :defer: not just now
 r_remain router: defer for rz.b@outside

@@ -3,7 +3,7 @@ Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1234
 seeking password data for user "root": cache not available
-getpwnam() succeeded uid=uuuu gid=gggg
+getpwnam() succeeded uid=ROOT gid=ROOT
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -13,7 +13,7 @@ readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
  seeking password data for user "root": cache not available
- getpwnam() succeeded uid=uuuu gid=gggg
+ getpwnam() succeeded uid=ROOT gid=ROOT
 readconf_rest: retry
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
@@ -23,7 +23,7 @@ Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1235
 seeking password data for user "root": cache not available
-getpwnam() succeeded uid=uuuu gid=gggg
+getpwnam() succeeded uid=ROOT gid=ROOT
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -33,7 +33,7 @@ readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
  seeking password data for user "root": cache not available
- getpwnam() succeeded uid=uuuu gid=gggg
+ getpwnam() succeeded uid=ROOT gid=ROOT
 readconf_rest: retry
  somebody in local_parts? no (end of list)
  somebody in local_parts? no (end of list)
@@ -50,7 +50,7 @@ Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1237
 seeking password data for user "root": cache not available
-getpwnam() succeeded uid=uuuu gid=gggg
+getpwnam() succeeded uid=ROOT gid=ROOT
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -61,7 +61,7 @@ readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
  seeking password data for user "root": cache not available
- getpwnam() succeeded uid=uuuu gid=gggg
+ getpwnam() succeeded uid=ROOT gid=ROOT
 readconf_rest: retry
 LOG: MAIN
   <= <> R=10HmaY-000000005vi-0000 U=EXIMUSER P=local S=sss
@@ -70,7 +70,7 @@ Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1238
 seeking password data for user "root": cache not available
-getpwnam() succeeded uid=uuuu gid=gggg
+getpwnam() succeeded uid=ROOT gid=ROOT
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -80,7 +80,7 @@ readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
  seeking password data for user "root": cache not available
- getpwnam() succeeded uid=uuuu gid=gggg
+ getpwnam() succeeded uid=ROOT gid=ROOT
 readconf_rest: retry
  CALLER in local_parts? no (end of list)
 changed uid/gid: local delivery to CALLER <CALLER@myhost.test.ex> transport=t2
@@ -103,7 +103,7 @@ Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1240
 seeking password data for user "root": cache not available
-getpwnam() succeeded uid=uuuu gid=gggg
+getpwnam() succeeded uid=ROOT gid=ROOT
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -113,7 +113,7 @@ readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
  seeking password data for user "root": cache not available
- getpwnam() succeeded uid=uuuu gid=gggg
+ getpwnam() succeeded uid=ROOT gid=ROOT
 readconf_rest: retry
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
@@ -122,7 +122,7 @@ Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1241
 seeking password data for user "root": cache not available
-getpwnam() succeeded uid=uuuu gid=gggg
+getpwnam() succeeded uid=ROOT gid=ROOT
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -132,7 +132,7 @@ readconf_rest: transports
  seeking password data for user "CALLER": cache not available
  getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
  seeking password data for user "root": cache not available
- getpwnam() succeeded uid=uuuu gid=gggg
+ getpwnam() succeeded uid=ROOT gid=ROOT
 readconf_rest: retry
 LOG: MAIN PANIC
   User 0 set for t3 transport is on the never_users list

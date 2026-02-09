@@ -8,7 +8,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@test.ex
-Address testing: uid=uuuu gid=EXIM_GID euid=uuuu egid=EXIM_GID
+Address testing: uid=ROOT gid=EXIM_GID euid=ROOT egid=EXIM_GID
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Testing x@test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -18,7 +18,7 @@ routing x@test.ex
 --------> l1 router <--------
  local_part=x domain=test.ex
  calling l1 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases1}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases1}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases1"
   search_find: file="TESTSUITE/aux-fixed/0123.aliases1"
     key="x" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -31,14 +31,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases1
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l1 router declined for x@test.ex
 --------> l2 router <--------
  local_part=x domain=test.ex
  calling l2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases2}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases2}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases2"
   search_find: file="TESTSUITE/aux-fixed/0123.aliases2"
     key="x" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -52,14 +52,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases2
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l2 router declined for x@test.ex
 --------> l3 router <--------
  local_part=x domain=test.ex
  calling l3 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases3}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases3}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases3"
   Too many lookup files open
     closing 0TESTSUITE/aux-fixed/0123.aliases1
@@ -75,14 +75,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases3
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l3 router declined for x@test.ex
 --------> c1 router <--------
  local_part=x domain=test.ex
  calling c1 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases4}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases4}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases4"
   Too many lookup files open
     closing 0TESTSUITE/aux-fixed/0123.aliases2
@@ -98,14 +98,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases4
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c1 router declined for x@test.ex
 --------> c2 router <--------
  local_part=x domain=test.ex
  calling c2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases5}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases5}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases5"
   Too many lookup files open
     closing 0TESTSUITE/aux-fixed/0123.aliases3
@@ -121,14 +121,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases5
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c2 router declined for x@test.ex
 --------> c3 router <--------
  local_part=x domain=test.ex
  calling c3 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases6}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases6}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases6"
   Too many lookup files open
     closing 0TESTSUITE/aux-fixed/0123.aliases4
@@ -144,8 +144,8 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases6
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c3 router declined for x@test.ex
 no more routers
@@ -158,7 +158,7 @@ routing y@test.ex
 --------> l1 router <--------
  local_part=y domain=test.ex
  calling l1 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases1}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases1}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases1"
     cached closed
   Too many lookup files open
@@ -175,14 +175,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases1
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l1 router declined for y@test.ex
 --------> l2 router <--------
  local_part=y domain=test.ex
  calling l2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases2}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases2}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases2"
     cached closed
   Too many lookup files open
@@ -199,14 +199,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases2
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l2 router declined for y@test.ex
 --------> l3 router <--------
  local_part=y domain=test.ex
  calling l3 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases3}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases3}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases3"
     cached closed
   Too many lookup files open
@@ -223,14 +223,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases3
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l3 router declined for y@test.ex
 --------> c1 router <--------
  local_part=y domain=test.ex
  calling c1 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases4}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases4}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases4"
     cached closed
   Too many lookup files open
@@ -247,14 +247,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases4
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c1 router declined for y@test.ex
 --------> c2 router <--------
  local_part=y domain=test.ex
  calling c2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases5}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases5}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases5"
     cached closed
   Too many lookup files open
@@ -271,14 +271,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases5
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c2 router declined for y@test.ex
 --------> c3 router <--------
  local_part=y domain=test.ex
  calling c3 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases6}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases6}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases6"
     cached closed
   Too many lookup files open
@@ -295,8 +295,8 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases6
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c3 router declined for y@test.ex
 no more routers
@@ -309,7 +309,7 @@ routing z@test.ex
 --------> l1 router <--------
  local_part=z domain=test.ex
  calling l1 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases1}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases1}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases1"
     cached closed
   Too many lookup files open
@@ -326,14 +326,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases1
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l1 router declined for z@test.ex
 --------> l2 router <--------
  local_part=z domain=test.ex
  calling l2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases2}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases2}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases2"
     cached closed
   Too many lookup files open
@@ -350,14 +350,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases2
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l2 router declined for z@test.ex
 --------> l3 router <--------
  local_part=z domain=test.ex
  calling l3 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases3}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases3}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases3"
     cached closed
   Too many lookup files open
@@ -374,14 +374,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases3
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  l3 router declined for z@test.ex
 --------> c1 router <--------
  local_part=z domain=test.ex
  calling c1 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases4}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases4}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases4"
     cached closed
   Too many lookup files open
@@ -398,14 +398,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases4
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c1 router declined for z@test.ex
 --------> c2 router <--------
  local_part=z domain=test.ex
  calling c2 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases5}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases5}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases5"
     cached closed
   Too many lookup files open
@@ -422,14 +422,14 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases5
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c2 router declined for z@test.ex
 --------> c3 router <--------
  local_part=z domain=test.ex
  calling c3 router
-rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases6}}'
+ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.aliases6}}'
   search_open: lsearch "TESTSUITE/aux-fixed/0123.aliases6"
     cached closed
   Too many lookup files open
@@ -446,8 +446,8 @@ rda_interpret (string): '${lookup{$local_part}lsearch{TESTSUITE/aux-fixed/0123.a
     in TESTSUITE/aux-fixed/0123.aliases6
   creating new cache entry
   lookup failed
-expanded: ''
-file is not a filter file
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  c3 router declined for z@test.ex
 no more routers

@@ -7348,6 +7348,7 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
     }
   }
 
+//debug_print_ids(US"after system filter:");
 
 /* Scan the recipients list, and for every one that is not in the non-
 recipients tree, add an addr item to the chain of new addresses. If the pno

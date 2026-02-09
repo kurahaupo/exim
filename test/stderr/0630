@@ -18,7 +18,7 @@
 01:01:01 p1235  LOG: MAIN PANIC
 01:01:01 p1235    Tainted filename '/dest3'
 01:01:01 p1235  LOG: MAIN PANIC DIE
-01:01:01 p1235    failed to open /dest3 when checking local_parts: Permission denied (euid=uuuu egid=EXIM_GID)
+01:01:01 p1235    failed to open /dest3 when checking local_parts: Permission denied (euid=ROOT egid=EXIM_GID)
 01:01:01 p1235    search_tidyup called
 01:01:01 p1235  >>>>>>>>>>>>>>>> Exim pid=p1235 (daemon-accept-delivery) terminating with rc=1 >>>>>>>>>>>>>>>>
 

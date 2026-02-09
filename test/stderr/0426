@@ -89,9 +89,9 @@ routing CALLER@test.ex
  local_part=CALLER domain=test.ex
  checking senders
  calling r0 router
-rda_interpret (string): ':blackhole:'
-expanded: ':blackhole:'
-file is not a filter file
+ rda_interpret (string): ':blackhole:'
+ expanded: ':blackhole:'
+  file is not a filter file
 parse_forward_list: :blackhole:
 extract item: :blackhole:
 address :blackhole:d

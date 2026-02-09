@@ -41,10 +41,10 @@ routing bbbb@myhost.test.ex
  local_part=bbbb domain=myhost.test.ex
  checking local_parts
  calling r2 router
-rda_interpret (file): 'TESTSUITE/non-exist/bbbb'
-expanded: 'TESTSUITE/non-exist/bbbb'
-TESTSUITE/non-exist/bbbb does not exist
-ignore_enotdir set => skip checking parent directory
+ rda_interpret (file): 'TESTSUITE/non-exist/bbbb'
+ expanded: 'TESTSUITE/non-exist/bbbb'
+  TESTSUITE/non-exist/bbbb does not exist
+  ignore_enotdir set => skip checking parent directory
  r2 router declined for bbbb@myhost.test.ex
 --------> r3 router <--------
  local_part=bbbb domain=myhost.test.ex
@@ -69,11 +69,11 @@ routing aaaa@myhost.test.ex
  local_part=aaaa domain=myhost.test.ex
  checking local_parts
  calling r1 router
-rda_interpret (file): 'TESTSUITE/non-exist/aaaa'
-expanded: 'TESTSUITE/non-exist/aaaa'
-TESTSUITE/non-exist/aaaa does not exist
-checking parent directory
-stat(TESTSUITE/non-exist/.)=-1
+ rda_interpret (file): 'TESTSUITE/non-exist/aaaa'
+ expanded: 'TESTSUITE/non-exist/aaaa'
+  TESTSUITE/non-exist/aaaa does not exist
+  checking parent directory
+  stat(TESTSUITE/non-exist/.)=-1
 r1 router: defer for aaaa@myhost.test.ex
   message: failed to stat TESTSUITE/non-exist/. (No such file or directory)
 LOG: MAIN

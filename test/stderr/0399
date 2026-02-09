@@ -8,7 +8,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@test.ex
-Address testing: uid=uuuu gid=EXIM_GID euid=uuuu egid=EXIM_GID
+Address testing: uid=ROOT gid=EXIM_GID euid=ROOT egid=EXIM_GID
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Testing x@y
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -18,27 +18,27 @@ routing x@y
 --------> r1 router <--------
  local_part=x domain=y
  calling r1 router
-rda_interpret (string): ''
-expanded: ''
-file is not a filter file
+ rda_interpret (string): ''
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  r1 router declined for x@y
 expansion of "more" forced failure
 --------> r2 router <--------
  local_part=x domain=y
  calling r2 router
-rda_interpret (string): ''
-expanded: ''
-file is not a filter file
+ rda_interpret (string): ''
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  r2 router declined for x@y
 expansion of "more" yields "yes"
 --------> r3 router <--------
  local_part=x domain=y
  calling r3 router
-rda_interpret (string): ''
-expanded: ''
-file is not a filter file
+ rda_interpret (string): ''
+ expanded: ''
+  file is not a filter file
 parse_forward_list: 
  r3 router declined for x@y
 failed to expand "more" in r3 router: unknown variable name "unknown_variable"

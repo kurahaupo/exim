@@ -11,9 +11,9 @@ routing /a/b/c@myhost.test.ex
 --------> r1 router <--------
  local_part=/a/b/c domain=myhost.test.ex
  calling r1 router
-rda_interpret (string): '$local_part'
-expanded: '/a/b/c' (tainted)
-file is not a filter file
+ rda_interpret (string): '$local_part'
+ expanded: '/a/b/c' (tainted)
+  file is not a filter file
 parse_forward_list: /a/b/c
 extract item: /a/b/c
  set transport 'tf1'
@@ -38,9 +38,9 @@ routing /x/y/z@myhost.test.ex
 --------> r1 router <--------
  local_part=/x/y/z domain=myhost.test.ex
  calling r1 router
-rda_interpret (string): '$local_part'
-expanded: '/x/y/z' (tainted)
-file is not a filter file
+ rda_interpret (string): '$local_part'
+ expanded: '/x/y/z' (tainted)
+  file is not a filter file
 parse_forward_list: /x/y/z
 extract item: /x/y/z
  set transport 'tf2'

@@ -149,9 +149,9 @@ routing userx@test.ex
 +++home=/usr
  processing address_data
  calling r2 router
-rda_interpret (string): 'TESTSUITE/test-mail/junk'
-expanded: 'TESTSUITE/test-mail/junk'
-file is not a filter file
+ rda_interpret (string): 'TESTSUITE/test-mail/junk'
+ expanded: 'TESTSUITE/test-mail/junk'
+  file is not a filter file
 parse_forward_list: TESTSUITE/test-mail/junk
 extract item: TESTSUITE/test-mail/junk
  set transport 't1'
@@ -362,9 +362,9 @@ routing charlie@dom1.ain
 +++domain_data=dom1.ain
 +++local_part_data=charlie
  calling r1 router
-rda_interpret (string): 'TESTSUITE/test-mail/junk'
-expanded: 'TESTSUITE/test-mail/junk'
-file is not a filter file
+ rda_interpret (string): 'TESTSUITE/test-mail/junk'
+ expanded: 'TESTSUITE/test-mail/junk'
+  file is not a filter file
 parse_forward_list: TESTSUITE/test-mail/junk
 extract item: TESTSUITE/test-mail/junk
  set transport 't1'

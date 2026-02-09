@@ -16,7 +16,7 @@ readconf_rest: transports
 readconf_rest: retry
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@myhost.test.ex
-Address testing: uid=uuuu gid=EXIM_GID euid=uuuu egid=EXIM_GID
+Address testing: uid=ROOT gid=EXIM_GID euid=ROOT egid=EXIM_GID
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Testing test.ex@test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

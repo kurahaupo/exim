@@ -19,10 +19,10 @@ routing yes@myhost.test.ex
  expanded file: TESTSUITE/aux-fixed/0084.yes
  stat() yielded 0
  calling forward router
-rda_interpret (file): '${lookup {0084.$local_part} dsearch,ret=full {TESTSUITE/aux-fixed}}'
-expanded: 'TESTSUITE/aux-fixed/0084.yes'
-ssss bytes read from TESTSUITE/aux-fixed/0084.yes
-file is not a filter file
+ rda_interpret (file): '${lookup {0084.$local_part} dsearch,ret=full {TESTSUITE/aux-fixed}}'
+ expanded: 'TESTSUITE/aux-fixed/0084.yes'
+  ssss bytes read from TESTSUITE/aux-fixed/0084.yes
+  file is not a filter file
 parse_forward_list: userx@test.ex
 
 extract item: userx@test.ex
