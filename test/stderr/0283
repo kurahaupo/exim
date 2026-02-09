@@ -84,7 +84,7 @@ readconf_rest: transports
 readconf_rest: retry
  CALLER in local_parts? no (end of list)
 changed uid/gid: local delivery to CALLER <CALLER@myhost.test.ex> transport=t2
-   uid ROOT->1000 gid EXIM_GID->1000 pid=p1239
+   uid ROOT->CALLER_UID gid EXIM_GID->CALLER_GID pid=p1239
 >>>>>>>>>>>>>>>> Exim pid=p1239 (delivery-local) terminating with rc=0 >>>>>>>>>>>>>>>>
 LOG: MAIN
   => CALLER <CALLER@myhost.test.ex> R=caller T=t2

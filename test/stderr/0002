@@ -870,7 +870,7 @@ LOG: 10HmbD-000000005vi-0000 H=(test) [V4NET.0.0.0] F=<> rejected after DATA: re
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: -C, -D, -be or -bf forces real uid
-   uid ROOT->1000 gid CALLER_GID->CALLER_GID pid=p1241
+   uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1241
 configuration file is TESTSUITE/test-config
 admin user
 dropping to exim gid; retaining priv uid

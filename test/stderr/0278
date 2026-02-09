@@ -271,7 +271,7 @@ search_tidyup called
 no retry data available
 search_tidyup called
 changed uid/gid: local delivery to CALLER <CALLER@test.ex> transport=t1
-   uid ROOT->1000 gid EXIM_GID->1000 pid=p1237
+   uid ROOT->CALLER_UID gid EXIM_GID->CALLER_GID pid=p1237
   home=CALLER_HOME current=CALLER_HOME
 set_process_info: pppp delivering 10HmaX-000000005vi-0000 to CALLER using t1
 appendfile transport entered
