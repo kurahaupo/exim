@@ -849,8 +849,6 @@ CALLER@myhost.test.ex delivered
 LOG: MAIN
   => CALLER <CALLER@myhost.test.ex> R=r1 T=t1
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
-changed uid/gid: post-delivery tidying
-   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1238
 set_process_info: pppp tidying up after delivering 10HmaX-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -869,6 +867,8 @@ DSN: not sending DSN success message
 LOG: MAIN
   Completed
 end delivery of 10HmaX-000000005vi-0000
+changed uid/gid: post-delivery tidying
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1238
 search_tidyup called
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1238 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>

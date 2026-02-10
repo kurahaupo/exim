@@ -2036,7 +2036,7 @@ retfalse:
 *************************************************/
 
 /* Just the regain-root-privilege exec portion.
-The sole caller is delivery_re_exec(). */
+Callers: delivery_re_exec(), deliver_message() */
 
 void
 transport_do_pass_socket(uschar * id, int socket_fd)

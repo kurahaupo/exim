@@ -3759,11 +3759,12 @@ while (!done)
 	  dup2((recvd_fd = recv_fd_from_sock(fd)), 0);
 	  close(recvd_fd);
 
+	  /*XXX continue_host_port relies on a preceding A0 record */
 	  DEBUG(D_deliver)
 	    debug_printf("continue: fd %d tpt %s host '%s' addr '%s':%d"
 			 " seq %d\n",
 			  recvd_fd, continue_transport, continue_hostname,
-			  continue_host_address, deliver_host_port,
+			  continue_host_address, continue_host_port,
 			  continue_sequence);
 	  break;
 	  }
@@ -6547,8 +6548,8 @@ return child_close(pid, 0) == 0;
 *              Send a success-DSN                *
 *************************************************/
 
-static void
-maybe_send_dsn(const address_item * const addr_succeed)
+static BOOL
+maybe_send_dsn(const address_item * const addr_succeed, BOOL has_privs)
 {
 address_item * addr_senddsn = NULL;
 
@@ -6592,7 +6593,15 @@ for (const address_item * a = addr_succeed; a; a = a->next)
 if (addr_senddsn)
   {				/* create exim process to send message */
   int fd;
-  pid_t pid = child_open_exim(&fd, US"DSN");
+  pid_t pid;
+
+  if (has_privs)
+    {
+    exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery DSN gen");
+    has_privs = FALSE;
+    }
+
+  pid = child_open_exim(&fd, US"DSN");
 
   DEBUG(D_deliver)
     debug_printf("DSN: child_open_exim returns: " PID_T_FMT "\n", pid);
@@ -6612,6 +6621,8 @@ if (addr_senddsn)
     /* header only as required by RFC. only failure DSN needs to honor RET=FULL */
     uschar * bound;
     transport_ctx tctx = {{0}};
+
+    priv_drop_temp(exim_uid, exim_gid);
 
     DEBUG(D_deliver)
       debug_printf("sending success-dsn to: %s\n", sender_address);
@@ -6697,8 +6708,19 @@ if (addr_senddsn)
     fflush(f);
     fclose(f);
     (void) child_close(pid, 0);     /* Waits for child to close, no timeout */
+
+    priv_restore();
     }
   }
+return has_privs;
+}
+
+static inline BOOL
+drop_privs(const uschar * why, BOOL has_privs)
+{
+if (has_privs)
+  exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery warn gen");
+return FALSE;
 }
 
 /*************************************************
@@ -6747,6 +6769,7 @@ time_t now;
 address_item * addr_last;
 uschar * filter_message, * info;
 open_db dbblock, * dbm_file = NULL;
+BOOL has_privs = TRUE;
 rmark reset_point;
 
 CONTINUED_ID:
@@ -7349,7 +7372,7 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
     }
   }
 
-//debug_print_ids(US"after system filter:");
+/* debug_print_ids(US"after system filter:"); */
 
 /* Scan the recipients list, and for every one that is not in the non-
 recipients tree, add an addr item to the chain of new addresses. If the pno
@@ -8465,9 +8488,19 @@ DEBUG(D_deliver)
   debug_printf(">>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>\n");
 cancel_cutthrough_connection(TRUE, US"deliveries are done");
 
-/* Root privilege is no longer needed */
+/* We used to always drop privs here, from root to exim, but the introduction
+of handling a further transport-suggested message requires we retain root.
+On the other hand, we want bounce messages to be sent by the Exim user.  So, if
+there is need to send a response (bounce, warn or DSN) drop at that point and
+do a re-exec for the next chained message.
+This arises because the reponse (presumably) is labelled with the
+reuid not (say) the euid - so we cannot use priv_drop_temp(). */
 
-exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery tidying");
+if (addr_failed)		/* We will be generating a bounce */
+  {
+  exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery tidying");
+  has_privs = FALSE;
+  }
 
 set_process_info("tidying up after delivering %s", message_id);
 signal(SIGTERM, SIG_IGN);
@@ -8539,90 +8572,94 @@ else if (!f.dont_deliver)
 
 /* Send DSN for successful messages if requested */
 
-maybe_send_dsn(addr_succeed);
+has_privs = maybe_send_dsn(addr_succeed, has_privs);
 
 /* If any addresses failed, we must send a message to somebody, unless
 af_ignore_error is set, in which case no action is taken. It is possible for
 several messages to get sent if there are addresses with different
 requirements. */
 
-while (addr_failed)
+if (addr_failed)
   {
-  const uschar * logtod = tod_stamp(tod_log);
-  address_item * addr;
+  has_privs = drop_privs(US"post-delivery bounce gen", has_privs);
 
-  /* There are weird cases when logging is disabled in the transport. However,
-  there may not be a transport (address failed by a router). */
-
-  f.disable_logging = FALSE;
-  if (addr_failed->transport)
-    f.disable_logging = addr_failed->transport->disable_logging;
-
-  DEBUG(D_deliver)
-    debug_printf("processing failed address %s\n", addr_failed->address);
-
-  /* There are only two ways an address in a bounce message can get here:
-
-  (1) When delivery was initially deferred, but has now timed out (in the call
-      to retry_update() above). We can detect this by testing for
-      af_retry_timedout. If the address does not have its own errors address,
-      we arrange to ignore the error.
-
-  (2) If delivery failures for bounce messages are being ignored. We can detect
-      this by testing for af_ignore_error. This will also be set if a bounce
-      message has been autothawed and the ignore_bounce_errors_after time has
-      passed. It might also be set if a router was explicitly configured to
-      ignore errors (errors_to = "").
-
-  If neither of these cases obtains, something has gone wrong. Log the
-  incident, but then ignore the error. */
-
-  if (sender_address[0] == 0 && !addr_failed->prop.errors_address)
+  do
     {
-    if (  !testflag(addr_failed, af_retry_timedout)
-       && !addr_failed->prop.ignore_error)
-      log_write(0, LOG_MAIN|LOG_PANIC, "internal error: bounce message "
-        "failure is neither frozen nor ignored (it's been ignored)");
+    const uschar * logtod = tod_stamp(tod_log);
+    address_item * addr;
 
-    addr_failed->prop.ignore_error = TRUE;
-    }
+    /* There are weird cases when logging is disabled in the transport.
+    However, there may not be a transport (address failed by a router). */
 
-  /* If the first address on the list has af_ignore_error set, just remove
-  it from the list, throw away any saved message file, log it, and
-  mark the recipient done. */
+    f.disable_logging = addr_failed->transport
+      ? addr_failed->transport->disable_logging : FALSE;
 
-  if (  addr_failed->prop.ignore_error
-     ||    addr_failed->dsn_flags & rf_dsnflags
-	&& !(addr_failed->dsn_flags & rf_notify_failure)
-     )
-    {
-    addr = addr_failed;
-    addr_failed = addr->next;
-    if (addr->return_filename) Uunlink(addr->return_filename);
+    DEBUG(D_deliver)
+      debug_printf("processing failed address %s\n", addr_failed->address);
+
+    /* There are only two ways an address in a bounce message can get here:
+
+    (1) When delivery was initially deferred, but has now timed out (in the
+	call to retry_update() above). We can detect this by testing for
+	af_retry_timedout. If the address does not have its own errors
+	address, we arrange to ignore the error.
+
+    (2) If delivery failures for bounce messages are being ignored. We can
+	detect this by testing for af_ignore_error. This will also be set if a
+	bounce message has been autothawed and the ignore_bounce_errors_after
+	time has passed. It might also be set if a router was explicitly
+	configured to ignore errors (errors_to = "").
+
+    If neither of these cases obtains, something has gone wrong. Log the
+    incident, but then ignore the error. */
+
+    if (!*sender_address && !addr_failed->prop.errors_address)
+      {
+      if (  !testflag(addr_failed, af_retry_timedout)
+	 && !addr_failed->prop.ignore_error)
+	log_write(0, LOG_MAIN|LOG_PANIC, "internal error: bounce message "
+	  "failure is neither frozen nor ignored (it's been ignored)");
+
+      addr_failed->prop.ignore_error = TRUE;
+      }
+
+    /* If the first address on the list has af_ignore_error set, just remove
+    it from the list, throw away any saved message file, log it, and
+    mark the recipient done. */
+
+    if (  addr_failed->prop.ignore_error
+       ||    addr_failed->dsn_flags & rf_dsnflags
+	  && !(addr_failed->dsn_flags & rf_notify_failure)
+       )
+      {
+      addr = addr_failed;
+      addr_failed = addr->next;
+      if (addr->return_filename) Uunlink(addr->return_filename);
 
 #ifndef DISABLE_EVENT
-    msg_event_raise(US"msg:fail:delivery", addr);
+      msg_event_raise(US"msg:fail:delivery", addr);
 #endif
-    log_write(0, LOG_MAIN, "%s%s%s%s: error ignored%s",
-      addr->address,
-      !addr->parent ? US"" : US" <",
-      !addr->parent ? US"" : addr->parent->address,
-      !addr->parent ? US"" : US">",
-      addr->prop.ignore_error
-      ? US"" : US": RFC 3461 DSN, failure notify not requested");
+      log_write(0, LOG_MAIN, "%s%s%s%s: error ignored%s",
+	addr->address,
+	!addr->parent ? US"" : US" <",
+	!addr->parent ? US"" : addr->parent->address,
+	!addr->parent ? US"" : US">",
+	addr->prop.ignore_error
+	? US"" : US": RFC 3461 DSN, failure notify not requested");
 
-    address_done(addr, logtod);
-    child_done(addr, logtod);
-    /* Panic-dies on error */
-    (void)spool_write_header(message_id, SW_DELIVERING, NULL);
-    }
+      address_done(addr, logtod);
+      child_done(addr, logtod);
+      /* Panic-dies on error */
+      (void) spool_write_header(message_id, SW_DELIVERING, NULL);
+      }
 
-  /* Otherwise, handle the sending of a message. Find the error address for
-  the first address, then send a message that includes all failed addresses
-  that have the same error address. */
+    /* Otherwise, handle the sending of a message. Find the error address for
+    the first address, then send a message that includes all failed addresses
+    that have the same error address. */
 
-  else
-    send_bounce_message(now, logtod);
+    else
+      send_bounce_message(now, logtod);
+    } while (addr_failed);
   }
 
 f.disable_logging = FALSE;  /* In case left set */
@@ -8860,11 +8897,14 @@ else if (addr_defer != (address_item *)(+1))
       have been. */
 
       if (warning_count < count)
+	{
+	has_privs = drop_privs(US"post-delivery warn gen", has_privs);
 	if (send_warning_message(recipients, queue_time, show_time))
 	  {
 	  warning_count = count;
 	  update_spool = TRUE;    /* Ensure spool rewritten */
 	  }
+	}
       }
     }
 
@@ -8906,6 +8946,8 @@ else if (addr_defer != (address_item *)(+1))
           { *ss++ = ' '; *ss++ = '\n'; }
         else
 	  ss++;
+
+      has_privs = drop_privs(US"post-delivery freezemsg gen", has_privs);
 
       moan_tell_someone(freeze_tell, addr_defer, US"Message frozen",
         "Message %s has been frozen%s.\nThe sender is <%s>.\n", message_id,
@@ -8983,22 +9025,46 @@ report_time_since(&timestamp_startup, US"delivery end"); /* testcase 0005 */
 /* If the transport suggested another message to deliver, go round again. */
 
 if (final_yield == DELIVER_ATTEMPTED_NORMAL && *continue_next_id)
-  {
-  addr_defer = addr_failed = addr_succeed = NULL;
+  if (has_privs)
+    {
+    addr_defer = addr_failed = addr_succeed = NULL;
 
-  tree_duplicates = NULL;	/* discard dups info from old message */
-  addr_duplicate = NULL;
+    tree_duplicates = NULL;	/* discard dups info from old message */
+    addr_duplicate = NULL;
 
-  spool_clear_header_globals();
-  deliver_set_expansions(NULL);
-  deliver_host_address = return_path = bounce_recipient = NULL;
+    spool_clear_header_globals();
+    deliver_set_expansions(NULL);
+    deliver_host_address = return_path = bounce_recipient = NULL;
 
-  store_reset(reset_point);
+    store_reset(reset_point);
 
-  id = string_copyn(continue_next_id, MESSAGE_ID_LENGTH);
-  continue_next_id[0] = '\0';
-  goto CONTINUED_ID;
-  }
+    id = string_copyn(continue_next_id, MESSAGE_ID_LENGTH);
+    continue_next_id[0] = '\0';
+    goto CONTINUED_ID;
+    }
+  else
+    {
+    cutthrough.peer_options = smtp_peer_options;
+    cutthrough.is_tls = !!continue_proxy_cipher;
+    cutthrough.snd_ip = sending_ip_address;
+    cutthrough.snd_port = sending_port;
+    cutthrough.cipher = continue_proxy_cipher;
+    cutthrough.sni = continue_proxy_sni;
+    cutthrough.is_dane = continue_proxy_dane;
+    cutthrough.transport = US continue_transport;
+    cutthrough.host.name = continue_hostname;
+    cutthrough.host.address = continue_host_address;
+    cutthrough.host.port = continue_host_port;
+
+    transport_do_pass_socket(continue_next_id, 0);
+
+    /* Control never returns here. */
+    }
+
+/* Root privilege is no longer needed */
+
+if (has_privs)
+  exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery tidying");
 
 /* It is unlikely that there will be any cached resources, since they are
 released after routing, and in the delivery subprocesses. However, it's
@@ -9042,7 +9108,8 @@ if (cutthrough.cctx.sock >= 0 && cutthrough.callout_hold_only)
 #ifndef DISABLE_TLS
   if (cutthrough.is_tls)
     {
-    int pfd[2], pid;
+    int pfd[2];
+    pid_t pid;
 
     cutthrough.peer_options |= OPTION_TLS;
 

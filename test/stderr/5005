@@ -165,8 +165,6 @@ nofile@test.ex delivered
 LOG: MAIN
   => nofile <nofile@test.ex> R=r1 T=t1
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
-changed uid/gid: post-delivery tidying
-   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1235
 set_process_info: pppp tidying up after delivering 10HmaX-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -185,6 +183,8 @@ DSN: not sending DSN success message
 LOG: MAIN
   Completed
 end delivery of 10HmaX-000000005vi-0000
+changed uid/gid: post-delivery tidying
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1235
 search_tidyup called
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -358,8 +358,6 @@ userx@test.ex delivered
 LOG: MAIN
   => userx <userx@test.ex> R=r1 T=t1
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
-changed uid/gid: post-delivery tidying
-   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1238
 set_process_info: pppp tidying up after delivering 10HmaY-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -378,6 +376,8 @@ DSN: not sending DSN success message
 LOG: MAIN
   Completed
 end delivery of 10HmaY-000000005vi-0000
+changed uid/gid: post-delivery tidying
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1238
 search_tidyup called
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1238 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -545,8 +545,6 @@ post-process userx@test.ex (DEFER)
 LOG: MAIN
   == userx@test.ex R=r1 T=t1 defer (-22): mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
-changed uid/gid: post-delivery tidying
-   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1241
 set_process_info: pppp tidying up after delivering 10HmaZ-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -576,6 +574,8 @@ DSN: **** SPOOL_OUT - address: <userx@test.ex> errorsto: <NULL> orcpt: <NULL> ds
 Renaming spool header file: TESTSUITE/spool//input//10HmaZ-000000005vi-0000-H
 Size of headers = sss
 end delivery of 10HmaZ-000000005vi-0000
+changed uid/gid: post-delivery tidying
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1241
 search_tidyup called
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1241 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -738,8 +738,6 @@ post-process userx@test.ex (DEFER)
 LOG: MAIN
   == userx@test.ex R=r1 T=t1 defer (-22): mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
-changed uid/gid: post-delivery tidying
-   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1244
 set_process_info: pppp tidying up after delivering 10HmbA-000000005vi-0000
 Processing retry items
  Succeeded addresses:
@@ -769,6 +767,8 @@ DSN: **** SPOOL_OUT - address: <userx@test.ex> errorsto: <NULL> orcpt: <NULL> ds
 Renaming spool header file: TESTSUITE/spool//input//10HmbA-000000005vi-0000-H
 Size of headers = sss
 end delivery of 10HmbA-000000005vi-0000
+changed uid/gid: post-delivery tidying
+   uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1244
 search_tidyup called
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1244 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
