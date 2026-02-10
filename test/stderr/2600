@@ -717,7 +717,7 @@ DSN: Sender_address: CALLER@myhost.test.ex
 DSN: orcpt: NULL  flags: 0x0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: userx@myhost.test.ex
-DSN: Remote SMTP server supports DSN: 0
+DSN: Remote SMTP server supports DSN: UNKNOWN
 DSN: not sending DSN success message
 LOG: MAIN
   Completed

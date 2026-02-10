@@ -110,7 +110,7 @@
 01:01:01 p1238  DSN: orcpt: NULL  flags: 0x0
 01:01:01 p1238  DSN: envid: NULL  ret: 0
 01:01:01 p1238  DSN: Final recipient: dest@test.ex
-01:01:01 p1238  DSN: Remote SMTP server supports DSN: 0
+01:01:01 p1238  DSN: Remote SMTP server supports DSN: UNKNOWN
 01:01:01 p1238  DSN: not sending DSN success message
 01:01:01 p1238  LOG: MAIN
 01:01:01 p1238    Completed
@@ -215,7 +215,7 @@
 01:01:01 p1240  DSN: orcpt: NULL  flags: 0x0
 01:01:01 p1240  DSN: envid: NULL  ret: 0
 01:01:01 p1240  DSN: Final recipient: dest2@test.ex
-01:01:01 p1240  DSN: Remote SMTP server supports DSN: 0
+01:01:01 p1240  DSN: Remote SMTP server supports DSN: UNKNOWN
 01:01:01 p1240  DSN: not sending DSN success message
 01:01:01 p1240  LOG: MAIN
 01:01:01 p1240    Completed

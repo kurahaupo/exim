@@ -6561,7 +6561,7 @@ for (const address_item * a = addr_succeed; a; a = a->next)
       "DSN: orcpt: %s  flags: 0x%x\n"
       "DSN: envid: %s  ret: %d\n"
       "DSN: Final recipient: %s\n"
-      "DSN: Remote SMTP server supports DSN: %d\n",
+      "DSN: Remote SMTP server supports DSN: %s\n",
       a->router ? a->router->drinst.name : US"(unknown)",
       a->address,
       sender_address,
@@ -6569,7 +6569,7 @@ for (const address_item * a = addr_succeed; a; a = a->next)
       a->dsn_flags,
       dsn_envid ? dsn_envid : US"NULL", dsn_ret,
       a->address,
-      a->dsn_aware
+      dsn_aware_names[a->dsn_aware]
       );
 
   /* send report if next hop not DSN aware or a router flagged "last DSN hop"

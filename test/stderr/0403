@@ -215,7 +215,7 @@ DSN: Sender_address: CALLER@test.ex
 DSN: orcpt: NULL  flags: 0x0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: TESTSUITE/test-mail/junk
-DSN: Remote SMTP server supports DSN: 0
+DSN: Remote SMTP server supports DSN: UNKNOWN
 DSN: not sending DSN success message
 DSN: processing router : r2
 DSN: processing successful delivery address: userx@test.ex
@@ -223,7 +223,7 @@ DSN: Sender_address: CALLER@test.ex
 DSN: orcpt: NULL  flags: 0x0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: userx@test.ex
-DSN: Remote SMTP server supports DSN: 0
+DSN: Remote SMTP server supports DSN: UNKNOWN
 DSN: not sending DSN success message
 LOG: MAIN
   Completed
@@ -428,7 +428,7 @@ DSN: Sender_address: CALLER@test.ex
 DSN: orcpt: NULL  flags: 0x0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: TESTSUITE/test-mail/junk
-DSN: Remote SMTP server supports DSN: 0
+DSN: Remote SMTP server supports DSN: UNKNOWN
 DSN: not sending DSN success message
 DSN: processing router : r1
 DSN: processing successful delivery address: charlie@dom1.ain
@@ -436,7 +436,7 @@ DSN: Sender_address: CALLER@test.ex
 DSN: orcpt: NULL  flags: 0x0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: charlie@dom1.ain
-DSN: Remote SMTP server supports DSN: 0
+DSN: Remote SMTP server supports DSN: UNKNOWN
 DSN: not sending DSN success message
 LOG: MAIN
   Completed

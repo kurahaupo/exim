@@ -405,7 +405,7 @@ DSN: Sender_address: x@y
 DSN: orcpt: NULL  flags: 0x0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: 2@b
-DSN: Remote SMTP server supports DSN: 0
+DSN: Remote SMTP server supports DSN: UNKNOWN
 DSN: not sending DSN success message
 LOG: MAIN
   Completed
@@ -599,7 +599,7 @@ DSN: Sender_address: x@y
 DSN: orcpt: NULL  flags: 0x0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: 2@b
-DSN: Remote SMTP server supports DSN: 0
+DSN: Remote SMTP server supports DSN: UNKNOWN
 DSN: not sending DSN success message
 LOG: MAIN
   Completed
