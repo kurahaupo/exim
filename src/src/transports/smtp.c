@@ -3906,18 +3906,19 @@ smtp_proxy_tls(client_conn_ctx * ctx, uschar * buf, size_t bsize, int * pfd,
 struct pollfd p[2] = {{.fd = ctx->sock, .events = POLLIN},
 		      {.fd = pfd[0], .events = POLLIN}};
 void * tls_ctx = ctx->tls_ctx;
-int rc, i;
+pid_t pid;
 BOOL send_tls_shutdown = TRUE;
 
 acl_level++;
 close(pfd[1]);
-if ((rc = exim_fork(US"tls-proxy")))
-  _exit(rc < 0 ? EXIT_FAILURE : EXIT_SUCCESS);
+if ((pid = exim_fork(US"tls-proxy")))
+  _exit(pid < 0 ? EXIT_FAILURE : EXIT_SUCCESS);
 
 set_process_info("proxying TLS connection for continued transport to %s\n", host);
 
 do
   {
+  int rc;
   time_t time_left = timeout;
   time_t time_start = time(NULL);
 
@@ -3957,7 +3958,7 @@ do
       timeout = 5;
       }
     else
-      for (int nbytes = 0; rc - nbytes > 0; nbytes += i)
+      for (int nbytes = 0, i; rc - nbytes > 0; nbytes += i)
 	if ((i = write(pfd[0], buf + nbytes, rc - nbytes)) < 0) goto done;
 
   /* Handle outbound data.  We cannot yet combine payload and the TLS-close
@@ -3979,7 +3980,7 @@ do
       shutdown(tls_out.active.sock, SHUT_WR);
       }
     else
-      for (int nbytes = 0; rc - nbytes > 0; nbytes += i)
+      for (int nbytes = 0, i; rc - nbytes > 0; nbytes += i)
 	if ((i = tls_write(tls_ctx, buf + nbytes, rc - nbytes, FALSE)) < 0)
 	  goto done;
   }
@@ -5112,7 +5113,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 	    smtp_peer_options |= OPTION_TLS;
 	    if ((sx->ok = socketpair(AF_UNIX, SOCK_STREAM, 0, pfd) == 0))
 	      {
-	      int pid = exim_fork(US"tls-proxy-interproc");
+	      pid_t pid = exim_fork(US"tls-proxy-interproc");
 	      if (pid == 0)	/* child; fork again to disconnect totally */
 		{
 		/* does not return */

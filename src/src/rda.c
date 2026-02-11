@@ -967,7 +967,8 @@ WAIT_EXIT:
 while ((rc = wait(&status)) != pid)
   if (rc < 0 && errno == ECHILD)      /* Process has vanished */
     {
-    log_write(0, LOG_MAIN, "redirection process %d vanished unexpectedly", pid);
+    log_write(0, LOG_MAIN,
+      "redirection process " PID_T_FMT " vanished unexpectedly", pid);
     goto FINAL_EXIT;
     }
 

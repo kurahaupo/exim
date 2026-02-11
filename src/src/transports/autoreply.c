@@ -266,10 +266,8 @@ autoreply_transport_entry(
 {
 autoreply_transport_options_block * ob = tblock->drinst.options_block;
 const uschar * trname = tblock->drinst.name;
-int fd, pid, rc;
-int cache_fd = -1;
-int cache_size = 0;
-int add_size = 0;
+pid_t pid;
+int fd, rc, cache_fd = -1, cache_size = 0, add_size = 0;
 EXIM_DB * dbm_file = NULL;
 BOOL file_expand, return_message;
 const uschar * from, * reply_to, * to, * cc, * bcc, * subject, * headers;

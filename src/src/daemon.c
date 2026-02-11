@@ -721,7 +721,8 @@ if (pid == 0)
       if (dpid > 0)
         {
 	release_cutthrough_connection(US"passed for delivery");
-        DEBUG(D_any) debug_printf("forked delivery process %d\n", (int)dpid);
+        DEBUG(D_any)
+	  debug_printf("forked delivery process " PID_T_FMT "\n", dpid);
         }
       else
 	{

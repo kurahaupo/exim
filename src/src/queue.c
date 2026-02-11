@@ -402,7 +402,7 @@ if (!recurse)
   *p = '\0';
 
   p = big_buffer;
-  p += sprintf(CS p, "pid=%d", (int)queue_run_pid);
+  p += sprintf(CS p, "pid=" PID_T_FMT, queue_run_pid);
 
   if (*extras)
     p += sprintf(CS p, " -q%s", extras);
@@ -658,7 +658,7 @@ for (int i = queue_run_in_order ? -1 : 0;
 
     if (pipe(pfd) < 0)
       log_write_die(0, LOG_MAIN, "failed to create pipe in queue "
-        "runner process %d: %s", queue_run_pid, strerror(errno));
+        "runner process " PID_T_FMT ": %s", queue_run_pid, strerror(errno));
     queue_run_pipe = pfd[pipe_write];  /* To ensure it gets passed on. */
 
     /* Make sure it isn't stdin. This seems unlikely, but just to be on the
@@ -703,7 +703,7 @@ single_item_retry:
       }
     if (pid < 0)
       log_write_die(0, LOG_MAIN, "fork of delivery process from "
-        "queue runner %d failed\n", queue_run_pid);
+        "queue runner " PID_T_FMT " failed\n", queue_run_pid);
 
     /* Close the writing end of the synchronizing pipe in this process,
     then wait for the first level process to terminate. */
@@ -815,7 +815,8 @@ if (q->queue_2stage)
       set_process_info("running queue (ph 1): wait-all, child %u/%u",
 		      i+1, active);
       waitpid(qpid[i], NULL, 0);
-      DEBUG(D_queue_run) debug_printf("q2stage reaped child %d\n", (int)qpid[i]);
+      DEBUG(D_queue_run)
+	debug_printf("q2stage reaped child " PID_T_FMT "\n", qpid[i]);
       }
     else break;		/* should be no holes in table, so we're done */
 

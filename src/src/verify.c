@@ -3603,7 +3603,8 @@ int
 verify_quota_call(const uschar * rcpt, int pos_cache, int neg_cache,
   uschar ** msg)
 {
-int pfd[2], pid, save_errno, yield = FAIL;
+int pfd[2], save_errno, yield = FAIL;
+pid_t pid;
 void (*oldsignal)(int);
 const uschar * where = US"socketpair";
 

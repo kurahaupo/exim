@@ -3030,7 +3030,8 @@ while (*filter->pc)
   #ifndef COMPILE_SYNTAX_CHECKER
           if (filter_test == FTEST_NONE)
             {
-            int pid, fd;
+            pid_t pid;
+            int fd;
 
             if ((pid = child_open_exim2(&fd, envelope_from, envelope_from,
 			US"sieve-notify")) >= 1)

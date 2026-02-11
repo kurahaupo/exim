@@ -165,7 +165,7 @@ moan_send_message(const uschar * recipient, int ident,
 {
 int written = 0, fd, status, count = 0, size_limit = bounce_return_size_limit;
 FILE * fp;
-int pid;
+pid_t pid;
 
 #ifdef EXIM_HAVE_DMARC
 uschar * s, * s2;
@@ -198,7 +198,8 @@ if (pid < 0)
     strerror(errno));
   return FALSE;
   }
-else DEBUG(D_any) debug_printf("Child process %d for sending message\n", pid);
+else DEBUG(D_any)
+  debug_printf("Child process " PID_T_FMT " for sending message\n", pid);
 
 /* Creation of child succeeded */
 
@@ -600,7 +601,8 @@ moan_tell_someone(const uschar * who, const address_item * addr,
 {
 FILE * f;
 va_list ap;
-int fd, pid = child_open_exim(&fd, US"moan_tell_someone");
+int fd;
+pid_t pid = child_open_exim(&fd, US"moan_tell_someone");
 
 if (pid < 0)
   {
@@ -811,7 +813,8 @@ BOOL
 moan_skipped_syntax_errors(const uschar * rname, const error_block * eblock,
   const uschar * syntax_errors_to, BOOL some, const uschar * custom)
 {
-int pid, fd;
+pid_t pid;
+int fd;
 const uschar * s;
 FILE * f;
 
@@ -883,3 +886,5 @@ return TRUE;
 }
 
 /* End of moan.c */
+/* vi: aw ai sw=2
+*/

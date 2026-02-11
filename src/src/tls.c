@@ -820,8 +820,8 @@ do {
 } while (rc < 0 && errno == EINTR);
 
 DEBUG(D_tls)
-  debug_printf("tls_validate_require_cipher child %d ended: status=0x%x\n",
-      (int)pid, status);
+  debug_printf("tls_validate_require_cipher child " PID_T_FMT
+      " ended: status=0x%x\n", pid, status);
 
 signal(SIGCHLD, oldsignal);
 

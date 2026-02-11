@@ -3976,11 +3976,11 @@ if ((pid = exim_fork(US"etrn-command")) == 0)
   else
     {
     int status;
-    DEBUG(D_any) debug_printf("waiting for serialized ETRN process %d\n",
-      (int)pid);
+    DEBUG(D_any)
+      debug_printf("waiting for serialized ETRN process " PID_T_FMT "\n", pid);
     (void)wait(&status);
-    DEBUG(D_any) debug_printf("serialized ETRN process %d ended\n",
-      (int)pid);
+    DEBUG(D_any)
+      debug_printf("serialized ETRN process " PID_T_FMT " ended\n", pid);
     }
 
   if (smtp_etrn_serialize) enq_end(etrn_serialize_key);

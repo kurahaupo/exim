@@ -6231,8 +6231,8 @@ for (BOOL more = TRUE; more; )
 	while (wait(&status) != pid);
 	if ((status & 0x00ff) != 0)
 	  log_write(0, LOG_MAIN|LOG_PANIC,
-	    "process %d crashed with signal %d while delivering %s",
-	    (int)pid, status & 0x00ff, message_id);
+	    "process " PID_T_FMT " crashed with signal %d while delivering %s",
+	    pid, status & 0x00ff, message_id);
 	if (mua_wrapper && (status & 0xffff) != 0)
 	  exim_exit(EXIT_FAILURE);
 	}

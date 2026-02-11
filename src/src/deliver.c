@@ -6594,7 +6594,8 @@ if (addr_senddsn)
   int fd;
   pid_t pid = child_open_exim(&fd, US"DSN");
 
-  DEBUG(D_deliver) debug_printf("DSN: child_open_exim returns: %ld\n", (long)pid);
+  DEBUG(D_deliver)
+    debug_printf("DSN: child_open_exim returns: " PID_T_FMT "\n", pid);
 
   if (pid < 0)  /* Creation of child failed */
     {

@@ -1325,9 +1325,9 @@ write_pid = (pid_t)(-1);
   }
 if (filter_pid < 0) goto TIDY_UP;      /* errno set */
 
-DEBUG(D_transport)
-  debug_printf("process %d running as transport filter: fd_write=%d fd_read=%d\n",
-    (int)filter_pid, fd_write, fd_read);
+DEBUG(D_transport) debug_printf("process " PID_T_FMT
+    " running as transport filter: fd_write=%d fd_read=%d\n",
+    filter_pid, fd_write, fd_read);
 
 /* Fork subprocess to write the message to the filter, and return the result
 via a(nother) pipe. While writing to the filter, we do not do the CRLF,
@@ -1381,7 +1381,7 @@ if (write_pid < 0)
 testharness_pause_ms(250);
 
 DEBUG(D_transport)
-  debug_printf("process %d writing to transport filter\n", (int)write_pid);
+  debug_printf("process "PID_T_FMT " writing to transport filter\n", write_pid);
 
 /* Copy the message from the filter to the output fd. A read error leaves len
 == -1 and errno set. We need to apply a timeout to the read, to cope with
