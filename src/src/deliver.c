@@ -6622,8 +6622,6 @@ if (addr_senddsn)
     uschar * bound;
     transport_ctx tctx = {{0}};
 
-    priv_drop_temp(exim_uid, exim_gid);
-
     DEBUG(D_deliver)
       debug_printf("sending success-dsn to: %s\n", sender_address);
 
@@ -6708,8 +6706,6 @@ if (addr_senddsn)
     fflush(f);
     fclose(f);
     (void) child_close(pid, 0);     /* Waits for child to close, no timeout */
-
-    priv_restore();
     }
   }
 return has_privs;

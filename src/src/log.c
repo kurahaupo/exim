@@ -1539,7 +1539,8 @@ if (debug_file)
   {
   debug_printf("DEBUGGING ACTIVATED FROM WITHIN CONFIG.\n"
       "DEBUG: Tag=%q opts=%q\n", tag_name, opts ? opts : US"");
-  return debug_print_ids(US"");
+  debug_print_ids(US"");
+  return;
   }
 
 if (tag_name && (Ustrchr(tag_name, '/') != NULL))
