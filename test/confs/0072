@@ -10,6 +10,7 @@ RETURN=
 # ----- Main settings -----
 
 qualify_domain = test.ex
+log_selector = +delivery_size
 
 
 # ----- Routers -----

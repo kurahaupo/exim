@@ -567,14 +567,15 @@ if ((pid = child_open_exim(&fd, US"autoreply")) < 0)
 as the -t option is used. The "headers" stuff *must* be last in case there
 are newlines in it which might, if placed earlier, screw up other headers. */
 
+transport_count = 0;
 fp = fdopen(fd, "wb");
 
-if (from) fprintf(fp, "From: %s\n", from);
-if (reply_to) fprintf(fp, "Reply-To: %s\n", reply_to);
-if (to) fprintf(fp, "To: %s\n", to);
-if (cc) fprintf(fp, "Cc: %s\n", cc);
-if (bcc) fprintf(fp, "Bcc: %s\n", bcc);
-if (subject) fprintf(fp, "Subject: %s\n", subject);
+if (from)	transport_count += fprintf(fp, "From: %s\n", from) + 1;
+if (reply_to)	transport_count += fprintf(fp, "Reply-To: %s\n", reply_to) + 1;
+if (to)		transport_count += fprintf(fp, "To: %s\n", to) + 1;
+if (cc)		transport_count += fprintf(fp, "Cc: %s\n", cc) + 1;
+if (bcc)	transport_count += fprintf(fp, "Bcc: %s\n", bcc) + 1;
+if (subject)	transport_count += fprintf(fp, "Subject: %s\n", subject) + 1;
 
 /* Generate In-Reply-To from the message_id header; there should
 always be one, but code defensively. */
@@ -586,24 +587,34 @@ if (h)
   {
   message_id = Ustrchr(h->text, ':') + 1;
   Uskip_whitespace(&message_id);
-  fprintf(fp, "In-Reply-To: %s", message_id);
+  transport_count += fprintf(fp, "In-Reply-To: %s", message_id);
   }
 
+/*XXX byte count? */
 moan_write_references(fp, message_id);
 
 /* Add an Auto-Submitted: header */
 
-fprintf(fp, "Auto-Submitted: auto-replied\n");
+transport_count += fprintf(fp, "Auto-Submitted: auto-replied\n") + 1;
 
 /* Add any specially requested headers */
 
-if (headers) fprintf(fp, "%s\n", headers);
+if (headers)
+ {
+  int i = 1;
+  transport_count += fprintf(fp, "%s\n", headers);
+  for (const uschar * s = headers; *s; s++) if (*s == '\n') i++;
+  transport_count += i;
+ }
+
 fprintf(fp, "\n");
 
 if (text)
   {
-  fprintf(fp, "%s", CS text);
-  if (text[Ustrlen(text)-1] != '\n') fprintf(fp, "\n");
+  int i = fprintf(fp, "%s", CS text);
+  if (text[Ustrlen(text)-1] != '\n') { fprintf(fp, "\n"); i++; }
+  for (const uschar * s = text; *s; s++) if (*s == '\n') i++;
+  transport_count += i;
   }
 
 if (ff)
@@ -612,13 +623,17 @@ if (ff)
     if (file_expand)
       {
       const uschar * s = expand_string(big_buffer);
+      int i;
       if (!s) DEBUG(D_transport)
 	debug_printf("error while expanding line from file:\n  %s\n  %s\n",
 	  big_buffer, expand_string_message);
-      fprintf(fp, "%s", s ? CS s : CS big_buffer);
+      if (!s) s = big_buffer;
+      i = fprintf(fp, "%s", CS s);
+      for (const uschar * t = s; *t; t++) if (*t == '\n') i++;
+      transport_count += i;
       }
     else
-      fprintf(fp, "%s", CS big_buffer);
+      transport_count += fprintf(fp, "%s", CS big_buffer) + 1;
 
   (void) fclose(ff);
   }
@@ -654,17 +669,17 @@ if (return_message)
       DELIVER_IN_BUFFER_SIZE;
     if (fstat(deliver_datafile, &statbuf) == 0 && statbuf.st_size > max)
       {
-      fprintf(fp, "\n%s"
+     	transport_count += fprintf(fp, "\n%s"
 "------ The body of the message is " OFF_T_FMT " characters long; only the first\n"
 "------ %d or so are included here.\n\n", rubric, statbuf.st_size,
-        (max/1000)*1000);
+        (max/1000)*1000) + 5;
       }
-    else fprintf(fp, "\n%s\n", rubric);
+    else
+      transport_count += fprintf(fp, "\n%s\n", rubric) + 3;
     }
-  else fprintf(fp, "\n%s\n", rubric);
+  else	transport_count += fprintf(fp, "\n%s\n", rubric) + 3;
 
   fflush(fp);
-  transport_count = 0;
   transport_write_message(&tctx, bounce_return_size_limit);
   }
 
