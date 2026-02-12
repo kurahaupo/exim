@@ -13,7 +13,7 @@ do
   | awk '/{ (US)?"/ {print $2}' \
   | awk -F\" '{print $2}' \
   | LC_ALL=C sort -c \
-  || exit 1
+  || { echo "Table $table in $file is not alphabetically ordered" >&2 ; exit 1; }
 done <<-END
 	readconf.c	optionlist_config
 	globals.c	optionlist_auths
@@ -42,8 +42,7 @@ do
   perl -e '$/= undef; while (<>) { print $1 if /(?<='$table'\[\])\s*=\s*{\s?(([^}]*)+)}/m }' \
   | awk -F\" '/"/ {print $2}' \
   | LC_ALL=C sort -c \
-  || exit 1
-
+  || { echo "Table $table in $file is not alphabetically ordered" >&2 ; exit 1; }
 done <<-END
 	expand.c	item_table
 	expand.c	op_table_underscore
