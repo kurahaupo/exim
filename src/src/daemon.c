@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -43,6 +43,7 @@ static int   accept_retry_errno;
 static BOOL  accept_retry_select_failed;
 
 static int   queue_run_count = 0;	/* current runners */
+static const uschar * daemon_process_info = NULL;
 
 static unsigned queue_runner_slot_count = 0;
 static runner_slot * queue_runner_slots = NULL;
@@ -751,6 +752,8 @@ else if (smtp_slots)
       if (smtp_accept_max_per_host)
         smtp_slots[i].host_address = string_copy_malloc(sender_host_address);
       smtp_accept_count++;
+      set_process_info("daemon(%s): [%d+%d] %s", version_string,
+		      smtp_accept_count, queue_run_count, daemon_process_info);
       break;
       }
   DEBUG(D_any) debug_printf("%d SMTP accept process%s running\n",
@@ -909,6 +912,8 @@ while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
         if (--smtp_accept_count < 0) smtp_accept_count = 0;
         DEBUG(D_any) debug_printf("%d SMTP accept process%s now running\n",
           smtp_accept_count, smtp_accept_count == 1 ? "" : "es");
+	set_process_info("daemon(%s): [%d+%d] %s", version_string,
+		      smtp_accept_count, queue_run_count, daemon_process_info);
         break;
         }
     if (i < smtp_accept_max) continue;  /* Found an accepting process */
@@ -928,6 +933,8 @@ while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
         if (--queue_run_count < 0) queue_run_count = 0;
         DEBUG(D_any) debug_printf("%d queue-runner process%s now running\n",
           queue_run_count, queue_run_count == 1 ? "" : "es");
+	set_process_info("daemon(%s): [%d+%d] %s", version_string,
+		      smtp_accept_count, queue_run_count, daemon_process_info);
 
 	for (qrunner ** p = &qrunners, * q = qrunners; q; p = &q->next, q = *p)
 	  if (q->name == r->queue_name)
@@ -1617,6 +1624,8 @@ if (is_multiple_qrun())				/* we are managing periodic runs */
 	    }
 	DEBUG(D_any) debug_printf("%d queue-runner process%s running\n",
 	  queue_run_count, queue_run_count == 1 ? "" : "es");
+	set_process_info("daemon(%s): [%d+%d] %s", version_string,
+		      smtp_accept_count, queue_run_count, daemon_process_info);
 	}
       }
     }
@@ -2434,7 +2443,7 @@ must be set up. */
 
 if (f.inetd_wait_mode)
   {
-  uschar *p = big_buffer;
+  uschar * p = big_buffer;
 
   if (inetd_wait_timeout >= 0)
     sprintf(CS p, "terminating after %d seconds", inetd_wait_timeout);
@@ -2444,7 +2453,7 @@ if (f.inetd_wait_mode)
   log_write(0, LOG_MAIN, "exim %s daemon started: pid=" PID_T_FMT
 			  ", launched with listening socket, %s",
     version_string, getpid(), big_buffer);
-  set_process_info("daemon(%s): pre-listening socket", version_string);
+  daemon_process_info = US"pre-listening socket";
 
   /* set up the timeout logic */
   sigalrm_seen = TRUE;
@@ -2550,8 +2559,8 @@ else if (f.daemon_listen)
   log_write(0, LOG_MAIN,
     "exim %s daemon started: pid=" PID_T_FMT ", %s, listening for %s",
     version_string, getpid(), qinfo, big_buffer);
-  set_process_info("daemon(%s): %s, listening for %s",
-    version_string, qinfo, big_buffer);
+  daemon_process_info =
+    string_sprintf("%s, listening for %s", qinfo, big_buffer);
   }
 
 else	/* no listening sockets, only queue-runs */
@@ -2560,8 +2569,11 @@ else	/* no listening sockets, only queue-runs */
   log_write(0, LOG_MAIN,
     "exim %s daemon started: pid=" PID_T_FMT ", %s, not listening for SMTP",
     version_string, getpid(), s);
-  set_process_info("daemon(%s): %s, not listening", version_string, s);
+  daemon_process_info = string_sprintf("%s, not listening", s);
   }
+
+set_process_info("daemon(%s): [%d+%d] %s",
+      version_string, smtp_accept_count, queue_run_count, daemon_process_info);
 
 /* Do any work it might be useful to amortize over our children
 (eg: compile regex) */

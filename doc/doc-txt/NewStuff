@@ -20,6 +20,9 @@ Since Version 4.99
 
  5. Debug channels "regex" and "macro".
 
+ 6. The exiwhat utility now includes, on the daemon process line, counts for
+    smtp and queue-run children.
+
 
 Version 4.99
 ------------
