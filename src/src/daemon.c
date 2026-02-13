@@ -2475,6 +2475,7 @@ else if (f.daemon_listen)
   listings separate. */
 
   for (int j = 0, i; j < 2; j++)
+    {
     for (i = 0, ipa = addresses; i < 10 && ipa; i++, ipa = ipa->next)
       {
       /* First time round, look for SMTP ports; second time round, look for
@@ -2507,6 +2508,9 @@ else if (f.daemon_listen)
 	else				/* check for previously-seen IP */
 	  {
 	  ip_address_item * i2;
+
+	  /* Look for same-IP combinations of ports */
+
 	  for (i2 = addresses; i2 != ipa; i2 = i2->next)
 	    if (  host_is_tls_on_connect_port(i2->port) == (j > 0)
 	       && Ustrcmp(ipa->address, i2->address) == 0
@@ -2528,6 +2532,39 @@ else if (f.daemon_listen)
 	  }
 	}
       }
+
+    /* Now look for same-port (or portlist) combinations of IPs */
+
+    for (i = 0, ipa = addresses; i < 10 && ipa; i++, ipa = ipa->next)
+      if (host_is_tls_on_connect_port(ipa->port) == (j > 0))
+	{
+	const uschar * portlist, * i2_plist;
+
+	if (ipa->log && (portlist = Ustrrchr(ipa->log, ':')))
+	  {
+	  const uschar * iplist = ipa->log + 1;	/* skip leading space */
+	  int iplen = portlist - iplist;
+
+	  for (ip_address_item * i2 = addresses; i2 != ipa; i2 = i2->next)
+	    if (  host_is_tls_on_connect_port(i2->port) == (j > 0)
+	       && i2->log
+	       && (i2_plist = Ustrrchr(i2->log, ':'))
+	       && Ustrcmp(portlist, i2_plist) == 0
+	       )
+	      {
+	      BOOL is_list = i2->log[1] == '{';		/*}*/
+	      const uschar * i2list = i2->log + (is_list ? 2 : 1);
+	      int i2len = i2_plist - i2list - (is_list ? 1 : 0);
+
+	      i2->log = string_sprintf(" {%.*s %.*s}%s",
+					  i2len, i2list, iplen, iplist,
+					  portlist);
+
+	      ipa->log = NULL;
+	      }
+	  }
+	}
+    }
 
   p = big_buffer;
   for (int j = 0, i; j < 2; j++)

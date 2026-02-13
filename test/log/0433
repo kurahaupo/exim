@@ -6,3 +6,4 @@
 1999-03-02 09:44:33 exim x.yz daemon started: pid=p1237, no queue runs, listening for SMTP on port PORT_D port PORT_D2 [127.0.0.1]:PORT_D4
 1999-03-02 09:44:33 exim x.yz daemon started: pid=p1238, no queue runs, listening for SMTP on [127.0.0.1]:PORT_D4 port PORT_D3 (IPv4)
 1999-03-02 09:44:33 exim x.yz daemon started: pid=p1239, no queue runs, listening for SMTP on port PORT_D port PORT_D2
+1999-03-02 09:44:33 exim x.yz daemon started: pid=p1240, no queue runs, listening for SMTP on {[127.0.0.1] [ip4.ip4.ip4.ip4]}:PORT_D
