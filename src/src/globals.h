@@ -372,6 +372,7 @@ extern uschar *big_buffer;             /* Used for various temp things */
 extern int     big_buffer_size;        /* Current size (can expand) */
 extern int     bsmtp_transaction_linecount; /* Start of last transaction */
 extern int     body_8bitmime;          /* sender declared BODY= ; 7=7BIT, 8=8BITMIME */
+extern uschar *bounce_charset;	       /* value for Content-Type: headers */
 extern uschar *bounce_message_file;    /* Template file */
 extern uschar *bounce_message_text;    /* One-liner */
 extern const uschar *bounce_recipient; /* When writing an errmsg */

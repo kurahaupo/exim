@@ -5923,6 +5923,16 @@ fprintf(fp, "%s\n", wrap_header(string_from_gstring(g), 79, 1023, US" ", 1));
 *              Send a bounce message             *
 *************************************************/
 
+static uschar *
+get_bounce_charset(void)
+{
+uschar * charset;
+GET_OPTION("bounce_charset");
+return   !(charset = expand_string(bounce_charset))
+      || Ustrcmp(charset, "us-ascii") != 0 && Ustrcmp(charset, "UTF-8") != 0
+ ? US"us-ascii" : charset;
+}
+
 /* Find the error address for the first address, then send a message that
 includes all failed addresses that have the same error address. Note the
 bounce_recipient is a global so that it can be accessed by $bounce_recipient
@@ -6045,9 +6055,10 @@ else
       to_sender? ": returning message to sender" : "");
 
   /* output human readable part as text/plain section */
+  GET_OPTION("bounce_charset");
   fprintf(fp, "--%s\n"
-      "Content-type: text/plain; charset=us-ascii\n\n",
-    bound);
+      "Content-type: text/plain; charset=%s\n\n",
+    bound, get_bounce_charset());
 
   if ((emf_text = next_emf(emf, US"intro")))
     fprintf(fp, "%s", CS emf_text);
@@ -6418,8 +6429,8 @@ else
 
 /* output human readable part as text/plain section */
 fprintf(f, "--%s\n"
-    "Content-type: text/plain; charset=us-ascii\n\n",
-  bound);
+    "Content-type: text/plain; charset=%s\n\n",
+  bound, get_bounce_charset());
 
 if ((wmf_text = next_emf(wmf, US"intro")))
   fprintf(f, "%s", CS wmf_text);
@@ -6643,11 +6654,11 @@ if (addr_senddsn)
 	"MIME-Version: 1.0\n\n"
 
 	"--%s\n"
-	"Content-type: text/plain; charset=us-ascii\n\n"
+	"Content-type: text/plain; charset=%s\n\n"
 
 	"This message was created automatically by mail delivery software.\n"
 	" ----- The following addresses had successful delivery notifications -----\n",
-      bound, bound);
+      bound, bound, get_bounce_charset());
 
     for (address_item * a = addr_senddsn; a; a = a->next)
       fprintf(f, "<%s> (relayed %s)\n\n",

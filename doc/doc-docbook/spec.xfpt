@@ -15308,6 +15308,7 @@ See also the &'Policy controls'& section above.
 
 .section "Bounce and warning messages" "SECID117"
 .table2
+.row &%bounce_charset%&              "Content-type: headers"
 .row &%bounce_message_file%&         "content of bounce"
 .row &%bounce_message_text%&         "content of bounce"
 .row &%bounce_return_body%&          "include body if returning message"
@@ -15636,6 +15637,18 @@ the &%-bi%& option (see chapter &<<CHAPcommandline>>&). The string value is
 just the command name, it is not a complete command line. If an argument is
 required, it must come from the &%-oA%& command line option.
 
+
+.new
+.option bounce_charset main string&!! us-ascii
+This aoption is expanded and used for the &"charset="& item
+in &"Content-type:"& headers in bounce and warning messages.
+
+The only permitted values after expansion are &"us-ascii"&
+or &"UTF-8"&.
+
+&*Note*&: No validation of the message content is done,
+however this option is set.
+.wen
 
 .option bounce_message_file main string&!! unset
 .cindex "bounce message" "customizing"

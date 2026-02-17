@@ -23,6 +23,8 @@ Since Version 4.99
  6. The exiwhat utility now includes, on the daemon process line, counts for
     smtp and queue-run children.
 
+ 7. Main config option "bounce_charset", for setting Content-type: headers.
+
 
 Version 4.99
 ------------

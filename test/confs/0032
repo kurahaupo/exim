@@ -8,6 +8,9 @@ primary_hostname = myhost.ex
 # ----- Main settings -----
 
 dsn_from = MailProgram <xyz@some.where>
+.ifdef CONTROL
+bounce_charset = CONTROL
+.endif
 
 acl_not_smtp = add_insane_refs
 

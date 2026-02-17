@@ -555,6 +555,7 @@ int     bsmtp_transaction_linecount = 0;
 int     body_8bitmime          = 0;
 int     body_linecount         = 0;
 int     body_zerocount         = 0;
+uschar *bounce_charset         = US"us-ascii";
 uschar *bounce_message_file    = NULL;
 uschar *bounce_message_text    = NULL;
 const uschar *bounce_recipient = NULL;

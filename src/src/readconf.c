@@ -79,6 +79,7 @@ static optionlist optionlist_config[] = {
   { "av_scanner",               opt_stringptr,   {&av_scanner} },
 #endif
   { "bi_command",               opt_stringptr,   {&bi_command} },
+  { "bounce_charset",           opt_stringptr,   {&bounce_charset} },
   { "bounce_message_file",      opt_stringptr,   {&bounce_message_file} },
   { "bounce_message_text",      opt_stringptr,   {&bounce_message_text} },
   { "bounce_return_body",       opt_bool,        {&bounce_return_body} },

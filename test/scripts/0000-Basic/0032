@@ -2,3 +2,9 @@
 exim -odi userx@mxt1.test.ex
 This is a test message.
 ****
+exim -DCONTROL=UTF-8 -odi userx_utf8@mxt1.test.ex
+****
+exim -DCONTROL=other -odi userx_bogus@mxt1.test.ex
+****
+exim -DCONTROL=us-ascii -odi userx_usascii@mxt1.test.ex
+****
