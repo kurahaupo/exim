@@ -311,8 +311,6 @@ search_tidyup called
 01:01:01 p1235   ╰─────result: myhost.test.ex░ESMTP░Exim░x.yz░Tue,░2░Mar░1999░09:44:33░+0000
 01:01:01 p1235  host in pipelining_connect_advertise_hosts?
 01:01:01 p1235   list element: 
-01:01:01 p1235  host in pipelining_connect_advertise_hosts?
-01:01:01 p1235   list element: 
 01:01:01 p1235  SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 01:01:01 p1235  smtp_setup_msg entered
 01:01:01 p1235  SMTP>- ◀flush▶

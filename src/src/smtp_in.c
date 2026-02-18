@@ -2855,10 +2855,6 @@ else						/* not already sent */
   this synchronisation check is disabled. */
 
 #ifndef DISABLE_PIPE_CONNECT
-  fl.pipe_connect_acceptable =
-       sender_host_address
-    && verify_check_host(&pipe_connect_advertise_hosts) == OK;
-
   if (!check_sync(WBR_DATA_ONLY))
     if (fl.pipe_connect_acceptable)
       f.smtp_in_early_pipe_used = TRUE;

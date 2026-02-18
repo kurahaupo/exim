@@ -189,7 +189,6 @@ pid_t pid;
 union sockaddr_46 interface_sockaddr;
 EXIM_SOCKLEN_T ifsize = sizeof(interface_sockaddr);
 int max_for_this_host = 0;
-bitmask_word_t save_log_selector = *log_selector;
 gstring * whofrom;
 
 rmark reset_point = store_mark();
@@ -374,6 +373,7 @@ if (pid == 0)
 
   smtp_accept_count++;    /* So that it includes this process */
   set_connection_id();
+  memset(sender_host_cache, 0, sizeof(sender_host_cache));
 
   /* Log the connection if requested.
   In order to minimize the cost (because this is going to happen for every
@@ -390,9 +390,8 @@ if (pid == 0)
   if (LOGGING(smtp_connection))
     {
     const uschar * list = hosts_connection_nolog;
-    memset(sender_host_cache, 0, sizeof(sender_host_cache));
     if (list && verify_check_host(&list) == OK)
-      save_log_selector &= ~L_smtp_connection;
+      log_selector[0] &= ~L_smtp_connection;	/*XXX assumes word-of-bit */
     else if (LOGGING(connection_id))
       log_write(L_smtp_connection, LOG_MAIN, "SMTP connection from %Y "
 	"Ci=%s (TCP/IP connection count = %d)",
@@ -407,10 +406,6 @@ if (pid == 0)
   if (smtp_listen_backlog > smtp_backlog_monitor)
     log_write(0, LOG_MAIN, "listen backlog %d I=[%s]:%d",
 		smtp_listen_backlog, interface_address, interface_port);
-
-  /* May have been modified for the subprocess */
-
-  *log_selector = save_log_selector;
 
   /* Get the local interface address into permanent store */
 
