@@ -101,6 +101,8 @@ JH/24 Bug 3197: Fix logged autoreply size. If enabled, sizes for delivery lines
       size would be claimed.  Fix by counting all components of a generated
       message.
 
+BQ/26 Bug 3199/3200: Remove Brightmail and Interbase support.
+
 
 Exim version 4.99.1
 -------------------

@@ -16,14 +16,14 @@ released tarball.
 
 ## Reporting a Vulnerability
 
-Our security page is at <https://wiki.exim.org/EximSecurity>.
+Our security page is at <https://code.exim.org/exim/exim/wiki/EximSecurity>.
 It contains the current contact point and list of PGP keys to use for
 encrypting particularly sensitive information.
 This also links to our documentation and the chapter on security
 considerations.
 
 Our security release process is at
-<https://wiki.exim.org/SecurityReleaseProcess>.
+<https://code.exim.org/exim/exim/wiki/SecurityReleaseProcess>.
 This covers what we do in handling vulnerability reports.
 
 We have no bug bounty program of our own; we're far too disparate a group of

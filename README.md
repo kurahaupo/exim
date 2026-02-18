@@ -1,18 +1,5 @@
 # Exim Development Repository
 
-# IMPORTANT NOTE - EXIM NO LONGER USES GITHUB
-
-As of 2025-12-26 the exim project will no longer be pushing any
-updates to the repositories at GitHub.
-
-Please use the official sites.
-
-* Project Site:  [https://www.exim.org/](https://www.exim.org/)
-* Repository:    [https://code.exim.org/exim/exim.git](https://code.exim.org/exim/exim.git)
-* Other Repos:   [https://code.exim.org/exim/](https://code.exim.org/exim/)
-
-----
-
 This is the Exim (Mail Transport Agent) Source Repository. Please
 read the following information if you wish to use or contribute to the
 Exim development process - this is to prevent your or our time being
@@ -23,20 +10,19 @@ look at the pointers further down this file at ["General Exim Information"](#gen
 
 ## General Development Information
 
+The git repository for the project is at
+
+* Repository:    [https://code.exim.org/exim/exim.git](https://code.exim.org/exim/exim.git)
+
 The general Exim development process and resources are documented in
 the wiki page at [https://code.exim.org/exim/wiki/wiki/EximDevelopment](https://code.exim.org/exim/wiki/wiki/EximDevelopment) - although the wiki is likely to be moved and rehashed in the near future.
 
 The sections below this duplicate much of the information from the
 wiki document.
 
-## Development Repositories
-
-The git repository for the project is at
-
-* Repository:    [https://code.exim.org/exim/exim.git](https://code.exim.org/exim/exim.git)
+## Other Sites
 
 * Project Site:  [https://www.exim.org/](https://www.exim.org/)
-* Repository:    [https://code.exim.org/exim/exim.git](https://code.exim.org/exim/exim.git)
 * Other Repos:   [https://code.exim.org/exim/](https://code.exim.org/exim/)
 
 
@@ -52,7 +38,7 @@ Development issues are normally discussed on the exim-dev mailing list
 ## Exim Release Process
 
 Some documentation on the release process can be found at
-[https://code.exim.org/exim/wiki/wiki/EximRelease](https://code.exim.org/exim/wiki/wiki/EximRelease).
+[https://code.exim.org/exim/exim/wiki/EximRelease](https://code.exim.org/exim/exim/wiki/EximRelease).
 
 ## General Exim Information
 

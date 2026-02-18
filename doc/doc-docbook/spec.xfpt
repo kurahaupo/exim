@@ -453,12 +453,13 @@ examples, tips, and know-how that have been contributed by Exim users.
 The wiki site should always redirect to the correct place, which is currently
 provided by GitHub, and is open to editing by anyone with a GitHub account.
 
+.cindex Issue Reporting
 .cindex Bugzilla
 .cindex "wish list"
 .cindex "bug reporting"
 .new
 An issues tracking system exists at
-&url(https://code.exim.org/exim/exim/issues)/
+&url(https://code.exim.org/exim/exim/issues/)
 You can use
 this to report bugs, and also to add items to the wish list. Please search
 first to check that you are not duplicating a previous entry.
@@ -492,9 +493,10 @@ lists.
 
 .section "Bug reports" "SECID5"
 .cindex "bug reports"
+.cindex "Issue Reporting"
 .cindex "reporting bugs"
-Reports of obvious bugs can be emailed to &'bugs@exim.org'& or reported
-via &url(https://bugs.exim.org,the Bugzilla). However, if you are unsure
+Reports of obvious bugs can be files via
+&url(https://code.exim.org/exim/exim/issues).  However, if you are unsure
 whether some behaviour is a bug or not, the best thing to do is to post a
 message to the &'exim-dev'& mailing list and have it discussed.
 
@@ -755,7 +757,7 @@ Exim monitor using the freely-distributable PCRE2 library, copyright
 &copy; University of Cambridge. The source to PCRE2 is not  shipped with
 Exim, so you will need to use the version of PCRE2 shipped with your system,
 or obtain and install the full version of the library from
-&url(https://github.com/PhilipHazel/pcre2/releases).
+&url(https://github.com/PCRE2Project/pcre2/releases).
 .next
 .cindex "cdb" "acknowledgment"
 Support for the cdb (Constant DataBase) lookup method is provided by code
@@ -1753,8 +1755,8 @@ and INCLUDE directives appropriately,
 or set PCRE2_CONFIG=yes to use the installed &(pcre-config)& command.
 If your operating system has no
 PCRE2 support then you will need to obtain and build the current PCRE2
-from &url(https://github.com/PhilipHazel/pcre2/releases).
-More information on PCRE2 is available at &url(https://www.pcre.org/).
+from &url(https://github.com/PCRE2Project/pcre2/releases).
+More information on PCRE2 is available at &url(https://pcre2project.github.io/pcre2/).
 
 .section "DBM libraries" "SECTdb"
 .cindex "DBM libraries" "discussion of"
