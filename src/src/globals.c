@@ -81,15 +81,15 @@ tls_support tls_out = {
 uschar *dsn_envid              = NULL;
 int     dsn_ret                = 0;
 const pcre2_code  *regex_DSN         = NULL;
-uschar *dsn_advertise_hosts    = NULL;
+const uschar *dsn_advertise_hosts    = NULL;
 
 #ifndef DISABLE_TLS
 BOOL    gnutls_compat_mode     = FALSE;
 BOOL    gnutls_allow_auto_pkcs11 = FALSE;
-uschar *hosts_require_alpn     = NULL;
+const uschar *hosts_require_alpn = NULL;
 uschar *openssl_options        = NULL;
 const pcre2_code *regex_STARTTLS     = NULL;
-uschar *tls_advertise_hosts    = US"*";
+const uschar *tls_advertise_hosts    = US"*";
 uschar *tls_alpn	       = US"smtp:esmtp";
 uschar *tls_certificate        = NULL;
 uschar *tls_crl                = NULL;
@@ -98,7 +98,7 @@ that's the interop problem which has been observed: GnuTLS suggesting a higher
 bit-count as "NORMAL" (2432) and Thunderbird dropping connection. */
 int     tls_dh_max_bits        = 2236;
 uschar *tls_dhparam            = NULL;
-uschar *tls_early_banner_hosts = US"";
+const uschar *tls_early_banner_hosts = US"";
 uschar *tls_eccurve            = US"auto";
 # ifndef DISABLE_OCSP
 uschar *tls_ocsp_file          = NULL;
@@ -108,11 +108,11 @@ uschar *tls_privatekey         = NULL;
 BOOL    tls_remember_esmtp     = FALSE;
 uschar *tls_require_ciphers    = NULL;
 # ifndef DISABLE_TLS_RESUME
-uschar *tls_resumption_hosts   = NULL;
+const uschar *tls_resumption_hosts = NULL;
 # endif
-uschar *tls_try_verify_hosts   = NULL;
+const uschar *tls_try_verify_hosts = NULL;
 uschar *tls_verify_certificates= US"system";
-uschar *tls_verify_hosts       = NULL;
+const uschar *tls_verify_hosts = NULL;
 int     tls_watch_fd	       = -1;
 time_t  tls_watch_trigger_time = (time_t)0;
 #else	/*DISABLE_TLS*/
@@ -526,7 +526,7 @@ uschar *authenticated_fail_id  = NULL;
 uschar *authenticated_id       = NULL;
 uschar *authenticated_sender   = NULL;
 auth_instance  *auths          = NULL;
-uschar *auth_advertise_hosts   = US"*";
+const uschar *auth_advertise_hosts   = US"*";
 auth_instance auth_defaults    = {   /* All unmentioned elements 0/NULL/FALSE */
     0
 };
@@ -575,7 +575,7 @@ int_eximarith_t check_log_space = 10*1024;	/* 10K Kbyte == 10MB */
 int     check_spool_inodes     = 100;
 int_eximarith_t check_spool_space = 10*1024;	/* 10K Kbyte == 10MB */
 
-uschar *chunking_advertise_hosts = US"*";
+const uschar *chunking_advertise_hosts = US"*";
 unsigned chunking_datasize     = 0;
 unsigned chunking_data_left    = 0;
 chunking_state_t chunking_state= CHUNKING_NOT_OFFERED;
@@ -840,35 +840,35 @@ header_name header_names[] = {
 
 int header_names_size          = nelem(header_names);
 
-uschar *helo_accept_junk_hosts = NULL;
+const uschar *helo_accept_junk_hosts = NULL;
 uschar *helo_allow_chars       = US"";
 uschar *helo_lookup_domains    = US"@ : @[]";
-uschar *helo_try_verify_hosts  = NULL;
-uschar *helo_verify_hosts      = NULL;
+const uschar *helo_try_verify_hosts  = NULL;
+const uschar *helo_verify_hosts      = NULL;
 const uschar *hex_digits       = CUS"0123456789abcdef";
 uschar *hold_domains           = NULL;
 uschar *host_data              = NULL;
-uschar *host_lookup            = NULL;
+const uschar *host_lookup      = NULL;
 uschar *host_lookup_order      = US"bydns:byaddr";
 uschar *host_lookup_msg        = US"";
 int     host_number            = 0;
 uschar *host_number_string     = NULL;
-uschar *host_reject_connection = NULL;
-uschar *hosts_connection_nolog = NULL;
+const uschar *host_reject_connection = NULL;
+const uschar *hosts_connection_nolog = NULL;
 #ifdef SUPPORT_PROXY
 uschar *hosts_proxy            = NULL;
 #endif
 uschar *hosts_treat_as_local   = NULL;
-uschar *hosts_require_helo     = US"*";
+const uschar *hosts_require_helo = US"*";
 #ifdef EXPERIMENTAL_XCLIENT
-uschar *hosts_xclient	       = NULL;
+const uschar *hosts_xclient	= NULL;
 #endif
 tree_node *hostlist_anchor     = NULL;
 int     hostlist_count         = 0;
 
 
 int     ignore_bounce_errors_after = 10*7*24*60*60;  /* 10 weeks */
-uschar *ignore_fromline_hosts  = NULL;
+const uschar *ignore_fromline_hosts = NULL;
 int     inetd_wait_timeout     = -1;
 uschar *initial_cwd            = NULL;
 uschar *interface_address      = NULL;
@@ -886,7 +886,7 @@ const uschar *letter_digit_hyphen_dot =
       ".-0123456789"
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 #ifndef DISABLE_ESMTP_LIMITS
-uschar *limits_advertise_hosts = US"*";
+const uschar *limits_advertise_hosts = US"*";
 #endif
 int     load_average           = -2;
 uschar *local_from_prefix      = NULL;
@@ -1103,9 +1103,9 @@ uschar *percent_hack_domains   = NULL;
 const uschar *pid_file_path    = US PID_FILE_PATH
                            "\0<--------------Space to patch pid_file_path->";
 #ifndef DISABLE_PIPE_CONNECT
-uschar *pipe_connect_advertise_hosts = US"*";
+const uschar *pipe_connect_advertise_hosts = US"*";
 #endif
-uschar *pipelining_advertise_hosts = US"*";
+const uschar *pipelining_advertise_hosts = US"*";
 uschar *primary_hostname       = NULL;
 uschar *process_info;
 int     process_info_len       = 0;
@@ -1187,7 +1187,7 @@ uschar *received_protocol      = NULL;
 struct timeval received_time   = { 0, 0 };
 struct timeval received_time_complete = { 0, 0 };
 uschar *recipient_data         = NULL;
-uschar *recipient_unqualified_hosts = NULL;
+const uschar *recipient_unqualified_hosts = NULL;
 uschar *recipient_verify_failure = NULL;
 int     recipients_count       = 0;
 recipient_item  *recipients_list = NULL;
@@ -1222,7 +1222,7 @@ int     retry_maximum_timeout  = 0;        /* set from retry config */
 retry_config  *retries         = NULL;
 const uschar *return_path            = NULL;
 int     rewrite_existflags     = 0;
-uschar *rfc1413_hosts          = US"@[]";
+const uschar *rfc1413_hosts    = US"@[]";
 int     rfc1413_query_timeout  = 0;
 uid_t   root_gid               = ROOT_GID;
 uid_t   root_uid               = ROOT_UID;
@@ -1288,7 +1288,7 @@ uschar *sender_rate            = NULL;
 uschar *sender_rate_limit      = NULL;
 uschar *sender_rate_period     = NULL;
 uschar *sender_rcvhost         = NULL;
-uschar *sender_unqualified_hosts = NULL;
+const uschar *sender_unqualified_hosts = NULL;
 uschar *sender_verify_failure = NULL;
 address_item *sender_verified_list  = NULL;
 address_item *sender_verified_failed = NULL;
@@ -1302,7 +1302,7 @@ int     slow_lookup_log        = 0;	/* millisecs, zero disables */
 int     smtp_accept_count      = 0;
 int     smtp_accept_max        = 20;
 int     smtp_accept_max_nonmail= 10;
-uschar *smtp_accept_max_nonmail_hosts = US"*";
+const uschar *smtp_accept_max_nonmail_hosts = US"*";
 uschar *smtp_accept_max_per_connection = US"1000";
 uschar *smtp_accept_max_per_host = NULL;
 int     smtp_accept_queue      = 0;
@@ -1333,12 +1333,12 @@ int     smtp_max_unknown_commands = 3;
 const uschar *smtp_notquit_reason = NULL;
 unsigned smtp_peer_options     = 0;
 unsigned smtp_peer_options_wrap= 0;
-uschar *smtp_ratelimit_hosts   = NULL;
+const uschar *smtp_ratelimit_hosts = NULL;
 uschar *smtp_ratelimit_mail    = NULL;
 uschar *smtp_ratelimit_rcpt    = NULL;
 int     smtp_receive_timeout   = 5*60;
 uschar *smtp_receive_timeout_s = NULL;
-uschar *smtp_reserve_hosts     = NULL;
+const uschar *smtp_reserve_hosts = NULL;
 int     smtp_rlm_base          = 0;
 double  smtp_rlm_factor        = 0.0;
 int     smtp_rlm_limit         = 0;
@@ -1348,7 +1348,7 @@ double  smtp_rlr_factor        = 0.0;
 int     smtp_rlr_limit         = 0;
 int     smtp_rlr_threshold     = INT_MAX;
 #ifdef SUPPORT_I18N
-uschar *smtputf8_advertise_hosts = US"*";	/* overridden under test-harness */
+const uschar *smtputf8_advertise_hosts = US"*";	/* overridden under test-harness */
 #endif
 
 #ifdef WITH_CONTENT_SCAN
@@ -1467,7 +1467,7 @@ const uschar *warnmsg_delay    = NULL;
 const uschar *warnmsg_recipients = NULL;
 
 #ifndef DISABLE_WELLKNOWN
-uschar *wellknown_advertise_hosts = NULL;
+const uschar *wellknown_advertise_hosts = NULL;
 uschar *wellknown_response     = NULL;
 #endif
 

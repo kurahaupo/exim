@@ -389,7 +389,7 @@ if (pid == 0)
 
   if (LOGGING(smtp_connection))
     {
-    uschar * list = hosts_connection_nolog;
+    const uschar * list = hosts_connection_nolog;
     memset(sender_host_cache, 0, sizeof(sender_host_cache));
     if (list && verify_check_host(&list) == OK)
       save_log_selector &= ~L_smtp_connection;

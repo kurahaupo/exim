@@ -95,7 +95,7 @@ extern tls_support tls_out;
 #ifndef DISABLE_TLS
 extern BOOL    gnutls_compat_mode;     /* Less security, more compatibility */
 extern BOOL    gnutls_allow_auto_pkcs11; /* Let GnuTLS autoload PKCS11 modules */
-extern uschar *hosts_require_alpn;     /* Mandatory ALPN successful nogitiation */
+extern const uschar *hosts_require_alpn; /* Mandatory ALPN successful nogitiation */
 extern uschar *openssl_options;        /* OpenSSL compatibility options */
 extern const pcre2_code *regex_STARTTLS;     /* For recognizing STARTTLS settings */
 extern uschar *tls_alpn;	       /* ALPN names acceptable */
@@ -103,7 +103,7 @@ extern uschar *tls_certificate;        /* Certificate file */
 extern uschar *tls_crl;                /* CRL File */
 extern int     tls_dh_max_bits;        /* don't accept higher lib suggestions */
 extern uschar *tls_dhparam;            /* DH param file */
-extern uschar *tls_early_banner_hosts; /* use Early Data for SMTP banner */
+extern const uschar *tls_early_banner_hosts; /* use Early Data for SMTP banner */
 extern uschar *tls_eccurve;            /* EC curve */
 # ifndef DISABLE_OCSP
 extern uschar *tls_ocsp_file;          /* OCSP stapling proof file */
@@ -113,20 +113,20 @@ extern uschar *tls_privatekey;         /* Private key file */
 extern BOOL    tls_remember_esmtp;     /* For YAEB */
 extern uschar *tls_require_ciphers;    /* So some can be avoided */
 # ifndef DISABLE_TLS_RESUME
-extern uschar *tls_resumption_hosts;   /* TLS session resumption */
+extern const uschar *tls_resumption_hosts; /* TLS session resumption */
 # endif
-extern uschar *tls_try_verify_hosts;   /* Optional client verification */
+extern const uschar *tls_try_verify_hosts; /* Optional client verification */
 extern uschar *tls_verify_certificates;/* Path for certificates to check */
-extern uschar *tls_verify_hosts;       /* Mandatory client verification */
+extern const uschar *tls_verify_hosts; /* Mandatory client verification */
 extern int     tls_watch_fd;	       /* for inotify of creds files */
 extern time_t  tls_watch_trigger_time; /* non-0: triggered */
 #endif
-extern uschar *tls_advertise_hosts;    /* host for which TLS is advertised */
+const extern uschar *tls_advertise_hosts; /* host for which TLS is advertised */
 
 extern uschar  *dsn_envid;             /* DSN envid string */
 extern int      dsn_ret;               /* DSN ret type*/
 extern const pcre2_code  *regex_DSN;         /* For recognizing DSN settings */
-extern uschar  *dsn_advertise_hosts;   /* host for which TLS is advertised */
+extern const uschar  *dsn_advertise_hosts;   /* host for which TLS is advertised */
 
 /* Input-reading functions for messages, so we can use special ones for
 incoming TCP/IP. */
@@ -344,7 +344,7 @@ extern uschar *authenticated_id;       /* ID that was authenticated */
 extern uschar *authenticated_sender;   /* From AUTH on MAIL */
 extern BOOL    authentication_failed;  /* TRUE if AUTH was tried and failed */
 extern uschar *authenticator_name;     /* for debug and error messages */
-extern uschar *auth_advertise_hosts;   /* Only advertise to these */
+extern const uschar *auth_advertise_hosts; /* Only advertise to these */
 extern auth_info *auths_available;	/* List of available auth mechanisms */
 extern auth_instance *auths;           /* Chain of instantiated auths */
 extern auth_instance auth_defaults;    /* Default values */
@@ -394,7 +394,7 @@ extern int_eximarith_t check_log_space; /* Minimum for message acceptance */
 extern BOOL    check_rfc2047_length;   /* Check RFC 2047 encoded string length */
 extern int     check_spool_inodes;     /* Minimum for message acceptance */
 extern int_eximarith_t check_spool_space; /* Minimum for message acceptance */
-extern uschar *chunking_advertise_hosts;    /* RFC 3030 CHUNKING */
+extern const uschar *chunking_advertise_hosts; /* RFC 3030 CHUNKING */
 extern unsigned chunking_datasize;
 extern unsigned chunking_data_left;
 extern chunking_state_t chunking_state;
@@ -608,27 +608,27 @@ extern int     header_maxsize;         /* Max total length for header */
 extern int     header_line_maxsize;    /* Max for an individual line */
 extern header_name header_names[];     /* Table of header names */
 extern int     header_names_size;      /* Number of entries */
-extern uschar *helo_accept_junk_hosts; /* Allowed to use junk arg */
+extern const uschar *helo_accept_junk_hosts; /* Allowed to use junk arg */
 extern uschar *helo_allow_chars;       /* Rogue chars to allow in HELO/EHLO */
 extern uschar *helo_lookup_domains;    /* If these given, lookup host name */
-extern uschar *helo_try_verify_hosts;  /* Soft check HELO argument for these */
-extern uschar *helo_verify_hosts;      /* Hard check HELO argument for these */
+extern const uschar *helo_try_verify_hosts; /* Soft check HELO argument for these */
+extern const uschar *helo_verify_hosts; /* Hard check HELO argument for these */
 extern const uschar *hex_digits;             /* Used in several places */
 extern uschar *hold_domains;           /* Hold up deliveries to these */
 extern uschar *host_data;              /* Obtained from lookup in ACL */
-extern uschar *host_lookup;            /* For which IP addresses are always looked up */
+extern const uschar *host_lookup;      /* For which IP addresses are always looked up */
 extern BOOL    host_lookup_deferred;   /* TRUE if lookup deferred */
 extern BOOL    host_lookup_failed;     /* TRUE if lookup failed */
 extern uschar *host_lookup_order;      /* Order of host lookup types */
 extern uschar *host_lookup_msg;        /* Text for why it failed */
 extern int     host_number;            /* For sharing spools */
 extern uschar *host_number_string;     /* For expanding */
-extern uschar *host_reject_connection; /* Reject these hosts */
-extern uschar *hosts_connection_nolog; /* Limits the logging option */
-extern uschar *hosts_require_helo;     /* check for HELO/EHLO before MAIL */
+extern const uschar *host_reject_connection; /* Reject these hosts */
+extern const uschar *hosts_connection_nolog; /* Limits the logging option */
+extern const uschar *hosts_require_helo;     /* check for HELO/EHLO before MAIL */
 extern uschar *hosts_treat_as_local;   /* For routing */
 #ifdef EXPERIMENTAL_XCLIENT
-extern uschar *hosts_xclient;	       /* Allow XCLIENT command for specified hosts */
+extern const uschar *hosts_xclient;    /* Allow XCLIENT command for specified hosts */
 #endif
 extern tree_node *hostlist_anchor;     /* Tree of defined host lists */
 extern int     hostlist_count;         /* Number defined */
@@ -636,7 +636,7 @@ extern int     hostlist_count;         /* Number defined */
 
 extern int     ignore_bounce_errors_after; /* Keep them for this time. */
 extern BOOL    ignore_fromline_local;  /* Local SMTP ignore fromline */
-extern uschar *ignore_fromline_hosts;  /* Hosts permitted to send "From " */
+extern const uschar *ignore_fromline_hosts; /* Hosts permitted to send "From "*/
 extern int     inetd_wait_timeout;     /* Timeout for inetd wait mode */
 extern uschar *initial_cwd;            /* The directory we where in at startup */
 extern uschar *iterate_item;           /* Item from iterate list */
@@ -648,7 +648,7 @@ extern int     keep_malformed;         /* Time to keep malformed messages */
 
 extern const uschar *letter_digit_hyphen_dot; /* Legitimate DNS host name chars */
 #ifndef DISABLE_ESMTP_LIMITS
-extern uschar *limits_advertise_hosts; /* for banner/EHLO pipelining */
+extern const uschar *limits_advertise_hosts; /* for banner/EHLO pipelining */
 #endif
 extern int     load_average;           /* Most recently read load average */
 extern BOOL    local_from_check;       /* For adding Sender: (global value) */
@@ -774,9 +774,9 @@ extern pcre2_compile_context * pcre_mlc_cmp_ctx;
 extern uschar *percent_hack_domains;   /* Local domains for which '% operates */
 extern const uschar *pid_file_path;    /* For writing daemon pids */
 #ifndef DISABLE_PIPE_CONNECT
-extern uschar *pipe_connect_advertise_hosts; /* for banner/EHLO pipelining */
+extern const uschar *pipe_connect_advertise_hosts; /* for banner/EHLO pipelining */
 #endif
-extern uschar *pipelining_advertise_hosts; /* As it says */
+extern const uschar *pipelining_advertise_hosts; /* As it says */
 #ifndef DISABLE_PRDR
 extern BOOL    prdr_enable;            /* As it says */
 extern BOOL    prdr_requested;         /* Connecting mail server wants PRDR */
@@ -855,7 +855,7 @@ extern int     received_headers_max;   /* Max count of Received: headers */
 extern struct timeval received_time;   /* Time the message started to be received */
 extern struct timeval received_time_complete; /* Time the message completed reception */
 extern uschar *recipient_data;         /* lookup data for recipients */
-extern uschar *recipient_unqualified_hosts; /* Permitted unqualified recipients */
+extern const uschar *recipient_unqualified_hosts; /* Permitted unqualified recipients */
 extern uschar *recipient_verify_failure; /* What went wrong */
 extern int     recipients_list_max;    /* Maximum number fitting in list */
 extern uschar *recipients_max;         /* Max permitted */
@@ -894,7 +894,7 @@ extern int     retry_maximum_timeout;  /* The maximum timeout */
 extern const uschar *return_path;            /* Return path for a message */
 extern BOOL    return_path_remove;     /* Remove return-path headers */
 extern int     rewrite_existflags;     /* Indicate which headers have rewrites */
-extern uschar *rfc1413_hosts;          /* RFC hosts */
+extern const uschar *rfc1413_hosts;    /* RFC hosts */
 extern int     rfc1413_query_timeout;  /* Timeout on RFC 1413 calls */
 /* extern BOOL    rfc821_domains;  */       /* If set, syntax is 821, not 822 => being abolished */
 extern uid_t   root_gid;               /* The gid for root */
@@ -927,7 +927,7 @@ extern uschar *sender_rate;            /* Sender rate computed by ACL */
 extern uschar *sender_rate_limit;      /* Configured rate limit */
 extern uschar *sender_rate_period;     /* Configured smoothing period */
 extern uschar *sender_rcvhost;         /* Host data for Received: */
-extern uschar *sender_unqualified_hosts; /* Permitted unqualified senders */
+extern const uschar *sender_unqualified_hosts; /* Permitted unqualified senders */
 extern uschar *sender_verify_failure;  /* What went wrong */
 extern address_item *sender_verified_list; /* Saved chain of sender verifies */
 extern address_item *sender_verified_failed; /* The one that caused denial */
@@ -941,7 +941,7 @@ extern int     smtp_accept_count;      /* Count of connections */
 extern BOOL    smtp_accept_keepalive;  /* Set keepalive on incoming */
 extern int     smtp_accept_max;        /* Max SMTP connections */
 extern int     smtp_accept_max_nonmail;/* Max non-mail commands in one con */
-extern uschar *smtp_accept_max_nonmail_hosts; /* Limit non-mail cmds from these hosts */
+extern const uschar *smtp_accept_max_nonmail_hosts; /* Limit non-mail cmds from these hosts */
 extern uschar *smtp_accept_max_per_connection; /* Max msgs per connection */
 extern uschar *smtp_accept_max_per_host; /* Max SMTP cons from one IP addr */
 extern int     smtp_accept_queue;      /* Queue after so many connections */
@@ -972,12 +972,12 @@ extern int     smtp_max_unknown_commands; /* As it says */
 extern uschar *smtp_names[];	       /* decode for command codes */
 extern const uschar *smtp_notquit_reason; /* Global for disconnect reason */
 extern int     smtp_out_fd;	       /* Incoming SMTP output file */
-extern uschar *smtp_ratelimit_hosts;   /* Rate limit these hosts */
+extern const uschar *smtp_ratelimit_hosts; /* Rate limit these hosts */
 extern uschar *smtp_ratelimit_mail;    /* Parameters for MAIL limiting */
 extern uschar *smtp_ratelimit_rcpt;    /* Parameters for RCPT limiting */
 extern int     smtp_receive_timeout;   /* Applies to each received line */
 extern uschar *smtp_receive_timeout_s; /* ... expandable version */
-extern uschar *smtp_reserve_hosts;     /* Hosts for reserved slots */
+extern const uschar *smtp_reserve_hosts;  /* Hosts for reserved slots */
 extern BOOL    smtp_return_error_details; /* TRUE to return full info */
 extern int     smtp_rlm_base;          /* Base interval for MAIL rate limit */
 extern double  smtp_rlm_factor;        /* Factor for MAIL rate limit */
@@ -990,7 +990,7 @@ extern int     smtp_rlr_threshold;     /* Threshold for RCPT rate limit */
 extern unsigned smtp_peer_options;     /* Global flags for passed connections */
 extern unsigned smtp_peer_options_wrap; /* stacked version hidden by TLS */
 #ifdef SUPPORT_I18N
-extern uschar *smtputf8_advertise_hosts; /* ingress control */
+extern const uschar *smtputf8_advertise_hosts; /* ingress control */
 #endif
 
 #ifdef WITH_CONTENT_SCAN
@@ -1085,7 +1085,7 @@ extern uschar *version_string;         /* Version string */
 extern int     warning_count;          /* Delay warnings sent for this msg */
 
 #ifndef DISABLE_WELLKNOWN
-extern uschar *wellknown_advertise_hosts;/* Allow WELLKNOWN command for specified hosts */
+extern const uschar *wellknown_advertise_hosts; /* Allow WELLKNOWN command for specified hosts */
 extern uschar *wellknown_response;     /* SMTP response for WELLKNOWN verb */
 #endif
 

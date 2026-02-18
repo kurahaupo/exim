@@ -3326,8 +3326,9 @@ determined from the IP address, the result is FAIL unless the item
 "+allow_unknown" was met earlier in the list, in which case OK is returned. */
 
 int
-verify_check_this_host(const uschar **listptr, unsigned int *cache_bits,
-  const uschar *host_name, const uschar *host_address, const uschar **valueptr)
+verify_check_this_host(const uschar * const * listptr,
+  unsigned int * cache_bits, const uschar * host_name,
+  const uschar * host_address, const uschar ** valueptr)
 {
 int rc;
 unsigned int *local_cache_bits = cache_bits;
@@ -3394,7 +3395,7 @@ Returns:               the yield of verify_check_this_host(),
 */
 
 int
-verify_check_host(uschar **listptr)
+verify_check_host(const uschar * const * listptr)
 {
 return verify_check_this_host(CUSS listptr, sender_host_cache, NULL,
   sender_host_address ? sender_host_address : US"", NULL);

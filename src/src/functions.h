@@ -689,10 +689,10 @@ extern int     verify_check_header_address(uschar **, uschar **, int, int, int,
                  uschar *, uschar *, int, int *);
 extern int     verify_check_headers(uschar **);
 extern int     verify_check_header_names_ascii(uschar **);
-extern int     verify_check_host(uschar **);
+extern int     verify_check_host(const uschar * const *);
 extern int     verify_check_notblind(BOOL);
 extern int     verify_check_given_host(const uschar **, const host_item *);
-extern int     verify_check_this_host(const uschar **, unsigned int *,
+extern int     verify_check_this_host(const uschar * const *, unsigned int *,
 	         const uschar*, const uschar *, const uschar **);
 extern address_item *verify_checked_sender(const uschar *);
 extern void    verify_get_ident(int);
