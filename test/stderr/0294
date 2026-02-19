@@ -153,7 +153,7 @@ end of inline ACL: ACCEPT
 SMTP>> 250 Accepted
 SMTP<< rcpt to:<one@z>
 host in smtp_ratelimit_hosts?
- list element: 
+ list element: e̪m̪p̪t̪y̪
  list element: V4NET.9.8.7
 host in smtp_ratelimit_hosts? no (end of list)
 processing inline ACL "deny"
@@ -217,7 +217,7 @@ end of inline ACL: ACCEPT
 SMTP>> 250 Accepted
 SMTP<< rcpt to:<one@z>
 host in smtp_ratelimit_hosts?
- list element: 
+ list element: e̪m̪p̪t̪y̪
  list element: V4NET.9.8.7
   host in smtp_ratelimit_hosts? yes (matched "V4NET.9.8.7")
 rate limit RCPT: delay 0.25 sec

@@ -1714,10 +1714,20 @@ while (*fp)
 	gstring * zg = NULL;
 	int p = precision;
 
+	if (!*s)	/* output something distinctive for an empty input */
+	  {
+	  zg = string_catn(zg, CUS "e" UTF8_COMB_BRIDGE_BELOW
+				  "m" UTF8_COMB_BRIDGE_BELOW
+				  "p" UTF8_COMB_BRIDGE_BELOW
+				  "t" UTF8_COMB_BRIDGE_BELOW
+				  "y" UTF8_COMB_BRIDGE_BELOW, 15);
+	  if (precision >= 0) precision += 15;
+	  }
+
 	/* If a precision was given, we can handle embedded NULs. Take it as
 	applying to the input and expand it for the transformed result */
 
-	for ( ; precision >= 0 || *s; s++)
+	else for ( ; precision >= 0 || *s; s++)
 	  if (p >= 0 && --p < 0)
 	    break;
 	  else switch (*s)

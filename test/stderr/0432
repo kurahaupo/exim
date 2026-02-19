@@ -111,6 +111,7 @@ Attempting full verification using callout
 SMTP>- ◀flush▶
 interface=NULL port=PORT_S
  Connecting to 127.0.0.1 [127.0.0.1]:PORT_S ...
+   list element: e̪m̪p̪t̪y̪
  connected
    SMTP<< 220 server ready
  127.0.0.1 in hosts_avoid_esmtp? no (option unset)
@@ -299,6 +300,7 @@ MUNGED: ::1 will be omitted in what follows
 >>>  callout cache: no address record found for a@b
 >>> interface=NULL port=PORT_S
 >>>  Connecting to 127.0.0.1 [127.0.0.1]:PORT_S ...
+>>>    list element: e̪m̪p̪t̪y̪
 >>>  connected
 >>>    SMTP<< 220 server ready
 >>>  127.0.0.1 in hosts_avoid_esmtp? no (option unset)
@@ -351,6 +353,7 @@ MUNGED: ::1 will be omitted in what follows
 >>>  callout cache: no address record found for p1@q
 >>> interface=NULL port=PORT_S
 >>>  Connecting to 127.0.0.1 [127.0.0.1]:PORT_S ...
+>>>    list element: e̪m̪p̪t̪y̪
 >>>  connected
 >>>    SMTP<< 220 server ready
 >>>  127.0.0.1 in hosts_avoid_esmtp? no (option unset)

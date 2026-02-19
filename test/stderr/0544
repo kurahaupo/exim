@@ -417,15 +417,15 @@ try option 'delay_warning_condition'
    ╎├considering: $h_list-subscribe:}{}░}{░match{$h_precedence:}{(?i)bulk|list|junk}░}{░match{$h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├considering: }{}░}{░match{$h_precedence:}{(?i)bulk|list|junk}░}{░match{$h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├───expanded: $h_list-id:$h_list-post:$h_list-subscribe:
-   ╎╰─────result: 
+   ╎╰─────result: e̪m̪p̪t̪y̪
    ╎╭considering: }░}{░match{$h_precedence:}{(?i)bulk|list|junk}░}{░match{$h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├───expanded: 
-   ╎╰─────result: 
+   ╎╰─────result: e̪m̪p̪t̪y̪
    cond: match
    ╎╭considering: $h_precedence:}{(?i)bulk|list|junk}░}{░match{$h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├considering: }{(?i)bulk|list|junk}░}{░match{$h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├───expanded: $h_precedence:
-   ╎╰─────result: 
+   ╎╰─────result: e̪m̪p̪t̪y̪
    ╎╭considering: (?i)bulk|list|junk}░}{░match{$h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├───────text: (?i)bulk|list|junk
    ╎├considering: }░}{░match{$h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
@@ -435,7 +435,7 @@ try option 'delay_warning_condition'
    ╎╭considering: $h_auto-submitted:}{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├considering: }{(?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├───expanded: $h_auto-submitted:
-   ╎╰─────result: 
+   ╎╰─────result: e̪m̪p̪t̪y̪
    ╎╭considering: (?i)auto-generated|auto-replied}░}}░{no}{yes}}
    ╎├───────text: (?i)auto-generated|auto-replied
    ╎├considering: }░}}░{no}{yes}}
@@ -524,7 +524,7 @@ try option 'acl_smtp_mail'
  ╭considering: domain=$domain/sender_domain=$sender_address_domain
  ├───────text: domain=
  ├considering: $domain/sender_domain=$sender_address_domain
- ├──────value: 
+ ├──────value: e̪m̪p̪t̪y�
  ├considering: /sender_domain=$sender_address_domain
  ├───────text: /sender_domain=
  ├considering: $sender_address_domain

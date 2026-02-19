@@ -57,7 +57,7 @@ check acl = TESTSUITE/aux-fixed/0386.acl1
  processing ACL TESTSUITE/aux-fixed/0386.acl1 "accept" (TESTSUITE/test-config 18)
  check hosts = :
   host in ":"?
-  list element: 
+  list element: e̪m̪p̪t̪y̪
   host in ":"? no (end of list)
  accept: condition test failed in ACL TESTSUITE/aux-fixed/0386.acl1
  processing ACL TESTSUITE/aux-fixed/0386.acl1 "deny" (TESTSUITE/test-config 18)
@@ -120,7 +120,7 @@ check acl = TESTSUITE/aux-fixed/0386.acl1
  processing ACL TESTSUITE/aux-fixed/0386.acl1 "accept" (TESTSUITE/test-config 18)
  check hosts = :
   host in ":"?
-  list element: 
+  list element: e̪m̪p̪t̪y̪
   host in ":"? no (end of list)
  accept: condition test failed in ACL TESTSUITE/aux-fixed/0386.acl1
  processing ACL TESTSUITE/aux-fixed/0386.acl1 "deny" (TESTSUITE/test-config 18)

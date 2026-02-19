@@ -23,7 +23,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 18)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 19)
@@ -40,7 +40,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 18)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 19)
@@ -96,7 +96,7 @@ LOG: 10HmaX-000000005vi-0000 <= postmaster@exim.test.ex H=(exim.test.ex) [V4NET.
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 18)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 19)
@@ -113,7 +113,7 @@ LOG: 10HmaX-000000005vi-0000 <= postmaster@exim.test.ex H=(exim.test.ex) [V4NET.
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 18)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 19)

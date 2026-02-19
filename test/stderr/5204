@@ -327,7 +327,7 @@ check verify = recipient
   local_part=fail cannot route this one (fail) domain=some.host
   checking senders
   x@y in senders?
-   list element: 
+   list element: e̪m̪p̪t̪y̪
    y in ""?
    y in ""? no (end of list)
   x@y in senders? no (end of list)

@@ -14,7 +14,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -73,7 +73,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -118,7 +118,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -143,7 +143,7 @@ LOG: H=(test) [1.2.3.4] F=<y@b.c> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -170,7 +170,7 @@ LOG: H=(test) [1.2.3.4] F=<philip@xy.z> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -197,7 +197,7 @@ LOG: H=(test) [1.2.3.4] F=<quilt@patch.work> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -241,7 +241,7 @@ LOG: H=(test) [1.2.3.4] F=<quilt@patch.work> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -270,7 +270,7 @@ LOG: H=(test) [1.2.3.4] F=<xx@abc.def> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -299,7 +299,7 @@ LOG: H=(test) [1.2.3.4] F=<abc@d.e.f> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -358,7 +358,7 @@ LOG: H=(test) [1.2.3.4] F=<abc@d.e.f> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -407,7 +407,7 @@ LOG: H=(test) [1.2.3.4] F=<abc@d.e.f> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -437,7 +437,7 @@ LOG: H=(test) [1.2.3.4] F=<abc@z.z> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -496,7 +496,7 @@ LOG: H=(test) [1.2.3.4] F=<abc@z.z> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -526,7 +526,7 @@ LOG: H=(test) [1.2.3.4] F=<xyz@z.z> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -556,7 +556,7 @@ LOG: H=(test) [1.2.3.4] F=<12345678@p.q.r> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -586,7 +586,7 @@ LOG: H=(test) [1.2.3.4] F=<12345678@z.z> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -648,7 +648,7 @@ LOG: H=(test) [1.2.3.4] F=<12345678@z.z> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -698,7 +698,7 @@ LOG: H=(test) [1.2.3.4] F=<1234@m.n.o> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -715,7 +715,7 @@ LOG: H=(test) [1.2.3.4] F=<1234@m.n.o> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -732,7 +732,7 @@ LOG: H=(test) [1.2.3.4] F=<1234@m.n.o> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -783,7 +783,7 @@ LOG: H=(test) [1.2.3.4] F=<rr01@a.b.c> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -842,7 +842,7 @@ LOG: H=(test) [1.2.3.4] F=<rr01@a.b.c> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -890,7 +890,7 @@ LOG: H=(test) [1.2.3.4] F=<qq@a.b.c> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -938,7 +938,7 @@ LOG: H=(test) [1.2.3.4] F=<!excl@z.z> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -989,7 +989,7 @@ LOG: H=(test) [1.2.3.4] F=<sh#rp@y.p.s> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -1048,7 +1048,7 @@ LOG: H=(test) [1.2.3.4] F=<sh#rp@y.p.s> rejected RCPT <userx@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -1078,7 +1078,7 @@ LOG: H=(test) [1.2.3.4] F=<xyzbc@xx.yy> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -1108,7 +1108,7 @@ LOG: H=(test) [1.2.3.4] F=<aabc@xx.yy> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -1163,7 +1163,7 @@ LOG: H=(test) [1.2.3.4] F=<aabc@xx.yy> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -1198,7 +1198,7 @@ LOG: H=(test) [1.2.3.4] F=<y@bb.cc> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -1261,7 +1261,7 @@ LOG: H=(test) [1.2.3.4] F=<y@bb.cc> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)
@@ -1319,7 +1319,7 @@ LOG: H=(test) [1.2.3.4] F=<y@bb.cc> rejected RCPT <x@test.ex>
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 21)

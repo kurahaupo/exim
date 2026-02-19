@@ -92,7 +92,7 @@ p1235    ╰─────result: TESTSUITE/spool/exim_daemon_notify
 p1235  ├──condition: match░{a_random_string}░{static_RE}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{static_RE}}
-p1235  ╰─────result: 
+p1235  ╰─────result: e̪m̪p̪t̪y̪
 p1235  ╭considering: ${if░match░{a_random_string}░{tricky_static_RE\$}}
 p1235   cond: match
 p1235    ╭considering: a_random_string}░{tricky_static_RE\$}}
@@ -121,7 +121,7 @@ p1235    ╰─────result: TESTSUITE/spool/exim_daemon_notify
 p1235  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{tricky_static_RE\$}}
-p1235  ╰─────result: 
+p1235  ╰─────result: e̪m̪p̪t̪y̪
 p1235  ╭considering: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
 p1235   cond: match
 p1235    ╭considering: a_random_string}░{pid=${pid}░uncacheable_RE}}
@@ -141,7 +141,7 @@ p1235   compiling RE 'pid=p1235 uncacheable_RE'
 p1235  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable_RE}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
-p1235  ╰─────result: 
+p1235  ╰─────result: e̪m̪p̪t̪y̪
 p1235 try option 'acl_smtp_predata'
 p1235 search_tidyup called
 p1235 search_tidyup called
@@ -572,7 +572,7 @@ p1236   compiled RE 'static_RE' found in local cache
 p1236  ├──condition: match░{a_random_string}░{static_RE}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{static_RE}}
-p1236  ╰─────result: 
+p1236  ╰─────result: e̪m̪p̪t̪y̪
 p1236  ╭considering: ${if░match░{a_random_string}░{tricky_static_RE\$}}
 p1236   cond: match
 p1236    ╭considering: a_random_string}░{tricky_static_RE\$}}
@@ -591,7 +591,7 @@ p1236   compiled RE 'tricky_static_RE$' found in local cache
 p1236  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{tricky_static_RE\$}}
-p1236  ╰─────result: 
+p1236  ╰─────result: e̪m̪p̪t̪y̪
 p1236  ╭considering: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
 p1236   cond: match
 p1236    ╭considering: a_random_string}░{pid=${pid}░uncacheable_RE}}
@@ -611,7 +611,7 @@ p1236   compiling RE 'pid=p1236 uncacheable_RE'
 p1236  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable_RE}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
-p1236  ╰─────result: 
+p1236  ╰─────result: e̪m̪p̪t̪y̪
 p1236 try option 'acl_smtp_predata'
 p1236 search_tidyup called
 p1236 search_tidyup called

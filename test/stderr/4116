@@ -20,7 +20,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "warn" (TESTSUITE/test-config 25)
@@ -66,7 +66,7 @@ LOG: H=(exim.test.ex) [V4NET.11.12.14] Warning: accepting postmaster from host i
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "warn" (TESTSUITE/test-config 25)

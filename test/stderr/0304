@@ -66,7 +66,7 @@
 >>>   message: failed 7
 >>> check senders = :
 >>>  in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>   in ":"? yes (matched "")
 >>> check recipients = b1@x
 >>> b1@x in "b1@x"?
@@ -134,7 +134,7 @@ LOG: H=(test) [1.2.3.4] F=<> rejected RCPT <b1@x>: failed 7
 >>>   message: failed 7
 >>> check senders = :
 >>>  in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>   in ":"? yes (matched "")
 >>> check recipients = b1@x
 >>> b2@x in "b1@x"?
@@ -213,7 +213,7 @@ LOG: H=(test) [1.2.3.4] F=<> rejected RCPT <b2@x>: failed 8
 >>>   message: failed 7
 >>> check senders = :
 >>>  in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>   in ":"? yes (matched "")
 >>> check recipients = b1@x
 >>> b9@x in "b1@x"?
@@ -348,7 +348,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <a@b>: failed 1
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -479,7 +479,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abc@d.e.f>: failed 2
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -649,7 +649,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abcxyz@at.1>: failed 3
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -818,7 +818,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <x@abc.domain2.only>: failed 4
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -1015,7 +1015,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@x.domain4>: failed 5
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -1113,7 +1113,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@x.domain4>: failed 5
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -1268,7 +1268,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <pqr@myhost.test.ex>: failed 6
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -1366,7 +1366,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <pqr@myhost.test.ex>: failed 6
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -1449,7 +1449,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <a@domain5>: failed 9
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -1542,7 +1542,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@domain6>: failed 10
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)
@@ -1637,7 +1637,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@domain6>: failed 10
 >>>   message: failed 7
 >>> check senders = :
 >>> x@y in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  y in ""?
 >>>  y in ""? no (end of list)
 >>> x@y in ":"? no (end of list)

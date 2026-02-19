@@ -34,7 +34,7 @@ LOG: H=(test) [1.2.3.4] F=<userx@external.test.ex> temporarily rejected RCPT <us
 >>> processing ACL acl_4_3_2_1 "accept" (TESTSUITE/test-config 23)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL acl_4_3_2_1
 >>> processing ACL acl_4_3_2_1 "deny" (TESTSUITE/test-config 24)

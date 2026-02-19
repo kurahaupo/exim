@@ -336,7 +336,7 @@ routing charlie@dom1.ain
    file lookup required for charlie@dom1.ain
      in TESTSUITE/aux-fixed/0403.accountfile
    creating new cache entry
-   lookup yielded: 
+   lookup yielded: e̪m̪p̪t̪y̪
    lookup yield replace by key: charlie@dom1.ain
  dom1.ain in domains?
   list element: dom1.ain
@@ -353,7 +353,7 @@ routing charlie@dom1.ain
      type=lsearch key="charlie@dom1.ain" opts=NULL
    cached data used for lookup of charlie@dom1.ain
      in TESTSUITE/aux-fixed/0403.accountfile
-   lookup yielded: 
+   lookup yielded: e̪m̪p̪t̪y̪
    lookup yield replace by key: charlie@dom1.ain
  charlie in local_parts?
   list element: charlie

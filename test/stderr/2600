@@ -69,7 +69,7 @@ readconf_rest: transports
  file lookup required for select name from them where id='nothing';
    in TESTSUITE/aux-fixed/sqlitedb
  creating new cache entry
- lookup yielded: 
+ lookup yielded: e̪m̪p̪t̪y̪
  search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
    cached open
  search_find: file="TESTSUITE/aux-fixed/sqlitedb"

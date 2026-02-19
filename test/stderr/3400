@@ -210,7 +210,7 @@ LOG: H=(test.host) [10.0.0.1] rejected ETRN abcd: authentication required
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 41)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 42)
@@ -247,7 +247,7 @@ LOG: H=(test.host) [10.0.0.1] F=<junk@jink.jonk.test.ex> rejected RCPT <userx1@t
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 41)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 42)
@@ -297,7 +297,7 @@ LOG: H=(test.host) [10.0.0.1] F=<junk@jink.jonk.test.ex> rejected RCPT <userx1@t
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 41)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 42)
@@ -524,7 +524,7 @@ LOG: H=(test.host) [10.0.0.1] Warning: accepted ETRN #abcd
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 41)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 42)
@@ -595,7 +595,7 @@ LOG: H=(test.host) [10.0.0.3] F=<junk@jink.jonk.test.ex> rejected RCPT <userx4@c
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 41)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 42)

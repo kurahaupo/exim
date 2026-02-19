@@ -1107,6 +1107,7 @@ enum { FILTER_UNSET, FILTER_FORWARD, FILTER_EXIM, FILTER_SIEVE };
 #define UTF8_RIGHT_TRIANGLE	"\xE2\x96\xB6"
 #define UTF8_LIGHT_SHADE	"\xE2\x96\x91"
 #define UTF8_L_ARROW_HOOK	"\xE2\x86\xA9"
+#define UTF8_COMB_BRIDGE_BELOW	"\xCC\xAA"
 
 
 /* Options on tls_close */

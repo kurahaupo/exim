@@ -14,7 +14,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)
@@ -71,7 +71,7 @@ LOG: 10HmaX-000000005vi-0000 <= userx@test.ex H=(test) [V4NET.10.10.10] P=smtp S
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)
@@ -129,7 +129,7 @@ LOG: 10HmaY-000000005vi-0000 <= userx@test.ex H=(test) [V4NET.10.10.10] P=smtp S
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)
@@ -192,7 +192,7 @@ LOG: 10HmbA-000000005vi-0000 H=(test) [V4NET.10.10.10] F=<userx@test.ex> rejecte
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)
@@ -259,7 +259,7 @@ LOG: 10HmaZ-000000005vi-0000 <= userx@test.ex H=(test) [V4NET.10.10.10] P=smtp S
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)

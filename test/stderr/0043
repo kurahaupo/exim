@@ -20,7 +20,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)
@@ -52,7 +52,7 @@ LOG: H=(exim.test.ex) [V4NET.0.0.97] incomplete transaction (RSET) from <junkjun
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)
@@ -143,7 +143,7 @@ LOG: H=(exim.test.ex) [V4NET.0.0.97] incomplete transaction (RSET) from <junkjun
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)
@@ -178,7 +178,7 @@ LOG: H=(exim.test.ex) [V4NET.0.0.97] F=<postmaster@exim.test.ex> rejected RCPT j
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 20)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "require" (TESTSUITE/test-config 21)

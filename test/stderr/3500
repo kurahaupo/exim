@@ -83,7 +83,7 @@
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 34)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 35)

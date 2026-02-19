@@ -1440,7 +1440,7 @@ LOG: H=(test) [25.25.25.25] F=<x@y> rejected RCPT <x@y>
 >>> processing ACL acl_26_26_26 "deny" (TESTSUITE/test-config 140)
 >>> check senders = :
 >>>  in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>   in ":"? yes (matched "")
 >>>   message: bounce messages can have only one recipient
 >>> check condition = ${if > {$recipients_count}{0}{yes}{no}}
@@ -1453,7 +1453,7 @@ LOG: H=(test) [25.25.25.25] F=<x@y> rejected RCPT <x@y>
 >>> processing ACL acl_26_26_26 "deny" (TESTSUITE/test-config 140)
 >>> check senders = :
 >>>  in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>   in ":"? yes (matched "")
 >>>   message: bounce messages can have only one recipient
 >>> check condition = ${if > {$recipients_count}{0}{yes}{no}}
@@ -1465,7 +1465,7 @@ LOG: H=(test) [26.26.26.26] F=<> rejected RCPT <y@y>: bounce messages can have o
 >>> processing ACL acl_26_26_26 "deny" (TESTSUITE/test-config 140)
 >>> check senders = :
 >>>  in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>   in ":"? yes (matched "")
 >>>   message: bounce messages can have only one recipient
 >>> check condition = ${if > {$recipients_count}{0}{yes}{no}}
@@ -1509,7 +1509,7 @@ LOG: H=(test) [26.26.26.26] F=<> rejected RCPT <z@y>: bounce messages can have o
 >>> processing ACL acl_28_28_28 "accept" (TESTSUITE/test-config 151)
 >>> check sender_domains = : okdomain
 >>>  in ": okdomain"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>   in ": okdomain"? yes (matched "")
 >>> accept: condition test succeeded in ACL acl_28_28_28
 >>> end of ACL acl_28_28_28: ACCEPT
@@ -1517,7 +1517,7 @@ LOG: H=(test) [26.26.26.26] F=<> rejected RCPT <z@y>: bounce messages can have o
 >>> processing ACL acl_28_28_28 "accept" (TESTSUITE/test-config 151)
 >>> check sender_domains = : okdomain
 >>> okdomain in ": okdomain"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  list element: okdomain
 >>>  okdomain in ": okdomain"? yes (matched "okdomain")
 >>> accept: condition test succeeded in ACL acl_28_28_28
@@ -1529,7 +1529,7 @@ LOG: H=(test) [26.26.26.26] F=<> rejected RCPT <z@y>: bounce messages can have o
 >>> processing ACL acl_28_28_28 "accept" (TESTSUITE/test-config 151)
 >>> check sender_domains = : okdomain
 >>> baddomain in ": okdomain"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>>  list element: okdomain
 >>> baddomain in ": okdomain"? no (end of list)
 >>> accept: condition test failed in ACL acl_28_28_28

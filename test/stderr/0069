@@ -22,7 +22,7 @@
 >>> processing ACL check_recipientx "accept" (TESTSUITE/test-config 24)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipientx
 >>> processing ACL check_recipientx "deny" (TESTSUITE/test-config 25)
@@ -57,7 +57,7 @@ LOG: failed to find host name for V4NET.0.0.13: accepted by +include_unknown
 >>>  processing ACL check_recipientx "accept" (TESTSUITE/test-config 24)
 >>>  check hosts = :
 >>>  host in ":"?
->>>   list element: 
+>>>   list element: e̪m̪p̪t̪y̪
 >>>  host in ":"? no (end of list)
 >>>  accept: condition test failed in ACL check_recipientx
 >>>  processing ACL check_recipientx "deny" (TESTSUITE/test-config 25)
@@ -193,7 +193,7 @@ LOG: failed to find host name for V4NET.0.0.13: accepted by +include_unknown
 >>>  processing ACL check_recipienta "accept" (TESTSUITE/test-config 38)
 >>>  check hosts = :
 >>>  host in ":"?
->>>   list element: 
+>>>   list element: e̪m̪p̪t̪y̪
 >>>  host in ":"? no (end of list)
 >>>  accept: condition test failed in ACL check_recipienta
 >>>  processing ACL check_recipienta "deny" (TESTSUITE/test-config 39)

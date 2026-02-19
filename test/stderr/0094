@@ -18,7 +18,7 @@ LOG: no host name found for IP address V4NET.11.12.13
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 23)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
@@ -71,7 +71,7 @@ LOG: H=(test) [V4NET.11.12.13] F=<userx@cam.ac.uk> rejected RCPT <userx@cam.ac.u
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 23)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
@@ -177,7 +177,7 @@ using ACL "check_recipient"
 processing ACL check_recipient "accept" (TESTSUITE/test-config 23)
 check hosts = :
 host in ":"?
- list element: 
+ list element: e̪m̪p̪t̪y̪
 host in ":"? no (end of list)
 accept: condition test failed in ACL check_recipient
 processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
@@ -199,7 +199,7 @@ using ACL "check_recipient"
 processing ACL check_recipient "accept" (TESTSUITE/test-config 23)
 check hosts = :
 host in ":"?
- list element: 
+ list element: e̪m̪p̪t̪y̪
 host in ":"? no (end of list)
 accept: condition test failed in ACL check_recipient
 processing ACL check_recipient "accept" (TESTSUITE/test-config 24)

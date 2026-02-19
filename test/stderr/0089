@@ -26,7 +26,7 @@ LOG: rejected HELO from [V4NET.0.0.0]: syntactically invalid argument(s): @#$%^&
 >>>   processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
 >>>   check hosts = :
 >>>   host in ":"?
->>>    list element: 
+>>>    list element: e̪m̪p̪t̪y̪
 >>>   host in ":"? no (end of list)
 >>>   accept: condition test failed in ACL check_recipient
 >>>   processing ACL check_recipient "accept" (TESTSUITE/test-config 25)
@@ -46,7 +46,7 @@ LOG: rejected HELO from [V4NET.0.0.0]: syntactically invalid argument(s): @#$%^&
 >>>   processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
 >>>   check hosts = :
 >>>   host in ":"?
->>>    list element: 
+>>>    list element: e̪m̪p̪t̪y̪
 >>>   host in ":"? no (end of list)
 >>>   accept: condition test failed in ACL check_recipient
 >>>   processing ACL check_recipient "accept" (TESTSUITE/test-config 25)
@@ -103,7 +103,7 @@ LOG: H=(abc_xyz) [V4NET.0.0.0] F=<userx@cus.cam.ac.uk> rejected RCPT <userx@else
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 25)
@@ -136,7 +136,7 @@ LOG: H=(abc_xyz) [V4NET.0.0.0] F=<userx@cus.cam.ac.uk> rejected RCPT <userx@else
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 24)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 25)

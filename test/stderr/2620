@@ -50,7 +50,7 @@ readconf_rest: transports
  PostgreSQL query: "select name from them where id='nothing';" opts 'NULL'
  PGSQL using cached connection for localhost:PORT_N/test/CALLER
  creating new cache entry
- lookup yielded: 
+ lookup yielded: e̪m̪p̪t̪y̪
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select id,name from them where id='nothing';" partial=-1 affix=NULL starflags=0 opts=NULL

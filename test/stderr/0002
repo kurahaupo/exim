@@ -643,7 +643,7 @@ host in " partial-lsearch;TESTSUITE/aux-fixed/0002.lsearch
  file lookup required for ten-1.test.ex
    in TESTSUITE/aux-fixed/0002.lsearch
  creating new cache entry
- lookup yielded: 
+ lookup yielded: e̪m̪p̪t̪y̪
   host in " partial-lsearch;TESTSUITE/aux-fixed/0002.lsearch 
   1.2.3.4"? yes (matched "partial-lsearch;TESTSUITE/aux-fixed/0002.lsearch")
 deny: condition test succeeded in ACL connect1

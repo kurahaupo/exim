@@ -23,7 +23,7 @@ LOG: SMTP command timeout on connection from [V4NET.0.0.1] D=qqs
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 27)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 28)
@@ -148,7 +148,7 @@ using ACL "check_recipient"
 processing ACL check_recipient "accept" (TESTSUITE/test-config 27)
 check hosts = :
 host in ":"?
- list element: 
+ list element: e̪m̪p̪t̪y̪
 host in ":"? no (end of list)
 accept: condition test failed in ACL check_recipient
 processing ACL check_recipient "deny" (TESTSUITE/test-config 28)
@@ -204,7 +204,7 @@ exim: timed out while reading - message abandoned
 >>> processing ACL check_recipient "accept" (TESTSUITE/test-config 27)
 >>> check hosts = :
 >>> host in ":"?
->>>  list element: 
+>>>  list element: e̪m̪p̪t̪y̪
 >>> host in ":"? no (end of list)
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 28)
