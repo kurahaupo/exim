@@ -1383,8 +1383,14 @@ const uschar * const * end = names + count;
 while (start < end)
   {
   const uschar * const * middle = start + (end - start)/2;
-  int c = Ustrncmp(word, *middle, len);
-  if (c == 0)
+  int c;
+
+  /* Work around empty list element pointers */
+
+  while (!*middle && middle < end) middle++;
+  while (!*middle && middle >= start) middle--;
+
+  if ((c = Ustrncmp(word, *middle, len)) == 0)
     if ((*middle)[len])
       c = -1;
     else
