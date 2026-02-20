@@ -34,17 +34,17 @@ else
   int len;
 
   if ((len = b64decode(data, &clear, GET_TAINTED)) < 0) return BAD64;
-  DEBUG(D_auth) debug_printf("auth input decode:");
+  DEBUG(auth) debug_printf("auth input decode:");
   for (const uschar * end = clear + len;
       clear < end && expand_nmax < EXPAND_MAXN; )
     {
-    DEBUG(D_auth) debug_printf(" '%s'", clear);
+    DEBUG(auth) debug_printf(" '%s'", clear);
     if (expand_nmax < AUTH_VARS) auth_vars[expand_nmax] = clear;
     expand_nstring[++expand_nmax] = clear;
     while (*clear) clear++;
     expand_nlength[expand_nmax] = clear++ - expand_nstring[expand_nmax];
     }
-  DEBUG(D_auth) debug_printf("\n");
+  DEBUG(auth) debug_printf("\n");
   }
 return OK;
 }
@@ -86,7 +86,7 @@ while ((c = receive_getc(GETC_BUFFER_UNLIMITED)) != '\n' && c != EOF)
   }
 if (p > 0 && big_buffer[p-1] == '\r') p--;
 big_buffer[p] = 0;
-DEBUG(D_receive) debug_printf("SMTP<< %s\n", big_buffer);
+DEBUG(receive) debug_printf("SMTP<< %s\n", big_buffer);
 if (Ustrcmp(big_buffer, "*") == 0) return CANCELLED;
 *aptr = big_buffer;
 return OK;
@@ -249,7 +249,7 @@ if (clear_len < 0)
       "response %q", save_bad);
     return CANCELLED;
     }
-  DEBUG(D_auth) debug_printf("bad b64 decode for '%s';"
+  DEBUG(auth) debug_printf("bad b64 decode for '%s';"
        " ignoring due to client_ignore_invalid_base64\n", save_bad);
   clear = string_copy(US"");
   }

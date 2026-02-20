@@ -268,7 +268,7 @@ if (!cn)
   cn->next = nmh_connections;
   nmh_connections = cn;
   }
-else DEBUG(D_lookup)
+else DEBUG(lookup)
   debug_printf_indent("cached socket\n");
 
 /* Build and send the query string */
@@ -277,7 +277,7 @@ g = string_fmt_append(NULL, "%s%c%n%c%s",
       table, '\0', &i, mode, keystring);
 s = string_from_gstring(g);
 
-DEBUG(D_lookup)
+DEBUG(lookup)
   debug_printf("%s %d: send '%s\\0%s'\n", __FUNCTION__, __LINE__, s, s + i);
 
 i = write(sock, s, gstring_length(g));
@@ -301,7 +301,7 @@ if (read(sock, resp, 1) != 1)
   return DEFER;
   }
 
-DEBUG(D_lookup)
+DEBUG(lookup)
   debug_printf("%s %d: recv '%.1s'\n", __FUNCTION__, __LINE__, resp);
 
 switch (resp[0])
@@ -328,7 +328,7 @@ nmh_connection *cn;
 while ((cn = nmh_connections))
   {
   nmh_connections = cn->next;
-  DEBUG(D_lookup) debug_printf_indent("close NMH connection: %s\n", cn->server);
+  DEBUG(lookup) debug_printf_indent("close NMH connection: %s\n", cn->server);
   close(cn->socket);
   }
 }

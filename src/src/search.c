@@ -85,15 +85,15 @@ if ((li = lookup_findonly(name)))
   return li;
 
 #ifdef LOOKUP_MODULE_DIR
-    DEBUG(D_lookup)
+    DEBUG(lookup)
       debug_printf_indent("searchtype %s not initially found\n", name);
 
     if (lookup_one_mod_load(name, NULL))
       if ((li = lookup_findonly(name)))
 	return li;
       else
-	{ DEBUG(D_lookup) debug_printf_indent("find retry failed\n"); }
-    else DEBUG(D_lookup)
+	{ DEBUG(lookup) debug_printf_indent("find retry failed\n"); }
+    else DEBUG(lookup)
       debug_printf_indent("scan modules dir for %s failed\n", name);
 #endif
 
@@ -320,7 +320,7 @@ search_tidyup(void)
 {
 int old_pool = store_pool;
 
-DEBUG(D_lookup) debug_printf_indent("search_tidyup called\n");
+DEBUG(lookup) debug_printf_indent("search_tidyup called\n");
 expand_level++;
 
 /* Close individually each cached open file. */
@@ -416,7 +416,7 @@ if (filename && is_tainted(filename))
 store_pool = POOL_SEARCH;
 if (!search_reset_point) search_reset_point = store_mark();
 
-DEBUG(D_lookup) debug_printf_indent("search_open: %s %q\n", li->name,
+DEBUG(lookup) debug_printf_indent("search_open: %s %q\n", li->name,
   filename ? filename : US"NULL");
 
 /* See if we already have this open for this type of search, and if so,
@@ -431,12 +431,12 @@ if ((t = tree_search(search_tree, keybuffer)))
   {
   if ((c = (search_cache *)t->data.ptr)->handle)
     {
-    DEBUG(D_lookup)
+    DEBUG(lookup)
       if (c->handle != (void *)1) debug_printf_indent("  cached open\n");
     store_pool = old_pool;
     return t;
     }
-  DEBUG(D_lookup) debug_printf_indent("  cached closed\n");
+  DEBUG(lookup) debug_printf_indent("  cached closed\n");
   }
 
 /* Otherwise, we need to open the file or database - each search type has its
@@ -452,7 +452,7 @@ if (li->type == lookup_absfile && open_filecount >= lookup_open_max)
   else
     {
     search_cache * c = (search_cache *)(open_bot->data.ptr);
-    DEBUG(D_lookup) debug_printf_indent("Too many lookup files open\n  closing %s\n",
+    DEBUG(lookup) debug_printf_indent("Too many lookup files open\n  closing %s\n",
       open_bot->name);
     if ((open_bot = c->up))
       ((search_cache *)(open_bot->data.ptr))->down = NULL;
@@ -550,7 +550,7 @@ the callers don't have to test for NULL, set an empty string. */
 search_error_message = US"";
 f.search_find_defer = FALSE;
 
-DEBUG(D_lookup) debug_printf_indent("internal_search_find: file=%q\n  "
+DEBUG(lookup) debug_printf_indent("internal_search_find: file=%q\n  "
   "type=%s key=%q opts=%s%s%s\n", filename,
   li->name, keystring, opts ? "\"" : "", opts, opts ? "\"" : "");
 
@@ -573,7 +573,7 @@ if (  (t = tree_search(c->item_cache, keystring))
    )
   { /* Data was in the cache already; set the pointer from the tree node */
   data = e->data.ptr;
-  DEBUG(D_lookup) debug_printf_indent("cached data used for lookup of %s%s%s\n",
+  DEBUG(lookup) debug_printf_indent("cached data used for lookup of %s%s%s\n",
     keystring,
     filename ? US"\n  in " : US"", filename ? filename : US"");
   }
@@ -582,7 +582,7 @@ else
   uint do_cache = cache & CACHE_WR ? UINT_MAX : 0;
   int keylength = Ustrlen(keystring);
 
-  DEBUG(D_lookup)
+  DEBUG(lookup)
     {
     if (t)
       debug_printf_indent("cached data found but %s; ",
@@ -639,7 +639,7 @@ else
       transport_name ? LOG_MAIN : LOG_MAIN|LOG_PANIC,
       "tainted search query is not properly quoted%s: %s", loc, ks);
 
-    DEBUG(D_lookup)
+    DEBUG(lookup)
       {
       const uschar * quoter_name;
       int q = quoter_for_address(ks, &quoter_name);
@@ -669,7 +669,7 @@ else
 
   else if (do_cache)
     {
-    DEBUG(D_lookup) debug_printf_indent("%s cache entry\n",
+    DEBUG(lookup) debug_printf_indent("%s cache entry\n",
       t ? "replacing old" : "creating new");
     if (!t)	/* No existing entry.  Create new one. */
       {
@@ -694,15 +694,15 @@ cannot release the store at this stage. */
 
   else if (cache & CACHE_WR)
     {
-    DEBUG(D_lookup) debug_printf_indent("lookup forced cache cleanup\n");
+    DEBUG(lookup) debug_printf_indent("lookup forced cache cleanup\n");
     c->item_cache = NULL; 	/* forget all lookups on this connection */
     }
-  else DEBUG(D_lookup)
+  else DEBUG(lookup)
     debug_printf_indent("no_wr option: no cache invalidate\n");
   }
 
 out:
-DEBUG(D_lookup)
+DEBUG(lookup)
   {
   if (data)
     debug_printf_indent("lookup yielded: %W\n", data);
@@ -757,7 +757,7 @@ BOOL set_null_wild = FALSE, ret_key = FALSE;
 unsigned cache = CACHE_RD | CACHE_WR;
 uschar * yield;
 
-DEBUG(D_lookup)
+DEBUG(lookup)
   {
   if (partial < 0) affixlen = 99;   /* So that "NULL" prints */
   debug_printf_indent("search_find: file=%q\n  key=%q "
@@ -821,7 +821,7 @@ if (open_top != (tree_node *)handle)
     }
   }
 
-DEBUG(D_lookup)
+DEBUG(lookup)
   {
   debug_printf_indent("LRU list:\n");
   for (tree_node * t = open_top; t; )
@@ -862,7 +862,7 @@ else if (partial >= 0)
 	  is_tainted(keystring) || is_tainted(affix) ? GET_TAINTED : GET_UNTAINTED);
     Ustrncpy(keystring2, affix, affixlen);
     Ustrcpy(keystring2 + affixlen, keystring);
-    DEBUG(D_lookup) debug_printf_indent("trying partial match %s\n", keystring2);
+    DEBUG(lookup) debug_printf_indent("trying partial match %s\n", keystring2);
     yield = internal_search_find(handle, filename, CUS keystring2, cache, opts);
     if (f.search_find_defer) return NULL;
     }
@@ -900,7 +900,7 @@ else if (partial >= 0)
         if (affixlen > 0) Ustrncpy(keystring3, affix, affixlen);
         }
 
-      DEBUG(D_lookup) debug_printf_indent("trying partial match %s\n", keystring3);
+      DEBUG(lookup) debug_printf_indent("trying partial match %s\n", keystring3);
       yield = internal_search_find(handle, filename, CUS keystring3,
 		cache, opts);
       if (f.search_find_defer) return NULL;
@@ -945,7 +945,7 @@ if (!yield  &&  starflags & SEARCH_STARAT)
     savechar = *--atat;
     *atat = '*';
 
-    DEBUG(D_lookup) debug_printf_indent("trying default match %s\n", atat);
+    DEBUG(lookup) debug_printf_indent("trying default match %s\n", atat);
     yield = internal_search_find(handle, filename, atat, cache, opts);
     *atat = savechar;
     if (f.search_find_defer) return NULL;
@@ -968,7 +968,7 @@ and the second is empty. */
 
 if (!yield  &&  starflags & (SEARCH_STAR|SEARCH_STARAT))
   {
-  DEBUG(D_lookup) debug_printf_indent("trying to match *\n");
+  DEBUG(lookup) debug_printf_indent("trying to match *\n");
   yield = internal_search_find(handle, filename, US"*", cache, opts);
   if (yield && expand_setup && *expand_setup >= 0)
     {
@@ -1008,7 +1008,7 @@ it have been validated by the lookup. */
 if (yield && ret_key)
   {
   yield = string_copy_taint(keystring, GET_UNTAINTED);
-  DEBUG(D_lookup)
+  DEBUG(lookup)
     debug_printf_indent("lookup yield replace by key: %s\n", yield);
   }
 

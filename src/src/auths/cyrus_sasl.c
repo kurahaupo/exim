@@ -160,7 +160,7 @@ if (sasl_listmech(conn, NULL, "", ":", "", CCSS &list, &len, NULL) != SASL_OK)
 sep = ':';
 listptr = list;
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   {
   debug_printf("Initialised Cyrus SASL service=%q fqdn=%q realm=%q\n",
       ob->server_service, expanded_hostname, realm_expanded);
@@ -185,7 +185,7 @@ if (!buffer)
 
 store_reset(rs_point);
 
-HDEBUG(D_auth) debug_printf("Cyrus SASL driver %s: %s initialised\n", a->name, ablock->public_name);
+HDEBUG(auth) debug_printf("Cyrus SASL driver %s: %s initialised\n", a->name, ablock->public_name);
 
 /* make sure that if we get here then we're allowed to advertise. */
 ablock->server = TRUE;
@@ -219,7 +219,7 @@ unsigned int inlen, outlen;
 input = data;
 inlen = Ustrlen(data);
 
-HDEBUG(D_auth) debug = string_copy(data);
+HDEBUG(auth) debug = string_copy(data);
 
 hname = expand_string(ob->server_hostname);
 if (hname && ob->server_realm)
@@ -247,7 +247,7 @@ if ((rc = sasl_server_init(cbs, "exim")) != SASL_OK)
 rc = sasl_server_new(CS ob->server_service, CS hname, realm_expanded, NULL,
   NULL, NULL, 0, &conn);
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   debug_printf("Initialised Cyrus SASL server connection; service=%q fqdn=%q realm=%q\n",
       ob->server_service, hname, realm_expanded);
 
@@ -262,20 +262,20 @@ if (tls_in.cipher)
   {
   if ((rc = sasl_setprop(conn, SASL_SSF_EXTERNAL, (sasl_ssf_t *) &tls_in.bits)) != SASL_OK)
     {
-    HDEBUG(D_auth) debug_printf("Cyrus SASL EXTERNAL SSF set %d failed: %s\n",
+    HDEBUG(auth) debug_printf("Cyrus SASL EXTERNAL SSF set %d failed: %s\n",
         tls_in.bits, sasl_errstring(rc, NULL, NULL));
     auth_defer_msg = US"couldn't set Cyrus SASL EXTERNAL SSF";
     sasl_done();
     return DEFER;
     }
   else
-    HDEBUG(D_auth) debug_printf("Cyrus SASL set EXTERNAL SSF to %d\n", tls_in.bits);
+    HDEBUG(auth) debug_printf("Cyrus SASL set EXTERNAL SSF to %d\n", tls_in.bits);
 
   /*XXX Set channel-binding here with sasl_channel_binding_t / SASL_CHANNEL_BINDING
   Unclear what the "name" element does though, ditto the "critical" flag. */
   }
 else
-  HDEBUG(D_auth) debug_printf("Cyrus SASL: no TLS, no EXTERNAL SSF set\n");
+  HDEBUG(auth) debug_printf("Cyrus SASL: no TLS, no EXTERNAL SSF set\n");
 
 /* So sasl_setprop() documents non-shorted IPv6 addresses which is incredibly
 annoying; looking at cyrus-imapd-2.3.x source, the IP address is constructed
@@ -308,7 +308,7 @@ for (int i = 0; i < 2; ++i)
 
   if ((rc = sasl_setprop(conn, propnum, address_port)) != SASL_OK)
     {
-    HDEBUG(D_auth)
+    HDEBUG(auth)
       {
       const char * s_err = sasl_errdetail(conn);
       debug_printf("Failed to set %s SASL property: [%d] %s\n",
@@ -316,7 +316,7 @@ for (int i = 0; i < 2; ++i)
       }
     break;
     }
-  HDEBUG(D_auth) debug_printf("Cyrus SASL set %s hostport to: %s\n",
+  HDEBUG(auth) debug_printf("Cyrus SASL set %s hostport to: %s\n",
       label, address_port);
   }
 
@@ -325,7 +325,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
   if (firsttime)
     {
     firsttime = 0;
-    HDEBUG(D_auth) debug_printf("Calling sasl_server_start(%s,%q)\n", ob->server_mech, debug);
+    HDEBUG(auth) debug_printf("Calling sasl_server_start(%s,%q)\n", ob->server_mech, debug);
     rc = sasl_server_start(conn, CS ob->server_mech, inlen ? CS input : NULL, inlen,
            CCSS &output, &outlen);
     }
@@ -344,7 +344,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       }
     inlen = Ustrlen(input);
 
-    HDEBUG(D_auth) debug = string_copy_taint(input, GET_TAINTED);
+    HDEBUG(auth) debug = string_copy_taint(input, GET_TAINTED);
     if (inlen)
       {
       if ((clen = b64decode(input, &clear, GET_TAINTED)) < 0)
@@ -357,7 +357,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       inlen = clen;
       }
 
-    HDEBUG(D_auth) debug_printf("Calling sasl_server_step(%q)\n", debug);
+    HDEBUG(auth) debug_printf("Calling sasl_server_step(%q)\n", debug);
     rc = sasl_server_step(conn, CS input, inlen, CCSS &output, &outlen);
     }
 
@@ -375,7 +375,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
 
   if ((sasl_getprop(conn, SASL_USERNAME, (const void **)&out2)) != SASL_OK)
     {
-    HDEBUG(D_auth)
+    HDEBUG(auth)
       debug_printf("Cyrus SASL library will not tell us the username: %s\n",
 	  sasl_errstring(rc, NULL, NULL));
     log_write(0, LOG_REJECT, "%s authenticator (%s): "
@@ -395,7 +395,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
     case SASL_NOAUTHZ: case SASL_ENCRYPT: case SASL_EXPIRED:
     case SASL_DISABLED: case SASL_NOUSER:
       /* these are considered permanent failure codes */
-      HDEBUG(D_auth)
+      HDEBUG(auth)
 	debug_printf("Cyrus SASL permanent failure %d (%s)\n", rc, sasl_errstring(rc, NULL, NULL));
       log_write(0, LOG_REJECT, "%s authenticator (%s): "
 	 "Cyrus SASL permanent failure: %s", auname, ob->server_mech,
@@ -409,7 +409,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       available for this user. If it wasn't available at all, we
       shouldn't have got here in the first place...  */
 
-      HDEBUG(D_auth)
+      HDEBUG(auth)
 	debug_printf("Cyrus SASL temporary failure %d (%s)\n", rc, sasl_errstring(rc, NULL, NULL));
       auth_defer_msg =
 	  string_sprintf("Cyrus SASL: mechanism %s not available", ob->server_mech);
@@ -418,13 +418,13 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       return DEFER;
 
     case SASL_OK:
-      HDEBUG(D_auth)
+      HDEBUG(auth)
 	debug_printf("Cyrus SASL %s authentication succeeded for %s\n",
 	    ob->server_mech, auth_vars[0]);
 
       if ((rc = sasl_getprop(conn, SASL_SSF, (const void **)(&negotiated_ssf_ptr)))!= SASL_OK)
 	{
-	HDEBUG(D_auth)
+	HDEBUG(auth)
 	  debug_printf("Cyrus SASL library will not tell us the SSF: %s\n",
 	      sasl_errstring(rc, NULL, NULL));
 	log_write(0, LOG_REJECT, "%s authenticator (%s): "
@@ -435,11 +435,11 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
 	return FAIL;
 	}
       negotiated_ssf = *negotiated_ssf_ptr;
-      HDEBUG(D_auth)
+      HDEBUG(auth)
 	debug_printf("Cyrus SASL %s negotiated SSF: %d\n", ob->server_mech, negotiated_ssf);
       if (negotiated_ssf > 0)
 	{
-	HDEBUG(D_auth)
+	HDEBUG(auth)
 	  debug_printf("Exim does not implement SASL wrapping (needed for SSF %d).\n", negotiated_ssf);
 	log_write(0, LOG_REJECT, "%s authenticator (%s): "
 	    "Cyrus SASL SSF %d not supported by Exim", auname, ob->server_mech, negotiated_ssf);
@@ -459,7 +459,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       /* Anything else is a temporary failure, and we'll let SASL print out
        * the error string for us
        */
-      HDEBUG(D_auth)
+      HDEBUG(auth)
 	debug_printf("Cyrus SASL temporary failure %d (%s)\n", rc, sasl_errstring(rc, NULL, NULL));
       auth_defer_msg =
 	  string_sprintf("Cyrus SASL: %s", sasl_errstring(rc, NULL, NULL));

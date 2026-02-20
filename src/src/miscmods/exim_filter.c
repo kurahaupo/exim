@@ -794,7 +794,7 @@ return nextsigchar(ptr, TRUE);
 static void
 indent(void)
 {
-DEBUG(D_filter) for (int i = 0; i < output_indent; i++) debug_printf(" ");
+DEBUG(filter) for (int i = 0; i < output_indent; i++) debug_printf(" ");
 }
 
 
@@ -1673,8 +1673,7 @@ switch (c->type)
 
       if (filter_thisaddress)
 	{
-	if ((filter_test != FTEST_NONE && debug_selector != 0) ||
-	    (debug_selector & D_filter) != 0)
+	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
 	  {
 	  indent();
 	  debug_printf_indent("Extracted address %s\n", filter_thisaddress);
@@ -1752,8 +1751,7 @@ switch (c->type)
 	const pcre2_code * re;
 	mcs_flags flags = textonly_re ? MCS_CACHEABLE : MCS_NOFLAGS;
 
-	if ((filter_test != FTEST_NONE && debug_selector != 0) ||
-	    (debug_selector & D_filter) != 0)
+	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
 	  {
 	  debug_printf_indent("Match expanded arguments:\n");
 	  debug_printf_indent("  Subject = %s\n", exp[0]);
@@ -1788,8 +1786,7 @@ switch (c->type)
     break;
   }
 
-if ((filter_test != FTEST_NONE && debug_selector != 0) ||
-    (debug_selector & D_filter) != 0)
+if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
   {
   indent();
   debug_printf_indent("%sondition is %s: ",
@@ -1953,7 +1950,7 @@ while (commands)
 
       else
 	{
-	DEBUG(D_filter) debug_printf_indent("Filter: %sdeliver message to: %s%s%s%s\n",
+	DEBUG(filter) debug_printf_indent("Filter: %sdeliver message to: %s%s%s%s\n",
 	  commands->seen ? "" : "unseen ",
 	  expargs[0],
 	  commands->noerror ? " (noerror)" : "",
@@ -1999,7 +1996,7 @@ while (commands)
 	if (s[0] != '/' && filter_options & RDO_PREPEND_HOME &&
 	    deliver_home && *deliver_home)
 	  s = string_sprintf("%s/%s", deliver_home, s);
-	DEBUG(D_filter) debug_printf_indent("Filter: %ssave message to: %s%s\n",
+	DEBUG(filter) debug_printf_indent("Filter: %ssave message to: %s%s\n",
 	  commands->seen ? "" : "unseen ",
 	  s, commands->noerror ? " (noerror)" : "");
 
@@ -2028,7 +2025,7 @@ while (commands)
 	}
       else /* Ensure pipe command starts with | */
 	{
-	DEBUG(D_filter) debug_printf_indent("Filter: %spipe message to: %s%s\n",
+	DEBUG(filter) debug_printf_indent("Filter: %spipe message to: %s%s\n",
 	  commands->seen ? "" : "unseen ", s,
 	  commands->noerror ? " (noerror)" : "");
 	if (s[0] != '|') s = string_sprintf("|%s", s);
@@ -2099,7 +2096,7 @@ while (commands)
 
       else if (filter_options & RDO_LOG)   /* Locked out */
 	{
-	DEBUG(D_filter)
+	DEBUG(filter)
 	  debug_printf_indent("filter log command aborted: euid=%ld\n",
 	  (long int)geteuid());
 	*error_pointer = US"logwrite command forbidden";
@@ -2108,7 +2105,7 @@ while (commands)
       else if (filter_options & RDO_REALLOG)
 	{
 	int len;
-	DEBUG(D_filter) debug_printf_indent("writing filter log as euid %ld\n",
+	DEBUG(filter) debug_printf_indent("writing filter log as euid %ld\n",
 	  (long int)geteuid());
 	if (log_fd < 0)
 	  {
@@ -2135,7 +2132,7 @@ while (commands)
 	  }
 	}
       else
-	DEBUG(D_filter)
+	DEBUG(filter)
 	  debug_printf_indent("skipping logwrite (verifying or testing)\n");
       break;
 
@@ -2214,7 +2211,7 @@ while (commands)
 	printf("%c%s text \"%s\"\n", toupper(ff_name[0]), ff_name+1, fmsg);
 	}
       else
-        DEBUG(D_filter) debug_printf_indent("Filter: %s %q\n", ff_name, fmsg);
+        DEBUG(filter) debug_printf_indent("Filter: %s %q\n", ff_name, fmsg);
       return ff_ret;
 
     case FINISH_COMMAND:
@@ -2224,7 +2221,7 @@ while (commands)
 	printf("%sinish\n", commands->seen ? "Seen f" : "F");
 	}
       else
-	DEBUG(D_filter) debug_printf_indent("Filter: %sfinish\n",
+	DEBUG(filter) debug_printf_indent("Filter: %sfinish\n",
 	  commands->seen ? " Seen " : "");
       finish_obeyed = TRUE;
       return filter_delivered ? FF_DELIVERED : FF_NOTDELIVERED;
@@ -2261,7 +2258,7 @@ while (commands)
 	  if (filter_test != FTEST_NONE)
 	    printf("%s command ignored because return_path is empty\n",
 	      command_list[commands->command]);
-	  else DEBUG(D_filter)
+	  else DEBUG(filter)
 	    debug_printf_indent("%s command ignored because return_path "
 	    "is empty\n", command_list[commands->command]);
 	  break;
@@ -2360,7 +2357,7 @@ while (commands)
 	    if (arg)
 	      {
 	      int len = Ustrlen(mailargs[i]);
-	      int indent = debug_selector != 0 ? output_indent : 0;
+	      int indent = ANY_DEBUG ? output_indent : 0;
 	      while (len++ < 7 + indent) printf(" ");
 	      printf("%s: %s%s\n", mailargs[i], string_printing(arg),
 		(  commands->args[mailarg_index_expand].u
@@ -2389,7 +2386,7 @@ while (commands)
 	      break;
 	      }
 
-	  DEBUG(D_filter)
+	  DEBUG(filter)
 	    {
 	    debug_printf_indent("Filter: %smail to: %s%s%s\n",
 	      commands->seen ? "seen " : "",
@@ -2500,7 +2497,7 @@ while (commands)
 	break;
 
     case TESTPRINT_COMMAND:
-	if (filter_test != FTEST_NONE || (debug_selector & D_filter) != 0)
+	if (filter_test != FTEST_NONE || IS_DEBUG(filter))
 	  {
 	  const uschar * t = string_printing(expargs[0]);
 	  if (filter_test == FTEST_NONE)
@@ -2549,7 +2546,7 @@ const uschar *save_headers_charset = headers_charset;
 filter_cmd *commands = NULL;
 filter_cmd **lastcmdptr = &commands;
 
-DEBUG(D_route) debug_printf("Filter: start of processing\n");
+DEBUG(route) debug_printf("Filter: start of processing\n");
 acl_level++;
 
 /* Initialize "not in an if command", set the global flag that is always TRUE
@@ -2584,7 +2581,7 @@ ptr = nextsigchar(ptr, TRUE);
 if (read_command_list(&ptr, &lastcmdptr, FALSE))
   yield = interpret_commands(commands, generated);
 
-if (filter_test != FTEST_NONE || (debug_selector & D_filter) != 0)
+if (filter_test != FTEST_NONE || IS_DEBUG(filter))
   {
   uschar *s = US"";
   switch(yield)
@@ -2630,7 +2627,7 @@ f.filter_running = FALSE;
 headers_charset = save_headers_charset;
 
 acl_level--;
-DEBUG(D_route) debug_printf("Filter: end of processing\n");
+DEBUG(route) debug_printf("Filter: end of processing\n");
 return yield;
 }
 

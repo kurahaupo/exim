@@ -136,7 +136,7 @@ lock that times out. */
 lock_data.l_type = rdonly ? F_RDLCK : F_WRLCK;
 lock_data.l_whence = lock_data.l_start = lock_data.l_len = 0;
 
-DEBUG(D_hints_lookup|D_retry|D_route|D_deliver)
+DEBUG(hints_lookup|retry|route|deliver)
   debug_printf_indent("locking %s\n", filename);
 
 sigalrm_seen = FALSE;
@@ -155,7 +155,7 @@ if (rc < 0)
   return FALSE;
   }
 
-DEBUG(D_hints_lookup) debug_printf_indent("locked  %s\n", filename);
+DEBUG(hints_lookup) debug_printf_indent("locked  %s\n", filename);
 return TRUE;
 }
 
@@ -184,7 +184,7 @@ dbfn_open(const uschar * name, int flags, open_db * dbblock,
 int save_errno, dlen, flen;
 uschar dirname[PATHLEN], filename[PATHLEN];
 
-DEBUG(D_hints_lookup) acl_level++;
+DEBUG(hints_lookup) acl_level++;
 
 /* The first thing to do is to open a separate file on which to lock. This
 ensures that Exim has exclusive use of the database before it even tries to
@@ -213,7 +213,7 @@ else
 	    flen, name);
   if (!lockfile_take(dbblock, filename, flags == O_RDONLY, panic))
     {
-    DEBUG(D_hints_lookup) acl_level--;
+    DEBUG(hints_lookup) acl_level--;
     return NULL;
     }
   }
@@ -236,7 +236,7 @@ dbblock->dbptr = dbblock->readonly && !exim_lockfile_needed()
 
 if (!dbblock->dbptr && errno == ENOENT && flags & O_CREAT)
   {
-  DEBUG(D_hints_lookup)
+  DEBUG(hints_lookup)
     debug_printf_indent("%s appears not to exist: trying to create\n", filename);
   dbblock->dbptr = exim_dbopen(filename, dirname, flags, EXIMDB_MODE);
   }
@@ -254,7 +254,7 @@ if (!dbblock->dbptr)
     log_write(0, LOG_MAIN, "%s", string_open_failed("DB file %s",
         filename));
   else
-    DEBUG(D_hints_lookup)
+    DEBUG(hints_lookup)
       debug_printf_indent("%s\n", CS string_open_failed("DB file %s",
           filename));
   (void)close(dbblock->lockfd);
@@ -265,7 +265,7 @@ if (!dbblock->dbptr)
 /* Pass back the block containing the opened database handle and the open fd
 for the lock. */
 
-DEBUG(D_hints_lookup) acl_level--;
+DEBUG(hints_lookup) acl_level--;
 return dbblock;
 }
 
@@ -281,7 +281,7 @@ dbfn_open_multi(const uschar * name, int flags, open_db * dbblock)
 int save_errno, dlen;
 uschar dirname[PATHLEN], filename[PATHLEN];
 
-DEBUG(D_hints_lookup) acl_level++;
+DEBUG(hints_lookup) acl_level++;
 
 dbblock->lockfd = -1;
 dbblock->readonly = (flags & O_ACCMODE) == O_RDONLY;
@@ -294,7 +294,7 @@ priv_drop_temp(exim_uid, exim_gid);
 dbblock->dbptr = exim_dbopen_multi(filename, dirname, flags & O_ACCMODE, EXIMDB_MODE);
 if (!dbblock->dbptr && errno == ENOENT && flags & O_CREAT)
   {
-  DEBUG(D_hints_lookup)
+  DEBUG(hints_lookup)
     debug_printf_indent("%s appears not to exist: trying to create\n", filename);
   dbblock->dbptr = exim_dbopen_multi(filename, dirname, flags, EXIMDB_MODE);
   }
@@ -312,14 +312,14 @@ if (!dbblock->dbptr)
     log_write(0, LOG_MAIN, "%s", string_open_failed("DB file %s",
         filename));
   else
-    DEBUG(D_hints_lookup)
+    DEBUG(hints_lookup)
       debug_printf_indent("%s\n", CS string_open_failed("DB file %s",
           filename));
   dbblock =  NULL;
   }
 
 /* Pass back the block containing the opened database handle */
-DEBUG(D_hints_lookup) acl_level--;
+DEBUG(hints_lookup) acl_level--;
 return dbblock;
 }
 
@@ -328,14 +328,14 @@ return dbblock;
 BOOL
 dbfn_transaction_start(open_db * dbp)
 {
-DEBUG(D_hints_lookup) debug_printf_indent("dbfn_transaction_start\n");
+DEBUG(hints_lookup) debug_printf_indent("dbfn_transaction_start\n");
 if (!dbp->readonly) return exim_dbtransaction_start(dbp->dbptr);
 return FALSE;
 }
 void
 dbfn_transaction_commit(open_db * dbp)
 {
-DEBUG(D_hints_lookup) debug_printf_indent("dbfn_transaction_commit\n");
+DEBUG(hints_lookup) debug_printf_indent("dbfn_transaction_commit\n");
 if (!dbp->readonly) exim_dbtransaction_commit(dbp->dbptr);
 }
 
@@ -363,7 +363,7 @@ else
   exim_dbclose(dbp->dbptr);
 
 if (*fdp >= 0) (void)close(*fdp);
-DEBUG(D_hints_lookup)
+DEBUG(hints_lookup)
   debug_printf_indent("closed hints database%s\n",
 		      *fdp < 0 ? "" : " and lockfile");
 *fdp = -1;
@@ -374,7 +374,7 @@ void
 dbfn_close_multi(open_db * dbp)
 {
 exim_dbclose_multi(dbp->dbptr);
-DEBUG(D_hints_lookup)
+DEBUG(hints_lookup)
   debug_printf_indent("closed hints database\n");
 }
 
@@ -425,7 +425,7 @@ BOOL tainted;
 
 memcpy(key_copy, key, klen);
 
-DEBUG(D_hints_lookup) debug_printf_indent("dbfn_read: key=%.*W\n", klen, key);
+DEBUG(hints_lookup) debug_printf_indent("dbfn_read: key=%.*W\n", klen, key);
 
 exim_datum_init(&key_datum);         /* Some DBM libraries require the datum */
 exim_datum_init(&result_datum);      /* to be cleared before use. */
@@ -434,12 +434,12 @@ exim_datum_size_set(&key_datum, klen);
 
 if (!exim_dbget(dbblock->dbptr, &key_datum, &result_datum))
   {
-  DEBUG(D_hints_lookup) debug_printf_indent("dbfn_read: null return\n");
+  DEBUG(hints_lookup) debug_printf_indent("dbfn_read: null return\n");
   return NULL;
   }
 
 dlen = exim_datum_size_get(&result_datum);
-DEBUG(D_hints_lookup) debug_printf_indent("dbfn_read: size %u return\n", dlen);
+DEBUG(hints_lookup) debug_printf_indent("dbfn_read: size %u return\n", dlen);
 
 if (hintsdb)
   {
@@ -447,13 +447,13 @@ if (hintsdb)
 
   if (dlen < sizeof(dbdata_generic))
     {
-    DEBUG(D_hints_lookup)
+    DEBUG(hints_lookup)
       debug_printf_indent("dbfn_read: bad record size %u\n", dlen);
     return NULL;
     }
   if (gp->version != HINTS_VERSION)
     {
-    DEBUG(D_hints_lookup)
+    DEBUG(hints_lookup)
       debug_printf_indent("dbfn_read: bad record version %u\n", gp->version);
     return NULL;
     }
@@ -557,7 +557,7 @@ gptr->version = HINTS_VERSION;
 gptr->tainted = is_tainted(ptr);
 gptr->time_stamp = time(NULL);
 
-DEBUG(D_hints_lookup)
+DEBUG(hints_lookup)
   debug_printf_indent("dbfn_write: key=%s datalen %d\n", key, length);
 
 exim_datum_init(&key_datum);         /* Some DBM libraries require the datum */
@@ -590,14 +590,14 @@ int klen = Ustrlen(key) + 1, rc;
 uschar * key_copy = store_get(klen, key);
 EXIM_DATUM key_datum;
 
-DEBUG(D_hints_lookup) debug_printf_indent("dbfn_delete: key=%s\n", key);
+DEBUG(hints_lookup) debug_printf_indent("dbfn_delete: key=%s\n", key);
 
 memcpy(key_copy, key, klen);
 exim_datum_init(&key_datum);         /* Some DBM libraries require clearing */
 exim_datum_data_set(&key_datum, key_copy);
 exim_datum_size_set(&key_datum, klen);
 rc = exim_dbdel(dbblock->dbptr, &key_datum);
-DEBUG(D_hints_lookup) if (rc != EXIM_DBPUTB_OK)
+DEBUG(hints_lookup) if (rc != EXIM_DBPUTB_OK)
   debug_printf_indent(" exim_dbdel: fail\n");
 return rc;
 }
@@ -631,7 +631,7 @@ dbfn_scan(open_db *dbblock, BOOL start, EXIM_CURSOR **cursor)
 EXIM_DATUM key_datum, value_datum;
 uschar *yield;
 
-DEBUG(D_hints_lookup) debug_printf_indent("dbfn_scan\n");
+DEBUG(hints_lookup) debug_printf_indent("dbfn_scan\n");
 
 /* Some dbm require an initialization */
 
@@ -684,7 +684,8 @@ if (argc != 2)
 /* Initialize */
 
 spool_directory = argv[1];
-debug_selector = D_all - D_memory;
+debug_modify_channel(US"");
+debug_modify_channel(US"+all-memory");
 debug_file = stderr;
 big_buffer = malloc(big_buffer_size);
 

@@ -111,12 +111,12 @@ if (  !dmarc_tld_file
    || !(dmarc_tld_file = expand_string(dmarc_tld_file))
    || !*dmarc_tld_file)
   {
-  DEBUG(D_receive) debug_printf_indent("DMARC: no dmarc_tld_file\n");
+  DEBUG(receive) debug_printf_indent("DMARC: no dmarc_tld_file\n");
   dmarc_abort = TRUE;
   }
 else if (!sender_host_address)
   {
-  DEBUG(D_receive) debug_printf_indent("DMARC: no sender_host_address\n");
+  DEBUG(receive) debug_printf_indent("DMARC: no sender_host_address\n");
   dmarc_abort = TRUE;
   }
 else
@@ -194,7 +194,7 @@ for (int c = 0; ruf[c]; c++)
     continue;
   /* Move to first character past the colon */
   recipient += 7;
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf_indent("DMARC forensic report to %s%s\n", recipient,
 	 host_checking || f.running_in_test_harness ? " (not really)" : "");
   if (host_checking || f.running_in_test_harness)
@@ -246,18 +246,18 @@ if (dns_lookup(dnsa, string_sprintf("_dmarc.%s", dom), T_TXT, NULL)
       else
 /* RFC 7489 6.6.3 step 5: multiple records are treated as no record */
 	{
-	DEBUG(D_receive) debug_printf_indent("DMARC: multiple rr\n");
+	DEBUG(receive) debug_printf_indent("DMARC: multiple rr\n");
 	res = NULL;
 	break;
 	}
     }
   }
 else
-  DEBUG(D_receive) debug_printf_indent("DMARC: no ret\n");
+  DEBUG(receive) debug_printf_indent("DMARC: no ret\n");
 
 expand_level--;
 store_free_dns_answer(dnsa);
-DEBUG(D_receive) debug_printf_indent("DMARC: rr %q\n", res);
+DEBUG(receive) debug_printf_indent("DMARC: rr %q\n", res);
 return res;
 }
 
@@ -272,12 +272,12 @@ const lookup_info * li;
 void * handle;
 static const uschar * cached_key = NULL, * cached_res = NULL;
 
-DEBUG(D_receive) debug_printf_indent("DMARC: lookup regdom for %q\n", dom);
+DEBUG(receive) debug_printf_indent("DMARC: lookup regdom for %q\n", dom);
 
 if (cached_key && Ustrcmp(dom, cached_key) == 0)
   {
   res = cached_res;
-  DEBUG(D_receive) debug_printf_indent(" DMARC: cached value %q\n", res);
+  DEBUG(receive) debug_printf_indent(" DMARC: cached value %q\n", res);
   return res;
   }
 
@@ -286,7 +286,7 @@ res = NULL;
 if (!(li = search_findtype_partial(US"regdom", &partial, &affix, &affixlen,
 				  &starflags, &opts)))
   {
-  DEBUG(D_receive) debug_printf_indent("DMARC: missing regdom lookup\n");
+  DEBUG(receive) debug_printf_indent("DMARC: missing regdom lookup\n");
   goto out;
   }
 
@@ -309,7 +309,7 @@ dmarc_get_dns_policy_record(const uschar ** used_dom_p)
 {
 const uschar * s;
 
-DEBUG(D_receive) debug_printf_indent("DMARC: lookup policy record for %s\n",
+DEBUG(receive) debug_printf_indent("DMARC: lookup policy record for %s\n",
 				      dmarc_header_from_sender);
 
 /* RFC 7489 6.6.3 step 1: DNS domain matching the 5322.From */
@@ -341,7 +341,7 @@ gstring * g;
 GET_OPTION("dmarc_history_file");
 if (!(s = dmarc_history_file) || !(s = expand_string(s)) || !*s)
   {
-  DEBUG(D_receive) debug_printf_indent("DMARC history file not set\n");
+  DEBUG(receive) debug_printf_indent("DMARC history file not set\n");
   return;
   }
 if (!host_checking)	/* -bh mode: nothing written except debug */
@@ -429,7 +429,7 @@ g = string_fmt_append(g, "align_dkim %d\n"
 #endif
 
 /* Write the contents to the history file */
-DEBUG(D_receive)
+DEBUG(receive)
   {
   debug_printf_indent("DMARC history data for debugging:\n");
   expand_level++;
@@ -464,15 +464,15 @@ authres_dmarc(gstring * g)
 if (f.dmarc_has_been_checked)
   {
   int start = 0;		/* Compiler quietening */
-  DEBUG(D_acl) start = gstring_length(g);
+  DEBUG(acl) start = gstring_length(g);
   g = string_append(g, 2, US";\n\tdmarc=", dmarc_pass_fail);
   if (dmarc_header_from_sender)
     g = string_append(g, 2, US" header.from=", dmarc_header_from_sender);
-  DEBUG(D_acl) debug_printf_indent("DMARC:\tauthres '%.*s'\n",
+  DEBUG(acl) debug_printf_indent("DMARC:\tauthres '%.*s'\n",
 		  gstring_length(g) - start - 3, g->s + start + 3);
   }
 else
-  DEBUG(D_acl) debug_printf_indent("DMARC:\tno authres\n");
+  DEBUG(acl) debug_printf_indent("DMARC:\tno authres\n");
 return g;
 }
 

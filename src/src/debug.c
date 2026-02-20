@@ -138,14 +138,14 @@ void
 debug_print_string(uschar *debug_string)
 {
 if (!debug_string) return;
-HDEBUG(D_any|D_v)
+HDEBUG(any|v)
   {
   uschar * s = expand_string(debug_string);
   if (!s)
     debug_printf("failed to expand debug_output %q: %s\n", debug_string,
       expand_string_message);
-  else if (s[0] != 0)
-    debug_printf("%s%s", s, (s[Ustrlen(s)-1] == '\n')? "" : "\n");
+  else if (*s)
+    debug_printf("%s%s", s, s[Ustrlen(s)-1] == '\n' ? "" : "\n");
   }
 }
 
@@ -230,7 +230,7 @@ timestamp buffer, which may contain something useful. (This was a bug fix: the
 
 if (debug_ptr == debug_buffer)
   {
-  DEBUG(D_timestamp)
+  DEBUG(timestamp)
     {
     struct timeval now;
     time_t tmp;
@@ -244,12 +244,12 @@ if (debug_ptr == debug_buffer)
       t->tm_hour, t->tm_min, t->tm_sec, (int)(now.tv_usec/1000));
     }
 
-  DEBUG(D_pid)
+  DEBUG(pid)
     debug_ptr += sprintf(CS debug_ptr, "%5d ", (int)getpid());
 
   /* Set up prefix if outputting for host checking and not debugging */
 
-  if (host_checking && debug_selector == 0)
+  if (host_checking && !ANY_DEBUG)
     debug_ptr = Ustpcpy(debug_ptr, US">>> ");
 
   debug_prefix_length = debug_ptr - debug_buffer;
@@ -258,7 +258,7 @@ if (debug_ptr == debug_buffer)
 if (indent > 0)
   {
   for (int i = indent >> 2; i > 0; i--)
-    DEBUG(D_noutf8)
+    DEBUG(noutf8)
       {
       debug_ptr = Ustpcpy(debug_ptr, US"   !");
       debug_prefix_length += 4;
@@ -501,4 +501,80 @@ debug_pretrigger_discard();
 }
 
 
+/******************************************************************************/
+
+BOOL
+is_debug(const uschar * channels)
+{
+int sep = '|';
+uschar buf[64];		/* static buffer to avoid allocs */
+const uschar * chan;
+
+/* The "any" request is special (and somewhat a misnomer).
+Check its summary bit. */
+
+while (chan = string_nextinlist(&channels, &sep, buf, sizeof(buf)))
+  {
+  unsigned bit =
+    Ustrcmp(chan, "any") == 0
+    ? BIT_TABLE_IDX_IS_ANY
+    : chan_name_to_idx(chan, Ustrlen(chan),
+				  debug_chan_names, debug_options_count);
+  if (bit && DEBUG_BIT(bit)) return TRUE;
+  }
+return FALSE;
+}
+
+void
+debug_decode_bits(bitmask_word_t ** selector, const uschar * string, int flags)
+{
+if (!*selector)
+  {
+  size_t len = sizeof(bitmask_word_t) * DEBUG_SELECTOR_SIZE;
+  *selector = store_get_perm(len, GET_UNTAINTED);
+  memset(*selector, 0, len);
+  }
+
+decode_bits(*selector, DEBUG_SELECTOR_SIZE, debug_notall_names, string,
+          debug_chan_names, debug_options_count, DCB_DEBUG | flags);
+}
+
+void
+debug_modify_channel(const uschar * string)
+{
+debug_decode_bits(&debug_selector, string, 0);
+}
+
+void
+debug_set_default_bits(bitmask_word_t ** selector)
+{
+debug_decode_bits(selector, US"=0", 0);
+debug_decode_bits(selector, debug_defaults, 0);
+}
+
+BOOL
+debug_disable(void)
+{
+BOOL is_debugging = !!ANY_DEBUG;
+bit_clear(debug_selector, BIT_TABLE_IDX_NONZERO);
+return is_debugging;
+}
+
+void
+debug_enable(void)
+{
+bit_set(debug_selector, BIT_TABLE_IDX_NONZERO);
+}
+
+gstring *
+debug_selector_dump(gstring * g)
+{
+g = string_fmt_append(g, "-d=0x" PR_EXIM_BITMASK, debug_selector[0]);
+for (int i = 1; i < DEBUG_SELECTOR_SIZE; i++)
+  g = string_fmt_append(g, ",0x" PR_EXIM_BITMASK, debug_selector[i]);
+return g;
+}
+
 /* End of debug.c */
+/* vi: ai aw sw=2
+ */

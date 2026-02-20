@@ -50,7 +50,7 @@ int i;
 struct stat statbuf;
 const char * const subdirs[] = { "/tmp", "/new", "/cur" };
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("ensuring maildir directories exist in %s\n", path);
 
 /* First ensure that the path we have is a directory; if it does not exist,
@@ -102,7 +102,7 @@ for (i = 0; i < 4; i++)
         addr->basic_errno = errno;
         return FALSE;
         }
-      DEBUG(D_transport)
+      DEBUG(transport)
         debug_printf("created directory %s%s\n", path, mdir);
       break;   /* out of the race loop */
       }
@@ -145,7 +145,7 @@ if (maildirfolder_create_regex)
   {
   const pcre2_code * re;
 
-  DEBUG(D_transport) debug_printf("checking for maildirfolder requirement\n");
+  DEBUG(transport) debug_printf("checking for maildirfolder requirement\n");
 
   if (!(re = regex_compile(maildirfolder_create_regex,
 	      MCS_NOFLAGS, &addr->message, pcre_gen_cmp_ctx)))
@@ -156,7 +156,7 @@ if (maildirfolder_create_regex)
     uschar *fname = string_sprintf("%s/maildirfolder", path);
     if (Ustat(fname, &statbuf) == 0)
       {
-      DEBUG(D_transport) debug_printf("maildirfolder already exists\n");
+      DEBUG(transport) debug_printf("maildirfolder already exists\n");
       }
     else
       {
@@ -168,12 +168,12 @@ if (maildirfolder_create_regex)
         return FALSE;
         }
       (void)close(fd);
-      DEBUG(D_transport) debug_printf("created maildirfolder file\n");
+      DEBUG(transport) debug_printf("created maildirfolder file\n");
       }
     }
   else
     {
-    DEBUG(D_transport) debug_printf("maildirfolder file not required\n");
+    DEBUG(transport) debug_printf("maildirfolder file not required\n");
     }
   }
 
@@ -207,7 +207,7 @@ len = Ustrlen(buffer);
 if (lseek(fd, 0, SEEK_END) >= 0)
   {
   len = write(fd, buffer, len);
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("added '%.*s' to maildirsize file\n", len-1, buffer);
   }
 }
@@ -265,7 +265,7 @@ for (struct dirent *ent; ent = readdir(dir); )
 
   if (dir_regex && !regex_match(dir_regex, name, -1, NULL))
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("skipping %s/%s: dir_regex does not match\n", path, name);
     continue;
     }
@@ -275,7 +275,7 @@ for (struct dirent *ent; ent = readdir(dir); )
   s = string_sprintf("%s/%s", path, name);
   if (Ustat(s, &statbuf) < 0)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("maildir_compute_size: stat error %d for %s: %s\n", errno,
         s, strerror(errno));
     continue;
@@ -283,7 +283,7 @@ for (struct dirent *ent; ent = readdir(dir); )
 
   if ((statbuf.st_mode & S_IFMT) != S_IFDIR)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("skipping %s/%s: not a directory\n", s, name);
     continue;
     }
@@ -306,7 +306,7 @@ for (struct dirent *ent; ent = readdir(dir); )
   }
 
 closedir(dir);
-DEBUG(D_transport)
+DEBUG(transport)
   {
   if (timestamp_only)
     debug_printf("maildir_compute_size (timestamp_only): %ld\n",
@@ -366,11 +366,11 @@ the same thing. */
 
 filename = string_sprintf("%s/maildirsize", path);
 
-DEBUG(D_transport) debug_printf("looking for maildirsize in %s\n", path);
+DEBUG(transport) debug_printf("looking for maildirsize in %s\n", path);
 if ((fd = Uopen(filename, O_RDWR|O_APPEND, ob->mode ? ob->mode : 0600)) < 0)
   {
   if (errno != ENOENT) return -1;
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("%s does not exist: recalculating\n", filename);
   goto RECALCULATE;
   }
@@ -381,7 +381,7 @@ compute the maildir size from the file. */
 
 if ((count = read(fd, buffer, sizeof(buffer))) >= sizeof(buffer))
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("maildirsize file too big (%d): recalculating\n", count);
   goto RECALCULATE;
   }
@@ -389,7 +389,7 @@ buffer[count] = 0;   /* Ensure string terminated */
 
 /* Read the quota parameters from the first line of the data. */
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("reading quota parameters from maildirsize data\n");
 
 for (;;)
@@ -404,7 +404,7 @@ for (;;)
     else if (*endptr == 'C') cached_quota_filecount = (int)n;
   if (!isalpha(*endptr++))
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("quota parameter number not followed by letter in "
         "\"%.*s\": recalculating maildirsize\n", (int)(endptr - buffer),
         buffer);
@@ -413,7 +413,7 @@ for (;;)
   if (*endptr == '\n' || !*endptr) break;
   if (*endptr++ != ',')
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("quota parameter not followed by comma in "
         "\"%.*s\": recalculating maildirsize\n", (int)(endptr - buffer),
         buffer);
@@ -427,7 +427,7 @@ for (;;)
 if (cached_quota != ob->quota_value ||
     cached_quota_filecount != ob->quota_filecount_value)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("cached quota is out of date: recalculating\n"
       "  quota=" OFF_T_FMT " cached_quota=" OFF_T_FMT " filecount_quota=%d "
       "cached_quota_filecount=%d\n", ob->quota_value,
@@ -438,7 +438,7 @@ if (cached_quota != ob->quota_value ||
 /* Quota values agree; parse the rest of the data to get the sizes. At this
 stage, *endptr points either to 0 or to '\n'.  */
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("computing maildir size from maildirsize data\n");
 
 for (; *endptr++ == '\n' && *endptr; )
@@ -462,7 +462,7 @@ if (!*endptr)
   {
   if (size < 0 || filecount < 0)
     {
-    DEBUG(D_transport) debug_printf("negative value in maildirsize "
+    DEBUG(transport) debug_printf("negative value in maildirsize "
       "(size=" OFF_T_FMT " count=%d): recalculating\n", size, filecount);
     goto RECALCULATE;
     }
@@ -477,7 +477,7 @@ if (!*endptr)
     struct stat statbuf;
     if (linecount > 1)
       {
-      DEBUG(D_transport) debug_printf("over quota and maildirsize has "
+      DEBUG(transport) debug_printf("over quota and maildirsize has "
         "more than 1 entry: recalculating\n");
       goto RECALCULATE;
       }
@@ -486,7 +486,7 @@ if (!*endptr)
 
     if (time(NULL) - statbuf.st_mtime > 15*60)
       {
-      DEBUG(D_transport) debug_printf("over quota and maildirsize is older "
+      DEBUG(transport) debug_printf("over quota and maildirsize is older "
         "than 15 minutes: recalculating\n");
       goto RECALCULATE;
       }
@@ -502,7 +502,7 @@ else
   uschar *tempname;
   struct timeval tv;
 
-  DEBUG(D_transport)
+  DEBUG(transport)
     {
     const uschar * p = endptr;
     while (p > buffer && p[-1] != '\n') p--;
@@ -545,12 +545,12 @@ else
   /* If any of the directories have been modified since the last timestamp we
   saw, we have to junk this maildirsize file. */
 
-  DEBUG(D_transport) debug_printf("checking subdirectory timestamps\n");
+  DEBUG(transport) debug_printf("checking subdirectory timestamps\n");
   new_latest = 0;
   (void)maildir_compute_size(path, NULL, &new_latest , NULL, dir_regex, TRUE);
   if (new_latest > old_latest)
     {
-    DEBUG(D_transport) debug_printf("abandoning maildirsize because of "
+    DEBUG(transport) debug_printf("abandoning maildirsize because of "
       "a later subdirectory modification\n");
     (void)Uunlink(filename);
     (void)close(fd);
@@ -560,7 +560,7 @@ else
 
 /* Return the sizes and the file descriptor, if any */
 
-DEBUG(D_transport) debug_printf("returning maildir size=" OFF_T_FMT
+DEBUG(transport) debug_printf("returning maildir size=" OFF_T_FMT
   " filecount=%d\n", size, filecount);
 *returned_size = size;
 *returned_filecount = filecount;

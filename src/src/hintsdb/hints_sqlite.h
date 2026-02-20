@@ -55,7 +55,7 @@ if ((ret = sqlite3_open_v2(CCS name, &dbp, sflags, NULL)) == SQLITE_OK)
   /* in case we are migrating, drop the old table, return code not needed */
   (void) sqlite3_exec(dbp, "DROP TABLE IF EXISTS tbl;", NULL, NULL, NULL);
   }
-else DEBUG(D_hints_lookup)
+else DEBUG(hints_lookup)
   debug_printf_indent("sqlite_open(flags 0x%x mode %04o) %s\n",
 		      flags, mode, sqlite3_errmsg(dbp));
 return ret == SQLITE_OK ? dbp : NULL;
@@ -115,7 +115,7 @@ if (SQLITE_OK != sqlite3_prepare_v2(dbp, query, strlen(query), &stmt, NULL))
   }
 
 # ifdef SQL_DEBUG
-DEBUG(D_hints_lookup) debug_printf_indent("prepared SQL: %s\n", sqlite3_sql(stmt));
+DEBUG(hints_lookup) debug_printf_indent("prepared SQL: %s\n", sqlite3_sql(stmt));
 # endif
 
 stmt = exim_sqlbind_blob(dbp, stmt, &bindcol, key);
@@ -124,7 +124,7 @@ stmt = exim_sqlbind_blob(dbp, stmt, &bindcol, data);
 # ifdef SQL_DEBUG
 if (stmt)
   {
-  DEBUG(D_hints_lookup) debug_printf_indent("expanded SQL: %s\n", sqlite3_expanded_sql(stmt));
+  DEBUG(hints_lookup) debug_printf_indent("expanded SQL: %s\n", sqlite3_expanded_sql(stmt));
   }
 # endif
 
@@ -223,7 +223,7 @@ static inline int
 exim_dbput(EXIM_DB * dbp, EXIM_DATUM * key, EXIM_DATUM * data)
 {
 # ifdef SQL_DEBUG
-DEBUG(D_hints_lookup) debug_printf_indent(EXIM_DBTYPE " put: key:%.*W data:%.*W\n", key->len, key->data, data->len, data->data );
+DEBUG(hints_lookup) debug_printf_indent(EXIM_DBTYPE " put: key:%.*W data:%.*W\n", key->len, key->data, data->len, data->data );
 # endif
 (void) exim_s_dbp(dbp, key, data, "INSERT OR REPLACE INTO tblblob (ky, dat) VALUES(?, ?)");
 return 0;
@@ -261,7 +261,7 @@ EXIM_CURSOR * cursor;
 cursor = exim_sqlprep(dbp, "SELECT ky FROM tblblob ORDER BY ky", NULL, NULL );
 if (!cursor) return NULL;
 # ifdef SQL_DEBUG
-DEBUG(D_hints_lookup) debug_printf_indent("prepared query: %s\n", sqlite3_sql(cursor));
+DEBUG(hints_lookup) debug_printf_indent("prepared query: %s\n", sqlite3_sql(cursor));
 # endif
 
 return cursor;

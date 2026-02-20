@@ -127,7 +127,7 @@ dstpath = string_sprintf("%s/%s-%s", dstpath, message_id, suffix);
 
 if (link_file)
   {
-  DEBUG(D_transport) debug_printf("%s transport, linking %s => %s\n",
+  DEBUG(transport) debug_printf("%s transport, linking %s => %s\n",
     trname, srcpath, dstpath);
 
   if (linkat(sdfd, CCS filename, ddfd, CCS filename, 0) >= 0)
@@ -138,7 +138,7 @@ if (link_file)
   }
 else					/* use data copy */
   {
-  DEBUG(D_transport) debug_printf("%s transport, copying %s => %s\n",
+  DEBUG(transport) debug_printf("%s transport, copying %s => %s\n",
     trname, srcpath, dstpath);
 
   if (  (s = dstpath,
@@ -185,7 +185,7 @@ uschar * s, * dstdir;
 struct stat dstatbuf, sstatbuf;
 int ddfd = -1, sdfd = -1;
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("%s transport entered\n", trname);
 
 #ifndef O_DIRECTORY
@@ -242,7 +242,7 @@ can_link = (dstatbuf.st_dev == sstatbuf.st_dev);
 
 if (f.dont_deliver)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("*** delivery by %s transport bypassed by -N option\n",
       trname);
   addr->transport_return = OK;
@@ -251,26 +251,26 @@ if (f.dont_deliver)
 
 /* Link or copy the header and data spool files */
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("%s transport, copying header file\n", trname);
 
 if (!copy_spool_files(tblock, addr, dstdir, sdfd, ddfd, can_link, -1))
   goto RETURN;
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("%s transport, copying data file\n", trname);
 
 if (!copy_spool_files(tblock, addr, dstdir, sdfd, ddfd, can_link,
 	deliver_datafile))
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("%s transport, copying data file failed, "
       "unlinking the header file\n", trname);
   Uunlink(string_sprintf("%s/%s-H", dstdir, message_id));
   goto RETURN;
   }
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("%s transport succeeded\n", trname);
 
 addr->transport_return = OK;

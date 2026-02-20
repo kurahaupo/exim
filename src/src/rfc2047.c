@@ -273,7 +273,7 @@ while (mimeword)
         }
       else
         {
-        DEBUG(D_any) debug_printf("iconv error translating \"%.*s\" to %s: "
+        DEBUG(any) debug_printf("iconv error translating \"%.*s\" to %s: "
         "%s\n", (int)(endword + 2 - mimeword), mimeword, target, strerror(errno));
         }
       }

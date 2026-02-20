@@ -47,11 +47,11 @@ typedef struct macro_item {
   const uschar * replacement;
 } macro_item;
 
-/* Structure for bit tables for debugging and logging */
+/* Structure for bit table for logging */
 
 typedef struct bit_table {
-  uschar *name;
-  int bit;
+  uschar *	name;
+  unsigned	logchan_bit;
 } bit_table;
 
 /* Block for holding a uid and gid, possibly unset, and an initgroups flag. */

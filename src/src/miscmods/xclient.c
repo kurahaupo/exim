@@ -148,7 +148,7 @@ for (state = XCLIENT_SKIP_SPACES; *s; )
 	goto fatal_501;
 	}
 
-      DEBUG(D_transport) debug_printf(" XCLIENT: cmd %.*s\n", len, word);
+      DEBUG(transport) debug_printf(" XCLIENT: cmd %.*s\n", len, word);
       cmd = XCLIENT_CMD_UNKNOWN;
       for (struct xclient_cmd * x = xclient_cmds + 1;
 	   x < xclient_cmds + nelem(xclient_cmds); x++)
@@ -177,7 +177,7 @@ for (state = XCLIENT_SKIP_SPACES; *s; )
       Uskip_nonwhite(&s);
       len = s - word;
 
-      DEBUG(D_transport) debug_printf(" XCLIENT: \tvalue %.*s\n", len, word);
+      DEBUG(transport) debug_printf(" XCLIENT: \tvalue %.*s\n", len, word);
       if (len == 0)
 	{ errmsg = US"XCLIENT: zero-length value for param"; goto fatal_501; }
 

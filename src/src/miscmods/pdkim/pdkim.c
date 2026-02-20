@@ -510,7 +510,7 @@ for (uschar * p = raw_hdr; ; p++)
 	(void) string_from_gstring(cur_val);
 	pdkim_strtrim(cur_val);
 
-	DEBUG(D_acl) debug_printf(" %s=%s\n", cur_tag->s, cur_val->s);
+	DEBUG(acl) debug_printf(" %s=%s\n", cur_tag->s, cur_val->s);
 
 	switch (*cur_tag->s)
 	  {
@@ -580,7 +580,7 @@ for rsafp signatures.  But later discussion is dropping those. */
 	  }
 	}
 	else
-bad_tag:  DEBUG(D_acl) debug_printf(" Unknown tag encountered: %Y\n", cur_tag);
+bad_tag:  DEBUG(acl) debug_printf(" Unknown tag encountered: %Y\n", cur_tag);
 
       cur_tag = cur_val = NULL;
       in_b_val = FALSE;
@@ -606,7 +606,7 @@ if (sig->keytype < 0 || sig->hashtype < 0)	/* Cannot verify this signature */
 while (--q > sig->rawsig_no_b_val  && (*q == '\r' || *q == '\n'))
   *q = '\0';
 
-DEBUG(D_acl)
+DEBUG(acl)
   {
   debug_printf(
 	  "DKIM >> Raw signature w/o b= tag value >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
@@ -644,7 +644,7 @@ for (const uschar * ele = raw_record, * tspec, * end, * val; *ele; ele = end)
     {
     int taglen = val++ - tspec;
 
-    DEBUG(D_acl) debug_printf(" %.*s=%s\n", taglen, tspec, val);
+    DEBUG(acl) debug_printf(" %.*s=%s\n", taglen, tspec, val);
     while (taglen > 1 && isspace(tspec[taglen-1]))
       taglen--;			/* Ignore whitespace before = */
     Uskip_whitespace(&val);	/* Ignore whitespace after = */
@@ -655,7 +655,7 @@ for (const uschar * ele = raw_record, * tspec, * end, * val; *ele; ele = end)
 	gstring_trim(g, 1);
       if (!(val = string_from_gstring(g)))
 	{
-	DEBUG(D_acl)
+	DEBUG(acl)
 	  debug_printf(" Missing value for tag '%.*s'\n", taglen, tspec);
 	return NULL;
 	}
@@ -677,7 +677,7 @@ for (const uschar * ele = raw_record, * tspec, * end, * val; *ele; ele = end)
       }
     else
 bad_tag:
-       DEBUG(D_acl) debug_printf(" Unknown tag encountered\n");
+       DEBUG(acl) debug_printf(" Unknown tag encountered\n");
     }
   }
 
@@ -686,7 +686,7 @@ if (!pub->version)
   pub->version = string_copy(PDKIM_PUB_RECORD_VERSION);
 else if (Ustrcmp(pub->version, PDKIM_PUB_RECORD_VERSION) != 0)
   {
-  DEBUG(D_acl) debug_printf(" Bad v= field\n");
+  DEBUG(acl) debug_printf(" Bad v= field\n");
   return NULL;
   }
 
@@ -698,7 +698,7 @@ if (!pub->srvtype    ) pub->srvtype     = US"*";
 if (pub->key.data)
   return pub;
 
-DEBUG(D_acl) debug_printf(" Missing p= field\n");
+DEBUG(acl) debug_printf(" Missing p= field\n");
 return NULL;
 }
 
@@ -768,7 +768,7 @@ if (left > 0)
   {
   exim_sha_update(&b->body_hash_ctx, CUS canon_data->data, left);
   b->signed_body_bytes += left;
-  DEBUG(D_acl) debug_printf("%.*Z\n", left, canon_data->data);
+  DEBUG(acl) debug_printf("%.*Z\n", left, canon_data->data);
   }
 
 return relaxed_data;
@@ -782,7 +782,7 @@ pdkim_finish_bodyhash(pdkim_ctx * ctx)
 {
 for (pdkim_bodyhash * b = ctx->bodyhash; b; b = b->next)     /* Finish hashes */
   {
-  DEBUG(D_acl) debug_printf("DKIM: finish bodyhash %s/%s/%ld len %ld\n",
+  DEBUG(acl) debug_printf("DKIM: finish bodyhash %s/%s/%ld len %ld\n",
       pdkim_hashes[b->hashtype].dkim_hashname, pdkim_canons[b->canon_method],
       b->bodylength, b->signed_body_bytes);
   exim_sha_finish(&b->body_hash_ctx, &b->bh);
@@ -793,7 +793,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   {
   pdkim_bodyhash * b = sig->calc_body_hash;
 
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     debug_printf("DKIM [%s]%s Body bytes (%s) hashed: %lu\n"
 		 "DKIM [%s]%s Body %s computed: ",
@@ -818,11 +818,11 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     if (sig->bodyhash.data && sig->bodyhash.len == b->bh.len
        && memcmp(b->bh.data, sig->bodyhash.data, b->bh.len) == 0)
       {
-      DEBUG(D_acl) debug_printf("DKIM [%s] Body hash compared OK\n", sig->domain);
+      DEBUG(acl) debug_printf("DKIM [%s] Body hash compared OK\n", sig->domain);
       }
     else
       {
-      DEBUG(D_acl)
+      DEBUG(acl)
         {
 	debug_printf("DKIM [%s] Body hash signature from headers: ", sig->domain);
 	debug_printf("%.*H\n", sig->bodyhash.len, sig->bodyhash.data);
@@ -975,7 +975,7 @@ if (ctx->flags & PDKIM_MODE_SIGN)
 else
   {
 #ifdef notdef
-  DEBUG(D_acl) debug_printf("DKIM >> raw hdr: %.*Z\n",
+  DEBUG(acl) debug_printf("DKIM >> raw hdr: %.*Z\n",
 			    ctx->cur_head->ptr, CUS g->s);
 #endif
   if (strncasecmp(CCS g->s,
@@ -987,7 +987,7 @@ else
     required tags here, but prefer to create the internal sig and expicitly
     fail verification of it later. */
 
-    DEBUG(D_acl) debug_printf(
+    DEBUG(acl) debug_printf(
 	"DKIM >> Found sig, trying to parse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 
     sig = pdkim_parse_sig_header(ctx, g->s);
@@ -1074,7 +1074,7 @@ else for (unsigned p = 0; p < len; p++)
 	  return rc;
 
 	ctx->flags = (ctx->flags & ~(PDKIM_SEEN_LF|PDKIM_SEEN_CR)) | PDKIM_PAST_HDRS;
-	DEBUG(D_acl) debug_printf(
+	DEBUG(acl) debug_printf(
 	    "DKIM >> Body data for hash, canonicalized >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 	continue;
 	}
@@ -1323,7 +1323,7 @@ check_bare_ed25519_pubkey(pdkim_pubkey * p)
 int excess = p->key.len - 32;
 if (excess > 0)
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DKIM: unexpected pubkey len %lu\n", (unsigned long) p->key.len);
   p->key.data += excess; p->key.len = 32;
   }
@@ -1350,7 +1350,7 @@ if (  !(dns_txt_reply = ctx->dns_txt_callback(dns_txt_name))
   return NULL;
   }
 
-DEBUG(D_acl)
+DEBUG(acl)
   {
   debug_printf(
     "DKIM >> Parsing public key record >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
@@ -1367,7 +1367,7 @@ if (  !(p = pdkim_parse_pubkey_record(CUS dns_txt_reply))
   sig->verify_status =      PDKIM_VERIFY_INVALID;
   sig->verify_ext_status =  PDKIM_VERIFY_INVALID_PUBKEY_DNSRECORD;
 
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     if (p)
       debug_printf(" Invalid public key service type '%s'\n", p->srvtype);
@@ -1379,7 +1379,7 @@ if (  !(p = pdkim_parse_pubkey_record(CUS dns_txt_reply))
   return NULL;
   }
 
-DEBUG(D_acl) debug_printf(
+DEBUG(acl) debug_printf(
       "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 
 /* Import public key */
@@ -1392,7 +1392,7 @@ instead.  Assume writing on the sig is ok in that case. */
 if (sig->keytype < 0)
   if ((sig->keytype = pdkim_keyname_to_keytype(p->keytype)) < 0)
     {
-    DEBUG(D_acl) debug_printf("verify_init: unhandled keytype %s\n", p->keytype);
+    DEBUG(acl) debug_printf("verify_init: unhandled keytype %s\n", p->keytype);
     sig->verify_status =      PDKIM_VERIFY_INVALID;
     sig->verify_ext_status =  PDKIM_VERIFY_INVALID_PUBKEY_IMPORT;
     return NULL;
@@ -1405,7 +1405,7 @@ if ((*errstr = exim_dkim_verify_init(&p->key,
 	    sig->keytype == KEYTYPE_ED25519 ? KEYFMT_ED25519_BARE : KEYFMT_DER,
 	    vctx, &sig->keybits)))
   {
-  DEBUG(D_acl) debug_printf("verify_init: %s\n", *errstr);
+  DEBUG(acl) debug_printf("verify_init: %s\n", *errstr);
   sig->verify_status =      PDKIM_VERIFY_INVALID;
   sig->verify_ext_status =  PDKIM_VERIFY_INVALID_PUBKEY_IMPORT;
   return NULL;
@@ -1430,7 +1430,7 @@ int sep;
 if (!siglist) return NULL;
 
 /* first select in order of hashtypes */
-DEBUG(D_acl) debug_printf("DKIM: dkim_verify_hashes   '%s'\n", dkim_verify_hashes);
+DEBUG(acl) debug_printf("DKIM: dkim_verify_hashes   '%s'\n", dkim_verify_hashes);
 for (prefs = dkim_verify_hashes, sep = 0, yield = NULL, ss = &yield;
      ele = string_nextinlist(&prefs, &sep, NULL, 0); )
   {
@@ -1448,7 +1448,7 @@ for (prefs = dkim_verify_hashes, sep = 0, yield = NULL, ss = &yield;
 
 /* then in order of keytypes */
 siglist = yield;
-DEBUG(D_acl) debug_printf("DKIM: dkim_verify_keytypes '%s'\n", dkim_verify_keytypes);
+DEBUG(acl) debug_printf("DKIM: dkim_verify_keytypes '%s'\n", dkim_verify_keytypes);
 for (prefs = dkim_verify_keytypes, sep = 0, yield = NULL, ss = &yield;
      ele = string_nextinlist(&prefs, &sep, NULL, 0); )
   {
@@ -1464,7 +1464,7 @@ for (prefs = dkim_verify_keytypes, sep = 0, yield = NULL, ss = &yield;
     }
   }
 
-DEBUG(D_acl) for (pdkim_signature * s = yield; s; s = s->next)
+DEBUG(acl) for (pdkim_signature * s = yield; s; s = s->next)
   debug_printf(" retain d=%s s=%s a=%s\n",
     s->domain, s->selector, dkim_sig_to_a_tag(s));
 return yield;
@@ -1495,7 +1495,7 @@ if (ctx->cur_header && ctx->cur_header->ptr > 0)
   if (rnl) store_free(rnl);
   }
 else
-  DEBUG(D_acl) debug_printf(
+  DEBUG(acl) debug_printf(
       "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 
 /* Build (and/or evaluate) body hash.  Do this even if no DKIM sigs, in case we
@@ -1510,7 +1510,7 @@ if (!(ctx->flags & PDKIM_MODE_SIGN))
 
 if (!ctx->sig)
   {
-  DEBUG(D_acl) debug_printf("DKIM: no signatures\n");
+  DEBUG(acl) debug_printf("DKIM: no signatures\n");
   *return_signatures = NULL;
   return PDKIM_OK;
   }
@@ -1526,7 +1526,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   if (  !(ctx->flags & PDKIM_MODE_SIGN)
      && sig->verify_status == PDKIM_VERIFY_FAIL)
     {
-    DEBUG(D_acl)
+    DEBUG(acl)
        debug_printf("DKIM: [%s] abandoning this signature\n", sig->domain);
     continue;
     }
@@ -1560,12 +1560,12 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     }
 
   if (ctx->flags & PDKIM_MODE_SIGN)
-    DEBUG(D_acl) debug_printf(
+    DEBUG(acl) debug_printf(
 	"DKIM >> Headers to be signed:                            >>>>>>>>>>>>\n"
 	" %s\n",
 	sig->sign_headers);
 
-  DEBUG(D_acl) debug_printf(
+  DEBUG(acl) debug_printf(
       "DKIM >> Header data for hash, canonicalized (%-7s), in sequence >>\n",
 	pdkim_canons[sig->canon_headers]);
 
@@ -1613,7 +1613,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 	/*XXX we could avoid doing this for all but the GnuTLS/RSA case */
 	hdata = exim_dkim_data_append(hdata, rh);
 
-	DEBUG(D_acl) debug_printf("%Z\n", rh);
+	DEBUG(acl) debug_printf("%Z\n", rh);
 	}
       }
 
@@ -1670,7 +1670,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 	    /* Feed header to the hash algorithm */
 	    exim_sha_update_string(&hhash_ctx, CUS rh);
 
-	    DEBUG(D_acl) debug_printf("%Z\n", rh);
+	    DEBUG(acl) debug_printf("%Z\n", rh);
 	    hdrs->tag = 1;
 	    break;
 	    }
@@ -1683,10 +1683,10 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
       }
     }
 
-  DEBUG(D_acl) debug_printf(
+  DEBUG(acl) debug_printf(
 	    "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     debug_printf(
 	    "DKIM >> Signed DKIM-Signature header, pre-canonicalized >>>>>>>>>>>>>\n");
@@ -1699,7 +1699,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   if (sig->canon_headers == PDKIM_CANON_RELAXED)
     sig_hdr = pdkim_relax_header(sig_hdr, FALSE);
 
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     debug_printf("DKIM >> Signed DKIM-Signature header, canonicalized (%-7s) >>>>>>>\n",
 	    pdkim_canons[sig->canon_headers]);
@@ -1712,7 +1712,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   exim_sha_update_string(&hhash_ctx, CUS sig_hdr);
   exim_sha_finish(&hhash_ctx, &hhash);
 
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     debug_printf("DKIM [%s] Header %s computed: ",
       sig->domain, pdkim_hashes[sig->hashtype].dkim_hashname);
@@ -1752,7 +1752,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
       return PDKIM_ERR_RSA_SIGNING;
       }
 
-    DEBUG(D_acl)
+    DEBUG(acl)
       {
       debug_printf( "DKIM [%s] b computed: ", sig->domain);
       debug_printf("%.*H\n", sig->sighash.len, sig->sighash.data);
@@ -1781,7 +1781,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
       sig->verify_status     = PDKIM_VERIFY_INVALID;
       sig->verify_ext_status = PDKIM_VERIFY_INVALID_SIGNATURE_ERROR;
 
-      DEBUG(D_acl) debug_printf(
+      DEBUG(acl) debug_printf(
 	  " Error in DKIM-Signature header: tags missing or invalid (%s)\n"
 	  "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
 	  !(sig->domain && *sig->domain) ? "d="
@@ -1801,13 +1801,13 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
       sig->verify_status     = PDKIM_VERIFY_INVALID;
       sig->verify_ext_status = PDKIM_VERIFY_INVALID_DKIM_VERSION;
 
-      DEBUG(D_acl) debug_printf(
+      DEBUG(acl) debug_printf(
           " Error in DKIM-Signature header: unsupported DKIM version\n"
           "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
       goto NEXT_VERIFY;
       }
 
-    DEBUG(D_acl)
+    DEBUG(acl)
       {
       debug_printf( "DKIM [%s] b from mail: ", sig->domain);
       debug_printf("%.*H\n", sig->sighash.len, sig->sighash.data);
@@ -1832,7 +1832,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 	if (Ustrcmp(ele, pdkim_hashes[sig->hashtype].dkim_hashname) == 0) break;
       if (!ele)
 	{
-	DEBUG(D_acl) debug_printf("pubkey h=%s vs. sig a=%s_%s\n",
+	DEBUG(acl) debug_printf("pubkey h=%s vs. sig a=%s_%s\n",
 	  sig->pubkey->hashes,
 	  pdkim_keytypes[sig->keytype],
 	  pdkim_hashes[sig->hashtype].dkim_hashname);
@@ -1854,7 +1854,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
     if ((*err = exim_dkim_verify(&vctx, hm, &hhash, &sig->sighash)))
       {
-      DEBUG(D_acl)
+      DEBUG(acl)
 	debug_printf("headers verify: %s\n", **err ? *err : US"fail");
       sig->verify_status =      PDKIM_VERIFY_FAIL;
       sig->verify_ext_status =  PDKIM_VERIFY_FAIL_MESSAGE;
@@ -1867,7 +1867,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 				    dkim_verify_min_keysizes);
       if (ss &&  (minbits = atoi(CCS ss)) > sig->keybits)
 	{
-	DEBUG(D_acl) debug_printf("Key too short: Actual: %s %u  Minima '%s'\n",
+	DEBUG(acl) debug_printf("Key too short: Actual: %s %u  Minima '%s'\n",
 	  pdkim_keytypes[sig->keytype], sig->keybits, dkim_verify_min_keysizes);
 	sig->verify_status =      PDKIM_VERIFY_FAIL;
 	sig->verify_ext_status =  PDKIM_VERIFY_INVALID_PUBKEY_KEYSIZE;
@@ -1891,7 +1891,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
       }
 
 NEXT_VERIFY:
-    DEBUG(D_acl)
+    DEBUG(acl)
       {
       debug_printf("DKIM [%s] %s signature status: %s",
 	      sig->domain, dkim_sig_to_a_tag(sig),
@@ -1973,7 +1973,7 @@ if (hashtype >= nelem(pdkim_hashes))
   return NULL;
   }
 
-DEBUG(D_acl)
+DEBUG(acl)
   {
   pdkim_signature s = *sig;
   ev_ctx vctx;
@@ -2031,7 +2031,7 @@ if (hashtype == -1 || canon_method == -1) return NULL;
 
 if (!ctx)
   {
-  DEBUG(D_receive) debug_printf("pdkim_set_bodyhash: null context\n");
+  DEBUG(receive) debug_printf("pdkim_set_bodyhash: null context\n");
   return NULL;
   }
 
@@ -2040,12 +2040,12 @@ for (b = ctx->bodyhash; b; b = b->next)
      && canon_method == b->canon_method
      && bodylength == b->bodylength)
     {
-    DEBUG(D_receive) debug_printf("DKIM: using existing bodyhash %s/%s/%ld\n",
+    DEBUG(receive) debug_printf("DKIM: using existing bodyhash %s/%s/%ld\n",
       pdkim_hashes[hashtype].dkim_hashname, pdkim_canons[canon_method], bodylength);
     return b;
     }
 
-DEBUG(D_receive) debug_printf("DKIM: new bodyhash %s/%s/%ld\n",
+DEBUG(receive) debug_printf("DKIM: new bodyhash %s/%s/%ld\n",
     pdkim_hashes[hashtype].dkim_hashname, pdkim_canons[canon_method], bodylength);
 b = store_get(sizeof(pdkim_bodyhash), GET_UNTAINTED);
 b->next = ctx->bodyhash;
@@ -2055,7 +2055,7 @@ b->bodylength = bodylength;
 if (!exim_sha_init(&b->body_hash_ctx,		/*XXX hash method: extend for sha512 */
 		  pdkim_hashes[hashtype].exim_hashmethod))
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DKIM: hash init error, possibly nonhandled hashtype\n");
   return NULL;
   }
@@ -2095,7 +2095,7 @@ memset(ctx, 0, sizeof(pdkim_ctx));
 ctx->flags = dot_stuffed ? PDKIM_MODE_SIGN | PDKIM_DOT_TERM : PDKIM_MODE_SIGN;
 /* The line buffer is for message data, hence tainted */
 ctx->linebuf = store_get(PDKIM_MAX_BODY_LINE_LEN, GET_TAINTED);
-DEBUG(D_acl) ctx->dns_txt_callback = dns_txt_callback;
+DEBUG(acl) ctx->dns_txt_callback = dns_txt_callback;
 }
 
 

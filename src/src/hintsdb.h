@@ -110,7 +110,7 @@ exim_dbopen(const uschar * name, const uschar * dirname, int flags,
   unsigned mode)
 {
 void * dbp;
-DEBUG(D_hints_lookup)
+DEBUG(hints_lookup)
   debug_printf_indent("EXIM_DBOPEN: file <%s> dir <%s> flags=%s\n",
     name, dirname,
     flags == O_RDONLY ? "O_RDONLY"
@@ -125,7 +125,7 @@ if (is_tainted(name) || is_tainted(dirname))
 else
   dbp = exim_dbopen__(name, dirname, flags, mode);
 
-DEBUG(D_hints_lookup) debug_printf_indent("returned from EXIM_DBOPEN: %p\n", dbp);
+DEBUG(hints_lookup) debug_printf_indent("returned from EXIM_DBOPEN: %p\n", dbp);
 return dbp;
 }
 
@@ -134,7 +134,7 @@ exim_dbopen_multi(const uschar * name, const uschar * dirname, int flags,
   unsigned mode)
 {
 void * dbp;
-DEBUG(D_hints_lookup)
+DEBUG(hints_lookup)
   debug_printf_indent("EXIM_DBOPEN_MULTI: file <%s> dir <%s> flags=%s\n",
     name, dirname,
     flags == O_RDONLY ? "O_RDONLY"
@@ -149,20 +149,20 @@ if (is_tainted(name) || is_tainted(dirname))
 else
   dbp = exim_dbopen_multi__(name, dirname, flags, mode);
 
-DEBUG(D_hints_lookup) debug_printf_indent("returned from EXIM_DBOPEN_MULTI: %p\n", dbp);
+DEBUG(hints_lookup) debug_printf_indent("returned from EXIM_DBOPEN_MULTI: %p\n", dbp);
 return dbp;
 }
 
 static inline void
 exim_dbclose(EXIM_DB * dbp)
 {
-DEBUG(D_hints_lookup) debug_printf_indent("EXIM_DBCLOSE(%p)\n", dbp);
+DEBUG(hints_lookup) debug_printf_indent("EXIM_DBCLOSE(%p)\n", dbp);
 exim_dbclose__(dbp);
 }
 static inline void
 exim_dbclose_multi(EXIM_DB * dbp)
 {
-DEBUG(D_hints_lookup) debug_printf_indent("EXIM_DBCLOSE_MULTI(%p)\n", dbp);
+DEBUG(hints_lookup) debug_printf_indent("EXIM_DBCLOSE_MULTI(%p)\n", dbp);
 exim_dbclose_multi__(dbp);
 }
 

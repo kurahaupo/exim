@@ -140,12 +140,12 @@ extern BOOL    bdat_hasc(void);
 extern int     bdat_ungetc(int);
 extern void    bdat_flush_data(void);
 
-extern void    bits_clear(bitmask_word_t *, size_t, int *);
-extern void    bits_set(bitmask_word_t *, size_t, int *);
-
 extern void    cancel_cutthrough_connection(BOOL, const uschar *);
 extern gstring *cat_file(FILE *, gstring *, const uschar *);
 extern gstring *cat_file_tls(void *, gstring *, const uschar *);
+extern unsigned chan_name_to_idx(const uschar *, unsigned,
+		  const uschar * const *, unsigned);
+
 extern void    check_deliver_addrs_not_freed(void (*)(const uschar*, const uschar*, void*), void *);
 extern int     check_host(void *, const uschar *, const uschar **, uschar **);
 extern uschar **child_exec_exim(int, BOOL, int *, BOOL, int, ...);
@@ -175,6 +175,9 @@ extern ssize_t daemon_notifier_sockname(struct sockaddr_un *);
 extern int     dcc_process(uschar **);
 #endif
 
+extern BOOL    debug_disable(void);
+extern void    debug_decode_bits(bitmask_word_t **, const uschar *, int);
+
 extern void    debug_logging_activate(const uschar *, const uschar *);
 extern void    debug_logging_from_spool(const uschar *);
 extern void    debug_logging_stop(BOOL);
@@ -187,10 +190,13 @@ extern void    debug_vprintf(int, const char *, va_list);
 extern void    debug_pretrigger_setup(const uschar *);
 extern void    debug_pretrigger_discard(void);
 extern void    debug_print_socket(int);
+extern gstring * debug_selector_dump(gstring *);
+extern void    debug_set_default_bits(bitmask_word_t **);
+extern void    debug_enable(void);
 extern void    debug_trigger_fire(void);
 
-extern void    decode_bits(bitmask_word_t *, size_t, int *,
-	           const uschar *, bit_table *, int, uschar *, int);
+extern void    decode_bits(bitmask_word_t *, size_t, const uschar * const *,
+	           const uschar *, const uschar * const *, int, int);
 extern void    delete_pid_file(void);
 extern void    deliver_local(address_item *, BOOL);
 extern address_item *deliver_make_addr(const uschar *, BOOL);
@@ -234,7 +240,7 @@ extern void    exim_setugid(uid_t, gid_t, BOOL, const uschar *);
 extern void    exim_underbar_exit(int) NORETURN;
 extern void    exim_wait_tick(struct timeval *, int);
 extern int     exp_bool(address_item *,
-  const uschar *, const uschar *, unsigned, uschar *, BOOL bvalue,
+  const uschar *, const uschar *, BOOL, uschar *, BOOL,
   const uschar *, BOOL *);
 extern BOOL    expand_check_condition(const uschar *, const uschar *, const uschar *);
 extern uschar *expand_file_big_buffer(const uschar *);
@@ -305,6 +311,8 @@ extern int     log_open_as_exim(const uschar * const);
 extern gstring *log_portnum(gstring *, int);
 extern void    log_write_die(bitmask_word_t, int, const char * format, ...)
 		PRINTF_FUNCTION(3,4) NORETURN;
+extern void    logging_modify_channels(const uschar *);
+extern void    logging_set_defaults(void);
 
 extern const lookup_info * lookup_with_acq_num(unsigned);
 extern gstring *lookup_dynamic_supported(gstring *);
@@ -710,6 +718,21 @@ extern uschar *wrap_header(const uschar *, unsigned, unsigned, const uschar *, u
 extern uschar *xtextencode(const uschar *, int);
 extern int     xtextdecode(const uschar *, uschar **);
 
+
+/******************************************************************************/
+/* Bit-manipulation in multi-word vectors. */
+
+static inline void
+bit_clear(bitmask_word_t * tbl, unsigned bitnum)
+{ tbl[BITWORD(bitnum)] &= ~BITMASK(bitnum); }
+
+static inline void
+bit_set(bitmask_word_t * tbl, unsigned bitnum)
+{ tbl[BITWORD(bitnum)] |= BITMASK(bitnum); }
+
+static inline bitmask_word_t
+bit_test(bitmask_word_t * tbl, unsigned bitnum)
+{ return tbl[BITWORD(bitnum)] & BITMASK(bitnum); }
 
 /******************************************************************************/
 /* Predicate: if an address is in a tainted pool.
@@ -1404,18 +1427,18 @@ static inline pid_t
 exim_fork(const unsigned char * purpose)
 {
 pid_t pid;
-DEBUG(D_any)
+DEBUG(any)
   debug_printf_indent("%s forking for %s\n", process_purpose, purpose);
 if ((pid = fork()) == 0)
   {
   f.daemon_listen = FALSE;
   process_purpose = purpose;
-  DEBUG(D_any) debug_printf_indent("postfork: %s\n", purpose);
+  DEBUG(any) debug_printf_indent("postfork: %s\n", purpose);
   }
 else
   {
   testharness_pause_ms(100); /* let child work */
-  DEBUG(D_any) debug_printf_indent("%s forked for %s: %d\n",
+  DEBUG(any) debug_printf_indent("%s forked for %s: %d\n",
 				  process_purpose, purpose, (int)pid);
   }
 return pid;
@@ -1465,7 +1488,7 @@ store_pool = old_pool;
 static inline void
 smtp_debug_cmd(const uschar * buf, int mode)
 {
-HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP%c> %s\n",
+HDEBUG(transport|acl|v) debug_printf_indent("  SMTP%c> %s\n",
   mode == SCMD_BUFFER ? '|' : mode == SCMD_MORE ? '+' : '>', buf);
 
 #  ifndef DISABLE_CLIENT_CMD_LOG
@@ -1549,8 +1572,8 @@ is_multiple_qrun(void)
 return qrunners && (qrunners->interval > 0 || qrunners->next);
 }
 
-
 # endif	/* !COMPILE_UTILITY */
+
 
 /******************************************************************************/
 #endif	/* !MACRO_PREDEF */

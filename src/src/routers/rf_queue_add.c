@@ -116,7 +116,7 @@ remote_delivery_count++;
 
 donelocal:
 
-DEBUG(D_route)
+DEBUG(route)
   {
   debug_printf_indent("queued for %s transport: local_part = %s\ndomain = %s\n"
     "  errors_to=%s\n",

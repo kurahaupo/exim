@@ -524,7 +524,7 @@ try option 'acl_smtp_mail'
  ╭considering: domain=$domain/sender_domain=$sender_address_domain
  ├───────text: domain=
  ├considering: $domain/sender_domain=$sender_address_domain
- ├──────value: e̪m̪p̪t̪y�
+ ├──────value: e̪m̪p̪t̪y̪
  ├considering: /sender_domain=$sender_address_domain
  ├───────text: /sender_domain=
  ├considering: $sender_address_domain

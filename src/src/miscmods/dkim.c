@@ -146,12 +146,12 @@ pdkim_pubkey * p;
 
 if (!dnstxt)
   {
-  DEBUG(D_acl) debug_printf_indent("pubkey dns lookup fail\n");
+  DEBUG(acl) debug_printf_indent("pubkey dns lookup fail\n");
   return NULL;
   }
 if (!(p = pdkim_parse_pubkey_record(dnstxt)))
   {
-  DEBUG(D_acl) debug_printf_indent("pubkey dns record format error\n");
+  DEBUG(acl) debug_printf_indent("pubkey dns record format error\n");
   return NULL;
   }
 *pubkey_p = &p->key;
@@ -504,7 +504,7 @@ dkim_acl_call(uschar * id, gstring ** res_ptr,
   uschar ** user_msgptr, uschar ** log_msgptr)
 {
 int rc;
-DEBUG(D_receive)
+DEBUG(receive)
   debug_printf("calling acl_smtp_dkim for identity '%s' domain '%s' sel '%s'\n",
 	      id, dkim_signing_domain, dkim_signing_selector);
 
@@ -645,7 +645,7 @@ if (dkim_verify_signers && *dkim_verify_signers)
 
       if (seen_this_item)
 	{
-	DEBUG(D_receive)
+	DEBUG(receive)
 	  debug_printf("acl_smtp_dkim: skipping signer %s, "
 	    "already seen\n", item);
 	continue;
@@ -657,7 +657,7 @@ if (dkim_verify_signers && *dkim_verify_signers)
 
     if ((rc = dkim_exim_acl_run(item, &results, user_msgptr, log_msgptr)) != OK)
       {
-      DEBUG(D_receive)
+      DEBUG(receive)
 	debug_printf("acl_smtp_dkim: acl_check returned %d on %s, "
 	  "skipping remaining items\n", rc, item);
       break;
@@ -1078,7 +1078,7 @@ produce, if some other package (eg. ARC) is signing. */
 
 if (!dkim_sign_ctx.sig && !dkim->force_bodyhash)
   {
-  DEBUG(D_transport) debug_printf("DKIM: no viable signatures to use\n");
+  DEBUG(transport) debug_printf("DKIM: no viable signatures to use\n");
   sigbuf = string_get(1);	/* return a zero-len string */
   }
 else
@@ -1108,7 +1108,7 @@ else
 
   if (!sig)
     {
-    DEBUG(D_transport) debug_printf("DKIM: no signatures to use\n");
+    DEBUG(transport) debug_printf("DKIM: no signatures to use\n");
     sigbuf = string_get(1);	/* return a zero-len string */
     }
   else for (sigbuf = NULL; sig; sig = sig->next)
@@ -1216,7 +1216,7 @@ es_ctx sctx;
 const uschar * errstr;
 
 if ((errstr = exim_dkim_signing_init(privkey, &sctx)))
-  { DEBUG(D_transport) debug_printf("signing key setup: %s\n", errstr); }
+  { DEBUG(transport) debug_printf("signing key setup: %s\n", errstr); }
 else errstr = exim_dkim_sign(&sctx, hm, data, signature);
 
 return errstr;
@@ -1232,7 +1232,7 @@ authres_dkim(gstring * g)
 {
 int start = 0;		/* compiler quietening */
 
-DEBUG(D_acl) start = gstring_length(g);
+DEBUG(acl) start = gstring_length(g);
 
 for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
   {
@@ -1293,7 +1293,7 @@ for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
   g = string_append(g, 2, US" header.a=", dkim_sig_to_a_tag(sig));
   }
 
-DEBUG(D_acl)
+DEBUG(acl)
   if (gstring_length(g) == start)
     debug_printf_indent("DKIM:\tno authres\n");
   else

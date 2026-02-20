@@ -402,7 +402,7 @@ if (Uskip_whitespace(&list) == '<')
   uschar c = *s == '\\' ? string_interpret_escape(&s) : *s;
   if (ispunct(c) || iscntrl(c))
     {
-    DEBUG(D_lists)
+    DEBUG(lists)
       {
       uschar s[2] = {0}; *s = c;
       debug_printf_indent("list separator: '%W'\n", s);
@@ -477,7 +477,7 @@ BOOL textonly_re;
 
 /* Save time by not scanning for the option name when we don't need it. */
 
-HDEBUG(D_any)
+HDEBUG(any)
   {
   const uschar * listname = readconf_find_option(listptr);
   if (*listname) ot = string_sprintf("%s in %s?", name, listname);
@@ -487,7 +487,7 @@ HDEBUG(D_any)
 
 if (!*listptr)
   {
-  HDEBUG(D_lists)
+  HDEBUG(lists)
     if (ot) debug_printf_indent("%s no (option unset)\n", ot);
     else    debug_printf_indent("%s not in empty list (option unset? cannot trace name)\n", name);
   return FAIL;
@@ -526,7 +526,7 @@ else
     {
     if (f.expand_string_forcedfail)
       {
-      HDEBUG(D_lists) debug_printf_indent("expansion of %q forced failure: "
+      HDEBUG(lists) debug_printf_indent("expansion of %q forced failure: "
         "assume not in this list\n", *listptr);
       return FAIL;
       }
@@ -551,7 +551,7 @@ if (textonly_re) switch (type)
 /* For an unnamed list, use the expanded version in comments */
 #define LIST_LIMIT_PR 2048
 
-HDEBUG(D_any) if (!ot)
+HDEBUG(any) if (!ot)
   {	/* We failed to identify an option name, so give the list text */
   int n, m;
   gstring * g = string_fmt_append(NULL, "%s in \"%n%.*s%n\"",
@@ -561,7 +561,7 @@ HDEBUG(D_any) if (!ot)
   gstring_release_unused(g);
   ot = string_from_gstring(g);
   }
-HDEBUG(D_lists)
+HDEBUG(lists)
   {
   debug_printf_indent("%s\n", ot);
   expand_level++;
@@ -574,7 +574,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
   {
   uschar * ss = sss;
 
-  HDEBUG(D_lists) debug_printf_indent("list element: %W\n", ss);
+  HDEBUG(lists) debug_printf_indent("list element: %W\n", ss);
 
   /* Address lists may contain +caseful, to restore caseful matching of the
   local part. We have to know the layout of the control block, unfortunately.
@@ -727,7 +727,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
         {
         case OK:
 	  (void)fclose(f);
-	  HDEBUG(D_lists) debug_printf_indent("%s %s (matched %q in %s)\n",
+	  HDEBUG(lists) debug_printf_indent("%s %s (matched %q in %s)\n",
 	    ot, yield == OK ? "yes" : "no", sss, filename);
 
 	  /* The "pattern" being matched came from the file; we use a stack-local.
@@ -742,7 +742,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	    error = string_sprintf("DNS lookup of %s deferred", ss);
 	  if (ignore_defer)
 	    {
-	    HDEBUG(D_lists)
+	    HDEBUG(lists)
 	      debug_printf_indent("%s: item ignored by +ignore_defer\n", error);
 	    break;
 	    }
@@ -760,12 +760,12 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
         case ERROR:
 	  if (ignore_unknown)
 	    {
-	    HDEBUG(D_lists) debug_printf_indent(
+	    HDEBUG(lists) debug_printf_indent(
 	      "%s: item ignored by +ignore_unknown\n", error);
 	    }
 	  else
 	    {
-	    HDEBUG(D_lists) debug_printf_indent("%s %s (%s)\n", ot,
+	    HDEBUG(lists) debug_printf_indent("%s %s (%s)\n", ot,
 	      include_unknown ? "yes":"no", error);
 	    (void)fclose(f);
 	    if (!include_unknown)
@@ -801,7 +801,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
     namedlist_block * nb;
     tree_node * t;
 
-    HDEBUG(D_lists)
+    HDEBUG(lists)
       { debug_printf_indent(" start sublist %s\n", ss+1); expand_level += 2; }
 
     if (is_tainted_metadata(ss)) goto BAD_TAINT;
@@ -839,7 +839,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
       {
       int res = match_check_list(&(nb->string), 0, anchorptr, &use_cache_bits,
 	      func, arg, type, name, valueptr);
-      HDEBUG(D_lists)
+      HDEBUG(lists)
 	{ expand_level -= 2; debug_printf_indent(" end sublist %s\n", ss+1); }
 
       switch (res)
@@ -879,7 +879,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	  p->next = nb->cache_data;
 	  nb->cache_data = p;
 	  if (*valueptr)
-	    HDEBUG(D_lists) debug_printf_indent("data from lookup saved for "
+	    HDEBUG(lists) debug_printf_indent("data from lookup saved for "
 	      "cache for %s: key '%s' value '%s'\n", ss, p->key, *valueptr);
 	  }
 	}
@@ -891,7 +891,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 
     else
       {
-      HDEBUG(D_lists)
+      HDEBUG(lists)
 	{
 	expand_level -= 2;
 	debug_printf_indent("cached %s match for %s\n",
@@ -909,7 +909,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	    *valueptr = p->data;
 	    break;
 	    }
-	HDEBUG(D_lists) debug_printf_indent("cached lookup data = %s\n", *valueptr);
+	HDEBUG(lists) debug_printf_indent("cached lookup data = %s\n", *valueptr);
 	}
       }
 
@@ -918,7 +918,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 
     if ((bits & (-bits)) == bits)    /* Only one of the two bits is set */
       {
-      HDEBUG(D_lists) debug_printf_indent("%s %s (matched %q%s)\n", ot,
+      HDEBUG(lists) debug_printf_indent("%s %s (matched %q%s)\n", ot,
 	yield == OK ? "yes" : "no", sss, cached);
       goto YIELD_RETURN;
       }
@@ -932,7 +932,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
     switch ((func)(arg, ss, valueptr, &error))
       {
       case OK:
-	HDEBUG(D_lists) debug_printf_indent("%s %s (matched %q)\n", ot,
+	HDEBUG(lists) debug_printf_indent("%s %s (matched %q)\n", ot,
 	  yield == OK ? "yes" : "no", sss);
 	goto YIELD_RETURN;
 
@@ -941,7 +941,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	  error = string_sprintf("DNS lookup of %q deferred", ss);
 	if (ignore_defer)
 	  {
-	  HDEBUG(D_lists)
+	  HDEBUG(lists)
 	    debug_printf_indent("%s: item ignored by +ignore_defer\n", error);
 	  break;
 	  }
@@ -961,12 +961,12 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
       case ERROR:
 	if (ignore_unknown)
 	  {
-	  HDEBUG(D_lists) debug_printf_indent(
+	  HDEBUG(lists) debug_printf_indent(
 	    "%s: item ignored by +ignore_unknown\n", error);
 	  }
 	else
 	  {
-	  HDEBUG(D_lists) debug_printf_indent("%s %s (%s)\n", ot,
+	  HDEBUG(lists) debug_printf_indent("%s %s (%s)\n", ot,
 	    include_unknown? "yes":"no", error);
 	  if (!include_unknown)
 	    {
@@ -984,9 +984,9 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 
 /* End of list reached: if the last item was negated yield OK, else FAIL. */
 
-HDEBUG(D_any)
+HDEBUG(any)
   {
-  HDEBUG(D_lists) expand_level--;
+  HDEBUG(lists) expand_level--;
   debug_printf_indent("%s %s (end of list)\n", ot, yield == OK ? "no":"yes");
   }
 return yield == OK ? FAIL : OK;
@@ -995,9 +995,9 @@ return yield == OK ? FAIL : OK;
 
 BAD_TAINT:
 DEFER_RETURN:
-  HDEBUG(D_any)
+  HDEBUG(any)
     {
-    HDEBUG(D_lists) expand_level--;
+    HDEBUG(lists) expand_level--;
     debug_printf_indent("%s list match deferred for %s\n", ot, sss);
     }
   return DEFER;
@@ -1010,7 +1010,7 @@ OK_RETURN:
   yield = OK;
 
 YIELD_RETURN:
-  HDEBUG(D_lists) expand_level--;
+  HDEBUG(lists) expand_level--;
   return yield;
 }
 
@@ -1121,7 +1121,7 @@ const uschar * s;
 uschar * pdomain, * sdomain;
 uschar * value = NULL;
 
-DEBUG(D_lists) debug_printf_indent("address match test: subject=%s pattern=%s\n",
+DEBUG(lists) debug_printf_indent("address match test: subject=%s pattern=%s\n",
   subject, pattern);
 
 /* Find the subject's domain */

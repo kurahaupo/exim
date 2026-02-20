@@ -36183,28 +36183,6 @@ It is not valid if the &%spool_wireformat%& option is used.
 This variable contains the number of binary zero bytes in the message's body.
 It is not valid if the &%spool_wireformat%& option is used.
 
-.vitem &*unsigned&~int&~debug_selector*&
-This variable is set to zero when no debugging is taking place. Otherwise, it
-is a bitmap of debugging selectors. Two bits are identified for use in
-&[local_scan()]&; they are defined as macros:
-
-.ilist
-The &`D_v`& bit is set when &%-v%& was present on the command line. This is a
-testing option that is not privileged &-- any caller may set it. All the
-other selector bits can be set only by admin users.
-
-.next
-The &`D_local_scan`& bit is provided for use by &[local_scan()]&; it is set
-by the &`+local_scan`& debug selector. It is not included in the default set
-of debugging bits.
-.endlist ilist
-
-Thus, to write to the debugging output only when &`+local_scan`& has been
-selected, you should use code like this:
-.code
-if ((debug_selector & D_local_scan) != 0)
-  debug_printf("xxx", ...);
-.endd
 .vitem &*uschar&~*expand_string_message*&
 After a failing call to &'expand_string()'& (returned value NULL), the
 variable &%expand_string_message%& contains the error message, zero-terminated.
@@ -36417,15 +36395,36 @@ that it runs is:
 The third argument may be NULL, in which case the &%-oMas%& option is omitted.
 
 
+.new
+.vitem &*void&~debug_enable_channel(const&~uschar&~*)*&
+This function turns on debug output from a given debug channel,
+given by name.
+Two channels are available: &"v&" and &"local_scan&".
+
+.ilist
+The &"v&" channel is enabled when &%-v%& was present on the command line.
+This is a testing option that is not privileged &-- any caller may set it.
+All the other channels can be enabled only by admin users.
+
+.next
+The &"local_scan&" channel is provided for use by &[local_scan()]&; it is set
+by the &`+local_scan`& debug selector.
+It is not included in the default set of debugging bits.
+.endlist ilist
+.wen
+
 .vitem &*void&~debug_printf(char&~*,&~...)*&
 This is Exim's debugging function, with arguments as for &'printf()'&. The
 output is written to the standard error stream. If no debugging is selected,
-calls to &'debug_printf()'& have no effect. Normally, you should make calls
+calls to &'debug_printf()'& have no effect.
+Normally, you should make calls
+.new
 conditional on the &`local_scan`& debug selector by coding like this:
 .code
-if ((debug_selector & D_local_scan) != 0)
+if (is_debug(US"local_scan"))
   debug_printf("xxx", ...);
 .endd
+.wen
 
 .vitem &*uschar&~*expand_string(uschar&~*string)*&
 This is an interface to Exim's string expansion code. The return value is the
@@ -36488,6 +36487,11 @@ This function base64-encodes a string, which is passed by address and length.
 The text may contain bytes of any value, including zero. The result is passed
 back in dynamic memory that is obtained by calling &'store_get()'&. It is
 zero-terminated.
+
+.new
+.vitem &*BOOL&~is_debug(uschar&~*channel)*&
+This function tests whether a given debug channel is enabled, by name.
+.wen
 
 .vitem &*int&~lss_b64decode(uschar&~*codetext,&~uschar&~**cleartext)*&
 This function decodes a base64-encoded string. Its arguments are a

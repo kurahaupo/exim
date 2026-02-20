@@ -388,7 +388,7 @@ store_writeprotect(int pool)
 #if !defined(COMPILE_UTILITY) && !defined(MISSING_POSIX_MEMALIGN)
 for (storeblock * b =  paired_pools[pool].chainbase; b; b = b->next)
   if (mprotect(b, ALIGNED_SIZEOF_STOREBLOCK + b->length, PROT_READ) != 0)
-    DEBUG(D_any) debug_printf("config block mprotect: (%d) %s\n", errno, strerror(errno));
+    DEBUG(any) debug_printf("config block mprotect: (%d) %s\n", errno, strerror(errno));
 #endif
 }
 
@@ -544,7 +544,7 @@ if (!quoter_name)
   giving warnings. */
 
 #ifndef COMPILE_UTILITY
-  DEBUG(D_memory)
+  DEBUG(memory)
     debug_printf("---%d Get %6p %5d %-14s %4d\n", pool,
       pp->store_last_get, size, func, linenumber);
 #endif
@@ -552,13 +552,13 @@ if (!quoter_name)
 #ifndef COMPILE_UTILITY
 else
   {
-  DEBUG(D_memory)
+  DEBUG(memory)
     debug_printf("allocating quoted-block for quoter %u (from %s %d)\n",
       quoter, func, linenumber);
   if (!(pp = pool_for_quoter(quoter, NULL)))
     pp = quoted_pool_new(quoter, quoter_name);
   yield = pool_get(pp, size, FALSE, func, linenumber);
-  DEBUG(D_memory)
+  DEBUG(memory)
     debug_printf("---QQ Get %6p %5d %-14s %4d\n",
       pp->store_last_get, size, func, linenumber);
   }
@@ -621,13 +621,13 @@ store_force_get_quoted(int size, unsigned quoter, const uschar * quoter_name,
 pooldesc * pp = pool_for_quoter(quoter, NULL);
 void * yield;
 
-DEBUG(D_memory)
+DEBUG(memory)
   debug_printf("allocating quoted-block for quoter %u (from %s %d)\n", quoter, func, linenumber);
 
 if (!pp) pp = quoted_pool_new(quoter, quoter_name);
 yield = pool_get(pp, size, FALSE, func, linenumber);
 
-DEBUG(D_memory)
+DEBUG(memory)
   debug_printf("---QQ Get %6p %5d %-14s %4d\n",
     pp->store_last_get, size, func, linenumber);
 
@@ -686,7 +686,7 @@ const void * p_qfn, * q_qfn;
 
 if (!p_name)
   {
-  DEBUG(D_any) debug_printf("No quoter name for addr\n");
+  DEBUG(any) debug_printf("No quoter name for addr\n");
   return FALSE;
   }
 
@@ -782,7 +782,7 @@ if (CS ptr + rounded_oldsize != CS (pp->next_yield) ||
 giving warnings. */
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_memory)
+DEBUG(memory)
   {
   quoted_pooldesc * qp;
   for (qp = quoted_pools; qp; qp = qp->next)
@@ -940,7 +940,7 @@ while ((b = bb))
 giving warnings. */
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_memory)
+DEBUG(memory)
   debug_printf("---%d Rst %6p %5d %-14s %4d\tpool %d\n", pool, ptr,
     count + oldmalloc - pool_malloc,
     func, linenumber, pool_malloc);
@@ -1023,7 +1023,7 @@ if ((pp = pool_current_for_pointer(ptr)))
   giving warnings. */
 
 #ifndef COMPILE_UTILITY
-  DEBUG(D_memory)
+  DEBUG(memory)
     {
     quoted_pooldesc * qp;
     for (qp = quoted_pools; qp; qp = qp->next)
@@ -1040,7 +1040,7 @@ if ((pp = pool_current_for_pointer(ptr)))
   return;
   }
 #ifndef COMPILE_UTILITY
-DEBUG(D_memory)
+DEBUG(memory)
   debug_printf("non-last memory release try: %s %d\n", func, linenumber);
 #endif
 }
@@ -1053,7 +1053,7 @@ store_mark_3(const char * func, int linenumber)
 void ** p;
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_memory)
+DEBUG(memory)
   debug_printf("---%d Mrk                    %-14s %4d\tpool %d\n",
     store_pool, func, linenumber, pool_malloc);
 #endif  /* COMPILE_UTILITY */
@@ -1111,7 +1111,7 @@ for (storeblock * b =  pp->chainbase; b; b = b->next)
     from giving warnings. */
 
 #ifndef COMPILE_UTILITY
-    DEBUG(D_memory)
+    DEBUG(memory)
       debug_printf("-Release %6p %-20s %4d %d\n", (void *)bb, func,
 	linenumber, pool_malloc);
 
@@ -1209,7 +1209,7 @@ if (!(yield = malloc(size)))
     "called from line %d in %s", size, line, func);
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_any) *(size_t *)yield = size;
+DEBUG(any) *(size_t *)yield = size;
 #endif
 yield = US yield + sizeof(size_t);
 
@@ -1225,7 +1225,7 @@ is not filled with zeros so as to catch problems. */
 
 if (f.running_in_test_harness)
   memset(yield, 0xF0, size - sizeof(size_t));
-DEBUG(D_memory) debug_printf("--Malloc %6p %5lu bytes\t%-20s %4d\tpool %5d  nonpool %5d\n",
+DEBUG(memory) debug_printf("--Malloc %6p %5lu bytes\t%-20s %4d\tpool %5d  nonpool %5d\n",
   yield, size, func, line, pool_malloc, nonpool_malloc);
 #endif  /* COMPILE_UTILITY */
 
@@ -1260,8 +1260,8 @@ internal_store_free(void * block, const char * func, int linenumber)
 {
 uschar * p = US block - sizeof(size_t);
 #ifndef COMPILE_UTILITY
-DEBUG(D_any) nonpool_malloc -= *(size_t *)p;
-DEBUG(D_memory) debug_printf("----Free %6p %5ld bytes\t%-20s %4d\n",
+DEBUG(any) nonpool_malloc -= *(size_t *)p;
+DEBUG(memory) debug_printf("----Free %6p %5ld bytes\t%-20s %4d\n",
 		    block, *(size_t *)p, func, linenumber);
 #endif
 free(p);
@@ -1303,7 +1303,7 @@ void
 store_exit(void)
 {
 #ifndef COMPILE_UTILITY
-DEBUG(D_memory)
+DEBUG(memory)
  {
  int i;
  debug_printf("----Exit nonpool max: %3d kB in %d blocks\n",

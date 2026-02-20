@@ -54,11 +54,11 @@ BOOL key_utf8;
 
 if ((key_utf8 = string_is_utf8(keystring)))
   {
-  DEBUG(D_lookup) debug_printf_indent("converting utf8 key %q\n", keystring);
+  DEBUG(lookup) debug_printf_indent("converting utf8 key %q\n", keystring);
   if (!(keystring = string_domain_utf8_to_alabel(keystring, errmsg)))
     return FAIL;
   length = Ustrlen(keystring);
-  DEBUG(D_lookup) debug_printf_indent(" result %q\n", keystring);
+  DEBUG(lookup) debug_printf_indent(" result %q\n", keystring);
   }
 else
   for (k = keystring; *k; k++)
@@ -83,7 +83,7 @@ while ((s = US fgets(CS rulebuf, sizeof(rulebuf), handle)))
       goto fail;
     if (t != r)
       {
-      DEBUG(D_lookup) debug_printf_indent("converting utf8 psl entry %q\n"
+      DEBUG(lookup) debug_printf_indent("converting utf8 psl entry %q\n"
 	" result %q\n", r, t);
       r = t;
       }
@@ -160,7 +160,7 @@ if (key_utf8 && res)
   {
   if (!(*result = string_domain_alabel_to_utf8(res, errmsg)))
     goto fail;
-  DEBUG(D_lookup)
+  DEBUG(lookup)
     debug_printf_indent("utf8 converting result %q\n to %q\n", res, *result);
   }
 else

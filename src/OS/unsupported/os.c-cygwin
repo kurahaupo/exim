@@ -357,7 +357,7 @@ static BOOL LoadNtdll()
                                                      "RtlNtStatusToDosError")))
     return TRUE;
 
-  DEBUG(D_load)
+  DEBUG(load)
     debug_printf("perf: load: %u (Windows)\n", GetLastError());
   return FALSE;
 }
@@ -381,18 +381,18 @@ static BOOL ReadStat(unsigned long long int *Time100nsPtr,
   if ((ret = NtQuerySystemInformation(SystemBasicInformation,
                                       (PVOID) &sbi, sizeof sbi, NULL))
       != STATUS_SUCCESS) {
-    DEBUG(D_load)
+    DEBUG(load)
       debug_printf("Perf: NtQuerySystemInformation: %u (Windows)\n",
                    RtlNtStatusToDosError(ret));
   }
   else if (!(spt = (PSYSTEM_PROCESSOR_TIMES) alloca(sizeof(spt[0]) * sbi.NumberProcessors))) {
-    DEBUG(D_load)
+    DEBUG(load)
       debug_printf("Perf: alloca: errno %d (%s)\n", errno, strerror(errno));
   }
   else if ((ret = NtQuerySystemInformation(SystemProcessorTimes, (PVOID) spt,
                                            sizeof spt[0] * sbi.NumberProcessors, NULL))
            != STATUS_SUCCESS) {
-    DEBUG(D_load)
+    DEBUG(load)
       debug_printf("Perf: NtQuerySystemInformation: %u (Windows)\n",
                    RtlNtStatusToDosError(ret));
   }
@@ -472,12 +472,12 @@ int os_getloadavg()
     if ((new = !cygwin_load.handle)) {
       cygwin_load.handle = CreateFileMapping (INVALID_HANDLE_VALUE, &sa, PAGE_READWRITE,
                                               0, sizeof(cygwin_perf_t), NULL);
-      DEBUG(D_load)
+      DEBUG(load)
         debug_printf("Perf: CreateFileMapping: handle %p\n", (void *) cygwin_load.handle);
     }
     cygwin_load.perf = (cygwin_perf_t *) MapViewOfFile (cygwin_load.handle,
                                                         FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 0);
-    DEBUG(D_load)
+    DEBUG(load)
       debug_printf("Perf: MapViewOfFile: addr %p\n", (void *) cygwin_load.perf);
     if (new && cygwin_load.perf)
       InitLoadAvg(cygwin_load.perf);
@@ -493,7 +493,7 @@ int os_getloadavg()
      results in an immediate delivery .*/
 
   if (InterlockedCompareExchange(&cygwin_load.perf->Lock, 1, 0)) {
-    DEBUG(D_load)
+    DEBUG(load)
       debug_printf("Perf: Lock busy\n");
     return 0;
   }
@@ -512,7 +512,7 @@ int os_getloadavg()
       cygwin_load.perf->IdleCount = IdleCount;
       cygwin_load.perf->LastCounter = CurrCounter;
       cygwin_load.perf->LastLoad = value;
-      DEBUG(D_load)
+      DEBUG(load)
         debug_printf("Perf: New load average %d\n", value);
       }
       else { /* Something bad happened.
@@ -523,7 +523,7 @@ int os_getloadavg()
     }
   }
   else
-  DEBUG(D_load)
+  DEBUG(load)
       debug_printf("Perf: Old load average %d\n", cygwin_load.perf->LastLoad);
   cygwin_load.perf->Lock = 0;
   return cygwin_load.perf->LastLoad;

@@ -182,7 +182,7 @@ for (; i <= *subcount; i++)
     buffer[subptr+1] = subdirchar;
     }
 
-  DEBUG(D_queue_run) debug_printf("looking in %s\n", buffer);
+  DEBUG(queue_run) debug_printf("looking in %s\n", buffer);
   if (!(dd = exim_opendir(buffer)))
     continue;
 
@@ -470,7 +470,7 @@ for (int i = queue_run_in_order ? -1 : 0;
   {
   rmark reset_point1 = store_mark();
 
-  DEBUG(D_queue_run)
+  DEBUG(queue_run)
     {
     if (i == 0)
       debug_printf("queue running main directory\n");
@@ -504,7 +504,7 @@ for (int i = queue_run_in_order ? -1 : 0;
         break;
         }
       else
-        DEBUG(D_load) debug_printf("load average = %.2f max = %.2f\n",
+        DEBUG(load) debug_printf("load average = %.2f max = %.2f\n",
           (double)load_average/1000.0,
           (double)deliver_queue_load_max/1000.0);
 
@@ -524,10 +524,10 @@ for (int i = queue_run_in_order ? -1 : 0;
 			that happens to complete. */
 	set_process_info("running queue (ph 1): parallel limit %u",
 			nelem(qpid));
-	DEBUG(D_queue_run)
+	DEBUG(queue_run)
 	  debug_printf("q2stage waiting for child %d\n", (int)qpid[0]);
 	waitpid(qpid[0], NULL, 0);
-	DEBUG(D_queue_run)
+	DEBUG(queue_run)
 	  debug_printf("q2stage reaped child %d\n", (int)qpid[0]);
 #ifndef MEASURE_TIMING
 	if (f.running_in_test_harness) j = 0; else
@@ -590,7 +590,7 @@ for (int i = queue_run_in_order ? -1 : 0;
 
       else if (q->queue_run_first_delivery && !f.deliver_firsttime)
         {
-        DEBUG(D_queue_run) debug_printf("%s: not first delivery\n", fq->text);
+        DEBUG(queue_run) debug_printf("%s: not first delivery\n", fq->text);
         wanted = FALSE;
         }
 
@@ -607,7 +607,7 @@ for (int i = queue_run_in_order ? -1 : 0;
 		      != NULL)
 	      )   )
         {
-        DEBUG(D_queue_run) debug_printf("%s: sender address did not match %s\n",
+        DEBUG(queue_run) debug_printf("%s: sender address did not match %s\n",
           fq->text, deliver_selectstring_sender);
         wanted = FALSE;
         }
@@ -631,12 +631,12 @@ for (int i = queue_run_in_order ? -1 : 0;
 
         if (i >= recipients_count)
           {
-          DEBUG(D_queue_run)
+          DEBUG(queue_run)
             debug_printf("%s: no recipient address matched %s\n",
               fq->text, deliver_selectstring);
           wanted = FALSE;
           }
-	else DEBUG(D_acl) if (atrn_domains)
+	else DEBUG(acl) if (atrn_domains)
 	  debug_printf_indent("%s matches ATRN\n", fq->text);
         }
 
@@ -713,7 +713,7 @@ single_item_retry:
     for (int ret; (ret = wait (&status)) != pid; )
       if (ret == -1)
 	{
-	DEBUG(D_any) debug_printf("%s %d: wait: %s\n", __FUNCTION__, __LINE__,
+	DEBUG(any) debug_printf("%s %d: wait: %s\n", __FUNCTION__, __LINE__,
 				  strerror(errno));
 	status = 0;
 	break;
@@ -737,9 +737,9 @@ single_item_retry:
     if (status & 0xff00 && single_id)
       {
       single_id = FALSE;
-      DEBUG(D_queue_run) debug_printf("qrun single-item pause before retry\n");
+      DEBUG(queue_run) debug_printf("qrun single-item pause before retry\n");
       millisleep(500);
-      DEBUG(D_queue_run) debug_printf("qrun single-item retry after pause\n");
+      DEBUG(queue_run) debug_printf("qrun single-item retry after pause\n");
       goto single_item_retry;
       }
 
@@ -815,7 +815,7 @@ if (q->queue_2stage)
       set_process_info("running queue (ph 1): wait-all, child %u/%u",
 		      i+1, active);
       waitpid(qpid[i], NULL, 0);
-      DEBUG(D_queue_run)
+      DEBUG(queue_run)
 	debug_printf("q2stage reaped child " PID_T_FMT "\n", qpid[i]);
       }
     else break;		/* should be no holes in table, so we're done */
@@ -824,7 +824,7 @@ if (q->queue_2stage)
   report_time_since(&timestamp_startup, US"queue_run phase 1 done");
 #endif
   q->queue_2stage = f.queue_2stage = FALSE;
-  DEBUG(D_queue_run) debug_printf("queue_run phase 2 start\n");
+  DEBUG(queue_run) debug_printf("queue_run phase 2 start\n");
   queue_run(q, start_id, stop_id, TRUE);
   }
 
@@ -844,7 +844,7 @@ if (!recurse)
 
   if (atrn_domains && !msg_handled)
     {
-    DEBUG(D_any) debug_printf("ATRN: no messages; sending QUIT\n");
+    DEBUG(any) debug_printf("ATRN: no messages; sending QUIT\n");
     (void) send(0, "QUIT\r\n", 6, 0);
     }
   }
@@ -855,7 +855,7 @@ if (!recurse)
 void
 single_queue_run(qrunner * q, const uschar * start_id, const uschar * stop_id)
 {
-DEBUG(D_queue_run) debug_printf("Single queue run%s%s%s%s\n",
+DEBUG(queue_run) debug_printf("Single queue run%s%s%s%s\n",
   start_id ? US" starting at " : US"",
   start_id ? start_id: US"",
   stop_id ?  US" stopping at " : US"",
@@ -915,7 +915,7 @@ for (queue_filename * fq = queue_get_spool_list(-1,	/* entire queue */
 	 && match_isinlist(s+1, &domains, 0, &domainlist_anchor, NULL,
 			  MCL_DOMAIN + MCL_NOEXPAND, TRUE, NULL) == OK)
 	{
-	DEBUG(D_all)
+	DEBUG(all)
 	  debug_printf_indent("found a matching message: '%s'\n", r->address);
 	yield = OK;
 	}
@@ -1419,7 +1419,7 @@ switch(action)
       {
       uschar * fname = spool_fname(US"msglog", message_subdir, id, US"");
 
-      DEBUG(D_any) debug_printf(" removing %s", fname);
+      DEBUG(any) debug_printf(" removing %s", fname);
       if (Uunlink(fname) < 0)
 	{
 	if (errno != ENOENT)
@@ -1427,12 +1427,12 @@ switch(action)
 	  yield = FALSE;
 	  printf("Error while removing %s: %s\n", fname, strerror(errno));
 	  }
-	else DEBUG(D_any) debug_printf(" (no file)\n");
+	else DEBUG(any) debug_printf(" (no file)\n");
 	}
       else
 	{
 	removed = TRUE;
-	DEBUG(D_any) debug_printf(" (ok)\n");
+	DEBUG(any) debug_printf(" (ok)\n");
 	}
 
       for (int i = 0; i < 3; i++)
@@ -1440,7 +1440,7 @@ switch(action)
 	suffix[1] = (US"DHJ")[i];
 	fname = spool_fname(US"input", message_subdir, id, suffix);
 
-	DEBUG(D_any) debug_printf(" removing %s", fname);
+	DEBUG(any) debug_printf(" removing %s", fname);
 	if (Uunlink(fname) < 0)
 	  {
 	  if (errno != ENOENT)
@@ -1448,12 +1448,12 @@ switch(action)
 	    yield = FALSE;
 	    printf("Error while removing %s: %s\n", fname, strerror(errno));
 	    }
-	  else DEBUG(D_any) debug_printf(" (no file)\n");
+	  else DEBUG(any) debug_printf(" (no file)\n");
 	  }
 	else
 	  {
 	  removed = TRUE;
-	  DEBUG(D_any) debug_printf(" (done)\n");
+	  DEBUG(any) debug_printf(" (done)\n");
 	  }
 	}
       }
@@ -1670,14 +1670,14 @@ if (s)
       if (Ustat(ss, &statbuf) == 0)
 	{
 	f.queue_smtp = TRUE;
-	DEBUG(D_receive) debug_printf("queue_smtp set because %s exists\n", ss);
+	DEBUG(receive) debug_printf("queue_smtp set because %s exists\n", ss);
 	}
       }
     else
       if (Ustat(ss, &statbuf) == 0)
 	{
 	queue_only = TRUE;
-	DEBUG(D_receive) debug_printf("queue_only set because %s exists\n", ss);
+	DEBUG(receive) debug_printf("queue_only set because %s exists\n", ss);
 	}
 }
 
@@ -1694,12 +1694,12 @@ int bsize = 1 + MESSAGE_ID_LENGTH + 1 + Ustrlen(queue_name) + 1;
 uschar * buf = store_get(bsize, GET_UNTAINTED);
 int fd;
 
-DEBUG(D_queue_run) debug_printf("%s: %s\n", __FUNCTION__, msgid);
+DEBUG(queue_run) debug_printf("%s: %s\n", __FUNCTION__, msgid);
 
 if (  deliver_queue_load_max >= 0
    && os_getloadavg() > deliver_queue_load_max)
   {
-  DEBUG(D_queue_run) debug_printf(" - avoided due to load-avg\n");
+  DEBUG(queue_run) debug_printf(" - avoided due to load-avg\n");
   return;
   }
 
@@ -1713,11 +1713,11 @@ if ((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) >= 0)
   ssize_t len = daemon_notifier_sockname(&sa_un);
 
   if (sendto(fd, buf, bsize, 0, (struct sockaddr *)&sa_un, (socklen_t)len) < 0)
-    DEBUG(D_queue_run)
+    DEBUG(queue_run)
       debug_printf("%s: sendto %s\n", __FUNCTION__, strerror(errno));
   close(fd);
   }
-else DEBUG(D_queue_run) debug_printf(" socket: %s\n", strerror(errno));
+else DEBUG(queue_run) debug_printf(" socket: %s\n", strerror(errno));
 }
 #endif
 

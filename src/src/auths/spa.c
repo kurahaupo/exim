@@ -156,7 +156,7 @@ if (!*data && auth_get_no64_data(&data, US"NTLM supported") != OK)
 
 if (spa_base64_to_bits(CS &request, sizeof(request), CCS data) < 0)
   {
-  DEBUG(D_auth) debug_printf("auth_spa_server(): bad base64 data in "
+  DEBUG(auth) debug_printf("auth_spa_server(): bad base64 data in "
     "request: %s\n", data);
   return FAIL;
   }
@@ -172,7 +172,7 @@ if (auth_get_no64_data(&data, msgbuf) != OK)
 /* dump client response */
 if (spa_base64_to_bits(CS &response, sizeof(response), CCS data) < 0)
   {
-  DEBUG(D_auth) debug_printf("auth_spa_server(): bad base64 data in "
+  DEBUG(auth) debug_printf("auth_spa_server(): bad base64 data in "
     "response: %s\n", data);
   return FAIL;
   }
@@ -201,7 +201,7 @@ that causes failure if the size of msgbuf is exceeded. ****/
      || (p = (CS responseptr) + off) + len*2 >= CS (responseptr+1)
      )
     {
-    DEBUG(D_auth)
+    DEBUG(auth)
       debug_printf("auth_spa_server(): bad uUser spec in response\n");
     return FAIL;
     }
@@ -233,13 +233,13 @@ debug_print_string(ablock->server_debug_string);    /* customized debug */
 if (!(clearpass = expand_string(ob->spa_serverpassword)))
   if (f.expand_string_forcedfail)
     {
-    DEBUG(D_auth) debug_printf("auth_spa_server(): forced failure while "
+    DEBUG(auth) debug_printf("auth_spa_server(): forced failure while "
       "expanding spa_serverpassword\n");
     return FAIL;
     }
   else
     {
-    DEBUG(D_auth) debug_printf("auth_spa_server(): error while expanding "
+    DEBUG(auth) debug_printf("auth_spa_server(): error while expanding "
       "spa_serverpassword: %s\n", expand_string_message);
     return DEFER;
     }
@@ -254,7 +254,7 @@ spa_smb_nt_encrypt(clearpass, challenge.challengeData, ntRespData);
 off = IVAL(&responseptr->ntResponse.offset,0);
 if (off >= sizeof(SPAAuthResponse) - 24)
   {
-  DEBUG(D_auth)
+  DEBUG(auth)
     debug_printf("auth_spa_server(): bad ntRespData spec in response\n");
   return FAIL;
   }

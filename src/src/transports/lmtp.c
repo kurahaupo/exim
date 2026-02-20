@@ -243,11 +243,11 @@ if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS format, ap))
   return FALSE;
   }
 va_end(ap);
-DEBUG(D_transport|D_v) debug_printf("  LMTP>> %Y", &gs);
+DEBUG(transport|v) debug_printf("  LMTP>> %Y", &gs);
 rc = write(fd, gs.s, gs.ptr);
 gs.ptr -= 2; string_from_gstring(&gs); /* remove \r\n for debug and error message */
 if (rc > 0) return TRUE;
-DEBUG(D_transport) debug_printf("write failed: %s\n", strerror(errno));
+DEBUG(transport) debug_printf("write failed: %s\n", strerror(errno));
 return FALSE;
 }
 
@@ -327,7 +327,7 @@ for (;;)
 
     else if (errno == EINTR)
       {
-      DEBUG(D_transport) debug_printf("EINTR while reading LMTP response\n");
+      DEBUG(transport) debug_printf("EINTR while reading LMTP response\n");
       continue;
       }
 
@@ -350,7 +350,7 @@ for (;;)
 
   if (ptr[count-1] != '\n')
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       {
       debug_printf("LMTP input line incomplete in one buffer:\n  ");
       for (int i = 0; i < count; i++)
@@ -370,7 +370,7 @@ for (;;)
   while (count > 0 && isspace(ptr[count-1])) count--;
   ptr[count] = 0;
 
-  DEBUG(D_transport|D_v)
+  DEBUG(transport|v)
     {
     uschar *s = ptr;
     uschar *t = ptr;
@@ -483,7 +483,7 @@ const uschar * sockname = NULL;
 const uschar ** argv;
 uschar buffer[256];
 
-DEBUG(D_transport) debug_printf("%s transport entered\n", trname);
+DEBUG(transport) debug_printf("%s transport entered\n", trname);
 
 /* Initialization ensures that either a command or a socket is specified, but
 not both. When a command is specified, call the common function for creating an
@@ -491,7 +491,7 @@ argument list and expanding the items. */
 
 if (ob->cmd)
   {
-  DEBUG(D_transport) debug_printf("using command %s\n", ob->cmd);
+  DEBUG(transport) debug_printf("using command %s\n", ob->cmd);
   sprintf(CS buffer, "%.50s transport", trname);
   if (!transport_set_up_command(&argv, ob->cmd, TSUC_EXPAND_ARGS, PANIC,
 	addrlist, buffer, NULL))
@@ -519,7 +519,7 @@ leader, so we can kill it and all its children on an error. */
 
 else
   {
-  DEBUG(D_transport) debug_printf("using socket %s\n", ob->skt);
+  DEBUG(transport) debug_printf("using socket %s\n", ob->skt);
   if (!(sockname = expand_string(ob->skt)))
     {
     addrlist->message = string_sprintf("Expansion of %q (socket setting "
@@ -650,7 +650,7 @@ if (send_data)
   sigalrm_seen = FALSE;
   transport_write_timeout = timeout;
   Ustrcpy(big_buffer, US"sending data block");   /* For error messages */
-  DEBUG(D_transport|D_v)
+  DEBUG(transport|v)
     debug_printf("  LMTP>> writing message and terminating \".\"\n");
 
   transport_count = 0;
@@ -795,14 +795,14 @@ RETURN:
 if (fd_in >= 0) (void)close(fd_in);
 if (fd_out >= 0) (void)fclose(out);
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("%s transport yields %d\n", trname, yield);
 
 return yield;
 
 
 MINUS_N:
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("*** delivery by %s transport bypassed by -N option",
       trname);
   addrlist->transport_return = OK;

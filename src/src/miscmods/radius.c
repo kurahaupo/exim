@@ -89,7 +89,7 @@ int sep = ':', result;
 if (!(user = string_nextinlist(&radius_args, &sep, NULL, 0))) user = US"";
 pwd = string_nextinlist(&radius_args, &sep, NULL, 0);
 
-DEBUG(D_auth) debug_printf("Running RADIUS authentication for user %q "
+DEBUG(auth) debug_printf("Running RADIUS authentication for user %q "
                "and %q\n", user, pwd);
 
 *errptr = NULL;
@@ -139,7 +139,7 @@ else if (!rc_avpair_add(h, &send, PW_SERVICE_TYPE, &service, 0, 0))
 
 if (*errptr)
   {
-  DEBUG(D_auth) debug_printf("%s\n", *errptr);
+  DEBUG(auth) debug_printf("%s\n", *errptr);
   return ERROR;
   }
 
@@ -149,7 +149,7 @@ result = rc_auth(0, send, &received, msg);
 result = rc_auth(h, 0, send, &received, msg);
 #endif
 
-DEBUG(D_auth) debug_printf("RADIUS code returned %d\n", result);
+DEBUG(auth) debug_printf("RADIUS code returned %d\n", result);
 
 switch (result)
   {
@@ -211,7 +211,7 @@ else
       break;
     }
 
-if (*errptr) DEBUG(D_auth) debug_printf("%s\n", *errptr);
+if (*errptr) DEBUG(auth) debug_printf("%s\n", *errptr);
 rad_close(h);
 return result;
 

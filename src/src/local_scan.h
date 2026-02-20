@@ -44,8 +44,8 @@ ABI is changed in a non backward compatible way. The minor number is increased
 each time a new feature is added (in a way that doesn't break backward
 compatibility). */
 
-#define LOCAL_SCAN_ABI_VERSION_MAJOR 7
-#define LOCAL_SCAN_ABI_VERSION_MINOR 1
+#define LOCAL_SCAN_ABI_VERSION_MAJOR 8
+#define LOCAL_SCAN_ABI_VERSION_MINOR 0
 #define LOCAL_SCAN_ABI_VERSION \
   LOCAL_SCAN_ABI_VERSION_MAJOR.LOCAL_SCAN_ABI_VERSION_MINOR
 
@@ -95,10 +95,10 @@ codes that dynamically-loaded ${dlfunc functions must return. */
 #define LOG_REJECT     16    /* Write to the reject log, with headers */
 
 
-/* Accessible debugging bits */
+/* Accessible debugging channels */
 
-#define D_v                          0x00000001
-#define D_local_scan                 0x00000002
+#define D_v                          US"v"
+#define D_local_scan                 US"local_scan"
 
 
 /* Option types that can be used for local_scan_options. The boolean ones
@@ -166,8 +166,6 @@ typedef struct recipient_item {
 
 /* Global variables that are documented as visible in the function. */
 
-extern bitmask_word_t debug_selector;   /* Debugging bits */
-
 extern int     body_linecount;         /* Line count in body */
 extern int     body_zerocount;         /* Binary zero count in body */
 extern uschar *expand_string_message;  /* Error info for failing expansion */
@@ -193,7 +191,9 @@ extern BOOL    smtp_input;             /* TRUE if input is via SMTP */
 /* Functions that are documented as visible in local_scan(). */
 
 extern int     child_close(pid_t, int);
+extern void    debug_modify_channel(const uschar *);
 extern void    debug_printf(const char *, ...) PRINTF_FUNCTION(1,2);
+extern BOOL    is_debug(const uschar *);
 
 extern const uschar * expand_string_2(const uschar *, BOOL *);
 static inline uschar * expand_nc_string(uschar * s)

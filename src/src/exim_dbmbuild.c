@@ -98,7 +98,9 @@ const uschar *hex_digits = CUS"0123456789abcdef";
 *   Debug output   *
 *******************/
 
-bitmask_word_t debug_selector = 0;	/* set -1 for debugging */
+bitmask_word_t * debug_selector = {0};	/* set -1 for debugging */
+
+inline BOOL is_debug(const uschar * channels) { return TRUE; }
 
 void
 debug_printf(const char * fmt, ...)

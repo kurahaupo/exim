@@ -160,7 +160,7 @@ if ((yield = (res >= 0)))
     }
   expand_nmax--;
   }
-else if (res != PCRE2_ERROR_NOMATCH) DEBUG(D_any)
+else if (res != PCRE2_ERROR_NOMATCH) DEBUG(any)
   {
   uschar errbuf[128];
   pcre2_get_error_message(res, errbuf, sizeof(errbuf));
@@ -234,7 +234,7 @@ if (!string_vformat(g, 0, format, ap))
   }
 g = string_catn(g, US"\n", 1);
 process_info_len = len_string_from_gstring(g, &s);
-DEBUG(D_process_info) debug_printf("set_process_info: %s", process_info);
+DEBUG(process_info) debug_printf("set_process_info: %s", process_info);
 va_end(ap);
 }
 
@@ -587,7 +587,7 @@ while (exim_tvcmp(&now_tv, prev_tv) <= 0)
     itval.it_value.tv_sec -= 1;
     }
 
-  DEBUG(D_transport|D_receive)
+  DEBUG(transport|receive)
     {
     if (!f.running_in_test_harness)
       {
@@ -733,9 +733,12 @@ if (smtp_input)
   }
 else
   {
-  (void)close(0);                                          /* stdin */
-  if ((debug_selector & D_resolver) == 0) (void)close(1);  /* stdout */
-  if (debug_selector == 0)                                 /* stderr */
+  (void)close(0);					/* stdin */
+  DEBUG(resolver)
+    ;
+  else
+    (void)close(1);					/* stdout */
+  if (!ANY_DEBUG)					/* stderr */
     {
     if (!f.synchronous_delivery)
       {
@@ -799,7 +802,7 @@ if (euid == root_uid || euid != uid || egid != gid || igflag)
 
 /* Debugging output included uid/gid and all groups */
 
-DEBUG(D_uid)
+DEBUG(uid)
   {
   int group_count, save_errno;
   gid_t group_list[EXIM_GROUPLIST_SIZE];
@@ -812,8 +815,7 @@ DEBUG(D_uid)
   debug_printf("  auxiliary group list:");
   if (group_count > 0)
     for (int i = 0; i < group_count; i++) debug_printf(" %d", (int)group_list[i]);
-  else if (group_count < 0)
-    debug_printf(" <error: %s>", strerror(save_errno));
+  else if (group_count < 0) debug_printf(" <error: %s>", strerror(save_errno));
   else debug_printf(" <none>");
   debug_printf("\n");
   }
@@ -841,7 +843,7 @@ exim_exit(int rc)
 smtp_fflush(SFF_NO_UNCORK);
 search_tidyup();
 store_exit();
-DEBUG(D_any)
+DEBUG(any)
   debug_printf(">>>>>>>>>>>>>>>> Exim pid=" PID_T_FMT " (%s) terminating with rc=%d "
     ">>>>>>>>>>>>>>>>\n",
     getpid(), process_purpose, rc);
@@ -853,7 +855,7 @@ void
 exim_underbar_exit(int rc)
 {
 store_exit();
-DEBUG(D_any)
+DEBUG(any)
   debug_printf(">>>>>>>>>>>>>>>> Exim pid=" PID_T_FMT " (%s) terminating with rc=%d "
     ">>>>>>>>>>>>>>>>\n",
     getpid(), process_purpose, rc);
@@ -1046,7 +1048,7 @@ show_db_version(gstring * g)
 {
 g = string_cat(g, US"Hints DB:\n");
 #ifdef DB_VERSION_STRING
-DEBUG(D_any)
+DEBUG(any)
   {
   g = string_fmt_append(g, " Library version: BDB: Compile: %s\n", DB_VERSION_STRING);
   g = string_fmt_append(g, "                       Runtime: %s\n",
@@ -1129,7 +1131,7 @@ the main pool. */
 store_pool = POOL_MAIN;
 reset_point = store_mark();
 
-DEBUG(D_any) {} else g = show_db_version(g);
+DEBUG(any) {} else g = show_db_version(g);
 
 g = string_cat(g, US"Support for:");
 #ifdef WITH_CONTENT_SCAN
@@ -1285,7 +1287,8 @@ g = string_fmt_append(g, "Size of off_t:" SIZE_T_FMT
 
 /* Everything else is details which are only worth reporting when debugging.
 Perhaps the tls_version_report should move into this too. */
-DEBUG(D_any)
+
+DEBUG(any)
   {
 
 /* clang defines __GNUC__ (at least, for me) so test for it first */
@@ -1517,7 +1520,7 @@ if (dlhandle)
   *fn_addhist_ptr = (void(*)(const char*))dlsym(dlhandle, "add_history");
   }
 else
-  DEBUG(D_any) debug_printf("failed to load readline: %s\n", dlerror());
+  DEBUG(any) debug_printf("failed to load readline: %s\n", dlerror());
 
 return dlhandle;
 }
@@ -1732,7 +1735,7 @@ for (macro_item * m = macros_user; m; m = m->next) if (m->command_line)
   if (!regex_match(regex_whitelisted_macro, m->replacement, len, NULL))
     return FALSE;
   }
-DEBUG(D_any) debug_printf("macros_trusted overridden to true by whitelisting\n");
+DEBUG(any) debug_printf("macros_trusted overridden to true by whitelisting\n");
 return TRUE;
 #endif
 }
@@ -2006,7 +2009,7 @@ if (!(log_buffer = US malloc(LOG_BUFFER_SIZE)))
 
 /* Initialize the default log options. */
 
-bits_set(log_selector, log_selector_size, log_default);
+logging_set_defaults();
 
 /* Set log_stderr to stderr, provided that stderr exists. This gets reset to
 NULL when the daemon is run and the file is closed. We have to use this
@@ -2219,6 +2222,10 @@ unprivileged = (real_uid != root_uid && original_euid != root_uid);
  {
  int old_pool = store_pool;
  store_pool = POOL_PERM;
+
+/* Allocate an empty bitmask for debug channels */
+
+debug_modify_channel(US"");
 
 /* Scan the program's arguments. Some can be dealt with right away; others are
 simply recorded for checking and handling afterwards. Do a high-level switch
@@ -2542,7 +2549,7 @@ on the second character (the one after '-'), to save some effort. */
 	  else
 	    {
 	    list_options = TRUE;
-	    debug_selector |= D_v;
+	    debug_modify_channel(US"+v");
 	    debug_file = stderr;
 	    }
 	  break;
@@ -2809,6 +2816,7 @@ on the second character (the one after '-'), to save some effort. */
 
     /* -dS: enable startup-time debugging (before the config is read) */
     /* Another debug channel per "-d" would be nicer, but we're at 32 already */
+    /*XXX*/
 
     else if (Ustrcmp(argrest, "S") == 0)
       debug_startup = TRUE;
@@ -2826,17 +2834,19 @@ on the second character (the one after '-'), to save some effort. */
       /* Use an intermediate variable so that we don't set debugging while
       decoding the debugging bits. */
 
-      bitmask_word_t selector = D_default;
-      debug_selector = 0;
+      bitmask_word_t * selector = NULL;
+
       debug_file = NULL;
       if (*argrest == 'd')
         {
         f.debug_daemon = TRUE;
         argrest++;
         }
+
+      debug_set_default_bits(&selector);
       if (*argrest)
-        decode_bits(&selector, 1, debug_notall, argrest,
-          debug_options, debug_options_count, US"debug", 0);
+	debug_decode_bits(&selector, argrest, 0);
+
       debug_selector = selector;
       }
     break;
@@ -3330,7 +3340,7 @@ on the second character (the one after '-'), to save some effort. */
     if (!*argrest)
       {
       f.dont_deliver = TRUE;
-      debug_selector |= D_v;
+      debug_modify_channel(US"+v");
       debug_file = stderr;
       }
     else badarg = TRUE;
@@ -3854,12 +3864,12 @@ on the second character (the one after '-'), to save some effort. */
     break;
 
 
-    /* -v: verify things - this is a very low-level debugging */
+    /* -v: verbose - this is a very gentle-level debugging */
 
     case 'v':
     if (!*argrest)
       {
-      debug_selector |= D_v;
+      debug_modify_channel(US"+v");
       debug_file = stderr;
       }
     else badarg = TRUE;
@@ -3976,18 +3986,18 @@ if (	 (smtp_input || extract_recipients || recipients_arg < argc)
 child processes. It should, of course, be 2 for stderr. Also, force the daemon
 to run in the foreground. */
 
-if (debug_selector != 0)
+if (ANY_DEBUG)
   {
   debug_file = stderr;
   debug_fd = fileno(debug_file);
   f.background_daemon = FALSE;
   testharness_pause_ms(100);   /* lets caller finish */
-  if (debug_selector != D_v)    /* -v only doesn't show this */
+
+  if (DEBUG_BIT(BIT_TABLE_IDX_NONVERB))		/* -v only doesn't show this */
     {
-    debug_printf("Exim version %s uid=%ld gid=%ld pid=" PID_T_FMT
-      " D=0x" PR_EXIM_BITMASK "\n",
+    debug_printf("Exim version %s uid=%ld gid=%ld pid=" PID_T_FMT " %Y\n",
       version_string, (long int)real_uid, (long int)real_gid, getpid(),
-      debug_selector);
+      debug_selector_dump(NULL));
     if (!version_printed)
       show_whats_supported(FALSE);
     }
@@ -4001,7 +4011,7 @@ change some of these limits. */
 
 if (unprivileged)
   {
-  DEBUG(D_any) debug_print_ids(US"Exim has no root privilege:");
+  DEBUG(any) debug_print_ids(US"Exim has no root privilege:");
   }
 else
   {
@@ -4116,15 +4126,14 @@ recompile each time, or to patch in an actual configuration file name and other
 values (such as the path name). If running in the test harness, pretend that
 configuration file changes and macro definitions haven't happened. */
 
-if ((                                            /* EITHER */
-    (!f.trusted_config ||                          /* Config changed, or */
-     !macros_trusted(opt_D_used)) &&		 /*  impermissible macros and */
-    real_uid != root_uid &&                      /* Not root, and */
-    !f.running_in_test_harness                     /* Not fudged */
-    ) ||                                         /*   OR   */
-    f.expansion_test                             /* expansion testing */
-    ||                                           /*   OR   */
-    filter_test != FTEST_NONE)                   /* Filter testing */
+if (  (					/* EITHER */
+        (  !f.trusted_config			  /* Config changed */
+	|| !macros_trusted(opt_D_used))		  /* or impermissible macros */
+      && real_uid != root_uid			/* and Not root */
+      && !f.running_in_test_harness		/* and Not fudged */
+      )
+    || f.expansion_test			/* OR expansion testing */
+    || filter_test != FTEST_NONE)	/* OR Filter testing */
   {
   setgroups(group_count, group_list);
   exim_setugid(real_uid, real_gid, FALSE,
@@ -4285,10 +4294,10 @@ if (checking && commandline_checks_require_admin && !f.admin_user)
 
 /* Handle the decoding of logging options. */
 
-decode_bits(log_selector, log_selector_size, log_notall,
-  log_selector_string, log_options, log_options_count, US"log", 0);
+decode_bits(log_selector, log_selector_size, log_notall_names,
+  log_selector_string, log_chan_names, log_options_count, DCB_LOG);
 
-DEBUG(D_any)
+DEBUG(any)
   {
   debug_printf("configuration file is %s\n", config_main_filename);
   debug_printf("log selectors =");
@@ -4374,7 +4383,7 @@ EXIM_TMPDIR by the build scripts.
       uschar * newp = store_malloc(Ustrlen(EXIM_TMPDIR) + 8);
       sprintf(CS newp, "TMPDIR=%s", EXIM_TMPDIR);
       *p = newp;
-      DEBUG(D_any) debug_printf("reset TMPDIR=%s in environment\n", EXIM_TMPDIR);
+      DEBUG(any) debug_printf("reset TMPDIR=%s in environment\n", EXIM_TMPDIR);
       }
 #endif
 
@@ -4415,7 +4424,7 @@ else
     *newp = NULL;
     environ = CSS new;
     tzset();
-    DEBUG(D_any) debug_printf("Reset TZ to %s: time is %s\n", timezone_string,
+    DEBUG(any) debug_printf("Reset TZ to %s: time is %s\n", timezone_string,
       tod_stamp(tod_log));
     }
   }
@@ -4469,7 +4478,7 @@ a debugging feature for finding out what arguments certain MUAs actually use.
 Don't attempt it if logging is disabled, or if listing variables or if
 verifying/testing addresses or expansions. */
 
-if (  (IS_DEBUG(D_any)  ||  LOGGING(arguments))
+if (  (IS_DEBUG(any) || LOGGING(arguments))
    && f.really_exim && !list_options && !checking)
   {
   uschar * p = big_buffer;
@@ -4549,7 +4558,7 @@ if (bi_option)
     setgroups(group_count, group_list);
     exim_setugid(real_uid, real_gid, FALSE, US"running bi_command");
 
-    DEBUG(D_exec) debug_printf("exec '%.256s' %s%.256s%s\n", bi_argv[0],
+    DEBUG(exec) debug_printf("exec '%.256s' %s%.256s%s\n", bi_argv[0],
       bi_argv[1] ? "'" : "",
       bi_argv[1] ? bi_argv[1] : US"",
       bi_argv[1] ? "'" : "");
@@ -4559,7 +4568,7 @@ if (bi_option)
     }
   else
     {
-    DEBUG(D_any) debug_printf("-bi used but bi_command not set; exiting\n");
+    DEBUG(any) debug_printf("-bi used but bi_command not set; exiting\n");
     exit(EXIT_SUCCESS);
     }
   }
@@ -4568,8 +4577,8 @@ if (bi_option)
 configuration file.  We leave these prints here to ensure that syslog setup,
 logfile setup, and so on has already happened. */
 
-if (f.trusted_caller) DEBUG(D_any) debug_printf("trusted user\n");
-if (f.admin_user) DEBUG(D_any) debug_printf("admin user\n");
+if (f.trusted_caller) DEBUG(any) debug_printf("trusted user\n");
+if (f.admin_user) DEBUG(any) debug_printf("admin user\n");
 
 /* Only an admin user may start the daemon or force a queue run in the default
 configuration, but the queue run restriction can be relaxed. Only an admin
@@ -4581,7 +4590,8 @@ count. Only an admin user can use the test interface to scan for email
 
 if (!f.admin_user)
   {
-  BOOL debugset = (debug_selector & ~D_v) != 0;
+  BOOL debugset = !!DEBUG_BIT(BIT_TABLE_IDX_NONVERB);
+
   if (  deliver_give_up || f.daemon_listen || malware_test_file
      || count_queue && queue_list_requires_admin
      || list_queue && queue_list_requires_admin
@@ -4638,7 +4648,7 @@ if (flag_G)
   if (f.trusted_caller)
     {
     f.suppress_local_fixups = f.suppress_local_fixups_default = TRUE;
-    DEBUG(D_acl) debug_printf("suppress_local_fixups forced on by -G\n");
+    DEBUG(acl) debug_printf("suppress_local_fixups forced on by -G\n");
     }
   else
     exim_fail("permission denied (-G requires a trusted user)");
@@ -4735,7 +4745,7 @@ if (  !unprivileged				/* originally had root AND */
 else
   {
   int rv;
-  DEBUG(D_any) debug_printf("dropping to exim gid; retaining priv uid\n");
+  DEBUG(any) debug_printf("dropping to exim gid; retaining priv uid\n");
   rv = setgid(exim_gid);
   /* Impact of failure is that some stuff might end up with an incorrect group.
   We track this for failures from root, since any attempt to change privilege
@@ -4746,7 +4756,7 @@ else
     if (!(unprivileged || removed_privilege))
       exim_fail("changing group failed: %s", strerror(errno));
     else
-      DEBUG(D_any) debug_printf("changing group to %ld failed: %s\n",
+      DEBUG(any) debug_printf("changing group to %ld failed: %s\n",
           (long int)exim_gid, strerror(errno));
   }
 
@@ -5148,14 +5158,14 @@ for (i = 0;;)
             expand_nmax = -1;
             if (new_name)
               {
-              DEBUG(D_receive) debug_printf("user name %q extracted from "
+              DEBUG(receive) debug_printf("user name %q extracted from "
                 "gecos field %q\n", new_name, name);
               name = new_name;
               }
-            else DEBUG(D_receive) debug_printf("failed to expand gecos_name string "
+            else DEBUG(receive) debug_printf("failed to expand gecos_name string "
               "%q: %s\n", gecos_name, expand_string_message);
             }
-          else DEBUG(D_receive) debug_printf("gecos_pattern %q did not match "
+          else DEBUG(receive) debug_printf("gecos_pattern %q did not match "
             "gecos field %q\n", gecos_pattern, name);
           store_free((void *)re);
           }
@@ -5207,7 +5217,7 @@ read in from the spool. */
 originator_uid = real_uid;
 originator_gid = real_gid;
 
-DEBUG(D_receive) debug_printf("originator: uid=%d gid=%d login=%s name=%s\n",
+DEBUG(receive) debug_printf("originator: uid=%d gid=%d login=%s name=%s\n",
   (int)originator_uid, (int)originator_gid, originator_login, originator_name);
 
 /* Run in daemon and/or queue-running mode. The function daemon_go() never
@@ -5324,7 +5334,7 @@ if (sender_address && *sender_address && sender_address_domain == 0)
   sender_address = string_sprintf("%s@%s", local_part_quote(sender_address),
     qualify_domain_sender);
 
-DEBUG(D_receive) debug_printf("sender address = %s\n", sender_address);
+DEBUG(receive) debug_printf("sender address = %s\n", sender_address);
 
 /* Handle a request to verify a list of addresses, or test them for delivery.
 This must follow the setting of the sender address, since routers can be
@@ -5339,16 +5349,16 @@ if (verify_address_mode || f.address_test_mode)
   if (verify_address_mode)
     {
     if (!verify_as_sender) flags |= vopt_is_recipient;
-    DEBUG(D_verify) debug_print_ids(US"Verifying:");
+    DEBUG(verify) debug_print_ids(US"Verifying:");
     }
 
   else
     {
     flags |= vopt_is_recipient;
-    debug_selector |= D_v;
+    debug_modify_channel(US"+v");
     debug_file = stderr;
     debug_fd = fileno(debug_file);
-    DEBUG(D_verify) debug_print_ids(US"Address testing:");
+    DEBUG(verify) debug_print_ids(US"Address testing:");
     }
 
   if (recipients_arg < argc)			/* addresses on cmdline */
@@ -5552,11 +5562,9 @@ if (host_checking)
 
   set_connection_id();
   memset(sender_host_cache, 0, sizeof(sender_host_cache));
+
   if (verify_check_host(&hosts_connection_nolog) == OK)
-    {
-    BIT_CLEAR(log_selector, log_selector_size, Li_smtp_connection);
-    BIT_CLEAR(log_selector, log_selector_size, Li_smtp_no_mail);
-    }
+    logging_modify_channels(US"-smtp_connection -smtp_no_mail");
   log_write(L_smtp_connection, LOG_MAIN, "%s", smtp_get_connection_info());
 
   /* NOTE: We do *not* call smtp_log_no_mail() if smtp_start_session() fails,
@@ -5748,11 +5756,9 @@ if (smtp_input)
 
   memset(sender_host_cache, 0, sizeof(sender_host_cache));
   if (verify_check_host(&hosts_connection_nolog) == OK)
-    {
-    BIT_CLEAR(log_selector, log_selector_size, Li_smtp_connection);
-    BIT_CLEAR(log_selector, log_selector_size, Li_smtp_no_mail);
-    }
+    logging_modify_channels(US"-smtp_connection -smtp_no_mail");
   log_write(L_smtp_connection, LOG_MAIN, "%s", smtp_get_connection_info());
+
   if (!smtp_start_session())
     exim_exit(EXIT_SUCCESS);
   }
@@ -5937,7 +5943,7 @@ for (BOOL more = TRUE; more; )
         if (  recipients_max_expanded > 0 && ++rcount > recipients_max_expanded
 	   && !extract_recipients)
 	  {
-	  DEBUG(D_all) debug_printf("excess reipients (max %d)\n",
+	  DEBUG(all) debug_printf("excess reipients (max %d)\n",
 	    recipients_max_expanded);
 
           if (error_handling == ERRORS_STDERR)
@@ -5975,7 +5981,7 @@ for (BOOL more = TRUE; more; )
 
         if (!recipient)
 	  {
-	  DEBUG(D_all) debug_printf("bad recipient address %q: %s\n",
+	  DEBUG(all) debug_printf("bad recipient address %q: %s\n",
 	    string_printing(list[i]), errmess);
 
           if (error_handling == ERRORS_STDERR)
@@ -6005,7 +6011,7 @@ for (BOOL more = TRUE; more; )
 
     /* Show the recipients when debugging */
 
-    DEBUG(D_receive)
+    DEBUG(receive)
       {
       if (sender_address) debug_printf("Sender: %s\n", sender_address);
       if (recipients_list)
@@ -6092,7 +6098,7 @@ for (BOOL more = TRUE; more; )
 
     if (chdir("/"))   /* Get away from wherever the user is running this from */
       {
-      DEBUG(D_receive) debug_printf("chdir(\"/\") failed\n");
+      DEBUG(receive) debug_printf("chdir(\"/\") failed\n");
       exim_exit(EXIT_FAILURE);
       }
 

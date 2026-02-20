@@ -111,7 +111,7 @@ int saslauthd_verify_password(const uschar *userid,
     int s, r;
     struct sockaddr_un srvaddr;
 
-    DEBUG(D_auth)
+    DEBUG(auth)
        debug_printf("saslauthd userid='%s' servicename='%s'"
                     " realm='%s'\n", userid, service, realm );
 
@@ -129,7 +129,7 @@ int saslauthd_verify_password(const uschar *userid,
             sizeof(srvaddr.sun_path));
     r = connect(s, (struct sockaddr *)&srvaddr, sizeof(srvaddr));
     if (r == -1) {
-       DEBUG(D_auth)
+       DEBUG(auth)
             debug_printf("Cannot connect to saslauthd daemon (at '%s'): %s\n",
                          CYRUS_SASLAUTHD_SOCKET, strerror(errno));
        *reply = string_sprintf("cannot connect to saslauthd daemon at "
@@ -139,14 +139,14 @@ int saslauthd_verify_password(const uschar *userid,
     }
 
     if ( write_string(s, userid, Ustrlen(userid)) < 0) {
-        DEBUG(D_auth)
+        DEBUG(auth)
             debug_printf("Failed to send userid to saslauthd daemon \n");
         (void)close(s);
         return PWCHECK_FAIL;
     }
 
     if ( write_string(s, password, Ustrlen(password)) < 0) {
-        DEBUG(D_auth)
+        DEBUG(auth)
             debug_printf("Failed to send password to saslauthd daemon \n");
         (void)close(s);
         return PWCHECK_FAIL;
@@ -155,21 +155,21 @@ int saslauthd_verify_password(const uschar *userid,
     memset((void *)password, 0, Ustrlen(password));
 
     if ( write_string(s, service, Ustrlen(service)) < 0) {
-        DEBUG(D_auth)
+        DEBUG(auth)
             debug_printf("Failed to send service name to saslauthd daemon \n");
         (void)close(s);
         return PWCHECK_FAIL;
     }
 
     if ( write_string(s, realm, Ustrlen(realm)) < 0) {
-        DEBUG(D_auth)
+        DEBUG(auth)
             debug_printf("Failed to send realm to saslauthd daemon \n");
         (void)close(s);
         return PWCHECK_FAIL;
     }
 
     if ( read_string(s, &daemon_reply ) < 2) {
-        DEBUG(D_auth)
+        DEBUG(auth)
             debug_printf("Corrupted answer '%s' received. \n", daemon_reply);
         (void)close(s);
         return PWCHECK_FAIL;
@@ -177,7 +177,7 @@ int saslauthd_verify_password(const uschar *userid,
 
     (void)close(s);
 
-    DEBUG(D_auth)
+    DEBUG(auth)
         debug_printf("Answer '%s' received. \n", daemon_reply);
 
     *reply = daemon_reply;

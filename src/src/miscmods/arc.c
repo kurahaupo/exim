@@ -199,14 +199,14 @@ for (pas = &ctx->arcset_chain, prev = NULL, next = ctx->arcset_chain;
   if (as->instance > i) break;
   if (as->instance == i)
     {
-    DEBUG(D_acl) debug_printf("ARC: existing instance %u\n", i);
+    DEBUG(acl) debug_printf("ARC: existing instance %u\n", i);
     return as;
     }
   next = as->next;
   prev = as;
   }
 
-DEBUG(D_acl) debug_printf("ARC: new instance %u\n", i);
+DEBUG(acl) debug_printf("ARC: new instance %u\n", i);
 *pas = as = store_get(sizeof(arc_set), GET_UNTAINTED);
 memset(as, 0, sizeof(arc_set));
 as->next = next;
@@ -482,7 +482,7 @@ memset(al, 0, sizeof(arc_line));
 
 if ((e = arc_parse_line(al, h, off, l_ext)))
   {
-  DEBUG(D_acl) debug_printf("ARC: %s\n", e);
+  DEBUG(acl) debug_printf("ARC: %s\n", e);
   return string_sprintf("line parse: %s", e);
   }
 if (!(i = arc_instance_from_hdr(al)))	return US"instance find";
@@ -507,7 +507,7 @@ const uschar * e;
 /*debug_printf("consider hdr '%s'\n", h->text);*/
 if (strncmpic(ARC_HDR_AAR, h->text, ARC_HDRLEN_AAR) == 0)
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     int len = h->slen;
     uschar * s;
@@ -518,7 +518,7 @@ if (strncmpic(ARC_HDR_AAR, h->text, ARC_HDRLEN_AAR) == 0)
   if ((e = arc_insert_hdr(ctx, h, ARC_HDRLEN_AAR, offsetof(arc_set, hdr_aar),
 	      is_signing ? le_instance_only : le_instance_plus_ip, NULL)))
     {
-    DEBUG(D_acl) debug_printf("inserting AAR: %s\n", e);
+    DEBUG(acl) debug_printf("inserting AAR: %s\n", e);
     return string_sprintf("inserting AAR: %s", e);
     }
   }
@@ -526,7 +526,7 @@ else if (strncmpic(ARC_HDR_AMS, h->text, ARC_HDRLEN_AMS) == 0)
   {
   arc_line * ams;
 
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     int len = h->slen;
     uschar * s;
@@ -537,7 +537,7 @@ else if (strncmpic(ARC_HDR_AMS, h->text, ARC_HDRLEN_AMS) == 0)
   if ((e = arc_insert_hdr(ctx, h, ARC_HDRLEN_AMS, offsetof(arc_set, hdr_ams),
 	      is_signing ? le_instance_only : le_all, &ams)))
     {
-    DEBUG(D_acl) debug_printf("inserting AMS: %s\n", e);
+    DEBUG(acl) debug_printf("inserting AMS: %s\n", e);
     return string_sprintf("inserting AMS: %s", e);
     }
 
@@ -550,7 +550,7 @@ else if (strncmpic(ARC_HDR_AMS, h->text, ARC_HDRLEN_AMS) == 0)
   }
 else if (strncmpic(ARC_HDR_AS, h->text, ARC_HDRLEN_AS) == 0)
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     int len = h->slen;
     uschar * s;
@@ -561,7 +561,7 @@ else if (strncmpic(ARC_HDR_AS, h->text, ARC_HDRLEN_AS) == 0)
   if ((e = arc_insert_hdr(ctx, h, ARC_HDRLEN_AS, offsetof(arc_set, hdr_as),
 	    is_signing ? le_instance_only : le_all, NULL)))
     {
-    DEBUG(D_acl) debug_printf("inserting AS: %s\n", e);
+    DEBUG(acl) debug_printf("inserting AS: %s\n", e);
     return string_sprintf("inserting AS: %s", e);
     }
   }
@@ -585,7 +585,7 @@ header_line * h;
 hdr_rlist * r = NULL, * rprev = NULL;
 const uschar * e;
 
-DEBUG(D_acl) debug_printf("ARC: collecting arc sets\n");
+DEBUG(acl) debug_printf("ARC: collecting arc sets\n");
 for (h = header_list; h; h = h->next)
   {
   r = store_get(sizeof(hdr_rlist), GET_UNTAINTED);
@@ -667,7 +667,7 @@ int len;
 
 if (hm < 0 || !exim_sha_init(&hhash_ctx, hm))
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
       debug_printf("ARC: hash setup error, possibly nonhandled hashtype\n");
   return;
   }
@@ -677,7 +677,7 @@ walk the message headers in reverse order, adding to the hash any
 found for the first time. For that last point, maintain used-marks
 on the list of message headers. */
 
-DEBUG(D_acl) debug_printf("ARC: AMS header data for verification:\n");
+DEBUG(acl) debug_printf("ARC: AMS header data for verification:\n");
 
 for (r = headers_rlist; r; r = r->prev)
   r->used = FALSE;
@@ -689,7 +689,7 @@ while ((hn = string_nextinlist(&headernames, &sep, NULL, 0)))
       {
       if (relaxed) s = arc_relax_header_n(s, r->h->slen, TRUE);
 
-      DEBUG(D_acl) debug_printf("%Z\n", s);
+      DEBUG(acl) debug_printf("%Z\n", s);
       exim_sha_update_string(&hhash_ctx, s);
       r->used = TRUE;
       break;
@@ -700,11 +700,11 @@ while ((hn = string_nextinlist(&headernames, &sep, NULL, 0)))
 s = ams->rawsig_no_b_val.data, len = ams->rawsig_no_b_val.len;
 if (relaxed)
   len = Ustrlen(s = arc_relax_header_n(s, len, FALSE));
-DEBUG(D_acl) debug_printf("%.*Z\n", len, s);
+DEBUG(acl) debug_printf("%.*Z\n", len, s);
 exim_sha_update(&hhash_ctx, s, len);
 
 exim_sha_finish(&hhash_ctx, hhash);
-DEBUG(D_acl)
+DEBUG(acl)
   { debug_printf("ARC: header hash: %.*H\n", hhash->len, hhash->data); }
 return;
 }
@@ -742,7 +742,7 @@ if (hashes)
     if (Ustrncmp(ele, al->a_hash.data, al->a_hash.len) == 0) break;
   if (!ele)
     {
-    DEBUG(D_acl) debug_printf("pubkey h=%s vs sig a=%b\n", hashes, &al->a);
+    DEBUG(acl) debug_printf("pubkey h=%s vs sig a=%b\n", hashes, &al->a);
     *errstr = US"no usable sig for this pubkey hash list";
     return NULL;
     }
@@ -835,11 +835,11 @@ switch (rc)
   case OK:
     break;
   case FAIL:
-    DEBUG(D_acl)
+    DEBUG(acl)
       debug_printf("ARC i=%d %s verify %s\n", as->instance, why, errstr);
     break;
   case ERROR:
-    DEBUG(D_acl) debug_printf("ARC verify %s init: %s\n", why, errstr);
+    DEBUG(acl) debug_printf("ARC verify %s init: %s\n", why, errstr);
     break;
   }
 return rc;
@@ -890,13 +890,11 @@ if (!(b = arc_ams_setup_vfy_bodyhash(ams)))
   return US"fail";
   }
 
-DEBUG(D_acl)
-  {
+DEBUG(acl)
   debug_printf("ARC i=%d AMS   Body bytes hashed: %lu\n"
 	       "              Body %b computed: %.*H\n",
 	       as->instance, b->signed_body_bytes,
 	       &ams->a_hash, b->bh.len, b->bh.data);
-  }
 
 /* We know the bh-tag blob is of a nul-term string, so safe as a string */
 
@@ -905,7 +903,7 @@ if (  !ams->bh.data
    || memcmp(sighash.data, b->bh.data, b->bh.len) != 0
    )
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     {
     debug_printf("ARC i=%d AMS Body hash from headers: ", as->instance);
     debug_printf("%.*H\n", sighash.len, sighash.data);
@@ -914,7 +912,7 @@ if (  !ams->bh.data
   return as->ams_verify_done = arc_state_reason = US"AMS body hash miscompare";
   }
 
-DEBUG(D_acl) debug_printf("ARC i=%d AMS Body hash compared OK\n", as->instance);
+DEBUG(acl) debug_printf("ARC i=%d AMS Body hash compared OK\n", as->instance);
 
 /* We know the b-tag blob is of a nul-term string, so safe as a string */
 arc_decode_base64(ams->b.data, &sighash);
@@ -923,7 +921,7 @@ arc_get_verify_hhash(ctx, ams, &hhash_computed);
 
 if ((hm = arc_dkim_hashname_blob_to_method(&ams->a_hash)) < 0)
   {
-  DEBUG(D_acl) debug_printf("ARC i=%d AMS verify bad a_hash\n", as->instance);
+  DEBUG(acl) debug_printf("ARC i=%d AMS verify bad a_hash\n", as->instance);
   return as->ams_verify_done = arc_state_reason = US"AMS sig nonverify";
   }
 
@@ -932,7 +930,7 @@ if (rc != OK)
   return as->ams_verify_done = arc_state_reason =
     rc == FAIL ? US"AMS sig nonverify" : errstr;
 
-DEBUG(D_acl) debug_printf("ARC i=%d AMS verify pass\n", as->instance);
+DEBUG(acl) debug_printf("ARC i=%d AMS verify pass\n", as->instance);
 as->ams_verify_passed = TRUE;
 return NULL;
 }
@@ -966,7 +964,7 @@ for(inst = as->instance; as; as = as->prev, inst--)
   else
     goto good;
 
-  DEBUG(D_acl) debug_printf("ARC chain fail at %s\n", arc_state_reason);
+  DEBUG(acl) debug_printf("ARC chain fail at %s\n", arc_state_reason);
   return US"fail";
 
   good:
@@ -984,7 +982,7 @@ for(inst = as->instance; as; as = as->prev, inst--)
 if (inst != 0)
   {
   arc_state_reason = string_sprintf("(sequence; expected i=%d)", inst);
-  DEBUG(D_acl) debug_printf("ARC chain fail %s\n", arc_state_reason);
+  DEBUG(acl) debug_printf("ARC chain fail %s\n", arc_state_reason);
   return US"fail";
   }
 
@@ -1021,7 +1019,7 @@ blob sighash;
 const uschar * errstr;
 int rc;
 
-DEBUG(D_acl) debug_printf("ARC: AS vfy i=%d\n", as->instance);
+DEBUG(acl) debug_printf("ARC: AS vfy i=%d\n", as->instance);
 /*
        1.  If the value of the "cv" tag on that seal is "fail", the
            chain state is "fail" and the algorithm stops here.  (This
@@ -1051,7 +1049,7 @@ hm = arc_dkim_hashname_blob_to_method(&hdr_as->a_hash);
 
 if (hm < 0 || !exim_sha_init(&hhash_ctx, hm))
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
       debug_printf("ARC: hash setup error, possibly nonhandled hashtype\n");
   arc_state_reason = US"seal hash setup error";
   return US"fail";
@@ -1067,7 +1065,7 @@ if (hm < 0 || !exim_sha_init(&hhash_ctx, hm))
 Headers are CRLF-separated, but the last one is not crlf-terminated.
 */
 
-DEBUG(D_acl) debug_printf("ARC: AS header data for verification:\n");
+DEBUG(acl) debug_printf("ARC: AS header data for verification:\n");
 for (as2 = ctx->arcset_chain;
      as2 && as2->instance <= as->instance;
      as2 = as2->next)
@@ -1081,7 +1079,7 @@ for (as2 = ctx->arcset_chain;
     al->relaxed = s = arc_relax_header_n(al->complete->text,
 					    al->complete->slen, TRUE);
   len = Ustrlen(s);
-  DEBUG(D_acl) debug_printf("%Z\n", s);
+  DEBUG(acl) debug_printf("%Z\n", s);
   exim_sha_update(&hhash_ctx, s, len);
 
   al = as2->hdr_ams;
@@ -1089,7 +1087,7 @@ for (as2 = ctx->arcset_chain;
     al->relaxed = s = arc_relax_header_n(al->complete->text,
 					    al->complete->slen, TRUE);
   len = Ustrlen(s);
-  DEBUG(D_acl) debug_printf("%Z\n", s);
+  DEBUG(acl) debug_printf("%Z\n", s);
   exim_sha_update(&hhash_ctx, s, len);
 
   al = as2->hdr_as;
@@ -1100,7 +1098,7 @@ for (as2 = ctx->arcset_chain;
     al->relaxed = s = arc_relax_header_n(al->complete->text,
 					    al->complete->slen, TRUE);
   len = Ustrlen(s);
-  DEBUG(D_acl) debug_printf("%Z\n", s);
+  DEBUG(acl) debug_printf("%Z\n", s);
   exim_sha_update(&hhash_ctx, s, len);
   }
 
@@ -1109,7 +1107,7 @@ for (as2 = ctx->arcset_chain;
 */
 
 exim_sha_finish(&hhash_ctx, &hhash_computed);
-DEBUG(D_acl)
+DEBUG(acl)
   {
   debug_printf("ARC i=%d AS Header %b computed: ",
 		as->instance, &hdr_as->a_hash);
@@ -1142,7 +1140,7 @@ if (rc != OK)
   return US"fail";
   }
 
-DEBUG(D_acl) debug_printf("ARC: AS vfy i=%d pass\n", as->instance);
+DEBUG(acl) debug_printf("ARC: AS vfy i=%d pass\n", as->instance);
 return NULL;
 }
 
@@ -1157,7 +1155,7 @@ if (!as)
 
 for ( ; as; as = as->prev) if (arc_seal_verify(ctx, as)) return US"fail";
 
-DEBUG(D_acl) debug_printf("ARC: AS vfy overall pass\n");
+DEBUG(acl) debug_printf("ARC: AS vfy overall pass\n");
 return NULL;
 }
 /******************************************************************************/
@@ -1258,7 +1256,7 @@ out:
   if (!(arc_state = res))
     return DEFER;
 
-  DEBUG(D_acl) debug_printf_indent("ARC verify result %s %s%s%s\n", arc_state,
+  DEBUG(acl) debug_printf_indent("ARC verify result %s %s%s%s\n", arc_state,
     arc_state_reason ? "(":"", arc_state_reason, arc_state_reason ? ")":"");
 
   if (!condlist) condlist = US"none:pass";
@@ -1390,7 +1388,7 @@ else
   ctx->arcset_chain_last->next = as;
 ctx->arcset_chain_last = as;
 
-DEBUG(D_transport) debug_printf("ARC: AAR '%.*s'\n", h->slen - 2, h->text);
+DEBUG(transport) debug_printf("ARC: AAR '%.*s'\n", h->slen - 2, h->text);
 return g;
 }
 
@@ -1409,7 +1407,7 @@ const uschar * errstr;
 typedef const uschar * (*fn_t)
 			  (const blob *, hashmethod, const uschar *, blob *);
 
-DEBUG(D_transport)
+DEBUG(transport)
   {
   hctx hhash_ctx;
   debug_printf("ARC: %s header data for signing:\n", why);
@@ -1439,7 +1437,7 @@ errstr = (((fn_t *) arc_dkim_mod_info->functions)[DKIM_SIGN_DATA])
 if (errstr)
   {
   log_write(0, LOG_MAIN, "ARC: %s signing: %s\n", why, errstr);
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("private key, or private-key file content, was: '%s'\n",
       privkey);
   return FALSE;
@@ -1565,7 +1563,7 @@ h->text = g->s + ams_off;
 al->complete = h;
 ctx->arcset_chain_last->hdr_ams = al;
 
-DEBUG(D_transport) debug_printf("ARC: AMS '%.*s'\n", h->slen - 2, h->text);
+DEBUG(transport) debug_printf("ARC: AMS '%.*s'\n", h->slen - 2, h->text);
 return g;
 }
 
@@ -1624,7 +1622,7 @@ blob sig;
       - all ARC set headers, set-number order, aar then ams then as,
         including self (but with an empty b= in self)
 */
-DEBUG(D_transport) debug_printf("ARC: building AS for status '%s'\n", status);
+DEBUG(transport) debug_printf("ARC: building AS for status '%s'\n", status);
 
 /* Construct the AS except for the signature */
 
@@ -1678,14 +1676,14 @@ if (!arc_sig_from_pseudoheader(hdata, hashtype, privkey, &sig, US"AS"))
 /* Lose the trailing semicolon */
 gstring_trim(arcset, 1);
 arcset = arc_sign_append_sig(arcset, &sig);
-DEBUG(D_transport) debug_printf("ARC: AS  '%.*s'\n", arcset->ptr - 2, arcset->s);
+DEBUG(transport) debug_printf("ARC: AS  '%.*s'\n", arcset->ptr - 2, arcset->s);
 
 /* Finally, append the AMS and AAR to the new AS */
 
 return string_catn(arcset, arcset_interim->s, arcset_interim->ptr);
 
 badline:
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("ARC: while building AS, missing %s in chain\n", badline_str);
   return NULL;
 }
@@ -1699,7 +1697,7 @@ arc_ams_setup_sign_bodyhash(void)
 blob canon = {.data = US"relaxed", .len = 7};	/*XXX hardwired */
 blob hash =  {.data = US"sha256",  .len = 6};	/*XXX hardwired */
 
-DEBUG(D_transport) debug_printf("ARC: requesting bodyhash\n");
+DEBUG(transport) debug_printf("ARC: requesting bodyhash\n");
 
 return arc_set_bodyhash(TRUE, &canon, &hash, -1);
 }
@@ -1837,7 +1835,7 @@ if ((opts = string_nextinlist(&signspec, &sep, NULL, 0)))
       }
   }
 
-DEBUG(D_transport) debug_printf("ARC: sign for %s\n", identity);
+DEBUG(transport) debug_printf("ARC: sign for %s\n", identity);
 
 /* Make an rlist of any new DKIM headers, then add the "normals" rlist to it.
 Then scan the list for an A-R header. */
@@ -1871,7 +1869,7 @@ if (!(arc_sign_find_ar(headers, identity, &ar)))
 feed from the DKIM module.  Use that to give the instance number for the ARC set we are
 about to build. */
 
-DEBUG(D_transport)
+DEBUG(transport)
   if (arc_sign_ctx.arcset_chain_last)
     debug_printf("ARC: existing chain highest instance: %d\n",
       arc_sign_ctx.arcset_chain_last->instance);
@@ -1962,7 +1960,7 @@ uschar * errstr;
 
 if (strncmpic(ARC_HDR_AMS, g->s, ARC_HDRLEN_AMS) != 0) return US"not AMS";
 
-DEBUG(D_receive) debug_printf("ARC: spotted AMS header\n");
+DEBUG(receive) debug_printf("ARC: spotted AMS header\n");
 /* Parse the AMS header */
 
 memset(&al, 0, sizeof(arc_line));
@@ -1970,13 +1968,13 @@ h.next = NULL;
 h.slen = len_string_from_gstring(g, &h.text);
 if ((errstr = arc_parse_line(&al, &h, ARC_HDRLEN_AMS, le_all)))
   {
-  DEBUG(D_acl) debug_printf("ARC: %s\n", errstr);
+  DEBUG(acl) debug_printf("ARC: %s\n", errstr);
   goto badline;
   }
 
 if (!al.a_hash.data)
   {
-  DEBUG(D_acl) debug_printf("ARC: no a_hash from '%.*s'\n", h.slen, h.text);
+  DEBUG(acl) debug_printf("ARC: no a_hash from '%.*s'\n", h.slen, h.text);
   goto badline;
   }
 
@@ -2063,7 +2061,7 @@ authres_arc(gstring * g)
 if (arc_state)
   {
   int start = 0;		/* Compiler quietening */
-  DEBUG(D_acl) start = gstring_length(g);
+  DEBUG(acl) start = gstring_length(g);
 
   g = string_append(g, 2, US";\n\tarc=", arc_state);
   if (arc_received_instance > 0)
@@ -2081,11 +2079,11 @@ if (arc_state)
     }
   else if (arc_state_reason)
     g = string_append(g, 3, US" (", arc_state_reason, US")");
-  DEBUG(D_acl) debug_printf_indent("ARC:\tauthres '%.*s'\n",
+  DEBUG(acl) debug_printf_indent("ARC:\tauthres '%.*s'\n",
 		  gstring_length(g) - start - 3, g->s + start + 3);
   }
 else
-  DEBUG(D_acl) debug_printf_indent("ARC:\tno authres\n");
+  DEBUG(acl) debug_printf_indent("ARC:\tno authres\n");
 return g;
 }
 

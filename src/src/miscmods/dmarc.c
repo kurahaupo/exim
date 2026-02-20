@@ -163,7 +163,7 @@ there was a previous error.  */
 
 if (!header_from)
   {
-  DEBUG(D_receive) debug_printf_indent("DMARC: no From: header\n");
+  DEBUG(receive) debug_printf_indent("DMARC: no From: header\n");
   dmarc_abort = TRUE;
   }
 else if (!dmarc_abort)
@@ -217,7 +217,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 
   if (sr == SPF_RESULT_INVALID)
     {
-    DEBUG(D_receive) debug_printf_indent("DMARC: spf result 'invalid'\n");
+    DEBUG(receive) debug_printf_indent("DMARC: spf result 'invalid'\n");
 
     dmarc_spf_result = DMARC_POLICY_SPF_OUTCOME_NONE;
     dmarc_spf_ares_result = ARES_RESULT_UNKNOWN;
@@ -241,7 +241,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 			    sr == SPF_RESULT_PERMERROR ? ARES_RESULT_PERMERROR :
 			    ARES_RESULT_UNKNOWN;
     origin = DMARC_POLICY_SPF_ORIGIN_MAILFROM;
-    DEBUG(D_receive) debug_printf_indent("DMARC using SPF sender domain = %s\n",
+    DEBUG(receive) debug_printf_indent("DMARC using SPF sender domain = %s\n",
 					spf_sender_domain);
     }
   if (!*spf_sender_domain)
@@ -278,7 +278,7 @@ The EDITME provides a DMARC_API variable */
                                                sig->selector,
 #endif
                                                dkim_result, US"");
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf_indent("DMARC adding DKIM sender domain = %s\n", sig->domain);
     if (libdm_status != DMARC_PARSE_OKAY)
       log_write(0, LOG_MAIN|LOG_PANIC,
@@ -317,22 +317,22 @@ The EDITME provides a DMARC_API variable */
     {
     case DMARC_DNS_ERROR_NXDOMAIN:
     case DMARC_DNS_ERROR_NO_RECORD:
-      DEBUG(D_receive)
+      DEBUG(receive)
 	debug_printf_indent("DMARC no record found for %s\n", dmarc_header_from_sender);
       has_dmarc_record = FALSE;
       break;
     case DMARC_PARSE_OKAY:
-      DEBUG(D_receive)
+      DEBUG(receive)
 	debug_printf_indent("DMARC record found for %s\n", dmarc_header_from_sender);
       break;
     case DMARC_PARSE_ERROR_BAD_VALUE:
-      DEBUG(D_receive)
+      DEBUG(receive)
 	debug_printf_indent("DMARC record parse error for %s\n", dmarc_header_from_sender);
       has_dmarc_record = FALSE;
       break;
     default:
       /* everything else, skip dmarc */
-      DEBUG(D_receive)
+      DEBUG(receive)
 	debug_printf_indent("DMARC skipping (%s), unsure what to do with %s",
 		      opendmarc_policy_status_to_str(libdm_status),
 		      header_from);
@@ -421,7 +421,7 @@ The EDITME provides a DMARC_API variable */
     dmarc_alignment_dkim =
       dmarc_dkim_alignment == DMARC_POLICY_DKIM_ALIGNMENT_PASS;
 
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf_indent("DMARC results: spf_domain=%s dmarc_domain=%s "
 			   "spf_align=%s dkim_align=%s enforcement='%s'",
 			   spf_sender_domain, dmarc_used_domain,

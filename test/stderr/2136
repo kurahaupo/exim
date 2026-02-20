@@ -78,7 +78,7 @@ LOG: smtp_connection MAIN
 p1236 child p1239 ended: status=0x0
 p1236   normal exit, 0
 p1236 1 SMTP accept process now running
-p1244 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1244 D=0x20080000
+p1244 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1244 -d=0x40080000e
 p1244 Hints DB:
 p1244 macros_trusted overridden to true by whitelisting
 p1244 configuration file is TESTSUITE/test-config
@@ -127,7 +127,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1244 (daemon-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-p1248 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1248 D=0x20080000
+p1248 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1248 -d=0x40080000e
 p1248 Hints DB:
 p1248 macros_trusted overridden to true by whitelisting
 p1248 configuration file is TESTSUITE/test-config
@@ -230,7 +230,7 @@ LOG: smtp_connection MAIN
 p1237 child p1251 ended: status=0x0
 p1237   normal exit, 0
 p1237 1 SMTP accept process now running
-p1256 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1256 D=0x20080000
+p1256 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1256 -d=0x40080000e
 p1256 Hints DB:
 p1256 macros_trusted overridden to true by whitelisting
 p1256 configuration file is TESTSUITE/test-config
@@ -279,7 +279,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1256 (daemon-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-p1260 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1260 D=0x20080000
+p1260 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1260 -d=0x40080000e
 p1260 Hints DB:
 p1260 macros_trusted overridden to true by whitelisting
 p1260 configuration file is TESTSUITE/test-config

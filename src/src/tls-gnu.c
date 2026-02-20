@@ -461,7 +461,7 @@ return FALSE;
 static int
 tls_g_init(uschar ** errstr)
 {
-DEBUG(D_tls) debug_printf("GnuTLS global init required\n");
+DEBUG(tls) debug_printf("GnuTLS global init required\n");
 
 #if defined(HAVE_GNUTLS_PKCS11) && !defined(GNUTLS_AUTO_PKCS11_MANUAL)
 /* By default, gnutls_global_init will init PKCS11 support in auto mode,
@@ -487,7 +487,7 @@ if (!gnutls_allow_auto_pkcs11)
 #endif
 
 #if EXIM_GNUTLS_LIBRARY_LOG_LEVEL >= 0
-DEBUG(D_tls)
+DEBUG(tls)
   {
   gnutls_global_set_log_function(exim_gnutls_logger_cb);
   /* arbitrarily chosen level; bump up to 9 for more */
@@ -569,11 +569,11 @@ uschar * errstr;
 if (errno == 0)
   if (rc == GNUTLS_E_INVALID_SESSION)
     {
-    DEBUG(D_tls) debug_printf("- INVALID_SESSION with zero errno\n");
+    DEBUG(tls) debug_printf("- INVALID_SESSION with zero errno\n");
     return;
     }
   else if (text)
-    DEBUG(D_tls) debug_printf("- zero errno; %s\n", text);
+    DEBUG(tls) debug_printf("- zero errno; %s\n", text);
 
 msg = rc == GNUTLS_E_FATAL_ALERT_RECEIVED
   ? string_sprintf("A TLS fatal alert has been received: %s",
@@ -600,7 +600,7 @@ else if (  !tls_out.smtp_quit
 	)
   log_write(0, LOG_MAIN, "H=%s [%s] TLS error on connection %s",
     state->host->name, state->host->address, errstr);
-else DEBUG(D_tls)
+else DEBUG(tls)
   debug_printf("H=%s [%s] TLS error on connection %s\n",
     state->host->name, state->host->address, errstr);
 }
@@ -613,7 +613,7 @@ tls_refill(unsigned lim)
 exim_gnutls_state_st * state = &state_server;
 ssize_t inbytes;
 
-DEBUG(D_tls) debug_printf("Calling gnutls_record_recv"
+DEBUG(tls) debug_printf("Calling gnutls_record_recv"
   "(session=%p, buffer=%p, buffersize=%u)\n",
   state->session, state->xfer_buffer, ssl_xfer_buffer_size);
 
@@ -643,14 +643,14 @@ down. Revert to non-TLS handling. */
 
 if (sigalrm_seen)
   {
-  DEBUG(D_tls) debug_printf("Got tls read timeout\n");
+  DEBUG(tls) debug_printf("Got tls read timeout\n");
   state->xfer_error = TRUE;
   return FALSE;
   }
 
 else if (inbytes == 0)
   {
-  DEBUG(D_tls) debug_printf("Got TLS_EOF\n");
+  DEBUG(tls) debug_printf("Got TLS_EOF\n");
   tls_close(NULL, TLS_NO_SHUTDOWN);
   return FALSE;
   }
@@ -659,7 +659,7 @@ else if (inbytes == 0)
 
 else if (inbytes < 0)
   {
-  DEBUG(D_tls) debug_printf("%s: err from gnutls_record_recv\n", __FUNCTION__);
+  DEBUG(tls) debug_printf("%s: err from gnutls_record_recv\n", __FUNCTION__);
   record_io_error(state, (int) inbytes, US"recv", NULL);
   state->xfer_error = TRUE;
   return FALSE;
@@ -682,7 +682,7 @@ return TRUE;
     { \
     if (rc != GNUTLS_E_SUCCESS) \
       { \
-      DEBUG(D_tls) debug_printf("TLS: cert problem: %s: %s\n", \
+      DEBUG(tls) debug_printf("TLS: cert problem: %s: %s\n", \
 	(Label), gnutls_strerror(rc)); \
       return rc; \
       } \
@@ -736,7 +736,7 @@ tls_support * tlsp = state->tlsp;
 tlsp->active.sock = state->fd_out;
 tlsp->active.tls_ctx = state;
 
-DEBUG(D_tls) debug_printf("cipher: %s\n", state->ciphersuite);
+DEBUG(tls) debug_printf("cipher: %s\n", state->ciphersuite);
 
 tlsp->certificate_verified = state->peer_cert_verified;
 #ifdef SUPPORT_DANE
@@ -775,7 +775,7 @@ tlsp->channelbinding = NULL;
     rc = gnutls_session_channel_binding(state->session, GNUTLS_CB_TLS_UNIQUE, &channel);
 
   if (rc)
-    { DEBUG(D_tls) debug_printf("extracting channel binding: %s\n", gnutls_strerror(rc)); }
+    { DEBUG(tls) debug_printf("extracting channel binding: %s\n", gnutls_strerror(rc)); }
   else
     {
     int old_pool = store_pool;
@@ -786,7 +786,7 @@ tlsp->channelbinding = NULL;
     tlsp->channelbinding = b64encode_taint(CUS channel.data, (int)channel.size,
 		!tlsp->channelbind_exporter && state->host ? GET_TAINTED : GET_UNTAINTED);
     store_pool = old_pool;
-    DEBUG(D_tls) debug_printf("Have channel bindings cached for possible auth usage\n");
+    DEBUG(tls) debug_printf("Have channel bindings cached for possible auth usage\n");
     }
   }
 #endif
@@ -839,7 +839,7 @@ size_t sz;
 uschar * exp_tls_dhparam;
 BOOL use_file_in_spool = FALSE;
 
-DEBUG(D_tls) debug_printf("Initialising GnuTLS server params\n");
+DEBUG(tls) debug_printf("Initialising GnuTLS server params\n");
 
 if ((rc = gnutls_dh_params_init(&dh_server_params)))
   return tls_error_gnu(NULL, US"gnutls_dh_params_init", rc, errstr);
@@ -852,7 +852,7 @@ if (!expand_check(tls_dhparam, US"tls_dhparam", &exp_tls_dhparam, errstr))
 
 if (!exp_tls_dhparam)
   {
-  DEBUG(D_tls) debug_printf("Loading default hard-coded DH params\n");
+  DEBUG(tls) debug_printf("Loading default hard-coded DH params\n");
   m.data = US std_dh_prime_default();
   m.size = Ustrlen(m.data);
   }
@@ -860,7 +860,7 @@ else if (Ustrcmp(exp_tls_dhparam, "historic") == 0)
   use_file_in_spool = TRUE;
 else if (Ustrcmp(exp_tls_dhparam, "none") == 0)
   {
-  DEBUG(D_tls) debug_printf("Requested no DH parameters\n");
+  DEBUG(tls) debug_printf("Requested no DH parameters\n");
   return FAIL;
   }
 else if (exp_tls_dhparam[0] != '/')
@@ -876,7 +876,7 @@ if (m.data)
   {
   if ((rc = gnutls_dh_params_import_pkcs3(dh_server_params, &m, GNUTLS_X509_FMT_PEM)))
     return tls_error_gnu(NULL, US"gnutls_dh_params_import_pkcs3", rc, errstr);
-  DEBUG(D_tls) debug_printf("Loaded fixed standard D-H parameters\n");
+  DEBUG(tls) debug_printf("Loaded fixed standard D-H parameters\n");
   return OK;
   }
 
@@ -886,12 +886,12 @@ different filename and ensure we have sufficient bits. */
 
 if (!(dh_bits = gnutls_sec_param_to_pk_bits(GNUTLS_PK_DH, GNUTLS_SEC_PARAM_NORMAL)))
   return tls_error(US"gnutls_sec_param_to_pk_bits() failed", NULL, NULL, errstr);
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("GnuTLS tells us that for D-H PK, NORMAL is %d bits\n",
       dh_bits);
 #else
 dh_bits = EXIM_SERVER_DH_BITS_PRE2_12;
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("GnuTLS lacks gnutls_sec_param_to_pk_bits(), using %d bits\n",
       dh_bits);
 #endif
@@ -899,7 +899,7 @@ DEBUG(D_tls)
 /* Some clients have hard-coded limits. */
 if (dh_bits > tls_dh_max_bits)
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("tls_dh_max_bits clamping override, using %d bits instead\n",
         tls_dh_max_bits);
   dh_bits = tls_dh_max_bits;
@@ -960,7 +960,7 @@ if ((fd = Uopen(filename, O_RDONLY, 0)) >= 0)
   store_free(m.data);
   if (rc)
     return tls_error_gnu(NULL, US"gnutls_dh_params_import_pkcs3", rc, errstr);
-  DEBUG(D_tls) debug_printf("read D-H parameters from file %q\n", filename);
+  DEBUG(tls) debug_printf("read D-H parameters from file %q\n", filename);
   }
 
 /* If the file does not exist, fall through to compute new data and cache it.
@@ -969,7 +969,7 @@ If there was any other opening error, it is serious. */
 else if (errno == ENOENT)
   {
   rc = -1;
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("D-H parameter cache file %q does not exist\n", filename);
   }
 else
@@ -1007,12 +1007,12 @@ if (rc < 0)
   if (dh_bits >= EXIM_CLIENT_DH_MIN_BITS + 10)
     {
     dh_bits_gen = dh_bits - 10;
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("being paranoid about DH generation, make it '%d' bits'\n",
           dh_bits_gen);
     }
 
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("requesting generation of %d bit Diffie-Hellman prime ...\n",
         dh_bits_gen);
   if ((rc = gnutls_dh_params_generate2(dh_server_params, dh_bits_gen)))
@@ -1060,10 +1060,10 @@ if (rc < 0)
     return tls_error_sys(string_sprintf("failed to rename %q as %q",
           temp_fn, filename), errno, NULL, errstr);
 
-  DEBUG(D_tls) debug_printf("wrote D-H parameters to file %q\n", filename);
+  DEBUG(tls) debug_printf("wrote D-H parameters to file %q\n", filename);
   }
 
-DEBUG(D_tls) debug_printf("initialized server D-H parameters\n");
+DEBUG(tls) debug_printf("initialized server D-H parameters\n");
 return OK;
 }
 
@@ -1087,7 +1087,7 @@ rc = GNUTLS_E_NO_CERTIFICATE_FOUND;
 if (TRUE) goto err;
 #endif
 
-DEBUG(D_tls) debug_printf("TLS: generating selfsigned server cert\n");
+DEBUG(tls) debug_printf("TLS: generating selfsigned server cert\n");
 where = US"initialising pkey";
 if ((rc = gnutls_x509_privkey_init(&pkey))) goto err;
 
@@ -1180,11 +1180,11 @@ server_ocsp_stapling_cb(gnutls_session_t session, void * ptr,
   gnutls_datum_t * ocsp_response)
 {
 int ret;
-DEBUG(D_tls) debug_printf("OCSP stapling callback: %s\n", US ptr);
+DEBUG(tls) debug_printf("OCSP stapling callback: %s\n", US ptr);
 
 if ((ret = gnutls_load_file(ptr, ocsp_response)) < 0)
   {
-  DEBUG(D_tls) debug_printf("Failed to load ocsp stapling file %s\n",
+  DEBUG(tls) debug_printf("Failed to load ocsp stapling file %s\n",
 			      CS ptr);
   tls_in.ocsp = OCSP_NOT_RESP;
   return GNUTLS_E_NO_CERTIFICATE_STATUS;
@@ -1207,7 +1207,7 @@ https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-valu
 switch (tls_id)
   {
   case 5:	/* Status Request */
-    DEBUG(D_tls) debug_printf("Seen status_request extension from client\n");
+    DEBUG(tls) debug_printf("Seen status_request extension from client\n");
     tls_in.ocsp = OCSP_NOT_RESP;
     break;
 #ifdef EXIM_HAVE_ALPN
@@ -1221,18 +1221,18 @@ switch (tls_id)
     {
     gstring * g = NULL;
 
-    DEBUG(D_tls) debug_printf("Seen ALPN extension from client (s=%u):", size);
+    DEBUG(tls) debug_printf("Seen ALPN extension from client (s=%u):", size);
     for (const uschar * s = data+2; s-data < size-1; s += *s + 1)
       {
       server_seen_alpn++;
       g = string_append_listele_n(g, ':', s+1, *s);
-      DEBUG(D_tls) debug_printf(" '%.*s'", (int)*s, s+1);
+      DEBUG(tls) debug_printf(" '%.*s'", (int)*s, s+1);
       }
-    DEBUG(D_tls) debug_printf("\n");
+    DEBUG(tls) debug_printf("\n");
     if (server_seen_alpn > 1)
       {
       log_write(0, LOG_MAIN, "TLS ALPN (%Y) rejected", g);
-      DEBUG(D_tls) debug_printf("TLS: too many ALPNs presented in handshake\n");
+      DEBUG(tls) debug_printf("TLS: too many ALPNs presented in handshake\n");
       return GNUTLS_E_NO_APPLICATION_PROTOCOL;
       }
     break;
@@ -1264,7 +1264,7 @@ tls_server_servercerts_ext(void * ctx, unsigned tls_id,
 /* https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml */
 if (FALSE && tls_id == 5)	/* status_request */
   {
-  DEBUG(D_tls) debug_printf("Seen status_request extension\n");
+  DEBUG(tls) debug_printf("Seen status_request extension\n");
   tls_in.ocsp = exim_testharness_disable_ocsp_validity_check
     ? OCSP_VFY_NOT_TRIED : OCSP_VFIED;	/* We know that GnuTLS verifies responses */
   }
@@ -1300,7 +1300,7 @@ static int
 tls_server_certstatus_cb(gnutls_session_t session, unsigned int htype,
   unsigned when, unsigned int incoming, const gnutls_datum_t * msg)
 {
-DEBUG(D_tls) debug_printf("Sending certificate-status\n");		/*XXX we get this for tls1.2 but not for 1.3 */
+DEBUG(tls) debug_printf("Sending certificate-status\n");		/*XXX we get this for tls1.2 but not for 1.3 */
 # ifdef SUPPORT_SRV_OCSP_STACK
 tls_in.ocsp = exim_testharness_disable_ocsp_validity_check
   ? OCSP_VFY_NOT_TRIED : OCSP_VFIED;	/* We know that GnuTLS verifies responses */
@@ -1346,7 +1346,7 @@ extern char ** environ;
 if (environ) for (uschar ** p = USS environ; *p; p++)
   if (Ustrncmp(*p, "EXIM_TESTHARNESS_DISABLE_OCSPVALIDITYCHECK", 42) == 0)
     {
-    DEBUG(D_tls) debug_printf("Permitting known bad OCSP response\n");
+    DEBUG(tls) debug_printf("Permitting known bad OCSP response\n");
     exim_testharness_disable_ocsp_validity_check = TRUE;
     }
 }
@@ -1374,7 +1374,7 @@ if (server && tls_ocsp_file)
   }
 # endif
 #endif
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("TLS: basic cred init, %s\n", server ? "server" : "client");
 }
 
@@ -1408,7 +1408,7 @@ while (cfile = string_nextinlist(&clist, &csep, NULL, 0))
   else
     {
     int gnutls_cert_index = -rc;
-    DEBUG(D_tls) debug_printf("TLS: cert/key %d %s registered\n",
+    DEBUG(tls) debug_printf("TLS: cert/key %d %s registered\n",
 			      gnutls_cert_index, cfile);
 
 #ifndef DISABLE_OCSP
@@ -1418,12 +1418,12 @@ while (cfile = string_nextinlist(&clist, &csep, NULL, 0))
       /* Set the OCSP stapling server info */
       if (gnutls_buggy_ocsp)
 	{
-	DEBUG(D_tls)
+	DEBUG(tls)
 	  debug_printf("GnuTLS library is buggy for OCSP; avoiding\n");
 	}
       else if ((ofile = string_nextinlist(&olist, &osep, NULL, 0)))
 	{
-	DEBUG(D_tls) debug_printf("OCSP response file %d  = %s\n",
+	DEBUG(tls) debug_printf("OCSP response file %d  = %s\n",
 				  gnutls_cert_index, ofile);
 # ifdef SUPPORT_GNUTLS_EXT_RAW_PARSE
 	if (Ustrncmp(ofile, US"PEM ", 4) == 0)
@@ -1443,7 +1443,7 @@ while (cfile = string_nextinlist(&clist, &csep, NULL, 0))
 	  return tls_error_gnu(state,
 		  US"gnutls_certificate_set_ocsp_status_request_file2",
 		  rc, errstr);
-	DEBUG(D_tls)
+	DEBUG(tls)
 	  debug_printf(" %d response%s loaded\n", rc, rc>1 ? "s":"");
 
 	/* Arrange callbacks for OCSP request observability */
@@ -1468,7 +1468,7 @@ while (cfile = string_nextinlist(&clist, &csep, NULL, 0))
 	  {
 	  if (ocsp_file_cnt++ > 0)
 	    {
-	    DEBUG(D_tls)
+	    DEBUG(tls)
 	      debug_printf("oops; multiple OCSP files not supported\n");
 	    break;
 	    }
@@ -1478,7 +1478,7 @@ while (cfile = string_nextinlist(&clist, &csep, NULL, 0))
 # endif	/* SUPPORT_GNUTLS_EXT_RAW_PARSE */
 	}
       else
-	DEBUG(D_tls) debug_printf("ran out of OCSP response files in list\n");
+	DEBUG(tls) debug_printf("ran out of OCSP response files in list\n");
       }
 #endif /* DISABLE_OCSP */
     }
@@ -1491,7 +1491,7 @@ creds_load_client_certs(exim_gnutls_state_st * state, const host_item * host,
 {
 int rc = tls_add_certfile(state, host, cert, pkey, errstr);
 if (rc > 0) return rc;
-DEBUG(D_tls) debug_printf("TLS: cert/key registered\n");
+DEBUG(tls) debug_printf("TLS: cert/key registered\n");
 return OK;
 }
 
@@ -1529,12 +1529,12 @@ else
     }
 #endif
 
-  DEBUG(D_tls) debug_printf("verify certificates = %s size=" OFF_T_FMT "\n",
+  DEBUG(tls) debug_printf("verify certificates = %s size=" OFF_T_FMT "\n",
 	  bundle, statbuf.st_size);
 
   if (statbuf.st_size == 0)
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("cert file empty, no certs, no verification, ignoring any CRL\n");
     return OK;
     }
@@ -1565,7 +1565,7 @@ else
 
 if (cert_count < 0)
   return tls_error_gnu(state, US"setting certificate trust", cert_count, errstr);
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("Added %d certificate authorities\n", cert_count);
 
 return OK;
@@ -1576,13 +1576,13 @@ static int
 creds_load_crl(exim_gnutls_state_st * state, const uschar * crl, uschar ** errstr)
 {
 int cert_count;
-DEBUG(D_tls) debug_printf("loading CRL file = %s\n", crl);
+DEBUG(tls) debug_printf("loading CRL file = %s\n", crl);
 if ((cert_count = gnutls_certificate_set_x509_crl_file(state->lib_state.x509_cred,
     CS crl, GNUTLS_X509_FMT_PEM)) < 0)
   return tls_error_gnu(state, US"gnutls_certificate_set_x509_crl_file",
 	    cert_count, errstr);
 
-DEBUG(D_tls) debug_printf("Processed %d CRLs\n", cert_count);
+DEBUG(tls) debug_printf("Processed %d CRLs\n", cert_count);
 return OK;
 }
 
@@ -1594,7 +1594,7 @@ creds_load_pristring(exim_gnutls_state_st * state, const uschar * p,
 if (!p)
   {
   p = exim_default_gnutls_priority;
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("GnuTLS using default session cipher/priority %q\n", p);
   }
 return gnutls_priority_init( (gnutls_priority_t *) &state->lib_state.pri_cache,
@@ -1637,7 +1637,7 @@ if (  opt_set_and_noexpand(tls_certificate)
 # endif
      && tls_set_watch(tls_privatekey, TRUE))
     {
-    DEBUG(D_tls) debug_printf("TLS: preloading server certs\n");
+    DEBUG(tls) debug_printf("TLS: preloading server certs\n");
     if (creds_load_server_certs(&state_server, tls_certificate,
 	  tls_privatekey && *tls_privatekey ? tls_privatekey : tls_certificate,
 # ifdef DISABLE_OCSP
@@ -1662,7 +1662,7 @@ else if (  !tls_certificate && !tls_privatekey
     }
   }
 else
-  DEBUG(D_tls) debug_printf("TLS: not preloading server certs\n");
+  DEBUG(tls) debug_printf("TLS: not preloading server certs\n");
 
 /* If tls_verify_certificates is non-empty and has no $, load CAs.
 If none was configured and we can't handle "system", treat as empty. */
@@ -1675,7 +1675,7 @@ if (  opt_set_and_noexpand(tls_verify_certificates)
   {
   if (tls_set_watch(tls_verify_certificates, FALSE))
     {
-    DEBUG(D_tls) debug_printf("TLS: preloading CA bundle for server\n");
+    DEBUG(tls) debug_printf("TLS: preloading CA bundle for server\n");
     if (creds_load_cabundle(&state_server, tls_verify_certificates,
 			    NULL, &dummy_errstr) != OK)
       return lifetime;
@@ -1687,18 +1687,18 @@ if (  opt_set_and_noexpand(tls_verify_certificates)
       {
       if (tls_set_watch(tls_crl, FALSE))
 	{
-	DEBUG(D_tls) debug_printf("TLS: preloading CRL for server\n");
+	DEBUG(tls) debug_printf("TLS: preloading CRL for server\n");
 	if (creds_load_crl(&state_server, tls_crl, &dummy_errstr) != OK)
 	  return lifetime;
 	state_server.lib_state.crl = TRUE;
 	}
       }
     else
-      DEBUG(D_tls) debug_printf("TLS: not preloading CRL for server\n");
+      DEBUG(tls) debug_printf("TLS: not preloading CRL for server\n");
     }
   }
 else
-  DEBUG(D_tls) debug_printf("TLS: not preloading CA bundle for server\n");
+  DEBUG(tls) debug_printf("TLS: not preloading CA bundle for server\n");
 #endif	/* EXIM_HAVE_INOTIFY */
 
 /* If tls_require_ciphers is non-empty and has no $, load the
@@ -1708,14 +1708,14 @@ ciphers priority cache.  If unset, load with the default.
 if (!tls_require_ciphers || opt_set_and_noexpand(tls_require_ciphers))
   {
   const char * dummy_errpos;
-  DEBUG(D_tls) debug_printf("TLS: preloading cipher list for server: %s\n",
+  DEBUG(tls) debug_printf("TLS: preloading cipher list for server: %s\n",
 		  tls_require_ciphers);
   if (  creds_load_pristring(&state_server, tls_require_ciphers, &dummy_errpos)
      == OK)
     state_server.lib_state.pri_string = TRUE;
   }
 else
-  DEBUG(D_tls) debug_printf("TLS: not preloading cipher list for server\n");
+  DEBUG(tls) debug_printf("TLS: not preloading cipher list for server\n");
 return lifetime;
 }
 
@@ -1762,7 +1762,7 @@ if (  opt_set_and_noexpand(ob->tls_certificate)
     {
     const uschar * pkey = ob->tls_privatekey;
 
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("TLS: preloading client certs for transport '%s'\n", trname);
 
     /* The state->lib_state.x509_cred is used for the certs load, and is the sole
@@ -1776,7 +1776,7 @@ if (  opt_set_and_noexpand(ob->tls_certificate)
     }
   }
 else
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: not preloading client certs, for transport '%s'\n", trname);
 
 /* If tls_verify_certificates is non-empty and has no $, load CAs.
@@ -1790,7 +1790,7 @@ if (  opt_set_and_noexpand(ob->tls_verify_certificates)
   {
   if (!watch || tls_set_watch(ob->tls_verify_certificates, FALSE))
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("TLS: preloading CA bundle for transport '%s'\n", trname);
     if (creds_load_cabundle(&tpt_dummy_state, ob->tls_verify_certificates,
 			    dummy_host, &dummy_errstr) != OK)
@@ -1801,18 +1801,18 @@ if (  opt_set_and_noexpand(ob->tls_verify_certificates)
       {
       if (!watch || tls_set_watch(ob->tls_crl, FALSE))
 	{
-	DEBUG(D_tls) debug_printf("TLS: preloading CRL for transport '%s'\n", trname);
+	DEBUG(tls) debug_printf("TLS: preloading CRL for transport '%s'\n", trname);
 	if (creds_load_crl(&tpt_dummy_state, ob->tls_crl, &dummy_errstr) != OK)
 	  return;
 	ob->tls_preload.crl = TRUE;
 	}
       }
     else
-      DEBUG(D_tls) debug_printf("TLS: not preloading CRL, for transport '%s'\n", trname);
+      DEBUG(tls) debug_printf("TLS: not preloading CRL, for transport '%s'\n", trname);
     }
   }
 else
-  DEBUG(D_tls)
+  DEBUG(tls)
       debug_printf("TLS: not preloading CA bundle, for transport '%s'\n", trname);
 
 /* We do not preload tls_require_ciphers to to the transport as it implicitly
@@ -1889,7 +1889,7 @@ if (!host)	/* server */
 	  || Ustrstr(state->tls_certificate, US"tls_out_sni")
        )  )
       {
-      DEBUG(D_tls) debug_printf("We will re-expand TLS session files if we receive SNI\n");
+      DEBUG(tls) debug_printf("We will re-expand TLS session files if we receive SNI\n");
       state->trigger_sni_changes = TRUE;
       }
     }
@@ -1937,7 +1937,7 @@ if (!state->lib_state.conn_certs)
     if (!host)
       return tls_install_selfsign(state, errstr);
     else
-      DEBUG(D_tls) debug_printf("TLS: no client certificate specified; okay\n");
+      DEBUG(tls) debug_printf("TLS: no client certificate specified; okay\n");
 
   if (  state->tls_privatekey && !Expand_check_tlsvar(tls_privatekey, errstr)
      || f.expand_string_forcedfail
@@ -1959,7 +1959,7 @@ if (!state->lib_state.conn_certs)
   if (state->exp_tls_certificate && *state->exp_tls_certificate)
     {
     BOOL load = TRUE;
-    DEBUG(D_tls) debug_printf("certificate file = %s\nkey file = %s\n",
+    DEBUG(tls) debug_printf("certificate file = %s\nkey file = %s\n",
 	state->exp_tls_certificate, state->exp_tls_privatekey);
 
     if (state->received_sni)
@@ -1967,12 +1967,12 @@ if (!state->lib_state.conn_certs)
 	 && Ustrcmp(state->exp_tls_privatekey,  saved_tls_privatekey)  == 0
 	 )
 	{
-	DEBUG(D_tls) debug_printf("TLS SNI: cert and key unchanged\n");
+	DEBUG(tls) debug_printf("TLS SNI: cert and key unchanged\n");
 	load = FALSE;	/* avoid re-loading the same certs */
 	}
       else		/* unload the pre-SNI certs before loading new ones */
 	{
-	DEBUG(D_tls) debug_printf("TLS SNI: have a changed cert/key pair\n");
+	DEBUG(tls) debug_printf("TLS SNI: have a changed cert/key pair\n");
 	gnutls_certificate_free_keys(state->lib_state.x509_cred);
 	}
 
@@ -1990,14 +1990,14 @@ if (!state->lib_state.conn_certs)
 			      errstr)
        )  )
       {
-      DEBUG(D_tls) debug_printf("load-cert: '%s'\n", *errstr);
+      DEBUG(tls) debug_printf("load-cert: '%s'\n", *errstr);
       return rc;
       }
     }
   }
 else
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("%s certs were preloaded\n", host ? "client" : "server");
 
   if (!state->tls_privatekey) state->tls_privatekey = state->tls_certificate;
@@ -2036,7 +2036,7 @@ if (!state->lib_state.cabundle)
     if (!(state->exp_tls_verify_certificates &&
 	  *state->exp_tls_verify_certificates))
       {
-      DEBUG(D_tls)
+      DEBUG(tls)
 	debug_printf("TLS: tls_verify_certificates expanded empty, ignoring\n");
       /* With no tls_verify_certificates, we ignore tls_crl too */
       return OK;
@@ -2044,7 +2044,7 @@ if (!state->lib_state.cabundle)
     }
   else
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("TLS: tls_verify_certificates not set or empty, ignoring\n");
     return OK;
     }
@@ -2053,7 +2053,7 @@ if (!state->lib_state.cabundle)
   }
 else
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("%s CA bundle was preloaded\n", host ? "client" : "server");
   state->exp_tls_verify_certificates = US state->tls_verify_certificates;
 
@@ -2074,7 +2074,7 @@ if (!state->lib_state.crl)
   }
 else
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
       debug_printf("%s CRL was preloaded\n", host ? "client" : "server");
   state->exp_tls_crl = US state->tls_crl;
   }
@@ -2177,7 +2177,7 @@ if (host)
   memcpy(state, &exim_gnutls_state_init, sizeof(exim_gnutls_state_init));
   state->lib_state = ob->tls_preload;
   state->tlsp = tlsp;
-  DEBUG(D_tls) debug_printf("initialising GnuTLS client session\n");
+  DEBUG(tls) debug_printf("initialising GnuTLS client session\n");
   rc = gnutls_init(&state->session, GNUTLS_CLIENT);
 
   state->tls_certificate =	ob->tls_certificate;
@@ -2196,12 +2196,12 @@ else
   state = &state_server;
   state->tlsp = tlsp;
 
-  DEBUG(D_tls) debug_printf("initialising GnuTLS server session\n");
+  DEBUG(tls) debug_printf("initialising GnuTLS server session\n");
 
 #ifdef EXIM_TLS_EARLY_BANNER
   if (state->early_banner)
     {
-    DEBUG(D_tls) debug_printf("TLS: setting early-start flag\n");
+    DEBUG(tls) debug_printf("TLS: setting early-start flag\n");
     flags |= GNUTLS_ENABLE_EARLY_START;
     }
 #endif
@@ -2222,7 +2222,7 @@ state->host = host;
 /* This handles the variables that might get re-expanded after TLS SNI;
 tls_certificate, tls_privatekey, tls_verify_certificates, tls_crl */
 
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("Expanding various TLS configuration options for session credentials\n");
 if ((rc = tls_expand_session_files(state, errstr)) != OK) return rc;
 
@@ -2238,7 +2238,7 @@ if (host)
     return DEFER;
   if (state->tlsp->sni && *state->tlsp->sni)
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("Setting TLS client SNI to %q\n", state->tlsp->sni);
     sz = Ustrlen(state->tlsp->sni);
     if ((rc = gnutls_server_name_set(state->session,
@@ -2247,7 +2247,7 @@ if (host)
     }
   }
 else if (state->tls_sni)
-  DEBUG(D_tls) debug_printf("*** PROBABLY A BUG *** " \
+  DEBUG(tls) debug_printf("*** PROBABLY A BUG *** " \
       "have an SNI set for a server [%s]\n", state->tls_sni);
 
 if (!state->lib_state.pri_string)
@@ -2268,7 +2268,7 @@ if (!state->lib_state.pri_string)
     if (state->exp_tls_require_ciphers && *state->exp_tls_require_ciphers)
       {
       p = state->exp_tls_require_ciphers;
-      DEBUG(D_tls) debug_printf("GnuTLS session cipher/priority %q\n", p);
+      DEBUG(tls) debug_printf("GnuTLS session cipher/priority %q\n", p);
       }
     }
 
@@ -2280,7 +2280,7 @@ if (!state->lib_state.pri_string)
   }
 else
   {
-  DEBUG(D_tls) debug_printf("cipher list preloaded\n");
+  DEBUG(tls) debug_printf("cipher list preloaded\n");
   state->exp_tls_require_ciphers = US state->tls_require_ciphers;
   }
 
@@ -2298,10 +2298,10 @@ decides to make that trade-off. */
 if (gnutls_compat_mode)
   {
 #if LIBGNUTLS_VERSION_NUMBER >= 0x020104
-  DEBUG(D_tls) debug_printf("lowering GnuTLS security, compatibility mode\n");
+  DEBUG(tls) debug_printf("lowering GnuTLS security, compatibility mode\n");
   gnutls_session_enable_compatibility_mode(state->session);
 #else
-  DEBUG(D_tls) debug_printf("Unable to set gnutls_compat_mode - GnuTLS version too old\n");
+  DEBUG(tls) debug_printf("Unable to set gnutls_compat_mode - GnuTLS version too old\n");
 #endif
   }
 
@@ -2407,7 +2407,7 @@ old_pool = store_pool;
 
     if (!s)
       {
-      DEBUG(D_tls) debug_printf("TLS: session init still incomplete\n");
+      DEBUG(tls) debug_printf("TLS: session init still incomplete\n");
       store_pool = old_pool;
       return DEFER;
       }
@@ -2480,7 +2480,7 @@ cert_list = gnutls_certificate_get_peers(session, &cert_list_size);
 
 if (!cert_list || cert_list_size == 0)
   {
-  DEBUG(D_tls) debug_printf("TLS: no certificate from peer (%p & %d)\n",
+  DEBUG(tls) debug_printf("TLS: no certificate from peer (%p & %d)\n",
       cert_list, cert_list_size);
   if (state->verify_requirement >= VERIFY_REQUIRED)
     return tls_error(US"certificate verification failed",
@@ -2491,7 +2491,7 @@ if (!cert_list || cert_list_size == 0)
 if ((ct = gnutls_certificate_type_get(session)) != GNUTLS_CRT_X509)
   {
   const uschar * ctn = US gnutls_certificate_type_get_name(ct);
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: peer cert not X.509 but instead %q\n", ctn);
   if (state->verify_requirement >= VERIFY_REQUIRED)
     return tls_error(US"certificate verification not possible, unhandled type",
@@ -2503,7 +2503,7 @@ if ((ct = gnutls_certificate_type_get(session)) != GNUTLS_CRT_X509)
   do { \
     if (rc != GNUTLS_E_SUCCESS) \
       { \
-      DEBUG(D_tls) debug_printf("TLS: peer cert problem: %s: %s\n", \
+      DEBUG(tls) debug_printf("TLS: peer cert problem: %s: %s\n", \
 	(Label), gnutls_strerror(rc)); \
       if (state->verify_requirement >= VERIFY_REQUIRED) \
 	return tls_error_gnu(state, (Label), rc, errstr); \
@@ -2560,7 +2560,7 @@ verify_certificate(exim_gnutls_state_st * state, uschar ** errstr)
 int rc;
 uint verify;
 
-DEBUG(D_tls) debug_printf("TLS: checking peer certificate\n");
+DEBUG(tls) debug_printf("TLS: checking peer certificate\n");
 *errstr = NULL;
 rc = peer_status(state, errstr);
 
@@ -2634,7 +2634,7 @@ else
 			    ? DANE_VFLAG_ONLY_CHECK_EE_USAGE : 0,
 			    &verify)))
 	    {
-	    DEBUG(D_tls)
+	    DEBUG(tls)
 	      debug_printf("TLSA record problem: %s\n", dane_strerror(rc));
 	    }
 	  else if (verify == 0)	/* verification passed */
@@ -2711,7 +2711,7 @@ if (rc < 0 || verify & (GNUTLS_CERT_INVALID|GNUTLS_CERT_REVOKED))
   if (!*errstr)
     {
 #ifdef GNUTLS_CERT_VFY_STATUS_PRINT
-    DEBUG(D_tls)
+    DEBUG(tls)
       {
       gnutls_datum_t txt;
 
@@ -2728,13 +2728,13 @@ if (rc < 0 || verify & (GNUTLS_CERT_INVALID|GNUTLS_CERT_REVOKED))
       ? US"certificate revoked" : US"certificate invalid";
     }
 
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS certificate verification failed (%s): peerdn=%q\n",
         *errstr, state->peerdn ? state->peerdn : US"<unset>");
 
   if (state->verify_requirement >= VERIFY_REQUIRED)
     goto badcert;
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS verify failure overridden (host in tls_try_verify_hosts)\n");
   }
 
@@ -2750,7 +2750,7 @@ else
 		CS state->exp_tls_verify_cert_hostnames)
      )
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("TLS certificate verification failed: cert name mismatch (per GnuTLS)\n");
     if (state->verify_requirement >= VERIFY_REQUIRED)
       goto badcert;
@@ -2758,7 +2758,7 @@ else
     }
 
   state->peer_cert_verified = TRUE;
-  DEBUG(D_tls) debug_printf("TLS certificate verified: peerdn=%q\n",
+  DEBUG(tls) debug_printf("TLS certificate verified: peerdn=%q\n",
       state->peerdn ? state->peerdn : US"<unset>");
   }
 
@@ -2794,10 +2794,10 @@ exim_gnutls_logger_cb(int level, const char *message)
   size_t len = strlen(message);
   if (len < 1)
     {
-    DEBUG(D_tls) debug_printf("GnuTLS<%d> empty debug message\n", level);
+    DEBUG(tls) debug_printf("GnuTLS<%d> empty debug message\n", level);
     return;
     }
-  DEBUG(D_tls) debug_printf("GnuTLS<%d>: %s%s", level, message,
+  DEBUG(tls) debug_printf("GnuTLS<%d>: %s%s", level, message,
       message[len-1] == '\n' ? "" : "\n");
 }
 #endif
@@ -2832,7 +2832,7 @@ uschar * dummy_errstr;
 rc = gnutls_server_name_get(session, sni_name, &data_len, &sni_type, 0);
 if (rc != GNUTLS_E_SUCCESS)
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     if (rc == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
       debug_printf("TLS: no SNI presented in handshake\n");
     else
@@ -2843,7 +2843,7 @@ if (rc != GNUTLS_E_SUCCESS)
 
 if (sni_type != GNUTLS_NAME_DNS)
   {
-  DEBUG(D_tls) debug_printf("TLS: ignoring SNI of unhandled type %u\n", sni_type);
+  DEBUG(tls) debug_printf("TLS: ignoring SNI of unhandled type %u\n", sni_type);
   return 0;
   }
 
@@ -2853,7 +2853,7 @@ state->received_sni = string_copy_perm(US sni_name, TRUE);
 /* We set this one now so that variable expansions below will work */
 state->tlsp->sni = state->received_sni;
 
-DEBUG(D_tls) debug_printf("Received TLS SNI %q%s\n", sni_name,
+DEBUG(tls) debug_printf("Received TLS SNI %q%s\n", sni_name,
     state->trigger_sni_changes ? "" : " (unused for certificate selection)");
 
 if (!state->trigger_sni_changes)
@@ -2863,7 +2863,7 @@ if ((rc = tls_expand_session_files(state, &dummy_errstr)) != OK)
   {
   /* If the setup of certs/etc failed before handshake, TLS would not have
   been offered.  The best we can do now is abort. */
-  DEBUG(D_tls) debug_printf("expansion for SNI-dependent session files failed\n");
+  DEBUG(tls) debug_printf("expansion for SNI-dependent session files failed\n");
   return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
   }
 
@@ -2900,7 +2900,7 @@ if ((cert_list = gnutls_certificate_get_peers(session, &cert_list_size)))
     {
     if ((rc = import_cert(&cert_list[cert_list_size], &crt)) != GNUTLS_E_SUCCESS)
       {
-      DEBUG(D_tls) debug_printf("TLS: peer cert problem: depth %d: %s\n",
+      DEBUG(tls) debug_printf("TLS: peer cert problem: depth %d: %s\n",
 	cert_list_size, gnutls_strerror(rc));
       break;
       }
@@ -2977,7 +2977,7 @@ static int
 tls_server_ticket_cb(gnutls_session_t sess, u_int htype, unsigned when,
   unsigned incoming, const gnutls_datum_t * msg)
 {
-DEBUG(D_tls) debug_printf("newticket cb (on server)\n");
+DEBUG(tls) debug_printf("newticket cb (on server)\n");
 tls_in.resumption |= RESUME_CLIENT_REQUESTED;
 return 0;
 }
@@ -3000,7 +3000,7 @@ if (verify_check_host(&tls_resumption_hosts) == OK)
 	      &server_sessticket_key)))
     tls_in.resumption |= RESUME_SERVER_TICKET;
   else
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("enabling session tickets: %s\n", US gnutls_strerror(rc));
 
   /* Try to tell if we see a ticket request */
@@ -3022,12 +3022,12 @@ if (gnutls_session_resumption_requested(state->session))
   in the Client Hello, for 1.2) which mucks up our logic. */
 
   tls_in.resumption |= RESUME_CLIENT_SUGGESTED;
-  DEBUG(D_tls) debug_printf("client requested resumption\n");
+  DEBUG(tls) debug_printf("client requested resumption\n");
   }
 if (gnutls_session_is_resumed(state->session))
   {
   tls_in.resumption |= RESUME_USED;
-  DEBUG(D_tls) debug_printf("Session resumed\n");
+  DEBUG(tls) debug_printf("Session resumed\n");
   }
 }
 #endif	/* EXIM_HAVE_TLS_RESUME */
@@ -3049,7 +3049,7 @@ if (!expand_check(*tls_alpn, US"tls_alpn", &exp_alpn, errstr))
 
 if (!exp_alpn)
   {
-  DEBUG(D_tls) debug_printf("Setting TLS ALPN forced to fail, not sending\n");
+  DEBUG(tls) debug_printf("Setting TLS ALPN forced to fail, not sending\n");
   *plist = NULL;
   }
 else
@@ -3090,7 +3090,7 @@ if (tls_alpn_plist(&local_alpn, &plist, &plen, errstr) && plist)
     gnutls_handshake_set_hook_function(state->session,
       GNUTLS_HANDSHAKE_ANY, GNUTLS_HOOK_POST, tls_server_hook_cb);
   else
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("setting alpn protocols: %s\n", US gnutls_strerror(rc));
   }
 }
@@ -3141,19 +3141,19 @@ if (tls_in.active.sock >= 0)
 
 if (verify_check_host(&tls_verify_hosts) == OK)
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: a client certificate will be required\n");
   state_server.verify_requirement = VERIFY_REQUIRED;
   }
 else if (verify_check_host(&tls_try_verify_hosts) == OK)
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: a client certificate will be requested but not required\n");
   state_server.verify_requirement = VERIFY_OPTIONAL;
   }
 else
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: a client certificate will not be requested\n");
   state_server.verify_requirement = VERIFY_NONE;
   }
@@ -3161,7 +3161,7 @@ else
 /* Initialize the library. If it fails, it will already have logged the error
 and sent an SMTP response. */
 
-DEBUG(D_tls) debug_printf("initialising GnuTLS as a server\n");
+DEBUG(tls) debug_printf("initialising GnuTLS as a server\n");
 
   {
 #ifdef MEASURE_TIMING
@@ -3242,7 +3242,7 @@ ALARM_CLR(0);
 
 if (rc != GNUTLS_E_SUCCESS)
   {
-  DEBUG(D_tls) debug_printf(" error %d from gnutls_handshake: %s\n",
+  DEBUG(tls) debug_printf(" error %d from gnutls_handshake: %s\n",
     rc, gnutls_strerror(rc));
 
   /* It seems that, except in the case of a timeout, we have to close the
@@ -3283,11 +3283,11 @@ if (  gnutls_protocol_get_version(state->session) > GNUTLS_TLS1_2
    && state->early_banner)
   {
   tls_write(NULL, banner->s, banner->ptr, SP_NO_MORE);
-  DEBUG(D_receive) 
+  DEBUG(receive) 
     { gstring_trim(banner, 2); debug_printf("SMTP>> %Y\n", banner); }
   gstring_reset(banner);
 
-  DEBUG(D_tls) debug_printf("TLS: wait for handshake complete\n");
+  DEBUG(tls) debug_printf("TLS: wait for handshake complete\n");
   tls_refill(GETC_BUFFER_UNLIMITED);
   }
 #endif
@@ -3301,12 +3301,12 @@ if (gnutls_session_get_flags(state->session) & GNUTLS_SFLAGS_EXT_MASTER_SECRET)
 tls_server_resume_posthandshake(state);
 #endif
 
-DEBUG(D_tls) post_handshake_debug(state);
+DEBUG(tls) post_handshake_debug(state);
 
 #ifdef EXIM_HAVE_ALPN
 if (server_seen_alpn > 0)
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     {		/* The client offered ALPN.  See what was negotiated. */
     gnutls_datum_t p = {.size = 0};
     int rc = gnutls_alpn_get_selected_protocol(state->session, &p);
@@ -3325,9 +3325,9 @@ else if (server_seen_alpn == 0)
     return FAIL;
     }
   else
-    DEBUG(D_tls) debug_printf("TLS: no ALPN presented in handshake\n");
+    DEBUG(tls) debug_printf("TLS: no ALPN presented in handshake\n");
 else
-  DEBUG(D_tls) debug_printf("TLS: was not watching for ALPN\n");
+  DEBUG(tls) debug_printf("TLS: was not watching for ALPN\n");
 #endif
 
 /* Verify after the fact */
@@ -3339,7 +3339,7 @@ if (!verify_certificate(state, errstr))
     (void) tls_error(US"certificate verification failed", *errstr, NULL, errstr);
     return FAIL;
     }
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: continuing on only because verification was optional, after: %s\n",
 	*errstr);
   }
@@ -3377,7 +3377,7 @@ if (verify_check_given_host(CUSS &ob->tls_verify_cert_hostnames, host) == OK)
 #else
     host->certname;
 #endif
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: server cert verification includes hostname: %q\n",
 		    state->exp_tls_verify_cert_hostnames);
   }
@@ -3418,7 +3418,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
   const uschar * p = rr->data;
   uint8_t usage = p[0], sel = p[1], type = p[2];
 
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLSA: %d %d %d size %d\n", usage, sel, type, rr->size);
 
   if (  (usage != DANESSL_USAGE_DANE_TA && usage != DANESSL_USAGE_DANE_EE)
@@ -3470,7 +3470,7 @@ tls_retrieve_session(tls_support * tlsp, gnutls_session_t session,
 tlsp->resumption = RESUME_SUPPORTED;
 
 if (!conn_args->have_lbserver)
-  { DEBUG(D_tls) debug_printf(
+  { DEBUG(tls) debug_printf(
       "resumption not supported: no LB detection done (continued-conn?)\n"); }
 else if (verify_check_given_host(CUSS &ob->tls_resumption_hosts, conn_args->host) == OK)
   {
@@ -3491,15 +3491,15 @@ else if (verify_check_given_host(CUSS &ob->tls_resumption_hosts, conn_args->host
       if (!(rc = gnutls_session_set_data(session,
 		    CUS dt->session, (size_t)len - sizeof(dbdata_tls_session))))
 	{
-	DEBUG(D_tls) debug_printf("good session\n");
+	DEBUG(tls) debug_printf("good session\n");
 	tlsp->resumption |= RESUME_CLIENT_SUGGESTED;
 	}
-      else DEBUG(D_tls) debug_printf("setting session resumption data: %s\n",
+      else DEBUG(tls) debug_printf("setting session resumption data: %s\n",
 	    US gnutls_strerror(rc));
     dbfn_close(dbm_file);
     }
   }
-else DEBUG(D_tls) debug_printf("no resumption for this host\n");
+else DEBUG(tls) debug_printf("no resumption for this host\n");
 }
 
 
@@ -3516,7 +3516,7 @@ if (gnutls_session_get_flags(session) & GNUTLS_SFLAGS_SESSION_TICKET)
   gnutls_datum_t tkt;
   int rc;
 
-  DEBUG(D_tls) debug_printf("server offered session ticket\n");
+  DEBUG(tls) debug_printf("server offered session ticket\n");
   tlsp->ticket_received = TRUE;
   tlsp->resumption |= RESUME_SERVER_TICKET;
 
@@ -3527,7 +3527,7 @@ if (gnutls_session_get_flags(session) & GNUTLS_SFLAGS_SESSION_TICKET)
       int dlen = sizeof(dbdata_tls_session) + tkt.size;
       dbdata_tls_session * dt = store_get(dlen, GET_TAINTED);
 
-      DEBUG(D_tls) debug_printf(" session data size %u\n", (unsigned)tkt.size);
+      DEBUG(tls) debug_printf(" session data size %u\n", (unsigned)tkt.size);
       memcpy(dt->session, tkt.data, tkt.size);
       gnutls_free(tkt.data);
 
@@ -3537,15 +3537,15 @@ if (gnutls_session_get_flags(session) & GNUTLS_SFLAGS_SESSION_TICKET)
 	dbfn_write(dbm_file, tlsp->resume_index, dt, dlen);
 	dbfn_close(dbm_file);
 
-	DEBUG(D_tls)
+	DEBUG(tls)
 	  debug_printf(" wrote session db (len %u)\n", (unsigned)dlen);
 	}
       }
     else
-      { DEBUG(D_tls)
+      { DEBUG(tls)
       debug_printf(" extract session data: %s\n", US gnutls_strerror(rc));
       }
-  else DEBUG(D_tls)
+  else DEBUG(tls)
       debug_printf(" host not resumable; not saving ticket\n");
   }
 }
@@ -3563,7 +3563,7 @@ tls_client_ticket_cb(gnutls_session_t sess, u_int htype, unsigned when,
 exim_gnutls_state_st * state = gnutls_session_get_ptr(sess);
 tls_support * tlsp = state->tlsp;
 
-DEBUG(D_tls) debug_printf("newticket cb (on client)\n");
+DEBUG(tls) debug_printf("newticket cb (on client)\n");
 
 if (!tlsp->ticket_received)
   tls_save_session(tlsp, sess, state->host);
@@ -3589,7 +3589,7 @@ tls_client_resume_posthandshake(exim_gnutls_state_st * state,
 {
 if (gnutls_session_is_resumed(state->session))
   {
-  DEBUG(D_tls) debug_printf("Session resumed\n");
+  DEBUG(tls) debug_printf("Session resumed\n");
   tlsp->resumption |= RESUME_USED;
   }
 
@@ -3636,7 +3636,7 @@ BOOL request_ocsp = require_ocsp ? TRUE
   : verify_check_given_host(CUSS &ob->hosts_request_ocsp, host) == OK;
 #endif
 
-DEBUG(D_tls) debug_printf("initialising GnuTLS as a client on fd %d\n", cctx->sock);
+DEBUG(tls) debug_printf("initialising GnuTLS as a client on fd %d\n", cctx->sock);
 
 #ifdef SUPPORT_DANE
 /* If dane is flagged, have either request or require dane for this host, and
@@ -3687,7 +3687,7 @@ if (ob->tls_alpn)
       return FALSE;
       }
     else
-      DEBUG(D_tls) debug_printf("Setting TLS ALPN '%s'\n", ob->tls_alpn);
+      DEBUG(tls) debug_printf("Setting TLS ALPN '%s'\n", ob->tls_alpn);
   }
 #else
   log_write(0, LOG_MAIN,
@@ -3699,14 +3699,14 @@ if (ob->tls_alpn)
   int dh_min_bits = ob->tls_dh_min_bits;
   if (dh_min_bits < EXIM_CLIENT_DH_MIN_MIN_BITS)
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("WARNING: tls_dh_min_bits far too low,"
 		    " clamping %d up to %d\n",
 	  dh_min_bits, EXIM_CLIENT_DH_MIN_MIN_BITS);
     dh_min_bits = EXIM_CLIENT_DH_MIN_MIN_BITS;
     }
 
-  DEBUG(D_tls) debug_printf("Setting D-H prime minimum"
+  DEBUG(tls) debug_printf("Setting D-H prime minimum"
 		    " acceptable bits to %d\n",
       dh_min_bits);
   gnutls_dh_set_prime_bits(state->session, dh_min_bits);
@@ -3719,7 +3719,7 @@ the specified host patterns if one of them is defined */
 #ifdef SUPPORT_DANE
 if (conn_args->dane && dane_tlsa_load(state, conn_args->tlsa_dnsa))
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: server certificate DANE required\n");
   state->verify_requirement = VERIFY_DANE;
   gnutls_certificate_server_set_request(state->session, GNUTLS_CERT_REQUIRE);
@@ -3734,7 +3734,7 @@ else
        )
   {
   tls_client_setup_hostname_checks(host, state, ob);
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: server certificate verification required\n");
   state->verify_requirement = VERIFY_REQUIRED;
   gnutls_certificate_server_set_request(state->session, GNUTLS_CERT_REQUIRE);
@@ -3742,14 +3742,14 @@ else
 else if (verify_check_given_host(CUSS &ob->tls_try_verify_hosts, host) == OK)
   {
   tls_client_setup_hostname_checks(host, state, ob);
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: server certificate verification optional\n");
   state->verify_requirement = VERIFY_OPTIONAL;
   gnutls_certificate_server_set_request(state->session, GNUTLS_CERT_REQUEST);
   }
 else
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("TLS: server certificate verification not required\n");
   state->verify_requirement = VERIFY_NONE;
   gnutls_certificate_server_set_request(state->session, GNUTLS_CERT_IGNORE);
@@ -3759,7 +3759,7 @@ else
 			/* supported since GnuTLS 3.1.3 */
 if (request_ocsp)
   {
-  DEBUG(D_tls) debug_printf("TLS: will request OCSP stapling\n");
+  DEBUG(tls) debug_printf("TLS: will request OCSP stapling\n");
   if ((rc = gnutls_ocsp_status_request_enable_client(state->session,
 		    NULL, 0, NULL)) != OK)
     {
@@ -3787,7 +3787,7 @@ gnutls_transport_set_ptr(state->session, (gnutls_transport_ptr_t)(long) cctx->so
 state->fd_in = cctx->sock;
 state->fd_out = cctx->sock;
 
-DEBUG(D_tls) debug_printf("about to gnutls_handshake\n");
+DEBUG(tls) debug_printf("about to gnutls_handshake\n");
 /* There doesn't seem to be a built-in timeout on connection. */
 
 sigalrm_seen = FALSE;
@@ -3809,7 +3809,7 @@ if (rc != GNUTLS_E_SUCCESS)
   return FALSE;
   }
 
-DEBUG(D_tls) post_handshake_debug(state);
+DEBUG(tls) post_handshake_debug(state);
 
 /* Verify late */
 
@@ -3827,7 +3827,7 @@ if (gnutls_session_get_flags(state->session) & GNUTLS_SFLAGS_EXT_MASTER_SECRET)
 #ifndef DISABLE_OCSP
 if (request_ocsp)
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     {
     gnutls_datum_t stapling;
     gnutls_ocsp_resp_t resp;
@@ -3864,7 +3864,7 @@ if (request_ocsp)
     }
   else
     {
-    DEBUG(D_tls) debug_printf("Passed OCSP checking\n");
+    DEBUG(tls) debug_printf("Passed OCSP checking\n");
     tlsp->ocsp = OCSP_VFIED;
     }
   }
@@ -3880,7 +3880,7 @@ if (ob->tls_alpn)	/* We requested. See what was negotiated. */
   gnutls_datum_t p = {.size = 0};
 
   if (gnutls_alpn_get_selected_protocol(state->session, &p) == 0)
-    { DEBUG(D_tls) debug_printf("ALPN negotiated: '%.*s'\n", (int)p.size, p.data); }
+    { DEBUG(tls) debug_printf("ALPN negotiated: '%.*s'\n", (int)p.size, p.data); }
   else if (verify_check_given_host(CUSS &ob->hosts_require_alpn, host) == OK)
     {
     gnutls_alert_send(state->session, GNUTLS_AL_FATAL, GNUTLS_A_NO_APPLICATION_PROTOCOL);
@@ -3888,7 +3888,7 @@ if (ob->tls_alpn)	/* We requested. See what was negotiated. */
     return FALSE;
     }
   else
-    DEBUG(D_tls) debug_printf("No ALPN negotiated");
+    DEBUG(tls) debug_printf("No ALPN negotiated");
   }
 #endif
 
@@ -3918,7 +3918,7 @@ if (!tlsp || tlsp->active.sock < 0) return;  /* TLS was not active */
 
 tls_write(ct_ctx, NULL, 0, FALSE);	/* flush write buffer */
 
-HDEBUG(D_transport|D_tls|D_acl|D_v) debug_printf_indent("  SMTP(TLS shutdown)>>\n");
+HDEBUG(transport|tls|acl|v) debug_printf_indent("  SMTP(TLS shutdown)>>\n");
 gnutls_bye(state->session, GNUTLS_SHUT_WR);
 }
 
@@ -3949,7 +3949,7 @@ if (!tlsp || tlsp->active.sock < 0) return;  /* TLS was not active */
 
 if (do_shutdown)
   {
-  DEBUG(D_tls) debug_printf("tls_close(): shutting down TLS%s\n",
+  DEBUG(tls) debug_printf("tls_close(): shutting down TLS%s\n",
     do_shutdown > TLS_SHUTDOWN_NOWAIT ? " (with response-wait)" : "");
 
   tls_write(ct_ctx, NULL, 0, FALSE);	/* flush write buffer */
@@ -4106,12 +4106,12 @@ if (len > INT_MAX)
   len = INT_MAX;
 
 if (state->xfer_buffer_lwm < state->xfer_buffer_hwm)
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("*** PROBABLY A BUG *** " \
         "tls_read() called with data in the tls_getc() buffer, %d ignored\n",
         state->xfer_buffer_hwm - state->xfer_buffer_lwm);
 
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("Calling gnutls_record_recv(session=%p, buffer=%p, len=" SIZE_T_FMT ")\n",
       state->session, buff, len);
 
@@ -4123,11 +4123,11 @@ while (inbytes == GNUTLS_E_AGAIN);
 if (inbytes > 0) return inbytes;
 if (inbytes == 0)
   {
-  DEBUG(D_tls) debug_printf("Got TLS_EOF\n");
+  DEBUG(tls) debug_printf("Got TLS_EOF\n");
   }
 else
   {
-  DEBUG(D_tls) debug_printf("%s: err from gnutls_record_recv\n", __FUNCTION__);
+  DEBUG(tls) debug_printf("%s: err from gnutls_record_recv\n", __FUNCTION__);
   record_io_error(state, (int)inbytes, US"recv", NULL);
   }
 
@@ -4165,18 +4165,18 @@ exim_gnutls_state_st * state = ct_ctx ? ct_ctx : &state_server;
 #ifdef SUPPORT_CORK
 if (more && !state->corked)
   {
-  DEBUG(D_tls) debug_printf("gnutls_record_cork(session=%p)\n", state->session);
+  DEBUG(tls) debug_printf("gnutls_record_cork(session=%p)\n", state->session);
   gnutls_record_cork(state->session);
   state->corked = TRUE;
   }
 #endif
 
-DEBUG(D_tls) debug_printf("%s(%p, " SIZE_T_FMT "%s)\n", __FUNCTION__,
+DEBUG(tls) debug_printf("%s(%p, " SIZE_T_FMT "%s)\n", __FUNCTION__,
   buff, left, more ? ", more" : "");
 
 while (left > 0)
   {
-  DEBUG(D_tls) debug_printf("gnutls_record_send(session=%p, buffer=%p, left=" SIZE_T_FMT ")\n",
+  DEBUG(tls) debug_printf("gnutls_record_send(session=%p, buffer=%p, left=" SIZE_T_FMT ")\n",
       state->session, buff, left);
 
   errno = 0;
@@ -4184,7 +4184,7 @@ while (left > 0)
     outbytes = gnutls_record_send(state->session, buff, left);
   while (outbytes == GNUTLS_E_AGAIN);
 
-  DEBUG(D_tls) debug_printf("outbytes=" SSIZE_T_FMT "\n", outbytes);
+  DEBUG(tls) debug_printf("outbytes=" SSIZE_T_FMT "\n", outbytes);
 
   if (outbytes < 0)
     {
@@ -4197,13 +4197,13 @@ while (left > 0)
 	log_write(0, LOG_MAIN, "[%s] after QUIT, client reset TCP before"
 	  " SMTP response and TLS close\n", sender_host_address);
       else
-	DEBUG(D_tls) debug_printf("[%s] SSL_write: after QUIT,"
+	DEBUG(tls) debug_printf("[%s] SSL_write: after QUIT,"
 	  " client reset TCP before TLS close\n", sender_host_address);
       }
     else
 #endif
       {
-      DEBUG(D_tls) debug_printf("%s: gnutls_record_send err\n", __FUNCTION__);
+      DEBUG(tls) debug_printf("%s: gnutls_record_send err\n", __FUNCTION__);
       record_io_error(state, outbytes, US"send", NULL);
       }
     return -1;
@@ -4220,7 +4220,7 @@ while (left > 0)
 
 if (len > INT_MAX)
   {
-  DEBUG(D_tls)
+  DEBUG(tls)
     debug_printf("Whoops!  Wrote more bytes (" SIZE_T_FMT ") than INT_MAX\n",
         len);
   len = INT_MAX;
@@ -4229,7 +4229,7 @@ if (len > INT_MAX)
 #ifdef SUPPORT_CORK
 if (!more && state->corked)
   {
-  DEBUG(D_tls) debug_printf("gnutls_record_uncork(session=%p)\n", state->session);
+  DEBUG(tls) debug_printf("gnutls_record_uncork(session=%p)\n", state->session);
   do
     /* We can't use GNUTLS_RECORD_WAIT here, as it retries on
     GNUTLS_E_AGAIN || GNUTLS_E_INTR, which would break our timeout set by alarm().
@@ -4294,7 +4294,7 @@ if (i < needed_len)
 i = gnutls_rnd(GNUTLS_RND_NONCE, smallbuf, needed_len);
 if (i < 0)
   {
-  DEBUG(D_all) debug_printf("gnutls_rnd() failed, using fallback\n");
+  DEBUG(all) debug_printf("gnutls_rnd() failed, using fallback\n");
   return vaguely_random_number_fallback(max);
   }
 r = 0;
@@ -4374,7 +4374,7 @@ if (!expand_check(tls_require_ciphers, US"tls_require_ciphers", &expciphers,
 if (!(expciphers && *expciphers))
   return_deinit(NULL);
 
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("tls_require_ciphers expands to %q\n", expciphers);
 
 rc = gnutls_priority_init(&priority_cache, CS expciphers, &errpos);

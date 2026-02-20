@@ -42,9 +42,9 @@ if (!keep_environment || !*keep_environment)
 else if (Ustrcmp(keep_environment, "*") != 0)
   {
   rmark reset_point = store_mark();
-  bitmask_word_t deb = debug_selector;
-  BOOL hc = host_checking;
-  debug_selector = 0;			/* quieten this clearout */
+  BOOL hc = host_checking, dbg;
+
+  dbg = debug_disable();		/* quieten this clearout */
   host_checking = FALSE;
 
   if (environ) for (uschar ** p = USS environ; *p; /* see below */)
@@ -64,14 +64,18 @@ else if (Ustrcmp(keep_environment, "*") != 0)
       else if (os_unsetenv(name) == 0)
 	p = USS environ;	/* RESTART from the beginning */
       else
-	{ debug_selector = deb; host_checking = hc; return FALSE; }
+	{
+	host_checking = hc;
+	if (dbg) debug_enable();
+	return FALSE;
+	}
       }
     }
-  debug_selector = deb;
   host_checking = hc;
+  if (dbg) debug_enable();
   store_reset(reset_point);
   }
-DEBUG(D_expand)
+DEBUG(expand)
   {
   debug_printf("environment after trimming:\n");
   if (environ) for (uschar ** p = USS environ; *p; p++)
@@ -86,7 +90,7 @@ if (add_environment)
 
   for (const uschar * p; p = string_nextinlist(&envlist, &sep, NULL, 0); )
     {
-    DEBUG(D_expand) debug_printf("adding %s\n", p);
+    DEBUG(expand) debug_printf("adding %s\n", p);
     putenv(CS p);
     }
   store_pool = old_pool;
@@ -97,3 +101,6 @@ tls_clean_env();
 
 return TRUE;
 }
+
+/* vi: aw ai sw=2
+*/

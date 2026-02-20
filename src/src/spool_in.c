@@ -56,7 +56,7 @@ for (int i = 0; i < 2; i++)
 
   set_subdir_str(message_subdir, id, i);
   fname = spool_fname(US"input", message_subdir, id, US"-D");
-  DEBUG(D_deliver) debug_printf_indent("Trying spool file %s\n", fname);
+  DEBUG(deliver) debug_printf_indent("Trying spool file %s\n", fname);
 
   /* We protect against symlink attacks both in not propagating the
   file-descriptor to other processes as we exec, and also ensuring that we
@@ -75,7 +75,7 @@ for (int i = 0; i < 2; i++)
 	*queue_name ? US" Q=" : US"",
 	*queue_name ? queue_name : US"",
 	id);
-    else DEBUG(D_deliver)
+    else DEBUG(deliver)
       debug_printf("Spool%s%s file %s-D not found\n",
 	*queue_name ? US" Q=" : US"",
 	*queue_name ? queue_name : US"",
@@ -400,7 +400,7 @@ for (int i = 0; i < 2; i++)
 errno = 0;
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_deliver) debug_printf_indent("reading spool file %s\n", fname);
+DEBUG(deliver) debug_printf_indent("reading spool file %s\n", fname);
 #endif  /* COMPILE_UTILITY */
 
 /* The first line of a spool file contains the message id followed by -H (i.e.
@@ -478,7 +478,7 @@ if (f.running_in_test_harness)
 #endif
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_deliver) debug_printf_indent("user=%s uid=%ld gid=%ld sender=%s\n",
+DEBUG(deliver) debug_printf_indent("user=%s uid=%ld gid=%ld sender=%s\n",
   originator_login, (long int)originator_uid, (long int)originator_gid,
   sender_address);
 #endif
@@ -521,7 +521,7 @@ for (;;)
       const lookup_info * li;
       if (!(li= search_findtype(var, s - var)))
 	{
-	DEBUG(D_any)
+	DEBUG(any)
 	  debug_printf("Unrecognised quoter %.*s\n", (int)(s - var), var+1);
 	where = NULL;
 	goto SPOOL_FORMAT_ERROR;
@@ -620,7 +620,13 @@ for (;;)
       dsn_envid = string_copy_taint(var + 10, proto_mem);
 #ifndef COMPILE_UTILITY
     else if (Ustrncmp(p, "ebug_selector ", 14) == 0)
-      sscanf(CS var + 15, SC_EXIM_BITMASK, &debug_selector);
+      {
+      const uschar * s = var + 15;
+      int n;
+      sscanf(CS s, SC_EXIM_BITMASK "%n", &debug_selector[0], &n);
+      for (int i = 1; i < DEBUG_SELECTOR_SIZE && *(s += n) == ','; i++)
+	sscanf(CS ++s, SC_EXIM_BITMASK "%n", &debug_selector[i], &n);
+      }
     else if (Ustrncmp(p, "ebuglog_name ", 13) == 0)
       debug_logging_from_spool(var + 14);
 #endif
@@ -792,7 +798,7 @@ host_build_sender_fullhost();
 #endif  /* COMPILE_UTILITY */
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_deliver)
+DEBUG(deliver)
   debug_printf_indent("sender_local=%d ident=%s\n", f.sender_local,
     sender_ident ? sender_ident : US"unset");
 #endif  /* COMPILE_UTILITY */
@@ -806,7 +812,7 @@ if (Ustrncmp(big_buffer, "XX\n", 3) != 0 &&
     goto SPOOL_FORMAT_ERROR;
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_deliver) debug_print_tree("Non-recipients", tree_nonrecipients);
+DEBUG(deliver) debug_print_tree("Non-recipients", tree_nonrecipients);
 #endif  /* COMPILE_UTILITY */
 
 /* After reading the tree, the next line has not yet been read into the
@@ -819,7 +825,7 @@ if (sscanf(CS big_buffer, "%d", &rcount) != 1 || rcount > 16384)
   goto SPOOL_FORMAT_ERROR;
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_deliver) debug_printf_indent("recipients_count=%d\n", rcount);
+DEBUG(deliver) debug_printf_indent("recipients_count=%d\n", rcount);
 #endif  /* COMPILE_UTILITY */
 
 recipients_list_max = rcount;
@@ -891,7 +897,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     {
     int dummy;
 #if !defined (COMPILE_UTILITY)
-    DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - Exim 3 spool file\n");
+    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - Exim 3 spool file\n");
 #endif
     while (isdigit(*(--p)) || *p == ',');
     if (*p == ' ')
@@ -906,7 +912,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
   else if (*p == ' ')
     {
 #if !defined (COMPILE_UTILITY)
-    DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - early Exim 4 spool file\n");
+    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - early Exim 4 spool file\n");
 #endif
     *p++ = 0;
     (void)sscanf(CS p, "%d", &pno);
@@ -919,7 +925,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     int flags;
 
 #if !defined (COMPILE_UTILITY)
-    DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - Exim standard format spoolfile\n");
+    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - Exim standard format spoolfile\n");
 #endif
 
     (void)sscanf(CS p+1, "%d", &flags);
@@ -955,13 +961,13 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     }
 #if !defined(COMPILE_UTILITY)
   else
-    { DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - No additional fields\n"); }
+    { DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - No additional fields\n"); }
 
   if (orcpt || dsn_flags)
-    DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - address: <%s> orcpt: <%s> dsn_flags: 0x%x\n",
+    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - address: <%s> orcpt: <%s> dsn_flags: 0x%x\n",
       big_buffer, orcpt, dsn_flags);
   if (errors_to)
-    DEBUG(D_deliver) debug_printf_indent("**** SPOOL_IN - address: <%s> errorsto: <%s>\n",
+    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - address: <%s> errorsto: <%s>\n",
       big_buffer, errors_to);
 #endif
 
@@ -1034,7 +1040,7 @@ line count by adding the body linecount to the header linecount. Close the file
 and give a positive response. */
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_deliver) debug_printf_indent("body_linecount=%d message_linecount=%d\n",
+DEBUG(deliver) debug_printf_indent("body_linecount=%d message_linecount=%d\n",
   body_linecount, message_linecount);
 #endif  /* COMPILE_UTILITY */
 
@@ -1054,7 +1060,7 @@ if (errno != 0)
   n = errno;
 
 #ifndef COMPILE_UTILITY
-  DEBUG(D_any) debug_printf("Error while reading spool file %s\n", fname);
+  DEBUG(any) debug_printf("Error while reading spool file %s\n", fname);
 #endif  /* COMPILE_UTILITY */
 
   fclose(fp);
@@ -1065,7 +1071,7 @@ if (errno != 0)
 SPOOL_FORMAT_ERROR:
 
 #ifndef COMPILE_UTILITY
-DEBUG(D_any) debug_printf("Format error in spool file %s%s%s\n", fname,
+DEBUG(any) debug_printf("Format error in spool file %s%s%s\n", fname,
   where ? ": " : "", where ? where : US"");
 #else
 where = where;	/* compiler quietening */
@@ -1094,7 +1100,7 @@ uschar * yield = NULL;
 if (!(fp = Ufopen(spool_fname(US"input", message_subdir, id, US"-H"), "rb")))
   return NULL;
 
-DEBUG(D_deliver) debug_printf_indent("reading spool file %s-H\n", id);
+DEBUG(deliver) debug_printf_indent("reading spool file %s-H\n", id);
 
 /* Skip the line with the copy of the filename, then the line with login/uid/gid.
 Read the next line, which should be the envelope sender.

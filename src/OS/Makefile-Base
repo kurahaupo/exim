@@ -237,7 +237,8 @@ macro_predef: $(OBJ_MACRO)
 	$(FE)$(LNCC) -o $@ $(LFLAGS) $(OBJ_MACRO)
 
 macro.c: macro_predef
-	./macro_predef > macro.c
+	./macro_predef > tmpfile
+	mv tmpfile $@
 
 # This target is recognized specially by GNU make. It records those targets
 # that do not correspond to files that are being built and which should

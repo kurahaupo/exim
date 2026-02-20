@@ -35,7 +35,7 @@ static void *
 spf_open(const uschar * filename, uschar ** errmsg)
 {
 misc_module_info * mi;
-DEBUG(D_lookup) debug_printf_indent("spf lookup spf_open\n");
+DEBUG(lookup) debug_printf_indent("spf lookup spf_open\n");
 if ((mi = misc_mod_find(US"spf", errmsg)))
   {
   typedef void * (*fn_t)(const uschar *, uschar **);

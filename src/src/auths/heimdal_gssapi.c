@@ -135,14 +135,14 @@ ablock->client = FALSE;
 
 if (!ob->server_service || !*ob->server_service)
   {
-  HDEBUG(D_auth) debug_printf("heimdal: missing server_service\n");
+  HDEBUG(auth) debug_printf("heimdal: missing server_service\n");
   return;
   }
 
 if ((krc = krb5_init_context(&context)))
   {
   int kerr = errno;
-  HDEBUG(D_auth) debug_printf("heimdal: failed to initialise krb5 context: %s\n",
+  HDEBUG(auth) debug_printf("heimdal: failed to initialise krb5 context: %s\n",
       strerror(kerr));
   return;
   }
@@ -150,24 +150,24 @@ if ((krc = krb5_init_context(&context)))
 if (ob->server_keytab)
   {
   k_keytab_typed_name = CCS string_sprintf("file:%s", expand_string(ob->server_keytab));
-  HDEBUG(D_auth) debug_printf("heimdal: using keytab %s\n", k_keytab_typed_name);
+  HDEBUG(auth) debug_printf("heimdal: using keytab %s\n", k_keytab_typed_name);
   if ((krc = krb5_kt_resolve(context, k_keytab_typed_name, &keytab)))
     {
-    HDEBUG(D_auth) exim_heimdal_error_debug("krb5_kt_resolve", context, krc);
+    HDEBUG(auth) exim_heimdal_error_debug("krb5_kt_resolve", context, krc);
     return;
     }
   }
 else
  {
-  HDEBUG(D_auth) debug_printf("heimdal: using system default keytab\n");
+  HDEBUG(auth) debug_printf("heimdal: using system default keytab\n");
   if ((krc = krb5_kt_default(context, &keytab)))
     {
-    HDEBUG(D_auth) exim_heimdal_error_debug("krb5_kt_default", context, krc);
+    HDEBUG(auth) exim_heimdal_error_debug("krb5_kt_default", context, krc);
     return;
     }
   }
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   {
   /* http://www.h5l.org/manual/HEAD/krb5/krb5_keytab_intro.html */
   if ((krc = krb5_kt_start_seq_get(context, keytab, &cursor)))
@@ -193,7 +193,7 @@ HDEBUG(D_auth)
   }
 
 if ((krc = krb5_kt_close(context, keytab)))
-  HDEBUG(D_auth) exim_heimdal_error_debug("krb5_kt_close", context, krc);
+  HDEBUG(auth) exim_heimdal_error_debug("krb5_kt_close", context, krc);
 
 krb5_free_context(context);
 
@@ -249,7 +249,7 @@ uschar requested_qop;
 
 store_reset_point = store_mark();
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   debug_printf("heimdal: initialising auth context for %s\n", ablock->drinst.name);
 
 /* Construct our gss_name_t gserver describing ourselves */
@@ -272,7 +272,7 @@ if (ob->server_keytab)
   if (GSS_ERROR(maj_stat))
     return exim_gssapi_error_defer(store_reset_point, maj_stat, min_stat,
 	"registering keytab %q", keytab);
-  HDEBUG(D_auth) debug_printf("heimdal: using keytab %q\n", keytab);
+  HDEBUG(auth) debug_printf("heimdal: using keytab %q\n", keytab);
   }
 
 /* Acquire our credentials */
@@ -290,7 +290,7 @@ if (GSS_ERROR(maj_stat))
 
 maj_stat = gss_release_name(&min_stat, &gserver);
 
-HDEBUG(D_auth) debug_printf("heimdal: have server credentials.\n");
+HDEBUG(auth) debug_printf("heimdal: have server credentials.\n");
 
 /* Loop talking to client */
 step = 0;
@@ -317,12 +317,12 @@ while (step < 4)
         {
 	if (handled_empty_ir)
 	  {
-	  HDEBUG(D_auth) debug_printf("gssapi: repeated empty input, grr.\n");
+	  HDEBUG(auth) debug_printf("gssapi: repeated empty input, grr.\n");
 	  error_out = BAD64;
 	  goto ERROR_OUT;
 	  }
 
-	HDEBUG(D_auth) debug_printf("gssapi: missing initial response, nudging.\n");
+	HDEBUG(auth) debug_printf("gssapi: missing initial response, nudging.\n");
 	if ((error_out = auth_get_data(&from_client, US"", 0)) != OK)
 	  goto ERROR_OUT;
 	handled_empty_ir = TRUE;
@@ -330,7 +330,7 @@ while (step < 4)
 	}
       /* We should now have the opening data from the client, base64-encoded. */
       step += 1;
-      HDEBUG(D_auth) debug_printf("heimdal: have initial client data\n");
+      HDEBUG(auth) debug_printf("heimdal: have initial client data\n");
       break;
 
     case 1:
@@ -372,10 +372,10 @@ while (step < 4)
       if (maj_stat == GSS_S_COMPLETE)
         {
 	step += 1;
-	HDEBUG(D_auth) debug_printf("heimdal: GSS complete\n");
+	HDEBUG(auth) debug_printf("heimdal: GSS complete\n");
 	}
       else
-	HDEBUG(D_auth) debug_printf("heimdal: need more data\n");
+	HDEBUG(auth) debug_printf("heimdal: need more data\n");
       break;
 
     case 2:
@@ -406,7 +406,7 @@ while (step < 4)
 	goto ERROR_OUT;
 	}
 
-      HDEBUG(D_auth) debug_printf("heimdal SASL: requesting QOP with no security layers\n");
+      HDEBUG(auth) debug_printf("heimdal SASL: requesting QOP with no security layers\n");
 
       error_out = auth_get_data(&from_client,
 	  gbufdesc_out.value, gbufdesc_out.length);
@@ -436,7 +436,7 @@ while (step < 4)
 	}
       if (gbufdesc_out.length < 4)
         {
-	HDEBUG(D_auth)
+	HDEBUG(auth)
 	  debug_printf("gssapi: final message too short; "
 	      "need flags, buf sizes and optional authzid\n");
 	error_out = FAIL;
@@ -446,7 +446,7 @@ while (step < 4)
       requested_qop = (CS gbufdesc_out.value)[0];
       if (!(requested_qop & 0x01))
         {
-	HDEBUG(D_auth)
+	HDEBUG(auth)
 	  debug_printf("gssapi: client requested security layers (%x)\n",
 	      (unsigned int) requested_qop);
 	error_out = FAIL;
@@ -496,11 +496,11 @@ while (step < 4)
 	expand_nmax = 2;
 	expand_nlength[2] = expand_nlength[1];
 	auth_vars[1] = expand_nstring[2] = string_copyn(expand_nstring[1], expand_nlength[1]);
-	HDEBUG(D_auth)
+	HDEBUG(auth)
 	  debug_printf("heimdal SASL: empty authzid, set to dup of GSSAPI display name\n");
 	}
 
-      HDEBUG(D_auth)
+      HDEBUG(auth)
 	debug_printf("heimdal SASL: happy with client request\n"
 	   "  auth1 (verified GSSAPI display-name): %q\n"
 	   "  auth2 (unverified SASL requested authzid): %q\n",
@@ -549,7 +549,7 @@ OM_uint32 msgcontext = 0;
 gss_buffer_desc status_string;
 gstring * g = NULL;
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   {
   va_start(ap, format);
   g = string_vformat(NULL, SVFMT_EXTEND|SVFMT_REBUFFER, format, ap);
@@ -565,7 +565,7 @@ do {
   if (!auth_defer_msg)
     auth_defer_msg = string_copy(US status_string.value);
 
-  HDEBUG(D_auth) debug_printf("heimdal %Y: %.*s\n",
+  HDEBUG(auth) debug_printf("heimdal %Y: %.*s\n",
       g, (int)status_string.length, CS status_string.value);
   gss_release_buffer(&min_stat, &status_string);
 
@@ -591,7 +591,7 @@ auth_heimdal_gssapi_client(
   uschar *buffer,                        /* buffer for reading response */
   int buffsize)                          /* size of buffer */
 {
-HDEBUG(D_auth)
+HDEBUG(auth)
   debug_printf("Client side NOT IMPLEMENTED: you should not see this!\n");
 /* NOT IMPLEMENTED */
 return FAIL;

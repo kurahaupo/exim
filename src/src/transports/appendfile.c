@@ -520,13 +520,13 @@ struct servent *sp;
 host_item host;
 uschar * s;
 
-DEBUG(D_transport) debug_printf("notify_comsat called\n");
+DEBUG(transport) debug_printf("notify_comsat called\n");
 
 s = string_sprintf("%.200s@" OFF_T_FMT "\n", user, offset);
 
 if ((sp = getservbyname("biff", "udp")) == NULL)
   {
-  DEBUG(D_transport) debug_printf("biff/udp is an unknown service");
+  DEBUG(transport) debug_printf("biff/udp is an unknown service");
   return;
   }
 
@@ -543,7 +543,7 @@ can be changed. (But actually, comsat is probably dying out anyway.) */
 /******
 if (host_find_byname(&host, NULL, 0, NULL, FALSE) == HOST_FIND_FAILED)
   {
-  DEBUG(D_transport) debug_printf("\"localhost\" unknown\n");
+  DEBUG(transport) debug_printf("\"localhost\" unknown\n");
   return;
   }
 ******/
@@ -556,7 +556,7 @@ for (host_item * h = &host; h; h = h->next)
   int sock, rc;
   int host_af = Ustrchr(h->address, ':') != NULL ? AF_INET6 : AF_INET;
 
-  DEBUG(D_transport) debug_printf("calling comsat on %s\n", h->address);
+  DEBUG(transport) debug_printf("calling comsat on %s\n", h->address);
 
   if ((sock = ip_socket(SOCK_DGRAM, host_af)) < 0) continue;
 
@@ -567,7 +567,7 @@ for (host_item * h = &host; h; h = h->next)
   (void)close(sock);
 
   if (rc >= 0) break;
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("send to comsat failed for %s: %s\n", strerror(errno),
       h->address);
   }
@@ -602,7 +602,7 @@ int len = read(cfd, data, sizeof(data));
 int sep = 0;
 const uschar * s;
 
-DEBUG(D_transport) debug_printf("checking file format\n");
+DEBUG(transport) debug_printf("checking file format\n");
 
 /* An empty file matches the current transport */
 
@@ -622,7 +622,7 @@ while ((s = string_nextinlist(&format, &sep, big_buffer, big_buffer_size)))
     for (transport_instance * tt = transports; tt; tt = tt->drinst.next)
       if (Ustrcmp(tp, tt->drinst.name) == 0)
         {
-        DEBUG(D_transport)
+        DEBUG(transport)
           debug_printf("file format -> %s transport\n", tt->drinst.name);
         return tt;
         }
@@ -710,7 +710,7 @@ for (struct dirent * ent; ent = readdir(dir); )
       if (endptr == name + ovec[3])
         {
         sum += size;
-        DEBUG(D_transport)
+        DEBUG(transport)
           debug_printf("check_dir_size: size from %s is " OFF_T_FMT "\n", name,
             size);
 	/* pcre2_match_data_free(md);	gen ctx needs no free */
@@ -718,7 +718,7 @@ for (struct dirent * ent; ent = readdir(dir); )
         }
       }
     /* pcre2_match_data_free(md);	gen ctx needs no free */
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("check_dir_size: regex did not match %s\n", name);
     }
 
@@ -728,7 +728,7 @@ for (struct dirent * ent; ent = readdir(dir); )
 
   if (Ustat(path, &statbuf) < 0)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("check_dir_size: stat error %d for %s: %s\n", errno, path,
         strerror(errno));
     }
@@ -740,7 +740,7 @@ for (struct dirent * ent; ent = readdir(dir); )
   }
 
 closedir(dir);
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("check_dir_size: dir=%s sum=" OFF_T_FMT " count=%d\n", dirname,
     sum, count);
 
@@ -867,7 +867,7 @@ if (saved_size == 0)
     return DEFER;
   }
 
-DEBUG(D_transport) debug_printf("copying MBX message from temporary file\n");
+DEBUG(transport) debug_printf("copying MBX message from temporary file\n");
 
 /* Now construct the message's header from the time and the RFC822 file
 size, including CRLFs, which is the size of the input (temporary) file. */
@@ -987,7 +987,7 @@ if (deliver_dir  &&  create_file != create_anywhere)
       if (Ustrncmp(rph, big_buffer, rlen) != 0)
         {
         yield = FALSE;
-        DEBUG(D_transport) debug_printf("Real path %q does not match %q\n",
+        DEBUG(transport) debug_printf("Real path %q does not match %q\n",
           big_buffer, deliver_dir);
         }
       }
@@ -1189,7 +1189,7 @@ int maildir_save_errno;
 #endif
 
 
-DEBUG(D_transport) debug_printf("appendfile transport entered\n");
+DEBUG(transport) debug_printf("appendfile transport entered\n");
 
 /* An "address_file" or "address_directory" transport is used to deliver to
 files specified via .forward or an alias file. Prior to release 4.20, the
@@ -1299,7 +1299,7 @@ else
     mbf_unix;
   }
 
-DEBUG(D_transport)
+DEBUG(transport)
   {
   debug_printf("appendfile: mode=%o notify_comsat=%d quota=" OFF_T_FMT
     "%s%s"
@@ -1329,7 +1329,7 @@ DEBUG(D_transport)
 
 if (f.dont_deliver)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("*** delivery by %s transport bypassed by -N option\n",
       trname);
   addr->transport_return = OK;
@@ -1366,7 +1366,7 @@ if (!isdirectory)
      && ob->create_file == create_belowhome)
     if (is_tainted(path))
       {
-      DEBUG(D_transport) debug_printf("below-home: de-tainting path '%s'\n", path);
+      DEBUG(transport) debug_printf("below-home: de-tainting path '%s'\n", path);
       path = string_copy_taint(path, GET_UNTAINTED);
       }
 
@@ -1388,7 +1388,7 @@ if (!isdirectory)
       addr->message =
         string_sprintf("failed to create directories for %s: %s", path,
           exim_errstr(errno));
-      DEBUG(D_transport) debug_printf("%s transport: %s\n", trname, path);
+      DEBUG(transport) debug_printf("%s transport: %s\n", trname, path);
       return FALSE;
       }
     }
@@ -1566,7 +1566,7 @@ if (!isdirectory)
     hitchname = string_sprintf( "%s.%s.%08x.%08x", lockname, primary_hostname,
       (unsigned int)(time(NULL)), (unsigned long)getpid());
 
-    DEBUG(D_transport) debug_printf("lock name: %s\nhitch name: %s\n", lockname,
+    DEBUG(transport) debug_printf("lock name: %s\nhitch name: %s\n", lockname,
       hitchname);
 
     /* Lock file creation retry loop */
@@ -1608,14 +1608,14 @@ if (!isdirectory)
         if (ob->lockfile_timeout > 0 && Ustat(lockname, &statbuf) == 0 &&
             time(NULL) - statbuf.st_ctime > ob->lockfile_timeout)
           {
-          DEBUG(D_transport) debug_printf("unlinking timed-out lock file\n");
+          DEBUG(transport) debug_printf("unlinking timed-out lock file\n");
           Uunlink(lockname);
           }
-        DEBUG(D_transport) debug_printf("link of hitching post failed - retrying\n");
+        DEBUG(transport) debug_printf("link of hitching post failed - retrying\n");
         continue;
         }
 
-      DEBUG(D_transport) debug_printf("lock file created\n");
+      DEBUG(transport) debug_printf("lock file created\n");
       break;
       }
 
@@ -1809,7 +1809,7 @@ if (!isdirectory)
         int diffs = oldmode ^ mode;
         if (addr->mode > 0 || (diffs & oldmode) == diffs)
           {
-          DEBUG(D_transport) debug_printf("chmod %o %s\n", mode, filename);
+          DEBUG(transport) debug_printf("chmod %o %s\n", mode, filename);
           if (Uchmod(filename, mode) < 0)
             {
             addr->basic_errno = errno;
@@ -2092,18 +2092,18 @@ if (!isdirectory)
               statbuf.st_dev == ostatbuf.st_dev &&
               statbuf.st_ino == ostatbuf.st_ino)
             break;
-          DEBUG(D_transport) debug_printf("MBX lockfile %s changed "
+          DEBUG(transport) debug_printf("MBX lockfile %s changed "
             "between creation and locking\n", mbx_lockname);
           }
 
-        DEBUG(D_transport) debug_printf("failed to lock %s: %s\n", mbx_lockname,
+        DEBUG(transport) debug_printf("failed to lock %s: %s\n", mbx_lockname,
           strerror(errno));
         (void)close(mbx_lockfd);
         mbx_lockfd = -1;
         }
       else
         {
-        DEBUG(D_transport) debug_printf("failed to fstat or get read lock on %s: %s\n",
+        DEBUG(transport) debug_printf("failed to fstat or get read lock on %s: %s\n",
           filename, strerror(errno));
         }
       }
@@ -2111,7 +2111,7 @@ if (!isdirectory)
 
     else break;   /* No on-file locking required; break the open/lock loop */
 
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("fcntl(), flock(), or MBX locking failed - retrying\n");
 
     (void)close(fd);
@@ -2155,7 +2155,7 @@ if (!isdirectory)
     goto RETURN;
     }
 
-  DEBUG(D_transport) debug_printf("mailbox %s is locked\n", filename);
+  DEBUG(transport) debug_printf("mailbox %s is locked\n", filename);
 
   /* Save access time (for subsequent restoration), modification time (for
   restoration if updating fails), size of file (for comsat and for re-setting if
@@ -2206,7 +2206,7 @@ else
   if (is_tainted(path))
     if (ob->create_file == create_belowhome)
       {
-      DEBUG(D_transport) debug_printf("below-home: de-tainting path '%s'\n", path);
+      DEBUG(transport) debug_printf("below-home: de-tainting path '%s'\n", path);
       path = string_copy_taint(path, GET_UNTAINTED);
       }
     else
@@ -2240,7 +2240,7 @@ else
 		  MCS_NOFLAGS, &addr->message, pcre_gen_cmp_ctx)))
         return FALSE;
 
-      DEBUG(D_transport) debug_printf("using regex for file sizes: %s\n",
+      DEBUG(transport) debug_printf("using regex for file sizes: %s\n",
         ob->quota_size_regex);
       }
 
@@ -2291,7 +2291,7 @@ else
             {
             *slash = 0;
             check_path = new_check_path;
-            DEBUG(D_transport) debug_printf("maildirfolder file exists: "
+            DEBUG(transport) debug_printf("maildirfolder file exists: "
               "quota check directory changed to %s\n", check_path);
             }
           }
@@ -2322,7 +2322,7 @@ else
 	    MCS_NOFLAGS, &addr->message, pcre_gen_cmp_ctx)))
         return FALSE;
 
-      DEBUG(D_transport)
+      DEBUG(transport)
         debug_printf("using regex for maildir directory selection: %s\n",
           ob->maildir_dir_regex);
 
@@ -2339,7 +2339,7 @@ else
 	if (!regex_match(dir_regex, s, -1, NULL))
           {
           disable_quota = TRUE;
-          DEBUG(D_transport) debug_printf("delivery directory does not match "
+          DEBUG(transport) debug_printf("delivery directory does not match "
             "maildir_quota_directory_regex: disabling quota\n");
           }
         }
@@ -2402,7 +2402,7 @@ else
     {
     off_t size;
     int filecount = 0;
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("quota checks on directory %s\n", check_path);
     size = check_dir_size(check_path, &filecount,  re);
     if (mailbox_size < 0) mailbox_size = size;
@@ -2417,7 +2417,7 @@ else
 
   if (mbformat == mbf_smail)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("delivering to new file in %s\n", path);
     filename = dataname = string_sprintf("%s/temp." PID_T_FMT ".%s",
 					path, getpid(), primary_hostname);
@@ -2441,7 +2441,7 @@ else
 
   else if (mbformat == mbf_maildir)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("delivering in maildir format in %s\n", path);
 
     GET_OPTION("maildir_tag");
@@ -2484,7 +2484,7 @@ else
         {
         if ((fd = Uopen(filename, O_WRONLY | O_CREAT | O_EXCL, mode)) >= 0)
 	  break;
-        DEBUG (D_transport) debug_printf ("open failed for %s: %s\n",
+        DEBUG(transport) debug_printf ("open failed for %s: %s\n",
           filename, strerror(errno));
         }
 
@@ -2492,7 +2492,7 @@ else
 
       if (i >= ob->maildir_retries)
         {
-	DEBUG(D_transport)
+	DEBUG(transport)
 	  {
 	  char buf[PATH_MAX];
 	  debug_printf(" (euid=%ld egid=%ld cwd=%s)\n",
@@ -2542,7 +2542,7 @@ else
     mailstore_basename = string_sprintf("%s/%s-%s", path, message_id,
       string_base62_64((long int)getpid()));
 
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("delivering in mailstore format in %s\n", path);
 
     filename = string_sprintf("%s.tmp", mailstore_basename);
@@ -2648,7 +2648,7 @@ else
       return FALSE;
       }
 
-    DEBUG(D_transport) debug_printf("Envelope file %s written\n", filename);
+    DEBUG(transport) debug_printf("Envelope file %s written\n", filename);
 
     /* Now open the data file, and ensure that it has the correct ownership and
     mode. */
@@ -2689,7 +2689,7 @@ else
 prefix line, and followed by any configured suffix line. If there are any
 writing errors, we must defer. */
 
-DEBUG(D_transport) debug_printf("writing to file %s\n", dataname);
+DEBUG(transport) debug_printf("writing to file %s\n", dataname);
 
 yield = OK;
 errno = 0;
@@ -2701,7 +2701,7 @@ included in the check). */
 
 if (!disable_quota && ob->quota_value > 0)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     {
     debug_printf("Exim quota = " OFF_T_FMT " old size = " OFF_T_FMT
       " this message = %d (%sincluded)\n",
@@ -2714,24 +2714,24 @@ if (!disable_quota && ob->quota_value > 0)
   if (mailbox_size + (ob->quota_is_inclusive ? message_size:0) > ob->quota_value)
     if (!ob->quota_no_check)
       {
-      DEBUG(D_transport) debug_printf("mailbox quota exceeded\n");
+      DEBUG(transport) debug_printf("mailbox quota exceeded\n");
       yield = DEFER;
       errno = ERRNO_EXIMQUOTA;
       }
     else
-      DEBUG(D_transport) debug_printf("mailbox quota exceeded but ignored\n");
+      DEBUG(transport) debug_printf("mailbox quota exceeded but ignored\n");
 
   if (ob->quota_filecount_value > 0
            && mailbox_filecount + (ob->quota_is_inclusive ? 1:0) >
               ob->quota_filecount_value)
     if (!ob->quota_filecount_no_check)
       {
-      DEBUG(D_transport) debug_printf("mailbox file count quota exceeded\n");
+      DEBUG(transport) debug_printf("mailbox file count quota exceeded\n");
       yield = DEFER;
       errno = ERRNO_EXIMQUOTA;
       filecount_msg = US" filecount";
       }
-    else DEBUG(D_transport) if (ob->quota_filecount_no_check)
+    else DEBUG(transport) if (ob->quota_filecount_no_check)
       debug_printf("mailbox file count quota exceeded but ignored\n");
 
   }
@@ -2741,7 +2741,7 @@ if (verify_mode)
   addr->basic_errno = errno;
   addr->message = US"Over quota";
   addr->transport_return = yield;
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("appendfile (verify) yields %d with errno=%d more_errno=%d\n",
       yield, addr->basic_errno, addr->more_errno);
 
@@ -2767,7 +2767,7 @@ if (yield == OK && ob->mbx_format)
     }
   save_fd = fd;
   fd = fileno(temp_file);
-  DEBUG(D_transport) debug_printf("writing to temporary file\n");
+  DEBUG(transport) debug_printf("writing to temporary file\n");
   }
 #endif  /* SUPPORT_MBX */
 
@@ -2936,7 +2936,7 @@ if (!disable_quota && THRESHOLD_CHECK)
   off_t threshold = ob->quota_warn_threshold_value;
   if (ob->quota_warn_threshold_is_percent)
     threshold = (off_t)(((double)ob->quota_value * threshold) / 100);
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("quota = " OFF_T_FMT
       " threshold = " OFF_T_FMT
       " old size = " OFF_T_FMT
@@ -2990,14 +2990,14 @@ if (yield != OK)
       struct stat statbuf;
       if (Ustat("new", &statbuf) < 0)
         {
-        DEBUG(D_transport) debug_printf("maildir quota exceeded: "
+        DEBUG(transport) debug_printf("maildir quota exceeded: "
           "stat error %d for \"new\": %s\n", errno, strerror(errno));
         }
       else   /* Want a repeatable time when in test harness */
         addr->more_errno = f.running_in_test_harness ? 10 :
           (int)time(NULL) - statbuf.st_mtime;
 
-      DEBUG(D_transport)
+      DEBUG(transport)
         debug_printf("maildir: time since \"new\" directory modified = %s\n",
         readconf_printtime(addr->more_errno));
       }
@@ -3017,7 +3017,7 @@ if (yield != OK)
     addr->message = US"mailbox is full";
     #endif  /* EDQUOT */
     addr->user_message = US"mailbox is full";
-    DEBUG(D_transport) debug_printf("System quota exceeded for %s%s%s\n",
+    DEBUG(transport) debug_printf("System quota exceeded for %s%s%s\n",
       dataname,
       isdirectory ? US"" : US": time since file read = ",
       isdirectory ? US"" : readconf_printtime(addr->more_errno));
@@ -3031,7 +3031,7 @@ if (yield != OK)
       "(MTA-imposed%s quota exceeded while writing to %s)", filecount_msg,
         dataname);
     addr->user_message = US"mailbox is full";
-    DEBUG(D_transport) debug_printf("Exim%s quota exceeded for %s%s%s\n",
+    DEBUG(transport) debug_printf("Exim%s quota exceeded for %s%s%s\n",
       filecount_msg, dataname,
       isdirectory ? US"" : US": time since file read = ",
       isdirectory ? US"" : readconf_printtime(addr->more_errno));
@@ -3084,7 +3084,7 @@ if (yield != OK)
   fcntl() call (BSDI & FreeBSD do not). */
 
   if (!isdirectory && ftruncate(fd, saved_size))
-    DEBUG(D_transport) debug_printf("Error resetting file size\n");
+    DEBUG(transport) debug_printf("Error resetting file size\n");
   }
 
 /* Handle successful writing - we want the modification time to be now for
@@ -3129,7 +3129,7 @@ else
       uschar *renamename = newname;
       fd = -1;
 
-      DEBUG(D_transport) debug_printf("renaming temporary file\n");
+      DEBUG(transport) debug_printf("renaming temporary file\n");
 
       /* If there is no rename name set, we are in a non-maildir, non-mailstore
       situation. The name is built by expanding the directory_file option, and
@@ -3170,7 +3170,7 @@ else
           renamename = string_sprintf("%s/%s", path, renameleaf);
           if (Ulink(filename, renamename) < 0)
             {
-            DEBUG(D_transport) debug_printf("link failed: %s\n",
+            DEBUG(transport) debug_printf("link failed: %s\n",
               strerror(errno));
             if (errno != EEXIST || i >= 4 ||
                 Ustrcmp(renameleaf, old_renameleaf) == 0)
@@ -3182,7 +3182,7 @@ else
               break;
               }
             old_renameleaf = renameleaf;
-            DEBUG(D_transport) debug_printf("%s exists - trying again\n",
+            DEBUG(transport) debug_printf("%s exists - trying again\n",
               renamename);
             }
           else
@@ -3240,7 +3240,7 @@ else
 
         else
           {
-          DEBUG(D_transport) debug_printf("renamed %s as %s\n", filename,
+          DEBUG(transport) debug_printf("renamed %s as %s\n", filename,
             renamename);
           filename = dataname = NULL;   /* Prevents attempt to unlink at end */
           }
@@ -3263,7 +3263,7 @@ if (ob->notify_comsat && yield == OK && deliver_localpart)
 
 /* Pass back the final return code in the address structure */
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("appendfile yields %d with errno=%d more_errno=%d\n",
     yield, addr->basic_errno, addr->more_errno);
 
@@ -3287,7 +3287,7 @@ if (mbx_lockfd >= 0)
   if (yield == OK && apply_lock(fd, F_WRLCK, ob->use_fcntl, 0,
       ob->use_flock, 0) >= 0)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("unlinking MBX lock file %s\n", mbx_lockname);
     Uunlink(mbx_lockname);
     }

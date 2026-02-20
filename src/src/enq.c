@@ -42,7 +42,7 @@ dbdata_serialize new_record;
 open_db dbblock;
 open_db * dbm_file;
 
-DEBUG(D_transport) debug_printf("check serialized: %s\n", key);
+DEBUG(transport) debug_printf("check serialized: %s\n", key);
 
 /* Open and lock the waiting information database. */
 
@@ -58,7 +58,7 @@ if (serial_record && time(NULL) - serial_record->gen.time_stamp < 6*60*60)
   if (serial_record->count >= lim)
     {
     dbfn_close(dbm_file);
-    DEBUG(D_transport) debug_printf("outstanding serialization record for %s\n",
+    DEBUG(transport) debug_printf("outstanding serialization record for %s\n",
       key);
     return 0;
     }
@@ -69,7 +69,7 @@ else
 
 /* We can proceed - insert a new record or update the old one. */
 
-DEBUG(D_transport) debug_printf("write serialization record for %s val %d\n",
+DEBUG(transport) debug_printf("write serialization record for %s val %d\n",
       key, new_record.count);
 dbfn_write(dbm_file, key, &new_record, (int)sizeof(dbdata_serialize));
 dbfn_close(dbm_file);
@@ -98,7 +98,7 @@ open_db dbblock;
 open_db *dbm_file;
 dbdata_serialize *serial_record;
 
-DEBUG(D_transport) debug_printf("end serialized: %s\n", key);
+DEBUG(transport) debug_printf("end serialized: %s\n", key);
 
 if (  !(dbm_file = dbfn_open(US"misc", O_RDWR, &dbblock, TRUE, TRUE))
    || !(serial_record = dbfn_read_enforce_length(dbm_file, key, sizeof(dbdata_serialize)))
@@ -106,13 +106,13 @@ if (  !(dbm_file = dbfn_open(US"misc", O_RDWR, &dbblock, TRUE, TRUE))
   return;
 if (--serial_record->count > 0)
   {
-  DEBUG(D_transport) debug_printf("write serialization record for %s val %d\n",
+  DEBUG(transport) debug_printf("write serialization record for %s val %d\n",
       key, serial_record->count);
   dbfn_write(dbm_file, key, serial_record, (int)sizeof(dbdata_serialize));
   }
 else
   {
-  DEBUG(D_transport) debug_printf("remove serialization record for %s\n", key);
+  DEBUG(transport) debug_printf("remove serialization record for %s\n", key);
   dbfn_delete(dbm_file, key);
   }
 dbfn_close(dbm_file);

@@ -241,7 +241,7 @@ for (rewrite_rule * rule = rewrite_rules;
 
   /* We have a validly rewritten address */
 
-  if (LOGGING(address_rewrite) || IS_DEBUG(D_rewrite))
+  if (LOGGING(address_rewrite) || IS_DEBUG(rewrite))
     {
     const uschar * where = CUS"?";
 
@@ -448,7 +448,7 @@ uschar * s = Ustrchr(h->text, ':') + 1;
 
 Uskip_whitespace(&s);
 
-DEBUG(D_rewrite)	/* The header text includes the trailing newline */
+DEBUG(rewrite)	/* The header text includes the trailing newline */
   debug_printf_indent("rewrite_one_header: type=%c:\n  %s", h->type, h->text);
 
 f.parse_allow_group = TRUE;     /* Allow group syntax */
@@ -523,7 +523,7 @@ while (*s)
     if (domain <= 0 || strcmpic(recipient+domain, routed_old) != 0) continue;
     recipient[domain-1] = 0;
     new = string_sprintf("%s@%s", recipient, routed_new);
-    DEBUG(D_rewrite)
+    DEBUG(rewrite)
       {
       recipient[domain-1] = '@';
       debug_printf("%s rewritten by router as %s\n", recipient, new);
@@ -653,7 +653,7 @@ while (*s)
 
     Ustrcat(newt, s);
 
-    DEBUG(D_rewrite) debug_printf("newlen=%d newtype=%c newtext:\n%s",
+    DEBUG(rewrite) debug_printf("newlen=%d newtype=%c newtext:\n%s",
       slen, type, newtstart);
 
     /* Compute the length of the rest of the header line before we possibly
@@ -676,7 +676,7 @@ while (*s)
     /* Set up for scanning the rest of the header */
 
     s = newh->text + remlen;
-    DEBUG(D_rewrite) debug_printf("remainder: %s", *s ? s : US"\n");
+    DEBUG(rewrite) debug_printf("remainder: %s", *s ? s : US"\n");
     }
   }
 

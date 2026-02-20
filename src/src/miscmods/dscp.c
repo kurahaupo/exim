@@ -119,13 +119,13 @@ else if (af == AF_INET6)
 #endif
 else
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("Unhandled address family %d in dscp_lookup()\n", af);
   return FALSE;
   }
 if (!dscp_name)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("[empty DSCP]\n");
   return FALSE;
   }
@@ -146,7 +146,7 @@ if (p != dscp_lookup && *p == '\0')
   RFC 2597 defines the values unshifted. */
   if (rawlong < 0 || rawlong > 0x3F)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("DSCP value %ld out of range, ignored.\n", rawlong);
     return FALSE;
     }
@@ -194,7 +194,7 @@ anyway. */
 if (smtp_in_fd < 0) return US"no stdin";
 if ((af = ip_get_address_family(smtp_in_fd)) < 0)
   {
-  HDEBUG(D_acl) debug_printf_indent(
+  HDEBUG(acl) debug_printf_indent(
     "smtp input is probably not a socket [%s], not setting DSCP\n",
     strerror(errno));
   return NULL;
@@ -204,7 +204,7 @@ if (!dscp_lookup(++opt, af, &socklevel, &optname, &value))
 
 value = setsockopt(smtp_in_fd, socklevel, optname,
 		    &value, sizeof(value));
-HDEBUG(D_acl)
+HDEBUG(acl)
   if (value < 0)
     debug_printf_indent("failed to set input DSCP[%s]: %s\n",
       opt, strerror(errno));
@@ -228,11 +228,11 @@ if (  dscp_str
    && dscp_lookup(dscp_str, host_af, &dscp_level, &dscp_option, &dscp_value)
    )
   {
-  HDEBUG(D_transport|D_acl|D_v)
+  HDEBUG(transport|acl|v)
     debug_printf_indent("DSCP %q=%x ", dscp_str, dscp_value);
 
   if (setsockopt(sock, dscp_level, dscp_option, &dscp_value, sizeof(dscp_value)) < 0)
-    HDEBUG(D_transport|D_acl|D_v)
+    HDEBUG(transport|acl|v)
       debug_printf_indent("failed to set DSCP: %s ", strerror(errno));
 
   /* If the kernel supports IPv4 and IPv6 on an IPv6 socket, we need to set the

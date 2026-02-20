@@ -202,7 +202,7 @@ if (!gsasl_ctx)
 
 /* We don't need this except to log it for debugging. */
 
-HDEBUG(D_auth) if (!once)
+HDEBUG(auth) if (!once)
   {
   if ((rc = gsasl_server_mechlist(gsasl_ctx, &once)) != GSASL_OK)
     log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
@@ -233,7 +233,7 @@ else if(  ob->server_mech
   */
 
   ablock->server = FALSE;
-  HDEBUG(D_auth) debug_printf("%s authenticator:  "
+  HDEBUG(auth) debug_printf("%s authenticator:  "
 	    "Need server_condition for %s mechanism\n",
 	    a->name, ob->server_mech);
   }
@@ -245,7 +245,7 @@ if (  !ob->server_realm
    && STREQIC(ob->server_mech, US"DIGEST-MD5"))
   {
   ablock->server = FALSE;
-  HDEBUG(D_auth) debug_printf("%s authenticator:  "
+  HDEBUG(auth) debug_printf("%s authenticator:  "
 	    "Need server_realm for %s mechanism\n",
 	    a->name, ob->server_mech);
   }
@@ -266,19 +266,19 @@ struct callback_exim_state *cb_state =
 
 if (!cb_state)
   {
-  HDEBUG(D_auth) debug_printf("gsasl callback (%d) not from our server/client processing\n", prop);
+  HDEBUG(auth) debug_printf("gsasl callback (%d) not from our server/client processing\n", prop);
 #ifdef CHANNELBIND_HACK
   if (prop == GSASL_CB_TLS_UNIQUE)
     {
     uschar * s;
     if ((s = gsasl_callback_hook_get(ctx)))	/* Gross hack for early lib vers */
       {
-      HDEBUG(D_auth) debug_printf("GSASL_CB_TLS_UNIQUE from ctx hook\n");
+      HDEBUG(auth) debug_printf("GSASL_CB_TLS_UNIQUE from ctx hook\n");
       gsasl_property_set(sctx, GSASL_CB_TLS_UNIQUE, CS s);
       }
     else
       {
-      HDEBUG(D_auth) debug_printf("GSASL_CB_TLS_UNIQUE!  dummy for now\n");
+      HDEBUG(auth) debug_printf("GSASL_CB_TLS_UNIQUE!  dummy for now\n");
       gsasl_property_set(sctx, GSASL_CB_TLS_UNIQUE, "");
       }
     return GSASL_OK;
@@ -287,7 +287,7 @@ if (!cb_state)
   return GSASL_NO_CALLBACK;
   }
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   debug_printf("GNU SASL Callback entered, prop=%d (loop prop=%d)\n",
       prop, callback_loop);
 
@@ -296,7 +296,7 @@ if (callback_loop > 0)
   /* Most likely is that we were asked for property FOO, and to
   expand the string we asked for property BAR to put into an auth
   variable, but property BAR is not supplied for this mechanism. */
-  HDEBUG(D_auth)
+  HDEBUG(auth)
     debug_printf("Loop, asked for property %d while handling property %d\n",
 	prop, callback_loop);
   return GSASL_NO_CALLBACK;
@@ -370,7 +370,7 @@ return CUS string_sprintf("(unknown prop: %d)", (int)prop);
 static void
 preload_prop(Gsasl_session * sctx, Gsasl_property propcode, const uschar * val)
 {
-DEBUG(D_auth) debug_printf("preloading prop %s val %s\n",
+DEBUG(auth) debug_printf("preloading prop %s val %s\n",
   gsasl_prop_code_to_name(propcode), val);
 gsasl_property_set(sctx, propcode, CCS val);
 }
@@ -392,7 +392,7 @@ Gsasl_session * sctx = NULL;
 struct callback_exim_state cb_state;
 int rc, auth_result, exim_error, exim_error_override;
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   debug_printf("GNU SASL: initialising session for %s, mechanism %s\n",
       auname, ob->server_mech);
 
@@ -402,7 +402,7 @@ if (tls_in.channelbinding && ob->server_channelbinding)
 # ifndef DISABLE_TLS_RESUME
   if (!tls_in.ext_master_secret && tls_in.resumption == RESUME_USED)
     {		/* per RFC 7677 section 4 */
-    HDEBUG(D_auth) debug_printf(
+    HDEBUG(auth) debug_printf(
       "channel binding not usable on resumed TLS without extended-master-secret");
     return FAIL;
     }
@@ -421,7 +421,7 @@ if ((rc = gsasl_server_start(gsasl_ctx, CCS ob->server_mech, &sctx)) != GSASL_OK
   {
   auth_defer_msg = string_sprintf("GNU SASL: session start failure: %s (%s)",
       gsasl_strerror_name(rc), gsasl_strerror(rc));
-  HDEBUG(D_auth) debug_printf("%s\n", auth_defer_msg);
+  HDEBUG(auth) debug_printf("%s\n", auth_defer_msg);
   return DEFER;
   }
 /* Hereafter: gsasl_finish(sctx) please */
@@ -472,7 +472,7 @@ if (tls_in.channelbinding)
   */
   if (ob->server_channelbinding)
     {
-    HDEBUG(D_auth) debug_printf("Auth %s: Enabling channel-binding\n",
+    HDEBUG(auth) debug_printf("Auth %s: Enabling channel-binding\n",
 	auname);
 # ifndef CHANNELBIND_HACK
     preload_prop(sctx,
@@ -484,12 +484,12 @@ if (tls_in.channelbinding)
 # endif
     }
   else
-    HDEBUG(D_auth)
+    HDEBUG(auth)
       debug_printf("Auth %s: Not enabling channel-binding (data available)\n",
 	  auname);
   }
 else
-  HDEBUG(D_auth)
+  HDEBUG(auth)
     debug_printf("Auth %s: no channel-binding data available\n",
 	auname);
 #endif
@@ -520,7 +520,7 @@ do {
     case GSASL_NO_PASSCODE:
     case GSASL_NO_PIN:
     case GSASL_BASE64_ERROR:
-      HDEBUG(D_auth) debug_printf("GNU SASL permanent error: %s (%s)\n",
+      HDEBUG(auth) debug_printf("GNU SASL permanent error: %s (%s)\n",
 	  gsasl_strerror_name(rc), gsasl_strerror(rc));
       log_write(0, LOG_REJECT, "%s authenticator (%s):\n  "
 	  "GNU SASL permanent failure: %s (%s)",
@@ -533,7 +533,7 @@ do {
     default:
       auth_defer_msg = string_sprintf("GNU SASL temporary error: %s (%s)",
 	  gsasl_strerror_name(rc), gsasl_strerror(rc));
-      HDEBUG(D_auth) debug_printf("%s\n", auth_defer_msg);
+      HDEBUG(auth) debug_printf("%s\n", auth_defer_msg);
       exim_error_override = DEFER;
       goto STOP_INTERACTION;
     }
@@ -556,7 +556,7 @@ do {
 STOP_INTERACTION:
 auth_result = rc;
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   {
   const uschar * s;
   if ((s = CUS gsasl_property_fast(sctx, GSASL_SCRAM_ITER)))
@@ -580,7 +580,7 @@ if (exim_error != OK)
 
 if (auth_result != GSASL_OK)
   {
-  HDEBUG(D_auth) debug_printf("authentication returned %s (%s)\n",
+  HDEBUG(auth) debug_printf("authentication returned %s (%s)\n",
       gsasl_strerror_name(auth_result), gsasl_strerror(auth_result));
   if (exim_error_override != OK)
     return exim_error_override; /* might be DEFER */
@@ -623,7 +623,7 @@ set_exim_authvar_from_prop(Gsasl_session * sctx, Gsasl_property prop)
 uschar * propval = US gsasl_property_fast(sctx, prop);
 int i = expand_nmax, j = i + 1;
 propval = propval ? string_copy(propval) : US"";
-HDEBUG(D_auth) debug_printf("auth[%d] <=  %s'%s'\n",
+HDEBUG(auth) debug_printf("auth[%d] <=  %s'%s'\n",
 			    j, gsasl_prop_code_to_name(prop), propval);
 expand_nstring[j] = propval;
 expand_nlength[j] = Ustrlen(propval);
@@ -653,17 +653,17 @@ static int
 prop_from_option(Gsasl_session * sctx, Gsasl_property prop,
   const uschar * option)
 {
-HDEBUG(D_auth) debug_printf(" %s\n", gsasl_prop_code_to_name(prop));
+HDEBUG(auth) debug_printf(" %s\n", gsasl_prop_code_to_name(prop));
 if (option)
   {
   set_exim_authvars_from_a_az_r_props(sctx);
   option = expand_string(option);
-  HDEBUG(D_auth) debug_printf("  '%s'\n", option);
+  HDEBUG(auth) debug_printf("  '%s'\n", option);
   if (*option)
     gsasl_property_set(sctx, prop, CCS option);
   return GSASL_OK;
   }
-HDEBUG(D_auth) debug_printf("  option not set\n");
+HDEBUG(auth) debug_printf("  option not set\n");
 return GSASL_NO_CALLBACK;
 }
 
@@ -676,7 +676,7 @@ char * tmps;
 uschar * s;
 int cbrc = GSASL_NO_CALLBACK;
 
-HDEBUG(D_auth) debug_printf("GNU SASL callback %s for %s/%s as server\n",
+HDEBUG(auth) debug_printf("GNU SASL callback %s for %s/%s as server\n",
       gsasl_prop_code_to_name(prop), ablock->drinst.name, ablock->public_name);
 
 for (int i = 0; i < AUTH_VARS; i++) auth_vars[i] = NULL;
@@ -697,7 +697,7 @@ switch (prop)
   case GSASL_VALIDATE_EXTERNAL:
     if (!ablock->server_condition)
       {
-      HDEBUG(D_auth) debug_printf("No server_condition supplied, to validate EXTERNAL\n");
+      HDEBUG(auth) debug_printf("No server_condition supplied, to validate EXTERNAL\n");
       cbrc = GSASL_AUTHENTICATION_ERROR;
       break;
       }
@@ -711,7 +711,7 @@ switch (prop)
   case GSASL_VALIDATE_ANONYMOUS:
     if (!ablock->server_condition)
       {
-      HDEBUG(D_auth) debug_printf("No server_condition supplied, to validate ANONYMOUS\n");
+      HDEBUG(auth) debug_printf("No server_condition supplied, to validate ANONYMOUS\n");
       cbrc = GSASL_AUTHENTICATION_ERROR;
       break;
       }
@@ -772,17 +772,17 @@ switch (prop)
 
     if (!(s = ob->server_password))
       {
-      HDEBUG(D_auth) debug_printf("option not set\n");
+      HDEBUG(auth) debug_printf("option not set\n");
       break;
       }
     if (!(tmps = CS expand_string(s)))
       {
       sasl_error_should_defer = !f.expand_string_forcedfail;
-      HDEBUG(D_auth) debug_printf("server_password expansion failed, so "
+      HDEBUG(auth) debug_printf("server_password expansion failed, so "
 	  "can't tell GNU SASL library the password for %s\n", auth_vars[0]);
       return GSASL_AUTHENTICATION_ERROR;
       }
-    HDEBUG(D_auth) debug_printf("  set\n");
+    HDEBUG(auth) debug_printf("  set\n");
     gsasl_property_set(sctx, GSASL_PASSWORD, tmps);
 
     /* This is inadequate; don't think Exim's store stacks are geared
@@ -794,11 +794,11 @@ switch (prop)
     break;
 
   default:
-    HDEBUG(D_auth) debug_printf(" Unrecognised callback: %d\n", prop);
+    HDEBUG(auth) debug_printf(" Unrecognised callback: %d\n", prop);
     cbrc = GSASL_NO_CALLBACK;
   }
 
-HDEBUG(D_auth) debug_printf("Returning %s (%s)\n",
+HDEBUG(auth) debug_printf("Returning %s (%s)\n",
     gsasl_strerror_name(cbrc), gsasl_strerror(cbrc));
 
 return cbrc;
@@ -823,7 +823,7 @@ if (!(s = expand_string(val)) || !(flags & PROP_OPTIONAL) && !*s)
   }
 if (*s)
   {
-  HDEBUG(D_auth) debug_printf("%s: set %s = '%s'\n", __FUNCTION__,
+  HDEBUG(auth) debug_printf("%s: set %s = '%s'\n", __FUNCTION__,
     gsasl_prop_code_to_name(prop), s);
   gsasl_property_set(sctx, prop, CS s);
   }
@@ -853,7 +853,7 @@ uschar * s;
 BOOL initial = TRUE;
 int rc, yield = FAIL;
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   debug_printf("GNU SASL: initialising session for %s, mechanism %s\n",
       auname, ob->server_mech);
 
@@ -885,7 +885,7 @@ if ((rc = gsasl_client_start(gsasl_ctx, CCS ob->server_mech, &sctx)) != GSASL_OK
   {
   string_format(buffer, buffsize, "GNU SASL: session start failure: %s (%s)",
       gsasl_strerror_name(rc), gsasl_strerror(rc));
-  HDEBUG(D_auth) debug_printf("%s\n", buffer);
+  HDEBUG(auth) debug_printf("%s\n", buffer);
   return ERROR;
   }
 
@@ -908,7 +908,7 @@ if (  !set_client_prop(sctx, GSASL_PASSWORD, ob->client_password,
 if (tls_out.channelbinding)
   if (ob->client_channelbinding)
     {
-    HDEBUG(D_auth) debug_printf("Auth %s: Enabling channel-binding\n",
+    HDEBUG(auth) debug_printf("Auth %s: Enabling channel-binding\n",
 	auname);
 # ifndef CHANNELBIND_HACK
     preload_prop(sctx,
@@ -920,7 +920,7 @@ if (tls_out.channelbinding)
 # endif
     }
   else
-    HDEBUG(D_auth)
+    HDEBUG(auth)
       debug_printf("Auth %s: Not enabling channel-binding (data available)\n",
 	  auname);
 #endif
@@ -997,14 +997,14 @@ return yield;
 static int
 client_callback(Gsasl *ctx, Gsasl_session *sctx, Gsasl_property prop, auth_instance *ablock)
 {
-HDEBUG(D_auth) debug_printf("GNU SASL callback %s for %s/%s as client\n",
+HDEBUG(auth) debug_printf("GNU SASL callback %s for %s/%s as client\n",
       gsasl_prop_code_to_name(prop), ablock->drinst.name, ablock->public_name);
 switch (prop)
   {
 #ifdef EXIM_GSASL_HAVE_EXPORTER
   case GSASL_CB_TLS_EXPORTER:	/* Should never get called for this, as pre-set */
     if (!tls_out.channelbind_exporter) break;
-    HDEBUG(D_auth) debug_printf(" filling in\n");
+    HDEBUG(auth) debug_printf(" filling in\n");
     gsasl_property_set(sctx, GSASL_CB_TLS_EXPORTER, CCS tls_out.channelbinding);
     return GSASL_OK;
 #endif
@@ -1012,7 +1012,7 @@ switch (prop)
 #ifdef EXIM_GSASL_HAVE_EXPORTER
     if (tls_out.channelbind_exporter) break;
 #endif
-    HDEBUG(D_auth) debug_printf(" filling in\n");
+    HDEBUG(auth) debug_printf(" filling in\n");
     gsasl_property_set(sctx, GSASL_CB_TLS_UNIQUE, CCS tls_out.channelbinding);
     return GSASL_OK;
   case GSASL_SCRAM_SALTED_PASSWORD:
@@ -1020,7 +1020,7 @@ switch (prop)
     uschar * client_spassword =
       ((auth_gsasl_options_block *) ablock->drinst.options_block)->client_spassword;
     uschar dummy[4];
-    HDEBUG(D_auth) if (!client_spassword)
+    HDEBUG(auth) if (!client_spassword)
       debug_printf(" client_spassword option unset\n");
     if (client_spassword)
       {
@@ -1036,7 +1036,7 @@ switch (prop)
     break;
     }
   default:
-    HDEBUG(D_auth)
+    HDEBUG(auth)
       debug_printf(" not providing one\n");
     break;
   }

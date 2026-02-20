@@ -210,7 +210,7 @@ while (*s)
 
   if (rc == OK)                         /* Remove this address */
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("discarding recipient %s (matched never_mail)\n", next);
     hit = TRUE;
     if (terminator == ',') e++;
@@ -277,7 +277,7 @@ header_line * h;
 time_t now = time(NULL), once_repeat_sec = 0;
 FILE * ff = NULL, * fp;
 
-DEBUG(D_transport) debug_printf("%s transport entered\n", trname);
+DEBUG(transport) debug_printf("%s transport entered\n", trname);
 
 /* Set up for the good case */
 
@@ -291,7 +291,7 @@ it has to be expanded here. */
 
 if (addr->reply)
   {
-  DEBUG(D_transport) debug_printf("taking data from address\n");
+  DEBUG(transport) debug_printf("taking data from address\n");
   from = addr->reply->from;
   reply_to = addr->reply->reply_to;
   to = addr->reply->to;
@@ -312,7 +312,7 @@ else
   {
   const uschar * oncerepeat;
 
-  DEBUG(D_transport) debug_printf("taking data from transport\n");
+  DEBUG(transport) debug_printf("taking data from transport\n");
   GET_OPTION("once_repeat");	oncerepeat = ob->once_repeat;
   GET_OPTION("from"); 		from = ob->from;
   GET_OPTION("reply_to");	reply_to = ob->reply_to;
@@ -374,7 +374,7 @@ if (ob->never_mail)
 
   if (!to && !cc && !bcc)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("*** all recipients removed by never_mail\n");
     return OK;
     }
@@ -384,7 +384,7 @@ if (ob->never_mail)
 
 if (f.dont_deliver)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("*** delivery by %s transport bypassed by -N option\n",
       trname);
   return FALSE;
@@ -445,7 +445,7 @@ if (oncelog && *oncelog && to)
       goto END_OFF;
       }
 
-    DEBUG(D_transport) debug_printf("%d bytes read from %s\n", cache_size, oncelog);
+    DEBUG(transport) debug_printf("%d bytes read from %s\n", cache_size, oncelog);
 
     /* Scan the data for this recipient. Each entry in the file starts with
     a time_t sized time value, followed by the address, followed by a binary
@@ -507,7 +507,7 @@ if (oncelog && *oncelog && to)
       goto END_OFF;
       }
 
-    DEBUG(D_transport) debug_printf("message previously sent to %s%s\n", to,
+    DEBUG(transport) debug_printf("message previously sent to %s%s\n", to,
       (once_repeat_sec > 0)? " and repeat time not reached" : "");
     log_fd = logfile ? Uopen(logfile, O_WRONLY|O_APPEND|O_CREAT, ob->mode) : -1;
     if (log_fd >= 0)
@@ -517,13 +517,13 @@ if (oncelog && *oncelog && to)
       while(*ptr) ptr++;
       if(write(log_fd, log_buffer, ptr - log_buffer) != ptr-log_buffer
         || close(log_fd))
-        DEBUG(D_transport) debug_printf("Problem writing log file %s for %s "
+        DEBUG(transport) debug_printf("Problem writing log file %s for %s "
           "transport\n", logfile, trname);
       }
     goto END_OFF;
     }
 
-  DEBUG(D_transport) debug_printf("%s %s\n", (then <= 0)?
+  DEBUG(transport) debug_printf("%s %s\n", (then <= 0)?
     "no previous message sent to" : "repeat time reached for", to);
   }
 
@@ -558,7 +558,7 @@ if ((pid = child_open_exim(&fd, US"autoreply")) < 0)
   addr->basic_errno = errno;
   addr->message = string_sprintf("Failed to create child process to send "
     "message from %s transport: %s", trname, strerror(errno));
-  DEBUG(D_transport) debug_printf("%s\n", addr->message);
+  DEBUG(transport) debug_printf("%s\n", addr->message);
   if (dbm_file) exim_dbclose(dbm_file);
   return FALSE;
   }
@@ -624,7 +624,7 @@ if (ff)
       {
       const uschar * s = expand_string(big_buffer);
       int i;
-      if (!s) DEBUG(D_transport)
+      if (!s) DEBUG(transport)
 	debug_printf("error while expanding line from file:\n  %s\n  %s\n",
 	  big_buffer, expand_string_message);
       if (!s) s = big_buffer;
@@ -722,7 +722,7 @@ if (cache_fd >= 0)
 
     memcpy(cache_time, &now, sizeof(time_t));
     if(write(cache_fd, from, size) != size)
-      DEBUG(D_transport) debug_printf("Problem writing cache file %s for %s "
+      DEBUG(transport) debug_printf("Problem writing cache file %s for %s "
 	"transport\n", oncelog, trname);
     }
   }
@@ -753,7 +753,7 @@ message, we do not fail. */
 if (rc != 0)
   if (rc == EXIT_NORECIPIENTS)
     {
-    DEBUG(D_any) debug_printf("%s transport: message contained no recipients\n",
+    DEBUG(any) debug_printf("%s transport: message contained no recipients\n",
       trname);
     }
   else
@@ -783,7 +783,7 @@ if (logfile)
     /* Use taint-unchecked routines for writing into log_buffer, trusting
     that we'll never expand it. */
 
-    DEBUG(D_transport) debug_printf("logging message details\n");
+    DEBUG(transport) debug_printf("logging message details\n");
     g = string_fmt_append_f(g, SVFMT_TAINT_NOCHK, "%s\n", tod_stamp(tod_log));
     if (from)
       g = string_fmt_append_f(g, SVFMT_TAINT_NOCHK, "  From: %s\n", from);
@@ -798,10 +798,10 @@ if (logfile)
     if (headers)
       g = string_fmt_append_f(g, SVFMT_TAINT_NOCHK, "  %s\n", headers);
     if(write(log_fd, g->s, g->ptr) != g->ptr || close(log_fd))
-      DEBUG(D_transport) debug_printf("Problem writing log file %s for %s "
+      DEBUG(transport) debug_printf("Problem writing log file %s for %s "
         "transport\n", logfile, trname);
     }
-  else DEBUG(D_transport) debug_printf("Failed to open log file %s for %s "
+  else DEBUG(transport) debug_printf("Failed to open log file %s for %s "
     "transport: %s\n", logfile, trname, strerror(errno));
   }
 
@@ -809,7 +809,7 @@ END_OFF:
 if (dbm_file) exim_dbclose(dbm_file);
 if (cache_fd > 0) (void)close(cache_fd);
 
-DEBUG(D_transport) debug_printf("%s transport succeeded\n", trname);
+DEBUG(transport) debug_printf("%s transport succeeded\n", trname);
 
 return FALSE;
 }

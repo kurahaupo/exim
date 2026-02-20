@@ -159,7 +159,7 @@ res[0] = 'x'; res[1] = 'n'; res[2] = res[3] = '-';
 
 if ((rc = punycode_encode(ucs4_len, p, NULL, &p_len, CS res+4)) != PUNYCODE_SUCCESS)
   {
-  DEBUG(D_expand) debug_printf("l_u2a: bad '%s'\n", punycode_strerror(rc));
+  DEBUG(expand) debug_printf("l_u2a: bad '%s'\n", punycode_strerror(rc));
   free(p);
   if (err) *err = US punycode_strerror(rc);
   return NULL;
@@ -179,7 +179,7 @@ punycode_uint * p;
 int rc;
 uschar * s, * res;
 
-DEBUG(D_expand) debug_printf("l_a2u: '%s'\n", alabel);
+DEBUG(expand) debug_printf("l_a2u: '%s'\n", alabel);
 alabel += 4;
 p_len = Ustrlen(alabel);
 p = store_get((p_len+1) * sizeof(*p), alabel);
@@ -222,7 +222,7 @@ const uschar * l, * d;
 
 if (!*utf8) return string_copy(utf8);
 
-DEBUG(D_expand) debug_printf("addr from utf8 <%s>", utf8);
+DEBUG(expand) debug_printf("addr from utf8 <%s>", utf8);
 
 for (const uschar * s = utf8; *s; s++)
   if (*s == '@')
@@ -233,12 +233,12 @@ for (const uschar * s = utf8; *s; s++)
        )
       return NULL;
     l = string_sprintf("%s@%s", l, d);
-    DEBUG(D_expand) debug_printf(" -> <%s>\n", l);
+    DEBUG(expand) debug_printf(" -> <%s>\n", l);
     return l;
     }
 
 l =  string_localpart_utf8_to_alabel(utf8, err);
-DEBUG(D_expand) debug_printf(" -> <%s>\n", l);
+DEBUG(expand) debug_printf(" -> <%s>\n", l);
 return l;
 }
 

@@ -152,7 +152,7 @@ const uschar * pre_widen = addr->domain, * post_widen = NULL;
 const uschar * fully_qualified_name, * listptr;
 uschar widen_buffer[256];
 
-DEBUG(D_route)
+DEBUG(route)
   debug_printf_indent("%s router called for %s\n  domain = %s\n",
     rblock->drinst.name, addr->address, addr->domain);
 
@@ -229,14 +229,14 @@ for (;;)
     /* not expanded so should never be tainted */
     widen = string_nextinlist(&listptr, &widen_sep, widen_buffer,
       sizeof(widen_buffer));
-    DEBUG(D_route) debug_printf("%s router widened %s to %s\n",
+    DEBUG(route) debug_printf("%s router widened %s to %s\n",
       rblock->drinst.name, addr->domain, h.name);
     }
   else if (post_widen)
     {
     h.name = post_widen;
     post_widen = NULL;
-    DEBUG(D_route) debug_printf("%s router trying %s after widening failed\n",
+    DEBUG(route) debug_printf("%s router trying %s after widening failed\n",
       rblock->drinst.name, h.name);
     }
   else return DECLINE;
@@ -279,7 +279,7 @@ for (;;)
     if (ob->search_parents) flags |= HOST_FIND_SEARCH_PARENTS;
     }
 
-  DEBUG(D_route) debug_printf_indent("main lookup for domain\n");
+  DEBUG(route) debug_printf_indent("main lookup for domain\n");
    {
     expand_level++;
     rc = host_find_bydns(&h, CUS rblock->ignore_target_hosts, flags,
@@ -305,7 +305,7 @@ for (;;)
       return DEFER;
 
       case OK:
-      DEBUG(D_route) debug_printf("%s router rejected %s: no MX record(s)\n",
+      DEBUG(route) debug_printf("%s router rejected %s: no MX record(s)\n",
         rblock->drinst.name, fully_qualified_name);
       continue;
       }
@@ -322,7 +322,7 @@ for (;;)
     {
     if (rblock->pass_on_timeout)
       {
-      DEBUG(D_route) debug_printf("%s router timed out, and pass_on_timeout is set\n",
+      DEBUG(route) debug_printf("%s router timed out, and pass_on_timeout is set\n",
         rblock->drinst.name);
       return PASS;
       }
@@ -342,7 +342,7 @@ for (;;)
 	return DEFER;
 
       case OK:
-	DEBUG(D_route) debug_printf("%s router: matched fail_defer_domains\n",
+	DEBUG(route) debug_printf("%s router: matched fail_defer_domains\n",
 	  rblock->drinst.name);
 	addr->message = US"missing MX, or all MXs point to missing A records,"
 	  " and defer requested";
@@ -435,7 +435,7 @@ if (rc == HOST_FOUND_LOCAL)
 
 else if (ob->check_secondary_mx && !testflag(addr, af_local_host_removed))
   {
-  DEBUG(D_route) debug_printf("check_secondary_mx set and local host not secondary\n");
+  DEBUG(route) debug_printf("check_secondary_mx set and local host not secondary\n");
   return DECLINE;
   }
 

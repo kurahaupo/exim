@@ -223,7 +223,7 @@ oracle_connection *cn;
 while ((cn = oracle_connections))
   {
   oracle_connections = cn->next;
-  DEBUG(D_lookup) debug_printf_indent("close ORACLE connection: %s\n", cn->server);
+  DEBUG(lookup) debug_printf_indent("close ORACLE connection: %s\n", cn->server);
   ologof(cn->handle);
   }
 }
@@ -307,7 +307,7 @@ for (cn = oracle_connections; cn; cn = cn->next)
 
 if (!cn)
   {
-  DEBUG(D_lookup) debug_printf_indent("ORACLE new connection: host=%s database=%s "
+  DEBUG(lookup) debug_printf_indent("ORACLE new connection: host=%s database=%s "
     "user=%s\n", sdata[0], sdata[1], sdata[2]);
 
   /* Get store for a new connection, initialize it, and connect to the server */
@@ -347,7 +347,7 @@ if (!cn)
 /* Else use a previously cached connection - we can write to the server string
 to obliterate the password because it is in a nextinlist temporary buffer. */
 
-else DEBUG(D_lookup)
+else DEBUG(lookup)
   debug_printf_indent("ORACLE using cached connection for %s\n", server_copy);
 
 /* We have a connection. Open a cursor and run the query */
@@ -490,7 +490,7 @@ if (result)
   }
 else
   {
-  DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
+  DEBUG(lookup) debug_printf_indent("%s\n", *errmsg);
   return yield;      /* FAIL or DEFER */
   }
 }
@@ -516,7 +516,7 @@ uschar *list = oracle_servers;
 
 do_cache = do_cache;   /* Placate picky compilers */
 
-DEBUG(D_lookup) debug_printf_indent("ORACLE query: %s\n", query);
+DEBUG(lookup) debug_printf_indent("ORACLE query: %s\n", query);
 
 while ((server = string_nextinlist(&list, &sep, NULL, 0)))
   {

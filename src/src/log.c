@@ -286,7 +286,7 @@ if (fd < 0 && errno == ENOENT)
   const uschar * lastslash = Ustrrchr(name, '/');
   uschar * dirname = string_copyn(name, lastslash - name);
   created = directory_make(NULL, dirname, LOG_DIRECTORY_MODE, FALSE);
-  DEBUG(D_any)
+  DEBUG(any)
     if (created)
       debug_printf("created log directory %s\n", dirname);
     else
@@ -847,6 +847,7 @@ log_vwrite(bitmask_word_t selector, int flags, const char * format, va_list ap)
 {
 int paniclogfd;
 ssize_t written_len;
+BOOL will_log = FALSE;
 gstring gs = { .size = LOG_BUFFER_SIZE-2 }, * g = &gs;
 
 /* If panic_recurseflag is set, we have failed to open the panic log. This is
@@ -956,19 +957,16 @@ if (flags & LOG_PANIC && dtrigger_selector & BIT(DTi_panictrigger))
 /* If debugging, show all log entries, but don't show headers. Do it all
 in one go so that it doesn't get split when multi-processing. */
 
-DEBUG(D_any|D_v)
+DEBUG(any|v)
   {
   va_list aq;
   string_fmt_append_noextend(g, "LOG:");
 
   /* Show the selector that was passed into the call. */
 
-  for (int i = 0; i < log_options_count; i++)
-    {
-    unsigned int bitnum = log_options[i].bit;
-    if (bitnum < BITWORDSIZE && selector == BIT(bitnum))
-      string_fmt_append_noextend(g, " %s", log_options[i].name);
-    }
+  for (unsigned bitnum = 0; bitnum < logwrite_options_count; bitnum++)
+    if (bitnum < BITWORDSIZE && selector & BIT(bitnum))
+      string_fmt_append_noextend(g, " %s", logwrite_options[bitnum].name);
 
   string_fmt_append_noextend(g, "%s%s%s%s\n  ",
     flags & LOG_MAIN ?    " MAIN"   : "",
@@ -1006,7 +1004,7 @@ if (!(flags & (LOG_MAIN|LOG_PANIC|LOG_REJECT)))
 
 if (f.disable_logging)
   {
-  DEBUG(D_any) debug_printf("log writing disabled\n");
+  DEBUG(any) debug_printf("log writing disabled\n");
   if ((flags & LOG_PANIC_DIE) == LOG_PANIC_DIE) exim_exit(EXIT_FAILURE);
   return;
   }
@@ -1072,18 +1070,34 @@ gs.size = LOG_BUFFER_SIZE;
 string_fmt_append_noextend(g, "\n");
 string_from_gstring(g);
 
+/* See if the selector means we will log, given the enabled channels */
+
+if (!selector)
+  will_log = TRUE;
+else while (selector)
+  {
+  bitmask_word_t w = selector & ~(selector - 1);	/* lowest set bit */
+  unsigned bitnum = 0;
+  /* This relies on the ordering of logwrite_options[] */
+  while (BIT(bitnum) != w) bitnum++;
+  if (bit_test(log_selector, logwrite_options[bitnum].logchan_bit))
+    {
+    will_log = TRUE;
+    break;
+    }
+  selector &= ~w;					/* clear that bit */
+  }
+
 /* Handle loggable errors when running a utility, or when address testing.
 Write to log_stderr unless debugging (when it will already have been written),
 or unless there is no log_stderr (expn called from daemon, for example). */
 
 if (!f.really_exim || f.log_testing_mode)
   {
-  if (  !debug_selector
-     && log_stderr
-     && (selector == 0 || (selector & log_selector[0]) != 0)
-    )
+  if (!ANY_DEBUG && log_stderr && will_log)
     if (host_checking)
-      fprintf(log_stderr, "LOG: %s", CS(log_buffer + 20));  /* no timestamp */
+/*XXX +20 wrong if logging millisec or with-TZ */
+      fprintf(log_stderr, "LOG: %s", CS log_buffer + 20);  /* no timestamp */
     else
       fprintf(log_stderr, "%s", CS log_buffer);
 
@@ -1097,8 +1111,7 @@ been opened, but we don't want to keep on writing to it for too long after it
 has been renamed. Therefore, do a stat() and see if the inode has changed, and
 if so, re-open. */
 
-if (  flags & LOG_MAIN
-   && (!selector ||  selector & log_selector[0]))
+if (flags & LOG_MAIN && will_log)
   {
   if (  logging_mode & LOG_MODE_SYSLOG
      && (syslog_duplication || !(flags & (LOG_REJECT|LOG_PANIC))))
@@ -1278,7 +1291,7 @@ if (flags & LOG_PANIC)
 
     if (panic_save_buffer)
       if (write(paniclogfd, panic_save_buffer, Ustrlen(panic_save_buffer)) < 0)
-	DEBUG(D_any) debug_printf("sucks");
+	DEBUG(any) debug_printf("sucks");
 
     if (  (written_len = write_gstring_to_fd_buf(paniclogfd, g))
        != gstring_length(g))
@@ -1348,37 +1361,43 @@ syslog_open = FALSE;
 
 
 /*************************************************
-*             Multi-bit set or clear             *
-*************************************************/
-
-/* These functions take a list of bit indexes (terminated by -1) and
-clear or set the corresponding bits in the selector.
-
-Arguments:
-  selector       address of the bit string
-  selsize        number of words in the bit string
-  bits           list of bits to set
-*/
-
-void
-bits_clear(bitmask_word_t * selector, size_t selsize, int * bits)
-{
-for(; *bits != -1; ++bits)
-  BIT_CLEAR(selector, selsize, *bits);
-}
-
-void
-bits_set(bitmask_word_t * selector, size_t selsize, int * bits)
-{
-for(; *bits != -1; ++bits)
-  BIT_SET(selector, selsize, *bits);
-}
-
-
-
-/*************************************************
 *         Decode bit settings for log/debug      *
 *************************************************/
+
+/* Locate a word in a channel list.
+
+Arguments:	word		The name to search for
+		len		Number of chars in name
+		names		List of channel names
+		count		Number of list entries, incl. leading specials
+Return index, or zero for not-found
+*/
+
+unsigned
+chan_name_to_idx(const uschar * word, unsigned len,
+  const uschar * const * names, unsigned count)
+{
+const uschar * const * start = names + BIT_TABLE_IDX_USABLE;
+const uschar * const * end = names + count;
+
+while (start < end)
+  {
+  const uschar * const * middle = start + (end - start)/2;
+  int c = Ustrncmp(word, *middle, len);
+  if (c == 0)
+    if ((*middle)[len])
+      c = -1;
+    else
+      return middle - names;	/* Found */
+
+  if (c < 0)
+    end = middle;
+  else
+    start = middle + 1;
+  }  /* Loop to match selector name */
+
+return 0;			/* Fail */
+}
 
 /* This function decodes a string containing bit settings in the form of +name
 and/or -name sequences, and sets/unsets bits in a bit string accordingly. It
@@ -1386,9 +1405,11 @@ also recognizes a numeric setting of the form =<number>, but this is not
 intended for user use. It's an easy way for Exim to pass the debug settings
 when it is re-exec'ed.
 
-The option table is a list of names and bit indexes. The index -1
-means "set all bits, except for those listed in notall". The notall
-list is terminated by -1.
+The option table is a list of names, with offsets corresponding to bit numbers
+in the bit string.  The name "all" means "set all bits, except for those listed
+in notall". The notall list is terminated by -1.
+
+For the debug bitstring we also set various summary bits.
 
 The action taken for bad values varies depending upon why we're here.
 For log messages, or if the debugging is triggered from config, then we write
@@ -1398,20 +1419,19 @@ we treat it as an unknown option: error message to stderr and die.
 Arguments:
   selector       address of the bit string
   selsize        number of words in the bit string
-  notall         list of bit-numbers to exclude from "all"
+  notall         list of words to exclude from "all"
   string         the configured string
-  options        the table of option names
+  options        table of option names
   count          size of table
-  which          "log" or "debug"
-  flags          DEBUG_FROM_CONFIG
+  flags          DCB_LOG, DCB_DEBUG, DCB_FROM_CONFIG
 
 Returns:         nothing on success - bomb out on failure
 */
 
 void
-decode_bits(bitmask_word_t * selector, size_t selsize, int * notall,
-  const uschar * string, bit_table * options, int count, uschar * which,
-  int flags)
+decode_bits(bitmask_word_t * selector, size_t selsize,
+  const uschar * const * notall, const uschar * string,
+  const uschar * const * options, int count, int flags)
 {
 uschar * errmsg;
 
@@ -1420,14 +1440,27 @@ if (!string) return;
 if (*string == '=')
   {
   int n;
-  memset(selector, 0, sizeof(*selector)*selsize);
-  if (  sscanf(CCS string+1, SC_EXIM_BITMASK "%n", selector, &n) == 1
-     && !string[1+n])
-    return;
+  const uschar * s = string + 1;
 
-  errmsg = string_sprintf("malformed numeric %s_selector setting: %q (n %d, fmt %q)", which,
-    string, n, SC_EXIM_BITMASK);
-  goto ERROR_RETURN;
+  memset(selector, 0, sizeof(*selector)*selsize);
+
+  for (unsigned idx = 0;
+       idx < selsize
+       && sscanf(CCS s, SC_EXIM_BITMASK "%n", selector+idx, &n) == 1;
+       idx++)
+    {
+    s += n;
+    switch (*s)
+      {
+      case '\0':	return;		/* no more words; finished */
+      case ',':		s++; break;	/* next word */
+      default:
+	errmsg = string_sprintf(
+	  "malformed numeric %s_selector setting: %q (n %d, fmt %q)",
+	  flags & DCB_LOG ? "log" : "debug", string, n, SC_EXIM_BITMASK);
+	goto ERROR_RETURN;
+      }
+    }
   }
 
 /* Handle symbolic setting */
@@ -1437,69 +1470,74 @@ else for(;;)
   BOOL adding;
   const uschar * s;
   int len;
-  bit_table * start, * end;
 
   Uskip_whitespace(&string);
-  if (!*string) return;
-
-  if (*string != '+' && *string != '-')
+  switch (*string++)
     {
-    errmsg = string_sprintf("malformed %s_selector setting: "
-      "+ or - expected but found %q", which, string);
-    goto ERROR_RETURN;
+    case '\0':	return;			/* No more string to handle */
+    case '+':	adding = TRUE; break;
+    case '-':	adding = FALSE; break;
+    default:	errmsg = string_sprintf("malformed %s_selector setting: "
+		  "+ or - expected but found %q", flags & DCB_LOG ? "log" : "debug", string);
+		goto ERROR_RETURN;
     }
 
-  adding = *string++ == '+';
-  s = string;
-  while (isalnum(*string) || *string == '_') string++;
+  for (s = string; isalnum(*string) || *string == '_'; ) string++;
   len = string - s;
 
-  start = options;
-  end = options + count;
+  if (Ustrncmp(s, "all", len) == 0)
+    if (adding)
+      {
+      memset(selector, -1, sizeof(*selector)*selsize);
+      for (const uschar * const * p = notall; *p; p++)
+	bit_clear(selector, chan_name_to_idx(*p, Ustrlen(*p), options, count));
+      }
+    else
+      memset(selector, 0, sizeof(*selector)*selsize);
 
-  while (start < end)
+  else
     {
-    bit_table *middle = start + (end - start)/2;
-    int c = Ustrncmp(s, middle->name, len);
-    if (c == 0)
-      if (middle->name[len] != 0) c = -1; else
-        {
-        unsigned int bit = middle->bit;
+    unsigned idx = chan_name_to_idx(s, len, options, count);
+    if (!idx)
+      {
+      errmsg = string_sprintf("unknown %s_selector setting: %c%.*s", flags & DCB_LOG ? "log" : "debug",
+	adding ? '+' : '-', len, s);
+      goto ERROR_RETURN;
+      }
 
-	if (bit == -1)
+    if (adding)
+      {
+      bit_set(selector, idx);
+
+      if (flags & DCB_DEBUG)
+	{
+	bit_set(selector, BIT_TABLE_IDX_NONZERO);
+
+	if (Ustrncmp(s, "v", len) != 0)
 	  {
-	  if (adding)
-	    {
-	    memset(selector, -1, sizeof(*selector)*selsize);
-	    bits_clear(selector, selsize, notall);
-	    }
-	  else
-	    memset(selector, 0, sizeof(*selector)*selsize);
+	  bit_set(selector, BIT_TABLE_IDX_NONVERB);
+
+	  /*XXX this might be a table in globals.c */
+	  if (  Ustrncmp(s, "pid", len) != 0 && Ustrncmp(s, "noutf8", len)  != 0
+	     && Ustrncmp(s, "timestamp", len) != 0)
+	  bit_set(selector, BIT_TABLE_IDX_IS_ANY);
 	  }
-	else if (adding)
-	  BIT_SET(selector, selsize, bit);
-	else
-	  BIT_CLEAR(selector, selsize, bit);
-
-        break;  /* Out of loop to match selector name */
-        }
-    if (c < 0) end = middle; else start = middle + 1;
-    }  /* Loop to match selector name */
-
-  if (start >= end)
-    {
-    errmsg = string_sprintf("unknown %s_selector setting: %c%.*s", which,
-      adding ? '+' : '-', len, s);
-    goto ERROR_RETURN;
+	}
+      }
+    else
+      bit_clear(selector, idx);
     }
   }    /* Loop for selector names */
+
+/*NOTREACHED*/
+return;					/* stupid compiler */
 
 /* Handle disasters */
 
 ERROR_RETURN:
-if (Ustrcmp(which, "debug") == 0)
+if (flags & DCB_DEBUG)
   {
-  if (flags & DEBUG_FROM_CONFIG)
+  if (flags & DCB_FROM_CONFIG)
     {
     log_write(0, LOG_CONFIG|LOG_PANIC, "%s", errmsg);
     return;
@@ -1507,9 +1545,37 @@ if (Ustrcmp(which, "debug") == 0)
   fprintf(stderr, "exim: %s\n", errmsg);
   exim_exit(EXIT_FAILURE);
   }
-else log_write_die(0, LOG_CONFIG, "%s", errmsg);
+else
+  log_write_die(0, LOG_CONFIG, "%s", errmsg);
 }
 
+
+/* Channel configuration */
+
+void
+logging_modify_channels(const uschar * string)
+{
+decode_bits(log_selector, log_selector_size, log_notall_names, string,
+          log_chan_names, log_options_count, DCB_LOG);
+}
+
+
+/* Called during init.
+We could instead just feed one long string to logging_enable_channels().
+We might save some startup time by doing this in buildconfig.
+*/
+
+void
+logging_set_defaults(void)
+{
+memset(log_selector, 0, sizeof(bitmask_word_t) * log_selector_size);
+bit_set(log_selector, BIT_TABLE_IDX_NONZERO);
+
+for (const uschar * const * p = log_default_names;
+     p < log_default_names + log_default_count; p++)
+  bit_set(log_selector,
+   chan_name_to_idx(*p, Ustrlen(*p), log_chan_names, log_options_count));
+}
 
 
 /*************************************************
@@ -1552,10 +1618,9 @@ if (tag_name && (Ustrchr(tag_name, '/') != NULL))
   return;
   }
 
-debug_selector = D_default;
+debug_set_default_bits(&debug_selector);
 if (opts)
-  decode_bits(&debug_selector, 1, debug_notall, opts,
-      debug_options, debug_options_count, US"debug", DEBUG_FROM_CONFIG);
+  debug_decode_bits(&debug_selector, opts, DCB_FROM_CONFIG);
 
 /* When activating from a transport process we may never have logged at all
 resulting in certain setup not having been done.  Hack this for now so we
@@ -1581,10 +1646,10 @@ if (debug_fd < 0)
   Ustrncpy(debuglog_name, filename, sizeof(debuglog_name)-1);
   if ((debug_fd = log_open_as_exim(filename)) >= 0)
     debug_file = fdopen(debug_fd, "w");
-  DEBUG(D_deliver) debug_print_ids(US"debug enabled by spoolfile\n");
+  DEBUG(deliver) debug_print_ids(US"debug enabled by spoolfile\n");
   }
 /*
-else DEBUG(D_deliver)
+else DEBUG(deliver)
   debug_printf("debug already active; ignoring spoolfile '%s'\n", filename);
 */
 }
@@ -1597,7 +1662,7 @@ debug_printf("debug terminated by %s\n", kill ? "kill" : "stop");
 debug_pretrigger_discard();
 if (!debug_file || !debuglog_name[0]) return;
 
-debug_selector = 0;
+debug_decode_bits(&debug_selector, US"=0", 0);
 fclose(debug_file);
 debug_file = NULL;
 debug_fd = -1;
@@ -1606,5 +1671,5 @@ if (kill) unlink_log(lt_debug);
 
 
 /* End of log.c */
-/* vi: sw ai sw=2
+/* vi: aw ai sw=2
 */

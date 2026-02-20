@@ -206,7 +206,7 @@ if ((mapbuf = mmap(NULL, statbuf.st_size, PROT_READ, MAP_SHARED, fileno, 0))
 /* If we got here the map failed.  Basically we can ignore this since we fall
 back to slower methods....  However lets debug log it...  */
 
-DEBUG(D_lookup) debug_printf_indent("cdb mmap failed - %d\n", errno);
+DEBUG(lookup) debug_printf_indent("cdb mmap failed - %d\n", errno);
 #endif /* HAVE_MMAP */
 
 /* In this case we have either not got MMAP allowed, or it failed */
@@ -293,7 +293,7 @@ if ((hash_offset + (hash_offlen * CDB_HASH_ENTRY)) > cdbp->filelen)
   {
   *errmsg = string_sprintf("cdb: corrupt cdb file %s (too short)",
 		      filename);
-  DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
+  DEBUG(lookup) debug_printf_indent("%s\n", *errmsg);
   return DEFER;
   }
 

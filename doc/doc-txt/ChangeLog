@@ -104,6 +104,10 @@ JH/24 Bug 3197: Fix logged autoreply size. If enabled, sizes for delivery lines
 BQ/26 Bug 3199/3200: Remove Brightmail and Interbase support.
 
 
+JH/ZZ Reworked debug-channel control, to work with channels counts exceeding
+      the machine word size. Note that this results in local_scan() API changes.
+
+
 Exim version 4.99.1
 -------------------
 

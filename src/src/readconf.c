@@ -508,9 +508,10 @@ options_logging(void)
 {
 uschar buf[EXIM_DRIVERNAME_MAX];
 
-for (bit_table * bp = log_options; bp < log_options + log_options_count; bp++)
+for (const uschar * const * p = log_chan_names + BIT_TABLE_IDX_USABLE;
+    p < log_chan_names + log_options_count; p++) if (*p)
   {
-  spf(buf, sizeof(buf), US"_LOG_%T", bp->name);
+  spf(buf, sizeof(buf), US"_LOG_%T", *p);
   builtin_macro_create(buf);
   }
 }
@@ -787,7 +788,7 @@ macro_create(const uschar * name, const uschar * val, BOOL command_line)
 {
 macro_item * m = store_get(sizeof(macro_item), GET_UNTAINTED);
 
-EARLY_DEBUG(D_macro, "%s: '%s' '%s'\n", __FUNCTION__, name, val);
+EARLY_DEBUG(macro, "%s: '%s' '%s'\n", __FUNCTION__, name, val);
 m->next = NULL;
 m->command_line = command_line;
 m->namelen = Ustrlen(name);
@@ -980,11 +981,11 @@ if (*s) for (macro_item * m = *s == '_' ? macros : macros_user; m; m = m->next)
     {
     int moveby;
 
-    DEBUG(D_macro)
+    DEBUG(macro)
       if (f.expansion_test)
 	printf("macro '%s' -> '%s'\n", m->name, m->replacement);
       else
-	EARLY_DEBUG(D_macro, "%s: matched '%s' in '%.*s'\n", __FUNCTION__,
+	EARLY_DEBUG(macro, "%s: matched '%s' in '%.*s'\n", __FUNCTION__,
 	  m->name, (int) Ustrlen(ss)-1, ss);
 
     /* Expand the buffer if necessary */
@@ -3583,7 +3584,7 @@ if (!*spool_directory)
 /* Expand the spool directory name; it may, for example, contain the primary
 host name. Same comment about failure. */
 
-DEBUG(D_any) if (Ustrchr(spool_directory, '$'))
+DEBUG(any) if (Ustrchr(spool_directory, '$'))
   debug_printf("Expanding spool_directory option\n");
 
 if (!(s = expand_string(spool_directory)))
@@ -3834,7 +3835,7 @@ else
 				  d->driver_name, class);
   const char * errormsg;
 
-  DEBUG(D_any) debug_printf("Loading %q %s driver from %s\n",
+  DEBUG(any) debug_printf("Loading %q %s driver from %s\n",
 			    d->driver_name, class, LOOKUP_MODULE_DIR);
 
   for(struct dirent * ent; ent = readdir(dd); ) if (Ustrcmp(ent->d_name, fname) == 0)
@@ -3870,7 +3871,7 @@ else
 	store_pool = POOL_PERM;
 	add_driver_info(info_anchor, di, size_of_info);
 	store_pool = old_pool;
-	DEBUG(D_any)
+	DEBUG(any)
 	  debug_printf("Loaded module %q (%s)\n", d->driver_name, class);
 	goto found;
 	}
@@ -4097,13 +4098,13 @@ for (optionlist * ol = di->options; ol < di->options + count; ol++)
       {
       if (ss <= value || (ss[-1] != '$' && ss[-1] != '{') ||
 	isalnum(ss[Ustrlen(s)])) continue;
-      DEBUG(D_transport) debug_printf("driver %s: %q option depends on %s\n",
+      DEBUG(transport) debug_printf("driver %s: %q option depends on %s\n",
 	d->name, ol->name, s);
       return TRUE;
       }
     }
 
-DEBUG(D_transport) debug_printf("driver %s does not depend on %s\n", d->name, s);
+DEBUG(transport) debug_printf("driver %s does not depend on %s\n", d->name, s);
 return FALSE;
 }
 
@@ -4605,7 +4606,7 @@ while(*next_section)
   int mid = last/2;
   int n = Ustrlen(next_section);
 
-  EARLY_DEBUG(D_any, "%s: %s\n", __FUNCTION__, next_section);
+  EARLY_DEBUG(any, "%s: %s\n", __FUNCTION__, next_section);
   expand_level++;
   if (tolower(next_section[n-1]) != 's') Ustrcpy(next_section+n, US"s");
 

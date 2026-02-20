@@ -45,22 +45,22 @@ uschar *reply = NULL;
 if (service == NULL) service = US"";
 if (realm == NULL) realm = US"";
 
-DEBUG(D_auth)
+DEBUG(auth)
   debug_printf("Running saslauthd authentication for user %q \n", username);
 
 switch (saslauthd_verify_password(username, password, service,
         realm, (const uschar **)(&reply)))
   {
   case PWCHECK_OK:
-  DEBUG(D_auth) debug_printf("saslauthd: success (%s)\n", reply);
+  DEBUG(auth) debug_printf("saslauthd: success (%s)\n", reply);
   return OK;
 
   case PWCHECK_NO:
-  DEBUG(D_auth) debug_printf("saslauthd: access denied (%s)\n", reply);
+  DEBUG(auth) debug_printf("saslauthd: access denied (%s)\n", reply);
   return FAIL;
 
   default:
-  DEBUG(D_auth) debug_printf("saslauthd: query failed (%s)\n", reply);
+  DEBUG(auth) debug_printf("saslauthd: query failed (%s)\n", reply);
   *errptr = reply;
   return ERROR;
   }

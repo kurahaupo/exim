@@ -30,7 +30,7 @@ int ret;
 
 if (!filename || !*filename)
   {
-  DEBUG(D_lookup) debug_printf_indent("Using sqlite_dbfile: %s\n", sqlite_dbfile);
+  DEBUG(lookup) debug_printf_indent("Using sqlite_dbfile: %s\n", sqlite_dbfile);
   filename = sqlite_dbfile;
   }
 if (!filename || *filename != '/')
@@ -40,7 +40,7 @@ else if ((ret = sqlite3_open(CCS filename, &db)) != 0)
   *errmsg = string_copy(US sqlite3_errmsg(db));
   sqlite3_close(db);
   db = NULL;
-  DEBUG(D_lookup) debug_printf_indent("Error opening database: %s\n", *errmsg);
+  DEBUG(lookup) debug_printf_indent("Error opening database: %s\n", *errmsg);
   }
 
 if (db)

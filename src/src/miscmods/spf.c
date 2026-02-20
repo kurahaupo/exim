@@ -85,7 +85,7 @@ SPF_dns_rr_t srr = {
   .source = spf_dns_server
 };
 
-DEBUG(D_receive)
+DEBUG(receive)
   { debug_printf_indent("SPF_dns_exim_lookup '%s'\n", domain); expand_level++; }
 
 /* Shortcircuit SPF RR lookups by returning NO_DATA.  They were obsoleted by
@@ -93,7 +93,7 @@ RFC 6686/7208 years ago. see bug #1294 */
 
 if (rr_type == T_SPF)
   {
-  HDEBUG(D_host_lookup)
+  HDEBUG(host_lookup)
     debug_printf_indent("faking NO_DATA for SPF RR(99) lookup\n");
   srr.herrno = NO_DATA;
   goto out;
@@ -156,7 +156,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
 	if (rr->size < 1+6) continue;		/* min for version str */
 	if (strncmpic(rr->data+1, US SPF_VER_STR, 6) != 0)
 	  {
-	  HDEBUG(D_host_lookup) debug_printf_indent("not an spf record: %.*s\n",
+	  HDEBUG(host_lookup) debug_printf_indent("not an spf record: %.*s\n",
 						    (int) s[0], s+1);
 	  continue;
 	  }
@@ -175,7 +175,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
 	s = string_copy_malloc(string_from_gstring(g));
 	gstring_reset(g);
 	gstring_release_unused(g);
-	DEBUG(D_receive) debug_printf_indent("SPF_dns_exim_lookup '%s'\n", s);
+	DEBUG(receive) debug_printf_indent("SPF_dns_exim_lookup '%s'\n", s);
 	break;
 	}
 
@@ -202,7 +202,7 @@ out:
   /* spfrr->rr must have been malloc()d for this */
   SPF_dns_rr_dup(&spfrr, &srr);
 
-  DEBUG(D_receive) expand_level--;
+  DEBUG(receive) expand_level--;
   store_free_dns_answer(dnsa);
   return spfrr;
 }
@@ -214,7 +214,7 @@ SPF_dns_exim_new(int debug)
 {
 SPF_dns_server_t * spf_dns_server = store_malloc(sizeof(SPF_dns_server_t));
 
-/* DEBUG(D_receive) debug_printf_indent("SPF_dns_exim_new\n"); */
+/* DEBUG(receive) debug_printf_indent("SPF_dns_exim_new\n"); */
 
 memset(spf_dns_server, 0, sizeof(SPF_dns_server_t));
 spf_dns_server->destroy      = NULL;
@@ -253,7 +253,7 @@ SPF_dns_server_t * dc;
 int debug = 0;
 const uschar *s;
 
-DEBUG(D_receive) debug = 1;
+DEBUG(receive) debug = 1;
 
 /* We insert our own DNS access layer rather than letting the spf library
 do it, so that our dns access path is used for debug tracing and for the
@@ -261,17 +261,17 @@ testsuite. */
 
 if (!(dc = SPF_dns_exim_new(debug)))
   {
-  DEBUG(D_receive) debug_printf_indent("SPF_dns_exim_new() failed\n");
+  DEBUG(receive) debug_printf_indent("SPF_dns_exim_new() failed\n");
   return FALSE;
   }
 if (!(dc = SPF_dns_cache_new(dc, NULL, debug, 8)))
   {
-  DEBUG(D_receive) debug_printf_indent("SPF_dns_cache_new() failed\n");
+  DEBUG(receive) debug_printf_indent("SPF_dns_cache_new() failed\n");
   return FALSE;
   }
 if (!(spf_server = SPF_server_new_dns(dc, debug)))
   {
-  DEBUG(D_receive) debug_printf_indent("SPF_server_new() failed.\n");
+  DEBUG(receive) debug_printf_indent("SPF_server_new() failed.\n");
   return FALSE;
   }
 
@@ -303,7 +303,7 @@ static int
 spf_conn_init(const uschar * spf_helo_domain, const uschar * spf_remote_addr,
   const uschar ** errstr)
 {
-DEBUG(D_receive) debug_printf_indent("spf_conn_init: %s %s\n",
+DEBUG(receive) debug_printf_indent("spf_conn_init: %s %s\n",
 				      spf_helo_domain, spf_remote_addr);
 
 if (!spf_server && !spf_init(NULL))
@@ -314,7 +314,7 @@ if (!spf_server && !spf_init(NULL))
 
 if (SPF_server_set_rec_dom(spf_server, CS primary_hostname))
   {
-  DEBUG(D_receive) debug_printf_indent("SPF_server_set_rec_dom(%q) failed.\n",
+  DEBUG(receive) debug_printf_indent("SPF_server_set_rec_dom(%q) failed.\n",
 					primary_hostname);
   spf_server = NULL;
   *errstr = US"spf: setting host name";
@@ -327,7 +327,7 @@ if (  SPF_request_set_ipv4_str(spf_request, CCS spf_remote_addr)
    && SPF_request_set_ipv6_str(spf_request, CCS spf_remote_addr)
    )
   {
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf_indent("SPF_request_set_ipv4_str() and "
       "SPF_request_set_ipv6_str() failed [%s]\n", spf_remote_addr);
   spf_server = NULL;
@@ -338,7 +338,7 @@ if (  SPF_request_set_ipv4_str(spf_request, CCS spf_remote_addr)
 
 if (SPF_request_set_helo_dom(spf_request, CCS spf_helo_domain))
   {
-  DEBUG(D_receive) debug_printf_indent("SPF_set_helo_dom(%q) failed.\n",
+  DEBUG(receive) debug_printf_indent("SPF_set_helo_dom(%q) failed.\n",
 				      spf_helo_domain);
   spf_server = NULL;
   spf_request = NULL;
@@ -385,7 +385,7 @@ spf_process(const uschar ** listptr, const uschar * spf_envelope_sender,
 {
 int rc = SPF_RESULT_PERMERROR, ret;
 
-DEBUG(D_receive) { debug_printf_indent("SPF: process\n"); expand_level++; }
+DEBUG(receive) { debug_printf_indent("SPF: process\n"); expand_level++; }
 
 if (!(spf_server && spf_request))
   /* no global context, assume temp error and skip to evaluation */
@@ -417,11 +417,11 @@ else
 
   rc = SPF_response_result(spf_response);
 
-  DEBUG(D_acl) spf_response_debug(spf_response);
+  DEBUG(acl) spf_response_debug(spf_response);
   }
 
 /* We got a result. Now see if we should return OK or FAIL for it */
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf_indent("SPF: result is %s (%d)\n", SPF_strresult(rc), rc);
 
 if (action == SPF_PROCESS_GUESS && (!strcmp (SPF_strresult(rc), "none")))
@@ -434,7 +434,7 @@ else
                     0, NULL, NULL, MCL_STRING, TRUE, NULL);
   }
 
-DEBUG(D_receive) expand_level--;
+DEBUG(receive) expand_level--;
 return ret;
 }
 
@@ -447,7 +447,7 @@ uschar * s;
 if (spf_result)
   {
   int start = 0;		/* Compiler quietening */
-  DEBUG(D_acl) start = gstring_length(g);
+  DEBUG(acl) start = gstring_length(g);
 
   g = string_append(g, 2, US";\n\tspf=", spf_result);
   if (spf_result_guessed)
@@ -463,11 +463,11 @@ if (spf_result)
       ? string_append(g, 2, US" smtp.helo=", s)
       : string_cat(g, US" smtp.mailfrom=<>");
     }
-  DEBUG(D_acl) debug_printf_indent("SPF:\tauthres '%.*s'\n",
+  DEBUG(acl) debug_printf_indent("SPF:\tauthres '%.*s'\n",
 		  gstring_length(g) - start - 3, g->s + start + 3);
   }
 else
-  DEBUG(D_acl) debug_printf_indent("SPF:\tno authres\n");
+  DEBUG(acl) debug_printf_indent("SPF:\tno authres\n");
 return g;
 }
 
@@ -484,7 +484,7 @@ if (spf_response)
   s = US spf_response->header_comment;
   }
 *human_readable_p = s ? string_copy(s) : US"";
-DEBUG(D_acl) debug_printf_indent(" SPF: %d '%s'\n", res, s);
+DEBUG(acl) debug_printf_indent(" SPF: %d '%s'\n", res, s);
 return res;
 }
 
@@ -498,7 +498,7 @@ SPF_dns_server_t * dc;
 SPF_server_t * spf_server = NULL;
 int debug = 0;
 
-DEBUG(D_lookup) debug = 1;
+DEBUG(lookup) debug = 1;
 
 if ((dc = SPF_dns_exim_new(debug)))
   if ((dc = SPF_dns_cache_new(dc, NULL, debug, 8)))
@@ -568,7 +568,7 @@ if (SPF_request_set_env_from(spf_request, CS keystring))
 SPF_request_query_mailfrom(spf_request, &spf_response);
 *result = string_copy(US SPF_strresult(SPF_response_result(spf_response)));
 
-DEBUG(D_lookup) spf_response_debug(spf_response);
+DEBUG(lookup) spf_response_debug(spf_response);
 
 SPF_response_free(spf_response);
 SPF_request_free(spf_request);

@@ -122,7 +122,7 @@ if (saved_errno == ENOENT)
   saved_errno = errno;
   ALARM_CLR(0);
 
-  DEBUG(D_route) debug_printf_indent("stat(%s)=%d\n", s, rc);
+  DEBUG(route) debug_printf_indent("stat(%s)=%d\n", s, rc);
   }
 
 if (sigalrm_seen || rc != 0)
@@ -133,7 +133,7 @@ if (sigalrm_seen || rc != 0)
   }
 
 *error = string_sprintf("%s does not exist", filename);
-DEBUG(D_route) debug_printf_indent("%s\n", *error);
+DEBUG(route) debug_printf_indent("%s\n", *error);
 return FILE_NOT_EXIST;
 }
 
@@ -200,7 +200,7 @@ directory test. */
 if (!(fwd = Ufopen(filename, "rb"))) switch(errno)
   {
   case ENOENT:          /* File does not exist */
-    DEBUG(D_route) debug_printf_indent("%s does not exist\n%schecking parent directory\n",
+    DEBUG(route) debug_printf_indent("%s does not exist\n%schecking parent directory\n",
       filename, options & RDO_ENOTDIR ? "ignore_enotdir set => skip " : "");
     *yield =
 	options & RDO_ENOTDIR || rda_exists(filename, error) == FILE_NOT_EXIST
@@ -209,14 +209,14 @@ if (!(fwd = Ufopen(filename, "rb"))) switch(errno)
 
   case ENOTDIR:         /* Something on the path isn't a directory */
     if (!(options & RDO_ENOTDIR)) goto DEFAULT_ERROR;
-    DEBUG(D_route) debug_printf_indent("non-directory on path %s: file assumed not to "
+    DEBUG(route) debug_printf_indent("non-directory on path %s: file assumed not to "
       "exist\n", filename);
     *yield = FF_NONEXIST;
     return NULL;
 
   case EACCES:           /* Permission denied */
     if (!(options & RDO_EACCES)) goto DEFAULT_ERROR;
-    DEBUG(D_route) debug_printf_indent("permission denied for %s: file assumed not to "
+    DEBUG(route) debug_printf_indent("permission denied for %s: file assumed not to "
       "exist\n", filename);
     *yield = FF_NONEXIST;
     return NULL;
@@ -295,7 +295,7 @@ if (fread(filebuf, 1, statbuf.st_size, fwd) != statbuf.st_size)
   }
 filebuf[statbuf.st_size] = 0;
 
-DEBUG(D_route) debug_printf_indent(OFF_T_FMT " %sbytes read from %s\n",
+DEBUG(route) debug_printf_indent(OFF_T_FMT " %sbytes read from %s\n",
   statbuf.st_size, is_tainted(filename) ? "(tainted) " : "", filename);
 
 (void)fclose(fwd);
@@ -365,7 +365,7 @@ if (*filtertype != FILTER_FORWARD)
   {
   int old_expand_forbid = expand_forbid;
 
-  DEBUG(D_route) debug_printf_indent("data is %s filter program\n",
+  DEBUG(route) debug_printf_indent("data is %s filter program\n",
     *filtertype == FILTER_EXIM ? "an Exim" : "a Sieve");
 
   /* RDO_FILTER is an "allow" bit */
@@ -425,7 +425,7 @@ if (*filtertype != FILTER_FORWARD)
 
 /* Not a filter script */
 
-DEBUG(D_route) debug_printf_indent("file is not a filter file\n");
+DEBUG(route) debug_printf_indent("file is not a filter file\n");
 
 yield = parse_forward_list(data,
   options,                           /* specials that are allowed */
@@ -573,7 +573,7 @@ uschar *data;
 uschar *readerror = US"";
 void (*oldsignal)(int);
 
-DEBUG(D_route) debug_printf_indent("rda_interpret (%s): '%s'\n",
+DEBUG(route) debug_printf_indent("rda_interpret (%s): '%s'\n",
   rdata->isfile ? "file" : "string", string_printing(rdata->string));
 
 /* Do the expansions of the file name or data first, while still privileged. */
@@ -587,7 +587,7 @@ if (!(data = expand_string(rdata->string)))
   }
 rdata->string = data;
 
-DEBUG(D_route)
+DEBUG(route)
   debug_printf_indent("expanded: '%s'%s\n", data, is_tainted(data) ? " (tainted)":"");
 
 if (rdata->isfile && data[0] != '/')
@@ -652,9 +652,9 @@ if ((pid = exim_fork(US"router-interpret")) == 0)
 
   if (ugid->uid != root_uid && ugid->uid != exim_uid)
     {
-    DEBUG(D_rewrite) debug_printf_indent("turned off address rewrite logging (not "
+    DEBUG(rewrite) debug_printf_indent("turned off address rewrite logging (not "
       "root or exim in this process)\n");
-    BIT_CLEAR(log_selector, log_selector_size, Li_address_rewrite);
+    logging_modify_channels(US"-address_rewrite");
     }
 
   /* Now do the business */
@@ -793,7 +793,7 @@ out:
   exim_underbar_exit(EXIT_SUCCESS);
 
 bad:
-  DEBUG(D_rewrite) debug_printf_indent("rda_interpret: failed write to pipe\n");
+  DEBUG(rewrite) debug_printf_indent("rda_interpret: failed write to pipe\n");
   goto out;
   }
 
@@ -972,7 +972,7 @@ while ((rc = wait(&status)) != pid)
     goto FINAL_EXIT;
     }
 
-DEBUG(D_route)
+DEBUG(route)
   debug_printf_indent("rda_interpret: subprocess yield=%d error=%s\n", yield, *error);
 
 if (had_disaster)

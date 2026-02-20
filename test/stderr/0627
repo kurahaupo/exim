@@ -1,4 +1,8 @@
 Exim version x.yz ....
 Hints DB:
 macro_create: 'CONFIG_MACRO' 'this'
+configuration file is TESTSUITE/test-config
+admin user
+dropping to exim gid; retaining priv uid
 macro_create: 'FOO_2' 'baz'
+>>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

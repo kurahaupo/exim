@@ -110,7 +110,7 @@ if (!ablock->public_name)
   ablock->public_name = a->name;
 if (ob->server_socket)
   ablock->server = TRUE;
-else DEBUG(D_auth)
+else DEBUG(auth)
   debug_printf("Dovecot auth driver: no server_socket for %s\n",
 	      ablock->public_name);
 ablock->client = FALSE;
@@ -159,7 +159,7 @@ if (n <= nptrs)
   *ptrs = last_sub_start;
 else
   {
-  HDEBUG(D_auth)
+  HDEBUG(auth)
     debug_printf("dovecot: warning: too many results from tab-splitting;"
 		  " saw %d fields, room for %d\n", n, nptrs);
   n = nptrs;
@@ -251,7 +251,7 @@ dc_write(client_conn_ctx * cctx, const uschar * s)
 {
 int len = Ustrlen(s), res;
 
-HDEBUG(D_auth) debug_printf("  DOVECOT>> '%s'\n", s);
+HDEBUG(auth) debug_printf("  DOVECOT>> '%s'\n", s);
 res =
 #ifndef DISABLE_TLS
   cctx->tls_ctx ? tls_write(cctx->tls_ctx, s, len, FALSE) :
@@ -279,7 +279,7 @@ host_item host;
 client_conn_ctx cctx = {.sock = -1, .tls_ctx = NULL};
 BOOL found = FALSE, have_mech_line = FALSE;
 
-HDEBUG(D_auth) debug_printf("dovecot authentication\n");
+HDEBUG(auth) debug_printf("dovecot authentication\n");
 
 if (!data)
   {
@@ -336,11 +336,11 @@ for (;;)
     OUT("authentication socket protocol line too long");
 
   *p = '\0';
-  HDEBUG(D_auth) debug_printf("  DOVECOT<< '%s'\n", buffer);
+  HDEBUG(auth) debug_printf("  DOVECOT<< '%s'\n", buffer);
 
   nargs = strcut(buffer, args, nelem(args));
 
-  HDEBUG(D_auth) debug_strcut(args, nargs, nelem(args));
+  HDEBUG(auth) debug_strcut(args, nargs, nelem(args));
 
   /* Code below rewritten by Kirill Miazine (km@krot.org). Only check commands
   that Exim will need. Original code also failed if Dovecot server sent unknown
@@ -364,7 +364,7 @@ for (;;)
 	   VERSION_MAJOR, VERSION_MINOR);
     
     if (dc_write(&cctx, version_command) < 0)
-      HDEBUG(D_auth) debug_printf("error sending version_command: %s\n",
+      HDEBUG(auth) debug_printf("error sending version_command: %s\n",
 	strerror(errno));
     }
   else if (Ustrcmp(args[0], US"MECH") == 0)
@@ -448,7 +448,7 @@ auth_command = string_sprintf("CPID\t" PID_T_FMT "\n"
        interface_address, data);
 
 if (dc_write(&cctx, auth_command) < 0)
-  HDEBUG(D_auth) debug_printf("error sending auth_command: %s\n",
+  HDEBUG(auth) debug_printf("error sending auth_command: %s\n",
     strerror(errno));
 
 while (1)
@@ -463,9 +463,9 @@ while (1)
     }
 
   buffer[Ustrlen(buffer) - 1] = 0;
-  HDEBUG(D_auth) debug_printf("  DOVECOT<< '%s'\n", buffer);
+  HDEBUG(auth) debug_printf("  DOVECOT<< '%s'\n", buffer);
   nargs = strcut(buffer, args, nelem(args));
-  HDEBUG(D_auth) debug_strcut(args, nargs, nelem(args));
+  HDEBUG(auth) debug_strcut(args, nargs, nelem(args));
 
   if (Uatoi(args[1]) != crequid)
     OUT("authentication socket connection id mismatch");
@@ -549,7 +549,7 @@ if (cctx.sock >= 0)
 /* Expand server_condition as an authorization check */
 if (ret == OK) ret = auth_check_serv_cond(ablock);
 
-HDEBUG(D_auth) debug_printf("dovecot auth ret: %s\n", rc_names[ret]);
+HDEBUG(auth) debug_printf("dovecot auth ret: %s\n", rc_names[ret]);
 return ret;
 }
 

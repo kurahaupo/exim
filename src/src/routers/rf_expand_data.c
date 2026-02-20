@@ -35,7 +35,7 @@ uschar *yield = expand_string(s);
 if (yield) return yield;
 if (f.expand_string_forcedfail)
   {
-  DEBUG(D_route) debug_printf("forced failure for expansion of %q\n", s);
+  DEBUG(route) debug_printf("forced failure for expansion of %q\n", s);
   *prc = DECLINE;
   }
 else

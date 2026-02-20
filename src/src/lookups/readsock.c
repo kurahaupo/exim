@@ -23,7 +23,7 @@ if (Ustrncmp(sspec, "inet:", 5) == 0)
   int port;
   uschar * port_name;
 
-  DEBUG(D_lookup)
+  DEBUG(lookup)
     debug_printf_indent("  new inet socket needed for readsocket\n");
 
   server_name = sspec + 5;
@@ -81,7 +81,7 @@ else
   struct sockaddr_un sockun;         /* don't call this "sun" ! */
   int rc;
 
-  DEBUG(D_lookup)
+  DEBUG(lookup)
     debug_printf_indent("  new unix socket needed for readsocket\n");
 
   if ((cctx->sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
@@ -120,7 +120,7 @@ if (do_tls)
     goto bad;
 #endif
 
-DEBUG(D_expand|D_lookup) debug_printf_indent("  connected to socket %s\n", sspec);
+DEBUG(expand|lookup) debug_printf_indent("  connected to socket %s\n", sspec);
 return OK;
 
 bad:
@@ -145,7 +145,7 @@ readsock_open(const uschar * filename, uschar ** errmsg)
 client_conn_ctx * cctx = store_get(sizeof(*cctx), GET_UNTAINTED);
 cctx->sock = -1;
 cctx->tls_ctx = NULL;
-DEBUG(D_lookup) debug_printf_indent("readsock: allocated context\n");
+DEBUG(lookup) debug_printf_indent("readsock: allocated context\n");
 return cctx;
 }
 
@@ -176,7 +176,7 @@ int timeout = 5;
 gstring * yield;
 int ret = DEFER;
 
-DEBUG(D_lookup)
+DEBUG(lookup)
   debug_printf_indent("readsock: file=%q key=%q len=%d opts=%q\n",
     filename, keystring, length, opts);
 

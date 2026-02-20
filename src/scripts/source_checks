@@ -17,9 +17,7 @@ do
 done <<-END
 	readconf.c	optionlist_config
 	globals.c	optionlist_auths
-	globals.c	debug_options
 	globals.c	header_names
-	globals.c	log_options
 	expand.c	item_table
 	std-crypto.c	dh_constants
 	transport.c	optionlist_transports
@@ -44,6 +42,8 @@ do
   | LC_ALL=C sort -c \
   || { echo "Table $table in $file is not alphabetically ordered" >&2 ; exit 1; }
 done <<-END
+	globals.c	debug_chan_names
+	globals.c	log_chan_names
 	expand.c	item_table
 	expand.c	op_table_underscore
 	expand.c	op_table_main

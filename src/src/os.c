@@ -12,8 +12,8 @@
 # include <stdio.h>
 # include <time.h>
 #else
-# define IS_DEBUG(x) (debug_selector & (x ? x : D_any))
-# define DEBUG(x) if (IS_DEBUG(x))	/* for cppcheck */
+// # define IS_DEBUG(x) (debug_selector & (x ? x : D_any))
+// # define DEBUG(x) if (IS_DEBUG(D_##x))	/* for cppcheck */
 #endif
 
 #ifndef CS
@@ -528,7 +528,7 @@ for (struct ifaddrs * ifa = ifalist; ifa; ifa = ifa->ifa_next)
     last = next;
     }
 
-  DEBUG(D_interface) debug_printf_indent("Actual local interface address is %s (%s)\n",
+  DEBUG(interface) debug_printf_indent("Actual local interface address is %s (%s)\n",
     last->address, ifa->ifa_name);
   }
 
@@ -634,7 +634,7 @@ what we want to know. */
 if ((vs = socket(FAMILY, SOCK_DGRAM, 0)) < 0)
   {
 #if HAVE_IPV6
-  DEBUG(D_interface)
+  DEBUG(interface)
     debug_printf("Unable to create IPv6 socket to find interface addresses:\n  "
       "error %d %s\nTrying for an IPv4 socket\n", errno, strerror(errno));
   vs = socket(AF_INET, SOCK_DGRAM, 0);
@@ -667,7 +667,7 @@ number of interfaces, even though they don't all fit in the buffer. */
 if (ifc.V_ifc_len > sizeof(buf))
   {
   ifc.V_ifc_len = sizeof(buf);
-  DEBUG(D_interface)
+  DEBUG(interface)
     debug_printf("more than %d interfaces found: remainder not used\n"
       "(set MAX_INTERFACES in Local/Makefile and rebuild if you want more)\n",
       MAX_INTERFACES);
@@ -761,7 +761,7 @@ for (char * cp = buf; cp < buf + ifc.V_ifc_len; cp += len)
     last = next;
     }
 
-  DEBUG(D_interface) debug_printf_indent("Actual local interface address is %s (%s)\n",
+  DEBUG(interface) debug_printf_indent("Actual local interface address is %s (%s)\n",
     last->address, ifreq.V_ifr_name);
   }
 
@@ -794,7 +794,7 @@ yield->next->port = 0;
 yield->next->next = NULL;
 #endif
 
-DEBUG(D_interface) debug_printf("Unable to find local interface addresses "
+DEBUG(interface) debug_printf("Unable to find local interface addresses "
   "on this OS: returning loopback address(es)\n");
 return yield;
 }

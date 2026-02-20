@@ -194,11 +194,11 @@ pid = child_open_exim(&fd, US"moan_send_message");
 
 if (pid < 0)
   {
-  DEBUG(D_any) debug_printf("Failed to create child to send message: %s\n",
+  DEBUG(any) debug_printf("Failed to create child to send message: %s\n",
     strerror(errno));
   return FALSE;
   }
-else DEBUG(D_any)
+else DEBUG(any)
   debug_printf("Child process " PID_T_FMT " for sending message\n", pid);
 
 /* Creation of child succeeded */
@@ -606,7 +606,7 @@ pid_t pid = child_open_exim(&fd, US"moan_tell_someone");
 
 if (pid < 0)
   {
-  DEBUG(D_any) debug_printf("Failed to create child to send message: %s\n",
+  DEBUG(any) debug_printf("Failed to create child to send message: %s\n",
     strerror(errno));
   return;
   }
@@ -670,7 +670,7 @@ moan_smtp_batch(const uschar * cmd_buffer, const char * format, ...)
 va_list ap;
 int yield = receive_messagecount > 0 ? EXIT_FAILURE : 2;
 
-DEBUG(D_any) debug_printf("Handling error in batched SMTP input\n");
+DEBUG(any) debug_printf("Handling error in batched SMTP input\n");
 
 /* On stdout, write stuff that a program could parse fairly easily. */
 
@@ -779,7 +779,7 @@ while ((item = string_nextinlist(&listptr, &sep, NULL, 0)))
     }
   }
 
-DEBUG(D_any) debug_printf("errors_copy check returned %s\n",
+DEBUG(any) debug_printf("errors_copy check returned %s\n",
   (yield == NULL)? US"NULL" : yield);
 
 expand_nmax = -1;
@@ -841,7 +841,7 @@ pid = child_open_exim(&fd, US"moan_skipped_syntax_errors");
 
 if (pid < 0)
   {
-  DEBUG(D_any) debug_printf("Failed to create child to send message: %s\n",
+  DEBUG(any) debug_printf("Failed to create child to send message: %s\n",
     strerror(errno));
   return TRUE;
   }

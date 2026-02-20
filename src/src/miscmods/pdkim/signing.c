@@ -58,10 +58,10 @@ exim_gnutls_logger_cb(int level, const char *message)
 size_t len = strlen(message);
 if (len < 1)
   {
-  DEBUG(D_tls) debug_printf("GnuTLS<%d> empty debug message\n", level);
+  DEBUG(tls) debug_printf("GnuTLS<%d> empty debug message\n", level);
   return;
   }
-DEBUG(D_tls) debug_printf("GnuTLS<%d>: %s%s", level, message,
+DEBUG(tls) debug_printf("GnuTLS<%d>: %s%s", level, message,
     message[len-1] == '\n' ? "" : "\n");
 }
 #endif
@@ -72,7 +72,7 @@ void
 exim_dkim_signers_init(void)
 {
 #if EXIM_GNUTLS_LIBRARY_LOG_LEVEL >= 0
-DEBUG(D_tls)
+DEBUG(tls)
   {
   gnutls_global_set_log_function(exim_gnutls_logger_cb);
   /* arbitrarily chosen level; bump upto 9 for more */
@@ -457,7 +457,7 @@ if (  (s1 = as_mpi(&der, &sign_ctx->n))
   return s1;
 
 #ifdef extreme_debug
-DEBUG(D_acl) debug_printf_indent("rsa_signing_init:\n");
+DEBUG(acl) debug_printf_indent("rsa_signing_init:\n");
   {
   uschar * s;
   gcry_mpi_aprint (GCRYMPI_FMT_HEX, &s, NULL, sign_ctx->n);
@@ -544,7 +544,7 @@ if (  !(s_sig = gcry_sexp_find_token(s_sig, "s", 0))
 m_sig = gcry_sexp_nth_mpi(s_sig, 1, GCRYMPI_FMT_USG);
 
 #ifdef extreme_debug
-DEBUG(D_acl)
+DEBUG(acl)
   {
   uschar * s;
   gcry_mpi_aprint (GCRYMPI_FMT_HEX, &s, NULL, m_sig);
@@ -605,7 +605,7 @@ if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
    != ASN1_SUCCESS) goto asn_err;
 
 /* sequence; skip the entire thing */
-DEBUG(D_acl) stage = US"S2";
+DEBUG(acl) stage = US"S2";
 if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, &alen))
    != ASN1_SUCCESS) goto asn_err;
 pubkey->data += alen; pubkey->len -= alen;
@@ -613,26 +613,26 @@ pubkey->data += alen; pubkey->len -= alen;
 
 /* bitstring: limit range to size of bitstring;
 move over header + content wrapper */
-DEBUG(D_acl) stage = US"BS";
+DEBUG(acl) stage = US"BS";
 if ((rc = as_tag(pubkey, 0, ASN1_TAG_BIT_STRING, &alen)) != ASN1_SUCCESS)
   goto asn_err;
 pubkey->len = alen;
 pubkey->data++; pubkey->len--;
 
 /* sequence; just move past the header */
-DEBUG(D_acl) stage = US"S3";
+DEBUG(acl) stage = US"S3";
 if ((rc = as_tag(pubkey, ASN1_CLASS_STRUCTURED, ASN1_TAG_SEQUENCE, NULL))
    != ASN1_SUCCESS) goto asn_err;
 
 /* read two integers */
-DEBUG(D_acl) stage = US"MPI";
+DEBUG(acl) stage = US"MPI";
 nbits = pubkey->len;
 if ((errstr = as_mpi(pubkey, &verify_ctx->n))) return errstr;
 nbits = (nbits - pubkey->len) * 8;
 if ((errstr = as_mpi(pubkey, &verify_ctx->e))) return errstr;
 
 #ifdef extreme_debug
-DEBUG(D_acl) debug_printf_indent("rsa_verify_init:\n");
+DEBUG(acl) debug_printf_indent("rsa_verify_init:\n");
 	{
 	uschar * s;
 	gcry_mpi_aprint (GCRYMPI_FMT_HEX, &s, NULL, verify_ctx->n);
@@ -646,7 +646,7 @@ if (bits) *bits = nbits;
 return NULL;
 
 asn_err:
-DEBUG(D_acl) return string_sprintf("%s: %s", stage, asn1_strerror(rc));
+DEBUG(acl) return string_sprintf("%s: %s", stage, asn1_strerror(rc));
 	     return US asn1_strerror(rc);
 }
 
@@ -691,7 +691,7 @@ if (  (stage = US"pkey sexp build",
        gerr = gcry_pk_verify(s_sig, s_hash, s_pkey))
    )
   {
-  DEBUG(D_acl) debug_printf_indent("verify: error in stage '%s'\n", stage);
+  DEBUG(acl) debug_printf_indent("verify: error in stage '%s'\n", stage);
   return gerr == GCRY_ERR_BAD_SIGNATURE ? US"" : US gcry_strerror(gerr);
   }
 
@@ -896,7 +896,7 @@ else
       { EVP_PKEY_CTX_free(ctx); return NULL; }
     EVP_PKEY_CTX_free(ctx);
 
-    DEBUG(D_tls)
+    DEBUG(tls)
       if (Ustrcmp(ERR_reason_error_string(ERR_peek_error()), "wrong signature length") == 0)
 	debug_printf("sig len (from msg hdr): %d, expected (from dns pubkey) %d\n",
 	 (int) sig->len, EVP_PKEY_size(verify_ctx->key));

@@ -655,55 +655,74 @@ uschar *dccifd_options         = US"header";
 
 int     debug_fd               = -1;
 FILE   *debug_file             = NULL;
-int     debug_notall[]         = {
-  Di_macro,
-  Di_memory,
-  Di_noutf8,
-  Di_regex,
-  -1
+
+/* List of names for debug channels.  Must be in alphabetical order.
+The initial few entries are dummies. */
+
+const uschar * const debug_chan_names[] = {
+  [BIT_TABLE_IDX_USABLE] = US"acl",	/* 4 */
+    US"auth",
+    US"deliver",
+    US"dns",
+    US"dnsbl",				/* 8 */
+    US"exec",
+    US"expand",
+    US"filter",
+    US"hints_lookup",
+    US"host_lookup",
+    US"ident",
+    US"interface",
+    US"lists",				/* 16 */
+    US"load",
+    US"local_scan",
+    US"lookup",
+    US"macro",
+    US"memory",
+    US"noutf8",
+    US"pid",
+    US"process_info",			/* 24 */
+    US"queue_run",
+    US"receive",
+    US"regex",
+    US"resolver",
+    US"retry",
+    US"rewrite",
+    US"route",
+    US"timestamp",			/* 32 */
+    US"tls",
+    US"transport",
+    US"uid",
+    US"v",
+    US"verify",
 };
-bit_table debug_options[]      = { /* must be in alphabetical order and use
-				 only the enum values from macros.h */
-  BIT_TABLE(D, acl),
-  BIT_TABLE(D, all),
-  BIT_TABLE(D, auth),
-  BIT_TABLE(D, deliver),
-  BIT_TABLE(D, dns),
-  BIT_TABLE(D, dnsbl),
-  BIT_TABLE(D, exec),
-  BIT_TABLE(D, expand),
-  BIT_TABLE(D, filter),
-  BIT_TABLE(D, hints_lookup),
-  BIT_TABLE(D, host_lookup),
-  BIT_TABLE(D, ident),
-  BIT_TABLE(D, interface),
-  BIT_TABLE(D, lists),
-  BIT_TABLE(D, load),
-  BIT_TABLE(D, local_scan),
-  BIT_TABLE(D, lookup),
-  BIT_TABLE(D, macro),
-  BIT_TABLE(D, memory),
-  BIT_TABLE(D, noutf8),
-  BIT_TABLE(D, pid),
-  BIT_TABLE(D, process_info),
-  BIT_TABLE(D, queue_run),
-  BIT_TABLE(D, receive),
-  BIT_TABLE(D, regex),
-  BIT_TABLE(D, resolver),
-  BIT_TABLE(D, retry),
-  BIT_TABLE(D, rewrite),
-  BIT_TABLE(D, route),
-  BIT_TABLE(D, timestamp),
-  BIT_TABLE(D, tls),
-  BIT_TABLE(D, transport),
-  BIT_TABLE(D, uid),
-  BIT_TABLE(D, verify),
+
+int      debug_options_count	= nelem(debug_chan_names);
+
+/* Channel settings for "default" debug (just a "-d" used) */
+
+const uschar * debug_defaults =
+  US  "+all"
+      "-expand"
+      "-filter"
+      "-interface"
+      "-load"
+      "-local_scan"
+      "-memory"
+      "-noutf8"
+      "-pid"
+      "-timestamp"
+      "-resolver";
+
+/* List of debug channels that we exclude from "all" */
+
+const uschar * const debug_notall_names[] = {
+  US"macro", US"memory", US"noutf8", US"regex", NULL
 };
-int      debug_options_count	= nelem(debug_options);
+
 uschar   debuglog_name[LOG_NAME_SIZE] = {0};
 unsigned debug_pretrigger_bsize	= 0;
 uschar * debug_pretrigger_buf	= NULL;
-bitmask_word_t debug_selector	= 0;
+bitmask_word_t * debug_selector = NULL;
 BOOL	 debug_startup		= FALSE;
 
 int     delay_warning[DELAY_WARNING_SIZE] = { DELAY_WARNING_SIZE, 1, 24*60*60 };
@@ -909,117 +928,149 @@ tree_node *localpartlist_anchor= NULL;
 int     localpartlist_count    = 0;
 uschar *log_buffer             = NULL;
 
-int     log_default[]          = { /* for initializing log_selector */
-  Li_acl_warn_skipped,
-  Li_connection_reject,
-  Li_delay_delivery,
-  Li_dkim,
-  Li_dnslist_defer,
-  Li_etrn,
-  Li_host_lookup_failed,
-  Li_lost_incoming_connection,
-  Li_outgoing_interface, /* see d_log_interface in deliver.c */
-  Li_msg_id,
-  Li_queue_run,
-  Li_queue_time_exclusive,
-  Li_rejected_header,
-  Li_retry_defer,
-  Li_sender_verify_fail,
-  Li_size_reject,
-  Li_skip_delivery,
-  Li_smtp_confirmation,
-  Li_tls_certificate_verified,
-  Li_tls_cipher,
-  -1
+const uschar * log_default_names[] = {	/* for initializing log_selector */
+  US"acl_warn_skipped",
+  US"connection_reject",
+  US"delay_delivery",
+  US"dkim",
+  US"dnslist_defer",
+  US"etrn",
+  US"host_lookup_failed",
+  US"lost_incoming_connection",
+  US"outgoing_interface", /* see d_log_interface in deliver.c */
+  US"msg_id",
+  US"queue_run",
+  US"queue_time_exclusive",
+  US"rejected_header",
+  US"retry_defer",
+  US"sender_verify_fail",
+  US"size_reject",
+  US"skip_delivery",
+  US"smtp_confirmation",
+  US"tls_certificate_verified",
+  US"tls_cipher",
 };
+int     log_default_count      = nelem(log_default_names);
 
 uschar *log_file_path          = US LOG_FILE_PATH
                            "\0<--------------Space to patch log_file_path->";
 
-int     log_notall[]           = {
-  -1
+const uschar * const log_notall_names[] = { NULL };
+
+/* Table for selectors for log_write() calls.
+Must have names that are in both enum logwrite_bit and logging_test_bit. */
+
+#define BIT_TABLE(chan) {.name = US #chan, .logchan_bit = Lt_##chan }
+
+bit_table logwrite_options[] = {
+  BIT_TABLE(address_rewrite),
+  BIT_TABLE(all_parents),
+  BIT_TABLE(connection_reject),
+  BIT_TABLE(delay_delivery),
+  BIT_TABLE(dnslist_defer),
+  BIT_TABLE(etrn),
+  BIT_TABLE(host_lookup_failed),
+  BIT_TABLE(lost_incoming_connection),
+  BIT_TABLE(queue_run),
+  BIT_TABLE(retry_defer),
+  BIT_TABLE(size_reject),
+  BIT_TABLE(skip_delivery),
+  BIT_TABLE(smtp_connection),
+  BIT_TABLE(smtp_incomplete_transaction),
+  BIT_TABLE(smtp_protocol_error),
+  BIT_TABLE(smtp_syntax_error),
 };
-bit_table log_options[]        = { /* must be in alphabetical order,
-				with definitions from enum logbit. */
-  BIT_TABLE(L, 8bitmime),
-  BIT_TABLE(L, acl_warn_skipped),
-  BIT_TABLE(L, address_rewrite),
-  BIT_TABLE(L, all),
-  BIT_TABLE(L, all_parents),
-  BIT_TABLE(L, arguments),
-  BIT_TABLE(L, connection_id),
-  BIT_TABLE(L, connection_reject),
-  BIT_TABLE(L, delay_delivery),
-  BIT_TABLE(L, deliver_time),
-  BIT_TABLE(L, delivery_size),
+#undef BIT_TABLE
+int     logwrite_options_count      = nelem(logwrite_options);
+
+
+/* List of names for logging channels.  Must be in alphabetical order.
+Must match enum logging_test_bit (macros.h).
+This is a superset of logwrite_options[].
+The initial few entries are dummies. */
+
+#define LOG_CHAN(name) [Lt_##name] = US #name
+
+const uschar * const log_chan_names[] = {
+  LOG_CHAN(8bitmime),
+  LOG_CHAN(acl_warn_skipped),
+  LOG_CHAN(address_rewrite),
+  [Lt_DUMMY_all] = US"all",
+  LOG_CHAN(all_parents),
+  LOG_CHAN(arguments),
+  LOG_CHAN(connection_id),
+  LOG_CHAN(connection_reject),
+  LOG_CHAN(delay_delivery),
+  LOG_CHAN(deliver_time),
+  LOG_CHAN(delivery_size),
 #ifndef DISABLE_DKIM
-  BIT_TABLE(L, dkim),
-  BIT_TABLE(L, dkim_verbose),
+  LOG_CHAN(dkim),
+  LOG_CHAN(dkim_verbose),
 #endif
 #ifdef EXIM_HAVE_DMARC
-  BIT_TABLE(L, dmarc),
-  BIT_TABLE(L, dmarc_verbose),
+  LOG_CHAN(dmarc),
+  LOG_CHAN(dmarc_verbose),
 #endif
-  BIT_TABLE(L, dnslist_defer),
-  BIT_TABLE(L, dnssec),
-  BIT_TABLE(L, dsn),
-  BIT_TABLE(L, etrn),
-  BIT_TABLE(L, host_lookup_failed),
-  BIT_TABLE(L, ident_timeout),
-  BIT_TABLE(L, incoming_interface),
-  BIT_TABLE(L, incoming_port),
-  BIT_TABLE(L, lost_incoming_connection),
-  BIT_TABLE(L, millisec),
-  BIT_TABLE(L, msg_id),
-  BIT_TABLE(L, msg_id_created),
-  BIT_TABLE(L, outgoing_interface),
-  BIT_TABLE(L, outgoing_port),
-  BIT_TABLE(L, pid),
-  BIT_TABLE(L, pipelining),
-  BIT_TABLE(L, protocol_detail),
+  LOG_CHAN(dnslist_defer),
+  LOG_CHAN(dnssec),
+  LOG_CHAN(dsn),
+  LOG_CHAN(etrn),
+  LOG_CHAN(host_lookup_failed),
+  LOG_CHAN(ident_timeout),
+  LOG_CHAN(incoming_interface),
+  LOG_CHAN(incoming_port),
+  LOG_CHAN(lost_incoming_connection),
+  LOG_CHAN(millisec),
+  LOG_CHAN(msg_id),
+  LOG_CHAN(msg_id_created),
+  LOG_CHAN(outgoing_interface),
+  LOG_CHAN(outgoing_port),
+  LOG_CHAN(pid),
+  LOG_CHAN(pipelining),
+  LOG_CHAN(protocol_detail),
 #if defined(SUPPORT_PROXY) || defined(SUPPORT_SOCKS)
-  BIT_TABLE(L, proxy),
+  LOG_CHAN(proxy),
 #endif
-  BIT_TABLE(L, queue_run),
-  BIT_TABLE(L, queue_time),
-  BIT_TABLE(L, queue_time_exclusive),
-  BIT_TABLE(L, queue_time_overall),
-  BIT_TABLE(L, receive_time),
-  BIT_TABLE(L, received_recipients),
-  BIT_TABLE(L, received_sender),
-  BIT_TABLE(L, rejected_header),
-  { US"rejected_headers", Li_rejected_header },
-  BIT_TABLE(L, retry_defer),
-  BIT_TABLE(L, return_path_on_delivery),
-  BIT_TABLE(L, sender_on_delivery),
-  BIT_TABLE(L, sender_verify_fail),
-  BIT_TABLE(L, size_reject),
-  BIT_TABLE(L, skip_delivery),
-  BIT_TABLE(L, smtp_confirmation),
-  BIT_TABLE(L, smtp_connection),
-  BIT_TABLE(L, smtp_incomplete_transaction),
-  BIT_TABLE(L, smtp_mailauth),
-  BIT_TABLE(L, smtp_no_mail),
-  BIT_TABLE(L, smtp_protocol_error),
-  BIT_TABLE(L, smtp_syntax_error),
+  LOG_CHAN(queue_run),
+  LOG_CHAN(queue_time),
+  LOG_CHAN(queue_time_exclusive),
+  LOG_CHAN(queue_time_overall),
+  LOG_CHAN(receive_time),
+  LOG_CHAN(received_recipients),
+  LOG_CHAN(received_sender),
+  LOG_CHAN(rejected_header),
+  LOG_CHAN(retry_defer),
+  LOG_CHAN(return_path_on_delivery),
+  LOG_CHAN(sender_on_delivery),
+  LOG_CHAN(sender_verify_fail),
+  LOG_CHAN(size_reject),
+  LOG_CHAN(skip_delivery),
+  LOG_CHAN(smtp_confirmation),
+  LOG_CHAN(smtp_connection),
+  LOG_CHAN(smtp_incomplete_transaction),
+  LOG_CHAN(smtp_mailauth),
+  LOG_CHAN(smtp_no_mail),
+  LOG_CHAN(smtp_protocol_error),
+  LOG_CHAN(smtp_syntax_error),
 #ifdef EXIM_HAVE_SPF
-  BIT_TABLE(L, spf),
-  BIT_TABLE(L, spf_verbose),
+  LOG_CHAN(spf),
+  LOG_CHAN(spf_verbose),
 #endif
-  BIT_TABLE(L, subject),
-  BIT_TABLE(L, tls_certificate_verified),
-  BIT_TABLE(L, tls_cipher),
-  BIT_TABLE(L, tls_on_connect),
-  BIT_TABLE(L, tls_peerdn),
-  BIT_TABLE(L, tls_resumption),
-  BIT_TABLE(L, tls_sni),
-  BIT_TABLE(L, unknown_in_list),
+  LOG_CHAN(subject),
+  LOG_CHAN(tls_certificate_verified),
+  LOG_CHAN(tls_cipher),
+  LOG_CHAN(tls_on_connect),
+  LOG_CHAN(tls_peerdn),
+  LOG_CHAN(tls_resumption),
+  LOG_CHAN(tls_sni),
+  LOG_CHAN(unknown_in_list),
 };
-int     log_options_count      = nelem(log_options);
+#undef LOG_CHAN
+int     log_options_count      = nelem(log_chan_names);
 
 const uschar *log_ports	       = NULL;
 int     log_reject_target      = 0;
-bitmask_word_t log_selector[log_selector_size]; /* initialized in main() */
+bitmask_word_t log_selector[log_selector_size]; /* initialized from main() */
 uschar *log_selector_string    = NULL;
 FILE   *log_stderr             = NULL;
 uschar *login_sender_address   = NULL;

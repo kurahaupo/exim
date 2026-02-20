@@ -37,15 +37,15 @@ static int flushbuffer
 int rsp;
 
 rsp = write(socket, buffer->s, buffer->ptr);
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: flushbuffer(): Result of the write() = %d\n", rsp);
 if(rsp < 0)
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: flushbuffer(): Error writing buffer to socket: %s\n", strerror(errno));
   return errno;
   }
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: flushbuffer(): Wrote buffer to socket:\n%.*s\n", buffer->ptr, buffer->s);
 return 0;
 }
@@ -132,21 +132,21 @@ if (((override_client_ip = expand_string(US"$acl_m_dcc_override_client_ip")) != 
      (override_client_ip[0] != '\0'))
   {
   Ustrncpy(client_ip, override_client_ip, sizeof(client_ip)-1);
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: Client IP (overridden): %s\n", client_ip);
   }
 else if(sender_host_address)
   {
   /* else if $sender_host_address is available use that? */
   Ustrncpy(client_ip, sender_host_address, sizeof(client_ip)-1);
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: Client IP (sender_host_address): %s\n", client_ip);
   }
 else
   {
   /* sender_host_address is NULL which means it comes from localhost */
   Ustrncpy(client_ip, dcc_default_ip_option, sizeof(client_ip)-1);
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: Client IP (default): %s\n", client_ip);
   }
 /* build options block */
@@ -176,7 +176,7 @@ if(Ustrcmp(sockip, ""))
   serv_addr_in.sin_port = htons(portnr);
   if ((sockfd = socket(AF_INET, SOCK_STREAM,0)) < 0)
     {
-    DEBUG(D_acl)
+    DEBUG(acl)
       debug_printf("DCC: Creating TCP socket connection failed: %s\n", strerror(errno));
     log_write(0,LOG_PANIC,"DCC: Creating TCP socket connection failed: %s\n", strerror(errno));
     /* if we cannot create the socket, defer the mail */
@@ -186,7 +186,7 @@ if(Ustrcmp(sockip, ""))
   /* Now connecting the socket (INET) */
   if (connect(sockfd, (struct sockaddr *)&serv_addr_in, sizeof(serv_addr_in)) < 0)
     {
-    DEBUG(D_acl)
+    DEBUG(acl)
       debug_printf("DCC: Connecting to TCP socket failed: %s\n", strerror(errno));
     log_write(0,LOG_PANIC,"DCC: Connecting to TCP socket failed: %s\n", strerror(errno));
     /* if we cannot contact the socket, defer the mail */
@@ -202,7 +202,7 @@ else
   Ustrncpy(US serv_addr.sun_path, sockpath, sizeof(serv_addr.sun_path));
   if ((sockfd = socket(AF_UNIX, SOCK_STREAM,0)) < 0)
     {
-    DEBUG(D_acl)
+    DEBUG(acl)
       debug_printf("DCC: Creating UNIX socket connection failed: %s\n", strerror(errno));
     log_write(0,LOG_PANIC,"DCC: Creating UNIX socket connection failed: %s\n", strerror(errno));
     /* if we cannot create the socket, defer the mail */
@@ -212,7 +212,7 @@ else
   /* Now connecting the socket (UNIX) */
   if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
     {
-    DEBUG(D_acl)
+    DEBUG(acl)
       debug_printf("DCC: Connecting to UNIX socket failed: %s\n", strerror(errno));
     log_write(0,LOG_PANIC,"DCC: Connecting to UNIX socket failed: %s\n", strerror(errno));
     /* if we cannot contact the socket, defer the mail */
@@ -221,14 +221,14 @@ else
     }
   }
 /* the socket is open, now send the options to dccifd*/
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: -----------------------------------\nDCC: Socket opened; now sending input\n"
 	       "DCC: -----------------------------------\n");
 
 /* let's send each of the recipients to dccifd */
 for (int i = 0; i < recipients_count; i++)
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: recipient = %s\n",recipients_list[i].address);
   dcc_headers = string_append(dcc_headers, 2, recipients_list[i].address, "\n");
   }
@@ -236,7 +236,7 @@ for (int i = 0; i < recipients_count; i++)
 dcc_headers = string_catn(dcc_headers, US"\n", 1);
 
 /* Now we send the input buffer */
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: ***********************************\nDCC: Sending options:\n%Y"
 	       "DCC: ***********************************\n", dcc_headers);
 if (flushbuffer(sockfd, dcc_headers) != 0)
@@ -247,7 +247,7 @@ if (flushbuffer(sockfd, dcc_headers) != 0)
 
 /* now send the message */
 /* First send the headers */
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: ***********************************\nDCC: Sending headers:\n");
 sendbuf = string_get(8192);
 sendbuf = string_catn(sendbuf, mail_headers->text, mail_headers->slen);
@@ -257,7 +257,7 @@ while((mail_headers=mail_headers->next))
 /* a blank line separates header from body */
 sendbuf = string_catn(sendbuf, US"\r\n", 2);
 gstring_release_unused(sendbuf);
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("%YDCC: ***********************************\n", sendbuf);
 if (flushbuffer(sockfd, sendbuf) != 0)
   {
@@ -266,7 +266,7 @@ if (flushbuffer(sockfd, sendbuf) != 0)
   }
 
 /* now send the body */
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: ***********************************\nDCC: Writing body:\n");
 (void)fseek(data_file, spool_data_start_offset(message_id), SEEK_SET);
 
@@ -278,13 +278,13 @@ while((filebuf.ptr = fread(filebuf.s, 1, filebuf.size, data_file)) > 0)
     (void)fclose(data_file);
     return retval;
     }
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: ***********************************\n");
 
 /* shutdown() the socket */
 if(shutdown(sockfd, SHUT_WR) < 0)
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: Couldn't shutdown socket: %s\n", strerror(errno));
   log_write(0,LOG_MAIN,"DCC: Couldn't shutdown socket: %s\n", strerror(errno));
   /* If there is a problem with the shutdown()
@@ -292,7 +292,7 @@ if(shutdown(sockfd, SHUT_WR) < 0)
   (void)fclose(data_file);
   return retval;
   }
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: Input sent.\n"
 	       "DCC: +++++++++++++++++++++++++++++++++++\n"
 	       "DCC: Now receiving output from server\n"
@@ -321,7 +321,7 @@ dcc_header_str = string_get(DCC_HEADER_LIMIT + 2);
 while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
   {
   /* make the answer 0-terminated. only needed for debug_printf */
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: Length of the output buffer is: %d\nDCC: Output buffer is:\n"
 		 "DCC: -----------------------------------\n%.*s\n"
 		 "DCC: -----------------------------------\n", dcc_resplen, dcc_resplen, big_buffer);
@@ -345,14 +345,14 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	  switch (big_buffer[bufoffset])
 	    {
 	    case 'A':
-	      DEBUG(D_acl)
+	      DEBUG(acl)
 		debug_printf("DCC: Overall result = A\treturning OK\n");
 	      dcc_return_text = US"Mail accepted by DCC";
 	      dcc_result = US"A";
 	      retval = OK;
 	      break;
 	    case 'R':
-	      DEBUG(D_acl)
+	      DEBUG(acl)
 		debug_printf("DCC: Overall result = R\treturning FAIL\n");
 	      dcc_return_text = US"Rejected by DCC";
 	      dcc_result = US"R";
@@ -365,7 +365,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 			   sender_host_address, sender_address);
 	      break;
 	    case 'S':
-	      DEBUG(D_acl)
+	      DEBUG(acl)
 		debug_printf("DCC: Overall result  = S\treturning OK\n");
 	      dcc_return_text = US"Not all recipients accepted by DCC";
 	      /* Since we're in an ACL we want a global result so we accept for all */
@@ -373,14 +373,14 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	      retval = OK;
 	      break;
 	    case 'G':
-	      DEBUG(D_acl)
+	      DEBUG(acl)
 		debug_printf("DCC: Overall result  = G\treturning FAIL\n");
 	      dcc_return_text = US"Greylisted by DCC";
 	      dcc_result = US"G";
 	      retval = FAIL;
 	      break;
 	    case 'T':
-	      DEBUG(D_acl)
+	      DEBUG(acl)
 		debug_printf("DCC: Overall result = T\treturning DEFER\n");
 	      dcc_return_text = US"Temporary error with DCC";
 	      dcc_result = US"T";
@@ -388,7 +388,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	      log_write(0,LOG_MAIN,"Temporary error with DCC: %s\n", big_buffer);
 	      break;
 	    default:
-	      DEBUG(D_acl)
+	      DEBUG(acl)
 		debug_printf("DCC: Overall result = something else\treturning DEFER\n");
 	      dcc_return_text = US"Unknown DCC response";
 	      dcc_result = US"T";
@@ -401,7 +401,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	  {
 	  /* We're on the first line but not on the first character,
 	   * there must be something wrong. */
-	  DEBUG(D_acl) debug_printf("DCC: Line = %d but bufoffset = %d != 0"
+	  DEBUG(acl) debug_printf("DCC: Line = %d but bufoffset = %d != 0"
 	      "  character is %c - This is wrong!\n", line, bufoffset, big_buffer[bufoffset]);
 	  log_write(0,LOG_MAIN,"Wrong header from DCC, output is %s\n", big_buffer);
 	  }
@@ -425,7 +425,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
     if (gstring_length(dcc_header_str) + dcc_resplen > DCC_HEADER_LIMIT)
       {
       dcc_resplen = DCC_HEADER_LIMIT - gstring_length(dcc_header_str);
-      DEBUG(D_acl) debug_printf("DCC: We got more output than we can store"
+      DEBUG(acl) debug_printf("DCC: We got more output than we can store"
 			 "in the X-DCC header. Truncating at 120 characters.\n");
       }
     dcc_header_str = string_catn(dcc_header_str, &big_buffer[bufoffset], dcc_resplen);
@@ -435,7 +435,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 /* fail on read error */
 if(dcc_resplen < 0)
   {
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: Error reading from socket: %s\n", strerror(errno));
   (void)fclose(data_file);
   return retval;
@@ -446,7 +446,7 @@ dcc_header_str = string_catn(dcc_header_str, US"\n", 1);
 
 (void) string_from_gstring(dcc_header_str);
 /* Now let's sum up what we've got. */
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("\nDCC: --------------------------\nDCC: Overall result = %d\n"
 	       "DCC: X-DCC header: %YReturn message: %s\nDCC: dcc_result: %s\n",
 		 retval, dcc_header_str, dcc_return_text, dcc_result);
@@ -463,7 +463,7 @@ if(!(Ustrncmp(dcc_header_str->s, "X-DCC", 5)))
     }
   }
 else
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf("DCC: Wrong format of the X-DCC header: %Y\n", dcc_header_str);
 
 /* check if we should add additional headers passed in acl_m_dcc_add_header */
@@ -476,14 +476,14 @@ if (dcc_direct_add_header)
     if (dcc_xtra_hdrs->s[dcc_xtra_hdrs->ptr - 1] != '\n')
       dcc_xtra_hdrs = string_catn(dcc_xtra_hdrs, US"\n", 1);
     header_add(' ', "%s", string_from_gstring(dcc_xtra_hdrs));
-    DEBUG(D_acl)
+    DEBUG(acl)
       debug_printf("DCC: adding additional headers in $acl_m_dcc_add_header: %Y", dcc_xtra_hdrs);
     }
   }
 
 dcc_ok = 1;
 /* Now return to exim main process */
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf("DCC: Before returning to exim main process:\nDCC: return_text = %s - retval = %d\n"
 	       "DCC: dcc_result = %s\n", dcc_return_text, retval, dcc_result);
 

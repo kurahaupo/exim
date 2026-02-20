@@ -145,7 +145,7 @@ while (generated != NULL)
       "child addresses for <%s>", rblock->drinst.name, USHRT_MAX, addr->address);
   addr->child_count++;
 
-  DEBUG(D_route)
+  DEBUG(route)
     debug_printf("%s router generated %s\n", rblock->drinst.name, next->address);
   }
 }
@@ -226,7 +226,7 @@ gid_t gid = ob->cmd_gid;
 uid_t *puid = &uid;
 gid_t *pgid = &gid;
 
-DEBUG(D_route) debug_printf_indent("%s router called for %s: domain = %s\n",
+DEBUG(route) debug_printf_indent("%s router called for %s: domain = %s\n",
   rblock->drinst.name, addr->address, addr->domain);
 
 ugid.uid_set = ugid.gid_set = FALSE;
@@ -271,14 +271,14 @@ if (!ob->cmd_gid_set)
     return DEFER;
     }
 
-DEBUG(D_route) debug_printf("requires uid=%ld gid=%ld current_directory=%s\n",
+DEBUG(route) debug_printf("requires uid=%ld gid=%ld current_directory=%s\n",
   (long int)uid, (long int)gid, current_directory);
 
 /* If we are not running as root, we will not be able to change uid/gid. */
 
 if (curr_uid != root_uid && (uid != curr_uid || gid != curr_gid))
   {
-  DEBUG(D_route)
+  DEBUG(route)
     {
     debug_printf("not running as root: cannot change uid/gid\n");
     debug_printf("subprocess will run with uid=%ld gid=%ld\n",
@@ -360,7 +360,7 @@ the result. */
 while (len > 0 && isspace(buffer[len-1])) len--;
 buffer[len] = 0;
 
-DEBUG(D_route) debug_printf("command wrote: %s\n", buffer);
+DEBUG(route) debug_printf("command wrote: %s\n", buffer);
 
 rword = buffer;
 Uskip_whitespace(&rword);

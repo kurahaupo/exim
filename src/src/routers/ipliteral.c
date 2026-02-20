@@ -118,7 +118,7 @@ const uschar * ip;
 int len = Ustrlen(domain);
 int rc, ipv;
 
-DEBUG(D_route) debug_printf_indent("%s router called for %s: domain = %s\n",
+DEBUG(route) debug_printf_indent("%s router called for %s: domain = %s\n",
   rblock->drinst.name, addr->address, addr->domain);
 
 /* Check that the domain is an IP address enclosed in square brackets. Remember
@@ -141,7 +141,7 @@ but if it is set, it should probably work. */
 if (verify_check_this_host(CUSS&rblock->ignore_target_hosts,
        	NULL, domain, ip, NULL) == OK)
   {
-  DEBUG(D_route)
+  DEBUG(route)
       debug_printf("%s is in ignore_target_hosts\n", ip);
   addr->message = US"IP literal host explicitly ignored";
   return DECLINE;

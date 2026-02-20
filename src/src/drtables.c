@@ -171,14 +171,14 @@ if (!(dl = mod_open(name, US"lookup", errstr)))
 info = (lookup_module_info *) dlsym(dl, "_lookup_module_info");
 if ((errormsg = dlerror()))
   {
-  EARLY_DEBUG(D_any, "%s does not appear to be a lookup module (%s)\n", name, errormsg);
+  EARLY_DEBUG(any, "%s does not appear to be a lookup module (%s)\n", name, errormsg);
   log_write(0, LOG_MAIN|LOG_PANIC, "%s does not appear to be a lookup module (%s)", name, errormsg);
   dlclose(dl);
   return FALSE;
   }
 if (info->magic != LOOKUP_MODULE_INFO_MAGIC)
   {
-  EARLY_DEBUG(D_any, "Lookup module %s is not compatible with this version of Exim\n", name);
+  EARLY_DEBUG(any, "Lookup module %s is not compatible with this version of Exim\n", name);
   log_write(0, LOG_MAIN|LOG_PANIC, "Lookup module %s is not compatible with this version of Exim", name);
   dlclose(dl);
   return FALSE;
@@ -186,11 +186,11 @@ if (info->magic != LOOKUP_MODULE_INFO_MAGIC)
 
 addlookupmodule(info);
 if (debug_startup)
-  { EARLY_DEBUG(D_lookup, "Loaded %q (%d lookup type%s)\n",
+  { EARLY_DEBUG(lookup, "Loaded %q (%d lookup type%s)\n",
 				    name, info->lookupcount,
 				    info->lookupcount > 1 ? "s" : ""); }
 else
-  DEBUG(D_lookup) debug_printf_indent("Loaded module %q\n", name);
+  DEBUG(lookup) debug_printf_indent("Loaded module %q\n", name);
 
 return TRUE;
 }
@@ -304,17 +304,17 @@ misc_module_list = mi;
 
 if (mi->init)
   {
-  EARLY_DEBUG(D_any, "Module init: %q\n", mi->name);
+  EARLY_DEBUG(any, "Module init: %q\n", mi->name);
   expand_level++;
   if (!mi->init(mi))
-    EARLY_DEBUG(D_any, "module init call failed for %q\n", mi->name);
+    EARLY_DEBUG(any, "module init call failed for %q\n", mi->name);
   expand_level--;
   }
 
 if (mi->lib_vers_report)
-  DEBUG(D_any) debug_printf_indent("%Y", mi->lib_vers_report(NULL));
+  DEBUG(any) debug_printf_indent("%Y", mi->lib_vers_report(NULL));
 
-/* EARLY_DEBUG(D_any, "added %q\n", mi->name); */
+/* EARLY_DEBUG(any, "added %q\n", mi->name); */
 }
 
 
@@ -329,10 +329,10 @@ void * dl;
 struct misc_module_info * mi;
 const char * errormsg;
 
-EARLY_DEBUG(D_any, "Loading module %q\n", name);
+EARLY_DEBUG(any, "Loading module %q\n", name);
 if (!(dl = mod_open(name, US"miscmod", errstr)))
   {
-  if (errstr && *errstr) EARLY_DEBUG(D_any, " mod_open: %s\n", *errstr);
+  if (errstr && *errstr) EARLY_DEBUG(any, " mod_open: %s\n", *errstr);
   return NULL;
   }
 
@@ -340,7 +340,7 @@ mi = (struct misc_module_info *) dlsym(dl,
 				    CS string_sprintf("%s_module_info", name));
 if ((errormsg = dlerror()))
   {
-  EARLY_DEBUG(D_any, "%s does not appear to be a '%s' module (%s)\n",
+  EARLY_DEBUG(any, "%s does not appear to be a '%s' module (%s)\n",
 	  name, name, errormsg);
   log_write(0, LOG_MAIN|LOG_PANIC,
     "%s does not contain the expected module info symbol (%s)", name, errormsg);
@@ -349,13 +349,13 @@ if ((errormsg = dlerror()))
   }
 if (mi->dyn_magic != MISC_MODULE_MAGIC)
   {
-  EARLY_DEBUG(D_any, "Module %s is not compatible with this version of Exim\n", name);
+  EARLY_DEBUG(any, "Module %s is not compatible with this version of Exim\n", name);
   log_write(0, LOG_MAIN|LOG_PANIC, "Module %s is not compatible with this version of Exim", name);
   dlclose(dl);
   return FALSE;
   }
 
-EARLY_DEBUG(D_lookup, "Loaded module %q\n", name);
+EARLY_DEBUG(lookup, "Loaded module %q\n", name);
 misc_mod_add(mi);
 return mi;
 }
@@ -483,13 +483,13 @@ lookup_list_init_done = TRUE;
 for (lookup_module_info ** avi = avail_static_lookups; *avi; avi++)
   addlookupmodule(*avi);
 
-DEBUG(D_lookup) debug_printf_indent("Total %d built-in lookups\n", lookup_list_count);
+DEBUG(lookup) debug_printf_indent("Total %d built-in lookups\n", lookup_list_count);
 
 
 #ifdef LOOKUP_MODULE_DIR
 if (!(dd = open_module_dir()))
   {
-  EARLY_DEBUG(D_lookup, "Couldn't open %s: not loading lookup modules\n", LOOKUP_MODULE_DIR);
+  EARLY_DEBUG(lookup, "Couldn't open %s: not loading lookup modules\n", LOOKUP_MODULE_DIR);
   log_write(0, LOG_MAIN|LOG_PANIC,
 	  "Couldn't open %s: not loading lookup modules\n", LOOKUP_MODULE_DIR);
   }
@@ -502,7 +502,7 @@ else
   const pcre2_code * regex_islookupmod = regex_must_compile(
     US"(lsearch|ldap|nis)_lookup\\." DYNLIB_FN_EXT "$", MCS_NOFLAGS, TRUE);
 
-  EARLY_DEBUG(D_lookup, "Loading lookup modules from %s\n", LOOKUP_MODULE_DIR);
+  EARLY_DEBUG(lookup, "Loading lookup modules from %s\n", LOOKUP_MODULE_DIR);
   while ((ent = readdir(dd)))
     if (regex_match_and_setup(regex_islookupmod, US ent->d_name, 0, 0))
       {
@@ -511,13 +511,13 @@ else
 	countmodules++;
       else
 	{
-	EARLY_DEBUG(D_any, "%s\n", errstr);
+	EARLY_DEBUG(any, "%s\n", errstr);
 	log_write(0, LOG_MAIN|LOG_PANIC, "%s", errstr);
 	}
       }
   }
 
-EARLY_DEBUG(D_lookup, "Loaded %d dynamic lookup modules\n", countmodules);
+EARLY_DEBUG(lookup, "Loaded %d dynamic lookup modules\n", countmodules);
 #endif
 }
 

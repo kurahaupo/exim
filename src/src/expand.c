@@ -1731,7 +1731,7 @@ else
   uschar * error, * decoded = rfc2047_decode2(rawhdr,
     check_rfc2047_length, charset, '?', NULL, newsize, &error);
   if (error)
-    DEBUG(D_any) debug_printf("*** error in RFC 2047 decoding: %s\n"
+    DEBUG(any) debug_printf("*** error in RFC 2047 decoding: %s\n"
       "    input was: %s\n", error, rawhdr);
   return decoded ? decoded : rawhdr;
   }
@@ -1837,7 +1837,7 @@ uschar * sname;
 
 if ((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
   {
-  DEBUG(D_expand) debug_printf(" socket: %s\n", strerror(errno));
+  DEBUG(expand) debug_printf(" socket: %s\n", strerror(errno));
   return NULL;
   }
 
@@ -1861,7 +1861,7 @@ if (send(fd, buf, 1, 0) < 0) { where = US"send"; goto bad; }
 
 if (poll_one_fd(fd, POLLIN, 2 * 1000) != 1)
   {
-  DEBUG(D_expand) debug_printf("no daemon response; using local evaluation\n");
+  DEBUG(expand) debug_printf("no daemon response; using local evaluation\n");
   len = snprintf(CS buf, sizeof(buf), "%u", queue_count_cached());
   }
 else if ((len = recv(fd, buf, sizeof(buf), 0)) < 0)
@@ -1879,7 +1879,7 @@ bad2:
 #endif
 bad:
   close(fd);
-  DEBUG(D_expand) debug_printf(" %s: %s\n", where, strerror(errno));
+  DEBUG(expand) debug_printf(" %s: %s\n", where, strerror(errno));
   return NULL;
 }
 
@@ -2361,7 +2361,7 @@ while (i < nsub)
   acl_arg[i++] = NULL;
   }
 
-DEBUG(D_expand)
+DEBUG(expand)
   debug_printf_indent("expanding: acl: %s  arg: %s%s\n",
     sub[0],
     acl_narg>0 ? acl_arg[0] : US"<none>",
@@ -2461,7 +2461,7 @@ for (item = s;
 *list = *s ? s+1 : s;
 if (item == s) return NULL;
 item = string_copyn(item, s - item);
-DEBUG(D_expand) debug_printf_indent("  json ele: '%s'\n", item);
+DEBUG(expand) debug_printf_indent("  json ele: '%s'\n", item);
 return US item;
 }
 
@@ -2510,7 +2510,7 @@ if (!name[0])
     "but found \"%.16s\"", s);
   return -1;
   }
-DEBUG(D_expand) debug_printf_indent("cond: %s\n", name);
+DEBUG(expand) debug_printf_indent("cond: %s\n", name);
 if (opname)
   *opname = string_copy(name);
 
@@ -2797,9 +2797,9 @@ switch(cond_type = identify_operator(&s, &opname))
     {
       const uschar *errp;
       const uschar **errpp;
-      DEBUG(D_expand) errpp = &errp; else errpp = 0;
+      DEBUG(expand) errpp = &errp; else errpp = 0;
       if (0 == (rc = string_is_ip_addressX(sub[0], NULL, errpp)))
-        DEBUG(D_expand) debug_printf("failed: %s\n", errp);
+        DEBUG(expand) debug_printf("failed: %s\n", errp);
 
       *yield = ( cond_type == ECOND_ISIP  ? rc != 0 :
                  cond_type == ECOND_ISIP4 ? rc == 4 : rc == 6) == testfor;
@@ -3029,7 +3029,7 @@ switch(cond_type = identify_operator(&s, &opname))
     if (!(sub[i] = expand_string_internal(s+1, flags, &s, resetok, &textonly)))
       goto failout;
     if (textonly) sub_textonly |= BIT(i);
-    DEBUG(D_expand) if (i == 1 && !sub2_honour_dollar && Ustrchr(sub[1], '$'))
+    DEBUG(expand) if (i == 1 && !sub2_honour_dollar && Ustrchr(sub[1], '$'))
       debug_printf_indent("WARNING: the second arg is NOT expanded,"
 			" for security reasons\n");
     if (*s++ != '}') goto COND_FAILED_CURLY_END;
@@ -3042,7 +3042,7 @@ switch(cond_type = identify_operator(&s, &opname))
       if (sub[i][0] == 0)
         {
         num[i] = 0;
-        DEBUG(D_expand)
+        DEBUG(expand)
           debug_printf_indent("empty string cast to zero for numerical comparison\n");
         }
       else
@@ -3228,7 +3228,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	if (sublen == 24)
 	  {
 	  uschar *coded = b64encode(CUS digest, 16);
-	  DEBUG(D_auth) debug_printf("crypteq: using MD5+B64 hashing\n"
+	  DEBUG(auth) debug_printf("crypteq: using MD5+B64 hashing\n"
 	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
 	  tempcond = (Ustrcmp(coded, sub[1]+5) == 0);
 	  }
@@ -3237,13 +3237,13 @@ switch(cond_type = identify_operator(&s, &opname))
 	  uschar coded[36];
 	  for (int i = 0; i < 16; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
 	  coded[32] = 0;
-	  DEBUG(D_auth) debug_printf("crypteq: using MD5+hex hashing\n"
+	  DEBUG(auth) debug_printf("crypteq: using MD5+hex hashing\n"
 	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
 	  tempcond = (strcmpic(coded, sub[1]+5) == 0);
 	  }
 	else
 	  {
-	  DEBUG(D_auth) debug_printf("crypteq: length for MD5 not 24 or 32: "
+	  DEBUG(auth) debug_printf("crypteq: length for MD5 not 24 or 32: "
 	    "fail\n  crypted=%s\n", sub[1]+5);
 	  tempcond = FALSE;
 	  }
@@ -3265,7 +3265,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	if (sublen == 28)
 	  {
 	  uschar *coded = b64encode(CUS digest, 20);
-	  DEBUG(D_auth) debug_printf("crypteq: using SHA1+B64 hashing\n"
+	  DEBUG(auth) debug_printf("crypteq: using SHA1+B64 hashing\n"
 	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
 	  tempcond = (Ustrcmp(coded, sub[1]+6) == 0);
 	  }
@@ -3274,13 +3274,13 @@ switch(cond_type = identify_operator(&s, &opname))
 	  uschar coded[44];
 	  for (int i = 0; i < 20; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
 	  coded[40] = 0;
-	  DEBUG(D_auth) debug_printf("crypteq: using SHA1+hex hashing\n"
+	  DEBUG(auth) debug_printf("crypteq: using SHA1+hex hashing\n"
 	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
 	  tempcond = (strcmpic(coded, sub[1]+6) == 0);
 	  }
 	else
 	  {
-	  DEBUG(D_auth) debug_printf("crypteq: length for SHA-1 not 28 or 40: "
+	  DEBUG(auth) debug_printf("crypteq: length for SHA-1 not 28 or 40: "
 	    "fail\n  crypted=%s\n", sub[1]+6);
 	  tempcond = FALSE;
 	  }
@@ -3318,7 +3318,7 @@ switch(cond_type = identify_operator(&s, &opname))
 
 	#define STR(s) # s
 	#define XSTR(s) STR(s)
-	DEBUG(D_auth) debug_printf("crypteq: using %s()\n"
+	DEBUG(auth) debug_printf("crypteq: using %s()\n"
 	  "  subject=%s\n  crypted=%s\n",
 	  which == 0 ? XSTR(DEFAULT_CRYPT) : which == 1 ? "crypt" : "crypt16",
 	  coded, sub[1]);
@@ -3351,7 +3351,7 @@ switch(cond_type = identify_operator(&s, &opname))
       uschar * save_iterate_item = iterate_item;
       int (*compare)(const uschar *, const uschar *);
 
-      DEBUG(D_expand) debug_printf_indent("condition: %s  item: %s\n", opname, sub[0]);
+      DEBUG(expand) debug_printf_indent("condition: %s  item: %s\n", opname, sub[0]);
 
       /* grab any listsep spec, then expand the list */
 
@@ -3365,7 +3365,7 @@ switch(cond_type = identify_operator(&s, &opname))
 
       while ((iterate_item = string_nextinlist(&list, &sep, NULL, 0)))
 	{
-	DEBUG(D_expand) debug_printf_indent(" compare %s\n", iterate_item);
+	DEBUG(expand) debug_printf_indent(" compare %s\n", iterate_item);
         if (compare(sub[0], iterate_item) == 0)
           {
           tempcond = TRUE;
@@ -3452,7 +3452,7 @@ switch(cond_type = identify_operator(&s, &opname))
     int sep;
     uschar *save_iterate_item = iterate_item;
 
-    DEBUG(D_expand) debug_printf_indent("condition: %s\n", opname);
+    DEBUG(expand) debug_printf_indent("condition: %s\n", opname);
 
     /* First expand the list, apart from a leading change-of-separator
     on non-json lists */
@@ -3513,7 +3513,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	  goto failout;
 	  }
 
-      DEBUG(D_expand) debug_printf_indent("%s: $item = %q\n", opname, iterate_item);
+      DEBUG(expand) debug_printf_indent("%s: $item = %q\n", opname, iterate_item);
       if (!eval_condition(sub[1], resetok, &tempcond))
         {
         expand_string_message = string_sprintf("%s inside %q condition",
@@ -3521,7 +3521,7 @@ switch(cond_type = identify_operator(&s, &opname))
         iterate_item = save_iterate_item;
         goto failout;
         }
-      DEBUG(D_expand) debug_printf_indent("%s: condition evaluated to %s\n", opname,
+      DEBUG(expand) debug_printf_indent("%s: condition evaluated to %s\n", opname,
         tempcond? "true":"false");
 
       if (yield) *yield = (tempcond == testfor);
@@ -3577,7 +3577,7 @@ switch(cond_type = identify_operator(&s, &opname))
         len = t2 - t;
         }
       }
-    DEBUG(D_expand)
+    DEBUG(expand)
       debug_printf_indent("considering %s: %s\n", ourname, len ? t : US"<empty>");
     /* logic for the lax case from expand_check_condition(), which also does
     expands, and the logic is both short and stable enough that there should
@@ -3605,7 +3605,7 @@ switch(cond_type = identify_operator(&s, &opname))
        "value %q", t);
       goto failout;
       }
-    DEBUG(D_expand) debug_printf_indent("%s: condition evaluated to %s\n", ourname,
+    DEBUG(expand) debug_printf_indent("%s: condition evaluated to %s\n", ourname,
         boolvalue? "true":"false");
     if (yield) *yield = (boolvalue == testfor);
     next = s; goto out;
@@ -3640,7 +3640,7 @@ switch(cond_type = identify_operator(&s, &opname))
     if (pcre2_match(re, sub[0], PCRE2_ZERO_TERMINATED, 0, PCRE_EOPT,
 		    md, pcre_gen_mtc_ctx) < 0)
       {
-      DEBUG(D_expand) debug_printf("no match for SRS'd local-part pattern\n");
+      DEBUG(expand) debug_printf("no match for SRS'd local-part pattern\n");
       goto srs_result;
       }
     ovec = pcre2_get_ovector_pointer(md);
@@ -3651,7 +3651,7 @@ switch(cond_type = identify_operator(&s, &opname))
       if (!isalnum(*s) && Ustrchr(".!#$%&'*+-/=?^_`{|}~", *s) == NULL)
 	{ quoting = 1; break; }
     if (quoting)
-      DEBUG(D_expand) debug_printf_indent("auto-quoting local part\n");
+      DEBUG(expand) debug_printf_indent("auto-quoting local part\n");
 
     /* Record the (quoted, if needed) decoded recipient as $srs_recipient */
 
@@ -3686,7 +3686,7 @@ switch(cond_type = identify_operator(&s, &opname))
 
 	if (((now.tv_sec - d) & 0x3ff) > 10)	/* days since SRS generated */
 	  {
-	  DEBUG(D_expand) debug_printf("SRS too old\n");
+	  DEBUG(expand) debug_printf("SRS too old\n");
 	  goto srs_result;
 	  }
 	}
@@ -3695,7 +3695,7 @@ switch(cond_type = identify_operator(&s, &opname))
 
       if (ovec[3]-ovec[2] != 4)
 	{
-	DEBUG(D_expand) debug_printf("SRS checksum wrong size\n");
+	DEBUG(expand) debug_printf("SRS checksum wrong size\n");
 	goto srs_result;
 	}
 
@@ -3705,7 +3705,7 @@ switch(cond_type = identify_operator(&s, &opname))
       hmac_md5(sub[1], srs_recipient, cksum, sizeof(cksum));
       if (Ustrncmp(cksum, sub[0] + ovec[2], 4) != 0)
 	{
-	DEBUG(D_expand) debug_printf("SRS checksum mismatch\n");
+	DEBUG(expand) debug_printf("SRS checksum mismatch\n");
 	goto srs_result;
 	}
       }
@@ -4065,7 +4065,7 @@ hash_source = string_catn(NULL, key_num, 1);
 hash_source = string_catn(hash_source, daystamp, 3);
 hash_source = string_cat(hash_source, address);
 
-DEBUG(D_expand)
+DEBUG(expand)
   debug_printf_indent("prvs: hash source is '%Y'\n", hash_source);
 
 memset(innerkey, 0x36, 64);
@@ -4163,18 +4163,18 @@ return yield;
 static inline void
 eval_dbg_op_2(const uschar * op, int_eximarith_t a, int_eximarith_t b)
 {
-DEBUG(D_expand)
+DEBUG(expand)
   debug_printf_indent("eval " PR_EXIM_ARITH " %s " PR_EXIM_ARITH, a, op, b);
 }
 static inline void
 eval_dbg_res(int_eximarith_t res)
 {
-DEBUG(D_expand) debug_printf(" => " PR_EXIM_ARITH "\n", res);
+DEBUG(expand) debug_printf(" => " PR_EXIM_ARITH "\n", res);
 }
 static inline void
 eval_dbg(const uschar * op, int_eximarith_t res)
 {
-DEBUG(D_expand)
+DEBUG(expand)
   debug_printf_indent("eval '%s' res: " PR_EXIM_ARITH "\n", op, res);
 }
 
@@ -4329,7 +4329,7 @@ if (!*error)
 
       if (y == -1 && x == EXIM_ARITH_MIN && op != '*')
 	{
-	DEBUG(D_expand)
+	DEBUG(expand)
 	  debug_printf("Integer exception dodging: " PR_EXIM_ARITH "%c-1 coerced to " PR_EXIM_ARITH "\n",
 	      EXIM_ARITH_MIN, op, EXIM_ARITH_MAX);
 	x = EXIM_ARITH_MAX;
@@ -4686,7 +4686,7 @@ else if (!opt_perl_started)
   uschar * initerror;
   typedef uschar * (*fn_t)(const uschar *);
 
-  DEBUG(D_any) debug_printf_indent("Starting Perl interpreter\n");
+  DEBUG(any) debug_printf_indent("Starting Perl interpreter\n");
   if ((initerror = (((fn_t *) mi->functions)[PERL_STARTUP]) (startup_pl)))
     {
     expand_string_message =
@@ -4803,7 +4803,7 @@ while (*s)	/* known to be untainted */
 
   if (flags & ESI_EXISTS_ONLY && gstring_length(yield) > 0) break;
 
-  DEBUG(D_expand)
+  DEBUG(expand)
     {
     debug_printf_indent("%V%V%s: %W\n",
       first ? "/" : "K",
@@ -4830,7 +4830,7 @@ while (*s)	/* known to be untainted */
       const uschar * t = s + 2;
       for (s = t; *s ; s++) if (*s == '\\' && s[1] == 'N') break;
 
-      DEBUG(D_expand)
+      DEBUG(expand)
 	debug_expansion_interim(US"protected", t, (int)(s - t), flags);
       if (!(flags & ESI_SKIPPING))
 	yield = string_catn(yield, t, s - t);
@@ -4839,7 +4839,7 @@ while (*s)	/* known to be untainted */
     else
       {
       uschar ch[1];
-      DEBUG(D_expand)
+      DEBUG(expand)
 	debug_printf_indent("%Vbackslashed: '\\%c'\n", "K", s[1]);
       ch[0] = string_interpret_escape(&s);
       if (!(flags & ESI_SKIPPING))
@@ -4861,7 +4861,7 @@ while (*s)	/* known to be untainted */
     for (const uschar * t = s+1;
 	*t && *t != '$' && *t != '}' && *t != '\\'; t++) i++;
 
-    DEBUG(D_expand) debug_expansion_interim(US"text", s, i, flags);
+    DEBUG(expand) debug_expansion_interim(US"text", s, i, flags);
 
     if (!(flags & ESI_SKIPPING))
       yield = string_catn(yield, s, i);
@@ -4949,13 +4949,13 @@ while (*s)	/* known to be untainted */
 
     if (flags & ESI_SKIPPING)
       {
-      DEBUG(D_expand)
+      DEBUG(expand)
 	debug_expansion_interim(US"var", name, Ustrlen(name), flags);
       }
     else
       {
       int len = Ustrlen(value);
-      DEBUG(D_expand) debug_expansion_interim(US"value", value, len, flags);
+      DEBUG(expand) debug_expansion_interim(US"value", value, len, flags);
       if (!yield && newsize != 0)
 	{
 	yield = g;
@@ -4976,7 +4976,7 @@ while (*s)	/* known to be untainted */
     s = read_cnumber(&n, s);
     if (n >= 0 && n <= expand_nmax)
       {
-      DEBUG(D_expand) debug_expansion_interim(US"value", expand_nstring[n], expand_nlength[n], flags);
+      DEBUG(expand) debug_expansion_interim(US"value", expand_nstring[n], expand_nlength[n], flags);
       if (!(flags & ESI_SKIPPING))
 	yield = string_catn(yield, expand_nstring[n], expand_nlength[n]);
       }
@@ -5005,7 +5005,7 @@ while (*s)	/* known to be untainted */
       }
     if (n >= 0 && n <= expand_nmax)
       {
-      DEBUG(D_expand) debug_expansion_interim(US"value", expand_nstring[n], expand_nlength[n], flags);
+      DEBUG(expand) debug_expansion_interim(US"value", expand_nstring[n], expand_nlength[n], flags);
       if (!(flags & ESI_SKIPPING))
 	yield = string_catn(yield, expand_nstring[n], expand_nlength[n]);
       }
@@ -5061,7 +5061,7 @@ while (*s)	/* known to be untainted */
 	{
 	case OK:
 	case FAIL:
-	  DEBUG(D_expand)
+	  DEBUG(expand)
 	    debug_printf_indent("acl expansion yield: %s\n", user_msg);
 	  if (user_msg)
             yield = string_cat(yield, user_msg);
@@ -5119,7 +5119,7 @@ while (*s)	/* known to be untainted */
       if (!(next_s = eval_condition(s, &resetok, flags & ESI_SKIPPING ? NULL : &cond)))
 	goto EXPAND_FAILED;  /* message already set */
 
-      DEBUG(D_expand)
+      DEBUG(expand)
 	{
 	debug_expansion_interim(US"condition", s, (int)(next_s - s), flags);
 	debug_expansion_interim(US"result",
@@ -5529,7 +5529,7 @@ while (*s)	/* known to be untainted */
         uschar * hash = string_copyn(expand_nstring[3],expand_nlength[3]);
         uschar * domain = string_copyn(expand_nstring[5],expand_nlength[5]);
 
-        DEBUG(D_expand)
+        DEBUG(expand)
 	  {
 	  debug_printf_indent("prvscheck localpart: %s\n", local_part);
 	  debug_printf_indent("prvscheck key number: %s\n", key_num);
@@ -5563,8 +5563,8 @@ while (*s)	/* known to be untainted */
           goto EXPAND_FAILED;
           }
 
-        DEBUG(D_expand) debug_printf_indent("prvscheck: received hash is %s\n", hash);
-        DEBUG(D_expand) debug_printf_indent("prvscheck:      own hash is %s\n", p);
+        DEBUG(expand) debug_printf_indent("prvscheck: received hash is %s\n", hash);
+        DEBUG(expand) debug_printf_indent("prvscheck:      own hash is %s\n", p);
 
         if (Ustrcmp(p,hash) == 0)
           {
@@ -5582,18 +5582,18 @@ while (*s)	/* known to be untainted */
           if (iexpire >= inow)
             {
             prvscheck_result = US"1";
-            DEBUG(D_expand) debug_printf_indent("prvscheck: success, $prvscheck_result set to 1\n");
+            DEBUG(expand) debug_printf_indent("prvscheck: success, $prvscheck_result set to 1\n");
             }
 	  else
             {
             prvscheck_result = NULL;
-            DEBUG(D_expand) debug_printf_indent("prvscheck: signature expired, $prvscheck_result unset\n");
+            DEBUG(expand) debug_printf_indent("prvscheck: signature expired, $prvscheck_result unset\n");
             }
           }
         else
           {
           prvscheck_result = NULL;
-          DEBUG(D_expand) debug_printf_indent("prvscheck: hash failure, $prvscheck_result unset\n");
+          DEBUG(expand) debug_printf_indent("prvscheck: hash failure, $prvscheck_result unset\n");
           }
 
         /* Now expand the final argument. We leave this till now so that
@@ -5799,7 +5799,7 @@ while (*s)	/* known to be untainted */
 
     SOCK_FAIL:
       if (*s != '{') goto EXPAND_FAILED;				/*}*/
-      DEBUG(D_any) debug_printf("%s\n", expand_string_message);
+      DEBUG(any) debug_printf("%s\n", expand_string_message);
       if (!(arg = expand_string_internal(s+1,
 		    ESI_BRACE_ENDS | ESI_HONOR_DOLLAR, &s, &resetok, NULL)))
         goto EXPAND_FAILED;
@@ -5862,7 +5862,7 @@ while (*s)	/* known to be untainted */
 	}
       else
 	{
-	DEBUG(D_expand)
+	DEBUG(expand)
 	  debug_printf_indent("args string for ${run} expand before split\n");
 	if (!(arg = expand_string_internal(s,
 		ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL)))
@@ -6171,7 +6171,7 @@ while (*s)	/* known to be untainted */
 	*p++ = hex_digits[finalhash[i] & 0x0f];
 	}
 
-      DEBUG(D_any) debug_printf("HMAC[%s](%.*s,%s)=%.*s\n",
+      DEBUG(any) debug_printf("HMAC[%s](%.*s,%s)=%.*s\n",
 	sub[0], (int)keylen, keyptr, sub[2], hashlen*2, finalhash_hex);
 
       yield = string_catn(yield, finalhash_hex, hashlen*2);
@@ -6246,7 +6246,7 @@ while (*s)	/* known to be untainted */
           }
 
         /* Match - set up for expanding the replacement. */
-	DEBUG(D_expand) debug_printf_indent("%s: match\n", name);
+	DEBUG(expand) debug_printf_indent("%s: match\n", name);
 
         if (n == 0) n = EXPAND_MAXN + 1;
         expand_nmax = 0;
@@ -6761,7 +6761,7 @@ while (*s)	/* known to be untainted */
 	goto EXPAND_FAILED_CURLY;					/*}*/
 	}
 
-      DEBUG(D_expand) debug_printf_indent("%s: evaluate input list\n", name);
+      DEBUG(expand) debug_printf_indent("%s: evaluate input list\n", name);
       /* Check for a list-sep spec before expansion */
       sep = matchlist_parse_sep(&s);
 
@@ -6784,7 +6784,7 @@ while (*s)	/* known to be untainted */
 	  expand_string_message = US"missing '{' for second arg of reduce";
 	  goto EXPAND_FAILED_CURLY;					/*}*/
 	  }
-	DEBUG(D_expand) debug_printf_indent("reduce: initial result list\n");
+	DEBUG(expand) debug_printf_indent("reduce: initial result list\n");
         t = expand_string_internal(s,
 	      ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | flags, &s, &resetok, NULL);
         if (!t) goto EXPAND_FAILED;
@@ -6812,7 +6812,7 @@ while (*s)	/* known to be untainted */
       condition for real. For EITEM_MAP and EITEM_REDUCE, do the same, using
       the normal internal expansion function. */
 
-      DEBUG(D_expand) debug_printf_indent("%s: find end of conditionn\n", name);
+      DEBUG(expand) debug_printf_indent("%s: find end of conditionn\n", name);
       if (item_type != EITEM_FILTER)
         temp = expand_string_internal(s,
 	  ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | ESI_SKIPPING, &s, &resetok, NULL);
@@ -6851,7 +6851,7 @@ while (*s)	/* known to be untainted */
         {
         *outsep = (uschar)sep;      /* Separator as a string */
 
-	DEBUG(D_expand) debug_printf_indent("%s: $item = '%s'  $value = '%s'\n",
+	DEBUG(expand) debug_printf_indent("%s: $item = '%s'  $value = '%s'\n",
 			  name, iterate_item, lookup_value);
 
         if (item_type == EITEM_FILTER)
@@ -6869,7 +6869,7 @@ while (*s)	/* known to be untainted */
             goto EXPAND_FAILED;
             }
 	  lookup_value = save_value;
-          DEBUG(D_expand) debug_printf_indent("%s: condition is %s\n", name,
+          DEBUG(expand) debug_printf_indent("%s: condition is %s\n", name,
             condresult? "true":"false");
           if (condresult)
             temp = iterate_item;    /* TRUE => include this item */
@@ -7045,7 +7045,7 @@ while (*s)	/* known to be untainted */
 	const uschar * srcfield, * dstitem;
 	gstring * newlist = NULL, * newkeylist = NULL;
 
-        DEBUG(D_expand) debug_printf_indent("%s: $item = %q\n", name, srcitem);
+        DEBUG(expand) debug_printf_indent("%s: $item = %q\n", name, srcitem);
 
 	/* extract field for comparisons */
 	iterate_item = srcitem;
@@ -7110,8 +7110,8 @@ while (*s)	/* known to be untainted */
 	dstlist = newlist->s;
 	dstkeylist = newkeylist->s;
 
-        DEBUG(D_expand) debug_printf_indent("%s: dstlist = %q\n", name, dstlist);
-        DEBUG(D_expand) debug_printf_indent("%s: dstkeylist = %q\n", name, dstkeylist);
+        DEBUG(expand) debug_printf_indent("%s: dstlist = %q\n", name, dstlist);
+        DEBUG(expand) debug_printf_indent("%s: dstkeylist = %q\n", name, dstkeylist);
 	}
 
       if (dstlist)
@@ -7312,7 +7312,7 @@ while (*s)	/* known to be untainted */
 	  if ((quoted = Ustrchr(ss, '"') != NULL))
 	    {
 	    gstring * h = NULL;
-	    DEBUG(D_expand) debug_printf_indent("auto-quoting local part\n");
+	    DEBUG(expand) debug_printf_indent("auto-quoting local part\n");
 	    while (*ss)		/* de-quote */
 	      {
 	      while (*ss && *ss != '"') h = string_catn(h, ss++, 1);
@@ -7338,7 +7338,7 @@ while (*s)	/* known to be untainted */
 	yield = string_cat(yield, sub[2]);
 	}
       else
-	DEBUG(D_expand) debug_printf_indent("null return_path for srs-encode\n");
+	DEBUG(expand) debug_printf_indent("null return_path for srs-encode\n");
 
       break;
       }
@@ -7349,7 +7349,7 @@ while (*s)	/* known to be untainted */
     }	/* EITEM_* switch */
     /*NOTREACHED*/
 
-  DEBUG(D_expand)		/* only if not the sole expansion of the line */
+  DEBUG(expand)		/* only if not the sole expansion of the line */
     if (yield && (expansion_start > 0 || *s))
       debug_expansion_interim(US"item-res",
 	  yield->s + expansion_start, yield->ptr - expansion_start,
@@ -8240,7 +8240,7 @@ NOT_ITEM: ;
 	  goto EXPAND_FAILED;
 	  }
 	yield = string_cat(yield, s);
-	DEBUG(D_expand) debug_printf_indent("yield: '%Y'\n", yield);
+	DEBUG(expand) debug_printf_indent("yield: '%Y'\n", yield);
 	break;
 	}
 
@@ -8556,7 +8556,7 @@ NOT_ITEM: ;
 	goto EXPAND_FAILED;
       }	/* EOP_* switch */
 
-      DEBUG(D_expand)
+      DEBUG(expand)
 	{
 	const uschar * res = string_from_gstring(yield);
 	const uschar * s = res + expansion_start;
@@ -8658,7 +8658,7 @@ left != NULL, return a pointer to the endpoint in the source string. */
   if (resetok) gstring_release_unused(yield);
   else if (resetok_p) *resetok_p = FALSE;
 
-  DEBUG(D_expand)
+  DEBUG(expand)
     {
     BOOL tainted = is_tainted(res);
     debug_printf_indent("%Vexpanded: %.*W\n",
@@ -8703,7 +8703,7 @@ that is a bad idea, because expand_string_message is in dynamic store. */
 
 EXPAND_FAILED:
 if (left) *left = s;
-DEBUG(D_expand)
+DEBUG(expand)
   {
   debug_printf_indent("%Vfailed to expand: %s\n", "K", orig_string);
   debug_printf_indent("%Verror message: %s\n",
@@ -8851,7 +8851,7 @@ to find at all). */
 if (isspace(*s))
   if (Uskip_whitespace(&s) == '\0')
     {
-      DEBUG(D_expand)
+      DEBUG(expand)
        debug_printf_indent("treating blank string as number 0\n");
       return 0;
     }
@@ -8902,7 +8902,7 @@ Arguments:
   addr       address being routed
   mtype      the module type
   mname      the module name
-  dbg_opt    debug selectors
+  dbg	     output debugging
   oname      the option name
   bvalue     the router's boolean value
   svalue     the router's string value
@@ -8914,31 +8914,30 @@ Returns:     OK     value placed in rvalue
 
 int
 exp_bool(address_item * addr,
-  const uschar * mtype, const uschar * mname, unsigned dbg_opt,
+  const uschar * mtype, const uschar * mname, BOOL dbg,
   uschar * oname, BOOL bvalue,
   const uschar * svalue, BOOL * rvalue)
 {
 const uschar * expanded;
 
-DEBUG(D_expand) debug_printf_indent("try option %s\n", oname);
+DEBUG(expand) debug_printf_indent("try option %s\n", oname);
 if (!svalue) { *rvalue = bvalue; return OK; }
 
 if (!(expanded = expand_string(svalue)))
   {
   if (f.expand_string_forcedfail)
     {
-    DEBUG(dbg_opt) debug_printf("expansion of %q forced failure\n", oname);
+    if(dbg) debug_printf("expansion of %q forced failure\n", oname);
     *rvalue = bvalue;
     return OK;
     }
   addr->message = string_sprintf("failed to expand %q in %s %s: %s",
       oname, mname, mtype, expand_string_message);
-  DEBUG(dbg_opt) debug_printf("%s\n", addr->message);
+  if(dbg) debug_printf("%s\n", addr->message);
   return DEFER;
   }
 
-DEBUG(dbg_opt) debug_printf("expansion of %q yields %q\n", oname,
-  expanded);
+if(dbg) debug_printf("expansion of %q yields %q\n", oname, expanded);
 
 if (strcmpic(expanded, US"true") == 0 || strcmpic(expanded, US"yes") == 0)
   *rvalue = TRUE;
@@ -9121,7 +9120,7 @@ int main(int argc, uschar **argv)
 {
 uschar buffer[1024];
 
-debug_selector = D_v;
+debug_modify_channel(US"+v");
 debug_file = stderr;
 debug_fd = fileno(debug_file);
 big_buffer = malloc(big_buffer_size);
@@ -9135,7 +9134,7 @@ for (int i = 1; i < argc; i++)
     argv[i]++;
     }
   if (isdigit(argv[i][0]))
-    debug_selector = Ustrtoul(argv[i], NULL, 0);
+    debug_selector[0] = Ustrtoul(argv[i], NULL, 0);
   else
     if (Ustrspn(argv[i], "abcdefghijklmnopqrtsuvwxyz0123456789-.:/") ==
         Ustrlen(argv[i]))

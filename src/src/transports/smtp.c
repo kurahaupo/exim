@@ -335,7 +335,7 @@ if (tf)
   tf->search_parents = ob->dns_search_parents;
   tf->helo_data = ob->helo_data;
 
-  if (exp_bool(addrlist, US"transport", tblock->drinst.name, D_transport,
+  if (exp_bool(addrlist, US"transport", tblock->drinst.name, IS_DEBUG(transport),
 	      US"hosts_randomize", ob->hosts_randomize,
 	      ob->expand_hosts_randomize, &tf->hosts_randomize) != OK)
     return DEFER;
@@ -607,7 +607,7 @@ switch(*errno_value)
 #ifdef SUPPORT_I18N
   case ERRNO_UTF8_FWD: /* no advertised SMTPUTF8, for international message */
     *message = US"utf8 support required but not offered for forwarding";
-    DEBUG(D_deliver|D_transport) debug_printf("%s\n", *message);
+    DEBUG(deliver|transport) debug_printf("%s\n", *message);
     return TRUE;
 #endif
   }
@@ -892,7 +892,7 @@ if (limit_mail && limit_mail < sx->max_mail) sx->max_mail = limit_mail;
 if (limit_rcpt && limit_rcpt < sx->max_rcpt) sx->max_rcpt = limit_rcpt;
 if (limit_rcptdom)
   {
-  DEBUG(D_transport) debug_printf("will treat as !multi_domain\n");
+  DEBUG(transport) debug_printf("will treat as !multi_domain\n");
   sx->single_rcpt_domain = TRUE;
   }
 }
@@ -956,7 +956,7 @@ if ((dbm_file = dbfn_open(US"misc", O_RDWR|O_CREAT, &dbblock, TRUE, TRUE)))
   const uschar * ehlo_resp_key = ehlo_cache_key(sx);
   dbdata_ehlo_resp er = { .data = sx->ehlo_resp };
 
-  HDEBUG(D_transport)
+  HDEBUG(transport)
 # ifndef DISABLE_ESMTP_LIMITS
     if (sx->ehlo_resp.limit_mail || sx->ehlo_resp.limit_rcpt || sx->ehlo_resp.limit_rcptdom)
       debug_printf("writing clr %04x/%04x cry %04x/%04x lim %05d/%05d/%05d\n",
@@ -984,7 +984,7 @@ if (  sx->early_pipe_active
    && (dbm_file = dbfn_open(US"misc", O_RDWR|O_CREAT, &dbblock, TRUE, TRUE)))
   {
   const uschar * ehlo_resp_key = ehlo_cache_key(sx);
-  HDEBUG(D_transport)
+  HDEBUG(transport)
     {
     const dbdata_ehlo_resp * er;
 
@@ -1007,7 +1007,7 @@ open_db dbblock;
 open_db * dbm_file;
 
 if (!(dbm_file = dbfn_open(US"misc", O_RDONLY, &dbblock, FALSE, TRUE)))
-  { DEBUG(D_transport) debug_printf("ehlo-cache: no misc DB\n"); }
+  { DEBUG(transport) debug_printf("ehlo-cache: no misc DB\n"); }
 else
   {
   const uschar * ehlo_resp_key = ehlo_cache_key(sx);
@@ -1016,11 +1016,11 @@ else
   if (!(er = dbfn_read_enforce_length(dbm_file, ehlo_resp_key, sizeof(dbdata_ehlo_resp))))
     {
     dbfn_close(dbm_file);
-    DEBUG(D_transport) debug_printf("no ehlo-resp record\n");
+    DEBUG(transport) debug_printf("no ehlo-resp record\n");
     }
   else if (time(NULL) - er->gen.time_stamp > retry_data_expire)
     {
-    DEBUG(D_transport) debug_printf("ehlo-resp record too old\n");
+    DEBUG(transport) debug_printf("ehlo-resp record too old\n");
     dbfn_close(dbm_file);
     if ((dbm_file = dbfn_open(US"misc", O_RDWR|O_CREAT, &dbblock, TRUE, TRUE)))
       {
@@ -1030,7 +1030,7 @@ else
     }
   else
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
 # ifndef DISABLE_ESMTP_LIMITS
       if (er->data.limit_mail || er->data.limit_rcpt || er->data.limit_rcptdom)
 	debug_printf("EHLO response bits from cache:"
@@ -1084,7 +1084,7 @@ for (au = auths, authnum = 0; au; au = au->drinst.next, authnum++)
 	{ authbits |= BIT(authnum); break; }
     }
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("server offers %s AUTH, methods '%s', usable-bitmap 0x%04x\n",
     tls_out.active.sock >= 0 ? "crypted" : "plaintext", names, authbits);
 
@@ -1126,11 +1126,11 @@ sx->pending_EHLO = FALSE;
 
 if (pending_BANNER)
   {
-  DEBUG(D_transport) debug_printf("%s expect banner\n", __FUNCTION__);
+  DEBUG(transport) debug_printf("%s expect banner\n", __FUNCTION__);
   (*countp)--;
   if (!smtp_reap_banner(sx))
     {
-    DEBUG(D_transport) debug_printf("bad banner\n");
+    DEBUG(transport) debug_printf("bad banner\n");
     if (tls_out.active.sock >= 0) rc = DEFER;
     goto fail;
     }
@@ -1152,11 +1152,11 @@ if (pending_EHLO)
   unsigned peer_offered;
   unsigned short authbits = 0, * ap;
 
-  DEBUG(D_transport) debug_printf("%s expect ehlo\n", __FUNCTION__);
+  DEBUG(transport) debug_printf("%s expect ehlo\n", __FUNCTION__);
   (*countp)--;
   if (!smtp_reap_ehlo(sx))
     {
-    DEBUG(D_transport) debug_printf("bad response for EHLO\n");
+    DEBUG(transport) debug_printf("bad response for EHLO\n");
     if (tls_out.active.sock >= 0) rc = DEFER;
     goto fail;
     }
@@ -1180,7 +1180,7 @@ if (pending_EHLO)
   if (  peer_offered != sx->peer_offered
      || (authbits = study_ehlo_auths(sx)) != *ap)
     {
-    HDEBUG(D_transport)
+    HDEBUG(transport)
       debug_printf("EHLO %s extensions changed, 0x%04x/0x%04x -> 0x%04x/0x%04x\n",
 		    tls_out.active.sock < 0 ? "cleartext" : "crypted",
 		    sx->peer_offered, *ap, peer_offered, authbits);
@@ -1211,7 +1211,7 @@ if (pending_EHLO)
           || sx->peer_limit_rcptdom != sx->ehlo_resp.limit_rcptdom
        )  )
       {
-      HDEBUG(D_transport)
+      HDEBUG(transport)
 	{
 	debug_printf("EHLO LIMITS changed:");
 	if (sx->peer_limit_mail != sx->ehlo_resp.limit_mail)
@@ -1298,13 +1298,13 @@ responses before returning, except after I/O errors and timeouts. */
 
 if (sx->pending_MAIL)
   {
-  DEBUG(D_transport) debug_printf("%s expect mail\n", __FUNCTION__);
+  DEBUG(transport) debug_printf("%s expect mail\n", __FUNCTION__);
   count--;
   sx->pending_MAIL = sx->RCPT_452 = FALSE;
   if (!smtp_read_response(sx, sx->buffer, sizeof(sx->buffer),
 			  '2', ob->command_timeout))
     {
-    DEBUG(D_transport) debug_printf("bad response for MAIL\n");
+    DEBUG(transport) debug_printf("bad response for MAIL\n");
     Ustrcpy(big_buffer, mail_command);  /* Fits, because it came from there! */
     if (errno == ERRNO_TLSFAILURE)
       return RESP_EHLO_ERR_TLS;
@@ -1354,7 +1354,7 @@ while (count-- > 0)
   else
     { clearflag(addr, af_cont_conn); setflag(addr, af_new_conn); }
 
-  DEBUG(D_transport) debug_printf("%s expect rcpt for %s\n", __FUNCTION__, addr->address);
+  DEBUG(transport) debug_printf("%s expect rcpt for %s\n", __FUNCTION__, addr->address);
   if (smtp_read_response(sx, sx->buffer, sizeof(sx->buffer),
 			  '2', ob->command_timeout))
     {
@@ -1450,7 +1450,7 @@ while (count-- > 0)
 	  {
 	  if (!sx->RCPT_452)		/* initialised at MAIL-ack above */
 	    {
-	    DEBUG(D_transport)
+	    DEBUG(transport)
 	      debug_printf("%s: seen first 452 too-many-rcpts\n", __FUNCTION__);
 	    sx->RCPT_452 = TRUE;
 	    sx->next_addr = addr;
@@ -1511,7 +1511,7 @@ previously or in this block, the response is ignored. */
 
 if (pending_DATA != 0)
   {
-  DEBUG(D_transport) debug_printf("%s expect data\n", __FUNCTION__);
+  DEBUG(transport) debug_printf("%s expect data\n", __FUNCTION__);
   if (!smtp_read_response(sx, sx->buffer, sizeof(sx->buffer),
 			'3', ob->command_timeout))
     {
@@ -1532,7 +1532,7 @@ if (pending_DATA != 0)
       return RESP_MAIL_OR_DATA_ERROR;
       }
     (void)check_response(sx->conn_args.host, &errno, 0, sx->buffer, &code, &msg, &pass_message);
-    DEBUG(D_transport) debug_printf("%s\nerror for DATA ignored: pipelining "
+    DEBUG(transport) debug_printf("%s\nerror for DATA ignored: pipelining "
       "is in use and there were no good recipients\n", msg);
     }
   }
@@ -1581,7 +1581,7 @@ driver_srcline = au->drinst.srcline;
   sx->outblock.authenticating = FALSE;
   }
 driver_srcfile = authenticator_name = NULL; driver_srcline = 0;
-DEBUG(D_transport) debug_printf("%s authenticator yielded %s\n",
+DEBUG(transport) debug_printf("%s authenticator yielded %s\n",
   au->drinst.name, rc_names[rc]);
 
 /* A temporary authentication failure must hold up delivery to
@@ -1712,7 +1712,7 @@ if (  sx->esmtp
   if (  require_auth
      || verify_check_given_host(CUSS &ob->hosts_try_auth, host) == OK)
     {
-    DEBUG(D_transport) debug_printf("scanning authentication mechanisms\n");
+    DEBUG(transport) debug_printf("scanning authentication mechanisms\n");
     fail_reason = US"no common mechanisms were found";
 
 #ifndef DISABLE_PIPE_CONNECT
@@ -1737,7 +1737,7 @@ if (  sx->esmtp
 	     && !expand_check_condition(au->client_condition, au->drinst.name,
 		     US"client authenticator"))
 	    {
-	    DEBUG(D_transport) debug_printf("skipping %s authenticator: %s\n",
+	    DEBUG(transport) debug_printf("skipping %s authenticator: %s\n",
 	      au->drinst.name, "client_condition is false");
 	    continue;
 	    }
@@ -1771,7 +1771,7 @@ if (  sx->esmtp
 	    &&  !expand_check_condition(au->client_condition, au->drinst.name,
 		   US"client authenticator")))
 	{
-	DEBUG(D_transport) debug_printf("skipping %s authenticator: %s\n",
+	DEBUG(transport) debug_printf("skipping %s authenticator: %s\n",
 	  au->drinst.name,
 	  au->client ? "client_condition is false"
 		    : "not configured as a client");
@@ -1953,12 +1953,12 @@ if (!(new_sender_address = spool_sender_from_msgid(message_id)))
 
 message_local_identity =
   smtp_local_identity(new_sender_address, s_compare->tblock);
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf_indent("message local identity: %q\n", message_local_identity);
 
 current_local_identity =
   smtp_local_identity(s_compare->current_sender_address, s_compare->tblock);
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf_indent("current local identity: %q\n", current_local_identity);
 
 return Ustrcmp(current_local_identity, message_local_identity) == 0;
@@ -2098,7 +2098,7 @@ if (sx->pending_BDAT)
 
 if (flags & tc_reap_prev  &&  prev_cmd_count > 0)
   {
-  DEBUG(D_transport) debug_printf("look for %d responses"
+  DEBUG(transport) debug_printf("look for %d responses"
     " for previous pipelined cmds\n", prev_cmd_count);
 
   switch(sync_responses(sx, prev_cmd_count, 0))
@@ -2125,7 +2125,7 @@ if (flags & tc_reap_prev  &&  prev_cmd_count > 0)
 
 if (sx->pending_BDAT)
   {
-  DEBUG(D_transport) debug_printf("look for one response for BDAT\n");
+  DEBUG(transport) debug_printf("look for one response for BDAT\n");
 
   if (!smtp_read_response(sx, sx->buffer, sizeof(sx->buffer), '2',
        ob->command_timeout))
@@ -2232,7 +2232,7 @@ sx->conn_args.ob = ob;
 #ifdef EXPERIMENTAL_SRV_SMTPS
 if ((sx->smtps = sx->conn_args.host->tls_needs == SRV_TLS_ON_CONNECT))
   {
-  DEBUG(D_transport) debug_printf("tls-on-connect required by smtp context\n");
+  DEBUG(transport) debug_printf("tls-on-connect required by smtp context\n");
   }
 else
 #endif
@@ -2242,12 +2242,12 @@ else
     if ((sx->smtps = strcmpic(ob->protocol, US"smtps") == 0
 		  || strcmpic(ob->protocol, US"submissions") == 0))
       {
-      DEBUG(D_transport)
+      DEBUG(transport)
 	debug_printf(" tls-on-connect required by transport option\n");
       }
     else if ((sx->lmtp = strcmpic(ob->protocol, US"lmtp") == 0))
       {
-      DEBUG(D_transport)
+      DEBUG(transport)
 	debug_printf(" LMTP required by transport option\n");
       }
     else if (strcmpic(ob->protocol, US"smtp") != 0)
@@ -2372,7 +2372,7 @@ if (continue_hostname && continue_proxy_cipher)
 # endif
   else
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
 # ifdef SUPPORT_DANE
       if (continue_proxy_dane != sx->conn_args.dane)
 	debug_printf(
@@ -2385,7 +2385,7 @@ if (continue_hostname && continue_proxy_cipher)
 
     smtp_debug_cmd(US"QUIT", 0);
     if (write(0, "QUIT\r\n", 6) < 0)
-      DEBUG(D_any) debug_printf("stupid compiler\n");
+      DEBUG(any) debug_printf("stupid compiler\n");
     close(0);
     tls_out.active.sock = -1;
     continue_hostname = continue_proxy_cipher = NULL;
@@ -2401,7 +2401,7 @@ specially so they can be identified for retries. */
 
 if (!continue_hostname || atrn_domains)
   {
-  if (sx->verify) HDEBUG(D_verify)
+  if (sx->verify) HDEBUG(verify)
     debug_printf("interface=%s port=%d\n", sx->conn_args.interface, sx->port);
 
   /* Get the actual port the connection will use, into sx->conn_args.host */
@@ -2431,7 +2431,7 @@ if (!continue_hostname || atrn_domains)
 # endif
       return FAIL;
       }
-      else DEBUG(D_transport)
+      else DEBUG(transport)
 	debug_printf("lack of DNSSEC traceability precludes DANE\n");
     }
 #endif	/*DANE*/
@@ -2448,7 +2448,7 @@ if (!continue_hostname || atrn_domains)
 
   if (atrn_mode && *atrn_mode == 'P')
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("ATRN mode: TCP%s connection already present\n",
 		    tls_out.active.sock >= 0 ? "/TLS" : "");
     sx->cctx.sock = 0;
@@ -2480,13 +2480,13 @@ if (!continue_hostname || atrn_domains)
 	if (  read_ehlo_cache_entry(sx)
 	   && sx->ehlo_resp.cleartext_features & OPTION_EARLY_PIPE)
 	  {
-	  DEBUG(D_transport)
+	  DEBUG(transport)
 	    debug_printf("Using cached cleartext PIPECONNECT\n");
 	  sx->early_pipe_active = TRUE;
 	  sx->peer_offered = sx->ehlo_resp.cleartext_features;
 	  }
 	}
-      else DEBUG(D_transport)
+      else DEBUG(transport)
 	debug_printf("helo needs $sending_ip_address; avoid early-pipelining\n");
 
   CONNECT_RETRY:
@@ -2513,7 +2513,7 @@ if (!continue_hostname || atrn_domains)
 	if (sx->conn_args.host->tls_needs == SRV_TLS_ON_CONNECT)
 	  {
   SRV_SMTPS_RETRY:
-	  DEBUG(D_transport)
+	  DEBUG(transport)
 	    debug_printf(" TCP connect failed for port %d;"
 	      " retrying with require-STARTTLS on tpt option port\n", sx->port);
 	  sx->smtps = FALSE;
@@ -2729,13 +2729,13 @@ goto SEND_QUIT;
       if (  (ob->hosts_require_auth || ob->hosts_try_auth)
 	 && f.smtp_in_early_pipe_no_auth)
 	{
-	DEBUG(D_transport)
+	DEBUG(transport)
 	  debug_printf("may need to auth, so pipeline no further\n");
 	if (smtp_write_command(sx, SCMD_FLUSH, NULL) < 0)
 	  goto SEND_FAILED;
 	if (sync_responses(sx, 2, 0) != RESP_NOERROR)
 	  {
-	  HDEBUG(D_transport)
+	  HDEBUG(transport)
 	    debug_printf("failed reaping pipelined cmd responses\n");
 	  goto RESPONSE_FAILED;
 	  }
@@ -2748,7 +2748,7 @@ goto SEND_QUIT;
 	goto RESPONSE_FAILED;
     }
   else
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("not sending EHLO (host matches hosts_avoid_esmtp)\n");
 
 #ifndef DISABLE_PIPE_CONNECT
@@ -2820,7 +2820,7 @@ goto SEND_QUIT;
 	if (  (sx->peer_offered & (OPTION_PIPE | OPTION_EARLY_PIPE))
 	   == (OPTION_PIPE | OPTION_EARLY_PIPE))
 	  {
-	  DEBUG(D_transport)
+	  DEBUG(transport)
 	    debug_printf("PIPECONNECT usable in future for this IP\n");
 	  sx->ehlo_resp.cleartext_auths = study_ehlo_auths(sx);
 	  write_ehlo_cache_entry(sx);
@@ -2884,12 +2884,12 @@ else
 
     if (sx->conn_args.host->port != continue_host_port)
       {
-      DEBUG(D_transport)
+      DEBUG(transport)
 	debug_printf("Closing continued connection due to port mismatch:"
 	  " %d/%d\n", sx->conn_args.host->port, continue_host_port);
       smtp_debug_cmd(US"QUIT", 0);
       if (write(0, "QUIT\r\n", 6) < 0)
-	DEBUG(D_any) debug_printf("stupid compiler\n");
+	DEBUG(any) debug_printf("stupid compiler\n");
       close(0);
       tls_out.active.sock = -1;
       continue_hostname = continue_proxy_cipher = NULL;
@@ -2919,7 +2919,7 @@ else
      )
     {
     sx->pipelining_used = pipelining_active = !!(smtp_peer_options & OPTION_PIPE);
-    HDEBUG(D_transport) debug_printf("continued connection, %s TLS\n",
+    HDEBUG(transport) debug_printf("continued connection, %s TLS\n",
       continue_proxy_cipher ? "proxied" : "verify conn with");
 
     tls_out.certificate_verified = !!(continue_flags & CTF_CV);
@@ -2931,7 +2931,7 @@ else
 #endif
     return OK;
     }
-  HDEBUG(D_transport) debug_printf("continued connection, no TLS\n");
+  HDEBUG(transport) debug_printf("continued connection, no TLS\n");
   }
 
 /* If TLS is available on this connection, whether continued or not, attempt to
@@ -2965,7 +2965,7 @@ if (  smtp_peer_options & OPTION_TLS
     {
     if (sync_responses(sx, 2, 0) != RESP_NOERROR)
       {
-      HDEBUG(D_transport)
+      HDEBUG(transport)
 	debug_printf("failed reaping pipelined cmd responses\n");
       close(sx->cctx.sock);
       sx->cctx.sock = -1;
@@ -3017,7 +3017,7 @@ if (  smtp_peer_options & OPTION_TLS
       be called again to try in clear on a new connection, if the options permit
       it for this host. */
   TLS_CONN_FAILED:
-      DEBUG(D_tls) debug_printf("TLS session fail: %s\n", tls_errstr);
+      DEBUG(tls) debug_printf("TLS session fail: %s\n", tls_errstr);
 
 # ifdef SUPPORT_DANE
       if (sx->conn_args.dane)
@@ -3051,7 +3051,7 @@ if (  smtp_peer_options & OPTION_TLS
 
     if (sx->inblock.ptr != sx->inblock.ptrend)
       {
-      DEBUG(D_tls)
+      DEBUG(tls)
 	{
 	int i = sx->inblock.ptrend - sx->inblock.ptr;
 	debug_printf("unused data in input buffer after ack for STARTTLS:\n"
@@ -3111,7 +3111,7 @@ if (tls_out.active.sock >= 0)
     sx->peer_offered = sx->ehlo_resp.crypted_features;
     if ((sx->early_pipe_active =
 	 !!(sx->ehlo_resp.crypted_features & OPTION_EARLY_PIPE)))
-      DEBUG(D_transport) debug_printf("Using cached crypted PIPECONNECT\n");
+      DEBUG(transport) debug_printf("Using cached crypted PIPECONNECT\n");
     }
 #endif
 #ifdef EXPERIMENTAL_ESMTP_LIMITS
@@ -3143,7 +3143,7 @@ if (tls_out.active.sock >= 0)
   else
     {
     greeting_cmd = US"HELO";
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("not sending EHLO (host matches hosts_avoid_esmtp)\n");
     }
 
@@ -3287,7 +3287,7 @@ if (   !continue_hostname && (!atrn_domains || atrn_mode && *atrn_mode == 'C')
        && verify_check_given_host(CUSS &ob->hosts_avoid_pipelining, sx->conn_args.host) != OK)
       smtp_peer_options |= OPTION_PIPE;
 
-    DEBUG(D_transport) debug_printf("%susing PIPELINING\n",
+    DEBUG(transport) debug_printf("%susing PIPELINING\n",
       smtp_peer_options & OPTION_PIPE ? "" : "not ");
 
     if (  sx->peer_offered & OPTION_CHUNKING
@@ -3295,7 +3295,7 @@ if (   !continue_hostname && (!atrn_domains || atrn_mode && *atrn_mode == 'C')
       smtp_peer_options |= OPTION_CHUNKING;
 
     if (smtp_peer_options & OPTION_CHUNKING)
-      DEBUG(D_transport) debug_printf("CHUNKING usable\n");
+      DEBUG(transport) debug_printf("CHUNKING usable\n");
 
 #ifndef DISABLE_PRDR
     if (  sx->peer_offered & OPTION_PRDR
@@ -3303,12 +3303,12 @@ if (   !continue_hostname && (!atrn_domains || atrn_mode && *atrn_mode == 'C')
       smtp_peer_options |= OPTION_PRDR;
 
     if (smtp_peer_options & OPTION_PRDR)
-      DEBUG(D_transport) debug_printf("PRDR usable\n");
+      DEBUG(transport) debug_printf("PRDR usable\n");
 #endif
 
     /* Note if the server supports DSN */
     smtp_peer_options |= sx->peer_offered & OPTION_DSN;
-    DEBUG(D_transport) debug_printf("%susing DSN\n",
+    DEBUG(transport) debug_printf("%susing DSN\n",
 			sx->peer_offered & OPTION_DSN ? "" : "not ");
 
 #ifndef DISABLE_PIPE_CONNECT
@@ -3319,7 +3319,7 @@ if (   !continue_hostname && (!atrn_domains || atrn_mode && *atrn_mode == 'C')
        && ( sx->ehlo_resp.cleartext_features | sx->ehlo_resp.crypted_features)
 	  & OPTION_EARLY_PIPE)
       {
-      DEBUG(D_transport) debug_printf("PIPECONNECT usable in future for this IP\n");
+      DEBUG(transport) debug_printf("PIPECONNECT usable in future for this IP\n");
       sx->ehlo_resp.crypted_auths = study_ehlo_auths(sx);
       write_ehlo_cache_entry(sx);
       }
@@ -3384,7 +3384,7 @@ if (sx->addrlist->prop.utf8_msg)
 
   sx->utf8_needed = !sx->addrlist->prop.utf8_downcvt
 		    && !sx->addrlist->prop.utf8_downcvt_maybe;
-  DEBUG(D_transport) if (!sx->utf8_needed)
+  DEBUG(transport) if (!sx->utf8_needed)
     debug_printf("utf8: %s downconvert\n",
       sx->addrlist->prop.utf8_downcvt ? "mandatory" : "optional");
   }
@@ -3517,7 +3517,7 @@ works because the NULL setting is passed back to the calling process, and
 remote_max_parallel is forced to 1 when delivering over an existing connection,
 */
 
-HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP(close)>>\n");
+HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(close)>>\n");
 if (sx->send_quit)
   {
   shutdown(sx->cctx.sock, SHUT_WR);
@@ -3785,7 +3785,7 @@ for (addr = sx->first_addr, address_count = 0, pipe_limit = 100;
      && Ustrcmp(addr->domain, sx->first_addr->domain) != 0	/* dom diff from first */
      )
     {
-    DEBUG(D_transport) debug_printf("skipping different domain %s\n", addr->domain);
+    DEBUG(transport) debug_printf("skipping different domain %s\n", addr->domain);
 
     /* Ensure the smtp-response reaper does not think the address had a RCPT
     command sent for it.  Reset to PENDING_DEFER in smtp_deliver(), where we
@@ -3849,7 +3849,7 @@ for (addr = sx->first_addr, address_count = 0, pipe_limit = 100;
 
 	      if (sx->RCPT_452)
 		{
-		DEBUG(D_transport) debug_printf("seen 452 too-many-rcpts\n");
+		DEBUG(transport) debug_printf("seen 452 too-many-rcpts\n");
 		sx->RCPT_452 = FALSE;
 		/* sx->next_addr has been reset for fast_retry */
 		return sw_mrc_ok;
@@ -3932,7 +3932,7 @@ do
 
     if (rc <= 0)
       {
-      DEBUG(D_transport) if (rc == 0) debug_printf("%s: timed out\n", __FUNCTION__);
+      DEBUG(transport) if (rc == 0) debug_printf("%s: timed out\n", __FUNCTION__);
       goto done;
       }
 
@@ -3940,11 +3940,11 @@ do
 
     if (p[0].revents & POLLERR || p[1].revents & POLLERR)
       {
-      DEBUG(D_transport) debug_printf("poll: err cond on %s fd\n",
+      DEBUG(transport) debug_printf("poll: err cond on %s fd\n",
 	p[0].revents & POLLERR ? "tls" : "proxy");
       if (!(p[0].revents & POLLIN || p[1].events & POLLIN))
 	goto done;
-      DEBUG(D_transport) debug_printf("- but also readable; no exit yet\n");
+      DEBUG(transport) debug_printf("- but also readable; no exit yet\n");
       }
     }
   while (rc < 0 || !(p[0].revents & POLLIN || p[1].revents & POLLIN));
@@ -4113,7 +4113,7 @@ if (sx->conn_args.dane)
     if (  a->transport_return == PENDING_DEFER
        && Ustrcmp(dane_domain, a->domain) != 0)
       {
-      DEBUG(D_transport) debug_printf("DANE: holding %s for later\n", a->domain);
+      DEBUG(transport) debug_printf("DANE: holding %s for later\n", a->domain);
       dane_held = TRUE;
       a->transport_return = DANE;
       }
@@ -4152,7 +4152,7 @@ if (tblock->filter_command)
      )
     {
     smtp_peer_options &= ~OPTION_CHUNKING;
-    DEBUG(D_transport) debug_printf("CHUNKING not usable due to transport filter\n");
+    DEBUG(transport) debug_printf("CHUNKING not usable due to transport filter\n");
     }
   }
 
@@ -4251,7 +4251,7 @@ if (  !(smtp_peer_options & OPTION_CHUNKING)
 
 #ifndef DISABLE_PIPE_CONNECT
     case -5:				/* TLS first-read error */
-    case -4:  HDEBUG(D_transport)
+    case -4:  HDEBUG(transport)
 		debug_printf("failed reaping pipelined cmd responses\n");
 #endif
     default: goto RESPONSE_FAILED;       /* I/O error, or any MAIL/DATA error */
@@ -4321,7 +4321,7 @@ else
   sigalrm_seen = FALSE;
   transport_write_timeout = ob->data_timeout;
   smtp_command = US"sending data block";   /* For error messages */
-  DEBUG(D_transport|D_v)
+  DEBUG(transport|v)
     if (smtp_peer_options & OPTION_CHUNKING)
       debug_printf("         will write message using CHUNKING\n");
     else
@@ -4406,7 +4406,7 @@ else
 	     (oicf)smtp_are_same_identities, (void*)&t_compare);
     if (!tcw)
       {
-      HDEBUG(D_transport) debug_printf("will pipeline QUIT\n");
+      HDEBUG(transport) debug_printf("will pipeline QUIT\n");
       tctx.options |= topt_no_flush;
       }
 
@@ -4490,7 +4490,7 @@ else
 	sx->send_tlsclose = FALSE;	/* avoid later repeat */
 	}
 #endif
-      HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP(shutdown)>>\n");
+      HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(shutdown)>>\n");
       shutdown(sx->cctx.sock, SHUT_WR);	/* flush output buffer, with TCP FIN */
       }
     tls_out.smtp_quit = TRUE;
@@ -4514,7 +4514,7 @@ else
 
 #ifndef DISABLE_PIPE_CONNECT
       case RESP_EHLO_ERR_TLS:				/* TLS first-read error */
-      case RESP_EPIPE_EHLO_ERR:  HDEBUG(D_transport)
+      case RESP_EPIPE_EHLO_ERR:  HDEBUG(transport)
 		  debug_printf("failed reaping pipelined cmd responses\n");
 #endif
       default:		     goto RESPONSE_FAILED;	/* I/O error, or any MAIL/DATA error */
@@ -4693,7 +4693,7 @@ else
         else
           sprintf(CS sx->buffer, "%.500s\n", addr->unique);
 
-        DEBUG(D_deliver) debug_printf("S:journalling %s", sx->buffer);
+        DEBUG(deliver) debug_printf("S:journalling %s", sx->buffer);
         len = Ustrlen(CS sx->buffer);
         if (write(journal_fd, sx->buffer, len) != len)
           log_write(0, LOG_MAIN|LOG_PANIC, "failed to write journal for "
@@ -4740,7 +4740,7 @@ else
 	  else
 	    sprintf(CS sx->buffer, "%.500s\n", addr->unique);
 
-	  DEBUG(D_deliver) debug_printf("journalling(PRDR) %s\n", sx->buffer);
+	  DEBUG(deliver) debug_printf("journalling(PRDR) %s\n", sx->buffer);
 	  len = Ustrlen(CS sx->buffer);
 	  if (write(journal_fd, sx->buffer, len) != len)
 	    log_write(0, LOG_MAIN|LOG_PANIC, "failed to write journal for "
@@ -4902,7 +4902,7 @@ if (!sx->ok)
         *message_defer = TRUE;
         }
 #ifdef TIOCOUTQ
-      DEBUG(D_transport) if (sx->cctx.sock >= 0)
+      DEBUG(transport) if (sx->cctx.sock >= 0)
 	{
 	int n;
 	if (ioctl(sx->cctx.sock, TIOCOUTQ, &n) == 0)
@@ -4972,7 +4972,7 @@ hosts_nopass_tls. */
 
 happy:
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("ok=%d send_quit=%d send_rset=%d continue_more=%d "
     "yield=%d first_address is %sNULL\n", sx->ok, sx->send_quit,
     sx->send_rset, f.continue_more, yield, sx->first_addr ? "not " : "");
@@ -4980,7 +4980,7 @@ DEBUG(D_transport)
 if (sx->completed_addr && sx->ok && sx->send_quit)
   if (mail_limit = continue_sequence >= sx->max_mail)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("reached limit %u for MAILs per conn\n", sx->max_mail);
     /* We will close the smtp session and connection, and clear
     continue_hostname.  Then if there are further addrs for the message we will
@@ -5037,7 +5037,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 	    &pass_message);
 	  if (!sx->send_quit)
 	    {
-	    DEBUG(D_transport) debug_printf("H=%s [%s] %s\n",
+	    DEBUG(transport) debug_printf("H=%s [%s] %s\n",
 	      host->name, host->address, msg);
 	    }
 	  }
@@ -5220,7 +5220,7 @@ if (sx->send_quit)
   means we (client) take the TIME_WAIT state, so the server (which likely has a
   higher connection rate) does not have to. */
 
-  HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP(shutdown)>>\n");
+  HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(shutdown)>>\n");
   shutdown(sx->cctx.sock, SHUT_WR);
   }
 
@@ -5264,7 +5264,7 @@ if (sx->send_quit || tcw_done && !tcw)
      && fcntl(sx->cctx.sock, F_SETFL, O_NONBLOCK) == 0)
     for (int i = 16, n;						/* drain socket */
 	 (n = read(sx->cctx.sock, sx->inbuffer, sizeof(sx->inbuffer))) > 0 && i > 0;
-	 i--) HDEBUG(D_transport|D_acl|D_v)
+	 i--) HDEBUG(transport|acl|v)
       {
       int m = MIN(n, 64);
       debug_printf_indent("  SMTP(drain %d bytes)<< %.*s\n", n, m, sx->inbuffer);
@@ -5272,7 +5272,7 @@ if (sx->send_quit || tcw_done && !tcw)
 	debug_printf("0x%02x\n", sx->inbuffer[m]);
       }
   }
-HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP(close)>>\n");
+HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(close)>>\n");
 (void)close(sx->cctx.sock);
 sx->cctx.sock = -1;
 continue_hostname = NULL;
@@ -5296,7 +5296,7 @@ if (dane_held)
 	to get the domain string for SNI */
 
 	sx->first_addr = a;
-	DEBUG(D_transport) debug_printf("DANE: go-around for %s\n", a->domain);
+	DEBUG(transport) debug_printf("DANE: go-around for %s\n", a->domain);
 	}
       }
   continue_sequence = 1;			/* for consistency */
@@ -5493,7 +5493,7 @@ uschar * expanded_hosts = NULL, * pistring;
 uschar * tid = string_sprintf("%s transport", trname);
 host_item * hostlist = addrlist->host_list, * host = NULL;
 
-DEBUG(D_transport)
+DEBUG(transport)
   {
   debug_printf("%s transport entered\n", trname);
   for (address_item * addr = addrlist; addr; addr = addr->next)
@@ -5551,7 +5551,7 @@ if (!hostlist || (ob->hosts_override && ob->hosts))
     return FALSE;   /* Only top address has status */
     }
 
-  DEBUG(D_transport) debug_printf("using the transport's hosts: %s\n",
+  DEBUG(transport) debug_printf("using the transport's hosts: %s\n",
     ob->hosts);
 
   /* If the transport's host list contains no '$' characters, and we are not
@@ -5575,7 +5575,7 @@ if (!hostlist || (ob->hosts_override && ob->hosts))
         addrlist->transport_return = f.search_find_defer ? DEFER : PANIC;
         return FALSE;     /* Only top address has status */
         }
-      DEBUG(D_transport)
+      DEBUG(transport)
 	debug_printf("expanded list of hosts %q to %q\n", s, expanded_hosts);
       s = expanded_hosts;
       }
@@ -5596,7 +5596,7 @@ if (!hostlist || (ob->hosts_override && ob->hosts))
     /* Get the hosts_randomize transport option, expanding if needed */
       {
       BOOL randomize;
-      if (exp_bool(addrlist, US"transport", tblock->drinst.name, D_transport,
+      if (exp_bool(addrlist, US"transport", tblock->drinst.name, IS_DEBUG(transport),
 	  US"hosts_randomize", ob->hosts_randomize, ob->expand_hosts_randomize,
 	  &randomize))
 	{
@@ -5636,7 +5636,7 @@ connection). */
 else if (hostlist->mx == MX_NONE && !continue_hostname)
   {
   BOOL randomize;
-  if (exp_bool(addrlist, US"transport", tblock->drinst.name, D_transport,
+  if (exp_bool(addrlist, US"transport", tblock->drinst.name, IS_DEBUG(transport),
       US"hosts_randomize", ob->hosts_randomize, ob->expand_hosts_randomize,
       &randomize))
     {
@@ -5757,7 +5757,7 @@ retry_non_continued:
 
     if (total_hosts_tried > 0)
       {
-      DEBUG(D_transport|D_acl|D_v)
+      DEBUG(transport|acl|v)
 	debug_printf("Clearing TFO as not first host for message\n");
       ob->hosts_try_fastopen = US"";
       }
@@ -5788,12 +5788,12 @@ retry_non_continued:
 
       if (host->status >= hstatus_unusable)
         {
-        DEBUG(D_transport) debug_printf("%s has no address and is unusable - skipping\n",
+        DEBUG(transport) debug_printf("%s has no address and is unusable - skipping\n",
           host->name);
         continue;
         }
 
-      DEBUG(D_transport) debug_printf("getting address for %s\n", host->name);
+      DEBUG(transport) debug_printf("getting address for %s\n", host->name);
 
       /* The host name is permitted to have an attached port. Find it, and
       strip it from the name. Just remember it for now. */
@@ -5836,7 +5836,7 @@ retry_non_continued:
         retry_add_item(addrlist, string_sprintf("R:%s", host->name), 0);
         expired = FALSE;
         if (rc == HOST_FIND_AGAIN) hosts_defer++; else hosts_fail++;
-        DEBUG(D_transport) debug_printf("rc = %s for %s\n", (rc == HOST_FIND_AGAIN)?
+        DEBUG(transport) debug_printf("rc = %s for %s\n", (rc == HOST_FIND_AGAIN)?
           "HOST_FIND_AGAIN" : "HOST_FIND_FAILED", host->name);
         host->status = hstatus_unusable;
 
@@ -5905,7 +5905,7 @@ retry_non_continued:
 	      &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK)
        )
       {
-      DEBUG(D_transport) debug_printf("first-pass routing only\n");
+      DEBUG(transport) debug_printf("first-pass routing only\n");
       expired = FALSE;
       for (address_item * addr = addrlist; addr; addr = addr->next)
         if (addr->transport_return == DEFER)
@@ -5959,7 +5959,7 @@ retry_non_continued:
 		|| Ustrcmp(interface, sending_ip_address) != 0)
 	     )
 	    {
-	    DEBUG(D_transport) debug_printf_indent(
+	    DEBUG(transport) debug_printf_indent(
 	      "tpt interface option mismatch with continued-connection\n");
 	    /* Close the conn and recheck retry info */
 	    continue_host_tried = FALSE;
@@ -5984,7 +5984,7 @@ retry_non_continued:
       If either of these retry records are actually read, the keys used are
       returned to save recomputing them later. */
 
-      if (exp_bool(addrlist, US"transport", trname, D_transport,
+      if (exp_bool(addrlist, US"transport", trname, IS_DEBUG(transport),
 		US"retry_include_ip_address", ob->retry_include_ip_address,
 		ob->expand_retry_include_ip_address, &incl_ip) != OK)
 	continue;	/* with next host */
@@ -5992,7 +5992,7 @@ retry_non_continued:
       host_is_expired = retry_check_address(addrlist->domain, host, pistring,
         incl_ip, &retry_host_key, &retry_message_key);
 
-      DEBUG(D_transport) debug_printf("%s [%s]%s retry-status = %s\n", host->name,
+      DEBUG(transport) debug_printf("%s [%s]%s retry-status = %s\n", host->name,
         host->address ? host->address : US"", pistring,
         host->status == hstatus_usable ? "usable"
         : host->status == hstatus_unusable ? "unusable"
@@ -6035,7 +6035,7 @@ retry_non_continued:
          || host->status != hstatus_unusable_expired
 	 || host->last_try > received_time.tv_sec)
         continue;
-      DEBUG(D_transport) debug_printf("trying expired host %s [%s]%s\n",
+      DEBUG(transport) debug_printf("trying expired host %s [%s]%s\n",
           host->name, host->address, pistring);
       host_is_expired = TRUE;
       }
@@ -6058,7 +6058,7 @@ retry_non_continued:
       serialize_key = string_sprintf("host-serialize-%s", host->name);
       if (!enq_start(serialize_key, 1))
         {
-        DEBUG(D_transport)
+        DEBUG(transport)
           debug_printf("skipping host %s because another Exim process "
             "is connected to it\n", host->name);
         hosts_serial++;
@@ -6078,11 +6078,11 @@ retry_non_continued:
       /* Obscure situation; at least one case (bug 3059, fixed) where
       a previous host try returned DEFER, but having moved all
       recipients away from DEFER (the waiting-to-be-done state). */
-      DEBUG(D_transport) debug_printf("no pending recipients\n");
+      DEBUG(transport) debug_printf("no pending recipients\n");
       goto END_TRANSPORT;
       }
 
-    DEBUG(D_transport) debug_printf("delivering %s to %s [%s] (%s%s)\n",
+    DEBUG(transport) debug_printf("delivering %s to %s [%s] (%s%s)\n",
       message_id, host->name, host->address, addrlist->address,
       addrlist->next ? ", ..." : "");
 
@@ -6104,7 +6104,7 @@ retry_non_continued:
         addr->special_action = '*';
         addr->message = US"delivery bypassed by -N option";
         }
-      DEBUG(D_transport)
+      DEBUG(transport)
         {
         debug_printf("*** delivery by %s transport bypassed by -N option\n"
                      "*** host and remaining hosts:\n", trname);
@@ -6146,13 +6146,13 @@ retry_non_continued:
 
       if (!host_is_expired && ++unexpired_hosts_tried >= ob->hosts_max_try)
         {
-        DEBUG(D_transport)
+        DEBUG(transport)
           debug_printf("hosts_max_try limit reached with this host\n");
         for (host_item * h = host; h; h = h->next) if (h->mx != host->mx)
 	  {
 	  nexthost = h;
 	  unexpired_hosts_tried--;
-	  DEBUG(D_transport) debug_printf("however, a higher MX host exists "
+	  DEBUG(transport) debug_printf("however, a higher MX host exists "
 	    "and will be tried\n");
 	  break;
 	  }
@@ -6256,7 +6256,7 @@ retry_non_continued:
       if (!retry_host_key)
         {
 	BOOL incl_ip;
-	if (exp_bool(addrlist, US"transport", trname, D_transport,
+	if (exp_bool(addrlist, US"transport", trname, IS_DEBUG(transport),
 		  US"retry_include_ip_address", ob->retry_include_ip_address,
 		  ob->expand_retry_include_ip_address, &incl_ip) != OK)
 	  incl_ip = TRUE;	/* error; use most-specific retry record */
@@ -6302,7 +6302,7 @@ retry_non_continued:
       if (!retry_message_key)
         {
 	BOOL incl_ip;
-	if (exp_bool(addrlist, US"transport", trname, D_transport,
+	if (exp_bool(addrlist, US"transport", trname, IS_DEBUG(transport),
 		  US"retry_include_ip_address", ob->retry_include_ip_address,
 		  ob->expand_retry_include_ip_address, &incl_ip) != OK)
 	  incl_ip = TRUE;	/* error; use most-specific retry record */
@@ -6364,12 +6364,12 @@ retry_non_continued:
       if (timedout)
         {
         unexpired_hosts_tried--;
-        DEBUG(D_transport) debug_printf("temporary delivery error(s) override "
+        DEBUG(transport) debug_printf("temporary delivery error(s) override "
           "hosts_max_try (message older than host's retry time)\n");
         }
       }
 
-    DEBUG(D_transport)
+    DEBUG(transport)
       {
       if (unexpired_hosts_tried >= ob->hosts_max_try)
 	debug_printf("reached transport hosts_max_try limit %d\n",
@@ -6391,8 +6391,8 @@ retry_non_continued:
     {
     int fd = cutthrough.cctx.sock >= 0 ? cutthrough.cctx.sock : 0;
 
-    DEBUG(D_transport) debug_printf("no hosts match already-open connection\n");
-    DEBUG(D_transport) debug_printf("  SMTP>>QUIT\n");
+    DEBUG(transport) debug_printf("no hosts match already-open connection\n");
+    DEBUG(transport) debug_printf("  SMTP>>QUIT\n");
 #ifndef DISABLE_TLS
     /* A TLS conn could be open for a cutthrough, but not for a plain continued-
     transport */
@@ -6410,7 +6410,7 @@ retry_non_continued:
       (void) write(fd, US"QUIT\r\n", 6);
 #endif
 
-    DEBUG(D_transport) debug_printf("  SMTP(close)>>\n");
+    DEBUG(transport) debug_printf("  SMTP(close)>>\n");
     (void) close(fd);
     cutthrough.cctx.sock = -1;
     continue_hostname = NULL;
@@ -6422,7 +6422,7 @@ retry_non_continued:
   ob->delay_after_cutoff is FALSE. The second time round we will
   try those hosts that haven't been tried since the message arrived. */
 
-  DEBUG(D_transport)
+  DEBUG(transport)
     {
     debug_printf("all IP addresses skipped or deferred at least one address\n");
     if (expired && !ob->delay_after_cutoff && cutoff_retry == 0)
@@ -6466,13 +6466,13 @@ for (address_item * addr = addrlist; addr; addr = addr->next)
   if (host)
     if (total_hosts_tried >= ob->hosts_max_try_hardlimit)
       {
-      DEBUG(D_transport)
+      DEBUG(transport)
         debug_printf("hosts_max_try_hardlimit reached: behave as if all "
           "hosts were tried\n");
       }
     else
       {
-      DEBUG(D_transport)
+      DEBUG(transport)
         debug_printf("hosts_max_try limit caused some hosts to be skipped\n");
       setflag(addr, af_retry_skipped);
       }
@@ -6543,7 +6543,7 @@ if (update_waiting && tblock->connection_max_messages != 1)
 
 END_TRANSPORT:
 
-DEBUG(D_transport) debug_printf("Leaving %s transport\n", trname);
+DEBUG(transport) debug_printf("Leaving %s transport\n", trname);
 
 return TRUE;   /* Each address has its status */
 }

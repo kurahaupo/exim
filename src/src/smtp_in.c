@@ -807,7 +807,7 @@ for(;;)
 
   smtp_printf("250 %u byte chunk received\r\n", SP_NO_MORE, chunking_datasize);
   chunking_state = CHUNKING_OFFERED;
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf("chunking state '%s'\n", chunking_states[chunking_state]);
 
   /* Expect another BDAT cmd from input. RFC 3030 says nothing about
@@ -860,7 +860,7 @@ next_cmd:
       chunking_state = strcmpic(smtp_cmd_data+n, US"LAST") == 0
 	? CHUNKING_LAST : CHUNKING_ACTIVE;
       chunking_data_left = chunking_datasize;
-      DEBUG(D_receive) debug_printf("chunking state '%s', %d bytes\n",
+      DEBUG(receive) debug_printf("chunking state '%s', %d bytes\n",
 			chunking_states[chunking_state], chunking_data_left);
 
       if (chunking_datasize == 0)
@@ -916,7 +916,7 @@ while (chunking_data_left)
 
 bdat_pop_receive_functions();
 chunking_state = CHUNKING_OFFERED;
-DEBUG(D_receive)
+DEBUG(receive)
   debug_printf("chunking state '%s'\n", chunking_states[chunking_state]);
 }
 
@@ -935,9 +935,7 @@ if (!lwr_receive_getc)
   lwr_receive_ungetc = receive_ungetc;
   }
 else
-  {
-  DEBUG(D_receive) debug_printf("chunking double-push receive functions\n");
-  }
+  DEBUG(receive) debug_printf("chunking double-push receive functions\n");
 
 receive_getc = bdat_getc;
 receive_getbuf = bdat_getbuf;
@@ -950,7 +948,7 @@ bdat_pop_receive_functions(void)
 {
 if (!lwr_receive_getc)
   {
-  DEBUG(D_receive) debug_printf("chunking double-pop receive functions\n");
+  DEBUG(receive) debug_printf("chunking double-pop receive functions\n");
   return;
   }
 receive_getc = lwr_receive_getc;
@@ -1028,7 +1026,7 @@ that we'll never expand it. */
 yield = !! string_vformat(&gs, SVFMT_TAINT_NOCHK, format, ap);
 string_from_gstring(&gs);
 
-DEBUG(D_receive) for (const uschar * t, * s = gs.s;
+DEBUG(receive) for (const uschar * t, * s = gs.s;
 		      s && (t = Ustrchr(s, '\r'));
 		      s = t + 2)				/* \r\n */
     debug_printf("%s %.*s\n",
@@ -1133,7 +1131,7 @@ smtp_fflush(BOOL uncork)
 {
 if (smtp_out_fd <= 0) return 0;
 
-DEBUG(D_receive) debug_printf("SMTP>- %Vflush%V\n", "<", ">");
+DEBUG(receive) debug_printf("SMTP>- %Vflush%V\n", "<", ">");
 
 #ifndef DISABLE_TLS
 if (tls_in.active.sock >= 0)
@@ -1272,7 +1270,7 @@ while ((c = (receive_getc)(buffer_lim)) != '\n')
     {
     os_non_restarting_signal(SIGALRM, sigalrm_handler);
     /* c could be EOF, ERR, or a good (positive) value overflowing the buffer */
-    DEBUG(D_receive)
+    DEBUG(receive)
       if (c < 0)
 	debug_printf("SMTP(%s)<<\n", c == EOF ? "closed" : "error");
       else
@@ -1298,7 +1296,7 @@ string. */
 while (ptr > 0 && isspace(smtp_cmd_buffer[ptr-1])) ptr--;
 smtp_cmd_buffer[ptr] = 0;
 
-DEBUG(D_receive) debug_printf("SMTP<< %s\n", smtp_cmd_buffer);
+DEBUG(receive) debug_printf("SMTP<< %s\n", smtp_cmd_buffer);
 
 /* NULLs are not allowed in SMTP commands */
 
@@ -1988,7 +1986,7 @@ while (done <= 0)
 	  {
 	  /* deconst ok as sender_address was not const */
 	  sender_address = US rewrite_address_qualify(sender_address, FALSE);
-	  DEBUG(D_receive) debug_printf("unqualified address %s accepted "
+	  DEBUG(receive) debug_printf("unqualified address %s accepted "
 	    "and rewritten\n", raw_sender);
 	  }
 	/* The function moan_smtp_batch() does not return. */
@@ -2045,7 +2043,7 @@ while (done <= 0)
       if (!recipient_domain)
 	if (f.allow_unqualified_recipient)
 	  {
-	  DEBUG(D_receive) debug_printf("unqualified address %s accepted\n",
+	  DEBUG(receive) debug_printf("unqualified address %s accepted\n",
 	    recipient);
 	  /* deconst ok as recipient was not const */
 	  recipient = US rewrite_address_qualify(recipient, TRUE);
@@ -2158,12 +2156,12 @@ if (getsockopt(smtp_out_fd, IPPROTO_TCP, TCP_FASTOPEN, &is_fastopen, &len) == 0)
   {
   if (is_fastopen)
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("TFO mode connection (TCP_FASTOPEN getsockopt)\n");
     f.tcp_in_fastopen = TRUE;
     }
   }
-else DEBUG(D_receive)
+else DEBUG(receive)
   debug_printf("TCP_FASTOPEN getsockopt: %s\n", strerror(errno));
 
 # elif defined(TCP_INFO)
@@ -2175,14 +2173,14 @@ if (getsockopt(smtp_out_fd, IPPROTO_TCP, TCP_INFO, &tinfo, &len) == 0)
 #  ifdef TCPI_OPT_SYN_DATA	/* FreeBSD 11,12 do not seem to have this yet */
   if (tinfo.tcpi_options & TCPI_OPT_SYN_DATA)
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("TFO mode connection (ACKd data-on-SYN)\n");
     f.tcp_in_fastopen_data = f.tcp_in_fastopen = TRUE;
     }
 #   ifdef TCPI_OPT_TFO_CHILD
   else if (tinfo.tcpi_options & TCPI_OPT_TFO_CHILD)
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("TFO mode connection (SYN with TFO option)\n");
     f.tcp_in_fastopen = TRUE;
     }
@@ -2198,12 +2196,12 @@ if (getsockopt(smtp_out_fd, IPPROTO_TCP, TCP_INFO, &tinfo, &len) == 0)
 
     if (tinfo.tcpi_state == TCP_SYN_RECV)	/* Not seen on FreeBSD 12.1 */
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("TFO mode connection (state TCP_SYN_RECV)\n");
     f.tcp_in_fastopen = TRUE;
     }
   }
-else DEBUG(D_receive)
+else DEBUG(receive)
   debug_printf("TCP_INFO getsockopt: %s\n", strerror(errno));
 # endif	/* TCP_INFO */
 }
@@ -2271,7 +2269,7 @@ int optcount, sprint_len;
 struct in_addr addr;
 uschar * optstart = US OPTSTART;
 
-DEBUG(D_receive) debug_printf("IP options exist\n");
+DEBUG(receive) debug_printf("IP options exist\n");
 
 p = Ustpcpy(big_buffer, "IP options on incoming call:");
 
@@ -2550,7 +2548,7 @@ if (!f.sender_host_unknown)
     of writing. So for that error, carry on - we just can't do an IP options
     check. */
 
-    DEBUG(D_receive) debug_printf("checking for IP options\n");
+    DEBUG(receive) debug_printf("checking for IP options\n");
 
     if (  smtp_out_fd < 0
        || getsockopt(smtp_out_fd, IPPROTO_IP, IP_OPTIONS, US ipopt,
@@ -2575,7 +2573,7 @@ if (!f.sender_host_unknown)
 
     /* Length of options = 0 => there are no options */
 
-    else DEBUG(D_receive) debug_printf("no IP options found\n");
+    else DEBUG(receive) debug_printf("no IP options found\n");
     }
 #endif  /* HAVE_IPV6 && !defined(NO_IP_OPTIONS) */
 
@@ -2960,7 +2958,7 @@ if (code > 0)
     {
     smtp_notquit_exit(US"bad-command-synprot", string_sprintf("%d", code),
 		      US"Too many syntax or protocol errors");
-    DEBUG(D_any) debug_printf_indent("SMTP(close)>>\n");
+    DEBUG(any) debug_printf_indent("SMTP(close)>>\n");
 #ifndef DISABLE_TLS
     tls_close(NULL, TLS_SHUTDOWN_WAIT);
 #endif
@@ -3324,7 +3322,7 @@ the Linux socket(7) manpage, SO_LINGER para, to the effect that exit() without
 close() results in the socket always lingering). */
 
 (void) poll_one_fd(smtp_in_fd, POLLIN, 200);
-DEBUG(D_any) debug_printf_indent("SMTP(close)>>\n");
+DEBUG(any) debug_printf_indent("SMTP(close)>>\n");
 smtp_inout_close();
 
 return 2;
@@ -3438,19 +3436,19 @@ smtp_verify_helo(void)
 {
 BOOL yield = TRUE;
 
-HDEBUG(D_receive) debug_printf("verifying EHLO/HELO argument %q\n",
+HDEBUG(receive) debug_printf("verifying EHLO/HELO argument %q\n",
   sender_helo_name);
 
 if (sender_helo_name == NULL)
   {
-  HDEBUG(D_receive) debug_printf("no EHLO/HELO command was issued\n");
+  HDEBUG(receive) debug_printf("no EHLO/HELO command was issued\n");
   }
 
 /* Deal with the case of -bs without an IP address */
 
 else if (sender_host_address == NULL)
   {
-  HDEBUG(D_receive) debug_printf("no client IP address: assume success\n");
+  HDEBUG(receive) debug_printf("no client IP address: assume success\n");
   f.helo_verified = TRUE;
   }
 
@@ -3470,7 +3468,7 @@ else if (sender_helo_name[0] == '[')
     }
 #endif
 
-  HDEBUG(D_receive)
+  HDEBUG(receive)
     { if (f.helo_verified) debug_printf("matched host address\n"); }
   }
 
@@ -3489,7 +3487,7 @@ else
     if ((f.helo_verified = strcmpic(sender_host_name, sender_helo_name) == 0))
       {
       sender_helo_dnssec = sender_host_dnssec;
-      HDEBUG(D_receive) debug_printf("matched host name\n");
+      HDEBUG(receive) debug_printf("matched host name\n");
       }
     else
       {
@@ -3501,7 +3499,7 @@ else
 	  break;
 	  }
 
-      HDEBUG(D_receive) if (f.helo_verified)
+      HDEBUG(receive) if (f.helo_verified)
           debug_printf("matched alias %s\n", *(--aliases));
       }
 
@@ -3515,7 +3513,7 @@ else
     dnssec_domains d =
       {.request = US"*", .require = US""};
 
-    HDEBUG(D_receive) debug_printf("getting IP address for %s\n",
+    HDEBUG(receive) debug_printf("getting IP address for %s\n",
       sender_helo_name);
     rc = host_find_bydns(&h, NULL, HOST_FIND_BY_A | HOST_FIND_BY_AAAA,
 			  NULL, NULL, NULL, &d, NULL, NULL);
@@ -3525,7 +3523,7 @@ else
           {
           f.helo_verified = TRUE;
 	  if (h.dnssec_used == DS_YES) sender_helo_dnssec = TRUE;
-          HDEBUG(D_receive)
+          HDEBUG(receive)
             debug_printf("IP address for %s matches calling address\n"
 	      "Forward DNS security status: %sverified\n",
               sender_helo_name, sender_helo_dnssec ? "" : "un");
@@ -3697,7 +3695,7 @@ qualify_recipient(uschar ** recipient, uschar * smtp_cmd_data, uschar * tag)
 if (f.allow_unqualified_recipient || strcmpic(*recipient, US"postmaster") == 0)
   {
   int rd = Ustrlen(recipient) + 1;
-  DEBUG(D_receive) debug_printf("unqualified address %s accepted\n",
+  DEBUG(receive) debug_printf("unqualified address %s accepted\n",
     *recipient);
   /* deconst ok as *recipient was not const */
   *recipient = US rewrite_address_qualify(*recipient, TRUE);
@@ -3908,7 +3906,7 @@ else
 
 if (host_checking)
   {
-  HDEBUG(D_any)
+  HDEBUG(any)
     {
     debug_printf("ETRN command is: %s\n", etrn_command);
     debug_printf("ETRN command execution skipped\n");
@@ -3952,7 +3950,7 @@ if ((pid = exim_fork(US"etrn-command")) == 0)
   if (  !smtp_etrn_serialize
      || (pid = exim_fork(US"etrn-serialised-command")) == 0)
     {
-    DEBUG(D_exec) debug_print_argv(argv);
+    DEBUG(exec) debug_print_argv(argv);
     exim_nullstd();                   /* Ensure std{in,out,err} exist */
     /* argv[0] should be untainted, from child_exec_exim() */
     execv(CS argv[0], (char *const *)argv);
@@ -3972,10 +3970,10 @@ if ((pid = exim_fork(US"etrn-command")) == 0)
   else
     {
     int status;
-    DEBUG(D_any)
+    DEBUG(any)
       debug_printf("waiting for serialized ETRN process " PID_T_FMT "\n", pid);
     (void)wait(&status);
-    DEBUG(D_any)
+    DEBUG(any)
       debug_printf("serialized ETRN process " PID_T_FMT " ended\n", pid);
     }
 
@@ -4040,7 +4038,7 @@ static misc_module_info * xclient_mi = NULL;
 #endif
 rmark reset_point = store_mark();
 
-DEBUG(D_receive) debug_printf("smtp_setup_msg entered\n");
+DEBUG(receive) debug_printf("smtp_setup_msg entered\n");
 
 /* Reset for start of new message. We allow one RSET not to be counted as a
 nonmail command, for those MTAs that insist on sending it between every
@@ -4064,7 +4062,7 @@ if (lwr_receive_getc && !atrn_mode)
   {
   /* This should have already happened, but if we've gotten confused,
   force a reset here. */
-  DEBUG(D_receive) debug_printf("WARNING: smtp_setup_msg had to restore receive functions to lowers\n");
+  DEBUG(receive) debug_printf("WARNING: smtp_setup_msg had to restore receive functions to lowers\n");
   bdat_pop_receive_functions();
   }
 
@@ -4121,10 +4119,10 @@ while (done <= 0)
 
 	  smtp_cmd_data = NULL;
 	  if (smtp_in_auth(au, &s, &dummy_errmsg) == OK)
-	    { DEBUG(D_auth) debug_printf("tls auth succeeded\n"); }
+	    { DEBUG(auth) debug_printf("tls auth succeeded\n"); }
 	  else
 	    {
-	    DEBUG(D_auth) debug_printf("tls auth not succeeded\n");
+	    DEBUG(auth) debug_printf("tls auth not succeeded\n");
 #ifndef DISABLE_EVENT
 	     {
 	      uschar * save_name = sender_host_authenticated, * logmsg;
@@ -4371,7 +4369,7 @@ while (done <= 0)
 	      f.helo_verified = old_helo_verified;
 	      break;                   /* End of HELO/EHLO processing */
 	      }
-	    HDEBUG(D_all) debug_printf("%s verification failed but host is in "
+	    HDEBUG(all) debug_printf("%s verification failed but host is in "
 	      "helo_try_verify_hosts\n", hello);
 	    }
 	  }
@@ -4384,7 +4382,7 @@ while (done <= 0)
       if (misc_mod_conn_init(sender_helo_name, sender_host_address, &errstr)
 	  != OK)
 	{
-	DEBUG(D_receive)
+	DEBUG(receive)
 	  debug_printf("A module conn-init routine failed: %s\n", errstr);
 	done = 1;
 	break;
@@ -4601,7 +4599,7 @@ while (done <= 0)
 	    au->advertised = FALSE;
 	    if (au->server)
 	      {
-	      DEBUG(D_auth+D_expand) debug_printf_indent(
+	      DEBUG(auth|expand) debug_printf_indent(
 		"Evaluating advertise_condition for %s %s authenticator\n",
 		au->drinst.name, au->public_name);
 	      if (  !au->advertise_condition
@@ -4881,7 +4879,7 @@ while (done <= 0)
 		  US"invalid data for BODY");
 		goto COMMAND_LOOP;
 		}
-	      DEBUG(D_receive) debug_printf("8BITMIME: %d\n", body_8bitmime);
+	      DEBUG(receive) debug_printf("8BITMIME: %d\n", body_8bitmime);
 	      break;
 	    }
 	    arg_error = TRUE;
@@ -4905,7 +4903,7 @@ while (done <= 0)
 		: strcmpic(value, US"FULL") == 0
 		? dsn_ret_full
 		: 0;
-	      DEBUG(D_receive) debug_printf("DSN_RET: %d\n", dsn_ret);
+	      DEBUG(receive) debug_printf("DSN_RET: %d\n", dsn_ret);
 	      /* Check for invalid invalid value, and exit with error */
 	      if (dsn_ret == 0)
 		{
@@ -4926,7 +4924,7 @@ while (done <= 0)
 		goto COMMAND_LOOP;
 		}
 	      dsn_envid = string_copy(value);
-	      DEBUG(D_receive) debug_printf("DSN_ENVID: %s\n", dsn_envid);
+	      DEBUG(receive) debug_printf("DSN_ENVID: %s\n", dsn_envid);
 	      }
 	    break;
 
@@ -5016,7 +5014,7 @@ while (done <= 0)
 	      goto COMMAND_LOOP;
 	      }
 
-	    DEBUG(D_receive) debug_printf("smtputf8 requested\n");
+	    DEBUG(receive) debug_printf("smtputf8 requested\n");
 	    message_smtputf8 = allow_utf8_domains = TRUE;
 	    if (Ustrncmp(received_protocol, US"utf8", 4) != 0)
 	      {
@@ -5051,7 +5049,7 @@ while (done <= 0)
       if (smtp_mailcmd_count > smtp_rlm_threshold &&
 	  verify_check_host(&smtp_ratelimit_hosts) == OK)
 	{
-	DEBUG(D_receive) debug_printf("rate limit MAIL: delay %.3g sec\n",
+	DEBUG(receive) debug_printf("rate limit MAIL: delay %.3g sec\n",
 	  smtp_delay_mail/1000.0);
 	millisleep((int)smtp_delay_mail);
 	smtp_delay_mail *= smtp_rlm_factor;
@@ -5128,7 +5126,7 @@ while (done <= 0)
 	  sender_domain = Ustrlen(sender_address) + 1;
 	  /* deconst ok as sender_address was not const */
 	  sender_address = US rewrite_address_qualify(sender_address, FALSE);
-	  DEBUG(D_receive) debug_printf("unqualified address %s accepted\n",
+	  DEBUG(receive) debug_printf("unqualified address %s accepted\n",
 	    raw_sender);
 	  }
 	else
@@ -5258,7 +5256,7 @@ while (done <= 0)
 	    goto COMMAND_LOOP;
 	    }
 	  rcpt_orcpt = string_copy(value);
-	  DEBUG(D_receive) debug_printf("DSN orcpt: %s\n", rcpt_orcpt);
+	  DEBUG(receive) debug_printf("DSN orcpt: %s\n", rcpt_orcpt);
 	  }
 
 	else if (fl.dsn_advertised && strcmpic(name, US"NOTIFY") == 0)
@@ -5282,17 +5280,17 @@ while (done <= 0)
 	      if (*pp == ',') *pp++ = 0;
 	      if (strcmpic(p, US"SUCCESS") == 0)
 		{
-		DEBUG(D_receive) debug_printf("DSN: Setting notify success\n");
+		DEBUG(receive) debug_printf("DSN: Setting notify success\n");
 		rcpt_dsn_flags |= rf_notify_success;
 		}
 	      else if (strcmpic(p, US"FAILURE") == 0)
 		{
-		DEBUG(D_receive) debug_printf("DSN: Setting notify failure\n");
+		DEBUG(receive) debug_printf("DSN: Setting notify failure\n");
 		rcpt_dsn_flags |= rf_notify_failure;
 		}
 	      else if (strcmpic(p, US"DELAY") == 0)
 		{
-		DEBUG(D_receive) debug_printf("DSN: Setting notify delay\n");
+		DEBUG(receive) debug_printf("DSN: Setting notify delay\n");
 		rcpt_dsn_flags |= rf_notify_delay;
 		}
 	      else
@@ -5304,7 +5302,7 @@ while (done <= 0)
 		}
 	      p = pp;
 	      }
-	      DEBUG(D_receive) debug_printf("DSN Flags: %x\n", rcpt_dsn_flags);
+	      DEBUG(receive) debug_printf("DSN Flags: %x\n", rcpt_dsn_flags);
 	    }
 	  }
 
@@ -5313,7 +5311,7 @@ while (done <= 0)
 
 	else
 	  {
-	  DEBUG(D_receive) debug_printf("Invalid RCPT option: %s : %s\n", name, value);
+	  DEBUG(receive) debug_printf("Invalid RCPT option: %s : %s\n", name, value);
 	  name[-1] = ' ';
 	  value[-1] = '=';
 	  break;
@@ -5389,7 +5387,7 @@ while (done <= 0)
       if (rcpt_count > smtp_rlr_threshold &&
 	  verify_check_host(&smtp_ratelimit_hosts) == OK)
 	{
-	DEBUG(D_receive) debug_printf("rate limit RCPT: delay %.3g sec\n",
+	DEBUG(receive) debug_printf("rate limit RCPT: delay %.3g sec\n",
 	  smtp_delay_rcpt/1000.0);
 	millisleep((int)smtp_delay_rcpt);
 	smtp_delay_rcpt *= smtp_rlr_factor;
@@ -5429,7 +5427,7 @@ while (done <= 0)
 	recipients_list[recipients_count-1].orcpt = rcpt_orcpt;
 	recipients_list[recipients_count-1].dsn_flags = rcpt_dsn_flags;
 
-	/* DEBUG(D_receive) debug_printf("DSN: orcpt: %s  flags: %d\n",
+	/* DEBUG(receive) debug_printf("DSN: orcpt: %s  flags: %d\n",
 	  recipients_list[recipients_count-1].orcpt,
 	  recipients_list[recipients_count-1].dsn_flags); */
 	}
@@ -5504,7 +5502,7 @@ while (done <= 0)
       chunking_state = strcmpic(smtp_cmd_data+n, US"LAST") == 0
 	? CHUNKING_LAST : CHUNKING_ACTIVE;
       chunking_data_left = chunking_datasize;
-      DEBUG(D_receive) debug_printf("chunking state '%s', %d bytes\n",
+      DEBUG(receive) debug_printf("chunking state '%s', %d bytes\n",
 			chunking_states[chunking_state], chunking_data_left);
 
       f.bdat_readers_wanted = TRUE; /* FIXME: redundant vs chunking_state? */
@@ -5733,7 +5731,7 @@ while (done <= 0)
 
       if (receive_hasc())
 	{
-	DEBUG(D_any)
+	DEBUG(any)
 	  debug_printf("Non-empty input buffer after STARTTLS; naive attack?\n");
 	if (tls_in.active.sock < 0)
 	  smtp_inend = smtp_inptr = smtp_inbuffer;
@@ -5786,7 +5784,7 @@ while (done <= 0)
 	sender_host_auth_pubname = sender_host_authenticated = NULL;
 	authenticated_id = NULL;
 	sync_cmd_limit = NON_SYNC_CMD_NON_PIPELINING;
-	DEBUG(D_tls) debug_printf("TLS active\n");
+	DEBUG(tls) debug_printf("TLS active\n");
 	break;     /* Successful STARTTLS */
 	}
       else
@@ -5807,7 +5805,7 @@ while (done <= 0)
       failure - and there may some encrypted data still in the pipe to us, which we
       see as garbage commands. */
 
-      DEBUG(D_tls) debug_printf("TLS failed to start\n");
+      DEBUG(tls) debug_printf("TLS failed to start\n");
       while (done <= 0) switch(smtp_read_command(FALSE, GETC_BUFFER_UNLIMITED))
 	{
 	case EOF_CMD:

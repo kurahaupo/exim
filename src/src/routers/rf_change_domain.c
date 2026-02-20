@@ -42,7 +42,7 @@ const uschar * at = Ustrrchr(addr->address, '@');
 uschar * address = string_sprintf("%.*s@%s",
   (int)(at - addr->address), addr->address, domain);
 
-DEBUG(D_route) debug_printf("domain changed to %s\n", domain);
+DEBUG(route) debug_printf("domain changed to %s\n", domain);
 
 /* The current address item is made into the parent, and a new address is set
 up in the old space. */
@@ -68,12 +68,11 @@ addr->next = *addr_new;
 
 if (rewrite)
   {
-  DEBUG(D_route|D_rewrite) debug_printf("rewriting header lines\n");
-  for (header_line * h = header_list; h != NULL; h = h->next)
+  DEBUG(route|rewrite) debug_printf("rewriting header lines\n");
+  for (header_line * h = header_list; h; h = h->next)
     {
-    header_line *newh =
-      rewrite_header(h, parent->domain, domain,
-        global_rewrite_rules, rewrite_existflags, TRUE);
+    header_line * newh = rewrite_header(h, parent->domain, domain,
+				global_rewrite_rules, rewrite_existflags, TRUE);
     if (newh)
       {
       h = newh;

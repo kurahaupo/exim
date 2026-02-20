@@ -249,7 +249,7 @@ if (fastopen_blob && f.tcp_fastopen_ok)
 	/* seen for with-data, experimental TFO option, with-cookie case */
 	/* seen for with-data, proper TFO opt, with-cookie case */
     {
-    DEBUG(D_transport|D_v)
+    DEBUG(transport|v)
       debug_printf(" TFO mode connection attempt to %s, %lu data\n",
 	address, (unsigned long)fastopen_blob->len);
     /*XXX also seen on successful TFO, sigh */
@@ -263,7 +263,7 @@ if (fastopen_blob && f.tcp_fastopen_ok)
 	/* seen for with-data, proper TFO opt, cookie-req */
 	/*   with netwk delay, post-conn tcp_info sees unacked 1 for R, 2 for C; code in smtp_out.c */
 	/* ? older Experimental TFO option behaviour ? */
-      DEBUG(D_transport|D_v) debug_printf(" TFO mode sendto, %s data: EINPROGRESS\n",
+      DEBUG(transport|v) debug_printf(" TFO mode sendto, %s data: EINPROGRESS\n",
 	fastopen_blob->len > 0 ? "with"  : "no");
       if (!fastopen_blob->data)
 	{
@@ -275,12 +275,12 @@ if (fastopen_blob && f.tcp_fastopen_ok)
       break;
 
     case EOPNOTSUPP:
-      DEBUG(D_transport)
+      DEBUG(transport)
 	debug_printf("Tried TCP Fast Open but apparently not enabled by sysctl\n");
       goto legacy_connect;
 
     case EPIPE:
-      DEBUG(D_transport)
+      DEBUG(transport)
 	debug_printf("Tried TCP Fast Open but kernel too old to support it\n");
       goto legacy_connect;
     }
@@ -290,14 +290,14 @@ if (fastopen_blob && f.tcp_fastopen_ok)
 
   if (setsockopt(sock, IPPROTO_TCP, TCP_FASTOPEN, &on, sizeof(on)) < 0)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("Tried TCP Fast Open but apparently not enabled by sysctl\n");
     goto legacy_connect;
     }
   if ((rc = sendto(sock, fastopen_blob->data, fastopen_blob->len, 0,
 		    s_ptr, s_len)) >= 0)
     {
-    DEBUG(D_transport|D_v)
+    DEBUG(transport|v)
       debug_printf(" TFO mode connection attempt to %s, %lu data\n",
 	address, (unsigned long)fastopen_blob->len);
     tcp_out_fastopen = fastopen_blob->len > 0 ?  TFO_ATTEMPTED_DATA : TFO_ATTEMPTED_NODATA;
@@ -315,18 +315,18 @@ if (fastopen_blob && f.tcp_fastopen_ok)
   if ((rc = connectx(sock, &ends, SAE_ASSOCID_ANY,
 	     CONNECT_DATA_IDEMPOTENT, &iov, 1, &len, NULL)) == 0)
     {
-    DEBUG(D_transport|D_v)
+    DEBUG(transport|v)
       debug_printf(" TFO mode connection attempt to %s, %lu data\n",
 	address, (unsigned long)fastopen_blob->len);
     tcp_out_fastopen = fastopen_blob->len > 0 ?  TFO_ATTEMPTED_DATA : TFO_ATTEMPTED_NODATA;
 
     if (len != fastopen_blob->len)
-      DEBUG(D_transport|D_v)
+      DEBUG(transport|v)
 	debug_printf(" only queued %lu data!\n", (unsigned long)len);
     }
   else if (errno == EINPROGRESS)
     {
-    DEBUG(D_transport|D_v) debug_printf(" TFO mode connectx, %s data: EINPROGRESS\n",
+    DEBUG(transport|v) debug_printf(" TFO mode connectx, %s data: EINPROGRESS\n",
       fastopen_blob->len > 0 ? "with"  : "no");
     if (!fastopen_blob->data)
       {
@@ -345,7 +345,7 @@ else
 legacy_connect:
 #endif
 
-  DEBUG(D_transport|D_v) if (fastopen_blob)
+  DEBUG(transport|v) if (fastopen_blob)
     debug_printf(" non-TFO mode connection attempt to %s, %lu data\n",
       address, (unsigned long)fastopen_blob->len);
   if ((rc = connect(sock, s_ptr, s_len)) >= 0)
@@ -604,7 +604,7 @@ if (time_left <= 0)
 
 do
   {
-  /*DEBUG(D_transport) debug_printf("waiting for data on fd\n");*/
+  /*DEBUG(transport) debug_printf("waiting for data on fd\n");*/
   rc = poll_one_fd(fd, POLLIN, time_left * 1000);
 
   /* If some interrupt arrived, just retry. We presume this to be rare,
@@ -619,7 +619,7 @@ do
 
   if (rc < 0 && errno == EINTR)
     {
-    DEBUG(D_transport) debug_printf("EINTR while waiting for socket data\n");
+    DEBUG(transport) debug_printf("EINTR while waiting for socket data\n");
 
     /* Watch out, 'continue' jumps to the condition, not to the loops top */
     if ((time_left = timelimit - time(NULL)) > 0) continue;

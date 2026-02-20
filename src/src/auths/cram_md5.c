@@ -228,7 +228,7 @@ if (secret == NULL)
 
 compute_cram_md5(secret, challenge, digest);
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   {
   debug_printf("CRAM-MD5: user name = %s\n", auth_vars[0]);
   debug_printf("          challenge = %s\n", challenge);

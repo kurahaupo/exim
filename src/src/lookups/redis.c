@@ -47,7 +47,7 @@ redis_connection *cn;
 while ((cn = redis_connections))
   {
   redis_connections = cn->next;
-  DEBUG(D_lookup) debug_printf_indent("close REDIS connection: %s\n", cn->server);
+  DEBUG(lookup) debug_printf_indent("close REDIS connection: %s\n", cn->server);
   redisFree(cn->handle);
   }
 }
@@ -153,7 +153,7 @@ if (!cn)
     return DEFER;
     }
 
-  DEBUG(D_lookup)
+  DEBUG(lookup)
     debug_printf_indent("REDIS new connection: host=%s port=%d socket=%s database=%s\n",
       sdata[0], port, socket, sdata[1]);
 
@@ -175,7 +175,7 @@ if (!cn)
   cn->next = redis_connections;
   redis_connections = cn;
   }
-else DEBUG(D_lookup)
+else DEBUG(lookup)
   debug_printf_indent("REDIS using cached connection for %s\n", server_copy);
 
 /* Authenticate if there is a password */
@@ -196,7 +196,7 @@ if(sdata[1])
     *defer_break = FALSE;
     goto REDIS_EXIT;
     }
-  DEBUG(D_lookup) debug_printf_indent("REDIS: Selecting database=%s\n", sdata[1]);
+  DEBUG(lookup) debug_printf_indent("REDIS: Selecting database=%s\n", sdata[1]);
   }
 
 /* split string on whitespace into argv */
@@ -217,7 +217,7 @@ if(sdata[1])
 	g = string_catn(g, s, 1);
     argv[i] = string_from_gstring(g);
 
-    DEBUG(D_lookup) debug_printf_indent("REDIS: argv[%d] '%s'\n", i, argv[i]);
+    DEBUG(lookup) debug_printf_indent("REDIS: argv[%d] '%s'\n", i, argv[i]);
     Uskip_whitespace(&s);
     }
 
@@ -240,7 +240,7 @@ switch (redis_reply->type)
     /* trap MOVED cluster responses and follow them */
     if (Ustrncmp(redis_reply->str, "MOVED", 5) == 0)
       {
-      DEBUG(D_lookup)
+      DEBUG(lookup)
         debug_printf_indent("REDIS: cluster redirect %s\n", redis_reply->str);
       /* follow redirect
       This is cheating, we simply set defer_break = FALSE to move on to
@@ -255,7 +255,7 @@ switch (redis_reply->type)
     /* NOTREACHED */
 
   case REDIS_REPLY_NIL:
-    DEBUG(D_lookup)
+    DEBUG(lookup)
       debug_printf_indent("REDIS: query was not one that returned any data\n");
     result = string_catn(result, US"", 1);
     *do_cache = 0;
@@ -308,19 +308,19 @@ switch (redis_reply->type)
 		result = string_catn(result, US tentry->str, tentry->len);
 		break;
 	      case REDIS_REPLY_ARRAY:
-		DEBUG(D_lookup)
+		DEBUG(lookup)
 		  debug_printf_indent("REDIS: result has nesting of arrays which"
 		    " is not supported. Ignoring!\n");
 		break;
 	      default:
-		DEBUG(D_lookup) debug_printf_indent(
+		DEBUG(lookup) debug_printf_indent(
 			  "REDIS: result has unsupported type. Ignoring!\n");
 		break;
 	      }
 	    }
 	    break;
 	  default:
-	    DEBUG(D_lookup) debug_printf_indent("REDIS: query returned unsupported type\n");
+	    DEBUG(lookup) debug_printf_indent("REDIS: query returned unsupported type\n");
 	    break;
 	  }
 	}
@@ -352,7 +352,7 @@ if (result)
   }
 else
   {
-  DEBUG(D_lookup) debug_printf_indent("%s\n", *errmsg);
+  DEBUG(lookup) debug_printf_indent("%s\n", *errmsg);
   /* NOTE: Required to close connection since it needs to be reopened */
   return yield;      /* FAIL or DEFER */
   }

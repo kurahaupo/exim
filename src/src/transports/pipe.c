@@ -436,7 +436,7 @@ if (expand_arguments)
   uschar * p = Ustrstr(cmd, "pipe_addresses");
   gstring * g = NULL;
 
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("shell pipe command before expansion:\n  %s\n", cmd);
 
   /* Allow $recipients in the expansion iff it comes from a system filter */
@@ -457,7 +457,7 @@ if (expand_arguments)
 
     for (address_item * ad = addr; ad; ad = ad->next)
       {
-      DEBUG(D_transport) if (is_tainted(ad->address))
+      DEBUG(transport) if (is_tainted(ad->address))
 	debug_printf("tainted element '%s' from $pipe_addresses\n", ad->address);
 
       /*XXX string_append_listele() ? */
@@ -482,12 +482,12 @@ if (expand_arguments)
     return FALSE;
     }
 
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("shell pipe command after expansion:\n  %s\n", argv[2]);
   }
 else
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("shell pipe command (no expansion):\n  %s\n", cmd);
   argv[2] = cmd;
   }
@@ -530,7 +530,7 @@ transport_ctx tctx = {
   ob->options | topt_not_socket /* set at initialization time */
 };
 
-DEBUG(D_transport) debug_printf("%s transport entered\n", trname);
+DEBUG(transport) debug_printf("%s transport entered\n", trname);
 
 /* Set up for the good case */
 
@@ -581,7 +581,7 @@ if (!cmd || !*cmd)
   }
 if (is_tainted(cmd))
   {
-  DEBUG(D_transport) debug_printf("cmd '%s' is tainted\n", cmd);
+  DEBUG(transport) debug_printf("cmd '%s' is tainted\n", cmd);
   addr->message = string_sprintf("Tainted '%s' (command "
     "for %s transport) not permitted", cmd, trname);
   addr->transport_return = PANIC;
@@ -680,7 +680,7 @@ envp[envcount] = NULL;
 
 if (f.dont_deliver)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("*** delivery by %s transport bypassed by -N option",
       trname);
   return FALSE;
@@ -748,17 +748,17 @@ if (outpid == 0)
     {
     if (addr->return_file >= 0)
       if(write(addr->return_file, big_buffer, rc) != rc)
-        DEBUG(D_transport) debug_printf("Problem writing to return_file\n");
+        DEBUG(transport) debug_printf("Problem writing to return_file\n");
     count += rc;
     if (count > ob->max_output)
       {
-      DEBUG(D_transport) debug_printf("Too much output from pipe - killed\n");
+      DEBUG(transport) debug_printf("Too much output from pipe - killed\n");
       if (addr->return_file >= 0)
 	{
         uschar *message = US"\n\n*** Too much output - remainder discarded ***\n";
         rc = Ustrlen(message);
         if(write(addr->return_file, message, rc) != rc)
-          DEBUG(D_transport) debug_printf("Problem writing to return_file\n");
+          DEBUG(transport) debug_printf("Problem writing to return_file\n");
 	}
       killpg(pid, SIGKILL);
       break;
@@ -781,7 +781,7 @@ any debugging output is likely to be in the same order.) */
 
 testharness_pause_ms(500);
 
-DEBUG(D_transport) debug_printf("Writing message to pipe\n");
+DEBUG(transport) debug_printf("Writing message to pipe\n");
 
 /* Arrange to time out writes if there is a timeout set. */
 
@@ -1113,7 +1113,7 @@ are complete before we pass this point. */
 
 while (wait(&rc) >= 0);
 
-DEBUG(D_transport) debug_printf("%s transport yielded %d\n", trname,
+DEBUG(transport) debug_printf("%s transport yielded %d\n", trname,
   addr->transport_return);
 
 /* If there has been a problem, the message in addr->message contains details

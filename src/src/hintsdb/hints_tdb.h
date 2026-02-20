@@ -43,12 +43,12 @@ exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
 EXIM_DB * db = tdb_open(CS name, 0, TDB_DEFAULT, flags, mode);
 int e;
 
-DEBUG(D_hints_lookup) if (!db)
+DEBUG(hints_lookup) if (!db)
   debug_printf_indent("tdb_open(flags 0x%x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
 if (!db || tdb_transaction_start(db) == 0) return db;
 e = errno;
-DEBUG(D_hints_lookup) if (db)
+DEBUG(hints_lookup) if (db)
   debug_printf_indent("tdb_transaction_start: %s\n", tdb_errorstr(db));
 tdb_close(db);
 errno = e;
@@ -60,7 +60,7 @@ exim_dbopen_multi__(const uschar * name, const uschar * dirname, int flags,
   unsigned mode)
 {
 EXIM_DB * db = tdb_open(CS name, 0, TDB_DEFAULT, flags, mode);
-DEBUG(D_hints_lookup) if (!db)
+DEBUG(hints_lookup) if (!db)
   debug_printf_indent("tdb_open(flags 0x%x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
 return db;
@@ -79,7 +79,7 @@ static inline BOOL
 exim_dbtransaction_start(EXIM_DB * db)
 {
 BOOL ok = tdb_transaction_start(db) == 0;
-DEBUG(D_hints_lookup) if (!ok)
+DEBUG(hints_lookup) if (!ok)
   debug_printf_indent("tdb_transaction_start: %s\n", tdb_errorstr(db));
 return ok;
 }
@@ -88,7 +88,7 @@ static inline void
 exim_dbtransaction_commit(EXIM_DB * db)
 {
 BOOL ok = tdb_transaction_commit(db) == 0;
-DEBUG(D_hints_lookup) if (!ok)
+DEBUG(hints_lookup) if (!ok)
   debug_printf_indent("tdb_transaction_commit: %s\n", tdb_errorstr(db));
 return;
 }
@@ -100,7 +100,7 @@ static inline int
 exim_dbput(EXIM_DB * dbp, EXIM_DATUM * key, EXIM_DATUM * data)
 {
 int rc = tdb_store(dbp, *key, *data, TDB_REPLACE);
-DEBUG(D_hints_lookup) if (rc != 0)
+DEBUG(hints_lookup) if (rc != 0)
   debug_printf_indent("tdb_store: %s\n", tdb_errorstr(dbp));
 return rc;
 }
@@ -162,7 +162,7 @@ static inline void
 exim_dbclose_multi__(EXIM_DB * db)
 {
 int rc = tdb_close(db);
-DEBUG(D_hints_lookup) if (rc != 0)
+DEBUG(hints_lookup) if (rc != 0)
   debug_printf_indent("tdb_close: %s\n", tdb_errorstr(db));
 }
 
@@ -170,10 +170,10 @@ static inline void
 exim_dbclose__(EXIM_DB * db)
 {
 int rc = tdb_transaction_commit(db);
-DEBUG(D_hints_lookup) if (rc != 0)
+DEBUG(hints_lookup) if (rc != 0)
   debug_printf_indent("tdb_transaction_commit: %s\n", tdb_errorstr(db));
 rc = tdb_close(db);
-DEBUG(D_hints_lookup) if (rc != 0)
+DEBUG(hints_lookup) if (rc != 0)
   debug_printf_indent("tdb_close: %s\n", tdb_errorstr(db));
 }
 

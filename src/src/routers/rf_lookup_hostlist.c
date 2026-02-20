@@ -71,7 +71,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
   next_h = h->next;
   if (h->address) { prev = h; continue; }
 
-  DEBUG(D_route|D_host_lookup)
+  DEBUG(route|host_lookup)
     debug_printf_indent("finding IP address for %s\n", h->name);
   expand_level++;
 
@@ -99,7 +99,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
       ? HOST_FIND_BY_MX | HOST_FIND_IPV4_FIRST
       : HOST_FIND_BY_MX;
 
-    DEBUG(D_route|D_host_lookup)
+    DEBUG(route|host_lookup)
       debug_printf("doing DNS MX lookup for %s\n", h->name);
 
     mx = MX_NONE;
@@ -120,7 +120,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
 
   else if (lookup_type & LK_BYNAME || string_is_ip_address(h->name, NULL) != 0)
     {
-    DEBUG(D_route|D_host_lookup) debug_printf_indent("calling host_find_byname\n");
+    DEBUG(route|host_lookup) debug_printf_indent("calling host_find_byname\n");
     rc = host_find_byname(h, ignore_target_hosts, HOST_FIND_QUALIFY_SINGLE,
       &canonical_name, TRUE);
     }
@@ -138,7 +138,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
       ? HOST_FIND_BY_A | HOST_FIND_BY_AAAA | HOST_FIND_IPV4_FIRST
       : HOST_FIND_BY_A | HOST_FIND_BY_AAAA;
 
-    DEBUG(D_route|D_host_lookup) debug_printf("doing DNS lookup\n");
+    DEBUG(route|host_lookup) debug_printf("doing DNS lookup\n");
     switch (rc = host_find_bydns(h, ignore_target_hosts, whichrrs, NULL,
 	NULL, NULL,
 	&rblock->dnssec,			/* domains for request/require */
@@ -150,7 +150,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
       case HOST_FIND_FAILED:
 	if (lookup_type & LK_DEFAULT)
 	  {
-	  DEBUG(D_route|D_host_lookup)
+	  DEBUG(route|host_lookup)
 	    debug_printf("DNS lookup failed: trying %s\n",
 	      f.running_in_test_harness
 	      ? "host_fake_gethostbyname" : "getipnodebyname");
@@ -175,7 +175,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
     expand_level--;
     if (rblock->pass_on_timeout)
       {
-      DEBUG(D_route)
+      DEBUG(route)
         debug_printf("%s router timed out and pass_on_timeout set\n",
           rblock->drinst.name);
       return PASS;
@@ -235,7 +235,7 @@ for (host_item * prev = NULL, * h = addr->host_list, *next_h; h; h = next_h)
     {
     if (prev)
       {
-      DEBUG(D_route)
+      DEBUG(route)
         {
         debug_printf("Removed from host list:\n");
         for (; h; h = h->next) debug_printf("  %s\n", h->name);

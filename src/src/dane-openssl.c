@@ -909,7 +909,7 @@ if (gens)
 	continue;
       if (!(dane->mhost = OPENSSL_strdup(certid)))
 	matched = -1;
-      DEBUG(D_tls) debug_printf("Dane name_check: matched SAN %s\n", certid);
+      DEBUG(tls) debug_printf("Dane name_check: matched SAN %s\n", certid);
       break;
       }
     }
@@ -925,7 +925,7 @@ if (!got_altname)
   char *certid = parse_subject_name(cert);
   if (certid != 0 && *certid && (matched = match_name(certid, dane)) != 0)
     {
-    DEBUG(D_tls) debug_printf("Dane name_check: matched SN %s\n", certid);
+    DEBUG(tls) debug_printf("Dane name_check: matched SN %s\n", certid);
     dane->mhost = OPENSSL_strdup(certid);
     }
   if (certid)
@@ -948,7 +948,7 @@ dane_selector_list issuer_rrs = dane->selectors[DANESSL_USAGE_PKIX_TA];
 dane_selector_list leaf_rrs = dane->selectors[DANESSL_USAGE_PKIX_EE];
 int matched = 0;
 
-DEBUG(D_tls) debug_printf("Dane verify_chain\n");
+DEBUG(tls) debug_printf("Dane verify_chain\n");
 
 /* Restore OpenSSL's internal_verify() as the signature check function */
 X509_STORE_CTX_set_verify(ctx, dane->verify);
@@ -1008,7 +1008,7 @@ else
    */
   if (leaf_rrs)
     matched = match(leaf_rrs, xn, 0);
-  if (matched) DEBUG(D_tls) debug_printf("Dane verify_chain: matched EE\n");
+  if (matched) DEBUG(tls) debug_printf("Dane verify_chain: matched EE\n");
 
   if (!matched && issuer_rrs)
     for (n = chain_length-1; !matched && n >= 0; --n)
@@ -1017,7 +1017,7 @@ else
       if (n > 0 || X509_check_issued(xn, xn) == X509_V_OK)
 	matched = match(issuer_rrs, xn, n);
       }
-  if (matched) DEBUG(D_tls) debug_printf("Dane verify_chain: matched %s\n",
+  if (matched) DEBUG(tls) debug_printf("Dane verify_chain: matched %s\n",
     n>0 ? "CA" : "selfisssued EE");
 
   if (!matched)
@@ -1077,7 +1077,7 @@ int (*cb)(int, X509_STORE_CTX *) = X509_STORE_CTX_get_verify_cb(ctx);
 X509 *cert = X509_STORE_CTX_get0_cert(ctx);
 int matched;
 
-DEBUG(D_tls) debug_printf("Dane verify_cert\n");
+DEBUG(tls) debug_printf("Dane verify_cert\n");
 
 if (ssl_idx < 0)
   ssl_idx = SSL_get_ex_data_X509_STORE_CTX_idx();
@@ -1234,7 +1234,7 @@ DANESSL_cleanup(SSL *ssl)
 {
 ssl_dane *dane;
 
-DEBUG(D_tls) debug_printf("Dane lib-cleanup\n");
+DEBUG(tls) debug_printf("Dane lib-cleanup\n");
 
 if (dane_idx < 0 || !(dane = SSL_get_ex_data(ssl, dane_idx)))
   return;
@@ -1373,7 +1373,7 @@ dane_cert_list xlist = 0;
 dane_pkey_list klist = 0;
 const EVP_MD *md = 0;
 
-DEBUG(D_tls) debug_printf("Dane add-tlsa: usage %u sel %u mdname %q\n",
+DEBUG(tls) debug_printf("Dane add-tlsa: usage %u sel %u mdname %q\n",
 			  usage, selector, mdname);
 
 if(dane_idx < 0 || !(dane = SSL_get_ex_data(ssl, dane_idx)))
@@ -1560,7 +1560,7 @@ DANESSL_init(SSL *ssl, const char *sni_domain, const char **hostnames)
 {
 ssl_dane *dane;
 
-DEBUG(D_tls) debug_printf("Dane ssl_init\n");
+DEBUG(tls) debug_printf("Dane ssl_init\n");
 if (dane_idx < 0)
   {
   DANEerr(DANESSL_F_INIT, DANESSL_R_LIBRARY_INIT);
@@ -1632,7 +1632,7 @@ Return
 int
 DANESSL_CTX_init(SSL_CTX *ctx)
 {
-DEBUG(D_tls) debug_printf("Dane ctx-init\n");
+DEBUG(tls) debug_printf("Dane ctx-init\n");
 if (dane_idx >= 0)
   {
   SSL_CTX_set_cert_verify_callback(ctx, verify_cert, 0);
@@ -1723,7 +1723,7 @@ DANESSL_library_init(void)
 {
 static CRYPTO_ONCE once = CRYPTO_ONCE_STATIC_INIT;
 
-DEBUG(D_tls) debug_printf("Dane lib-init\n");
+DEBUG(tls) debug_printf("Dane lib-init\n");
 (void) CRYPTO_THREAD_run_once(&once, dane_init);
 
 #if defined(LN_sha256)

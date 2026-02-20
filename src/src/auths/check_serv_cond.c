@@ -64,7 +64,7 @@ auth_check_some_cond(auth_instance * ablock,
 {
 uschar * cond;
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   {
   debug_printf("%s authenticator %s:\n", ablock->drinst.name, label);
   for (int i = 0; i < AUTH_VARS; i++) if (auth_vars[i])
@@ -85,7 +85,7 @@ server_condition will be OK and otherwise will typically be FAIL. */
 if (!condition) return unset;
 cond = expand_string(condition);
 
-HDEBUG(D_auth)
+HDEBUG(auth)
   if (!cond)
     debug_printf("expansion failed: %s\n", expand_string_message);
   else

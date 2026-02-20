@@ -173,7 +173,7 @@ const pcre2_code *re = ob->re_response_pattern;
 int count, query_len, rc;
 int sep = 0;
 
-DEBUG(D_route) debug_printf_indent("%s router called for %s: domain = %s\n",
+DEBUG(route) debug_printf_indent("%s router called for %s: domain = %s\n",
   rblock->drinst.name, addr->address, addr->domain);
 
 reply = store_get(256, GET_TAINTED);
@@ -194,7 +194,7 @@ else
     }
 
 query_len = Ustrlen(query);
-DEBUG(D_route) debug_printf("%s router query is %q\n", rblock->drinst.name,
+DEBUG(route) debug_printf("%s router query is %q\n", rblock->drinst.name,
   string_printing(query));
 
 /* Now connect to the required port for each of the hosts in turn, until a
@@ -208,7 +208,7 @@ while ((hostname = string_nextinlist(&listptr, &sep, host_buffer,
   {
   host_item *h;
 
-  DEBUG(D_route) debug_printf("calling host %s\n", hostname);
+  DEBUG(route) debug_printf("calling host %s\n", hostname);
 
   host->name = hostname;
   host->address = NULL;
@@ -260,7 +260,7 @@ while ((hostname = string_nextinlist(&listptr, &sep, host_buffer,
 		ob->protocol == ip_udp ? NULL : &tcp_fastopen_nodata) < 0)
       {
       close(query_cctx.sock);
-      DEBUG(D_route)
+      DEBUG(route)
         debug_printf("connection to %s failed: %s\n", h->address,
           strerror(errno));
       continue;
@@ -270,7 +270,7 @@ while ((hostname = string_nextinlist(&listptr, &sep, host_buffer,
 
     if (send(query_cctx.sock, query, query_len, 0) < 0)
       {
-      DEBUG(D_route) debug_printf("send to %s failed\n", h->address);
+      DEBUG(route) debug_printf("send to %s failed\n", h->address);
       (void)close(query_cctx.sock);
       continue;
       }
@@ -282,7 +282,7 @@ while ((hostname = string_nextinlist(&listptr, &sep, host_buffer,
     (void)close(query_cctx.sock);
     if (count <= 0)
       {
-      DEBUG(D_route) debug_printf("%s from %s\n", (errno == ETIMEDOUT)?
+      DEBUG(route) debug_printf("%s from %s\n", (errno == ETIMEDOUT)?
         "timed out" : "recv failed", h->address);
       *reply = 0;
       continue;
@@ -291,7 +291,7 @@ while ((hostname = string_nextinlist(&listptr, &sep, host_buffer,
     /* Success; break the loop */
 
     reply[count] = 0;
-    DEBUG(D_route) debug_printf("%s router received %q from %s\n",
+    DEBUG(route) debug_printf("%s router received %q from %s\n",
       rblock->drinst.name, string_printing(reply), h->address);
     break;
     }
@@ -310,7 +310,7 @@ defer otherwise. */
 
 if (!hostname)
   {
-  DEBUG(D_route) debug_printf("%s router failed to get anything\n", rblock->drinst.name);
+  DEBUG(route) debug_printf("%s router failed to get anything\n", rblock->drinst.name);
   if (ob->optional) return PASS;
   addr->message = string_sprintf("%s router: failed to communicate with any "
     "host", rblock->drinst.name);
@@ -326,7 +326,7 @@ if (re != NULL)
   {
   if (!regex_match_and_setup(re, reply, 0, -1))
     {
-    DEBUG(D_route) debug_printf("%s router: %s failed to match response %s\n",
+    DEBUG(route) debug_printf("%s router: %s failed to match response %s\n",
       rblock->drinst.name, ob->response_pattern, reply);
     return DECLINE;
     }
@@ -351,7 +351,7 @@ else
     while (isspace(reply[nn])) nn++;
     if (Ustrcmp(query + query_len/2 + 1, reply+nn) != 0)
       {
-      DEBUG(D_route) debug_printf("%s router: failed to match identification "
+      DEBUG(route) debug_printf("%s router: failed to match identification "
         "in response %s\n", rblock->drinst.name, reply);
       return DECLINE;
       }

@@ -97,7 +97,7 @@ if (  (t = tree_search(dnsbl_cache, query))
 /* Previous lookup was cached */
 
   {
-  HDEBUG(D_dnsbl) debug_printf("dnslists: using result of previous lookup\n");
+  HDEBUG(dnsbl) debug_printf("dnslists: using result of previous lookup\n");
   }
 
 /* If not cached from a previous lookup, we must do a DNS lookup, and
@@ -111,7 +111,7 @@ else
 
   if (t)
     {
-    HDEBUG(D_dnsbl) debug_printf("cached data found but past valid time; ");
+    HDEBUG(dnsbl) debug_printf("cached data found but past valid time; ");
     }
 
   else
@@ -124,7 +124,7 @@ else
 
   /* Do the DNS lookup . */
 
-  HDEBUG(D_dnsbl) debug_printf("new DNS lookup for %s\n", query);
+  HDEBUG(dnsbl) debug_printf("new DNS lookup for %s\n", query);
   cb->rc = dns_basic_lookup(dnsa, query, T_A);
   cb->text_set = FALSE;
   cb->text = NULL;
@@ -190,7 +190,7 @@ else
     }
 
   store_pool = old_pool;
-  HDEBUG(D_dnsbl) debug_printf("dnslists: wrote cache entry, ttl=%d\n",
+  HDEBUG(dnsbl) debug_printf("dnslists: wrote cache entry, ttl=%d\n",
     (int)(cb->expiry - time(NULL)));
   }
 
@@ -212,7 +212,7 @@ if (cb->rc == DNS_SUCCEED)
     addlist = string_append2_listele_n(addlist, US", ",
 					da->address, Ustrlen(da->address));
 
-  HDEBUG(D_dnsbl) debug_printf("DNS lookup for %s succeeded (yielding %Y)\n",
+  HDEBUG(dnsbl) debug_printf("DNS lookup for %s succeeded (yielding %Y)\n",
     query, addlist);
 
   /* Address list check; this can be either for equality, or via a bitmask.
@@ -285,7 +285,7 @@ if (cb->rc == DNS_SUCCEED)
 
     if ((match_type == MT_NOT || match_type == MT_ALL) != (da == NULL))
       {
-      HDEBUG(D_dnsbl)
+      HDEBUG(dnsbl)
         {
         uschar *res = NULL;
         switch(match_type)
@@ -394,7 +394,7 @@ if (cb->rc != DNS_NOMATCH && cb->rc != DNS_NODATA)
 
 /* No entry was found in the DNS; continue for next domain */
 
-HDEBUG(D_dnsbl)
+HDEBUG(dnsbl)
   {
   debug_printf("DNS lookup for %s failed\n", query);
   debug_printf("=> that means %s is not listed at %s\n",
@@ -493,7 +493,7 @@ if (!(s = expand_string(s)))
     list, expand_string_message);
   return f.search_find_defer ? DEFER : ERROR;
   }
-HDEBUG(D_acl) if (s != list) debug_printf_indent("expanded list: %s\n", s);
+HDEBUG(acl) if (s != list) debug_printf_indent("expanded list: %s\n", s);
 list = s;
 
 /* Loop through all the domains supplied, until something matches */
@@ -505,7 +505,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
   int match_type = 0;
   uschar * domain_txt, * comma, * iplist, * key;
 
-  HDEBUG(D_dnsbl) debug_printf("dnslists check: %s\n", domain);
+  HDEBUG(dnsbl) debug_printf("dnslists check: %s\n", domain);
 
   /* Deal with special values that change the behaviour on defer */
 
@@ -609,7 +609,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
       {
       dnslist_domain = domain_txt ? string_copy_perm(domain_txt, FALSE) : NULL;
       dnslist_matched = string_copy_perm(sender_host_address, FALSE);
-      HDEBUG(D_dnsbl) debug_printf("=> that means %s is listed at %s\n",
+      HDEBUG(dnsbl) debug_printf("=> that means %s is listed at %s\n",
         sender_host_address, dnslist_domain);
       }
     if (rc != FAIL) return rc;     /* OK or DEFER */
@@ -641,7 +641,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
         {
         dnslist_domain = domain_txt ? string_copy_perm(domain_txt, FALSE) :NULL;
         dnslist_matched = keydomain ? string_copy_perm(keydomain, FALSE) : NULL;
-        HDEBUG(D_dnsbl) debug_printf("=> that means %s is listed at %s\n",
+        HDEBUG(dnsbl) debug_printf("=> that means %s is listed at %s\n",
           keydomain, dnslist_domain);
         return OK;
         }

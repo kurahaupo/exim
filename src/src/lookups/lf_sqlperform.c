@@ -55,7 +55,7 @@ int rc;
 uschar * server;
 BOOL defer_break = FALSE;
 
-DEBUG(D_lookup) debug_printf_indent("%s query: %q opts '%s'\n", name, query, opts);
+DEBUG(lookup) debug_printf_indent("%s query: %q opts '%s'\n", name, query, opts);
 
 /* Handle queries that do have server information at the start (old style). */
 

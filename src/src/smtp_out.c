@@ -180,7 +180,7 @@ if (done_once) return;
 	 && tinfo.__tcpi_unacked > 0
 	 )
 	{
-	DEBUG(D_transport|D_v)
+	DEBUG(transport|v)
 	 debug_printf("TCP_FASTOPEN tcpi_unacked %d\n", tinfo.__tcpi_unacked);
 	tcp_out_fastopen = TFO_USED_NODATA;
 	}
@@ -227,7 +227,7 @@ if (done_once) return;
 	 && tinfo.tcpi_unacked > 1
 	 )
 	{
-	DEBUG(D_transport|D_v)
+	DEBUG(transport|v)
 	  debug_printf("TCP_FASTOPEN tcpi_unacked %d\n", tinfo.tcpi_unacked);
 	tcp_out_fastopen = TFO_USED_NODATA;
 	}
@@ -248,12 +248,12 @@ if (done_once) return;
 	{
 	if (tinfo.tcpi_options & TCPI_OPT_SYN_DATA)
 	  {
-	  DEBUG(D_transport|D_v) debug_printf("TFO: data was acked\n");
+	  DEBUG(transport|v) debug_printf("TFO: data was acked\n");
 	  tcp_out_fastopen = TFO_USED_DATA;
 	  }
 	else
 	  {
-	  DEBUG(D_transport|D_v) debug_printf("TFO: had to retransmit\n");
+	  DEBUG(transport|v) debug_printf("TFO: had to retransmit\n");
 	  tcp_out_fastopen = TFO_NOT_USED;
 	  }
 	done_once = TRUE;
@@ -284,7 +284,7 @@ if ((sock = ip_socket(SOCK_STREAM, sc->host_af)) < 0)
 /* Set TCP_NODELAY; Exim does its own buffering. */
 
 if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, US &on, sizeof(on)))
-  HDEBUG(D_transport|D_acl|D_v)
+  HDEBUG(transport|acl|v)
     debug_printf_indent("failed to set NODELAY: %s ", strerror(errno));
 
 #ifdef SUPPORT_DSCP
@@ -316,7 +316,7 @@ if (sc->interface)
      || getsockname(sock, (struct sockaddr *) &interface_sock, &size) < 0
      )
     {
-    HDEBUG(D_transport|D_acl|D_v)
+    HDEBUG(transport|acl|v)
       debug_printf_indent("unable to bind outgoing SMTP call to %s: %s\n", sc->interface,
 	strerror(errno));
     close(sock);
@@ -380,7 +380,7 @@ if (!save_errno)
 # ifdef TCP_FASTOPEN_CONNECT
     else
       {						/* expecting client data */
-      DEBUG(D_transport|D_acl|D_v) debug_printf(" set up lazy-connect\n");
+      DEBUG(transport|acl|v) debug_printf(" set up lazy-connect\n");
       setsockopt(sock, IPPROTO_TCP, TCP_FASTOPEN_CONNECT, US &on, sizeof(on));
       /* fastopen_blob = NULL;		 lazy TFO, triggered by data write */
       tcp_out_fastopen = TFO_ATTEMPTED_DATA;
@@ -395,7 +395,7 @@ if (!save_errno)
   else if (early_data && !fastopen_blob && early_data->data && early_data->len)
     {
     /* We had some early-data to send, but couldn't do TFO */
-    HDEBUG(D_transport|D_acl|D_v)
+    HDEBUG(transport|acl|v)
       debug_printf("sending %ld nonTFO early-data\n", (long)early_data->len);
 
 #ifdef TCP_QUICKACK_notdef
@@ -420,7 +420,7 @@ if (!save_errno)
 
   /* Both bind() and connect() succeeded, and any early-data */
 
-  HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("connected\n");
+  HDEBUG(transport|acl|v) debug_printf_indent("connected\n");
   if (getsockname(sock, (struct sockaddr *)(&interface_sock), &size) == 0)
     sending_ip_address = host_ntoa(-1, &interface_sock, NULL, &sending_port);
   else
@@ -440,7 +440,7 @@ if (!save_errno)
 
 /* Either bind() or connect() failed */
 
-HDEBUG(D_transport|D_acl|D_v)
+HDEBUG(transport|acl|v)
   {
   debug_printf_indent(" sock_connect failed: %s", CUstrerror(save_errno));
   if (save_errno == ETIMEDOUT)
@@ -462,7 +462,7 @@ smtp_port_for_connect(host_item * host, int tpt_port)
 if (host->port == PORT_NONE)
   host->port = tpt_port;    /* Set the port actually used */
 
-else HDEBUG(D_transport|D_acl|D_v) if (tpt_port != host->port)
+else HDEBUG(transport|acl|v) if (tpt_port != host->port)
   debug_printf_indent("Transport port=%d replaced by host-specific port=%d\n",
 		      tpt_port, host->port);
 }
@@ -494,7 +494,7 @@ smtp_transport_options_block * ob = sc->ob;
 
 callout_address = string_sprintf("[%s]:%d", sc->host->address, sc->host->port);
 
-HDEBUG(D_transport|D_acl|D_v)
+HDEBUG(transport|acl|v)
   {
   gstring * g = sc->interface
     ? string_fmt_append(NULL, " from %s", sc->interface)
@@ -554,7 +554,7 @@ BOOL more = mode == SCMD_MORE;
 client_conn_ctx * cctx;
 const uschar * where;
 
-HDEBUG(D_transport|D_acl) debug_printf_indent("cmd buf flush %d bytes%s\n", n,
+HDEBUG(transport|acl) debug_printf_indent("cmd buf flush %d bytes%s\n", n,
   more ? " (more expected)" : "");
 
 if (!(cctx = outblock->cctx))
@@ -614,7 +614,7 @@ else
 
 if (rc <= 0)
   {
-  HDEBUG(D_transport|D_acl) debug_printf_indent("%s (fd %d) failed: %s\n",
+  HDEBUG(transport|acl) debug_printf_indent("%s (fd %d) failed: %s\n",
     where, cctx->sock, strerror(errno));
   return FALSE;
   }
@@ -783,7 +783,7 @@ for (;;)
 
   if((rc = ip_recv(cctx, inblock->buffer, inblock->buffersize, timelimit)) <= 0)
     {
-    DEBUG(D_deliver|D_transport|D_acl|D_v)
+    DEBUG(deliver|transport|acl|v)
       debug_printf_indent(errno ? "  SMTP(%s)<<\n" : "  SMTP(closed)<<\n",
 	strerror(errno));
     break;
@@ -794,7 +794,7 @@ for (;;)
 
   ptrend = inblock->ptrend = inblock->buffer + rc;
   ptr = inblock->buffer;
-  DEBUG(D_transport|D_acl) debug_printf_indent("read response data: size=%d\n", rc);
+  DEBUG(transport|acl) debug_printf_indent("read response data: size=%d\n", rc);
   }
 
 /* Get here if there has been some kind of recv() error; errno is set, but we
@@ -851,7 +851,7 @@ if (sx->pending_BANNER || sx->pending_EHLO)
   int rc;
   if ((rc = smtp_reap_early_pipe(sx, &count)) != OK)
     {
-    DEBUG(D_transport) debug_printf("failed reaping pipelined cmd responsess\n");
+    DEBUG(transport) debug_printf("failed reaping pipelined cmd responsess\n");
     if (rc == DEFER) errno = ERRNO_TLSFAILURE;
     goto out;
     }
@@ -866,7 +866,7 @@ for (;;)
   if ((count = read_response_line(&sx->inblock, ptr, size, timelimit)) < 0)
     return FALSE;
 
-  HDEBUG(D_transport|D_acl|D_v)
+  HDEBUG(transport|acl|v)
     debug_printf_indent("  %s %s\n", ptr == buffer ? "SMTP<<" : "      ", ptr);
 
   /* Check the format of the response: it must start with three digits; if

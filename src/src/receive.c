@@ -296,7 +296,7 @@ if (check_spool_space > 0 || msg_size > 0 || check_spool_inodes > 0)
   {
   int_eximarith_t space = receive_statvfs(TRUE, &inodes);
 
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf("spool directory space = " PR_EXIM_ARITH "K inodes = %d "
       "check_space = " PR_EXIM_ARITH "K inodes = %d msg_size = %d\n",
       space, inodes, check_spool_space, check_spool_inodes, msg_size);
@@ -314,7 +314,7 @@ if (check_log_space > 0 || check_log_inodes > 0)
   {
   int_eximarith_t space = receive_statvfs(FALSE, &inodes);
 
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf("log directory space = " PR_EXIM_ARITH "K inodes = %d "
       "check_space = " PR_EXIM_ARITH "K inodes = %d\n",
       space, inodes, check_log_space, check_log_inodes);
@@ -586,7 +586,7 @@ Returns:      TRUE if it did remove something; FALSE otherwise
 BOOL
 receive_remove_recipient(const uschar * recipient)
 {
-DEBUG(D_receive) debug_printf("receive_remove_recipient(%q) called\n",
+DEBUG(receive) debug_printf("receive_remove_recipient(%q) called\n",
   recipient);
 for (int count = 0; count < recipients_count; count++)
   if (Ustrcmp(recipients_list[count].address, recipient) == 0)
@@ -1008,11 +1008,11 @@ for(;;)
 
       if (linelength == -1)    /* \r already seen (see below) */
         {
-        DEBUG(D_receive) debug_printf("Add missing LF\n");
+        DEBUG(receive) debug_printf("Add missing LF\n");
         bdat_ungetc('\n');
         continue;
         }
-      DEBUG(D_receive) debug_printf("Add missing CRLF\n");
+      DEBUG(receive) debug_printf("Add missing CRLF\n");
       bdat_ungetc('\r');      /* not even \r was seen */
       fix_nl = TRUE;
 
@@ -1087,7 +1087,7 @@ int ch;
 
 /* Remember that this message uses wireformat. */
 
-DEBUG(D_receive) debug_printf("CHUNKING: %s\n",
+DEBUG(receive) debug_printf("CHUNKING: %s\n",
 	fout ? "writing spoolfile in wire format" : "flushing input");
 f.spool_file_wireformat = TRUE;
 
@@ -1197,7 +1197,7 @@ static void
 give_local_error(int errcode, uschar *text1, uschar *text2, int error_rc,
   FILE *f, header_line *hptr)
 {
-DEBUG(D_all) debug_printf("%s%s\n", text2, text1);
+DEBUG(all) debug_printf("%s%s\n", text2, text1);
 
 if (error_handling == ERRORS_SENDER)
   {
@@ -1259,7 +1259,7 @@ switch(where)
 
 if (acl_removed_headers)
   {
-  DEBUG(D_receive|D_acl) debug_printf_indent(">>Headers removed by %s ACL:\n", acl_name);
+  DEBUG(receive|acl) debug_printf_indent(">>Headers removed by %s ACL:\n", acl_name);
 
   for (header_line * h = header_list; h; h = h->next) if (h->type != htype_old)
     {
@@ -1278,15 +1278,15 @@ if (acl_removed_headers)
 	 )
 	{
 	h->type = htype_old;
-	DEBUG(D_receive|D_acl) debug_printf_indent("  %s", h->text);
+	DEBUG(receive|acl) debug_printf_indent("  %s", h->text);
 	}
     }
   acl_removed_headers = NULL;
-  DEBUG(D_receive|D_acl) debug_printf_indent(">>\n");
+  DEBUG(receive|acl) debug_printf_indent(">>\n");
   }
 
 if (!acl_added_headers) return;
-DEBUG(D_receive|D_acl) debug_printf_indent(">>Headers added by %s ACL:\n", acl_name);
+DEBUG(receive|acl) debug_printf_indent(">>Headers added by %s ACL:\n", acl_name);
 
 for (header_line * h = acl_added_headers, * next; h; h = next)
   {
@@ -1297,7 +1297,7 @@ for (header_line * h = acl_added_headers, * next; h; h = next)
     case htype_add_top:
       h->next = header_list;
       header_list = h;
-      DEBUG(D_receive|D_acl) debug_printf_indent("  (at top)");
+      DEBUG(receive|acl) debug_printf_indent("  (at top)");
       break;
 
     case htype_add_rec:
@@ -1312,7 +1312,7 @@ for (header_line * h = acl_added_headers, * next; h; h = next)
 	}
       h->next = last_received->next;
       last_received->next = h;
-      DEBUG(D_receive|D_acl) debug_printf_indent("  (after Received:)");
+      DEBUG(receive|acl) debug_printf_indent("  (after Received:)");
       break;
 
     case htype_add_rfc:
@@ -1327,13 +1327,13 @@ for (header_line * h = acl_added_headers, * next; h; h = next)
 	 of all headers. Our current header must follow it. */
       h->next = last_received->next;
       last_received->next = h;
-      DEBUG(D_receive|D_acl) debug_printf_indent("  (before any non-Received: or Resent-*: header)");
+      DEBUG(receive|acl) debug_printf_indent("  (before any non-Received: or Resent-*: header)");
       break;
 
     default:
       h->next = NULL;
       header_last->next = h;
-      DEBUG(D_receive|D_acl) debug_printf_indent("  ");
+      DEBUG(receive|acl) debug_printf_indent("  ");
       break;
     }
 
@@ -1348,11 +1348,11 @@ for (header_line * h = acl_added_headers, * next; h; h = next)
   h->type = header_checkname(h, FALSE);
   if (h->type >= 'a') h->type = htype_other;
 
-  DEBUG(D_receive|D_acl) debug_printf("%s", h->text);
+  DEBUG(receive|acl) debug_printf("%s", h->text);
   }
 
 acl_added_headers = NULL;
-DEBUG(D_receive|D_acl) debug_printf_indent(">>\n");
+DEBUG(receive|acl) debug_printf_indent(">>\n");
 }
 
 
@@ -1482,11 +1482,11 @@ for (header_line * my_headerlist = header_list; my_headerlist;
      && strncmpic(my_headerlist->text, US"Content-Type:", 13) == 0
      )
     {
-    DEBUG(D_receive) debug_printf("Found Content-Type: header - executing acl_smtp_mime.\n");
+    DEBUG(receive) debug_printf("Found Content-Type: header - executing acl_smtp_mime.\n");
     goto DO_MIME_ACL;
     }
 
-DEBUG(D_receive) debug_printf("No Content-Type: header - presumably not a MIME message.\n");
+DEBUG(receive) debug_printf("No Content-Type: header - presumably not a MIME message.\n");
 return TRUE;
 
 DO_MIME_ACL:
@@ -1539,7 +1539,7 @@ if (rc == OK)
     if (strncmpic(US entry->d_name, US"__rfc822_", 9) == 0)
       {
       rfc822_file_path = string_sprintf("%s/%s", scandir, entry->d_name);
-      DEBUG(D_receive)
+      DEBUG(receive)
 	debug_printf("RFC822 attachment detected: running MIME ACL for '%s'\n",
 	  rfc822_file_path);
       break;
@@ -1633,7 +1633,7 @@ else
 
 received_header->slen = Ustrlen(received_header->text);
 
-DEBUG(D_receive) debug_printf(">>Generated Received: header line\n%c %s",
+DEBUG(receive) debug_printf(">>Generated Received: header line\n%c %s",
   received_header->type, received_header->text);
 }
 
@@ -2265,7 +2265,7 @@ OVERSIZE:
 
     if (isspace(*p))
       {
-      DEBUG(D_receive) debug_printf("WARNING: bad header line "
+      DEBUG(receive) debug_printf("WARNING: bad header line "
 	      " (starts with whitespace).  Assuming first line of body\n");
 #ifndef DISABLE_DKIM
       f.dkim_disable_verify = TRUE;	/* This could be a DKIM-bypass attack */
@@ -2275,7 +2275,7 @@ OVERSIZE:
     while (mac_isgraph(*p) && *p != ':') p++;
     if (Uskip_whitespace(&p) != ':')
       {
-      DEBUG(D_receive) debug_printf("WARNING: bad header line"
+      DEBUG(receive) debug_printf("WARNING: bad header line"
 	      " (no colon).  Assuming first line of body\n");
 #ifndef DISABLE_DKIM
       f.dkim_disable_verify = TRUE;
@@ -2395,7 +2395,7 @@ we are going to generate a bit later on. If next != NULL, it contains the first
 data line - which terminated the headers before reaching a blank line (not the
 normal case). */
 
-DEBUG(D_receive)
+DEBUG(receive)
   {
   debug_printf(">>Headers received:\n");
   acl_level++;
@@ -2494,7 +2494,7 @@ for (header_line * h = header_list->next; h; h = h->next)
 	      originator_login, qualify_domain_sender);
 	    from_header = header_last;
 	    h->type = htype_old;
-	    DEBUG(D_receive|D_rewrite)
+	    DEBUG(receive|rewrite)
 	      debug_printf("rewrote \"%s:\" header using gecos\n", name);
 	   }
 	  }
@@ -2927,13 +2927,13 @@ if (LOGGING(received_recipients))
 recipients will get here only if the conditions were right (allow_unqualified_
 recipient is TRUE). */
 
-DEBUG(D_rewrite)
+DEBUG(rewrite)
   { debug_printf_indent("qualify & rewrite recipients list\n"); acl_level++; }
 for (int i = 0; i < recipients_count; i++)
   recipients_list[i].address =	/* deconst ok as src was not cont */
     US rewrite_address(recipients_list[i].address, TRUE, TRUE,
       global_rewrite_rules, rewrite_existflags);
-DEBUG(D_rewrite) acl_level--;
+DEBUG(rewrite) acl_level--;
 
 /* If there is no From: header, generate one for local (without
 suppress_local_fixups) or submission_mode messages. If there is no sender
@@ -3105,17 +3105,17 @@ if (  from_header
 /* If there are any rewriting rules, apply them to the sender address, unless
 it has already been rewritten as part of verification for SMTP input. */
 
-DEBUG(D_rewrite)
+DEBUG(rewrite)
   { debug_printf("rewrite rules on sender address\n"); acl_level++; }
 if (global_rewrite_rules && !sender_address_unrewritten && *sender_address)
   {
   /* deconst ok as src was not const */
   sender_address = US rewrite_address(sender_address, FALSE, TRUE,
     global_rewrite_rules, rewrite_existflags);
-  DEBUG(D_receive|D_rewrite)
+  DEBUG(receive|rewrite)
     debug_printf("rewritten sender = %s\n", sender_address);
   }
-DEBUG(D_rewrite) acl_level--;
+DEBUG(rewrite) acl_level--;
 
 
 /* The headers must be run through rewrite_header(), because it ensures that
@@ -3132,13 +3132,13 @@ We start at the second header, skipping our own Received:. This rewriting is
 documented as happening *after* recipient addresses are taken from the headers
 by the -t command line option. An added Sender: gets rewritten here. */
 
-DEBUG(D_rewrite)
+DEBUG(rewrite)
   { debug_printf("qualify and rewrite headers\n"); acl_level++; }
 for (header_line * h = header_list->next, * newh; h; h = h->next)
   if ((newh = rewrite_header(h, NULL, NULL, global_rewrite_rules,
 			      rewrite_existflags, TRUE)))
     h = newh;
-DEBUG(D_rewrite) acl_level--;
+DEBUG(rewrite) acl_level--;
 
 
 /* An RFC 822 (sic) message is not legal unless it has at least one of "to",
@@ -3169,7 +3169,7 @@ search_tidyup();    /* Free any cached resources */
 /* Show the complete set of headers if debugging. Note that the first one (the
 new Received:) has not yet been set. */
 
-DEBUG(D_receive)
+DEBUG(receive)
   {
   debug_printf(">>Headers after rewriting and local additions:\n");
   acl_level++;
@@ -3227,7 +3227,7 @@ to access it both via a file descriptor and a stdio stream. Try to make the
 directory if it isn't there. */
 
 spool_name = spool_fname(US"input", message_subdir, message_id, US"-D");
-DEBUG(D_receive) debug_printf("Data file name: %s\n", spool_name);
+DEBUG(receive) debug_printf("Data file name: %s\n", spool_name);
 
 if ((data_fd = Uopen(spool_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE)) < 0)
   {
@@ -3414,7 +3414,7 @@ if (fflush(spool_data_file) == EOF || ferror(spool_data_file) ||
 
 /* No I/O errors were encountered while writing the data file. */
 
-DEBUG(D_receive) debug_printf("Data file written for message %s\n", message_id);
+DEBUG(receive) debug_printf("Data file written for message %s\n", message_id);
 gettimeofday(&received_time_complete, NULL);
 
 
@@ -3431,7 +3431,7 @@ syntactically good recipient address.) */
 
 if (extract_recip && (bad_addresses || recipients_count == 0))
   {
-  DEBUG(D_receive)
+  DEBUG(receive)
     {
     if (recipients_count == 0) debug_printf("*** No recipients\n");
     if (bad_addresses)
@@ -3619,7 +3619,7 @@ else
 	  const uschar * addr = recipients_list[c].address;
 	  uschar * msg= US"PRDR R=<%s> %s";
 	  uschar * code;
-	  DEBUG(D_receive)
+	  DEBUG(receive)
 	    debug_printf("PRDR processing recipient %s (%d of %d)\n",
 			 addr, c+1, recipients_count);
 	  rc = acl_check(ACL_WHERE_PRDR, addr,
@@ -3805,7 +3805,7 @@ if (sigsetjmp(local_scan_env, 1) == 0)
   os_non_restarting_signal(SIGILL, local_scan_crash_handler);
   os_non_restarting_signal(SIGBUS, local_scan_crash_handler);
 
-  DEBUG(D_receive) debug_printf("calling local_scan(); timeout=%d\n",
+  DEBUG(receive) debug_printf("calling local_scan(); timeout=%d\n",
     local_scan_timeout);
   local_scan_data = NULL;
 
@@ -3819,7 +3819,7 @@ if (sigsetjmp(local_scan_env, 1) == 0)
   f.enable_dollar_recipients = FALSE;
 
   store_pool = POOL_MAIN;   /* In case changed */
-  DEBUG(D_receive) debug_printf("local_scan() returned %d %s\n", rc,
+  DEBUG(receive) debug_printf("local_scan() returned %d %s\n", rc,
     local_scan_data);
 
   os_non_restarting_signal(SIGSEGV, SIG_DFL);
@@ -3899,8 +3899,7 @@ multiline SMTP responses. */
 
 else
   {
-  uschar *istemp = US"";
-  uschar *smtp_code;
+  uschar * istemp = US"", * smtp_code;
   gstring * g;
 
   errmsg = local_scan_data;
@@ -3909,12 +3908,12 @@ else
   switch(rc)
     {
     default:
-      log_write(0, LOG_MAIN, "invalid return %d from local_scan(). Temporary "
-	"rejection given", rc);
+      log_write(0, LOG_MAIN,
+	"invalid return %d from local_scan(). Temporary rejection given", rc);
       goto TEMPREJECT;
 
     case LOCAL_SCAN_REJECT_NOLOGHDR:
-      BIT_CLEAR(log_selector, log_selector_size, Li_rejected_header);
+      logging_modify_channels(US"-rejected_header");
       /* Fall through */
 
     case LOCAL_SCAN_REJECT:
@@ -3923,7 +3922,7 @@ else
       break;
 
     case LOCAL_SCAN_TEMPREJECT_NOLOGHDR:
-      BIT_CLEAR(log_selector, log_selector_size, Li_rejected_header);
+      logging_modify_channels(US"-rejected_header");
       /* Fall through */
 
     case LOCAL_SCAN_TEMPREJECT:
@@ -3974,7 +3973,7 @@ if (fake_response != OK)
   for (recipient_item * r = recipients_list;
        r < recipients_list + recipients_count; r++)
     {
-    DEBUG(D_receive) if (r->dsn_flags & (rf_notify_success | rf_notify_delay))
+    DEBUG(receive) if (r->dsn_flags & (rf_notify_success | rf_notify_delay))
       debug_printf("DSN: clearing flags due to fake-response for message\n");
     r->dsn_flags = r->dsn_flags & ~(rf_notify_success | rf_notify_delay)
 		    | rf_notify_never;
@@ -4431,7 +4430,7 @@ NOT_ACCEPTED:
   message_id[0] = 0;			/* Indicate no message accepted */
 
 TIDYUP:
-DEBUG(D_receive) debug_printf("%s: tidyup\n", __FUNCTION__);
+DEBUG(receive) debug_printf("%s: tidyup\n", __FUNCTION__);
 
 process_info[process_info_len] = 0;			/* Remove message id */
 if (spool_data_file && cutthrough_done == NOT_TRIED)
@@ -4600,5 +4599,5 @@ return yield;  /* TRUE if more messages (SMTP only) */
 }
 
 /* End of receive.c */
-/* vi: se aw ai sw=2
+/* vi: aw ai sw=2
 */

@@ -69,15 +69,14 @@ Returns:         if CEE_RETURN_ARGV is given, returns a pointer to argv;
 */
 
 uschar **
-child_exec_exim(int exec_type, BOOL kill_v, int *pcount, BOOL minimal,
+child_exec_exim(int exec_type, BOOL kill_v, int * pcount, BOOL minimal,
   int acount, ...)
 {
-int first_special = -1;
-int n = 0;
-int extra = pcount ? *pcount : 0;
+int first_special = -1, n = 0, extra = pcount ? *pcount : 0;
 uschar **argv;
 
-argv = store_get((extra + acount + MAX_CLMACROS + 24) * sizeof(char *), GET_UNTAINTED);
+argv = store_get((extra + acount + MAX_CLMACROS + 24) * sizeof(char *),
+		 GET_UNTAINTED);
 
 /* In all case, the list starts out with the path, any macros, and a changed
 config file. */
@@ -99,15 +98,11 @@ was involved, so we do pass it on. */
 
 if (!minimal)
   {
-  if (debug_selector == D_v)
-    {
-    if (!kill_v) argv[n++] = US"-v";
-    }
-  else
-    {
-    if (debug_selector != 0)
+  if (ANY_DEBUG)
+    if (DEBUG_BIT(BIT_TABLE_IDX_NONVERB))
       {
-      argv[n++] = string_sprintf("-d=0x" PR_EXIM_BITMASK, debug_selector);
+      argv[n++] = string_from_gstring(debug_selector_dump(NULL));
+
       if (debug_fd > 2)
 	{
 	int flags = fcntl(debug_fd, F_GETFD);
@@ -117,12 +112,14 @@ if (!minimal)
 	close(debug_fd);
 	}
       }
-    }
+    else
+      if (!kill_v) argv[n++] = US"-v";
+
   if (debug_pretrigger_buf)
     { argv[n++] = US"-dp"; argv[n++] = string_sprintf("0x%x", debug_pretrigger_bsize); }
   if (dtrigger_selector != 0)
     argv[n++] = string_sprintf("-dt=0x%x", dtrigger_selector);
-  DEBUG(D_any)
+  DEBUG(any)
     {
     argv[n++] = US"-MCd";
     argv[n++] = US process_purpose;
@@ -163,7 +160,7 @@ if (exec_type == CEE_RETURN_ARGV)
 failure. We know that there will always be at least one extra option in the
 call when exec() is done here, so it can be used to add to the panic data. */
 
-DEBUG(D_exec) debug_print_argv(CUSS argv);
+DEBUG(exec) debug_print_argv(CUSS argv);
 exim_nullstd();                            /* Make sure std{in,out,err} exist */
 execv(CS argv[0], (char *const *)argv);
 
@@ -379,14 +376,14 @@ if (pid == 0)
 
   if (newgid && setgid(*newgid) < 0)
     {
-    DEBUG(D_any) debug_printf("failed to set gid=%ld in subprocess: %s\n",
+    DEBUG(any) debug_printf("failed to set gid=%ld in subprocess: %s\n",
       (long int)(*newgid), strerror(errno));
     goto CHILD_FAILED;
     }
 
   if (newuid && setuid(*newuid) < 0)
     {
-    DEBUG(D_any) debug_printf("failed to set uid=%ld in subprocess: %s\n",
+    DEBUG(any) debug_printf("failed to set uid=%ld in subprocess: %s\n",
       (long int)(*newuid), strerror(errno));
     goto CHILD_FAILED;
     }
@@ -395,7 +392,7 @@ if (pid == 0)
 
   if (wd && Uchdir(wd) < 0)
     {
-    DEBUG(D_any) debug_printf("failed to chdir to %s: %s\n", wd,
+    DEBUG(any) debug_printf("failed to chdir to %s: %s\n", wd,
       strerror(errno));
     goto CHILD_FAILED;
     }
@@ -407,7 +404,7 @@ if (pid == 0)
 
   if (make_leader && setpgid(0,0) < 0)
     {
-    DEBUG(D_any) debug_printf("failed to set group leader in subprocess: %s\n",
+    DEBUG(any) debug_printf("failed to set group leader in subprocess: %s\n",
       strerror(errno));
     goto CHILD_FAILED;
     }
@@ -555,3 +552,5 @@ return yield;
 }
 
 /* End of child.c */
+/* vi: aw ai sw=2
+*/

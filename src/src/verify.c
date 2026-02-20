@@ -51,7 +51,7 @@ dbdata_callout_cache *cache_record;
 
 if (!(cache_record = dbfn_read_with_length(dbm_file, key, &length)))
   {
-  HDEBUG(D_verify) debug_printf_indent("callout cache: no %s record found for %s\n", type, key);
+  HDEBUG(verify) debug_printf_indent("callout cache: no %s record found for %s\n", type, key);
   return NULL;
   }
 
@@ -65,7 +65,7 @@ now = time(NULL);
 
 if (now - cache_record->gen.time_stamp > expire)
   {
-  HDEBUG(D_verify) debug_printf_indent("callout cache: %s record expired for %s\n", type, key);
+  HDEBUG(verify) debug_printf_indent("callout cache: %s record expired for %s\n", type, key);
   return NULL;
   }
 
@@ -92,7 +92,7 @@ if (type[0] == 'd' && cache_record->result != ccache_reject)
     cache_record->random_result = ccache_unknown;
   }
 
-HDEBUG(D_verify) debug_printf_indent("callout cache: found %s record for %s\n", type, key);
+HDEBUG(verify) debug_printf_indent("callout cache: found %s record for %s\n", type, key);
 return cache_record;
 }
 
@@ -119,11 +119,11 @@ stage, unless caching has been disabled. */
 
 if (options & vopt_callout_no_cache)
   {
-  HDEBUG(D_verify) debug_printf_indent("callout cache: disabled by no_cache\n");
+  HDEBUG(verify) debug_printf_indent("callout cache: disabled by no_cache\n");
   }
 else if (!(dbm_file = dbfn_open(US"callout", O_RDWR|O_CREAT, &dbblock, FALSE, TRUE)))
   {
-  HDEBUG(D_verify) debug_printf_indent("callout cache: not available\n");
+  HDEBUG(verify) debug_printf_indent("callout cache: not available\n");
   }
 else
   {
@@ -153,7 +153,7 @@ else
     if (  cache_record->result == ccache_reject
        || *from_address == 0 && cache_record->result == ccache_reject_mfnull)
       {
-      HDEBUG(D_verify)
+      HDEBUG(verify)
 	debug_printf_indent("callout cache: domain gave initial rejection, or "
 	  "does not accept HELO or MAIL FROM:<>\n");
       setflag(addr, af_verify_nsfail);
@@ -174,14 +174,14 @@ else
     if (options & vopt_callout_random) switch(cache_record->random_result)
       {
       case ccache_accept:
-	HDEBUG(D_verify)
+	HDEBUG(verify)
 	  debug_printf_indent("callout cache: domain accepts random addresses\n");
 	*failure_ptr = US"random";
 	dbfn_close(dbm_file);
 	return TRUE;     /* Default yield is OK */
 
       case ccache_reject:
-	HDEBUG(D_verify)
+	HDEBUG(verify)
 	  debug_printf_indent("callout cache: domain rejects random addresses\n");
 	*opt_ptr = options & ~vopt_callout_random;
 	new_domain_record->random_result = ccache_reject;
@@ -189,7 +189,7 @@ else
 	break;
 
       default:
-	HDEBUG(D_verify)
+	HDEBUG(verify)
 	  debug_printf_indent("callout cache: need to check random address handling "
 	    "(not cached or cache expired)\n");
 	dbfn_close(dbm_file);
@@ -206,7 +206,7 @@ else
       if (cache_record->postmaster_result == ccache_reject)
 	{
 	setflag(addr, af_verify_pmfail);
-	HDEBUG(D_verify)
+	HDEBUG(verify)
 	  debug_printf_indent("callout cache: domain does not accept "
 	    "RCPT TO:<postmaster@domain>\n");
 	*yield = FAIL;
@@ -218,7 +218,7 @@ else
 	}
       if (cache_record->postmaster_result == ccache_unknown)
 	{
-	HDEBUG(D_verify)
+	HDEBUG(verify)
 	  debug_printf_indent("callout cache: need to check RCPT "
 	    "TO:<postmaster@domain> (not cached or cache expired)\n");
 	dbfn_close(dbm_file);
@@ -230,7 +230,7 @@ else
       that the value in the cache record is preserved (with its old timestamp).
       */
 
-      HDEBUG(D_verify) debug_printf_indent("callout cache: domain accepts RCPT "
+      HDEBUG(verify) debug_printf_indent("callout cache: domain accepts RCPT "
 	"TO:<postmaster@domain>\n");
       *pm_ptr = NULL;
       new_domain_record->postmaster_result = ccache_accept;
@@ -253,12 +253,12 @@ else
 
   if (cache_address_record->result == ccache_accept)
     {
-    HDEBUG(D_verify)
+    HDEBUG(verify)
       debug_printf_indent("callout cache: address record is positive\n");
     }
   else
     {
-    HDEBUG(D_verify)
+    HDEBUG(verify)
       debug_printf_indent("callout cache: address record is negative\n");
     addr->user_message = US"Previous (cached) callout verification failure";
     *failure_ptr = US"recipient";
@@ -296,13 +296,13 @@ Otherwise the value is ccache_accept, ccache_reject, or ccache_reject_mfnull. */
 if (dom_rec->result != ccache_unknown)
   if (!(dbm_file = dbfn_open(US"callout", O_RDWR|O_CREAT, &dbblock, FALSE, TRUE)))
     {
-    HDEBUG(D_verify) debug_printf_indent("callout cache: not available\n");
+    HDEBUG(verify) debug_printf_indent("callout cache: not available\n");
     }
   else
     {
     (void)dbfn_write(dbm_file, domain, dom_rec,
       (int)sizeof(dbdata_callout_cache));
-    HDEBUG(D_verify) debug_printf_indent("wrote callout cache domain record for %s:\n"
+    HDEBUG(verify) debug_printf_indent("wrote callout cache domain record for %s:\n"
       "  result=%d postmaster=%d random=%d\n",
       domain,
       dom_rec->result,
@@ -319,13 +319,13 @@ if (done  &&  addr_rec->result != ccache_unknown)
     dbm_file = dbfn_open(US"callout", O_RDWR|O_CREAT, &dbblock, FALSE, TRUE);
   if (!dbm_file)
     {
-    HDEBUG(D_verify) debug_printf_indent("no callout cache available\n");
+    HDEBUG(verify) debug_printf_indent("no callout cache available\n");
     }
   else
     {
     (void)dbfn_write(dbm_file, address_key, addr_rec,
       (int)sizeof(dbdata_callout_cache_address));
-    HDEBUG(D_verify) debug_printf_indent("wrote %s callout cache address record for %s\n",
+    HDEBUG(verify) debug_printf_indent("wrote %s callout cache address record for %s\n",
       addr_rec->result == ccache_accept ? "positive" : "negative",
       address_key);
     }
@@ -389,7 +389,7 @@ if (addr->transport == cutthrough.addr.transport)
 
 	/* Match!  Send the RCPT TO, set done from the response */
 
-	DEBUG(D_verify)
+	DEBUG(verify)
 	  debug_printf("already-open verify connection matches recipient\n");
 
 	done =
@@ -418,7 +418,7 @@ if (addr->transport == cutthrough.addr.transport)
 	  cancel_cutthrough_connection(TRUE, US"recipient rejected");
 	  if (!resp || errno == ETIMEDOUT)
 	    {
-	    HDEBUG(D_verify) debug_printf("SMTP timeout\n");
+	    HDEBUG(verify) debug_printf("SMTP timeout\n");
 	    }
 	  else if (errno == 0)
 	    {
@@ -538,7 +538,7 @@ if (options & vopt_is_recipient)
       transport_instance * tp = addr->transport;
       from_address = addr->prop.errors_address
 		  ? addr->prop.errors_address : sender_address;
-      DEBUG(D_verify)
+      DEBUG(verify)
 	debug_printf(" return-path from routed addr: %s\n", from_address);
 
       GET_OPTION("return_path");
@@ -549,7 +549,7 @@ if (options & vopt_is_recipient)
 	  from_address = new_return_path;
 	else if (!f.expand_string_forcedfail)
 	  return DEFER;
-	DEBUG(D_verify)
+	DEBUG(verify)
 	  debug_printf(" return-path from transport: %s\n", from_address);
 	}
       }
@@ -587,7 +587,7 @@ if (cached_callout_lookup(addr, address_key, from_address,
 
 if (!addr->transport)
   {
-  HDEBUG(D_verify) debug_printf("cannot callout via null transport\n");
+  HDEBUG(verify) debug_printf("cannot callout via null transport\n");
   }
 
 else if (Ustrcmp(addr->transport->drinst.driver_name, "smtp") != 0)
@@ -665,7 +665,7 @@ coding means skipping this whole loop and doing the append separately.  */
 
     if (!host->address)
       {
-      DEBUG(D_verify) debug_printf("no IP address for host name %s: skipping\n",
+      DEBUG(verify) debug_printf("no IP address for host name %s: skipping\n",
         host->name);
       continue;
       }
@@ -674,7 +674,7 @@ coding means skipping this whole loop and doing the append separately.  */
 
     if (time(NULL) - callout_start_time >= callout_overall)
       {
-      HDEBUG(D_verify) debug_printf("overall timeout for callout exceeded\n");
+      HDEBUG(verify) debug_printf("overall timeout for callout exceeded\n");
       break;
       }
 
@@ -888,13 +888,13 @@ tls_retry_connection:
 				'2', callout)))
 	      break;
 
-	    HDEBUG(D_acl|D_v)
+	    HDEBUG(acl|v)
 	      debug_printf_indent("problem after random/rset/mfrom; reopen conn\n");
 	    random_local_part = NULL;
 #ifndef DISABLE_TLS
 	    tls_close(sx->cctx.tls_ctx, TLS_SHUTDOWN_NOWAIT);
 #endif
-	    HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP(close)>>\n");
+	    HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(close)>>\n");
 	    (void)close(sx->cctx.sock);
 	    sx->cctx.sock = -1;
 #ifndef DISABLE_EVENT
@@ -979,7 +979,7 @@ tls_retry_connection:
       for cutthrough.  But no way to handle a subsequent rcpt, so just
       refuse any */
       cancel_cutthrough_connection(TRUE, US"postmaster verify");
-      HDEBUG(D_acl|D_v) debug_printf_indent("Cutthrough cancelled by presence of postmaster verify\n");
+      HDEBUG(acl|v) debug_printf_indent("Cutthrough cancelled by presence of postmaster verify\n");
 
       done = smtp_write_command(sx, SCMD_FLUSH, "RSET\r\n") >= 0
           && smtp_read_response(sx, sx->buffer, sizeof(sx->buffer), '2', callout);
@@ -1040,7 +1040,7 @@ no_conn:
     switch(errno)
       {
       case ETIMEDOUT:
-	HDEBUG(D_verify) debug_printf("SMTP timeout\n");
+	HDEBUG(verify) debug_printf("SMTP timeout\n");
 	sx->send_quit = FALSE;
 	break;
 
@@ -1120,7 +1120,7 @@ no_conn:
       if (expand_string_nonempty(addr->transport->filter_command))
         {
         cutthrough.delivery= FALSE;
-        HDEBUG(D_acl|D_v) debug_printf("Cutthrough cancelled by presence of transport filter\n");
+        HDEBUG(acl|v) debug_printf("Cutthrough cancelled by presence of transport filter\n");
         }
 #ifndef DISABLE_DKIM
       /* DKIM signing needs to add a header after seeing the whole body, so we
@@ -1129,7 +1129,7 @@ no_conn:
       if (expand_string_nonempty(ob->dkim.dkim_domain))
         {
         cutthrough.delivery= FALSE;
-        HDEBUG(D_acl|D_v) debug_printf("Cutthrough cancelled by presence of DKIM signing\n");
+        HDEBUG(acl|v) debug_printf("Cutthrough cancelled by presence of DKIM signing\n");
         }
 #endif
 #ifdef EXPERIMENTAL_ARC
@@ -1137,7 +1137,7 @@ no_conn:
       if (expand_string_nonempty(ob->arc_sign))
         {
         cutthrough.delivery= FALSE;
-        HDEBUG(D_acl|D_v) debug_printf("Cutthrough cancelled by presence of ARC signing\n");
+        HDEBUG(acl|v) debug_printf("Cutthrough cancelled by presence of ARC signing\n");
         }
 #endif
       }
@@ -1153,7 +1153,7 @@ no_conn:
        && !sx->lmtp
        )
       {
-      HDEBUG(D_acl|D_v) debug_printf_indent("holding verify callout open for %s\n",
+      HDEBUG(acl|v) debug_printf_indent("holding verify callout open for %s\n",
 	cutthrough.delivery
 	? "cutthrough delivery" : "potential further verifies and delivery");
 
@@ -1217,7 +1217,7 @@ no_conn:
 	  sx->cctx.tls_ctx = NULL;
 	  }
 #endif
-	HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP(close)>>\n");
+	HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(close)>>\n");
 	(void)close(sx->cctx.sock);
 	sx->cctx.sock = -1;
 	smtp_debug_cmd_report();
@@ -1296,7 +1296,7 @@ int vopt, rc;
 get rewritten. */
 
 addr2 = *addr;
-HDEBUG(D_acl) debug_printf_indent("----------- %s cutthrough setup ------------\n",
+HDEBUG(acl) debug_printf_indent("----------- %s cutthrough setup ------------\n",
   rcpt_count > 1 ? "more" : "start");
 
 vopt = transport_sender
@@ -1307,7 +1307,7 @@ rc = verify_address(&addr2, -1, vopt, CUTTHROUGH_CMD_TIMEOUT, -1, -1,
 	NULL, NULL, NULL);
 addr->message = addr2.message;
 addr->user_message = addr2.user_message;
-HDEBUG(D_acl) debug_printf_indent("----------- end cutthrough setup ------------\n");
+HDEBUG(acl) debug_printf_indent("----------- end cutthrough setup ------------\n");
 return rc;
 }
 
@@ -1334,7 +1334,7 @@ if(
   return TRUE;
 }
 
-HDEBUG(D_transport|D_acl) debug_printf_indent("cutthrough_send failed: %s\n", strerror(errno));
+HDEBUG(transport|acl) debug_printf_indent("cutthrough_send failed: %s\n", strerror(errno));
 return FALSE;
 }
 
@@ -1489,7 +1489,7 @@ if(cutthrough.cctx.sock < 0 || cutthrough.callout_hold_only)
 /* We share a routine with the mainline transport to handle header add/remove/rewrites,
    but having a separate buffered-output function (for now)
 */
-HDEBUG(D_acl) debug_printf_indent("----------- start cutthrough headers send -----------\n");
+HDEBUG(acl) debug_printf_indent("----------- start cutthrough headers send -----------\n");
 
 tctx.u.fd = cutthrough.cctx.sock;
 tctx.tblock = cutthrough.addr.transport;
@@ -1502,7 +1502,7 @@ tctx.options = topt_use_crlf;
 if (!transport_headers_send(&tctx, &cutthrough_write_chunk))
   return FALSE;
 
-HDEBUG(D_acl) debug_printf_indent("----------- done cutthrough headers send ------------\n");
+HDEBUG(acl) debug_printf_indent("----------- done cutthrough headers send ------------\n");
 return TRUE;
 }
 
@@ -1536,10 +1536,10 @@ if(fd >= 0)
     cutthrough.is_tls = FALSE;
     }
 #endif
-  HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP(close)>>\n");
+  HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(close)>>\n");
   (void)close(fd);
   smtp_debug_cmd_report();
-  HDEBUG(D_acl) debug_printf_indent("----------- cutthrough shutdown (%s) ------------\n", why);
+  HDEBUG(acl) debug_printf_indent("----------- cutthrough shutdown (%s) ------------\n", why);
   }
 ctctx.outblock.ptr = ctbuffer;
 }
@@ -1557,7 +1557,7 @@ void
 release_cutthrough_connection(const uschar * why)
 {
 if (cutthrough.cctx.sock < 0) return;
-HDEBUG(D_acl) debug_printf_indent("release cutthrough conn: %s\n", why);
+HDEBUG(acl) debug_printf_indent("release cutthrough conn: %s\n", why);
 cutthrough.cctx.sock = -1;
 cutthrough.cctx.tls_ctx = NULL;
 cutthrough.delivery = cutthrough.callout_hold_only = FALSE;
@@ -1575,7 +1575,7 @@ uschar *
 cutthrough_finaldot(void)
 {
 uschar res;
-HDEBUG(D_transport|D_acl|D_v) debug_printf_indent("  SMTP>> .\n");
+HDEBUG(transport|acl|v) debug_printf_indent("  SMTP>> .\n");
 
 /* Assume data finshed with new-line */
 if(  !cutthrough_puts(US".", 1)
@@ -1745,7 +1745,7 @@ verify_address(address_item * vaddr, int fd, int options, int callout,
   uschar * pm_mailfrom, BOOL * routed)
 {
 BOOL allok = TRUE;
-BOOL full_info = fd >= 0 ? debug_selector != 0 : FALSE;
+BOOL full_info = fd >= 0 ? ANY_DEBUG : FALSE;
 BOOL expn         = (options & vopt_expn) != 0;
 BOOL success_on_redirect = (options & vopt_success_on_redirect) != 0;
 int i;
@@ -1792,7 +1792,7 @@ if (parse_find_at(address) == NULL)
   address = US rewrite_address_qualify(address, options & vopt_is_recipient);
   }
 
-DEBUG(D_verify)
+DEBUG(verify)
   {
   debug_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
   debug_printf("%s %s\n", f.address_test_mode? "Testing" : "Verifying", address);
@@ -1864,7 +1864,7 @@ while (addr_new)
   addr_new = addr->next;
   addr->next = NULL;
 
-  DEBUG(D_verify)
+  DEBUG(verify)
     {
     debug_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     debug_printf("Considering %s\n", addr->address);
@@ -2036,11 +2036,11 @@ while (addr_new)
 
       if (host_list)
         {
-        HDEBUG(D_verify)
+        HDEBUG(verify)
 	  debug_printf("Attempting full verification using callout\n");
         if (host_checking && !f.host_checking_callout)
           {
-          HDEBUG(D_verify)
+          HDEBUG(verify)
             debug_printf("... callout omitted by default when host testing\n"
               "(Use -bhc if you want the callouts to happen.)\n");
           }
@@ -2061,14 +2061,14 @@ while (addr_new)
         }
       else if (local_verify)
 	{
-        HDEBUG(D_verify) debug_printf("Attempting quota verification\n");
+        HDEBUG(verify) debug_printf("Attempting quota verification\n");
 
 	deliver_set_expansions(addr);
 	deliver_local(addr, TRUE);
 	rc = addr->transport_return;
 	}
       else
-        HDEBUG(D_verify) debug_printf("Cannot do callout: neither router nor "
+        HDEBUG(verify) debug_printf("Cannot do callout: neither router nor "
           "transport provided a host list, or transport is not smtp\n");
       }
     }
@@ -2675,7 +2675,7 @@ for (int i = 0; i < 3 && !done; i++)
       while (isspace(es[-1])) es--;
       ss = *es ? string_copyn(s, es - s) : s;
 
-      HDEBUG(D_verify) debug_printf("verifying %.*s header address %s\n",
+      HDEBUG(verify) debug_printf("verifying %.*s header address %s\n",
         (int)(endname - h->text), h->text, ss);
 
       /* See if we have already verified this address as an envelope sender,
@@ -2688,7 +2688,7 @@ for (int i = 0; i < 3 && !done; i++)
 	     || vaddr->special_action > 256))	/* Callout was done */
         {
         new_ok = vaddr->special_action & 255;
-        HDEBUG(D_verify) debug_printf("previously checked as envelope sender\n");
+        HDEBUG(verify) debug_printf("previously checked as envelope sender\n");
         }
 
       /* Otherwise we run the verification now. We must restore the shortened
@@ -2819,7 +2819,7 @@ sender_ident = NULL;
 if (rfc1413_query_timeout <= 0 || verify_check_host(&rfc1413_hosts) != OK)
   return;
 
-DEBUG(D_ident) debug_printf("doing ident callback\n");
+DEBUG(ident) debug_printf("doing ident callback\n");
 
 /* Set up a connection to the ident port of the remote host. Bind the local end
 to the incoming interface address. If the sender host address is an IPv6
@@ -2830,7 +2830,7 @@ if ((ident_conn_ctx.sock = ip_socket(SOCK_STREAM, host_af)) < 0) return;
 
 if (ip_bind(ident_conn_ctx.sock, host_af, interface_address, 0) < 0)
   {
-  DEBUG(D_ident) debug_printf("bind socket for ident failed: %s\n",
+  DEBUG(ident) debug_printf("bind socket for ident failed: %s\n",
     strerror(errno));
   goto END_OFF;
   }
@@ -2850,7 +2850,7 @@ if (ip_connect(ident_conn_ctx.sock, host_af, sender_host_address, port,
     log_write(0, LOG_MAIN, "ident connection to %s timed out",
       sender_host_address);
   else
-    DEBUG(D_ident) debug_printf("ident connection to %s failed: %s\n",
+    DEBUG(ident) debug_printf("ident connection to %s failed: %s\n",
       sender_host_address, strerror(errno));
   goto END_OFF;
   }
@@ -2929,7 +2929,7 @@ or Received: lines into which it gets inserted. We keep a maximum of 127
 characters. The deconst cast is ok as we fed a nonconst to string_printing() */
 
 sender_ident = US string_printing(string_copyn(p, 127));
-DEBUG(D_ident) debug_printf("sender_ident = %s\n", sender_ident);
+DEBUG(ident) debug_printf("sender_ident = %s\n", sender_ident);
 
 END_OFF:
 (void)close(ident_conn_ctx.sock);
@@ -3252,7 +3252,7 @@ do a check on the name and all its aliases. */
 
 if (!sender_host_name)
   {
-  HDEBUG(D_host_lookup)
+  HDEBUG(host_lookup)
     debug_printf_indent("sender host name required, to match against %s\n", ss);
   expand_level++;
   if (host_lookup_failed || host_name_lookup() != OK)
@@ -3518,7 +3518,7 @@ if ((rc = verify_address(&vaddr, -1, vopt_is_recipient | vopt_quota,
     where, '\0', msg);
   }
 
-DEBUG(D_verify) debug_printf_indent("verify_quota: len %d\n", len);
+DEBUG(verify) debug_printf_indent("verify_quota: len %d\n", len);
 if (write(1, msg, len) != 0) ;
 return;
 }
@@ -3542,7 +3542,7 @@ if (!pos_cache && !neg_cache)
   return FALSE;
 if (!(dbm_file = dbfn_open(US"callout", O_RDWR|O_CREAT, &dbblock, FALSE, TRUE)))
   {
-  HDEBUG(D_verify) debug_printf_indent("quota cache: not available\n");
+  HDEBUG(verify) debug_printf_indent("quota cache: not available\n");
   return FALSE;
   }
 if (!(cache_address_record = (dbdata_callout_cache_address *)
@@ -3570,7 +3570,7 @@ if (!pos_cache && !neg_cache)
   return;
 if (!(dbm_file = dbfn_open(US"callout", O_RDWR|O_CREAT, &dbblock, FALSE, TRUE)))
   {
-  HDEBUG(D_verify) debug_printf_indent("quota cache: not available\n");
+  HDEBUG(verify) debug_printf_indent("quota cache: not available\n");
   return;
   }
 
@@ -3578,7 +3578,7 @@ cache_address_record.result = yield == OK ? ccache_accept : ccache_reject;
 
 (void)dbfn_write(dbm_file, rcpt, &cache_address_record,
 	(int)sizeof(dbdata_callout_cache_address));
-HDEBUG(D_verify) debug_printf_indent("wrote %s quota cache record for %s\n",
+HDEBUG(verify) debug_printf_indent("wrote %s quota cache record for %s\n",
       yield == OK ? "positive" : "negative", rcpt);
 
 dbfn_close(dbm_file);
@@ -3613,7 +3613,7 @@ const uschar * where = US"socketpair";
 
 if (cached_quota_lookup(rcpt, &yield, pos_cache, neg_cache))
   {
-  HDEBUG(D_verify) debug_printf_indent("quota cache: address record is %s\n",
+  HDEBUG(verify) debug_printf_indent("quota cache: address record is %s\n",
     yield == OK ? "positive" : "negative");
   if (yield != OK)
     {
@@ -3656,7 +3656,7 @@ close(pfd[pipe_write]);
 
 if (pid < 0)
   {
-  DEBUG(D_verify) debug_printf_indent(" fork: %s\n", strerror(save_errno));
+  DEBUG(verify) debug_printf_indent(" fork: %s\n", strerror(save_errno));
   }
 else
   {
@@ -3679,19 +3679,19 @@ else
 	m > 0 ? string_copyn_taint(s, m, GET_UNTAINTED) : NULL;
       }
 
-    DEBUG(D_verify) debug_printf_indent("verify call response:"
+    DEBUG(verify) debug_printf_indent("verify call response:"
       " len %d yield %s errno '%s' where '%s' msg '%s'\n",
       n, rc_names[yield], strerror(save_errno), recipient_verify_failure, *msg);
 
     if (  yield == OK
        || save_errno == 0 && Ustrcmp(recipient_verify_failure, "quota") == 0)
       cache_quota_write(rcpt, yield, pos_cache, neg_cache);
-    else DEBUG(D_verify)
+    else DEBUG(verify)
       debug_printf_indent("result not cacheable\n");
     }
   else
     {
-    DEBUG(D_verify)
+    DEBUG(verify)
       debug_printf_indent("verify call response: waitpid status 0x%04x\n", status);
     }
   }
@@ -3702,7 +3702,7 @@ errno = save_errno;
 return yield;
 
 fail:
-DEBUG(D_verify) debug_printf_indent("verify_quota_call fail in %s\n", where);
+DEBUG(verify) debug_printf_indent("verify_quota_call fail in %s\n", where);
 return yield;
 }
 

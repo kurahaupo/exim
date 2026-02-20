@@ -48,9 +48,9 @@ dkt_send_file(int out_fd, int in_fd, off_t off
   )
 {
 #ifdef OS_SENDFILE
-DEBUG(D_transport) debug_printf("send file fd=%d size=%u\n", out_fd, (unsigned)(size - off));
+DEBUG(transport) debug_printf("send file fd=%d size=%u\n", out_fd, (unsigned)(size - off));
 #else
-DEBUG(D_transport) debug_printf("send file fd=%d\n", out_fd);
+DEBUG(transport) debug_printf("send file fd=%d\n", out_fd);
 #endif
 
 /*XXX should implement timeout, like transport_write_block_fd() ? */
@@ -163,7 +163,7 @@ int hsize;
 const uschar * errstr;
 BOOL rc;
 
-DEBUG(D_transport) debug_printf("dkim signing direct-mode\n");
+DEBUG(transport) debug_printf("dkim signing direct-mode\n");
 
 /* Get headers in string for signing and transmission.  Do CRLF
 and dotstuffing (but no body nor dot-termination) */
@@ -266,7 +266,7 @@ const uschar * errstr;
 dkim_spool_name = spool_fname(US"input", message_subdir, message_id,
 		    string_sprintf("-" PID_T_FMT "-K", getpid()));
 
-DEBUG(D_transport) debug_printf("dkim signing via file %s\n", dkim_spool_name);
+DEBUG(transport) debug_printf("dkim signing via file %s\n", dkim_spool_name);
 
 if ((dkim_fd = Uopen(dkim_spool_name, O_RDWR|O_CREAT|O_TRUNC, SPOOL_MODE)) < 0)
   {

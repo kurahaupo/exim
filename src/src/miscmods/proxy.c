@@ -40,7 +40,7 @@ if (  sender_host_address
    && verify_check_this_host(CUSS &hosts_proxy, NULL, NULL,
                            sender_host_address, NULL) == OK)
   {
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf("Detected proxy protocol configured host\n");
   /* having this set when we could still fail is ugly */
   proxy_session = TRUE;
@@ -228,7 +228,7 @@ do
 
 if (ret == -1)
   goto proxyfail;
-DEBUG(D_receive) proxy_debug(US &hdr, 0, ret);
+DEBUG(receive) proxy_debug(US &hdr, 0, ret);
 
 /* For v2, handle reading the length, and then the rest. */
 if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
@@ -236,7 +236,7 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
   int retmore;
   uint8_t ver;
 
-  DEBUG(D_receive) debug_printf("v2\n");
+  DEBUG(receive) debug_printf("v2\n");
 
   /* First get the length fields. */
   do
@@ -245,7 +245,7 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
     } while (retmore == -1 && errno == EINTR && !had_command_timeout);
   if (retmore == -1)
     goto proxyfail;
-  DEBUG(D_receive) proxy_debug(US &hdr, ret, ret + retmore);
+  DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
 
   ret += retmore;
 
@@ -258,13 +258,13 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
 
   if (ver != 0x02)
     {
-    DEBUG(D_receive) debug_printf("Invalid Proxy Protocol version: %d\n", ver);
+    DEBUG(receive) debug_printf("Invalid Proxy Protocol version: %d\n", ver);
     goto proxyfail;
     }
 
   /* The v2 header will always be 16 bytes per the spec. */
   size = 16 + ntohs(hdr.v2.len);
-  DEBUG(D_receive) debug_printf("Detected PROXYv2 header, size %d (limit %d)\n",
+  DEBUG(receive) debug_printf("Detected PROXYv2 header, size %d (limit %d)\n",
       size, (int)sizeof(hdr));
 
   /* We should now have 16 octets (PROXY_V2_HEADER_SIZE), and we know the total
@@ -272,7 +272,7 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
   get the rest. */
   if (size > sizeof(hdr))
     {
-    DEBUG(D_receive) debug_printf("PROXYv2 header size unreasonably large; security attack?\n");
+    DEBUG(receive) debug_printf("PROXYv2 header size unreasonably large; security attack?\n");
     goto proxyfail;
     }
 
@@ -284,9 +284,9 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
       } while (retmore == -1 && errno == EINTR && !had_command_timeout);
     if (retmore == -1)
       goto proxyfail;
-    DEBUG(D_receive) proxy_debug(US &hdr, ret, ret + retmore);
+    DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
     ret += retmore;
-    DEBUG(D_receive) debug_printf("PROXYv2: have %d/%d required octets\n", ret, size);
+    DEBUG(receive) debug_printf("PROXYv2: have %d/%d required octets\n", ret, size);
     } while (ret < size);
 
   } /* end scope for getting rest of data for v2 */
@@ -310,7 +310,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
           inet_ntop(AF_INET, &tmpaddr.sin_addr, CS &tmpip, sizeof(tmpip));
           if (!string_is_ip_address(US tmpip, NULL))
             {
-            DEBUG(D_receive) debug_printf("Invalid %s source IP\n", iptype);
+            DEBUG(receive) debug_printf("Invalid %s source IP\n", iptype);
             goto proxyfail;
             }
           proxy_local_address = sender_host_address;
@@ -323,7 +323,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
           inet_ntop(AF_INET, &tmpaddr.sin_addr, CS &tmpip, sizeof(tmpip));
           if (!string_is_ip_address(US tmpip, NULL))
             {
-            DEBUG(D_receive) debug_printf("Invalid %s dest port\n", iptype);
+            DEBUG(receive) debug_printf("Invalid %s dest port\n", iptype);
             goto proxyfail;
             }
           proxy_external_address = string_copy(US tmpip);
@@ -336,7 +336,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
           inet_ntop(AF_INET6, &tmpaddr6.sin6_addr, CS &tmpip6, sizeof(tmpip6));
           if (!string_is_ip_address(US tmpip6, NULL))
             {
-            DEBUG(D_receive) debug_printf("Invalid %s source IP\n", iptype);
+            DEBUG(receive) debug_printf("Invalid %s source IP\n", iptype);
             goto proxyfail;
             }
           proxy_local_address = sender_host_address;
@@ -349,7 +349,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
           inet_ntop(AF_INET6, &tmpaddr6.sin6_addr, CS &tmpip6, sizeof(tmpip6));
           if (!string_is_ip_address(US tmpip6, NULL))
             {
-            DEBUG(D_receive) debug_printf("Invalid %s dest port\n", iptype);
+            DEBUG(receive) debug_printf("Invalid %s dest port\n", iptype);
             goto proxyfail;
             }
           proxy_external_address = string_copy(US tmpip6);
@@ -357,7 +357,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
           proxy_external_port  = tmpport;
           goto done;
         default:
-          DEBUG(D_receive)
+          DEBUG(receive)
             debug_printf("Unsupported PROXYv2 connection type: 0x%02x\n",
                          hdr.v2.fam);
           goto proxyfail;
@@ -369,7 +369,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
       iptype = US"local";
       break;
     default:
-      DEBUG(D_receive)
+      DEBUG(receive)
         debug_printf("Unsupported PROXYv2 command: 0x%x\n", cmd);
       goto proxyfail;
     }
@@ -394,19 +394,19 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
 
   if (!end || (end == US &hdr + ret) || end[1] != '\n')
     {
-    DEBUG(D_receive) debug_printf("Partial or invalid PROXY header\n");
+    DEBUG(receive) debug_printf("Partial or invalid PROXY header\n");
     goto proxyfail;
     }
   *end = '\0'; /* Terminate the string */
   size = end + 2 - p; /* Skip header + CRLF */
-  DEBUG(D_receive) debug_printf("Detected PROXYv1 header\n");
-  DEBUG(D_receive) debug_printf("Bytes read not within PROXY header: %d\n", ret - size);
+  DEBUG(receive) debug_printf("Detected PROXYv1 header\n");
+  DEBUG(receive) debug_printf("Bytes read not within PROXY header: %d\n", ret - size);
   /* Step through the string looking for the required fields. Ensure
   strict adherence to required formatting, exit for any error. */
   p += 5;
   if (!isspace(*p++))
     {
-    DEBUG(D_receive) debug_printf("Missing space after PROXY command\n");
+    DEBUG(receive) debug_printf("Missing space after PROXY command\n");
     goto proxyfail;
     }
   if (!Ustrncmp(p, CCS"TCP4", 4))
@@ -420,27 +420,27 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
     }
   else
     {
-    DEBUG(D_receive) debug_printf("Invalid TCP type\n");
+    DEBUG(receive) debug_printf("Invalid TCP type\n");
     goto proxyfail;
     }
 
   p += Ustrlen(iptype);
   if (!isspace(*p++))
     {
-    DEBUG(D_receive) debug_printf("Missing space after TCP4/6 command\n");
+    DEBUG(receive) debug_printf("Missing space after TCP4/6 command\n");
     goto proxyfail;
     }
   /* Find the end of the arg */
   if ((sp = Ustrchr(p, ' ')) == NULL)
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("Did not find proxied src %s\n", iptype);
     goto proxyfail;
     }
   *sp = '\0';
   if(!string_is_ip_address(p, NULL))
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("Proxied src arg is not an %s address\n", iptype);
     goto proxyfail;
     }
@@ -449,14 +449,14 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
   p = sp + 1;
   if ((sp = Ustrchr(p, ' ')) == NULL)
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("Did not find proxy dest %s\n", iptype);
     goto proxyfail;
     }
   *sp = '\0';
   if(!string_is_ip_address(p, NULL))
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("Proxy dest arg is not an %s address\n", iptype);
     goto proxyfail;
     }
@@ -464,14 +464,14 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
   p = sp + 1;
   if ((sp = Ustrchr(p, ' ')) == NULL)
     {
-    DEBUG(D_receive) debug_printf("Did not find proxied src port\n");
+    DEBUG(receive) debug_printf("Did not find proxied src port\n");
     goto proxyfail;
     }
   *sp = '\0';
   tmp_port = strtol(CCS p, &endc, 10);
   if (*endc || tmp_port == 0)
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("Proxied src port '%s' not an integer\n", p);
     goto proxyfail;
     }
@@ -480,13 +480,13 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
   p = sp + 1;
   if ((sp = Ustrchr(p, '\0')) == NULL)
     {
-    DEBUG(D_receive) debug_printf("Did not find proxy dest port\n");
+    DEBUG(receive) debug_printf("Did not find proxy dest port\n");
     goto proxyfail;
     }
   tmp_port = strtol(CCS p, &endc, 10);
   if (*endc || tmp_port == 0)
     {
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("Proxy dest port '%s' not an integer\n", p);
     goto proxyfail;
     }
@@ -496,13 +496,13 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
 else
   {
   /* Wrong protocol */
-  DEBUG(D_receive) debug_printf("Invalid proxy protocol version negotiation\n");
+  DEBUG(receive) debug_printf("Invalid proxy protocol version negotiation\n");
   (void) swallow_until_crlf(smtp_in_fd, US &hdr, ret, sizeof(hdr)-ret);
   goto proxyfail;
   }
 
 done:
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf("Valid %s sender from Proxy Protocol header\n", iptype);
   yield = proxy_session;
 
@@ -512,7 +512,7 @@ should cause a synchronization failure */
 proxyfail:
 
   ALARM(0);
-  DEBUG(D_receive) if (had_command_timeout)
+  DEBUG(receive) if (had_command_timeout)
     debug_printf("Timeout while reading proxy header\n");
 
   if (yield)
@@ -522,7 +522,7 @@ proxyfail:
     host_build_sender_fullhost();
     }
   else
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf("Failure to extract proxied host, only QUIT allowed\n");
 
 return yield;

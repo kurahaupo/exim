@@ -772,8 +772,7 @@ compare(struct Sieve * filter, const gstring * needle, const gstring * haystack,
 {
 int r = 0;
 
-if (   (filter_test != FTEST_NONE && debug_selector != 0)
-   || (debug_selector & D_filter) != 0)
+if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
   {
   debug_printf_indent("String comparison (match ");
   switch (mt)
@@ -859,8 +858,7 @@ switch (mt)
       }
     break;
   }
-if ((filter_test != FTEST_NONE && debug_selector != 0) ||
-  (debug_selector & D_filter) != 0)
+if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
   debug_printf_indent("  Result %s\n", r?"true":"false");
 return r;
 }
@@ -976,15 +974,14 @@ for (new_addr = *generated; new_addr; new_addr = new_addr->next)
 	)
      )
     {
-    if (  filter_test != FTEST_NONE && debug_selector != 0
-       || (debug_selector & D_filter) != 0)
+    if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
       debug_printf_indent("Repeated %s `%s' ignored.\n",
 			  file ? "fileinto" : "redirect", addr);
 
     return;
     }
 
-if ((filter_test != FTEST_NONE && debug_selector != 0) || (debug_selector & D_filter) != 0)
+if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
   debug_printf_indent("%s `%s'\n", file ? "fileinto" : "redirect", addr);
 
 new_addr = deliver_make_addr(addr, TRUE);
@@ -2680,8 +2677,7 @@ while (*filter->pc)
       filter->errmsg = CUS "missing test";
       return -1;
       }
-    if ((filter_test != FTEST_NONE && debug_selector != 0) ||
-        (debug_selector & D_filter) != 0)
+    if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
       {
       if (exec) debug_printf_indent("if %s\n", cond?"true":"false");
       }
@@ -2710,8 +2706,7 @@ while (*filter->pc)
           filter->errmsg = CUS "missing test";
           return -1;
           }
-        if ((filter_test != FTEST_NONE && debug_selector != 0) ||
-            (debug_selector & D_filter) != 0)
+	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
           {
           if (exec) debug_printf_indent("elsif %s\n", cond?"true":"false");
           }
@@ -3060,16 +3055,16 @@ while (*filter->pc)
               (void)child_close(pid, 0);
               }
             }
-          if ((filter_test != FTEST_NONE && debug_selector != 0) || debug_selector & D_filter)
+	  if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
             debug_printf_indent("Notification to `%s': '%s'.\n", method.s, message.ptr != -1 ? message.s : CUS "");
 #endif
           }
         else
-          if ((filter_test != FTEST_NONE && debug_selector != 0) || debug_selector & D_filter)
+	  if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
             debug_printf_indent("Repeated notification to `%s' ignored.\n", method.s);
         }
       else
-        if ((filter_test != FTEST_NONE && debug_selector != 0) || debug_selector & D_filter)
+	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
           debug_printf_indent("Ignoring notification, triggering message contains Auto-submitted: field.\n");
       }
     }
@@ -3262,7 +3257,7 @@ while (*filter->pc)
         for (int i = 0; i < 16; i++)
 	  sprintf(CS (hexdigest+2*i), "%02X", digest[i]);
 
-        if ((filter_test != FTEST_NONE && debug_selector != 0) || (debug_selector & D_filter) != 0)
+	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
           debug_printf_indent("Sieve: mail was personal, vacation file basename: %s\n", hexdigest);
 
         if (filter_test == FTEST_NONE)
@@ -3341,7 +3336,7 @@ while (*filter->pc)
             }
           }
         }
-        else if ((filter_test != FTEST_NONE && debug_selector != 0) || (debug_selector & D_filter) != 0)
+	else if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
           debug_printf_indent("Sieve: mail was not personal, vacation would ignore it\n");
       }
     }
@@ -3534,7 +3529,7 @@ struct Sieve sieve;
 int r;
 uschar * msg;
 
-DEBUG(D_route) debug_printf_indent("Sieve: start of processing\n");
+DEBUG(route) debug_printf_indent("Sieve: start of processing\n");
 expand_level++;
 sieve.filter = filter;
 
@@ -3609,7 +3604,7 @@ if (filter_test != FTEST_NONE) printf("%s\n", (const char*) msg);
 #endif
 
 expand_level--;
-DEBUG(D_route) debug_printf_indent("Sieve: end of processing\n");
+DEBUG(route) debug_printf_indent("Sieve: end of processing\n");
 return r;
 }
 
@@ -3643,3 +3638,5 @@ misc_module_info sieve_filter_module_info =
 };
 
 /* End of sieve_filter.c */
+/* vi: aw ai sw=2
+*/

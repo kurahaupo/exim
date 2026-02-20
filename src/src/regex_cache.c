@@ -52,7 +52,7 @@ int rlen = sizeof(re_req) + klen;
 re_req * req;
 int fd, old_pool = store_pool;
 
-DEBUG(D_regex)
+DEBUG(regex)
   debug_printf_indent("sending RE '%s' to daemon\n", key);
 
 store_pool = POOL_MAIN;
@@ -68,11 +68,11 @@ if ((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) >= 0)
   ssize_t len = daemon_notifier_sockname(&sa_un);
 
   if (sendto(fd, req, rlen, 0, (struct sockaddr *)&sa_un, (socklen_t)len) < 0)
-    DEBUG(D_regex)
+    DEBUG(regex)
       debug_printf("%s: sendto %s\n", __FUNCTION__, strerror(errno));
   close(fd);
   }
-else DEBUG(D_regex) debug_printf(" socket: %s\n", strerror(errno));
+else DEBUG(regex) debug_printf(" socket: %s\n", strerror(errno));
 }
 
 
@@ -81,7 +81,7 @@ regex_from_cache(const uschar * key, BOOL caseless)
 {
 tree_node * node  =
   tree_search(caseless ? regex_caseless_cache : regex_cache, key);
-DEBUG(D_regex)
+DEBUG(regex)
   debug_printf_indent("compiled %sRE '%s' %sfound in local cache\n",
 		      caseless ? "caseless " : "", key, node ? "" : "not ");
 
@@ -99,8 +99,8 @@ Ustrcpy(node->name, key);
 node->data.ptr = (void *)cre;
 
 if (!tree_insertnode(caseless ? &regex_caseless_cache : &regex_cache, node))
-  { DEBUG(D_regex) debug_printf_indent("duplicate key!\n"); }
-else DEBUG(D_regex)
+  { DEBUG(regex) debug_printf_indent("duplicate key!\n"); }
+else DEBUG(regex)
   debug_printf_indent("compiled RE '%s' saved in local cache\n", key);
 
 /* Additionally, if not re-execed and not the daemon, tell the daemon of the RE
@@ -204,7 +204,7 @@ if (  flags & MCS_CACHEABLE
    && (yield = regex_from_cache(key, caseless)))
   return yield;
 
-DEBUG(D_regex) debug_printf_indent("compiling %sRE '%s'\n",
+DEBUG(regex) debug_printf_indent("compiling %sRE '%s'\n",
 				caseless ? "caseless " : "", pattern);
 
 store_pool = POOL_PERM;
@@ -246,6 +246,6 @@ else if ((cre = regex_compile(req->re,
 	    &errstr, pcre_gen_cmp_ctx)))
   regex_cachesize++;
 
-DEBUG(D_any) if (!cre) debug_printf("%s\n", errstr);
+DEBUG(any) if (!cre) debug_printf("%s\n", errstr);
 return;
 }

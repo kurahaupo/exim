@@ -142,7 +142,7 @@ static void
 unlink_notifier_socket(void)
 {
 #ifndef EXIM_HAVE_ABSTRACT_UNIX_SOCKETS
-DEBUG(D_any) debug_printf("unlinking notifier socket %s\n", notifier_socket_name);
+DEBUG(any) debug_printf("unlinking notifier socket %s\n", notifier_socket_name);
 Uunlink(notifier_socket_name);
 #endif
 }
@@ -197,7 +197,7 @@ rmark reset_point = store_mark();
 the remote port. */
 
 sender_host_address = host_ntoa(-1, accepted, NULL, &sender_host_port);
-DEBUG(D_any) debug_printf("Connection request from %s port %d\n",
+DEBUG(any) debug_printf("Connection request from %s port %d\n",
   sender_host_address, sender_host_port);
 
 /* Set up the output stream, check the socket has duplicated, and set up the
@@ -226,7 +226,7 @@ if (getsockname(accept_socket, (struct sockaddr *)(&interface_sockaddr),
   }
 
 interface_address = host_ntoa(-1, &interface_sockaddr, NULL, &interface_port);
-DEBUG(D_interface) debug_printf("interface address=%s port=%d\n",
+DEBUG(interface) debug_printf("interface address=%s port=%d\n",
   interface_address, interface_port);
 
 /* Build a string identifying the remote host and, if requested, the port and
@@ -250,7 +250,7 @@ it might take some time. */
 
 if (smtp_accept_max > 0 && smtp_accept_count >= smtp_accept_max)
   {
-  DEBUG(D_any) debug_printf("rejecting SMTP connection: count=%d max=%d\n",
+  DEBUG(any) debug_printf("rejecting SMTP connection: count=%d max=%d\n",
     smtp_accept_count, smtp_accept_max);
   smtp_printf("421 Too many concurrent SMTP connections; "
     "please try again later.\r\n", SP_NO_MORE);
@@ -270,7 +270,7 @@ if (smtp_load_reserve >= 0)
   load_average = OS_GETLOADAVG();
   if (!smtp_reserve_hosts && load_average > smtp_load_reserve)
     {
-    DEBUG(D_any) debug_printf("rejecting SMTP connection: load average = %.2f\n",
+    DEBUG(any) debug_printf("rejecting SMTP connection: load average = %.2f\n",
       (double)load_average/1000.0);
     smtp_printf("421 Too much load; please try again later.\r\n", SP_NO_MORE);
     log_write(L_connection_reject,
@@ -339,7 +339,7 @@ if (  smtp_slots
 
   if (host_accept_count >= max_for_this_host)
     {
-    DEBUG(D_any) debug_printf("rejecting SMTP connection: too many from this "
+    DEBUG(any) debug_printf("rejecting SMTP connection: too many from this "
       "IP address: count=%d max=%d\n",
       host_accept_count, max_for_this_host);
     smtp_printf("421 Too many concurrent SMTP connections "
@@ -363,10 +363,8 @@ pid = exim_fork(US"daemon-accept");
 
 if (pid == 0)
   {
-  int queue_only_reason = 0;
-  int old_pool = store_pool;
-  bitmask_word_t save_debug_selector = debug_selector;
-  BOOL local_queue_only,  session_local_queue_only;
+  int queue_only_reason = 0, old_pool = store_pool;
+  BOOL is_any_debug = FALSE, local_queue_only, session_local_queue_only;
 #ifdef SA_NOCLDWAIT
   struct sigaction act;
 #endif
@@ -390,8 +388,9 @@ if (pid == 0)
   if (LOGGING(smtp_connection))
     {
     const uschar * list = hosts_connection_nolog;
+
     if (list && verify_check_host(&list) == OK)
-      log_selector[0] &= ~L_smtp_connection;	/*XXX assumes word-of-bit */
+      logging_modify_channels(US"-smtp_connection");
     else if (LOGGING(connection_id))
       log_write(L_smtp_connection, LOG_MAIN, "SMTP connection from %Y "
 	"Ci=%s (TCP/IP connection count = %d)",
@@ -483,19 +482,27 @@ if (pid == 0)
   finding the id, but turn it on again afterwards so that information about the
   incoming connection is output. */
 
-  if (f.debug_daemon) debug_selector = 0;
+  if (f.debug_daemon)
+    {
+    is_any_debug = !!ANY_DEBUG;
+    bit_clear(debug_selector, BIT_TABLE_IDX_NONZERO);
+    }
+
   verify_get_ident(IDENT_PORT);
   host_build_sender_fullhost();
-  debug_selector = save_debug_selector;
 
-  DEBUG(D_any)
+  if (f.debug_daemon && is_any_debug)
+    bit_set(debug_selector, BIT_TABLE_IDX_NONZERO);
+
+  DEBUG(any)
     debug_printf("Process " PID_T_FMT " is handling incoming connection"
       " from %s\n", getpid(), sender_fullhost);
 
   /* Now disable debugging permanently if it's required only for the daemon
   process. */
 
-  if (f.debug_daemon) debug_selector = 0;
+  if (f.debug_daemon && is_any_debug)
+    bit_clear(debug_selector, BIT_TABLE_IDX_NONZERO);
 
   /* If there are too many child processes for immediate delivery,
   set the session_local_queue_only flag, which is initialized from the
@@ -533,7 +540,7 @@ if (pid == 0)
     message_id[0] = 0;            /* Clear out any previous message_id */
     reset_point = store_mark();   /* Save current store high water point */
 
-    DEBUG(D_any)
+    DEBUG(any)
       debug_printf("Process " PID_T_FMT " is ready for new message\n", getpid());
 
     /* Smtp_setup_msg() returns 0 on QUIT or if the call is from an
@@ -563,7 +570,7 @@ if (pid == 0)
 
       /*XXX should we pause briefly, hoping that the client will be the
       active TCP closer hence get the TCP_WAIT endpoint? */
-      DEBUG(D_receive) debug_printf("SMTP>>(close on process exit)\n");
+      DEBUG(receive) debug_printf("SMTP>>(close on process exit)\n");
       exim_underbar_exit(rc ? EXIT_FAILURE : EXIT_SUCCESS);
       }
 
@@ -582,7 +589,7 @@ if (pid == 0)
 
     /* Show the recipients when debugging */
 
-    DEBUG(D_receive)
+    DEBUG(receive)
       {
       if (sender_address)
         debug_printf("Sender: %s\n", sender_address);
@@ -717,8 +724,7 @@ if (pid == 0)
       if (dpid > 0)
         {
 	release_cutthrough_connection(US"passed for delivery");
-        DEBUG(D_any)
-	  debug_printf("forked delivery process " PID_T_FMT "\n", dpid);
+        DEBUG(any) debug_printf("forked delivery process " PID_T_FMT "\n", dpid);
         }
       else
 	{
@@ -751,7 +757,7 @@ else if (smtp_slots)
 		      smtp_accept_count, queue_run_count, daemon_process_info);
       break;
       }
-  DEBUG(D_any) debug_printf("%d SMTP accept process%s running\n",
+  DEBUG(any) debug_printf("%d SMTP accept process%s running\n",
     smtp_accept_count, smtp_accept_count == 1 ? "" : "es");
   }
 
@@ -879,7 +885,7 @@ pid_t pid;
 
 while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
   {
-  DEBUG(D_any)
+  DEBUG(any)
     {
     debug_printf("child %ld ended: status=0x%x\n", (long)pid, status);
 #ifdef WCOREDUMP
@@ -905,7 +911,7 @@ while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
           store_free(sp->host_address);
         *sp = empty_smtp_slot;
         if (--smtp_accept_count < 0) smtp_accept_count = 0;
-        DEBUG(D_any) debug_printf("%d SMTP accept process%s now running\n",
+        DEBUG(any) debug_printf("%d SMTP accept process%s now running\n",
           smtp_accept_count, smtp_accept_count == 1 ? "" : "es");
 	set_process_info("daemon(%s): [%d+%d] %s", version_string,
 		      smtp_accept_count, queue_run_count, daemon_process_info);
@@ -926,7 +932,7 @@ while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
         r->pid = 0;			/* free up the slot */
 
         if (--queue_run_count < 0) queue_run_count = 0;
-        DEBUG(D_any) debug_printf("%d queue-runner process%s now running\n",
+        DEBUG(any) debug_printf("%d queue-runner process%s now running\n",
           queue_run_count, queue_run_count == 1 ? "" : "es");
 	set_process_info("daemon(%s): [%d+%d] %s", version_string,
 		      smtp_accept_count, queue_run_count, daemon_process_info);
@@ -1053,7 +1059,7 @@ if (operation == PID_WRITE)
     if (base_fd < 0) goto cleanup;
     if (fchmod(base_fd, base_mode) != 0) goto cleanup;
     if (write(base_fd, pid_line, pid_len) != pid_len) goto cleanup;
-    DEBUG(D_any) debug_printf("pid written to %s\n", pid_file_path);
+    DEBUG(any) debug_printf("pid written to %s\n", pid_file_path);
     }
   }
 else
@@ -1090,7 +1096,7 @@ delete_pid_file(void)
 {
 const BOOL success = operate_on_pid_file(PID_DELETE, getppid());
 
-DEBUG(D_any)
+DEBUG(any)
   debug_printf("delete pid file %s %s: %s\n", pid_file_path,
     success ? "success" : "failure", strerror(errno));
 
@@ -1106,7 +1112,7 @@ daemon_die(void)
 {
 pid_t pid;
 
-DEBUG(D_any) debug_printf("SIGTERM/SIGINT seen\n");
+DEBUG(any) debug_printf("SIGTERM/SIGINT seen\n");
 #if !defined(DISABLE_TLS) && (defined(EXIM_HAVE_INOTIFY) || defined(EXIM_HAVE_KEVENT))
 tls_watch_invalidate();
 #endif
@@ -1184,22 +1190,22 @@ ssize_t len;
 
 if (!f.notifier_socket_en)
   {
-  DEBUG(D_any) debug_printf("-oY used so not creating notifier socket\n");
+  DEBUG(any) debug_printf("-oY used so not creating notifier socket\n");
   return;
   }
 if (override_local_interfaces && !override_pid_file_path)
   {
-  DEBUG(D_any)
+  DEBUG(any)
     debug_printf("-oX used without -oP so not creating notifier socket\n");
   return;
   }
 if (!notifier_socket || !*notifier_socket)
   {
-  DEBUG(D_any) debug_printf("no name for notifier socket\n");
+  DEBUG(any) debug_printf("no name for notifier socket\n");
   return;
   }
 
-DEBUG(D_any) debug_printf("creating notifier socket\n");
+DEBUG(any) debug_printf("creating notifier socket\n");
 
 #ifdef SOCK_CLOEXEC
 if ((fd = socket(PF_UNIX, SOCK_DGRAM|SOCK_CLOEXEC, 0)) < 0)
@@ -1213,9 +1219,9 @@ if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) < 0)
 len = daemon_notifier_sockname(&sa_un);
 
 #ifdef EXIM_HAVE_ABSTRACT_UNIX_SOCKETS
-DEBUG(D_any) debug_printf(" @%s\n", sa_un.sun_path+1);
+DEBUG(any) debug_printf(" @%s\n", sa_un.sun_path+1);
 #else			/* filesystem-visible and persistent; will neeed removal */
-DEBUG(D_any) debug_printf(" %s\n", sa_un.sun_path);
+DEBUG(any) debug_printf(" %s\n", sa_un.sun_path);
 #endif
 
 if (bind(fd, (const struct sockaddr *)&sa_un, (socklen_t)len) < 0)
@@ -1277,7 +1283,7 @@ if (sz >= sizeof(buf)) return;
 #ifdef notdef
 debug_printf("addrlen %d\n", msg.msg_namelen);
 #endif
-DEBUG(D_queue_run)
+DEBUG(queue_run)
   if (msg.msg_namelen > 0)
     {
     BOOL abstract = !*sa_un.sun_path;
@@ -1313,14 +1319,14 @@ for (struct cmsghdr * cp = CMSG_FIRSTHDR(&msg);
   struct ucred * cr = (struct ucred *) CMSG_DATA(cp);
   if (cr->uid && cr->uid != exim_uid)
     {
-    DEBUG(D_queue_run) debug_printf("%s: sender creds pid %ld uid %d gid %d\n",
+    DEBUG(queue_run) debug_printf("%s: sender creds pid %ld uid %d gid %d\n",
       __FUNCTION__, (long)cr->pid, (int)cr->uid, (int)cr->gid);
     }
 # elif defined(LOCAL_CREDS)				/* BSD-ish */
   struct sockcred * cr = (struct sockcred *) CMSG_DATA(cp);
   if (cr->sc_uid && cr->sc_uid != exim_uid)
     {
-    DEBUG(D_queue_run) debug_printf("%s: sender creds pid ??? uid %d gid %d\n",
+    DEBUG(queue_run) debug_printf("%s: sender creds pid ??? uid %d gid %d\n",
       __FUNCTION__, (int)cr->sc_uid, (int)cr->sc_gid);
     }
 # endif
@@ -1334,7 +1340,7 @@ switch (buf[0])
 #ifndef DISABLE_QUEUE_RAMP
   case NOTIFY_MSG_QRUN:
     /* this should be a message_id */
-    DEBUG(D_queue_run)
+    DEBUG(queue_run)
       debug_printf("%s: qrunner trigger: %s\n", __FUNCTION__, buf+1);
 
     memcpy(queuerun_msgid, buf+1, MESSAGE_ID_LENGTH+1);
@@ -1353,7 +1359,7 @@ switch (buf[0])
     uschar qsbuf[16];
     int len = snprintf(CS qsbuf, sizeof(qsbuf), "%u", queue_count_cached());
 
-    DEBUG(D_queue_run)
+    DEBUG(queue_run)
       debug_printf("%s: queue size request: %s\n", __FUNCTION__, qsbuf);
 
     if (sendto(daemon_notifier_fd, qsbuf, len, 0,
@@ -1379,7 +1385,7 @@ time_t resignal_interval = inetd_wait_timeout;
 
 if (last_connection_time == (time_t)0)
   {
-  DEBUG(D_any)
+  DEBUG(any)
     debug_printf("inetd wait timeout expired, but still not seen first message, ignoring\n");
   }
 else
@@ -1387,11 +1393,11 @@ else
   time_t now = time(NULL);
   if (now == (time_t)-1)
     {
-    DEBUG(D_any) debug_printf("failed to get time: %s\n", strerror(errno));
+    DEBUG(any) debug_printf("failed to get time: %s\n", strerror(errno));
     }
   else if ((now - last_connection_time) >= inetd_wait_timeout)
     {
-    DEBUG(D_any)
+    DEBUG(any)
       debug_printf("inetd wait timeout %d expired, ending daemon\n",
 	  inetd_wait_timeout);
     log_write(0, LOG_MAIN, "exim %s daemon terminating, inetd wait timeout reached.\n",
@@ -1455,7 +1461,7 @@ Return the number of seconds until the next due runner.
 static int
 daemon_qrun(int local_queue_run_max, struct pollfd * fd_polls, int listen_socket_count)
 {
-DEBUG(D_any) debug_printf("%s received\n",
+DEBUG(any) debug_printf("%s received\n",
 #ifndef DISABLE_QUEUE_RAMP
   *queuerun_msgid ? "qrun notification" :
 #endif
@@ -1509,7 +1515,8 @@ if (is_multiple_qrun())				/* we are managing periodic runs */
 	leave the above message, because it ties up with the "child ended"
 	debugging messages. */
 
-	if (f.debug_daemon) debug_selector = 0;
+	if (f.debug_daemon) debug_modify_channel(US"=0");
+;
 
 	/* Close any open listening sockets in the child */
 
@@ -1617,7 +1624,7 @@ if (is_multiple_qrun())				/* we are managing periodic runs */
 	    queue_run_count++;
 	    break;
 	    }
-	DEBUG(D_any) debug_printf("%d queue-runner process%s running\n",
+	DEBUG(any) debug_printf("%d queue-runner process%s running\n",
 	  queue_run_count, queue_run_count == 1 ? "" : "es");
 	set_process_info("daemon(%s): [%d+%d] %s", version_string,
 		      smtp_accept_count, queue_run_count, daemon_process_info);
@@ -1751,7 +1758,7 @@ process_purpose = US"daemon";
 /* If any debugging options are set, turn on the D_pid bit so that all
 debugging lines get the pid added. */
 
-DEBUG(D_any|D_v) debug_selector |= D_pid;
+DEBUG(any|v) debug_modify_channel(US"+pid");
 
 /* Get any requested dynamic-load modules loaded */
 
@@ -1789,7 +1796,7 @@ if (f.inetd_wait_mode)
     debug_logging_activate(US"-wait", NULL);
     }
 
-  DEBUG(D_any) debug_printf("running in inetd wait mode\n");
+  DEBUG(any) debug_printf("running in inetd wait mode\n");
 
   /* As per below, when creating sockets ourselves, we handle tcp_nodelay for
   our own buffering; we assume though that inetd set the socket REUSEADDR. */
@@ -1928,7 +1935,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
     if (new_smtp_port)
       {
       daemon_smtp_port = string_from_gstring(new_smtp_port);
-      DEBUG(D_any) debug_printf("daemon_smtp_port overridden by -oX:\n  %s\n",
+      DEBUG(any) debug_printf("daemon_smtp_port overridden by -oX:\n  %s\n",
         daemon_smtp_port);
       }
 
@@ -1936,7 +1943,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
       {
       local_interfaces = string_from_gstring(new_local_interfaces);
       local_iface_source = US"-oX data";
-      DEBUG(D_any) debug_printf("local_interfaces overridden by -oX:\n  %s\n",
+      DEBUG(any) debug_printf("local_interfaces overridden by -oX:\n  %s\n",
         local_interfaces);
       }
     }
@@ -2263,7 +2270,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
       if (ip_bind(fd, af, ipa->address, ipa->port) >= 0) break;
       if (check_special_case(errno, addresses, ipa, TRUE))
         {
-        DEBUG(D_any) debug_printf("wildcard IPv4 bind() failed after IPv6 "
+        DEBUG(any) debug_printf("wildcard IPv4 bind() failed after IPv6 "
           "listen() success; EADDRINUSE ignored\n");
         (void)close(fd);
         goto SKIP_SOCKET;
@@ -2286,7 +2293,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
       sleep(daemon_startup_sleep);
       }
 
-    DEBUG(D_any)
+    DEBUG(any)
       if (wildcard)
         debug_printf("listening on all interfaces (IPv%c) port %d\n",
           af == AF_INET6 ? '6' : '4', ipa->port);
@@ -2302,7 +2309,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
        && setsockopt(fd, IPPROTO_TCP, TCP_FASTOPEN,
 		    &smtp_connect_backlog, sizeof(smtp_connect_backlog)))
       {
-      DEBUG(D_any) debug_printf("setsockopt FASTOPEN: %s\n", strerror(errno));
+      DEBUG(any) debug_printf("setsockopt FASTOPEN: %s\n", strerror(errno));
       f.tcp_fastopen_ok = FALSE;
       }
 #endif
@@ -2312,7 +2319,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
       if (  f.tcp_fastopen_ok
 	 && setsockopt(fd, IPPROTO_TCP, TCP_FASTOPEN, &on, sizeof(on)))
 	{
-	DEBUG(D_any) debug_printf("setsockopt FASTOPEN: %s\n", strerror(errno));
+	DEBUG(any) debug_printf("setsockopt FASTOPEN: %s\n", strerror(errno));
 	f.tcp_fastopen_ok = FALSE;
 	}
 #endif
@@ -2332,7 +2339,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
 	? af == AF_INET6 ? US"(any IPv6)" : US"(any IPv4)" : ipa->address,
         strerror(errno));
 
-    DEBUG(D_any) debug_printf("wildcard IPv4 listen() failed after IPv6 "
+    DEBUG(any) debug_printf("wildcard IPv4 listen() failed after IPv6 "
       "listen() success; EADDRINUSE ignored\n");
     (void)close(fd);
 
@@ -2379,7 +2386,7 @@ if (f.running_in_test_harness || write_pid)
      || real_uid == root_uid
      || (real_uid == exim_uid && !override_pid_file_path)) ? PID_WRITE : PID_CHECK;
   if (!operate_on_pid_file(operation, getpid()))
-    DEBUG(D_any) debug_printf("%s pid file %s: %s\n",
+    DEBUG(any) debug_printf("%s pid file %s: %s\n",
 			      operation == PID_WRITE ? "write" : "check",
 			      pid_file_path, strerror(errno));
   }
@@ -2644,7 +2651,7 @@ closes the log afterwards, for the same reason. */
 
 log_close_all();
 
-DEBUG(D_any) debug_print_ids(US"daemon running with");
+DEBUG(any) debug_print_ids(US"daemon running with");
 
 /* Any messages accepted via this route are going to be SMTP. */
 
@@ -2691,7 +2698,7 @@ for (;;)
     int lcount;
     BOOL select_failed = FALSE;
 
-    DEBUG(D_any) debug_printf("Listening...\n");
+    DEBUG(any) debug_printf("Listening...\n");
 
     /* In rare cases we may have had a SIGCHLD signal in the time between
     setting the handler (below) and getting back here. If so, pretend that the
@@ -2786,7 +2793,7 @@ for (;;)
 	    if (  smtp_backlog_monitor > 0
 	       && getsockopt(p->fd, SOL_SOCKET, SO_LISTENQLEN, &backlog, &blen) == 0)
 	      {
-	      DEBUG(D_interface)
+	      DEBUG(interface)
 		debug_printf("listen fd %d queue curr %d\n", p->fd, backlog);
 	      smtp_listen_backlog = backlog;
 	      }
@@ -2801,7 +2808,7 @@ for (;;)
 	    if (  smtp_backlog_monitor > 0
 	       && getsockopt(p->fd, IPPROTO_TCP, TCP_INFO, &ti, &tlen) == 0)
 	      {
-	      DEBUG(D_interface) debug_printf("listen fd %d queue max %u curr %u\n",
+	      DEBUG(interface) debug_printf("listen fd %d queue max %u curr %u\n",
 		      p->fd, ti.tcpi_sacked, ti.tcpi_unacked);
 	      smtp_listen_backlog = ti.tcpi_unacked;
 	      }

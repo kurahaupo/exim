@@ -168,13 +168,13 @@ if (errno != EINVAL)
 /* not a symlink */
 s = string_copyn(filename, s - filename);	/* mem released by tls_set_watch */
 
-DEBUG(D_tls) debug_printf("watch dir '%s'\n", s);
+DEBUG(tls) debug_printf("watch dir '%s'\n", s);
 
 if (inotify_add_watch(tls_watch_fd, CCS s,
       IN_ONESHOT | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF
       | IN_MOVED_FROM | IN_MOVED_TO | IN_MOVE_SELF) >= 0)
   return TRUE;
-DEBUG(D_tls) debug_printf("notify_add_watch: %s\n", strerror(errno));
+DEBUG(tls) debug_printf("notify_add_watch: %s\n", strerror(errno));
 return FALSE;
 }
 # endif
@@ -207,7 +207,7 @@ for (;;)
     {
     if ((fd1 = open(CCS filename, O_RDONLY | O_NOFOLLOW)) < 0)
       { s = US"open file"; goto bad; }
-    DEBUG(D_tls) debug_printf("watch file '%s':\t%d\n", filename, fd1);
+    DEBUG(tls) debug_printf("watch file '%s':\t%d\n", filename, fd1);
     EV_SET(&kev[kev_used++],
 	(uintptr_t)fd1,
 	EVFILT_VNODE,
@@ -218,7 +218,7 @@ for (;;)
 	NULL);
     cnt++;
     }
-  DEBUG(D_tls) debug_printf("watch dir  '%s':\t%d\n", s, fd2);
+  DEBUG(tls) debug_printf("watch dir  '%s':\t%d\n", s, fd2);
   EV_SET(&kev[kev_used++],
 	(uintptr_t)fd2,
 	EVFILT_VNODE,
@@ -251,7 +251,7 @@ if (kevent(tls_watch_fd, &kev[kev_used-cnt], cnt, NULL, 0, NULL) >= 0)
 s = US"kevent";
 
 bad:
-DEBUG(D_tls)
+DEBUG(tls)
   if (errno)
     debug_printf("%s: %s: %s\n", __FUNCTION__, s, strerror(errno));
   else
@@ -274,7 +274,7 @@ BOOL rc = FALSE;
 if (!filename || !*filename) return TRUE;
 if (Ustrncmp(filename, "system", 6) == 0) return TRUE;
 
-DEBUG(D_tls) debug_printf("tls_set_watch: '%s'\n", filename);
+DEBUG(tls) debug_printf("tls_set_watch: '%s'\n", filename);
 
 if (  tls_watch_fd < 0
 # ifdef EXIM_HAVE_INOTIFY
@@ -285,7 +285,7 @@ if (  tls_watch_fd < 0
 # endif
    )
     {
-    DEBUG(D_tls) debug_printf("inotify_init: %s\n", strerror(errno));
+    DEBUG(tls) debug_printf("inotify_init: %s\n", strerror(errno));
     return FALSE;
     }
 
@@ -301,7 +301,7 @@ else
   rc = tls_set_one_watch(filename);
 
 store_reset(r);
-if (!rc) DEBUG(D_tls) debug_printf("tls_set_watch() fail on '%s': %s\n", filename, strerror(errno));
+if (!rc) DEBUG(tls) debug_printf("tls_set_watch() fail on '%s': %s\n", filename, strerror(errno));
 return rc;
 }
 
@@ -345,7 +345,7 @@ if (tls_watch_fd < 0) return;
 /* Close the files we had open for kevent */
 for (int i = 0; i < kev_used; i++)
   {
-  DEBUG(D_tls) debug_printf("closing watch fd: %d\n", (int) kev[i].ident);
+  DEBUG(tls) debug_printf("closing watch fd: %d\n", (int) kev[i].ident);
   (void) close((int) kev[i].ident);
   kev[i].ident = (uintptr_t)-1;
   }
@@ -409,7 +409,7 @@ if (tls_creds_expire && time(NULL) >= tls_creds_expire)
   generate a new one.  Reload the rest of the creds also as the machinery
   is all there. */
 
-  DEBUG(D_tls) debug_printf("selfsign cert rotate\n");
+  DEBUG(tls) debug_printf("selfsign cert rotate\n");
   tls_creds_expire = 0;
   tls_daemon_creds_reload();
   return old_watch_fd;
@@ -421,7 +421,7 @@ else if (tls_watch_trigger_time && time(NULL) >= tls_watch_trigger_time + 5)
   Dump the set of watches and arrange to reload cached creds (which
   will set up new watches). */
 
-  DEBUG(D_tls) debug_printf("watch triggered\n");
+  DEBUG(tls) debug_printf("watch triggered\n");
   tls_watch_trigger_time = tls_creds_expire = 0;
   tls_daemon_creds_reload();
   return old_watch_fd;
@@ -686,18 +686,18 @@ int cmp_sep = 0;
 if ((altnames = tls_cert_subject_altname(cert, US"dns")))
   {
   int alt_sep = '\n';
-  DEBUG(D_tls|D_lookup) debug_printf_indent("cert has SAN\n");
+  DEBUG(tls|lookup) debug_printf_indent("cert has SAN\n");
   while ((cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0)))
     {
     const uschar * an = altnames;
-    DEBUG(D_tls|D_lookup) debug_printf_indent(" %s in SANs?", cmpname);
+    DEBUG(tls|lookup) debug_printf_indent(" %s in SANs?", cmpname);
     while ((certname = string_nextinlist(&an, &alt_sep, NULL, 0)))
       if (is_name_match(cmpname, certname))
 	{
-	DEBUG(D_tls|D_lookup) debug_printf_indent("  yes (matched %s)\n", certname);
+	DEBUG(tls|lookup) debug_printf_indent("  yes (matched %s)\n", certname);
 	return TRUE;
 	}
-    DEBUG(D_tls|D_lookup) debug_printf_indent(" no (end of SAN list)\n");
+    DEBUG(tls|lookup) debug_printf_indent(" no (end of SAN list)\n");
     }
   }
 
@@ -709,7 +709,7 @@ else if ((subjdn = tls_cert_subject(cert, NULL)))
   while ((cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0)))
     {
     const uschar * sn = subjdn;
-    DEBUG(D_tls|D_lookup) debug_printf_indent(" %s in SN?", cmpname);
+    DEBUG(tls|lookup) debug_printf_indent(" %s in SN?", cmpname);
     while ((certname = string_nextinlist(&sn, &sn_sep, NULL, 0)))
       if (  *certname++ == 'C'
 	 && *certname++ == 'N'
@@ -717,10 +717,10 @@ else if ((subjdn = tls_cert_subject(cert, NULL)))
 	 && is_name_match(cmpname, certname)
 	 )
 	{
-	DEBUG(D_tls|D_lookup) debug_printf_indent("  yes (matched %s)\n", certname);
+	DEBUG(tls|lookup) debug_printf_indent("  yes (matched %s)\n", certname);
 	return TRUE;
 	}
-    DEBUG(D_tls|D_lookup) debug_printf_indent(" no (end of CN)\n");
+    DEBUG(tls|lookup) debug_printf_indent(" no (end of CN)\n");
     }
   }
 return FALSE;
@@ -747,13 +747,13 @@ if (path)
     unsetenv("SSLKEYLOGFILE");
   else if (*path != '/')
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("prepending spooldir to  env SSLKEYLOGFILE\n");
     setenv("SSLKEYLOGFILE", CCS string_sprintf("%s/%s", spool_directory, path), 1);
     }
   else if (Ustrncmp(path, spool_directory, Ustrlen(spool_directory)) != 0)
     {
-    DEBUG(D_tls)
+    DEBUG(tls)
       debug_printf("removing env SSLKEYLOGFILE=%s: not under spooldir\n", path);
     unsetenv("SSLKEYLOGFILE");
     }
@@ -819,7 +819,7 @@ do {
   rc = waitpid(pid, &status, 0);
 } while (rc < 0 && errno == EINTR);
 
-DEBUG(D_tls)
+DEBUG(tls)
   debug_printf("tls_validate_require_cipher child " PID_T_FMT
       " ended: status=0x%x\n", pid, status);
 
@@ -839,7 +839,7 @@ tls_client_resmption_key(tls_support * tlsp,
 hctx * h = &tlsp->resume_hctx;
 blob b;
 
-DEBUG(D_tls) if (conn_args->host_lbserver)
+DEBUG(tls) if (conn_args->host_lbserver)
   debug_printf("TLS: lbserver '%s'\n", conn_args->host_lbserver);
 
 # ifdef EXIM_HAVE_SHA2
@@ -863,7 +863,7 @@ exim_sha_update_string(h, ob->tls_alpn);
 # endif
 exim_sha_finish(h, &b);
 tlsp->resume_index = string_sprintf("%.*H", (int)b.len, b.data);
-DEBUG(D_tls) debug_printf("TLS: resume session index %s\n", tlsp->resume_index);
+DEBUG(tls) debug_printf("TLS: resume session index %s\n", tlsp->resume_index);
 #endif
 }
 

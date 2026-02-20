@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -98,19 +98,6 @@ don't make the file descriptors two-way. */
 
 #define mac_islookup(li,b) ((li)->type & (b))
 
-/* Debugging control */
-
-#define LOG_NAME_SIZE 256
-#define IS_DEBUG(x)	(debug_selector & (x ? x : D_any))
-#define DEBUG(x)	if (IS_DEBUG(x))
-#define HDEBUG(x)	if (host_checking || IS_DEBUG(x))
-
-#define EARLY_DEBUG(x, fmt, ...) \
-  if (debug_fd >= 0) \
-    { DEBUG(x) debug_printf_indent(fmt, __VA_ARGS__); } \
-  else if (debug_startup) \
-    fprintf(stderr, "%s", string_sprintf(fmt, __VA_ARGS__));
-
 /* The default From: text for DSNs */
 
 #define DEFAULT_DSN_FROM "Mail Delivery System <Mailer-Daemon@$qualify_domain>"
@@ -144,6 +131,8 @@ changed, then the tables in expand.c for accessing them must be changed too. */
 enough to hold all the headers from a normal kind of message. */
 
 #define LOG_BUFFER_SIZE 8192
+
+#define LOG_NAME_SIZE 256
 
 /* The size of the circular buffer that remembers recent SMTP commands */
 
@@ -327,6 +316,10 @@ for having to swallow the rest of an SMTP message is whether the value is
 
 /* Bit masks for debug and log selectors */
 
+#ifndef bitmask_word_t
+# define bitmask_word_t          uint64_t
+#endif
+
 /* Assume words are at least 32 bits wide. Tiny waste of space on 64 bit
 platforms, but this ensures bit vectors always work the same way. */
 #ifdef EXIM_BITMAP_WORD_BITS
@@ -336,21 +329,33 @@ platforms, but this ensures bit vectors always work the same way. */
 #endif
 
 /* This macro is for single-word bit vectors: the debug selector,
-and the first word of the log selector. */
+and the first word of the log selector. For multi-word vectors we
+use inlinable functions. */
+
 #define BIT(n) ((bitmask_word_t)1 << (n))
 
-/* And these are for multi-word vectors. */
 #define BITWORD(n) (    (n) / BITWORDSIZE)
 #define BITMASK(n) (BIT((n) % BITWORDSIZE))
 
-#define BIT_CLEAR(s,z,n) ((s)[BITWORD(n)] &= ~BITMASK(n))
-#define BIT_SET(s,z,n)   ((s)[BITWORD(n)] |=  BITMASK(n))
-#define BIT_TEST(s,z,n)	 ((s)[BITWORD(n)]  &  BITMASK(n))
+/* Debugging control */
 
-/* Used in globals.c for initializing bit_table structures. T will be either
-D or L corresponding to the debug and log selector bits declared below. */
+#define DEBUG_SELECTOR_SIZE		(BITWORD(debug_options_count) + 1)
 
-#define BIT_TABLE(T,name) { US #name, T##i_##name }
+static inline bitmask_word_t bit_test(bitmask_word_t *, unsigned);
+extern bitmask_word_t * debug_selector;   /* Debugging bits */
+#define DEBUG_BIT(n)	(debug_selector && bit_test(debug_selector, n))
+#define ANY_DEBUG	DEBUG_BIT(BIT_TABLE_IDX_NONZERO)
+
+extern BOOL    is_debug(const uschar *);
+#define IS_DEBUG(list)	(ANY_DEBUG && is_debug(US # list))
+#define DEBUG(list)	if (IS_DEBUG(list))
+#define HDEBUG(list)	if (host_checking || IS_DEBUG(list))
+
+#define EARLY_DEBUG(x, fmt, ...) \
+  if (debug_fd >= 0) \
+    { DEBUG(x) debug_printf_indent(fmt, __VA_ARGS__); } \
+  else if (debug_startup) \
+    fprintf(stderr, "%s", string_sprintf(fmt, __VA_ARGS__));
 
 /* IOTA allows us to keep an implicit sequential count, like a simple enum,
 but we can have sequentially numbered identifiers which are not declared
@@ -360,6 +365,7 @@ masks, alternating between sequential bit index and corresponding mask. */
 #define IOTA(iota)      (__LINE__ - iota)
 #define IOTA_INIT(zero) (__LINE__ - zero + 1)
 
+/*XXX*/
 /* Options bits for debugging. DEBUG_BIT() declares both a bit index and the
 corresponding mask. Di_all is a special value recognized by decode_bits().
 These must match the debug_options table in globals.c .
@@ -367,90 +373,73 @@ These must match the debug_options table in globals.c .
 Exim's code assumes in a number of places that the debug_selector is one
 word, and this is exposed in the local_scan ABI. The D_v and D_local_scan bit
 masks are part of the local_scan API so are #defined in local_scan.h .
+XXX => v & local_scan must live in word zero 
 
 Thanks to the "one word", debug bits beyond 31 are not available on 32b-int
 systems, and coding must account for that. */
 
-#ifndef bitmask_word_t
-# define bitmask_word_t          uint64_t
-#endif
+/* Special bits used for debug and logging control. These are summarizing sets
+of enabled channels, and are in the first word of the selector array for quick
+access. */
+
+#define BIT_TABLE_IDX_ALL	0	/* code for nearly-all-bits-set */
+#define BIT_TABLE_IDX_NONZERO	1	/* at least one bit is set */
+#define BIT_TABLE_IDX_NONVERB	2	/* a bit apart from "v" is set */
+#define BIT_TABLE_IDX_IS_ANY	3	/* a bit apart from "v'-like ones is set */
+#define BIT_TABLE_IDX_USABLE	4	/* first named bit */
 
 #define BITMASK_IDX_TO_BIT(idx) ((bitmask_word_t)1 << (idx))
 #define BIT_TABLE_BIT(class, name) \
 			class##i_##name = IOTA(class##i_iota), \
 			class##_##name = BITMASK_IDX_TO_BIT(class##i_##name)
 
-#define DEBUG_BIT(name) BIT_TABLE_BIT(D, name)
-#define DEBUG_Z_BIT(name) Di_##name = 0, D_##name = 0
+/*XXX This fails with the Sun Studio compiler: the bitfield
+defns for 31, 32, 33 spit warnings, and we get unexpected debug
+output for (at least) macro and regex channels.  I suspect it has
+elected to use a signed 32b int as its enum type, which is not unfair.
 
-enum {
-  Di_all        = -1,
-  Di_v          = 0,
-  Di_local_scan = 1,
+(
+	C23 lets you spec the underlying type for an enum:
+	enum pet : unsigned char { CAT, DOG, ROCK };
+)
 
-  Di_iota = IOTA_INIT(2),
-  DEBUG_BIT(acl),		/* 2 */
-  DEBUG_BIT(auth),
-  DEBUG_BIT(deliver),
-  DEBUG_BIT(dns),
-  DEBUG_BIT(dnsbl),
-  DEBUG_BIT(exec),		/* 7 */
-  DEBUG_BIT(expand),
-  DEBUG_BIT(filter),
-  DEBUG_BIT(hints_lookup),
-  DEBUG_BIT(host_lookup),
-  DEBUG_BIT(ident),
-  DEBUG_BIT(interface),
-  DEBUG_BIT(lists),
-  DEBUG_BIT(load),		/* 15 */
-  DEBUG_BIT(lookup),
-  DEBUG_BIT(memory),
-  DEBUG_BIT(noutf8),
-  DEBUG_BIT(pid),
-  DEBUG_BIT(process_info),
-  DEBUG_BIT(queue_run),
-  DEBUG_BIT(receive),
-  DEBUG_BIT(resolver),		/* 23 */
-  DEBUG_BIT(retry),
-  DEBUG_BIT(rewrite),
-  DEBUG_BIT(route),
-  DEBUG_BIT(timestamp),
-  DEBUG_BIT(tls),
-  DEBUG_BIT(transport),
-  DEBUG_BIT(uid),
-  DEBUG_BIT(verify),		/* 31 */
-#if BITWORDSIZE > 32
-  DEBUG_BIT(macro),		/* 33 */
-  DEBUG_BIT(regex),
-#else
-# warn BITWORDSIZE <= 32
-  DEBUG_Z_BIT(macro),
-  DEBUG_Z_BIT(regex),
-#endif
-};
+We really only need the enum to give us an auto-inc for assgning bitnums.
+But we also have IOTA.  Could we use that for #defines for the bitmasks?
+We'd have to list everthing twice... hmm.  Losing the hard link between
+the bit-idx & bitmask would not be good.
 
+Could we live totally without the bitnum?  BIT_SET etc use?
+MMM, prob not.
 
-/* Multi-bit debug masks */
+Could we do bit-in-word mask rather than plain bitmask?
+But how does that work for combining bits?
+(currently we can just bitwise-or)
+Though, for L-bits we just say we do not.
+Make the same restriction on D-bits? It could work,
+but currently DEBUG is keyed on the plain bitmask;
+it would have to change to being the idx.
+OK, so redefine DEBUG in the way LOGGING is done.
+And perhaps a multi-bit version (macro-vararg) for combined-bit use.
+Nope, this isn't working out.
 
-#define D_all                        0xffffffff
+We also probably want a dedicated bit (? in word zero of the
+array-of-words?) to say that at least one debug bit is set -
+so that a fast test can be inlined.
 
-#define D_any                        (D_all & \
-                                       ~(D_v           | \
-					 D_noutf8      | \
-                                         D_pid         | \
-                                         D_timestamp)  )
+Next up, one more level of indirection:
+use buildconfig.c to write the C and/or CPP code needed.
+Expand the defn of BIT_TABLE() and struct bit_table
+to be { name, BITWORD(idx), BITMASK(idx) }
+Enhance decode_bits() to cope with that.
+[ preferably, logging should use this also ]
+buildconfig.c writes both debug_options[]   (for decoding text spec in
+cmdline and in config file)
+AND an enum with all the named index bits (cf. Di_acl in macros.h)
+NOTE that D_v and D_local_scan masks are defined in local_scan.h
+and changing those will be a pain.
+NOTE the existence of debug_notall[].
+*/
 
-#define D_default                    (0xffffffff & \
-                                       ~(D_expand      | \
-                                         D_filter      | \
-                                         D_interface   | \
-                                         D_load        | \
-                                         D_local_scan  | \
-                                         D_memory      | \
-					 D_noutf8      | \
-                                         D_pid         | \
-                                         D_timestamp   | \
-                                         D_resolver))
 
 /* Bits for debug triggers */
 
@@ -467,9 +456,9 @@ Add also to log_options[] when creating new ones. */
 
 #define LOG_BIT(name) BIT_TABLE_BIT(L, name)
 
-enum logbit {
-  Li_all = -1,
+/* Bit numbers used by calls to log_write() */
 
+enum logwrite_bit {
   Li_iota = IOTA_INIT(0),
   LOG_BIT(address_rewrite),
   LOG_BIT(all_parents),
@@ -487,59 +476,82 @@ enum logbit {
   LOG_BIT(smtp_incomplete_transaction),
   LOG_BIT(smtp_protocol_error),
   LOG_BIT(smtp_syntax_error),		/* 15 */
-
-  Li_8bitmime = BITWORDSIZE,
-  Li_acl_warn_skipped,
-  Li_arguments,
-  Li_connection_id,
-  Li_deliver_time,
-  Li_delivery_size,
-  Li_dkim,
-  Li_dkim_verbose,
-  Li_dmarc,
-  Li_dmarc_verbose,
-  Li_dnssec,
-  Li_dsn,
-  Li_ident_timeout,
-  Li_incoming_interface,
-  Li_incoming_port,
-  Li_millisec,
-  Li_msg_id,
-  Li_msg_id_created,
-  Li_outgoing_interface,
-  Li_outgoing_port,
-  Li_pid,
-  Li_pipelining,
-  Li_protocol_detail,
-  Li_proxy,
-  Li_queue_time,
-  Li_queue_time_exclusive,
-  Li_queue_time_overall,
-  Li_receive_time,
-  Li_received_sender,
-  Li_received_recipients,
-  Li_rejected_header,
-  Li_return_path_on_delivery,
-  Li_sender_on_delivery,
-  Li_sender_verify_fail,
-  Li_smtp_confirmation,
-  Li_smtp_mailauth,
-  Li_smtp_no_mail,
-  Li_spf,
-  Li_spf_verbose,
-  Li_subject,
-  Li_tls_certificate_verified,
-  Li_tls_cipher,
-  Li_tls_on_connect,
-  Li_tls_peerdn,
-  Li_tls_resumption,
-  Li_tls_sni,
-  Li_unknown_in_list,
-
-  log_selector_size = BITWORD(Li_unknown_in_list) + 1
 };
 
-#define LOGGING(opt) BIT_TEST(log_selector, log_selector_size, Li_##opt)
+/* Bit numbers used by the LOGGING() macro */
+
+enum logging_test_bit {	/* Must be in alpha order, matching log_chan_names[] */
+  Lt_all = BIT_TABLE_IDX_ALL,		/* 0 */
+
+  Lt_8bitmime = BIT_TABLE_IDX_USABLE,	/* 4 */
+  Lt_acl_warn_skipped,
+  Lt_address_rewrite,
+  Lt_DUMMY_all,				/* 7 */
+  Lt_all_parents,
+  Lt_arguments,
+  Lt_connection_id,
+  Lt_connection_reject,
+  Lt_delay_delivery,
+  Lt_deliver_time,
+  Lt_delivery_size,
+  Lt_dkim,				/* 15 */
+  Lt_dkim_verbose,
+  Lt_dmarc,
+  Lt_dmarc_verbose,
+  Lt_dnslist_defer,
+  Lt_dnssec,
+  Lt_dsn,
+  Lt_etrn,
+  Lt_host_lookup_failed,
+  Lt_ident_timeout,
+  Lt_incoming_interface,
+  Lt_incoming_port,
+  Lt_lost_incoming_connection,
+  Lt_millisec,
+  Lt_msg_id,
+  Lt_msg_id_created,
+  Lt_outgoing_interface,		/* 31 */
+  Lt_outgoing_port,
+  Lt_pid,
+  Lt_pipelining,
+  Lt_protocol_detail,
+  Lt_proxy,
+  Lt_queue_run,
+  Lt_queue_time,
+  Lt_queue_time_exclusive,
+  Lt_queue_time_overall,
+  Lt_receive_time,
+  Lt_received_recipients,
+  Lt_received_sender,
+  Lt_rejected_header,
+  Lt_retry_defer,
+  Lt_return_path_on_delivery,
+  Lt_sender_on_delivery,		/* 47 */
+  Lt_sender_verify_fail,
+  Lt_size_reject,
+  Lt_skip_delivery,
+  Lt_smtp_confirmation,
+  Lt_smtp_connection,
+  Lt_smtp_incomplete_transaction,
+  Lt_smtp_mailauth,
+  Lt_smtp_no_mail,
+  Lt_smtp_protocol_error,
+  Lt_smtp_syntax_error,
+  Lt_spf,
+  Lt_spf_verbose,
+  Lt_subject,
+  Lt_tls_certificate_verified,
+  Lt_tls_cipher,
+  Lt_tls_on_connect,			/* 63 */
+  Lt_tls_peerdn,
+  Lt_tls_resumption,
+  Lt_tls_sni,
+  Lt_unknown_in_list,
+
+  log_selector_size = BITWORD(Lt_unknown_in_list) + 1
+};
+
+#define LOGGING(opt) bit_test(log_selector, Lt_##opt)
 
 /* Private error numbers for delivery failures, set negative so as not
 to conflict with system errno values.  Take care to maintain the string
@@ -851,8 +863,11 @@ local_scan.h */
 #define LOG_CONFIG_FOR  (256+128) /* Add " for" instead of ":\n" */
 #define LOG_CONFIG_IN   (512+128) /* Add " in line x[ of file y]" */
 
-/* and for debug_bits() logging action control: */
-#define DEBUG_FROM_CONFIG       0x0001
+/* flags for decode_bits */
+
+#define DCB_LOG		0x0001
+#define DCB_DEBUG	0x0002
+#define DCB_FROM_CONFIG	0x0003
 
 /* SMTP command identifiers for the smtp_connection_had field that records the
 most recent SMTP commands. SCH_NONE is "empty".  The smtp_names array must have
@@ -1126,10 +1141,10 @@ alarm is active.  Clear it down on cancelling the alarm so we can tell there
 should not be one active. */
 
 # define ALARM(seconds) \
-    debug_selector & D_any \
+    ANY_DEBUG \
     ? (sigalarm_setter = CUS __FUNCTION__, alarm(seconds)) : alarm(seconds);
 # define ALARM_CLR(seconds) \
-    debug_selector & D_any \
+    ANY_DEBUG \
     ? (sigalarm_setter = NULL, alarm(seconds)) : alarm(seconds);
 #endif
 
@@ -1249,7 +1264,7 @@ When doing en extended loop of matching, release store periodically. */
 /* Debug an option access. Use for non-list ones about to be expanded
 (lists have their own debugging, under D_list). */
 #define GET_OPTION(name) \
-  DEBUG(D_expand) debug_printf_indent("try option '" name "'\n");
+  DEBUG(expand) debug_printf_indent("try option '" name "'\n");
 
 
 #ifdef EXPERIMENTAL_SRV_SMTPS

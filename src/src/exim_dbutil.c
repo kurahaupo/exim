@@ -113,7 +113,9 @@ exit(EXIT_FAILURE);
 *   Debug output   *
 *******************/
 
-bitmask_word_t debug_selector = 0;	/* set -1 for debugging */
+bitmask_word_t * debug_selector = {0};	/* set -1 for debugging */
+
+inline BOOL is_debug(const uschar * channels) { return TRUE; }
 
 void
 debug_printf(const char * fmt, ...)
@@ -473,7 +475,7 @@ if (!exim_dbget(dbblock->dbptr, &key_datum, &result_datum))
   return NULL;
 
 dlen = exim_datum_size_get(&result_datum);
-DEBUG(D_hints_lookup) debug_printf_indent("dbfn_read: size %u return\n", dlen);
+DEBUG(hints_lookup) debug_printf_indent("dbfn_read: size %u return\n", dlen);
 if (length) *length = dlen;
 
 /* Hintsdb uses store the taint of the payload of the value in the value.
@@ -486,13 +488,13 @@ else
   dbdata_generic * gp = (dbdata_generic *) exim_datum_data_get(&result_datum);
   if (dlen < sizeof(dbdata_generic))
     {
-    DEBUG(D_hints_lookup)
+    DEBUG(hints_lookup)
       debug_printf_indent("dbfn_read: bad record size %u\n", dlen);
     return NULL;
     }
   if (gp->version != HINTS_VERSION)
     {
-    DEBUG(D_hints_lookup)
+    DEBUG(hints_lookup)
       debug_printf_indent("dbfn_read: bad record version %u; deleting\n",
 			    gp->version);
     return NULL;

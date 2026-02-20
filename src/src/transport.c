@@ -300,7 +300,7 @@ normal cases, it is only ever executed once. */
 
 for (int i = 0; i < 100; i++)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf("writing data block fd=%d size=%d timeout=%d%s\n",
       fd, len, local_timeout, more ? " (more expected)" : "");
 
@@ -353,7 +353,7 @@ for (int i = 0; i < 100; i++)
     len -= rc;
     block += rc;
     transport_count += rc;
-    DEBUG(D_transport) debug_printf("write incomplete (%d)\n", rc);
+    DEBUG(transport) debug_printf("write incomplete (%d)\n", rc);
     goto CHECK_TIMEOUT;   /* A few lines below */
     }
 
@@ -362,7 +362,7 @@ for (int i = 0; i < 100; i++)
 
   if (save_errno == EINTR)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("write interrupted before anything written\n");
     goto CHECK_TIMEOUT;   /* A few lines below */
     }
@@ -372,7 +372,7 @@ for (int i = 0; i < 100; i++)
 
   if (save_errno == EAGAIN)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("write temporarily locked out, waiting 1 sec\n");
     sleep(1);
 
@@ -390,7 +390,7 @@ for (int i = 0; i < 100; i++)
 
   /* Otherwise there's been an error */
 
-  DEBUG(D_transport) debug_printf("writing error %d: %s\n", save_errno,
+  DEBUG(transport) debug_printf("writing error %d: %s\n", save_errno,
     strerror(save_errno));
   errno = save_errno;
   return FALSE;
@@ -548,7 +548,7 @@ for (const uschar * ptr = start; ptr < end; ptr++)
 
   if ((fl_len = chunk_ptr - deliver_out_buffer) > mlen)
     {
-    DEBUG(D_transport) debug_printf("flushing headers buffer\n");
+    DEBUG(transport) debug_printf("flushing headers buffer\n");
 
     /* If CHUNKING, prefix with BDAT (size) NON-LAST.  Also, reap responses
     from previous SMTP commands. */
@@ -861,7 +861,7 @@ for (header_line * h = header_list; h; h = h->next) if (h->type != htype_old)
   /* Header removed */
 
   else
-    DEBUG(D_transport) debug_printf("removed header line:\n %s---\n", h->text);
+    DEBUG(transport) debug_printf("removed header line:\n %s---\n", h->text);
   }
 
 /* Add on any address-specific headers. If there are multiple addresses,
@@ -888,7 +888,7 @@ if (addr)
       if (i == 1)
 	{
 	if (!sendfn(tctx, h->text, h->slen)) return FALSE;
-	DEBUG(D_transport)
+	DEBUG(transport)
 	  debug_printf("added header line(s):\n %s---\n", h->text);
 	}
       }
@@ -915,7 +915,7 @@ if (tblock && (list = CUS tblock->add_headers))
 	if (!sendfn(tctx, s, len)) return FALSE;
 	if (s[len-1] != '\n' && !sendfn(tctx, US"\n", 1))
 	  return FALSE;
-	DEBUG(D_transport)
+	DEBUG(transport)
 	  {
 	  debug_printf("added header line:\n %s", s);
 	  if (s[len-1] != '\n') debug_printf("\n");
@@ -1135,7 +1135,7 @@ if (tctx->options & topt_use_bdat)
 
   if (size > DELIVER_OUT_BUFFER_SIZE && hsize > 0)
     {
-    DEBUG(D_transport)
+    DEBUG(transport)
       debug_printf("sending small initial BDAT; hsize=%d\n", hsize);
     if (  tctx->chunk_cb(tctx, hsize, 0) != OK
        || !transport_write_block(tctx, deliver_out_buffer, hsize, FALSE)
@@ -1185,7 +1185,7 @@ if (  f.spool_file_wireformat
     size -= len;
     }
 
-  DEBUG(D_transport) debug_printf("using sendfile for body\n");
+  DEBUG(transport) debug_printf("using sendfile for body\n");
 
   while(size > 0)
     {
@@ -1195,10 +1195,10 @@ if (  f.spool_file_wireformat
   return copied >= 0;
   }
 #else
-DEBUG(D_transport) debug_printf("cannot use sendfile for body: no support\n");
+DEBUG(transport) debug_printf("cannot use sendfile for body: no support\n");
 #endif
 
-DEBUG(D_transport)
+DEBUG(transport)
   if (!(tctx->options & topt_no_body))
     debug_printf("cannot use sendfile for body: %s\n",
       !f.spool_file_wireformat ? "spoolfile not wireformat"
@@ -1325,7 +1325,7 @@ write_pid = (pid_t)(-1);
   }
 if (filter_pid < 0) goto TIDY_UP;      /* errno set */
 
-DEBUG(D_transport) debug_printf("process " PID_T_FMT
+DEBUG(transport) debug_printf("process " PID_T_FMT
     " running as transport filter: fd_write=%d fd_read=%d\n",
     filter_pid, fd_write, fd_read);
 
@@ -1380,7 +1380,7 @@ if (write_pid < 0)
 
 testharness_pause_ms(250);
 
-DEBUG(D_transport)
+DEBUG(transport)
   debug_printf("process "PID_T_FMT " writing to transport filter\n", write_pid);
 
 /* Copy the message from the filter to the output fd. A read error leaves len
@@ -1388,7 +1388,7 @@ DEBUG(D_transport)
 the case when the filter gets stuck, but it can be quite a long one. The
 default is 5m, but this is now configurable. */
 
-DEBUG(D_transport) debug_printf("copying from the filter\n");
+DEBUG(transport) debug_printf("copying from the filter\n");
 
 /* Copy the output of the filter, remembering if the last character was NL. If
 no data is returned, that counts as "ended with NL" (default setting of the
@@ -1406,7 +1406,7 @@ for (;;)
   ALARM_CLR(0);
   if (sigalrm_seen)
     {
-    DEBUG(D_transport) debug_printf("timed out reading from filter\n");
+    DEBUG(transport) debug_printf("timed out reading from filter\n");
     errno = ETIMEDOUT;
     f.transport_filter_timed_out = TRUE;
     goto TIDY_UP;
@@ -1450,20 +1450,20 @@ if (!yield)
 
 /* Wait for the filter process to complete. */
 
-DEBUG(D_transport) debug_printf("waiting for filter process\n");
+DEBUG(transport) debug_printf("waiting for filter process\n");
 if (filter_pid > 0 && (rc = child_close(filter_pid, 30)) != 0 && yield)
   {
   yield = FALSE;
   save_errno = ERRNO_FILTER_FAIL;
   tctx->addr->more_errno = rc;
-  DEBUG(D_transport) debug_printf("filter process returned %d\n", rc);
+  DEBUG(transport) debug_printf("filter process returned %d\n", rc);
   }
 
 /* Wait for the writing process to complete. If it ends successfully,
 read the results from its pipe, provided we haven't already had a filter
 process failure. */
 
-DEBUG(D_transport) debug_printf("waiting for writing process\n");
+DEBUG(transport) debug_printf("waiting for writing process\n");
 if (write_pid > 0)
   {
   rc = child_close(write_pid, 30);
@@ -1473,7 +1473,7 @@ if (write_pid > 0)
       BOOL ok;
       if (read(pfd[pipe_read], (void *)&ok, sizeof(BOOL)) != sizeof(BOOL))
 	{
-	DEBUG(D_transport)
+	DEBUG(transport)
 	  debug_printf("pipe read from writing process: %s\n", strerror(errno));
 	save_errno = ERRNO_FILTER_FAIL;
         yield = FALSE;
@@ -1492,7 +1492,7 @@ if (write_pid > 0)
       yield = FALSE;
       save_errno = ERRNO_FILTER_FAIL;
       tctx->addr->more_errno = rc;
-      DEBUG(D_transport) debug_printf("writing process returned %d\n", rc);
+      DEBUG(transport) debug_printf("writing process returned %d\n", rc);
       }
   }
 (void)close(pfd[pipe_read]);
@@ -1521,7 +1521,7 @@ if (yield)
 else
   errno = save_errno;      /* From some earlier error */
 
-DEBUG(D_transport)
+DEBUG(transport)
   {
   debug_printf("end of filtering transport writing: yield=%d\n", yield);
   if (!yield)
@@ -1578,12 +1578,12 @@ open_db dbblock, * dbp;
 
 if (!is_new_message_id(message_id))
   {
-  DEBUG(D_transport) debug_printf("message_id %s is not new format; "
+  DEBUG(transport) debug_printf("message_id %s is not new format; "
     "skipping wait-%s database update\n", message_id, tpname);
   return;
   }
 
-DEBUG(D_transport)
+DEBUG(transport)
   { debug_printf("updating wait-%s database\n", tpname); acl_level++; }
 
 /* Open the database (or transaction) for this transport */
@@ -1633,7 +1633,7 @@ for (host_item * host = hostlist; host; host = host->next)
 
     if (!is_new_message_id(s))
       {
-      DEBUG(D_hints_lookup)
+      DEBUG(hints_lookup)
 	debug_printf_indent("NOTE: old or corrupt message-id found in wait=%.200s"
 	  " hints DB; deleting records for %s\n", tpname, host->name);
 
@@ -1669,7 +1669,7 @@ for (host_item * host = hostlist; host; host = host->next)
 
   if (already)
     {
-    DEBUG(D_transport) debug_printf("already listed for %s\n", host->name);
+    DEBUG(transport) debug_printf("already listed for %s\n", host->name);
     continue;
     }
 
@@ -1712,7 +1712,7 @@ for (host_item * host = hostlist; host; host = host->next)
   /* Update the database */
 
   dbfn_write(dbp, host->name, host_record, sizeof(dbdata_wait) + host_length);
-  DEBUG(D_transport) debug_printf("added %.*s to queue for %s\n",
+  DEBUG(transport) debug_printf("added %.*s to queue for %s\n",
 				  MESSAGE_ID_LENGTH, message_id, host->name);
   }
 
@@ -1724,7 +1724,7 @@ else
   dbfn_close(dbp);
 
 out:
-  DEBUG(D_transport) acl_level--;
+  DEBUG(transport) acl_level--;
   return;
 }
 
@@ -1777,7 +1777,7 @@ open_db dbblock, * dbp;
 int         i;
 struct stat statbuf;
 
-DEBUG(D_transport)
+DEBUG(transport)
   {
   debug_printf("transport_check_waiting entered\n");
   debug_printf("  sequence=%d local_max=%d global_max=%d\n",
@@ -1791,7 +1791,7 @@ connection. */
 if (connection_max_messages >= 0) local_message_max = connection_max_messages;
 if (local_message_max > 0 && continue_sequence >= local_message_max)
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf_indent("max messages for one connection reached: returning\n");
   goto retfalse;
   }
@@ -1804,7 +1804,7 @@ if ( continue_wait_db
 		      O_RDWR, &dbblock, TRUE, TRUE))
    )
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf_indent("no messages waiting for %s\n", hostname);
   goto retfalse;
   }
@@ -1813,7 +1813,7 @@ if ( continue_wait_db
 
 if (!(host_record = dbfn_read(dbp, hostname)))
   {
-  DEBUG(D_transport)
+  DEBUG(transport)
     debug_printf_indent("no messages waiting for %s\n", hostname);
   goto dbclose_false;
   }
@@ -1858,7 +1858,7 @@ while (1)
     if (!is_new_message_id(host_record->text + (i * MESSAGE_ID_LENGTH)))
       {
       uschar buffer[256];
-      DEBUG(D_hints_lookup)
+      DEBUG(hints_lookup)
 	debug_printf_indent("NOTE: old or corrupt message-id found in"
 	  " wait=%.200s hints DB; deleting records for %s\n",
 	  transport_name, hostname);
@@ -1881,7 +1881,7 @@ while (1)
   for (i = 0; i < msgq_count; ++i)
     if (Ustrcmp(msgq[i].message_id, message_id) == 0)
       {
-      DEBUG(D_hints_lookup)
+      DEBUG(hints_lookup)
 	debug_printf_indent("dropping current msg from list\n");
       msgq[i].bKeep = FALSE;
       break;
@@ -1899,7 +1899,7 @@ while (1)
       msgq[i].bKeep = FALSE;
     else if (!oicf_func || oicf_func(mid, oicf_data))
       {
-      DEBUG(D_hints_lookup)
+      DEBUG(hints_lookup)
 	debug_printf_indent("acceptable next: %s\n", mid);
       Ustrcpy_nt(new_message_id, mid);
       msgq[i].bKeep = FALSE;
@@ -1911,7 +1911,7 @@ while (1)
   /* re-count */
   for (msgq_actual = 0, i = 0; i < msgq_count; ++i)
     if (msgq[i].bKeep) msgq_actual++;
-  DEBUG(D_hints_lookup)
+  DEBUG(hints_lookup)
     debug_printf_indent("%d left in this record\n", msgq_actual);
 
   /* reassemble the host record, based on removed message ids, from in
@@ -1980,7 +1980,7 @@ while (1)
 
   if (host_length <= 0)
     {
-    DEBUG(D_transport|D_hints_lookup)
+    DEBUG(transport|hints_lookup)
       debug_printf_indent("waiting messages already delivered\n");
     goto dbclose_false;
     }
@@ -1990,7 +1990,7 @@ while (1)
 
   if (!bContinuation)
     {
-    DEBUG(D_hints_lookup) debug_printf_indent("no further records\n");
+    DEBUG(hints_lookup) debug_printf_indent("no further records\n");
     Ustrcpy(new_message_id, message_id);
     goto dbclose_false;
     }
@@ -2012,7 +2012,7 @@ if (continue_wait_db)
 else
   dbfn_close(dbp);
 
-DEBUG(D_transport)
+DEBUG(transport)
   {
   acl_level--;
   debug_printf("transport_check_waiting: TRUE (found %s)\n", new_message_id);
@@ -2026,7 +2026,7 @@ dbclose_false:
     dbfn_close(dbp);
 
 retfalse:
-  DEBUG(D_transport)
+  DEBUG(transport)
     {acl_level--; debug_printf("transport_check_waiting: FALSE\n"); }
   return FALSE;
 }
@@ -2134,12 +2134,12 @@ if (socket_fd != 0)
   (void)close(socket_fd);
   }
 
-DEBUG(D_exec) debug_print_argv(argv);
+DEBUG(exec) debug_print_argv(argv);
 exim_nullstd();                          /* Ensure std{out,err} exist */
 /* argv[0] should be untainted, from child_exec_exim() */
 execv(CS argv[0], (char *const *)argv);
 
-DEBUG(D_any) debug_printf("execv failed: %s\n", strerror(errno));
+DEBUG(any) debug_printf("execv failed: %s\n", strerror(errno));
 _exit(errno);         /* Note: must be _exit(), NOT exit() */
 }
 
@@ -2268,7 +2268,7 @@ If the parent of the top address has an original part of "system-filter", this
 pipe was set up by the system filter, and we can permit the expansion of
 $recipients. */
 
-DEBUG(D_transport)
+DEBUG(transport)
   {
   debug_printf("direct command:\n");
   for (int i = 0; argv[i]; i++)
@@ -2282,7 +2282,7 @@ if (flags & TSUC_EXPAND_ARGS)
 
   for (int i = 0; argv[i]; i++)
     {
-    DEBUG(D_expand) debug_printf_indent("arg %d\n", i);
+    DEBUG(expand) debug_printf_indent("arg %d\n", i);
 
     /* Handle special fudge for passing an address list */
 
@@ -2314,7 +2314,7 @@ if (flags & TSUC_EXPAND_ARGS)
 	This is a hole in the taint-pretection, mitigated only in that
 	shell-syntax metachars cannot be injected via this route. */
 
-	DEBUG(D_transport) if (is_tainted(ad->address))
+	DEBUG(transport) if (is_tainted(ad->address))
 	  debug_printf("tainted element '%s' from $pipe_addresses\n", ad->address);
 
 	argv[i++] = ad->address;
@@ -2339,7 +2339,7 @@ if (flags & TSUC_EXPAND_ARGS)
       /* We can never have more then the argv we will be loading into */
       address_pipe_max_args = max_args - argcount + 1;
 
-      DEBUG(D_transport)
+      DEBUG(transport)
         debug_printf("address_pipe_max_args=%d\n", address_pipe_max_args);
 
       /* We allocate an additional for (uschar *)0 */
@@ -2457,7 +2457,7 @@ if (flags & TSUC_EXPAND_ARGS)
       if (  f.running_in_test_harness && is_tainted(expanded_arg)
 	 && Ustrcmp(etext, "queryprogram router") == 0)
 	{			/* hack, would be good to not need it */
-	DEBUG(D_transport)
+	DEBUG(transport)
 	  debug_printf("SPECIFIC TESTSUITE EXEMPTION: tainted arg '%s'\n",
 		      expanded_arg);
 	}
@@ -2468,7 +2468,7 @@ if (flags & TSUC_EXPAND_ARGS)
       }
     }
 
-  DEBUG(D_transport)
+  DEBUG(transport)
     {
     debug_printf("direct command after expansion:\n");
     for (int i = 0; argv[i]; i++)

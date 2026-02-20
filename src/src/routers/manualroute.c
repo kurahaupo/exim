@@ -248,7 +248,7 @@ manualroute_router_options_block * ob =
 transport_instance * transport = NULL;
 BOOL individual_transport_set = FALSE, randomize;
 
-DEBUG(D_route) debug_printf_indent("%s router called for %s\n  domain = %s\n",
+DEBUG(route) debug_printf_indent("%s router called for %s\n  domain = %s\n",
   rblock->drinst.name, addr->address, addr->domain);
 
 /* The initialization check ensures that either route_list or route_data is
@@ -263,7 +263,7 @@ if (ob->route_list)
     {
     int rc;
 
-    DEBUG(D_route) debug_printf_indent("route_item = %s\n", route_item);
+    DEBUG(route) debug_printf_indent("route_item = %s\n", route_item);
     if (!parse_route_item(route_item, &domain, &hostlist, &options))
       continue;     /* Ignore blank items */
 
@@ -298,7 +298,7 @@ else
 single host or a list of hosts; options is pointing to the rest of the
 routelist item, which is either empty or contains various option words. */
 
-DEBUG(D_route) debug_printf_indent("original list of hosts = '%s' options = '%s'\n",
+DEBUG(route) debug_printf_indent("original list of hosts = '%s' options = '%s'\n",
   hostlist, options);
 
 newhostlist = expand_string_copy(hostlist);
@@ -317,12 +317,12 @@ if (!newhostlist)
   }
 else hostlist = newhostlist;
 
-DEBUG(D_route) debug_printf_indent("expanded list of hosts = '%s' options = '%s'\n",
+DEBUG(route) debug_printf_indent("expanded list of hosts = '%s' options = '%s'\n",
   hostlist, options);
 
 /* Get the hosts_randomize router option, expanding if needed */
 
-if (exp_bool(addr, US"router", rblock->drinst.name, D_route,
+if (exp_bool(addr, US"router", rblock->drinst.name, IS_DEBUG(route),
 	  US"hosts_randomize", ob->hosts_randomize, ob->expand_hosts_randomize,
 	  &randomize) != OK)
   return DEFER;
@@ -457,7 +457,7 @@ is controlled by host_all_ignored. */
 if (!addr->host_list)
   {
   int i;
-  DEBUG(D_route) debug_printf("host_find_failed ignored every host\n");
+  DEBUG(route) debug_printf("host_find_failed ignored every host\n");
   if (ob->hai_code == hff_decline) return DECLINE;
   if (ob->hai_code == hff_pass) return PASS;
 

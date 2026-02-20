@@ -63,7 +63,7 @@ if (dbp)
   if (dbp->gdbm)
     return dbp;
 
-  DEBUG(D_hints_lookup)
+  DEBUG(hints_lookup)
     debug_printf_indent("gdbm_open(flags 0x%x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
   free(dbp);

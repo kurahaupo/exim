@@ -37,7 +37,7 @@ retry_ultimate_address_timeout(const uschar * retry_key, const uschar *domain,
 BOOL address_timeout;
 retry_config * retry;
 
-DEBUG(D_retry)
+DEBUG(retry)
   {
   debug_printf("retry time not reached: checking ultimate address timeout\n");
   debug_printf("  now=" TIME_T_FMT " first_failed=" TIME_T_FMT
@@ -53,19 +53,19 @@ if (retry && retry->rules)
   {
   retry_rule *last_rule;
   for (last_rule = retry->rules; last_rule->next; last_rule = last_rule->next) ;
-  DEBUG(D_retry)
+  DEBUG(retry)
     debug_printf("  received_time=" TIME_T_FMT " diff=%d timeout=%d\n",
       received_time.tv_sec, (int)(now - received_time.tv_sec), last_rule->timeout);
   address_timeout = (now - received_time.tv_sec > last_rule->timeout);
   }
 else
   {
-  DEBUG(D_retry)
+  DEBUG(retry)
     debug_printf("no retry rule found: assume timed out\n");
   address_timeout = TRUE;
   }
 
-DEBUG(D_retry)
+DEBUG(retry)
   if (address_timeout)
     debug_printf("on queue longer than maximum retry for address - "
       "allowing delivery\n");
@@ -164,7 +164,7 @@ dbdata_retry * host_retry_record, * message_retry_record;
 if (host->status != hstatus_unknown) return FALSE;
 host->status = hstatus_usable;
 
-DEBUG(D_transport|D_retry)
+DEBUG(transport|retry)
   {
   debug_printf_indent("checking retry status of %s\n", host->name);
   acl_level++;
@@ -186,7 +186,7 @@ the retry database when it is updated). */
 
 if ((node = tree_search(tree_unusable, host_key)))
   {
-  DEBUG(D_transport|D_retry)
+  DEBUG(transport|retry)
     debug_printf_indent("found in tree of unusables\n");
   host->status = node->data.val > 255
     ? hstatus_unusable_expired : hstatus_unusable;
@@ -201,16 +201,16 @@ if (!continue_retry_db)
   dbm_file = dbfn_open(US"retry", O_RDONLY, &dbblock, FALSE, TRUE);
 else if (continue_retry_db != (open_db *)-1)
   {
-  DEBUG(D_hints_lookup)
+  DEBUG(hints_lookup)
     debug_printf_indent(" using cached retry hintsdb handle\n");
   dbm_file = continue_retry_db;
   }
-else DEBUG(D_hints_lookup)
+else DEBUG(hints_lookup)
     debug_printf_indent(" using cached retry hintsdb nonpresence\n");
 
 if (!dbm_file)
   {
-  DEBUG(D_deliver|D_retry|D_hints_lookup)
+  DEBUG(deliver|retry|hints_lookup)
     debug_printf_indent("no retry data available\n");
   goto out;
   }
@@ -219,28 +219,28 @@ message_retry_record = dbfn_read(dbm_file, message_key);
 if (!continue_retry_db)
   dbfn_close(dbm_file);
 else
-  DEBUG(D_hints_lookup) debug_printf_indent("retaining retry hintsdb handle\n");
+  DEBUG(hints_lookup) debug_printf_indent("retaining retry hintsdb handle\n");
 
 /* Ignore the data if it is too old - too long since it was written */
 
 if (!host_retry_record)
   {
-  DEBUG(D_transport|D_retry) debug_printf_indent("no host retry record\n");
+  DEBUG(transport|retry) debug_printf_indent("no host retry record\n");
   }
 else if (now - host_retry_record->gen.time_stamp > retry_data_expire)
   {
   host_retry_record = NULL;
-  DEBUG(D_transport|D_retry) debug_printf_indent("host retry record too old\n");
+  DEBUG(transport|retry) debug_printf_indent("host retry record too old\n");
   }
 
 if (!message_retry_record)
   {
-  DEBUG(D_transport|D_retry) debug_printf_indent("no message retry record\n");
+  DEBUG(transport|retry) debug_printf_indent("no message retry record\n");
   }
 else if (now - message_retry_record->gen.time_stamp > retry_data_expire)
   {
   message_retry_record = NULL;
-  DEBUG(D_transport|D_retry)
+  DEBUG(transport|retry)
     debug_printf_indent("message retry record too old\n");
   }
 
@@ -299,7 +299,7 @@ if (message_retry_record)
   }
 
 out:
-DEBUG(D_transport|D_retry) acl_level--;
+DEBUG(transport|retry) acl_level--;
 return yield;
 }
 
@@ -348,7 +348,7 @@ rti->message = host
   : addr->message;
 rti->flags = flags;
 
-DEBUG(D_transport|D_retry)
+DEBUG(transport|retry)
   {
   int letter = rti->more_errno & 255;
   debug_printf("added retry %sitem for %s: errno=%d more_errno=",
@@ -426,12 +426,12 @@ if (alternate)    alternate = string_sprintf("*@%s", alternate);
 
 /* Scan the configured retry items. */
 
-DEBUG(D_retry) acl_level++;
+DEBUG(retry) acl_level++;
 for (yield = retries; yield; yield = yield->next)
   {
   const uschar * plist = yield->pattern, * slist = yield->senders;
 
-  DEBUG(D_retry)
+  DEBUG(retry)
     {
     acl_level--;
     debug_printf_indent("Check retry rule (%s:%d) '%s'\n",
@@ -543,7 +543,7 @@ for (yield = retries; yield; yield = yield->next)
      )  )
     break;
   }
-DEBUG(D_retry) acl_level--;
+DEBUG(retry) acl_level--;
 
 return yield;
 }
@@ -582,7 +582,7 @@ retry_update(address_item ** addr_defer, address_item ** addr_failed,
 open_db dbblock, * dbm_file = NULL;
 time_t now = time(NULL);
 
-DEBUG(D_retry) { debug_printf_indent("Processing retry items\n"); acl_level++; }
+DEBUG(retry) { debug_printf_indent("Processing retry items\n"); acl_level++; }
 
 /* Three-times loop to handle succeeded, failed, and deferred addresses.
 Deferred addresses must be handled after failed ones, because some may be moved
@@ -595,7 +595,7 @@ for (int i = 0; i < 3; i++)
   address_item ** paddr = i==0 ? addr_succeed : i==1 ? addr_failed : addr_defer;
   address_item ** saved_paddr = NULL;
 
-  DEBUG(D_retry)
+  DEBUG(retry)
     {
     debug_printf_indent("%s addresses:\n",
       i == 0 ? "Succeeded" : i == 1 ? "Failed" : "Deferred");
@@ -620,7 +620,7 @@ for (int i = 0; i < 3; i++)
       {
       int update_count = 0, timedout_count = 0;
 
-      DEBUG(D_retry)
+      DEBUG(retry)
 	{
 	debug_printf_indent("%s%s\n", addr->address,
 			    addr->retries ? "" : ": no retry items");
@@ -646,7 +646,7 @@ for (int i = 0; i < 3; i++)
         if (!dbm_file)
 	  if (continue_retry_db && continue_retry_db != (open_db *)-1)
 	    {
-	    DEBUG(D_hints_lookup)
+	    DEBUG(hints_lookup)
 	      debug_printf_indent("using cached retry hintsdb handle\n");
 	    dbm_file = continue_retry_db;
 	    }
@@ -654,7 +654,7 @@ for (int i = 0; i < 3; i++)
 		    ? dbfn_open(US"retry", O_RDWR|O_CREAT, &dbblock, TRUE, TRUE)
 		    : dbfn_open_multi(US"retry", O_RDWR|O_CREAT, &dbblock)))
 	    {
-	    DEBUG(D_deliver|D_retry|D_hints_lookup)
+	    DEBUG(deliver|retry|hints_lookup)
 	      debug_printf_indent("retry db not available for updating\n");
 	    return;
 	    }
@@ -676,7 +676,7 @@ for (int i = 0; i < 3; i++)
         if (rti->flags & rf_delete)
           {
           (void)dbfn_delete(dbm_file, rti->key);
-          DEBUG(D_retry)
+          DEBUG(retry)
             debug_printf_indent("deleted retry information for %s\n", rti->key);
           continue;
           }
@@ -697,7 +697,7 @@ for (int i = 0; i < 3; i++)
              rti->flags & rf_host ? addr->domain : NULL,
              rti->basic_errno, rti->more_errno)))
           {
-          DEBUG(D_retry) debug_printf_indent("No configured retry item for %s%s%s\n",
+          DEBUG(retry) debug_printf_indent("No configured retry item for %s%s%s\n",
             rti->key,
             rti->flags & rf_host ? US" or " : US"",
             rti->flags & rf_host ? addr->domain : US"");
@@ -705,7 +705,7 @@ for (int i = 0; i < 3; i++)
           continue;
           }
 
-        DEBUG(D_retry)
+        DEBUG(retry)
           if (rti->flags & rf_host)
             debug_printf_indent("retry for %s (%s) = %s %d %d\n", rti->key,
               addr->domain, retry->pattern, retry->basic_errno,
@@ -726,7 +726,7 @@ for (int i = 0; i < 3; i++)
         message_length = Ustrlen(message);
         if (message_length > EXIM_DB_RLIMIT)
 	  {
-	  DEBUG(D_retry)
+	  DEBUG(retry)
 	    debug_printf_indent("truncating message from %u to %u bytes\n",
 				message_length, EXIM_DB_RLIMIT);
 	  message_length = EXIM_DB_RLIMIT;
@@ -763,7 +763,7 @@ for (int i = 0; i < 3; i++)
         /* Compute how long this destination has been failing */
 
         failing_interval = now - retry_record->first_failed;
-        DEBUG(D_retry) debug_printf_indent("failing_interval=%d message_age=%d\n",
+        DEBUG(retry) debug_printf_indent("failing_interval=%d message_age=%d\n",
           failing_interval, message_age);
 
         /* For a non-host error, if the message has been on the queue longer
@@ -845,7 +845,7 @@ for (int i = 0; i < 3; i++)
 	    ;
           if (now - received_time.tv_sec > last_rule->timeout)
             {
-            DEBUG(D_retry) debug_printf_indent("on queue longer than maximum retry\n");
+            DEBUG(retry) debug_printf_indent("on queue longer than maximum retry\n");
             timedout_count++;
             rule = NULL;
             }
@@ -911,7 +911,7 @@ for (int i = 0; i < 3; i++)
         Ustrncpy(retry_record->text, message, message_length);
         retry_record->text[message_length] = 0;	/* nul-term string in db */
 
-        DEBUG(D_retry)
+        DEBUG(retry)
           {
           int letter = retry_record->more_errno & 255;
           debug_printf_indent("Writing retry data for %s\n", rti->key);
@@ -929,12 +929,12 @@ for (int i = 0; i < 3; i++)
 
         if (dbfn_write(dbm_file, rti->key, retry_record,
 		      sizeof(dbdata_retry) + message_length) != 0)
-	  DEBUG(D_retry) debug_printf_indent("retry record write failed\n");
+	  DEBUG(retry) debug_printf_indent("retry record write failed\n");
 
 	if (!exim_lockfile_needed())
 	  dbfn_transaction_commit(dbm_file);
         }                            /* Loop for each retry item */
-      DEBUG(D_retry) acl_level--;
+      DEBUG(retry) acl_level--;
 
       /* If all the non-delete retry items are timed out, the address is
       timed out, provided that we didn't skip any hosts because their retry
@@ -943,11 +943,11 @@ for (int i = 0; i < 3; i++)
       if (update_count > 0 && update_count == timedout_count)
         if (!testflag(endaddr, af_retry_skipped))
           {
-          DEBUG(D_retry) debug_printf_indent("timed out: all retries expired\n");
+          DEBUG(retry) debug_printf_indent("timed out: all retries expired\n");
           timed_out = TRUE;
           }
         else
-          DEBUG(D_retry)
+          DEBUG(retry)
             debug_printf_indent("timed out but some hosts were skipped\n");
       }     /* Loop for an address and its parents */
 
@@ -1009,7 +1009,7 @@ for (int i = 0; i < 3; i++)
 
     paddr = &(endaddr->next);         /* Advance to next address */
     }                                 /* Loop for all addresses  */
-  DEBUG(D_retry) acl_level--;
+  DEBUG(retry) acl_level--;
   }                                   /* Loop for succeed, fail, defer */
 
 /* Close and unlock the database */
@@ -1020,10 +1020,10 @@ if (dbm_file)
 	dbfn_close(dbm_file);
       else
 	dbfn_close_multi(dbm_file);
-  else DEBUG(D_hints_lookup)
+  else DEBUG(hints_lookup)
     debug_printf_indent("retaining retry hintsdb handle\n");
 
-DEBUG(D_retry)
+DEBUG(retry)
   { acl_level--; debug_printf_indent("end of retry processing\n"); }
 }
 

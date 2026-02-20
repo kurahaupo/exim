@@ -954,7 +954,7 @@ if (sep <= 0)
     {
     if (!is_tainted(s))
       sep = s[1];
-    else DEBUG(D_any) 
+    else DEBUG(any) 
       debug_printf("attempt to use tainted change-of-seperator spec (%s %d)\n",
 		    config_filename, config_lineno);
     if (*++s) ++s;
@@ -1683,7 +1683,7 @@ while (*fp)
       {
       gstring * zg = NULL;
       s = va_arg(ap, char *);
-      if (IS_DEBUG(D_noutf8))
+      if (IS_DEBUG(noutf8))
 	for ( ; *s; s++)
 	  zg = string_catn(zg, CUS (*s == 'K' ? "|" : s), 1);
       else
@@ -1709,7 +1709,7 @@ while (*fp)
 
     case 'W':			/* Maybe mark up ctrls, spaces & newlines */
       s = va_arg(ap, char *);
-      if (s && !IS_DEBUG(D_noutf8))
+      if (s && !IS_DEBUG(noutf8))
 	{
 	gstring * zg = NULL;
 	int p = precision;

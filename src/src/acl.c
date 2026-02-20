@@ -1321,7 +1321,7 @@ if (host_lookup_failed)
 
 /* Need to do a lookup */
 
-HDEBUG(D_acl)
+HDEBUG(acl)
   debug_printf_indent("looking up host name to force name/address consistency check\n");
 
 if ((rc = host_name_lookup()) != OK)
@@ -1392,7 +1392,7 @@ for (dns_record * rr = dns_next_rr(dnsa, dnss, reset);
     {
     /* If the client IP address matches the target IP address, it's good! */
 
-    DEBUG(D_acl) debug_printf_indent("CSA target address is %s\n", da->address);
+    DEBUG(acl) debug_printf_indent("CSA target address is %s\n", da->address);
 
     if (strcmpic(sender_host_address, da->address) == 0) return CSA_OK;
     }
@@ -1525,7 +1525,7 @@ for (rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   GETSHORT(weight, p);
   GETSHORT(port, p);
 
-  DEBUG(D_acl)
+  DEBUG(acl)
     debug_printf_indent("CSA priority=%d weight=%d port=%d\n", priority, weight, port);
 
   /* Check the CSA version number */
@@ -1565,7 +1565,7 @@ for (rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   (void)dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, p,
     (DN_EXPAND_ARG4_TYPE)target, TARGET_SIZE);
 
-  DEBUG(D_acl) debug_printf_indent("CSA target is %s\n", target);
+  DEBUG(acl) debug_printf_indent("CSA target is %s\n", target);
 
   break;
   }
@@ -1856,7 +1856,7 @@ switch(vp->value)
     *log_msgptr = *user_msgptr = string_sprintf("client SMTP authorization %s",
                                               csa_reason_string[rc]);
     csa_status = csa_status_string[rc];
-    DEBUG(D_acl) debug_printf_indent("CSA result %s\n", csa_status);
+    DEBUG(acl) debug_printf_indent("CSA result %s\n", csa_status);
     rc = csa_return_code[rc];
     goto OUT;
 
@@ -2184,7 +2184,7 @@ else if (verify_sender_address)
       rc = sender_vaddr->special_action;
       *basic_errno = sender_vaddr->basic_errno;
       }
-    HDEBUG(D_acl) debug_printf_indent("using cached sender verify result\n");
+    HDEBUG(acl) debug_printf_indent("using cached sender verify result\n");
     }
 
   /* Do a new verification, and cache the result. The cache is used to avoid
@@ -2231,12 +2231,12 @@ else if (verify_sender_address)
       rc = verify_address(sender_vaddr, -1, verify_options, callout,
         callout_overall, callout_connect, se_mailfrom, pm_mailfrom, &routed);
 
-      HDEBUG(D_acl) debug_printf_indent("----------- end verify ------------\n");
+      HDEBUG(acl) debug_printf_indent("----------- end verify ------------\n");
 
       if (rc != OK)
         *basic_errno = sender_vaddr->basic_errno;
       else
-	DEBUG(D_acl)
+	DEBUG(acl)
 	  if (Ustrcmp(sender_vaddr->address, verify_sender_address) != 0)
 	    debug_printf_indent("sender %s verified ok as %s\n",
 	      verify_sender_address, sender_vaddr->address);
@@ -2246,7 +2246,7 @@ else if (verify_sender_address)
       }
     else
       {
-      DEBUG(D_acl) debug_printf_indent(" null sender\n");
+      DEBUG(acl) debug_printf_indent(" null sender\n");
       rc = OK;
       }
 
@@ -2285,7 +2285,7 @@ else
   addr2 = *addr;
   rc = verify_address(&addr2, -1, verify_options|vopt_is_recipient, callout,
     callout_overall, callout_connect, se_mailfrom, pm_mailfrom, NULL);
-  HDEBUG(D_acl) debug_printf_indent("----------- end verify ------------\n");
+  HDEBUG(acl) debug_printf_indent("----------- end verify ------------\n");
 
   *basic_errno = addr2.basic_errno;
   *log_msgptr = addr2.message;
@@ -2305,7 +2305,7 @@ if (  rc == DEFER
       || callout_defer_ok && *basic_errno == ERRNO_CALLOUTDEFER
    )  )
   {
-  HDEBUG(D_acl) debug_printf_indent("verify defer overridden by %s\n",
+  HDEBUG(acl) debug_printf_indent("verify defer overridden by %s\n",
     defer_ok? "defer_ok" : "callout_defer_ok");
   rc = OK;
   }
@@ -2604,7 +2604,7 @@ key = string_sprintf("%s/%s/%s%s",
   unique == NULL ? "" : "unique/",
   key);
 
-HDEBUG(D_acl)
+HDEBUG(acl)
   debug_printf_indent("ratelimit condition count=%.0f %.1f/%s\n", count, limit, key);
 
 /* See if we have already computed the rate by looking in the relevant tree.
@@ -2647,7 +2647,7 @@ if ((t = tree_search(*anchor, key)))
   rc = (dbd->rate < limit)? FAIL : OK;
   store_pool = old_pool;
   sender_rate = string_sprintf("%.1f", dbd->rate);
-  HDEBUG(D_acl)
+  HDEBUG(acl)
     debug_printf_indent("ratelimit found pre-computed rate %s\n", sender_rate);
   return rc;
   }
@@ -2659,7 +2659,7 @@ if (!(dbm = dbfn_open(US"ratelimit", O_RDWR|O_CREAT, &dbblock, TRUE, TRUE)))
   {
   store_pool = old_pool;
   sender_rate = NULL;
-  HDEBUG(D_acl) debug_printf_indent("ratelimit database not available\n");
+  HDEBUG(acl) debug_printf_indent("ratelimit database not available\n");
   *log_msgptr = US"ratelimit database not available";
   return DEFER;
   }
@@ -2671,7 +2671,7 @@ gettimeofday(&tv, NULL);
 if (dbdb)
   {
   /* Locate the basic ratelimit block inside the DB data. */
-  HDEBUG(D_acl) debug_printf_indent("ratelimit found key in database\n");
+  HDEBUG(acl) debug_printf_indent("ratelimit found key in database\n");
   dbd = &dbdb->dbd;
 
   /* Forget the old Bloom filter if it is too old, so that we count each
@@ -2681,7 +2681,7 @@ if (dbdb)
 
   if(unique && tv.tv_sec > dbdb->bloom_epoch + period)
     {
-    HDEBUG(D_acl) debug_printf_indent("ratelimit discarding old Bloom filter\n");
+    HDEBUG(acl) debug_printf_indent("ratelimit discarding old Bloom filter\n");
     dbdb = NULL;
     }
 
@@ -2689,7 +2689,7 @@ if (dbdb)
 
   if(unique && dbdb_size < sizeof(*dbdb))
     {
-    HDEBUG(D_acl) debug_printf_indent("ratelimit discarding undersize Bloom filter\n");
+    HDEBUG(acl) debug_printf_indent("ratelimit discarding undersize Bloom filter\n");
     dbdb = NULL;
     }
   }
@@ -2702,14 +2702,14 @@ if (!dbdb)
   if (!unique)
     {
     /* No Bloom filter. This basic ratelimit block is initialized below. */
-    HDEBUG(D_acl) debug_printf_indent("ratelimit creating new rate data block\n");
+    HDEBUG(acl) debug_printf_indent("ratelimit creating new rate data block\n");
     dbdb_size = sizeof(*dbd);
     dbdb = store_get(dbdb_size, GET_UNTAINTED);
     }
   else
     {
     int extra;
-    HDEBUG(D_acl) debug_printf_indent("ratelimit creating new Bloom filter\n");
+    HDEBUG(acl) debug_printf_indent("ratelimit creating new Bloom filter\n");
 
     /* See the long comment below for an explanation of the magic number 2.
     The filter has a minimum size in case the rate limit is very small;
@@ -2793,7 +2793,7 @@ if (unique && !readonly)
   /* Scan the bits corresponding to this event. A zero bit means we have
   not seen it before. Ensure all bits are set to record this event. */
 
-  HDEBUG(D_acl) debug_printf_indent("ratelimit checking uniqueness of %s\n", unique);
+  HDEBUG(acl) debug_printf_indent("ratelimit checking uniqueness of %s\n", unique);
 
   seen = TRUE;
   for (n = 0; n < 8; n++, hash += hinc)
@@ -2811,11 +2811,11 @@ if (unique && !readonly)
 
   if (seen)
     {
-    HDEBUG(D_acl) debug_printf_indent("ratelimit event found in Bloom filter\n");
+    HDEBUG(acl) debug_printf_indent("ratelimit event found in Bloom filter\n");
     count = 0.0;
     }
   else
-    HDEBUG(D_acl) debug_printf_indent("ratelimit event added to Bloom filter\n");
+    HDEBUG(acl) debug_printf_indent("ratelimit event added to Bloom filter\n");
   }
 
 /* If there was no previous ratelimit data block for this key, initialize
@@ -2824,7 +2824,7 @@ is what would be computed by the code below for an infinite interval. */
 
 if (!dbd)
   {
-  HDEBUG(D_acl) debug_printf_indent("ratelimit initializing new key's rate data\n");
+  HDEBUG(acl) debug_printf_indent("ratelimit initializing new key's rate data\n");
   dbd = &dbdb->dbd;
   dbd->gen.time_stamp = tv.tv_sec;
   dbd->time_usec = tv.tv_usec;
@@ -2925,11 +2925,11 @@ neither leaky nor strict are set, so we do not do any updates. */
 if ((rc == FAIL && leaky) || strict)
   {
   dbfn_write(dbm, key, dbdb, dbdb_size);
-  HDEBUG(D_acl) debug_printf_indent("ratelimit db updated\n");
+  HDEBUG(acl) debug_printf_indent("ratelimit db updated\n");
   }
 else
   {
-  HDEBUG(D_acl) debug_printf_indent("ratelimit db not updated: %s\n",
+  HDEBUG(acl) debug_printf_indent("ratelimit db not updated: %s\n",
     readonly? "readonly mode" : "over the limit, but leaky");
   }
 
@@ -2949,7 +2949,7 @@ order to ensure that it is done using the correct storage pool. */
 store_pool = old_pool;
 sender_rate = string_sprintf("%.1f", dbd->rate);
 
-HDEBUG(D_acl)
+HDEBUG(acl)
   debug_printf_indent("ratelimit computed rate %s\n", sender_rate);
 
 return rc;
@@ -3039,7 +3039,7 @@ while ((ele = string_nextinlist(&list, &slash, NULL, 0)))
 
 if (!(dbm = dbfn_open(US"seen", O_RDWR|O_CREAT, &dbblock, TRUE, TRUE)))
   {
-  HDEBUG(D_acl) debug_printf_indent("database for 'seen' not available\n");
+  HDEBUG(acl) debug_printf_indent("database for 'seen' not available\n");
   *log_msgptr = US"database for 'seen' not available";
   return DEFER;
   }
@@ -3054,18 +3054,18 @@ if (dbd)		/* an existing record */
     yield = OK;
 
   if (mode == SEEN_READONLY)
-    { HDEBUG(D_acl) debug_printf_indent("seen db not written (readonly)\n"); }
+    { HDEBUG(acl) debug_printf_indent("seen db not written (readonly)\n"); }
   else if (mode == SEEN_WRITE || !before)
     {
     dbd->gen.time_stamp = now;
     dbfn_write(dbm, key, dbd, sizeof(*dbd));
-    HDEBUG(D_acl) debug_printf_indent("seen db written (update)\n");
+    HDEBUG(acl) debug_printf_indent("seen db written (update)\n");
     }
   else if (diff >= refresh)
     {
     dbd->gen.time_stamp = now - interval;
     dbfn_write(dbm, key, dbd, sizeof(*dbd));
-    HDEBUG(D_acl) debug_printf_indent("seen db written (refresh)\n");
+    HDEBUG(acl) debug_printf_indent("seen db written (refresh)\n");
     }
   }
 else
@@ -3074,10 +3074,10 @@ else
     {
     dbdata_seen d = {.gen = {.time_stamp = now}};
     dbfn_write(dbm, key, &d, sizeof(*dbd));
-    HDEBUG(D_acl) debug_printf_indent("seen db written (create)\n");
+    HDEBUG(acl) debug_printf_indent("seen db written (create)\n");
     }
   else
-    HDEBUG(D_acl) debug_printf_indent("seen db not written (readonly)\n");
+    HDEBUG(acl) debug_printf_indent("seen db not written (readonly)\n");
   }
 
 dbfn_close(dbm);
@@ -3161,7 +3161,7 @@ if (r == HOST_FIND_FAILED || r == HOST_FIND_AGAIN)
   return DEFER;
   }
 
-HDEBUG(D_acl)
+HDEBUG(acl)
   debug_printf_indent("udpsend [%s]:%d %s\n", h->address, portnum, arg);
 
 /*XXX this could better use sendto */
@@ -3184,7 +3184,7 @@ if (r < len)
   return DEFER;
   }
 
-HDEBUG(D_acl)
+HDEBUG(acl)
   debug_printf_indent("udpsend %d bytes\n", r);
 
 return OK;
@@ -3319,11 +3319,11 @@ for (; cb; cb = cb->next)
     case of rejection. They are expanded later. */
 
     case ACLC_MESSAGE:
-      HDEBUG(D_acl) debug_printf_indent("  message: %s\n", cb->arg);
+      HDEBUG(acl) debug_printf_indent("  message: %s\n", cb->arg);
       user_message = cb->arg;	continue;
 
     case ACLC_LOG_MESSAGE:
-      HDEBUG(D_acl) debug_printf_indent("l_message: %s\n", cb->arg);
+      HDEBUG(acl) debug_printf_indent("l_message: %s\n", cb->arg);
       log_message = cb->arg;	continue;
 
     /* The endpass "condition" just sets a flag to show it occurred. This is
@@ -3350,7 +3350,7 @@ for (; cb; cb = cb->next)
 
   /* Show condition, and expanded condition if it's different */
 
-  HDEBUG(D_acl)
+  HDEBUG(acl)
     {
     int lhswidth = 0;
     debug_printf_indent("check %s%s %n",
@@ -3720,7 +3720,7 @@ for (; cb; cb = cb->next)
 	    ignored = US"repeated";
 	  else if (cutthrough.callout_hold_only)
 	    {
-	    DEBUG(D_acl)
+	    DEBUG(acl)
 	      debug_printf_indent(" cutthrough request upgrades callout hold\n");
 	    cutthrough.callout_hold_only = FALSE;
 	    cutthrough.delivery = TRUE;	/* control accepted */
@@ -3749,7 +3749,7 @@ for (; cb; cb = cb->next)
 	      }
 	    }
 
-	  DEBUG(D_acl) if (ignored)
+	  DEBUG(acl) if (ignored)
 	    debug_printf(" cutthrough request ignored on %s item\n", ignored);
 	  }
 	break;
@@ -3837,11 +3837,11 @@ for (; cb; cb = cb->next)
         }
       else
         {
-        HDEBUG(D_acl) debug_printf_indent("delay modifier requests %d-second delay\n",
+        HDEBUG(acl) debug_printf_indent("delay modifier requests %d-second delay\n",
           delay);
         if (host_checking)
           {
-          HDEBUG(D_acl)
+          HDEBUG(acl)
             debug_printf_indent("delay skipped in -bh checking mode\n");
           }
 
@@ -3870,7 +3870,7 @@ for (; cb; cb = cb->next)
 	      n = 1;
 	      }
 	    if (poll(&p, n, delay*1000) > 0)
-	      HDEBUG(D_acl) debug_printf_indent("delay cancelled by peer close\n");
+	      HDEBUG(acl) debug_printf_indent("delay cancelled by peer close\n");
 	    }
 #else
 	  /* Lacking POLLRDHUP it appears to be impossible to detect that a
@@ -4471,7 +4471,7 @@ if (acl_level > 20)
 
 if (!s)
   {
-  HDEBUG(D_acl) debug_printf_indent("ACL is NULL: implicit DENY\n");
+  HDEBUG(acl) debug_printf_indent("ACL is NULL: implicit DENY\n");
   return FAIL;
   }
 
@@ -4517,11 +4517,11 @@ if (Ustrchr(ss, ' ') == NULL)
     {
     if (!(acl = (acl_block *)(t->data.ptr)))
       {
-      HDEBUG(D_acl) debug_printf_indent("ACL %q is empty: implicit DENY\n", ss);
+      HDEBUG(acl) debug_printf_indent("ACL %q is empty: implicit DENY\n", ss);
       return FAIL;
       }
     acl_name = string_sprintf("ACL %s", ss);
-    HDEBUG(D_acl) debug_printf_indent("using ACL %q\n", ss);
+    HDEBUG(acl) debug_printf_indent("using ACL %q\n", ss);
     }
 
   else if (*ss == '/')
@@ -4554,7 +4554,7 @@ if (Ustrchr(ss, ' ') == NULL)
     (void)close(fd);
 
     acl_name = string_sprintf("ACL %s", ss);
-    HDEBUG(D_acl) debug_printf_indent("read ACL from file %s\n", ss);
+    HDEBUG(acl) debug_printf_indent("read ACL from file %s\n", ss);
     }
   }
 
@@ -4594,7 +4594,7 @@ while ((acl_current = acl))
   config_filename = acl->srcfile;
   config_lineno = acl->srcline;
 
-  HDEBUG(D_acl)
+  HDEBUG(acl)
     {
     debug_printf_indent("processing %s %q", acl_name, verbs[acl->verb]);
     if (config_lineno) debug_printf(" (%s %d)", config_filename, config_lineno);
@@ -4614,7 +4614,7 @@ while ((acl_current = acl))
   switch (cond)
     {
     case DEFER:
-      HDEBUG(D_acl) debug_printf_indent("%s: condition test deferred in %s\n",
+      HDEBUG(acl) debug_printf_indent("%s: condition test deferred in %s\n",
 	verbs[acl->verb], acl_name);
       if (basic_errno != ERRNO_CALLOUTDEFER)
 	{
@@ -4629,17 +4629,17 @@ while ((acl_current = acl))
 
     default:      /* Paranoia */
     case ERROR:
-      HDEBUG(D_acl) debug_printf_indent("%s: condition test error in %s\n",
+      HDEBUG(acl) debug_printf_indent("%s: condition test error in %s\n",
 	verbs[acl->verb], acl_name);
       return ERROR;
 
     case OK:
-      HDEBUG(D_acl) debug_printf_indent("%s: condition test succeeded in %s\n",
+      HDEBUG(acl) debug_printf_indent("%s: condition test succeeded in %s\n",
 	verbs[acl->verb], acl_name);
       break;
 
     case FAIL:
-      HDEBUG(D_acl) debug_printf_indent("%s: condition test failed in %s\n",
+      HDEBUG(acl) debug_printf_indent("%s: condition test failed in %s\n",
 	verbs[acl->verb], acl_name);
       break;
 
@@ -4647,12 +4647,12 @@ while ((acl_current = acl))
     DISCARD can happen only for an "accept" or "discard" verb. */
 
     case DISCARD:
-      HDEBUG(D_acl) debug_printf_indent("%s: condition test yielded \"discard\" in %s\n",
+      HDEBUG(acl) debug_printf_indent("%s: condition test yielded \"discard\" in %s\n",
 	verbs[acl->verb], acl_name);
       break;
 
     case FAIL_DROP:
-      HDEBUG(D_acl) debug_printf_indent("%s: condition test yielded \"drop\" in %s\n",
+      HDEBUG(acl) debug_printf_indent("%s: condition test yielded \"drop\" in %s\n",
 	verbs[acl->verb], acl_name);
       break;
     }
@@ -4666,12 +4666,12 @@ while ((acl_current = acl))
     case ACL_ACCEPT:
       if (cond == OK || cond == DISCARD)
 	{
-	HDEBUG(D_acl) debug_printf_indent("end of %s: ACCEPT\n", acl_name);
+	HDEBUG(acl) debug_printf_indent("end of %s: ACCEPT\n", acl_name);
 	return cond;
 	}
       if (endpass_seen)
 	{
-	HDEBUG(D_acl) debug_printf_indent("accept: endpass encountered - denying access\n");
+	HDEBUG(acl) debug_printf_indent("accept: endpass encountered - denying access\n");
 	return cond;
 	}
       break;
@@ -4679,7 +4679,7 @@ while ((acl_current = acl))
     case ACL_DEFER:
       if (cond == OK)
 	{
-	HDEBUG(D_acl) debug_printf_indent("end of %s: DEFER\n", acl_name);
+	HDEBUG(acl) debug_printf_indent("end of %s: DEFER\n", acl_name);
 	if (acl_quit_check) goto badquit;
 	f.acl_temp_details = TRUE;
 	return DEFER;
@@ -4689,7 +4689,7 @@ while ((acl_current = acl))
     case ACL_DENY:
       if (cond == OK)
 	{
-	HDEBUG(D_acl) debug_printf_indent("end of %s: DENY\n", acl_name);
+	HDEBUG(acl) debug_printf_indent("end of %s: DENY\n", acl_name);
 	if (acl_quit_check) goto badquit;
 	return FAIL;
 	}
@@ -4698,13 +4698,13 @@ while ((acl_current = acl))
     case ACL_DISCARD:
       if (cond == OK || cond == DISCARD)
 	{
-	HDEBUG(D_acl) debug_printf_indent("end of %s: DISCARD\n", acl_name);
+	HDEBUG(acl) debug_printf_indent("end of %s: DISCARD\n", acl_name);
 	if (acl_quit_check) goto badquit;
 	return DISCARD;
 	}
       if (endpass_seen)
 	{
-	HDEBUG(D_acl)
+	HDEBUG(acl)
 	  debug_printf_indent("discard: endpass encountered - denying access\n");
 	return cond;
 	}
@@ -4713,7 +4713,7 @@ while ((acl_current = acl))
     case ACL_DROP:
       if (cond == OK)
 	{
-	HDEBUG(D_acl) debug_printf_indent("end of %s: DROP\n", acl_name);
+	HDEBUG(acl) debug_printf_indent("end of %s: DROP\n", acl_name);
 	if (acl_quit_check) goto badquit;
 	return FAIL_DROP;
 	}
@@ -4722,7 +4722,7 @@ while ((acl_current = acl))
     case ACL_REQUIRE:
       if (cond != OK)
 	{
-	HDEBUG(D_acl) debug_printf_indent("end of %s: not OK\n", acl_name);
+	HDEBUG(acl) debug_printf_indent("end of %s: not OK\n", acl_name);
 	if (acl_quit_check) goto badquit;
 	return cond;
 	}
@@ -4760,7 +4760,7 @@ while ((acl_current = acl))
 
 /* We have reached the end of the ACL. This is an implicit DENY. */
 
-HDEBUG(D_acl) debug_printf_indent("end of %s: implicit DENY\n", acl_name);
+HDEBUG(acl) debug_printf_indent("end of %s: implicit DENY\n", acl_name);
 return FAIL;
 
 badquit:
@@ -4965,12 +4965,12 @@ switch (where)
     else if (cutthrough.delivery)
       if (rc != OK)
 	{
-	HDEBUG(D_acl) debug_printf_indent(
+	HDEBUG(acl) debug_printf_indent(
 			"ignore cutthrough request; ACL did not accept\n");
 	}
       else if (rcpt_count <= cutthrough.nrcpt)
 	{
-	HDEBUG(D_acl) debug_printf_indent(
+	HDEBUG(acl) debug_printf_indent(
 			"ignore cutthrough request; nonfirst message\n");
 	}
       else if (  (rc = open_cutthrough_connection(addr, cutthrough.tpt_sender))
@@ -4986,7 +4986,7 @@ switch (where)
 	  }
 	else
 	  {
-	  HDEBUG(D_acl) debug_printf_indent("cutthrough defer; will spool\n");
+	  HDEBUG(acl) debug_printf_indent("cutthrough defer; will spool\n");
 	  rc = OK;
 	  }
 

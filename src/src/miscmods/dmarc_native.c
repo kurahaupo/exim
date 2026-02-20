@@ -201,7 +201,7 @@ const uschar * e = Ustrchr(tagrecord, '='), * s;
 /* RFC 6736 3.2 tagspec must have = */
 if (!e)
   {
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf_indent("DMARC: missing '=' for tag in %q\n", tagrecord);
   return FALSE;
   }
@@ -212,7 +212,7 @@ for (s = e; s > tagrecord && isspace(s[-1]); ) s--;
 /* RFC 6736 3.2 tag name at least 1 char */
 if (s == tagrecord)
   {
-  DEBUG(D_receive)
+  DEBUG(receive)
     debug_printf_indent("DMARC: missing tag name in %q\n", tagrecord);
   return FALSE;
   }
@@ -237,13 +237,13 @@ for (tag * ptp = policy_tags; ptp < policy_tags + nelem(policy_tags); ptp++)
       *vp = string_copy(s);
       return TRUE;
       }
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf_indent("DMARC: bad value for tag %q: %q\n", ptp->name, s);
     return FALSE;
     }
  }
 
-DEBUG(D_receive)
+DEBUG(receive)
   debug_printf_indent("DMARC: no recognised tag in %q\n", tagrecord);
 return FALSE;
 }
@@ -290,7 +290,7 @@ else
     res = a && b && Ustrcmp(a, b) == 0;
     }
   }
-DEBUG(D_receive)
+DEBUG(receive)
   if (res) debug_printf_indent("DMARC aligned(%s) %s %s\n", mode, a, b);
 return res;
 }
@@ -315,7 +315,7 @@ dmarc_spf_alignment =  DMARC_POLICY_SPF_ALIGNMENT_FAIL;
 if (f.dmarc_disable_verify || dmarc_abort)
   return OK;
 
-DEBUG(D_receive) { debug_printf_indent("DMARC: process\n"); expand_level++; }
+DEBUG(receive) { debug_printf_indent("DMARC: process\n"); expand_level++; }
 
 /* Store the header From: sender domain for this part of DMARC.
 If there is no from_header string, then it's likely this message
@@ -325,7 +325,7 @@ there was a previous error.  */
 
 if (!header_from)
   {
-  DEBUG(D_receive) debug_printf_indent("DMARC: no From: header\n");
+  DEBUG(receive) debug_printf_indent("DMARC: no From: header\n");
   dmarc_abort = TRUE;
   }
 else
@@ -380,7 +380,7 @@ if (!dmarc_abort && !sender_host_authenticated)
   typedef const pdkim_signature * (*sigs_fn_t)(void);
 
 /* RFC 7489 6.6.2 step 2: DMARC policy record from DNS */
-  DEBUG(D_receive)
+  DEBUG(receive)
     {
     debug_printf_indent("DMARC: get policy record\n");
     expand_level++;
@@ -390,7 +390,7 @@ if (!dmarc_abort && !sender_host_authenticated)
   if (!(rr = dmarc_get_dns_policy_record(&dmarc_used_domain)))
 	/*XXX want to handle nxdomain,temprror etc. here */
     {
-    DEBUG(D_receive) debug_printf_indent("DMARC: no record found for %s\n",
+    DEBUG(receive) debug_printf_indent("DMARC: no record found for %s\n",
 					  dmarc_header_from_sender);
     dmarc_policy = DMARC_POLICY_ABSENT;
     dmarc_status = US"norecord";
@@ -403,7 +403,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 
   else if (!dmarc_local_parse_policy(rr, &dmarc_parsed))
     {
-    DEBUG(D_receive) debug_printf_indent("DMARC: invalid record found for %s\n",
+    DEBUG(receive) debug_printf_indent("DMARC: invalid record found for %s\n",
 					  dmarc_header_from_sender);
     dmarc_policy = DMARC_POLICY_ABSENT;
     dmarc_status = US"norecord";
@@ -425,20 +425,20 @@ if (!dmarc_abort && !sender_host_authenticated)
 /*XXX "at least one syntactically valid reporting URI" */
       if (dmarc_parsed.rua && dmarc_tag_vfy_rua(dmarc_parsed.rua))
 	{
-	DEBUG(D_receive)
+	DEBUG(receive)
 	  debug_printf_indent("DMARC: invalid p or sp; continue for rua\n");
 	dmarc_parsed.p = US"none";
 	}
       else
 	{
-	DEBUG(D_receive)
+	DEBUG(receive)
 	  debug_printf_indent("DMARC: invalid p or sp, and no rua. Abort.\n");
 	dmarc_abort = TRUE;
 	goto out;
 	}
 
 /* RFC 7489 6.6.2 step 3: Perform DKIM signature verification checks */
-  DEBUG(D_receive)
+  DEBUG(receive)
     {
     expand_level--;
     debug_printf_indent("DMARC: process dkim results\n");
@@ -463,7 +463,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 		  vs == PDKIM_VERIFY_INVALID ? DMARC_POLICY_DKIM_OUTCOME_TMPFAIL :
 		  DMARC_POLICY_DKIM_OUTCOME_NONE;
 
-    DEBUG(D_receive)
+    DEBUG(receive)
       debug_printf_indent("DMARC: adding DKIM sender domain = %s\n",
 			  sig->domain);
 
@@ -499,10 +499,10 @@ if (!dmarc_abort && !sender_host_authenticated)
        )
       dmarc_dkim_alignment = DMARC_POLICY_DKIM_ALIGNMENT_PASS;
     }
-  DEBUG(D_receive) debug_printf_indent("DMARC: %u dkim sig%s\n",
+  DEBUG(receive) debug_printf_indent("DMARC: %u dkim sig%s\n",
 				dkim_sig_count, dkim_sig_count == 1 ? "" : "s");
 
-  DEBUG(D_receive)
+  DEBUG(receive)
     {
     expand_level--;
     debug_printf_indent("DMARC: process spf results\n");
@@ -524,7 +524,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 
     if (sr == SPF_RESULT_INVALID)
       {
-      DEBUG(D_receive) debug_printf_indent("DMARC: spf result 'invalid'\n");
+      DEBUG(receive) debug_printf_indent("DMARC: spf result 'invalid'\n");
 
       spf_result = DMARC_POLICY_SPF_OUTCOME_NONE;
       dmarc_spf_ares_result = ARES_RESULT_UNKNOWN;
@@ -548,7 +548,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 			      ARES_RESULT_UNKNOWN;
       /*XXX hmm, spf_origin never used? */
       /* spf_origin = DMARC_POLICY_SPF_ORIGIN_MAILFROM; */
-      DEBUG(D_receive)
+      DEBUG(receive)
 	debug_printf_indent("DMARC: using SPF sender domain = %s\n",
 					  spf_sender_domain);
       }
@@ -568,7 +568,7 @@ if (!dmarc_abort && !sender_host_authenticated)
       }
     }
 
-  DEBUG(D_receive)
+  DEBUG(receive)
     {
     expand_level--;
     debug_printf_indent("DMARC: finished spf\n");
@@ -634,7 +634,7 @@ use the sp.  Otherwise use the p. */
 
   if (has_dmarc_record && !dmarc_abort)
     {
-    DEBUG(D_receive) 
+    DEBUG(receive) 
       debug_printf_indent("DMARC results: spf_domain=%s dmarc_domain=%s "
 			   "spf_align=%s dkim_align=%s enforcement='%s'",
 			   spf_sender_domain, dmarc_used_domain,
@@ -667,7 +667,7 @@ use the sp.  Otherwise use the p. */
   }
 
 out:
-  DEBUG(D_receive)
+  DEBUG(receive)
     {
     expand_level--;
     debug_printf_indent("DMARC: finished process, status %q\n", dmarc_status);

@@ -1249,7 +1249,7 @@ parse_forward_list(const uschar *s, int options, address_item **anchor,
 {
 int count = 0;
 
-DEBUG(D_route) debug_printf("parse_forward_list: %s\n", s);
+DEBUG(route) debug_printf("parse_forward_list: %s\n", s);
 
 for (;;)
   {
@@ -1329,7 +1329,7 @@ for (;;)
 
   len = ss - s;
 
-  DEBUG(D_route) debug_printf("extract item: %.*s\n", len, s);
+  DEBUG(route) debug_printf("extract item: %.*s\n", len, s);
 
   /* Handle special addresses if permitted. If the address is :unknown:
   ignore it - this is for backward compatibility with old alias files. You

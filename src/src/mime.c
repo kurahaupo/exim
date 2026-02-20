@@ -526,7 +526,7 @@ while(1)
     if (!fgets(CS header, MIME_MAX_HEADER_SIZE, f))
       {
       /* Hit EOF or read error. Ugh. */
-      DEBUG(D_acl) debug_printf_indent("MIME: Hit EOF ...\n");
+      DEBUG(acl) debug_printf_indent("MIME: Hit EOF ...\n");
       return rc;
       }
 
@@ -538,12 +538,12 @@ while(1)
       if (Ustrncmp((header+2+Ustrlen(context->boundary)), "--", 2) == 0)
 	{
 	/* END boundary found */
-	DEBUG(D_acl) debug_printf_indent("MIME: End boundary found %s\n",
+	DEBUG(acl) debug_printf_indent("MIME: End boundary found %s\n",
 	  context->boundary);
 	return rc;
 	}
 
-      DEBUG(D_acl) debug_printf_indent("MIME: Next part with boundary %s\n",
+      DEBUG(acl) debug_printf_indent("MIME: Next part with boundary %s\n",
 	context->boundary);
       break;
       }
@@ -564,7 +564,7 @@ while(1)
 
       for (p1 = p; *p1 != ';' && *p1; p1++) ;
       *mh->value = string_copynlc(p, p1-p);
-      DEBUG(D_acl) debug_printf_indent("MIME: found %s header, value is '%s'\n",
+      DEBUG(acl) debug_printf_indent("MIME: found %s header, value is '%s'\n",
 	mh->name, *mh->value);
 
       if (*(p = p1)) p++;			/* jump past the ; */
@@ -579,7 +579,7 @@ while(1)
 
 	while (*p)
 	  {
-	  DEBUG(D_acl)
+	  DEBUG(acl)
 	    debug_printf_indent("MIME:   considering paramlist '%s'\n", p);
 
 	  /* look for interesting parameters */
@@ -629,19 +629,19 @@ while(1)
 			}
 		      }
 
-		    DEBUG(D_acl)
+		    DEBUG(acl)
 		      debug_printf_indent("MIME:    charset %s fname '%s'\n",
 			mime_filename_charset ? mime_filename_charset : US"<NULL>",
 			fname);
 
 		    fname = rfc2231_to_2047(fname, mime_filename_charset,
 						  &slen);
-		    DEBUG(D_acl)
+		    DEBUG(acl)
 		      debug_printf_indent("MIME:    2047-name %s\n", fname);
 
 		    fname = rfc2047_decode(fname, FALSE, NULL, ' ',
 						  NULL, &err_msg);
-		    DEBUG(D_acl) debug_printf_indent(
+		    DEBUG(acl) debug_printf_indent(
 				    "MIME:    plain-name %s\n", fname);
 
 		    if (!fname || Ustrlen(fname) == slen)
@@ -674,7 +674,7 @@ while(1)
 		? rfc2047_decode(p3, check_rfc2047_length, NULL, 32, NULL,
 		    &dummy_errstr)
 		: NULL;
-	      DEBUG(D_acl) debug_printf_indent(
+	      DEBUG(acl) debug_printf_indent(
 		"MIME:  found %s parameter in %s header, value '%s'\n",
 		mp->name, mh->name, *mp->value);
 
@@ -696,7 +696,7 @@ while(1)
 	  if (decoding_failed)
 	    mime_filename = string_from_gstring(mime_fname_rfc2231);
 
-	  DEBUG(D_acl) debug_printf_indent(
+	  DEBUG(acl) debug_printf_indent(
 	    "MIME:  found %s parameter in %s header, value is '%s'\n",
 	    "filename", mh->name, mime_filename);
 	  }
@@ -737,7 +737,7 @@ while(1)
   if (  mime_content_type && nested_context.boundary 
      && Ustrncmp(mime_content_type,"multipart",9) == 0)
     {
-    DEBUG(D_acl)
+    DEBUG(acl)
       debug_printf_indent("MIME: Entering multipart recursion, boundary '%s'\n",
 	nested_context.boundary);
 

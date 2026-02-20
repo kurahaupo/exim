@@ -106,11 +106,11 @@ uschar * errstr;
 gstring * g;
 typedef gstring * (*fn_t)(gstring *, uschar **, uschar *, const uschar **);
 
-DEBUG(D_acl) debug_printf_indent("calling Mail::SPF\n");
+DEBUG(acl) debug_printf_indent("calling Mail::SPF\n");
 expand_level++;
 if (!(g = (((fn_t *) spf_perl_mi->functions)[PERL_CAT])
 			  (NULL, &errstr, US"my_spf_req", argv)))
-  DEBUG(D_acl) debug_printf_indent("SPF err %q\n", errstr);
+  DEBUG(acl) debug_printf_indent("SPF err %q\n", errstr);
 expand_level--;
 return g;
 }
@@ -160,7 +160,7 @@ uschar * errstr;
 const uschar * arglist = *listptr;
 
 expand_level++;
-DEBUG(D_acl)
+DEBUG(acl)
   debug_printf_indent("%s: mfrom:<%s>\n", __FUNCTION__, spf_envelope_sender);
 
 if (!setup_spf_perl_mi(&errstr))
@@ -186,7 +186,7 @@ else
   sep = '\n';
 
   spf_result = string_nextinlist(CUSS &res_list, &sep, NULL, 0);
-  DEBUG(D_acl) debug_printf_indent("MAIL::SPF result is %q\n", spf_received);
+  DEBUG(acl) debug_printf_indent("MAIL::SPF result is %q\n", spf_received);
 
   spf_received = res_list;		/* remainder of the returned string */
 
@@ -221,7 +221,7 @@ uschar * s;
 if (spf_result)
   {
   int start = 0;		/* Compiler quietening */
-  DEBUG(D_acl) start = gstring_length(g);
+  DEBUG(acl) start = gstring_length(g);
 
   g = string_append(g, 2, US";\n\tspf=", spf_result);
   if (spf_result_guessed)
@@ -237,11 +237,11 @@ if (spf_result)
       ? string_append(g, 2, US" smtp.helo=", s)
       : string_cat(g, US" smtp.mailfrom=<>");
     }
-  DEBUG(D_acl) debug_printf_indent("SPF:\tauthres '%.*s'\n",
+  DEBUG(acl) debug_printf_indent("SPF:\tauthres '%.*s'\n",
 		  gstring_length(g) - start - 3, g->s + start + 3);
   }
 else
-  DEBUG(D_acl) debug_printf_indent("SPF:\tno authres\n");
+  DEBUG(acl) debug_printf_indent("SPF:\tno authres\n");
 return g;
 }
 
@@ -266,7 +266,7 @@ if (spf_result)
   }
 
 *human_readable_p = s ? string_copy(s) : US"";
-DEBUG(D_acl) debug_printf_indent(" SPF: %d '%s'\n", res, s);
+DEBUG(acl) debug_printf_indent(" SPF: %d '%s'\n", res, s);
 return res;
 }
 
@@ -298,7 +298,7 @@ spf_lookup_find(void * handle, const uschar * filename,
 uschar * errstr;
 int res = FAIL;
 
-DEBUG(D_acl) debug_printf_indent("%s: mfrom:<%s> ip %q\n", __FUNCTION__,
+DEBUG(acl) debug_printf_indent("%s: mfrom:<%s> ip %q\n", __FUNCTION__,
 				  keystring, filename);
 expand_level++;
 
@@ -315,7 +315,7 @@ if (setup_spf_perl_mi(&errstr))
       uschar * res_list = US string_from_gstring(g);
       int sep = '\n';
       *result = string_nextinlist(CUSS &res_list, &sep, NULL, 0);
-      DEBUG(D_acl) debug_printf_indent("MAIL::SPF result is %q\n", *result);
+      DEBUG(acl) debug_printf_indent("MAIL::SPF result is %q\n", *result);
       res = OK;
       }
     }

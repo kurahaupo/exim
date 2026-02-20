@@ -84,7 +84,7 @@ have the same pid. We therefore have one go at unlinking it before giving up.
 
 if (fd < 0 && errno == EEXIST)
   {
-  DEBUG(D_any) debug_printf("%s exists: unlinking\n", temp_name);
+  DEBUG(any) debug_printf("%s exists: unlinking\n", temp_name);
   Uunlink(temp_name);
   fd = Uopen(temp_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE);
   }
@@ -96,7 +96,7 @@ automatically. */
 if (fd >= 0)
   if (exim_fchown(fd, exim_uid, exim_gid, temp_name) || fchmod(fd, SPOOL_MODE))
     {
-    DEBUG(D_any) debug_printf("failed setting perms on %s\n", temp_name);
+    DEBUG(any) debug_printf("failed setting perms on %s\n", temp_name);
     (void) close(fd); fd = -1;
     Uunlink(temp_name);
     }
@@ -165,7 +165,7 @@ uschar * tname = spool_fname(US"input", message_subdir, US"hdr.", message_id);
 if ((fd = spool_open_temp(tname)) < 0)
   return spool_write_error(where, errmsg, US"open", NULL, NULL);
 fp = fdopen(fd, "wb");
-DEBUG(D_receive|D_deliver) debug_printf("Writing spool header file: %s\n", tname);
+DEBUG(receive|deliver) debug_printf("Writing spool header file: %s\n", tname);
 
 /* We now have an open file to which the header data is to be written. Start
 with the file's leaf name, to make the file self-identifying. Continue with the
@@ -232,8 +232,10 @@ tree_walk(acl_var_m, &acl_var_write, fp);
 
 if (*debuglog_name)
   {
-  fprintf(fp, "-debug_selector 0x" PR_EXIM_BITMASK "\n", debug_selector);
-  fprintf(fp, "-debuglog_name %s\n", debuglog_name);
+  fprintf(fp, "-debug_selector 0x" PR_EXIM_BITMASK, debug_selector[0]);
+  for (int i = 1; i < DEBUG_SELECTOR_SIZE; i++)
+    fprintf(fp, ",0x" PR_EXIM_BITMASK, debug_selector[i]);
+  fprintf(fp, "\n-debuglog_name %s\n", debuglog_name);
   }
 
 if (f.spool_file_wireformat)
@@ -302,9 +304,9 @@ if (message_smtputf8)
 #endif
 
 /* Write the dsn flags to the spool header file */
-/* DEBUG(D_deliver) debug_printf("DSN: Write SPOOL: -dsn_envid %s\n", dsn_envid); */
+/* DEBUG(deliver) debug_printf("DSN: Write SPOOL: -dsn_envid %s\n", dsn_envid); */
 if (dsn_envid) fprintf(fp, "-dsn_envid %s\n", dsn_envid);
-/* DEBUG(D_deliver) debug_printf("DSN: Write SPOOL: -dsn_ret %d\n", dsn_ret); */
+/* DEBUG(deliver) debug_printf("DSN: Write SPOOL: -dsn_ret %d\n", dsn_ret); */
 if (dsn_ret) fprintf(fp, "-dsn_ret %d\n", dsn_ret);
 
 /* To complete the envelope, write out the tree of non-recipients, followed by
@@ -319,7 +321,7 @@ for (int i = 0; i < recipients_count; i++)
   recipient_item *r = recipients_list + i;
   const uschar *address = zap_newlines(r->address);
 
-  /* DEBUG(D_deliver) debug_printf("DSN: Flags: 0x%x\n", r->dsn_flags); */
+  /* DEBUG(deliver) debug_printf("DSN: Flags: 0x%x\n", r->dsn_flags); */
 
   if (r->pno < 0 && !r->errors_to && r->dsn_flags == 0)
     fprintf(fp, "%s\n", address);
@@ -334,7 +336,7 @@ for (int i = 0; i < recipients_count; i++)
       r->dsn_flags, errors_to, Ustrlen(errors_to), r->pno);
     }
 
-    DEBUG(D_deliver) debug_printf("DSN: **** SPOOL_OUT - "
+    DEBUG(deliver) debug_printf("DSN: **** SPOOL_OUT - "
       "address: <%s> errorsto: <%s> orcpt: <%s> dsn_flags: 0x%x\n",
       r->address, r->errors_to, r->orcpt, r->dsn_flags);
   }
@@ -389,7 +391,7 @@ if (fclose(fp) != 0)
 incarnation. */
 
 fname = spool_fname(US"input", message_subdir, id, US"-H");
-DEBUG(D_receive|D_deliver) debug_printf("Renaming spool header file: %s\n", fname);
+DEBUG(receive|deliver) debug_printf("Renaming spool header file: %s\n", fname);
 
 if (Urename(tname, fname) < 0)
   return spool_write_error(where, errmsg, US"rename", tname, NULL);
@@ -426,7 +428,7 @@ if (close(fd) < 0)
 /* Return the number of characters in the headers, which is the file size, less
 the preliminary stuff, less the additional count fields on the headers. */
 
-DEBUG(D_receive) debug_printf("Size of headers = %d\n",
+DEBUG(receive) debug_printf("Size of headers = %d\n",
   (int)(statbuf.st_size - size_correction));
 
 return statbuf.st_size - size_correction;

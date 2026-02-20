@@ -48,7 +48,7 @@ if (!(s = expand_string(rblock->errors_to)))
   {
   if (f.expand_string_forcedfail)
     {
-    DEBUG(D_route)
+    DEBUG(route)
       debug_printf("forced expansion failure - ignoring errors_to\n");
     return OK;
     }
@@ -77,7 +77,7 @@ associated with an address. */
 if (verify != v_none)
   {
   *errors_to = s;
-  DEBUG(D_route)
+  DEBUG(route)
     debug_printf("skipped verify errors_to address: already verifying\n");
   }
 else
@@ -107,13 +107,13 @@ else
   vopt_is_recipient, as otherwise sender_address may be altered because
   verify_address() thinks it is dealing with *the* sender of the message. */
 
-  DEBUG(D_route|D_verify)
+  DEBUG(route|verify)
     debug_printf("------ Verifying errors address %s ------\n", s);
   if (verify_address(snew, -1,
       vopt_is_recipient /* vopt_fake_sender is the alternative */
       | vopt_qualify, -1, -1, -1, NULL, NULL, NULL) == OK)
     *errors_to = snew->address;
-  DEBUG(D_route|D_verify)
+  DEBUG(route|verify)
     debug_printf("------ End verifying errors address %s ------\n", s);
 
   f.address_test_mode = save_address_test_mode;
