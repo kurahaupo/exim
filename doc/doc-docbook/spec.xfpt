@@ -36399,15 +36399,15 @@ The third argument may be NULL, in which case the &%-oMas%& option is omitted.
 .vitem &*void&~debug_enable_channel(const&~uschar&~*)*&
 This function turns on debug output from a given debug channel,
 given by name.
-Two channels are available: &"v&" and &"local_scan&".
+Two channels are available: &"v"& and &"local_scan"&.
 
 .ilist
-The &"v&" channel is enabled when &%-v%& was present on the command line.
+The &"v"& channel is enabled when &%-v%& was present on the command line.
 This is a testing option that is not privileged &-- any caller may set it.
 All the other channels can be enabled only by admin users.
 
 .next
-The &"local_scan&" channel is provided for use by &[local_scan()]&; it is set
+The &"local_scan"& channel is provided for use by &[local_scan()]&; it is set
 by the &`+local_scan`& debug selector.
 It is not included in the default set of debugging bits.
 .endlist ilist
