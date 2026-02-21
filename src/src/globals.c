@@ -116,7 +116,7 @@ const uschar *tls_verify_hosts = NULL;
 int     tls_watch_fd	       = -1;
 time_t  tls_watch_trigger_time = (time_t)0;
 #else	/*DISABLE_TLS*/
-uschar *tls_advertise_hosts    = NULL;
+const uschar *tls_advertise_hosts = NULL;
 #endif
 
 #ifndef DISABLE_PRDR
@@ -656,47 +656,49 @@ uschar *dccifd_options         = US"header";
 int     debug_fd               = -1;
 FILE   *debug_file             = NULL;
 
-/* List of names for debug channels.  Must be in alphabetical order.
-The initial few entries are dummies. */
+/* List of names for debug channels.  Must be in alphabetical order. */
 
-const uschar * const debug_chan_names[] = {
-  [BIT_TABLE_IDX_USABLE] = US"acl",	/* 4 */
-    US"auth",
-    US"deliver",
-    US"dns",
-    US"dnsbl",				/* 8 */
-    US"exec",
-    US"expand",
-    US"filter",
-    US"hints_lookup",
-    US"host_lookup",
-    US"ident",
-    US"interface",
-    US"lists",				/* 16 */
-    US"load",
-    US"local_scan",
-    US"lookup",
-    US"macro",
-    US"memory",
-    US"noutf8",
-    US"pid",
-    US"process_info",			/* 24 */
-    US"queue_run",
-    US"receive",
-    US"regex",
-    US"resolver",
-    US"retry",
-    US"rewrite",
-    US"route",
-    US"timestamp",			/* 32 */
-    US"tls",
-    US"transport",
-    US"uid",
-    US"v",
-    US"verify",
+#define DEBUG_CHAN(chan) {.name = US #chan, .logchan_bit = __LINE__ - D_iota}
+
+enum { D_iota = __LINE__ + 2 - BIT_TABLE_IDX_USABLE };
+bit_table debug_channels[] = {
+  DEBUG_CHAN(acl),		/* 4 */
+  DEBUG_CHAN(auth),
+  DEBUG_CHAN(deliver),
+  DEBUG_CHAN(dns),
+  DEBUG_CHAN(dnsbl),		/* 8 */
+  DEBUG_CHAN(exec),
+  DEBUG_CHAN(expand),
+  DEBUG_CHAN(filter),
+  DEBUG_CHAN(hints_lookup),
+  DEBUG_CHAN(host_lookup),
+  DEBUG_CHAN(ident),
+  DEBUG_CHAN(interface),
+  DEBUG_CHAN(lists),		/* 16 */
+  DEBUG_CHAN(load),
+  DEBUG_CHAN(local_scan),
+  DEBUG_CHAN(lookup),
+  DEBUG_CHAN(macro),
+  DEBUG_CHAN(memory),
+  DEBUG_CHAN(noutf8),
+  DEBUG_CHAN(pid),
+  DEBUG_CHAN(process_info),	/* 24 */
+  DEBUG_CHAN(queue_run),
+  DEBUG_CHAN(receive),
+  DEBUG_CHAN(regex),
+  DEBUG_CHAN(resolver),
+  DEBUG_CHAN(retry),
+  DEBUG_CHAN(rewrite),
+  DEBUG_CHAN(route),
+  DEBUG_CHAN(timestamp),	/* 32 */
+  DEBUG_CHAN(tls),
+  DEBUG_CHAN(transport),
+  DEBUG_CHAN(uid),
+  DEBUG_CHAN(v),
+  DEBUG_CHAN(verify),
 };
-
-int      debug_options_count	= nelem(debug_chan_names);
+#undef DEBUG_CHAN
+int      debug_chan_count	= nelem(debug_channels);
 
 /* Channel settings for "default" debug (just a "-d" used) */
 
@@ -958,6 +960,8 @@ uschar *log_file_path          = US LOG_FILE_PATH
 const uschar * const log_notall_names[] = { NULL };
 
 /* Table for selectors for log_write() calls.
+It is used for translating Li_* values, using the position in this table,
+to Lt_* values and name strings.
 Must have names that are in both enum logwrite_bit and logging_test_bit. */
 
 #define BIT_TABLE(chan) {.name = US #chan, .logchan_bit = Lt_##chan }
@@ -986,16 +990,14 @@ int     logwrite_options_count      = nelem(logwrite_options);
 
 /* List of names for logging channels.  Must be in alphabetical order.
 Must match enum logging_test_bit (macros.h).
-This is a superset of logwrite_options[].
-The initial few entries are dummies. */
+This is a superset of logwrite_options[]. */
 
-#define LOG_CHAN(name) [Lt_##name] = US #name
+#define LOG_CHAN(chan) {.name = US #chan, .logchan_bit = Lt_##chan}
 
-const uschar * const log_chan_names[] = {
+bit_table log_channels[] = {
   LOG_CHAN(8bitmime),
   LOG_CHAN(acl_warn_skipped),
   LOG_CHAN(address_rewrite),
-  [Lt_DUMMY_all] = US"all",
   LOG_CHAN(all_parents),
   LOG_CHAN(arguments),
   LOG_CHAN(connection_id),
@@ -1066,7 +1068,7 @@ const uschar * const log_chan_names[] = {
   LOG_CHAN(unknown_in_list),
 };
 #undef LOG_CHAN
-int     log_options_count      = nelem(log_chan_names);
+int     log_chan_count = nelem(log_channels);
 
 const uschar *log_ports	       = NULL;
 int     log_reject_target      = 0;

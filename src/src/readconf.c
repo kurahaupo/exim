@@ -508,10 +508,9 @@ options_logging(void)
 {
 uschar buf[EXIM_DRIVERNAME_MAX];
 
-for (const uschar * const * p = log_chan_names + BIT_TABLE_IDX_USABLE;
-    p < log_chan_names + log_options_count; p++) if (*p)
+for (bit_table * p = log_channels; p < log_channels + log_chan_count; p++)
   {
-  spf(buf, sizeof(buf), US"_LOG_%T", *p);
+  spf(buf, sizeof(buf), US"_LOG_%T", p->name);
   builtin_macro_create(buf);
   }
 }

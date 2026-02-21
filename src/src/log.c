@@ -1368,33 +1368,28 @@ syslog_open = FALSE;
 
 Arguments:	word		The name to search for
 		len		Number of chars in name
-		names		List of channel names
+		channels	List of channel names + numbers
 		count		Number of list entries, incl. leading specials
-Return index, or zero for not-found
+Return channel number, or zero for not-found
 */
 
 unsigned
-chan_name_to_idx(const uschar * word, unsigned len,
-  const uschar * const * names, unsigned count)
+chan_name_to_num(const uschar * word, unsigned len,
+  bit_table * channels, unsigned count)
 {
-const uschar * const * start = names + BIT_TABLE_IDX_USABLE;
-const uschar * const * end = names + count;
+bit_table * start = channels;
+bit_table * end = channels + count;
 
 while (start < end)
   {
-  const uschar * const * middle = start + (end - start)/2;
+  bit_table * middle = start + (end - start)/2;
   int c;
 
-  /* Work around empty list element pointers */
-
-  while (!*middle && middle < end) middle++;
-  while (!*middle && middle >= start) middle--;
-
-  if ((c = Ustrncmp(word, *middle, len)) == 0)
-    if ((*middle)[len])
+  if ((c = Ustrncmp(word, middle->name, len)) == 0)
+    if (middle->name[len])
       c = -1;
     else
-      return middle - names;	/* Found */
+      return middle->logchan_bit;
 
   if (c < 0)
     end = middle;
@@ -1427,7 +1422,7 @@ Arguments:
   selsize        number of words in the bit string
   notall         list of words to exclude from "all"
   string         the configured string
-  options        table of option names
+  options        table of option names & channel-numbers
   count          size of table
   flags          DCB_LOG, DCB_DEBUG, DCB_FROM_CONFIG
 
@@ -1437,7 +1432,7 @@ Returns:         nothing on success - bomb out on failure
 void
 decode_bits(bitmask_word_t * selector, size_t selsize,
   const uschar * const * notall, const uschar * string,
-  const uschar * const * options, int count, int flags)
+  bit_table * options, int count, int flags)
 {
 uschar * errmsg;
 
@@ -1496,18 +1491,18 @@ else for(;;)
       {
       memset(selector, -1, sizeof(*selector)*selsize);
       for (const uschar * const * p = notall; *p; p++)
-	bit_clear(selector, chan_name_to_idx(*p, Ustrlen(*p), options, count));
+	bit_clear(selector, chan_name_to_num(*p, Ustrlen(*p), options, count));
       }
     else
       memset(selector, 0, sizeof(*selector)*selsize);
 
   else
     {
-    unsigned idx = chan_name_to_idx(s, len, options, count);
+    unsigned idx = chan_name_to_num(s, len, options, count);
     if (!idx)
       {
-      errmsg = string_sprintf("unknown %s_selector setting: %c%.*s", flags & DCB_LOG ? "log" : "debug",
-	adding ? '+' : '-', len, s);
+      errmsg = string_sprintf("unknown %s_selector setting: %c%.*s",
+	flags & DCB_LOG ? "log" : "debug", adding ? '+' : '-', len, s);
       goto ERROR_RETURN;
       }
 
@@ -1562,7 +1557,7 @@ void
 logging_modify_channels(const uschar * string)
 {
 decode_bits(log_selector, log_selector_size, log_notall_names, string,
-          log_chan_names, log_options_count, DCB_LOG);
+          log_channels, log_chan_count, DCB_LOG);
 }
 
 
@@ -1580,7 +1575,7 @@ bit_set(log_selector, BIT_TABLE_IDX_NONZERO);
 for (const uschar * const * p = log_default_names;
      p < log_default_names + log_default_count; p++)
   bit_set(log_selector,
-   chan_name_to_idx(*p, Ustrlen(*p), log_chan_names, log_options_count));
+   chan_name_to_num(*p, Ustrlen(*p), log_channels, log_chan_count));
 }
 
 

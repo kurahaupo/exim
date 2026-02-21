@@ -339,7 +339,7 @@ use inlinable functions. */
 
 /* Debugging control */
 
-#define DEBUG_SELECTOR_SIZE		(BITWORD(debug_options_count) + 1)
+#define DEBUG_SELECTOR_SIZE		(BITWORD(debug_chan_count) + 1)
 
 static inline bitmask_word_t bit_test(bitmask_word_t *, unsigned);
 extern bitmask_word_t * debug_selector;   /* Debugging bits */

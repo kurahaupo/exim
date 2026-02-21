@@ -476,7 +476,7 @@ extern uschar *dccifd_address;         /* address of the dccifd daemon */
 extern uschar *dccifd_options;         /* options for the dccifd daemon */
 #endif
 
-extern const uschar * const debug_chan_names[];		/* channel names */
+extern bit_table debug_channels[];     /* names + numbers */
 extern const uschar * debug_defaults;			/* chans for "-d" */
 extern const uschar * const debug_notall_names[];	/* chans not in "all" */
 extern bitmask_word_t * debug_selector;   /* Debugging bits */
@@ -484,7 +484,7 @@ extern bitmask_word_t * debug_selector;   /* Debugging bits */
 
 extern int     debug_fd;               /* The fd for debug_file */
 extern FILE   *debug_file;             /* Where to write debugging info */
-extern int     debug_options_count;    /* Size of table */
+extern int     debug_chan_count;       /* Size of table */
 extern unsigned debug_pretrigger_bsize;
 extern uschar *debug_pretrigger_buf;   /* circular buffer for precapture */
 extern BOOL    debug_startup;	       /* Pre-config-read debugging */
@@ -675,9 +675,9 @@ extern const uschar * log_default_names[]; /* Init list for log_selector */
 extern int     log_default_count;      /* Size of table */
 extern uschar *log_file_path;          /* If unset, use default */
 extern const uschar *log_ports;	       /* If set, port numbers to log */
-extern const uschar * const log_chan_names[]; /* Table of options */
+extern bit_table log_channels[];       /* Table of options */
+extern int     log_chan_count;         /* Size of table */
 extern const uschar * const log_notall_names[];	/* chans not in "all" */
-extern int     log_options_count;      /* Size of table */
 extern int     log_reject_target;      /* Target log for ACL rejections */
 extern bitmask_word_t log_selector[];  /* Bit map of logging options */
 extern uschar *log_selector_string;    /* As supplied in the config */

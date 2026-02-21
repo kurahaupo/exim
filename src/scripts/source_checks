@@ -32,6 +32,21 @@ done <<-END
 	acl.c		controls_list
 END
 
+# Tables with one-arg macros as items
+# (ignoring #ifdef lines)
+while read file table
+do
+  : $file $table
+  < $file \
+  perl -e '$/= undef; while (<>) { print $1 if /(?<='$table'\[\])\s*=\s*{\s?(([^}]*)+)}/m }' \
+  | awk '!/^\s*#/ {split($0,a,"[()]");print a[2]}' \
+  | LC_ALL=C sort -c \
+  || { echo "Table $table in $file is not alphabetically ordered" >&2 ; exit 1; }
+done <<-END
+	globals.c	debug_channels
+	globals.c	log_channels
+END
+
 # Tables with just string items
 while read file table
 do
@@ -42,8 +57,6 @@ do
   | LC_ALL=C sort -c \
   || { echo "Table $table in $file is not alphabetically ordered" >&2 ; exit 1; }
 done <<-END
-	globals.c	debug_chan_names
-	globals.c	log_chan_names
 	expand.c	item_table
 	expand.c	op_table_underscore
 	expand.c	op_table_main

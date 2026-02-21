@@ -143,8 +143,8 @@ extern void    bdat_flush_data(void);
 extern void    cancel_cutthrough_connection(BOOL, const uschar *);
 extern gstring *cat_file(FILE *, gstring *, const uschar *);
 extern gstring *cat_file_tls(void *, gstring *, const uschar *);
-extern unsigned chan_name_to_idx(const uschar *, unsigned,
-		  const uschar * const *, unsigned);
+extern unsigned chan_name_to_num(const uschar *, unsigned,
+		  bit_table *, unsigned);
 
 extern void    check_deliver_addrs_not_freed(void (*)(const uschar*, const uschar*, void*), void *);
 extern int     check_host(void *, const uschar *, const uschar **, uschar **);
@@ -196,7 +196,7 @@ extern void    debug_enable(void);
 extern void    debug_trigger_fire(void);
 
 extern void    decode_bits(bitmask_word_t *, size_t, const uschar * const *,
-	           const uschar *, const uschar * const *, int, int);
+	           const uschar *, bit_table *, int, int);
 extern void    delete_pid_file(void);
 extern void    deliver_local(address_item *, BOOL);
 extern address_item *deliver_make_addr(const uschar *, BOOL);

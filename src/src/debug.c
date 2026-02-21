@@ -518,8 +518,7 @@ while (chan = string_nextinlist(&channels, &sep, buf, sizeof(buf)))
   unsigned bit =
     Ustrcmp(chan, "any") == 0
     ? BIT_TABLE_IDX_IS_ANY
-    : chan_name_to_idx(chan, Ustrlen(chan),
-				  debug_chan_names, debug_options_count);
+    : chan_name_to_num(chan, Ustrlen(chan), debug_channels, debug_chan_count);
   if (bit && DEBUG_BIT(bit)) return TRUE;
   }
 return FALSE;
@@ -536,7 +535,7 @@ if (!*selector)
   }
 
 decode_bits(*selector, DEBUG_SELECTOR_SIZE, debug_notall_names, string,
-          debug_chan_names, debug_options_count, DCB_DEBUG | flags);
+          debug_channels, debug_chan_count, DCB_DEBUG | flags);
 }
 
 void

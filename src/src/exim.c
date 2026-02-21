@@ -4295,7 +4295,7 @@ if (checking && commandline_checks_require_admin && !f.admin_user)
 /* Handle the decoding of logging options. */
 
 decode_bits(log_selector, log_selector_size, log_notall_names,
-  log_selector_string, log_chan_names, log_options_count, DCB_LOG);
+  log_selector_string, log_channels, log_chan_count, DCB_LOG);
 
 DEBUG(any)
   {
