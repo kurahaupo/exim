@@ -35108,17 +35108,6 @@ If the scanner returns a temporary failure (e.g. license issues, or
 permission problems), the message is deferred and a paniclog entry is
 written.  The usual &`defer_ok`& option is available.
 
-.vitem &%aveserver%&
-.cindex "virus scanners" "Kaspersky"
-This is the scanner daemon of Kaspersky Version 5. You can get a trial version
-at &url(https://www.kaspersky.com/). This scanner type takes one option,
-which is the path to the daemon's UNIX socket. The default is shown in this
-example:
-.code
-av_scanner = aveserver:/var/run/aveserver
-.endd
-
-
 .vitem &%clamd%&
 .cindex "virus scanners" "clamd"
 This daemon-type scanner is GPL and free. You can get it at
@@ -35260,34 +35249,6 @@ av_scanner = fsecure:/path/to/.fsav
 .endd
 If no argument is given, the default is &_/var/run/.fsav_&. Thanks to Johan
 Thelmen for contributing the code for this scanner.
-
-.vitem &%kavdaemon%&
-.cindex "virus scanners" "Kaspersky"
-This is the scanner daemon of Kaspersky Version 4. This version of the
-Kaspersky scanner is outdated. Please upgrade (see &%aveserver%& above). This
-scanner type takes one option, which is the path to the daemon's UNIX socket.
-For example:
-.code
-av_scanner = kavdaemon:/opt/AVP/AvpCtl
-.endd
-The default path is &_/var/run/AvpCtl_&.
-
-.vitem &%mksd%&
-.cindex "virus scanners" "mksd"
-This was a daemon type scanner that is aimed mainly at Polish users,
-though some documentation was available in English.
-The history can be shown at &url(https://en.wikipedia.org/wiki/Mks_vir)
-and this appears to be a candidate for removal from Exim, unless
-we are informed of other virus scanners which use the same protocol
-to integrate.
-The only option for this scanner type is
-the maximum number of processes used simultaneously to scan the attachments,
-provided that mksd has
-been run with at least the same number of child processes. For example:
-.code
-av_scanner = mksd:2
-.endd
-You can safely omit this option (the default value is 1).
 
 .vitem &%sock%&
 .cindex "virus scanners" "simple socket-connected"

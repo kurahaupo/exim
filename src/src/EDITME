@@ -602,13 +602,6 @@ SUPPORT_DANE=yes
 # DISABLE_MAL_SOCK=yes
 # DISABLE_MAL_CMDLINE=yes
 
-# These scanners are claimed to be no longer existent.
-
-DISABLE_MAL_AVE=yes
-DISABLE_MAL_KAV=yes
-DISABLE_MAL_MKS=yes
-
-
 #------------------------------------------------------------------------------
 # If built with TLS, Exim includes code to support DKIM (DomainKeys Identified
 # Mail, RFC4871) signing and verification.  Verification of signatures is

@@ -205,12 +205,9 @@ Do not put spaces between # and the 'define'.
 #define DISABLE_MAL_FFROTD
 #define DISABLE_MAL_FFROT6D
 #define DISABLE_MAL_DRWEB
-#define DISABLE_MAL_AVE
 #define DISABLE_MAL_FSECURE
-#define DISABLE_MAL_KAV
 #define DISABLE_MAL_SOPHIE
 #define DISABLE_MAL_CLAM
-#define DISABLE_MAL_MKS
 #define DISABLE_MAL_AVAST
 #define DISABLE_MAL_SOCK
 #define DISABLE_MAL_CMDLINE
