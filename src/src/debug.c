@@ -217,7 +217,7 @@ va_end(ap);
 }
 
 void
-debug_vprintf(int indent, const char *format, va_list ap)
+debug_vprintf(int indent, const char * format, va_list ap)
 {
 int save_errno = errno;
 
@@ -245,7 +245,7 @@ if (debug_ptr == debug_buffer)
     }
 
   DEBUG(pid)
-    debug_ptr += sprintf(CS debug_ptr, "%5d ", (int)getpid());
+    debug_ptr += sprintf(CS debug_ptr, PID_T_FMT " ", getpid());
 
   /* Set up prefix if outputting for host checking and not debugging */
 
@@ -309,10 +309,10 @@ if (debug_ptr[-1] == '\n')
   {
   if (debug_prefix_length > 0)
     {
-    uschar *p = debug_buffer;
     int left = sizeof(debug_buffer) - (debug_ptr - debug_buffer) - 1;
-    while ((p = Ustrchr(p, '\n') + 1) != debug_ptr &&
-           left >= debug_prefix_length)
+    for (uschar * p = debug_buffer;
+	 (p = Ustrchr(p, '\n') + 1) != debug_ptr && left >= debug_prefix_length;
+	)
       {
       int len = debug_ptr - p;
       memmove(p + debug_prefix_length, p, len + 1);
@@ -353,10 +353,8 @@ if (debug_ptr[-1] == '\n')
       }
     }
   else
-    {
     fprintf(debug_file, "%s", CS debug_buffer);
-    fflush(debug_file);
-    }
+
   debug_ptr = debug_buffer;
   debug_prefix_length = 0;
   }

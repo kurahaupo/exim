@@ -1807,6 +1807,20 @@ return qrunners;
 }
 
 
+static void
+set_debug_stream(void)
+{
+debug_file = stderr;
+debug_fd = fileno(debug_file);
+}
+
+static void
+set_verb_opt_mode(void)
+{
+debug_modify_channel(US"+v");
+set_debug_stream();
+}
+
 /*************************************************
 *          Entry point and high-level code       *
 *************************************************/
@@ -2549,8 +2563,7 @@ on the second character (the one after '-'), to save some effort. */
 	  else
 	    {
 	    list_options = TRUE;
-	    debug_modify_channel(US"+v");
-	    debug_file = stderr;
+	    set_verb_opt_mode();
 	    }
 	  break;
 
@@ -3340,8 +3353,7 @@ on the second character (the one after '-'), to save some effort. */
     if (!*argrest)
       {
       f.dont_deliver = TRUE;
-      debug_modify_channel(US"+v");
-      debug_file = stderr;
+      set_verb_opt_mode();
       }
     else badarg = TRUE;
     break;
@@ -3868,10 +3880,7 @@ on the second character (the one after '-'), to save some effort. */
 
     case 'v':
     if (!*argrest)
-      {
-      debug_modify_channel(US"+v");
-      debug_file = stderr;
-      }
+      set_verb_opt_mode();
     else badarg = TRUE;
     break;
 
@@ -3988,8 +3997,7 @@ to run in the foreground. */
 
 if (ANY_DEBUG)
   {
-  debug_file = stderr;
-  debug_fd = fileno(debug_file);
+  set_debug_stream();
   f.background_daemon = FALSE;
   testharness_pause_ms(100);   /* lets caller finish */
 
@@ -5355,9 +5363,7 @@ if (verify_address_mode || f.address_test_mode)
   else
     {
     flags |= vopt_is_recipient;
-    debug_modify_channel(US"+v");
-    debug_file = stderr;
-    debug_fd = fileno(debug_file);
+    set_verb_opt_mode();
     DEBUG(verify) debug_print_ids(US"Address testing:");
     }
 
@@ -5553,8 +5559,8 @@ if (host_checking)
   smtp_out_fd = fileno(stdout);
   f.sender_local = FALSE;
   f.sender_host_notsocket = TRUE;
-  debug_file = stderr;
-  debug_fd = fileno(debug_file);
+  set_debug_stream();
+
   dprintf(smtp_out_fd, "\n**** SMTP testing session as if from host %s\n"
     "**** but without any ident (RFC 1413) callback.\n"
     "**** This is not for real!\n\n",

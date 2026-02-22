@@ -1784,12 +1784,10 @@ if (f.inetd_wait_mode)
   (void) close(2);
   exim_nullstd();
 
+  /* If we want debug, it must go to a file in the log directory */
+
   if (debug_file == stderr)
     {
-    /* need a call to log_write before call to open debug_file, so that
-    log.c:file_path has been initialised.  This is unfortunate. */
-    log_write(0, LOG_MAIN, "debugging Exim in inetd wait mode starting");
-
     fclose(debug_file);
     debug_file = NULL;
     exim_nullstd(); /* re-open fd2 after we just closed it again */

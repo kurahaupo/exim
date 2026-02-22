@@ -1628,12 +1628,14 @@ resulting in certain setup not having been done.  Hack this for now so we
 do not segfault; note that nondefault log locations (set via log_file_path)
 will not work for that case. */
 
-if (!*file_path) set_file_path();
+if (!*file_path)
+  set_file_path();
 
-if ((debug_fd = open_log(lt_debug, tag_name)) != -1)
-  debug_file = fdopen(debug_fd, "w");
-else
+if ((debug_fd = open_log(lt_debug, tag_name)) < 0)
   log_write(0, LOG_MAIN|LOG_PANIC, "unable to open debug log");
+
+debug_file = fdopen(debug_fd, "w");
+setbuf(debug_file, NULL);
 
 debug_print_ids(US"debug enabled:");
 }
@@ -1645,8 +1647,11 @@ debug_logging_from_spool(const uschar * filename)
 if (debug_fd < 0)
   {
   Ustrncpy(debuglog_name, filename, sizeof(debuglog_name)-1);
-  if ((debug_fd = log_open_as_exim(filename)) >= 0)
-    debug_file = fdopen(debug_fd, "w");
+  if ((debug_fd = log_open_as_exim(filename)) < 0)
+    return;
+
+  debug_file = fdopen(debug_fd, "w");
+  setbuf(debug_file, NULL);
   DEBUG(deliver) debug_print_ids(US"debug enabled by spoolfile\n");
   }
 /*

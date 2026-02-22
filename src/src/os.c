@@ -11,9 +11,6 @@
 # include <signal.h>
 # include <stdio.h>
 # include <time.h>
-#else
-// # define IS_DEBUG(x) (debug_selector & (x ? x : D_any))
-// # define DEBUG(x) if (IS_DEBUG(D_##x))	/* for cppcheck */
 #endif
 
 #ifndef CS

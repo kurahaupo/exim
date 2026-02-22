@@ -365,18 +365,17 @@ masks, alternating between sequential bit index and corresponding mask. */
 #define IOTA(iota)      (__LINE__ - iota)
 #define IOTA_INIT(zero) (__LINE__ - zero + 1)
 
-/*XXX*/
-/* Options bits for debugging. DEBUG_BIT() declares both a bit index and the
-corresponding mask. Di_all is a special value recognized by decode_bits().
-These must match the debug_options table in globals.c .
-
-Exim's code assumes in a number of places that the debug_selector is one
-word, and this is exposed in the local_scan ABI. The D_v and D_local_scan bit
-masks are part of the local_scan API so are #defined in local_scan.h .
-XXX => v & local_scan must live in word zero 
-
-Thanks to the "one word", debug bits beyond 31 are not available on 32b-int
-systems, and coding must account for that. */
+/* Options bits for debugging.
+Because of the history of debug within Exim, we have to generate various
+meta-info bits.  Also, we want to be able to determine quickly when debug
+is not enabled (that being the common case).  On the other hand we want to
+have many individually selectable debug channels; possibly more than there
+are bits in a single word. So we use a multiword array of bits, and reserve
+some in the first word for the meta-info. One of those is a single bit OR
+of all the channel bits, giving us the fast test. Code testing the specific
+channel enables is then out-of-line and can be slow.  We use the channel
+names in the sourcecode, converting to channel numbers to do the test against
+the array of bits. */
 
 /* Special bits used for debug and logging control. These are summarizing sets
 of enabled channels, and are in the first word of the selector array for quick
@@ -393,53 +392,6 @@ access. */
 			class##i_##name = IOTA(class##i_iota), \
 			class##_##name = BITMASK_IDX_TO_BIT(class##i_##name)
 
-/*XXX This fails with the Sun Studio compiler: the bitfield
-defns for 31, 32, 33 spit warnings, and we get unexpected debug
-output for (at least) macro and regex channels.  I suspect it has
-elected to use a signed 32b int as its enum type, which is not unfair.
-
-(
-	C23 lets you spec the underlying type for an enum:
-	enum pet : unsigned char { CAT, DOG, ROCK };
-)
-
-We really only need the enum to give us an auto-inc for assgning bitnums.
-But we also have IOTA.  Could we use that for #defines for the bitmasks?
-We'd have to list everthing twice... hmm.  Losing the hard link between
-the bit-idx & bitmask would not be good.
-
-Could we live totally without the bitnum?  BIT_SET etc use?
-MMM, prob not.
-
-Could we do bit-in-word mask rather than plain bitmask?
-But how does that work for combining bits?
-(currently we can just bitwise-or)
-Though, for L-bits we just say we do not.
-Make the same restriction on D-bits? It could work,
-but currently DEBUG is keyed on the plain bitmask;
-it would have to change to being the idx.
-OK, so redefine DEBUG in the way LOGGING is done.
-And perhaps a multi-bit version (macro-vararg) for combined-bit use.
-Nope, this isn't working out.
-
-We also probably want a dedicated bit (? in word zero of the
-array-of-words?) to say that at least one debug bit is set -
-so that a fast test can be inlined.
-
-Next up, one more level of indirection:
-use buildconfig.c to write the C and/or CPP code needed.
-Expand the defn of BIT_TABLE() and struct bit_table
-to be { name, BITWORD(idx), BITMASK(idx) }
-Enhance decode_bits() to cope with that.
-[ preferably, logging should use this also ]
-buildconfig.c writes both debug_options[]   (for decoding text spec in
-cmdline and in config file)
-AND an enum with all the named index bits (cf. Di_acl in macros.h)
-NOTE that D_v and D_local_scan masks are defined in local_scan.h
-and changing those will be a pain.
-NOTE the existence of debug_notall[].
-*/
-
 
 /* Bits for debug triggers */
 
@@ -451,7 +403,7 @@ enum {
 /* Options bits for logging. Those that have values < BITWORDSIZE can be used
 in calls to log_write(). The others are put into later words in log_selector
 and are only ever tested independently, so they do not need bit mask
-declarations. The Li_all value is recognized specially by decode_bits().
+declarations. The "all" name string is recognized specially by decode_bits().
 Add also to log_options[] when creating new ones. */
 
 #define LOG_BIT(name) BIT_TABLE_BIT(L, name)
@@ -480,22 +432,21 @@ enum logwrite_bit {
 
 /* Bit numbers used by the LOGGING() macro */
 
-enum logging_test_bit {	/* Must be in alpha order, matching log_chan_names[] */
+enum logging_test_bit {	/* names matching log_channels[] */
   Lt_all = BIT_TABLE_IDX_ALL,		/* 0 */
 
   Lt_8bitmime = BIT_TABLE_IDX_USABLE,	/* 4 */
   Lt_acl_warn_skipped,
   Lt_address_rewrite,
-  Lt_DUMMY_all,				/* 7 */
-  Lt_all_parents,
+  Lt_all_parents,			/* 7 */
   Lt_arguments,
   Lt_connection_id,
   Lt_connection_reject,
   Lt_delay_delivery,
   Lt_deliver_time,
   Lt_delivery_size,
-  Lt_dkim,				/* 15 */
-  Lt_dkim_verbose,
+  Lt_dkim,
+  Lt_dkim_verbose,			/* 15 */
   Lt_dmarc,
   Lt_dmarc_verbose,
   Lt_dnslist_defer,
@@ -510,8 +461,8 @@ enum logging_test_bit {	/* Must be in alpha order, matching log_chan_names[] */
   Lt_millisec,
   Lt_msg_id,
   Lt_msg_id_created,
-  Lt_outgoing_interface,		/* 31 */
-  Lt_outgoing_port,
+  Lt_outgoing_interface,
+  Lt_outgoing_port,			/* 31 */
   Lt_pid,
   Lt_pipelining,
   Lt_protocol_detail,
@@ -526,8 +477,8 @@ enum logging_test_bit {	/* Must be in alpha order, matching log_chan_names[] */
   Lt_rejected_header,
   Lt_retry_defer,
   Lt_return_path_on_delivery,
-  Lt_sender_on_delivery,		/* 47 */
-  Lt_sender_verify_fail,
+  Lt_sender_on_delivery,
+  Lt_sender_verify_fail,		/* 47 */
   Lt_size_reject,
   Lt_skip_delivery,
   Lt_smtp_confirmation,
@@ -542,8 +493,8 @@ enum logging_test_bit {	/* Must be in alpha order, matching log_chan_names[] */
   Lt_subject,
   Lt_tls_certificate_verified,
   Lt_tls_cipher,
-  Lt_tls_on_connect,			/* 63 */
-  Lt_tls_peerdn,
+  Lt_tls_on_connect,
+  Lt_tls_peerdn,			/* 63 */
   Lt_tls_resumption,
   Lt_tls_sni,
   Lt_unknown_in_list,

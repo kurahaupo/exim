@@ -8600,7 +8600,7 @@ if (addr_failed)
     f.disable_logging = addr_failed->transport
       ? addr_failed->transport->disable_logging : FALSE;
 
-    DEBUG(D_deliver)
+    DEBUG(deliver)
       debug_printf("processing failed address %s\n", addr_failed->address);
 
     /* There are only two ways an address in a bounce message can get here:
