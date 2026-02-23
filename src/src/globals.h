@@ -684,8 +684,6 @@ extern uschar *log_selector_string;    /* As supplied in the config */
 extern FILE   *log_stderr;             /* Copy of stderr for log use, or NULL */
 extern BOOL    log_timezone;           /* TRUE to include the timezone in log lines */
 extern uschar *login_sender_address;   /* The actual sender address */
-extern bit_table logwrite_options[];   /* Options usable for logwrite() */
-extern int     logwrite_options_count; /* Size of table */
 extern tree_node *lookups_tree;        /* Tree of available lookups */
 extern unsigned lookup_list_count;     /* Number of entries in the list */
 extern uschar *lookup_dnssec_authenticated; /* AD status of dns lookup */

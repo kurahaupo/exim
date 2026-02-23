@@ -109,7 +109,7 @@ gs.size = HEADER_ADD_BUFFER_SIZE;
 gs.ptr = 0;
 
 if (!string_vformat(&gs, SVFMT_REBUFFER, format, ap))
-  log_write_die(0, LOG_MAIN, "string too long in header_add: "
+  log_write_die(LOG_MAIN, "string too long in header_add: "
     "%.100Y ...", &gs);
 
 if (gs.s != buf) store_release_above(buf);

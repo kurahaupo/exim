@@ -90,13 +90,13 @@ queryprogram_router_options_block *ob =
 /* A command must be given */
 
 if (!ob->command)
-  log_write_die(0, LOG_CONFIG_FOR, "%s router:\n  "
+  log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
     "a command specification is required", rblock->name);
 
 /* A uid/gid must be supplied */
 
 if (!ob->cmd_uid_set && !ob->expand_cmd_uid)
-  log_write_die(0, LOG_CONFIG_FOR, "%s router:\n  "
+  log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
     "command_user must be specified", rblock->name);
 }
 
@@ -141,7 +141,7 @@ while (generated != NULL)
   *addr_new = next;
 
   if (addr->child_count == USHRT_MAX)
-    log_write_die(0, LOG_MAIN, "%s router generated more than %d "
+    log_write_die(LOG_MAIN, "%s router generated more than %d "
       "child addresses for <%s>", rblock->drinst.name, USHRT_MAX, addr->address);
   addr->child_count++;
 
@@ -456,7 +456,7 @@ if (strcmpic(rword, US"accept") != 0)
   else if (strcmpic(rword, US"defer") != 0)
     {
     addr->message = string_sprintf("bad command yield: %s %s", rword, rdata);
-    log_write(0, LOG_PANIC, "%s router: %s", rblock->drinst.name, addr->message);
+    log_write(LOG_PANIC, "%s router: %s", rblock->drinst.name, addr->message);
     }
   return DEFER;
   }
@@ -479,7 +479,7 @@ if ((s = expand_getkeyed(US"transport", rdata)) && *s)
     {
     addr->message = string_sprintf("unknown transport name %s yielded by "
       "command", s);
-    log_write(0, LOG_PANIC, "%s router: %s", rblock->drinst.name, addr->message);
+    log_write(LOG_PANIC, "%s router: %s", rblock->drinst.name, addr->message);
     return DEFER;
     }
   addr->transport = transport;
@@ -511,7 +511,7 @@ if ((s = expand_getkeyed(US"hosts", rdata)) && *s)
     else
       {
       addr->message = string_sprintf("bad lookup type %q yielded by command", ss);
-      log_write(0, LOG_PANIC, "%s router: %s", rblock->drinst.name, addr->message);
+      log_write(LOG_PANIC, "%s router: %s", rblock->drinst.name, addr->message);
       return DEFER;
       }
     }

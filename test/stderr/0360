@@ -165,7 +165,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234 -qf
 no retry data available
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -255,6 +255,6 @@ After routing:
   Deferred addresses:
     defer@test.ex
 >>>>>>>>>>>>>>>> Exim pid=p1238 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234 -qf
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

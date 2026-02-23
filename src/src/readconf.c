@@ -830,7 +830,7 @@ while (isalnum(*s) || *s == '_')
   {
   if (namelen >= sizeof(name) - 1)
     {
-    log_write(0, LOG_PANIC|LOG_CONFIG_IN,
+    log_write(LOG_PANIC|LOG_CONFIG_IN,
       "macro name too long (maximum is " SIZE_T_FMT " characters)", sizeof(name) - 1);
     return FALSE;
     }
@@ -841,7 +841,7 @@ name[namelen] = 0;
 Uskip_whitespace(&s);
 if (*s++ != '=')
   {
-  log_write(0, LOG_PANIC|LOG_CONFIG_IN,
+  log_write(LOG_PANIC|LOG_CONFIG_IN,
     "malformed macro definition %q", line);
   return FALSE;
   }
@@ -868,7 +868,7 @@ for (m = macros; m; m = m->next)
     {
     if (!m->command_line && !redef)
       {
-      log_write(0, LOG_CONFIG|LOG_PANIC, "macro %q is already "
+      log_write(LOG_CONFIG|LOG_PANIC, "macro %q is already "
        "defined (use \"==\" if you want to redefine it)", name);
       return FALSE;
       }
@@ -877,7 +877,7 @@ for (m = macros; m; m = m->next)
 
   if (m->namelen < namelen && Ustrstr(name, m->name) != NULL)
     {
-    log_write(0, LOG_CONFIG|LOG_PANIC, "%q cannot be defined as "
+    log_write(LOG_CONFIG|LOG_PANIC, "%q cannot be defined as "
       "a macro because previously defined macro %q is a substring",
       name, m->name);
     return FALSE;
@@ -887,7 +887,7 @@ for (m = macros; m; m = m->next)
   macro is permitted (there is even an example).
   *
   * if (m->namelen > namelen && Ustrstr(m->name, name) != NULL)
-  *   log_write_die(0, LOG_CONFIG|"%q cannot be defined as "
+  *   log_write_die(LOG_CONFIG|"%q cannot be defined as "
   *     "a macro because it is a substring of previously defined macro %q",
   *     name, m->name);
   */
@@ -907,7 +907,7 @@ if (redef)
     }
   else
     {
-    log_write(0, LOG_CONFIG|LOG_PANIC, "can't redefine an undefined macro "
+    log_write(LOG_CONFIG|LOG_PANIC, "can't redefine an undefined macro "
       "%q", name);
     return FALSE;
     }
@@ -1081,7 +1081,7 @@ for (;;)
     /* EOF at top level */
 
     if (cstate_stack_ptr >= 0)
-      log_write_die(0, LOG_CONFIG_IN,
+      log_write_die(LOG_CONFIG_IN,
         "Unexpected end of configuration file: .endif missing");
 
     if (len != 0) break;        /* EOF after continuation */
@@ -1150,7 +1150,7 @@ for (;;)
       if (c->pushpop > 0)
         {
         if (cstate_stack_ptr >= CSTATE_STACK_SIZE - 1)
-          log_write_die(0, LOG_CONFIG_IN,
+          log_write_die(LOG_CONFIG_IN,
             ".%s nested too deeply", c->name);
         cstate_stack[++cstate_stack_ptr] = cstate;
         cstate = next_cstate[cstate][macro_found ? c->action1 : c->action2];
@@ -1162,7 +1162,7 @@ for (;;)
       else
         {
         if (cstate_stack_ptr < 0)
-          log_write_die(0, LOG_CONFIG_IN,
+          log_write_die(LOG_CONFIG_IN,
             ".%s without matching .ifdef", c->name);
         cstate = (c->pushpop < 0)? cstate_stack[cstate_stack_ptr--] :
           next_cstate[cstate][macro_found ? c->action1 : c->action2];
@@ -1211,7 +1211,7 @@ for (;;)
     we need to check the permissions/ownership of the containing folder */
     if (*ss != '/')
       if (include_if_exists)
-	log_write_die(0, LOG_CONFIG_IN,
+	log_write_die(LOG_CONFIG_IN,
 			".include specifies a non-absolute path %q", ss);
       else
 	ss = string_sprintf("%s/%s", config_directory, ss);
@@ -1229,7 +1229,7 @@ for (;;)
     save->lineno = config_lineno;
 
     if (!(config_file = Ufopen(ss, "rb")))
-      log_write_die(0, LOG_CONFIG_IN, "failed to open included "
+      log_write_die(LOG_CONFIG_IN, "failed to open included "
         "configuration file %s", ss);
 
     config_filename = string_copy(ss);
@@ -1334,7 +1334,7 @@ if (isalpha(Uskip_whitespace(&s)))
 
 name[p] = 0;
 if (broken) {
-  log_write_die(0, LOG_CONFIG_IN,
+  log_write_die(LOG_CONFIG_IN,
             "exim item name too long (>%d), unable to use %q (truncated)",
             len, name);
 }
@@ -1507,7 +1507,7 @@ optionlist *ol;
 uschar name2[EXIM_DRIVERNAME_MAX];
 sprintf(CS name2, "*set_%.50s", name);
 if (!(ol = find_option(name2, oltop, last)))
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "Exim internal error: missing set flag for %s", name);
 return data_block
   ? (BOOL *)(US data_block + ol->v.offset) : (BOOL *)ol->v.value;
@@ -1535,7 +1535,7 @@ extra_chars_error(const uschar *s, const uschar *t1, const uschar *t2, const usc
 {
 uschar *comment = US"";
 if (*s == '#') comment = US" (# is comment only at line start)";
-log_write_die(0, LOG_CONFIG_IN,
+log_write_die(LOG_CONFIG_IN,
   "extra characters follow %s%s%s%s", t1, t2, t3, comment);
 }
 
@@ -1576,7 +1576,7 @@ next->key = string_dequote(&p);
 
 Uskip_whitespace(&p);
 if (!*p)
-  log_write_die(0, LOG_CONFIG_IN,
+  log_write_die(LOG_CONFIG_IN,
     "missing rewrite replacement string");
 
 next->flags = 0;
@@ -1607,12 +1607,12 @@ while (*p) switch (*p++)
   case 'S':
   next->flags |= rewrite_smtp;
   if (next->key[0] != '^' && Ustrncmp(next->key, "\\N^", 3) != 0)
-    log_write_die(0, LOG_CONFIG_IN,
+    log_write_die(LOG_CONFIG_IN,
       "rewrite rule has the S flag but is not a regular expression");
   break;
 
   default:
-  log_write_die(0, LOG_CONFIG_IN,
+  log_write_die(LOG_CONFIG_IN,
     "unknown rewrite flag character '%c' "
     "(could be missing quotes round replacement item)", p[-1]);
   break;
@@ -1684,7 +1684,7 @@ ss = s;
 yield = string_dequote(&s);
 
 if (s == ss+1 || s[-1] != '\"')
-  log_write_die(0, LOG_CONFIG_IN,
+  log_write_die(LOG_CONFIG_IN,
     "missing quote at end of string value for %s", name);
 
 if (*s != 0) extra_chars_error(s, US"string value for ", name, US"");
@@ -1713,7 +1713,7 @@ else
   /* "smtp_receive_timeout",     opt_time,        &smtp_receive_timeout */
   smtp_receive_timeout = readconf_readtime(str, 0, FALSE);
   if (smtp_receive_timeout < 0)
-    log_write_die(0, LOG_CONFIG_IN, "invalid time value for %s",
+    log_write_die(LOG_CONFIG_IN, "invalid time value for %s",
       name);
   }
 }
@@ -1786,7 +1786,7 @@ ptr = 0;
 with a letter. */
 
 if (!isalpha( Uskip_whitespace(&s) ))
-  log_write_die(0, LOG_CONFIG_IN, "option setting expected: %s", s);
+  log_write_die(LOG_CONFIG_IN, "option setting expected: %s", s);
 
 /* Read the name of the option, and skip any subsequent white space. If
 it turns out that what we read was "hide", set the flag indicating that
@@ -1826,11 +1826,11 @@ is set twice, is a disaster. */
 if (!(ol = find_option(name + offset, oltop, last)))
   {
   if (!unknown_txt) return FALSE;
-  log_write_die(0, LOG_CONFIG_IN, CS unknown_txt, name);
+  log_write_die(LOG_CONFIG_IN, CS unknown_txt, name);
   }
 
 if ((ol->type & opt_set)  && !(ol->type & (opt_rep_con | opt_rep_str)))
-  log_write_die(0, LOG_CONFIG_IN,
+  log_write_die(LOG_CONFIG_IN,
     "%q option set for the second time", name);
 
 ol->type |= opt_set | issecure;
@@ -1842,13 +1842,13 @@ applies only to boolean values. */
 if (type < opt_bool || type > opt_bool_last)
   {
   if (offset != 0)
-    log_write_die(0, LOG_CONFIG_IN,
+    log_write_die(LOG_CONFIG_IN,
       "negation prefix applied to a non-boolean option");
   if (!*s)
-    log_write_die(0, LOG_CONFIG_IN,
+    log_write_die(LOG_CONFIG_IN,
       "unexpected end of line (data missing) after %s", name);
   if (*s != '=')
-    log_write_die(0, LOG_CONFIG_IN, "missing \"=\" after %s", name);
+    log_write_die(LOG_CONFIG_IN, "missing \"=\" after %s", name);
   }
 
 /* If a boolean wasn't preceded by "no[t]_" it can be followed by = and
@@ -1989,7 +1989,7 @@ switch (type)
 	  ol3 = find_option(name2, oltop, last);
 
 	  if (!ol2 || !ol3)
-	    log_write_die(0, LOG_CONFIG_IN,
+	    log_write_die(LOG_CONFIG_IN,
 	      "rewrite rules not available for driver");
 
 	  if (data_block)
@@ -2012,7 +2012,7 @@ switch (type)
 	    }
 
 	  if ((*flagptr & (rewrite_all_envelope | rewrite_smtp)) != 0)
-	    log_write_die(0, LOG_CONFIG_IN, "rewrite rule specifies a "
+	    log_write_die(LOG_CONFIG_IN, "rewrite rule specifies a "
 	      "non-header rewrite - not allowed at transport time -");
 	  }
 	break;
@@ -2047,7 +2047,7 @@ switch (type)
 
       case opt_uid:
 	if (!route_finduser(sptr, &pw, &uid))
-	  log_write_die(0, LOG_CONFIG_IN, "user %s was not found", sptr);
+	  log_write_die(LOG_CONFIG_IN, "user %s was not found", sptr);
 	if (data_block)
 	  *(uid_t *)(US data_block + ol->v.offset) = uid;
 	else
@@ -2108,7 +2108,7 @@ switch (type)
 
       case opt_gid:
 	if (!route_findgroup(sptr, &gid))
-	  log_write_die(0, LOG_CONFIG_IN, "group %s was not found", sptr);
+	  log_write_die(LOG_CONFIG_IN, "group %s was not found", sptr);
 	if (data_block)
 	  *((gid_t *)(US data_block + ol->v.offset)) = gid;
 	else
@@ -2130,7 +2130,7 @@ switch (type)
 	const uschar *op = expand_string (sptr);
 
 	if (op == NULL)
-	  log_write_die(0, LOG_CONFIG_IN, "failed to expand %s: %s",
+	  log_write_die(LOG_CONFIG_IN, "failed to expand %s: %s",
 	    name, expand_string_message);
 
 	p = op;
@@ -2151,7 +2151,7 @@ switch (type)
 	  /* If p is tainted we trap.  Not sure that can happen */
 	  (void)string_nextinlist(&p, &sep, big_buffer, BIG_BUFFER_SIZE);
 	  if (!route_finduser(big_buffer, NULL, &uid))
-	    log_write_die(0, LOG_CONFIG_IN, "user %s was not found",
+	    log_write_die(LOG_CONFIG_IN, "user %s was not found",
 	      big_buffer);
 	  list[ptr++] = uid;
 	  }
@@ -2172,7 +2172,7 @@ switch (type)
 	const uschar *op = expand_string (sptr);
 
 	if (!op)
-	  log_write_die(0, LOG_CONFIG_IN, "failed to expand %s: %s",
+	  log_write_die(LOG_CONFIG_IN, "failed to expand %s: %s",
 	    name, expand_string_message);
 
 	p = op;
@@ -2193,7 +2193,7 @@ switch (type)
 	  /* If p is tainted we trap.  Not sure that can happen */
 	  (void)string_nextinlist(&p, &sep, big_buffer, BIG_BUFFER_SIZE);
 	  if (!route_findgroup(big_buffer, &gid))
-	    log_write_die(0, LOG_CONFIG_IN, "group %s was not found",
+	    log_write_die(LOG_CONFIG_IN, "group %s was not found",
 	      big_buffer);
 	  list[ptr++] = gid;
 	  }
@@ -2246,7 +2246,7 @@ switch (type)
 	boolvalue = TRUE;
       else if (strcmpic(name2, US"false") == 0 || strcmpic(name2, US"no") == 0)
 	boolvalue = FALSE;
-      else log_write_die(0, LOG_CONFIG_IN,
+      else log_write_die(LOG_CONFIG_IN,
 	"%q is not a valid value for the %q option", name2, name);
       if (*s != 0) extra_chars_error(s, string_sprintf("%q ", name2),
 	US"for boolean option ", name);
@@ -2315,7 +2315,7 @@ switch (type)
       lvalue = strtol(CS s, CSS &endptr, intbase);
 
       if (endptr == s)
-	log_write_die(0, LOG_CONFIG_IN, "%sinteger expected for %s",
+	log_write_die(LOG_CONFIG_IN, "%sinteger expected for %s",
 	  inttype, name);
 
       if (errno != ERANGE && *endptr)
@@ -2339,7 +2339,7 @@ switch (type)
 	}
 
       if (errno == ERANGE || lvalue > INT_MAX || lvalue < INT_MIN)
-	log_write_die(0, LOG_CONFIG_IN,
+	log_write_die(LOG_CONFIG_IN,
 	  "absolute value of integer %q is too large (overflow)", s);
 
       if (Uskip_whitespace(&endptr))
@@ -2363,7 +2363,7 @@ switch (type)
     int_eximarith_t lvalue = strtol(CS s, CSS &endptr, intbase);
 
     if (endptr == s)
-      log_write_die(0, LOG_CONFIG_IN, "%sinteger expected for %s",
+      log_write_die(LOG_CONFIG_IN, "%sinteger expected for %s",
         inttype, name);
 
     if (errno != ERANGE && *endptr)
@@ -2387,7 +2387,7 @@ switch (type)
 	lvalue = (lvalue + 512)/1024;
       }
 
-    if (errno == ERANGE) log_write_die(0, LOG_CONFIG_IN,
+    if (errno == ERANGE) log_write_die(LOG_CONFIG_IN,
       "absolute value of integer %q is too large (overflow)", s);
 
     if (Uskip_whitespace(&endptr))
@@ -2404,15 +2404,15 @@ switch (type)
 
   case opt_fixed:
     if (sscanf(CS s, "%d%n", &value, &count) != 1)
-      log_write_die(0, LOG_CONFIG_IN,
+      log_write_die(LOG_CONFIG_IN,
 	"fixed-point number expected for %s", name);
 
-    if (value < 0) log_write_die(0, LOG_CONFIG_IN,
+    if (value < 0) log_write_die(LOG_CONFIG_IN,
       "integer %q is too large (overflow)", s);
 
     value *= 1000;
 
-    if (value < 0) log_write_die(0, LOG_CONFIG_IN,
+    if (value < 0) log_write_die(LOG_CONFIG_IN,
       "integer %q is too large (overflow)", s);
 
     /* We get a coverity error here for using count, as it derived
@@ -2446,7 +2446,7 @@ switch (type)
   case opt_time:
     value = readconf_readtime(s, 0, FALSE);
     if (value < 0)
-      log_write_die(0, LOG_CONFIG_IN, "invalid time value for %s",
+      log_write_die(LOG_CONFIG_IN, "invalid time value for %s",
 	name);
     if (data_block)
       *((int *)(US data_block + ol->v.offset)) = value;
@@ -2477,10 +2477,10 @@ switch (type)
         }
       value = readconf_readtime(s, terminator, FALSE);
       if (value < 0)
-        log_write_die(0, LOG_CONFIG_IN, "invalid time value for %s",
+        log_write_die(LOG_CONFIG_IN, "invalid time value for %s",
           name);
       if (count > 1 && value <= list[count])
-        log_write_die(0, LOG_CONFIG_IN,
+        log_write_die(LOG_CONFIG_IN,
           "time value out of order for %s", name);
       list[count+1] = value;
       if (snext == NULL) break;
@@ -2489,7 +2489,7 @@ switch (type)
       }
 
     if (count > list[0] - 2)
-      log_write_die(0, LOG_CONFIG_IN, "too many time values for %s",
+      log_write_die(LOG_CONFIG_IN, "too many time values for %s",
         name);
     if (count > 0 && list[2] == 0) count = 0;
     list[1] = count;
@@ -2505,7 +2505,7 @@ switch (type)
     uschar * errstr;
     const lookup_info * li = lookup_find(US ol->v.value, &errstr);
     if (!li)
-      log_write_die(0, LOG_CONFIG_IN,
+      log_write_die(LOG_CONFIG_IN,
 	"failed to find %s module for %s: %s", US ol->v.value, name, errstr);
 
     oltop = li->options;
@@ -2518,7 +2518,7 @@ switch (type)
     uschar * errstr;
     const misc_module_info * mi = misc_mod_find(US ol->v.value, &errstr);
     if (!mi)
-      log_write_die(0, LOG_CONFIG_IN,
+      log_write_die(LOG_CONFIG_IN,
 	"failed to find %s module for %s: %s", US ol->v.value, name, errstr);
 
     oltop = mi->options;
@@ -3176,10 +3176,10 @@ if (Ustrncmp(s, "_cache", 6) == 0)
   }
 
 if (!isspace(*s))
-  log_write_die(0, LOG_CONFIG_IN, "unrecognized configuration line");
+  log_write_die(LOG_CONFIG_IN, "unrecognized configuration line");
 
 if (*numberp >= max)
- log_write_die(0, LOG_CONFIG_IN, "too many named %ss (max is %d)\n",
+ log_write_die(LOG_CONFIG_IN, "too many named %ss (max is %d)\n",
    tname, max);
 
 Uskip_whitespace(&s);
@@ -3191,7 +3191,7 @@ t->name[s-ss] = 0;
 Uskip_whitespace(&s);
 
 if (!tree_insertnode(anchorp, t))
-  log_write_die(0, LOG_CONFIG_IN,
+  log_write_die(LOG_CONFIG_IN,
     "duplicate name %q for a named %s", t->name, tname);
 
 t->data.ptr = nb;
@@ -3199,7 +3199,7 @@ nb->number = *numberp;
 *numberp += 1;
 nb->hide = hide;
 
-if (*s++ != '=') log_write_die(0, LOG_CONFIG_IN,
+if (*s++ != '=') log_write_die(LOG_CONFIG_IN,
   "missing '=' after %q", t->name);
 Uskip_whitespace(&s);
 nb->string = read_string(s, t->name);
@@ -3248,7 +3248,7 @@ if (sscanf(CS s, "%d, %15[0123456789smhdw.], %lf, %15s", threshold, bstring,
   *limit = readconf_readtime(lstring, 0, TRUE);
   if (*base >= 0 && *limit >= 0) return;
   }
-log_write_die(0, LOG_MAIN, "malformed ratelimit data: %s", s);
+log_write_die(LOG_MAIN, "malformed ratelimit data: %s", s);
 }
 
 
@@ -3394,10 +3394,10 @@ if (config_file)
   }
 else
   if (!filename)
-    log_write_die(0, LOG_MAIN, "non-existent configuration file(s): "
+    log_write_die(LOG_MAIN, "non-existent configuration file(s): "
       "%s", config_main_filelist);
   else
-    log_write_die(0, LOG_MAIN, "%s",
+    log_write_die(LOG_MAIN, "%s",
       string_open_failed("configuration file %s", filename));
 
 /* Now, once we found and opened our configuration file, we change the directory
@@ -3415,7 +3415,7 @@ privileges and the file isn't /dev/null (which *should* be 0666). */
 if (f.trusted_config && Ustrcmp(filename, US"/dev/null"))
   {
   if (fstat(fileno(config_file), &statbuf) != 0)
-    log_write_die(0, LOG_MAIN, "failed to stat configuration file %s",
+    log_write_die(LOG_MAIN, "failed to stat configuration file %s",
       big_buffer);
 
   if (    statbuf.st_uid != root_uid		/* owner not root */
@@ -3431,7 +3431,7 @@ if (f.trusted_config && Ustrcmp(filename, US"/dev/null"))
      ||						/* or */
        (statbuf.st_mode & 2) != 0		/* world writeable  */
      )
-    log_write_die(0, LOG_MAIN, "Exim configuration file %s has the "
+    log_write_die(LOG_MAIN, "Exim configuration file %s has the "
       "wrong owner, group, or mode", big_buffer);
 
   /* Do a dummy store-allocation of a size related to the (toplevel) file size.
@@ -3459,7 +3459,7 @@ while ((s = get_config_line()))
   uschar * t;
 
   if (config_lineno == 1 && Ustrstr(s, "\xef\xbb\xbf") == s)
-    log_write_die(0, LOG_CONFIG_IN,
+    log_write_die(LOG_CONFIG_IN,
       "found unexpected BOM (Byte Order Mark)");
 
   if (isupper(*s))
@@ -3495,7 +3495,7 @@ while ((s = get_config_line()))
 /* If local_sender_retain is set, local_from_check must be unset. */
 
 if (local_sender_retain && local_from_check)
-  log_write_die(0, LOG_MAIN, "both local_from_check and "
+  log_write_die(LOG_MAIN, "both local_from_check and "
     "local_sender_retain are set; this combination is not allowed");
 
 /* If the timezone string is empty, set it to NULL, implying no TZ variable
@@ -3528,7 +3528,7 @@ if (!primary_hostname)
   struct utsname uts;
 
   if (uname(&uts) < 0)
-    log_write_die(0, LOG_MAIN, "uname() failed to yield host name");
+    log_write_die(LOG_MAIN, "uname() failed to yield host name");
   hostname = US uts.nodename;
 
   if (Ustrchr(hostname, '.') == NULL)
@@ -3577,7 +3577,7 @@ got set above. Of course, writing to the log may not work if log_file_path is
 not set, but it will at least get to syslog or somewhere, with any luck. */
 
 if (!*spool_directory)
-  log_write_die(0, LOG_MAIN, "spool_directory undefined: cannot "
+  log_write_die(LOG_MAIN, "spool_directory undefined: cannot "
     "proceed");
 
 /* Expand the spool directory name; it may, for example, contain the primary
@@ -3587,7 +3587,7 @@ DEBUG(any) if (Ustrchr(spool_directory, '$'))
   debug_printf("Expanding spool_directory option\n");
 
 if (!(s = expand_string(spool_directory)))
-  log_write_die(0, LOG_MAIN, "failed to expand spool_directory "
+  log_write_die(LOG_MAIN, "failed to expand spool_directory "
     "%q: %s", spool_directory, expand_string_message);
 spool_directory = s;
 
@@ -3600,7 +3600,7 @@ if (*log_file_path)
   const uschar *ss, *sss;
   int sep = ':';                       /* Fixed for log file path */
   if (!(s = expand_string(log_file_path)))
-    log_write_die(0, LOG_MAIN, "failed to expand log_file_path "
+    log_write_die(LOG_MAIN, "failed to expand log_file_path "
       "%q: %s", log_file_path, expand_string_message);
 
   ss = s;
@@ -3610,12 +3610,12 @@ if (*log_file_path)
     uschar *t;
     if (sss[0] == 0 || Ustrcmp(sss, "syslog") == 0) continue;
     if (!(t = Ustrstr(sss, "%s")))
-      log_write_die(0, LOG_MAIN, "log_file_path %q does not "
+      log_write_die(LOG_MAIN, "log_file_path %q does not "
         "contain \"%%s\"", sss);
     *t = 'X';
     if ((t = Ustrchr(sss, '%')))
       if ((t[1] != 'D' && t[1] != 'M') || Ustrchr(t+2, '%') != NULL)
-        log_write_die(0, LOG_MAIN, "log_file_path %q contains "
+        log_write_die(LOG_MAIN, "log_file_path %q contains "
           "unexpected \"%%\" character", s);
     }
 
@@ -3643,7 +3643,7 @@ if (syslog_facility_str)
       }
 
   if (i >= syslog_list_size)
-    log_write_die(0, LOG_CONFIG,
+    log_write_die(LOG_CONFIG,
       "failed to interpret syslog_facility %q", syslog_facility_str);
   }
 
@@ -3653,7 +3653,7 @@ if (*pid_file_path)
   {
   const uschar * t = expand_string(pid_file_path);
   if (!t)
-    log_write_die(0, LOG_MAIN, "failed to expand pid_file_path "
+    log_write_die(LOG_MAIN, "failed to expand pid_file_path "
       "%q: %s", pid_file_path, expand_string_message);
   pid_file_path = t;
   }
@@ -3692,7 +3692,7 @@ if (system_filter_uid_set && !system_filter_gid_set)
   {
   struct passwd *pw = getpwuid(system_filter_uid);
   if (!pw)
-    log_write_die(0, LOG_MAIN, "Failed to look up uid %ld",
+    log_write_die(LOG_MAIN, "Failed to look up uid %ld",
       (long int)system_filter_uid);
   system_filter_gid = pw->pw_gid;
   system_filter_gid_set = TRUE;
@@ -3709,11 +3709,11 @@ if (errors_reply_to)
     &start, &end, &domain, FALSE);
 
   if (!recipient)
-    log_write_die(0, LOG_CONFIG,
+    log_write_die(LOG_CONFIG,
       "error in errors_reply_to (%s): %s", errors_reply_to, errmess);
 
   if (!domain)
-    log_write_die(0, LOG_CONFIG,
+    log_write_die(LOG_CONFIG,
       "errors_reply_to (%s) does not contain a domain", errors_reply_to);
   }
 
@@ -3721,7 +3721,7 @@ if (errors_reply_to)
 smtp_accept_max must also be set. */
 
 if (smtp_accept_max == 0 && (smtp_accept_queue > 0 || smtp_accept_max_per_host))
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
     "smtp_accept_max must be set if smtp_accept_queue or "
     "smtp_accept_max_per_host is set");
 
@@ -3736,15 +3736,15 @@ if (host_number_string)
   uschar *s = expand_string(host_number_string);
 
   if (!s)
-    log_write_die(0, LOG_MAIN,
+    log_write_die(LOG_MAIN,
         "failed to expand localhost_number %q: %s",
         host_number_string, expand_string_message);
   n = Ustrtol(s, &end, 0);
   if (Uskip_whitespace(&end))
-    log_write_die(0, LOG_CONFIG,
+    log_write_die(LOG_CONFIG,
       "localhost_number value is not a number: %s", s);
   if (n > LOCALHOST_MAX)
-    log_write_die(0, LOG_CONFIG,
+    log_write_die(LOG_CONFIG,
       "localhost_number is greater than the maximum allowed value (%d)",
         LOCALHOST_MAX);
   host_number = n;
@@ -3754,7 +3754,7 @@ if (host_number_string)
 /* If tls_verify_hosts is set, tls_verify_certificates must also be set */
 
 if ((tls_verify_hosts || tls_try_verify_hosts) && !tls_verify_certificates)
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
     "tls_%sverify_hosts is set, but tls_verify_certificates is not set",
     tls_verify_hosts ? "" : "try_");
 
@@ -3762,26 +3762,26 @@ if ((tls_verify_hosts || tls_try_verify_hosts) && !tls_verify_certificates)
 used by so many clients, and what Exim used to use always, that it makes
 sense to just min-clamp this max-clamp at that. */
 if (tls_dh_max_bits < 1024)
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
       "tls_dh_max_bits is too small, must be at least 1024 for interop");
 
 /* If openssl_options is set, validate it */
 if (openssl_options)
   {
 # ifdef USE_GNUTLS
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
     "openssl_options is set but we're using GnuTLS");
 # else
   long dummy;
   if (!tls_openssl_options_parse(openssl_options, &dummy))
-    log_write_die(0, LOG_CONFIG,
+    log_write_die(LOG_CONFIG,
       "openssl_options parse error: %s", openssl_options);
 # endif
   }
 #endif	/*DISABLE_TLS*/
 
 if (!nowarn && !keep_environment && environ && *environ)
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
       "Warning: purging the environment.\n"
       " Suggested action: use keep_environment.");
 }
@@ -3826,7 +3826,7 @@ for (di = *info_anchor; di; di = di->next)
 /* Potentially a loadable module. Look for a file with the right name. */
 
 if (!(dd = open_module_dir()))
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
 	  "Couldn't open %s: not loading driver modules\n", LOOKUP_MODULE_DIR);
 else
   {
@@ -3849,7 +3849,7 @@ else
     if (!dl)
       {
       errormsg = dlerror();
-      log_write(0, LOG_MAIN|LOG_PANIC, "Error loading %s %s driver: %s\n",
+      log_write(LOG_MAIN|LOG_PANIC, "Error loading %s %s driver: %s\n",
 		d->driver_name, class, errormsg);
       break;
       }
@@ -3858,7 +3858,7 @@ else
     di = (driver_info *) dlsym(dl, CS string_sprintf("_%s_info", class));
     if ((errormsg = dlerror()))
       {
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 	"%s does not appear to be a %s module (%s)\n", fname, class, errormsg);
       dlclose(dl);
       break;
@@ -3875,7 +3875,7 @@ else
 	goto found;
 	}
 
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	      "%s module %s is not compatible with this version of Exim\n",
 	      class, d->driver_name);
     dlclose(dl);
@@ -3884,7 +3884,7 @@ else
   }
 #endif	/* LOOKUP_MODULE_DIR */
 
-log_write_die(0, LOG_CONFIG_IN,
+log_write_die(LOG_CONFIG_IN,
   "%s %s: cannot find %s driver %q", class, d->name, class, d->driver_name);
 
 found:
@@ -3907,7 +3907,7 @@ driver_init_fini(driver_instance * d, const uschar * class)
 driver_info * di = d->info;
 
 if (!d->driver_name)
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
     "no driver defined for %s %q", class, d->name);
 (di->init)(d);
 }
@@ -3997,7 +3997,7 @@ while ((buffer = get_config_line()))
 
     for (d = *anchor; d; d = d->next)
       if (Ustrcmp(name, d->name) == 0)
-        log_write_die(0, LOG_CONFIG,
+        log_write_die(LOG_CONFIG,
           "there are two %ss called %q", class, name);
 
     /* Set up a new driver instance data block on the chain, with
@@ -4027,7 +4027,7 @@ while ((buffer = get_config_line()))
   current driver yet. */
 
   if (!d)
-    log_write_die(0, LOG_CONFIG_IN, "%s name missing", class);
+    log_write_die(LOG_CONFIG_IN, "%s name missing", class);
 
   /* First look to see if this is a generic option; if it is "driver",
   initialize the driver. If is it not a generic option, we can look for a
@@ -4053,7 +4053,7 @@ while ((buffer = get_config_line()))
 
   /* The option is not generic and the driver name has not yet been given. */
 
-  else log_write_die(0, LOG_CONFIG_IN, "option %q unknown "
+  else log_write_die(LOG_CONFIG_IN, "option %q unknown "
     "(\"driver\" must be specified before any private options)", name);
   }
 
@@ -4177,7 +4177,7 @@ else if (len == 7 && strncmpic(pp, US"timeout", len) == 0)
 
     if (i >= nelem(extras))
       if (strncmpic(x, US"DNS", xlen) == 0)
-        log_write(0, LOG_MAIN|LOG_PANIC, "\"timeout_dns\" is no longer "
+        log_write(LOG_MAIN|LOG_PANIC, "\"timeout_dns\" is no longer "
           "available in retry rules (it has never worked) - treated as "
           "\"timeout\"");
       else
@@ -4267,14 +4267,14 @@ retry_arg(const uschar ** paddr, int type)
 {
 const uschar * p = *paddr, * pp;
 
-if (*p++ != ',') log_write_die(0, LOG_CONFIG_IN, "comma expected");
+if (*p++ != ',') log_write_die(LOG_CONFIG_IN, "comma expected");
 
 Uskip_whitespace(&p);
 pp = p;
 while (isalnum(*p) || (type == 1 && *p == '.')) p++;
 
 if (*p && !isspace(*p) && *p != ',' && *p != ';')
-  log_write_die(0, LOG_CONFIG_IN, "comma or semicolon expected");
+  log_write_die(LOG_CONFIG_IN, "comma or semicolon expected");
 
 *paddr = p;
 switch (type)
@@ -4315,14 +4315,14 @@ while ((p = get_config_line()))
   Uskip_whitespace(&p);
   pp = p;
   while (mac_isgraph(*p)) p++;
-  if (p - pp <= 0) log_write_die(0, LOG_CONFIG_IN,
+  if (p - pp <= 0) log_write_die(LOG_CONFIG_IN,
     "missing error type in retry rule");
 
   /* Test error names for things we understand. */
 
   if ((error = readconf_retry_error(pp, p, &next->basic_errno,
        &next->more_errno)))
-    log_write_die(0, LOG_CONFIG_IN, "%s", error);
+    log_write_die(LOG_CONFIG_IN, "%s", error);
 
   /* There may be an optional address list of senders to be used as another
   constraint on the rule. This was added later, so the syntax is a bit of a
@@ -4334,7 +4334,7 @@ while ((p = get_config_line()))
     {
     p += 7;
     Uskip_whitespace(&p);
-    if (*p++ != '=') log_write_die(0, LOG_CONFIG_IN,
+    if (*p++ != '=') log_write_die(LOG_CONFIG_IN,
       "\"=\" expected after \"senders\" in retry rule");
     Uskip_whitespace(&p);
     next->senders = string_dequote(&p);
@@ -4368,13 +4368,13 @@ while ((p = get_config_line()))
 	break;
 
       default:
-	log_write_die(0, LOG_CONFIG_IN, "unknown retry rule letter");
+	log_write_die(LOG_CONFIG_IN, "unknown retry rule letter");
 	break;
       }
 
     if (rule->timeout <= 0 || rule->p1 <= 0 ||
           (rule->rule != 'F' && rule->p2 < 1000))
-      log_write_die(0, LOG_CONFIG_IN,
+      log_write_die(LOG_CONFIG_IN,
         "bad parameters for retry rule");
 
     if (Uskip_whitespace(&p) == ';')
@@ -4383,7 +4383,7 @@ while ((p = get_config_line()))
       Uskip_whitespace(&p);
       }
     else if (*p)
-      log_write_die(0, LOG_CONFIG_IN, "semicolon expected");
+      log_write_die(LOG_CONFIG_IN, "semicolon expected");
     }
   }
 }
@@ -4432,14 +4432,14 @@ readconf_driver_init((driver_instance **)&auths,      /* chain anchor */
 for (auth_instance * au = auths; au; au = au->drinst.next)
   {
   if (!au->public_name)
-    log_write_die(0, LOG_CONFIG, "no public name specified for "
+    log_write_die(LOG_CONFIG, "no public name specified for "
       "the %s authenticator", au->drinst.name);
 
   for (auth_instance * bu = au->drinst.next; bu; bu = bu->drinst.next)
     if (strcmpic(au->public_name, bu->public_name) == 0)
       if (  au->client && bu->client
 	 || au->server && bu->server)
-        log_write_die(0, LOG_CONFIG, "two %s authenticators "
+        log_write_die(LOG_CONFIG, "two %s authenticators "
           "(%s and %s) have the same public name (%s)",
           au->client && bu->client ? US"client" : US"server",
 	  au->drinst.name, bu->drinst.name, au->public_name);
@@ -4517,18 +4517,18 @@ while(acl_line)
     }
 
   if (*p != ':' || name[0] == 0)
-    log_write_die(0, LOG_CONFIG_IN, "missing or malformed ACL name");
+    log_write_die(LOG_CONFIG_IN, "missing or malformed ACL name");
 
   node = store_get_perm(sizeof(tree_node) + Ustrlen(name), name);
   Ustrcpy(node->name, name);
   if (!tree_insertnode(&acl_anchor, node))
-    log_write_die(0, LOG_CONFIG_IN,
+    log_write_die(LOG_CONFIG_IN,
       "there are two ACLs called %q", name);
 
   node->data.ptr = acl_read(acl_callback, &error);
 
   if (node->data.ptr == NULL && error != NULL)
-    log_write_die(0, LOG_CONFIG_IN, "error in ACL: %s", error);
+    log_write_die(LOG_CONFIG_IN, "error in ACL: %s", error);
   }
 }
 
@@ -4550,7 +4550,7 @@ static void
 local_scan_init(void)
 {
 #ifndef LOCAL_SCAN_HAS_OPTIONS
-log_write_die(0, LOG_CONFIG_IN, "local_scan() options not supported: "
+log_write_die(LOG_CONFIG_IN, "local_scan() options not supported: "
   "(LOCAL_SCAN_HAS_OPTIONS not defined in Local/Makefile)");
 #else
 
@@ -4615,14 +4615,14 @@ while(*next_section)
     if (c == 0) break;
     if (c > 0) first = mid + 1; else last = mid;
     if (first >= last)
-      log_write_die(0, LOG_CONFIG_IN,
+      log_write_die(LOG_CONFIG_IN,
         "\"%.*s\" is not a known configuration section name", n, next_section);
     mid = (last + first)/2;
     }
 
   bit = 1 << mid;
   if (((had ^= bit) & bit) == 0)
-    log_write_die(0, LOG_CONFIG_IN,
+    log_write_die(LOG_CONFIG_IN,
       "\"%.*s\" section is repeated in the configuration file", n,
         next_section);
 

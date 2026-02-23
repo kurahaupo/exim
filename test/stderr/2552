@@ -12,8 +12,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [ip4.ip4.ip4.ip4]
 sender_rcvhost = [ip4.ip4.ip4.ip4]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [ip4.ip4.ip4.ip4]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [ip4.ip4.ip4.ip4]
 host in host_reject_connection? no (option unset)
@@ -100,7 +98,7 @@ host in "+ignore_unknown : +goodhosts"?
    ╎ writing neg-cache entry for cioce.test.again.dns-A-xxxx, ttl -1
    ╎host_fake_gethostbyname(af=inet) returned 1 (HOST_NOT_FOUND)
    ╎no IP address found for host cioce.test.again.dns (during SMTP connection from the.local.host.name (test) [ip4.ip4.ip4.ip4])
-LOG: host_lookup_failed MAIN
+LOG: MAIN
   no IP address found for host cioce.test.again.dns (during SMTP connection from the.local.host.name (test) [ip4.ip4.ip4.ip4])
    ╎host in "*.cioce.test.again.dns : cioce.test.again.dns : "? no (failed to find IP address for cioce.test.again.dns)
    end sublist goodhosts
@@ -113,8 +111,6 @@ LOG: MAIN REJECT
   H=the.local.host.name (test) [ip4.ip4.ip4.ip4] F=<xx@cioce.test.again.dns> rejected RCPT <a@b>
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from the.local.host.name (test) [ip4.ip4.ip4.ip4] D=qqs closed by QUIT
 SMTP>- ◀flush▶
  search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -132,8 +128,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [ip4.ip4.ip4.ip4]
 sender_rcvhost = [ip4.ip4.ip4.ip4]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [ip4.ip4.ip4.ip4]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [ip4.ip4.ip4.ip4]
 host in host_reject_connection? no (option unset)
@@ -195,8 +189,6 @@ SMTP>- ◀flush▶
 SMTP(closed)<<
 SMTP>> 421 myhost.test.ex lost input connection
 SMTP>- ◀flush▶
-LOG: smtp_connection MAIN
-  SMTP connection from [ip4.ip4.ip4.ip4] lost D=qqs
 SMTP>- ◀flush▶
 SMTP>- ◀flush▶
 SMTP>- ◀flush▶

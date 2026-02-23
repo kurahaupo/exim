@@ -37,7 +37,7 @@ const uschar * cp;
 if ((fail = gnutls_x509_crt_export((gnutls_x509_crt_t)cert,
     GNUTLS_X509_FMT_PEM, buf, &sz)))
   {
-  log_write(0, LOG_MAIN, "TLS error in certificate export: %s",
+  log_write(LOG_MAIN, "TLS error in certificate export: %s",
     gnutls_strerror(fail));
   return FALSE;
   }
@@ -71,7 +71,7 @@ datum.data = string_unprinting(US buf);
 datum.size = Ustrlen(datum.data);
 if ((rc = gnutls_x509_crt_import(crt, &datum, GNUTLS_X509_FMT_PEM)))
   {
-  log_write(0, LOG_MAIN, "TLS error in certificate import: %s",
+  log_write(LOG_MAIN, "TLS error in certificate import: %s",
     gnutls_strerror(rc));
   crt = NULL;
   }
@@ -435,7 +435,7 @@ if (  (fail = gnutls_x509_crt_export((gnutls_x509_crt_t)cert,
         GNUTLS_X509_FMT_DER, cp, &len))
    )
   {
-  log_write(0, LOG_MAIN, "TLS error in certificate export: %s",
+  log_write(LOG_MAIN, "TLS error in certificate export: %s",
     gnutls_strerror(fail));
   return NULL;
   }

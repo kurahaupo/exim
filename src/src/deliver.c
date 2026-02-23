@@ -318,7 +318,7 @@ static int
 open_msglog_file(uschar *filename, int mode, uschar **error)
 {
 if (Ustrstr(filename, US"/../"))
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "Attempt to open msglog file path with upward-traversal: '%s'\n", filename);
 
 for (int i = 2; i > 0; i--)
@@ -856,7 +856,7 @@ if (action)
   event_data = ev_data;
 
   if (!(s = expand_string(action)) && *expand_string_message)
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "failed to expand event_action %s in %s: %s\n",
       event, transport_name ? transport_name : US"main", expand_string_message);
 
@@ -1295,7 +1295,7 @@ if (LOGGING(deliver_time))
 /* string_cat() always leaves room for the terminator. Release the
 store we used to build the line after writing it. */
 
-log_write(0, flags, "%Y", g);
+log_write(flags, "%Y", g);
 
 #ifndef DISABLE_EVENT
 if (!msg) msg_event_raise(US"msg:delivery", addr);
@@ -1369,8 +1369,8 @@ of error number is negative, and all the retry ones are less than any
 others. */
 
 
-log_write(addr->basic_errno <= ERRNO_RETRY_BASE ? L_retry_defer : 0, logflags,
-  "== %Y", g);
+if (addr->basic_errno > ERRNO_RETRY_BASE || LOGGING(retry_defer))
+  log_write(logflags, "== %Y", g);
 
 store_reset(reset_point);
 return;
@@ -1446,7 +1446,7 @@ if (driver_kind)
 else
   deliver_msglog("%s %.*s\n", now, g->ptr, g->s);
 
-log_write(0, LOG_MAIN, "** %Y", g);
+log_write(LOG_MAIN, "** %Y", g);
 
 store_reset(reset_point);
 return;
@@ -1555,7 +1555,7 @@ if (addr->return_file >= 0 && addr->return_filename)
       {
       FILE * f = Ufopen(addr->return_filename, "rb");
       if (!f)
-        log_write(0, LOG_MAIN|LOG_PANIC, "failed to open %s to log output "
+        log_write(LOG_MAIN|LOG_PANIC, "failed to open %s to log output "
           "from %s transport: %s", addr->return_filename, tb->drinst.name,
           strerror(errno));
       else
@@ -1567,7 +1567,7 @@ if (addr->return_file >= 0 && addr->return_filename)
           while (p > big_buffer && isspace(p[-1])) p--;
           *p = 0;
           sp = string_printing(big_buffer);
-          log_write(0, LOG_MAIN, "<%s>: %s transport output: %s",
+          log_write(LOG_MAIN, "<%s>: %s transport output: %s",
             addr->address, tb->drinst.name, sp);
           }
 	(void)fclose(f);
@@ -1796,7 +1796,7 @@ for (address_item * addr2 = addr->next; addr2; addr2 = addr2->next)
   addr2->message = addr->message;
   }
 
-if (logit) log_write(0, LOG_MAIN|LOG_PANIC, "%s", addr->message);
+if (logit) log_write(LOG_MAIN|LOG_PANIC, "%s", addr->message);
 deliver_set_expansions(NULL);
 }
 
@@ -2317,7 +2317,7 @@ if ((pid = exim_fork(US"delivery-local")) == 0)
 # ifdef SETRLIMIT_NOT_SUPPORTED
     if (errno != ENOSYS && errno != ENOTSUP)
 # endif
-      log_write(0, LOG_MAIN|LOG_PANIC, "setrlimit(RLIMIT_CORE) failed: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "setrlimit(RLIMIT_CORE) failed: %s",
         strerror(errno));
     }
 #endif
@@ -2446,7 +2446,7 @@ if ((pid = exim_fork(US"delivery-local")) == 0)
 	     )
 	 )
       )
-      log_write(0, LOG_MAIN|LOG_PANIC, "Failed writing transport results to pipe: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "Failed writing transport results to pipe: %s",
 	ret == -1 ? strerror(errno) : "short write");
 
     /* Now any messages */
@@ -2457,7 +2457,7 @@ if ((pid = exim_fork(US"delivery-local")) == 0)
       if(  (ret = write(pfd[pipe_write], &message_length, sizeof(int))) != sizeof(int)
         || message_length > 0  && (ret = write(pfd[pipe_write], s, message_length)) != message_length
 	)
-        log_write(0, LOG_MAIN|LOG_PANIC, "Failed writing transport results to pipe: %s",
+        log_write(LOG_MAIN|LOG_PANIC, "Failed writing transport results to pipe: %s",
 	  ret == -1 ? strerror(errno) : "short write");
       }
     }
@@ -2474,7 +2474,7 @@ better than returning an error - if forking is failing it is probably best
 not to try other deliveries for this message. */
 
 if (pid < 0)
-  log_write_die(0, LOG_MAIN, "Fork failed for local delivery to %s",
+  log_write_die(LOG_MAIN, "Fork failed for local delivery to %s",
     addr->address);
 
 /* Read the pipe to get the delivery status codes and error messages. Our copy
@@ -2510,7 +2510,7 @@ for (addr2 = addr; addr2; addr2 = addr2->next)
 	 || llen > 64*4	/* limit from rfc 5821, times I18N factor */
          )
 	{
-	log_write(0, LOG_MAIN|LOG_PANIC, "bad local_part length read"
+	log_write(LOG_MAIN|LOG_PANIC, "bad local_part length read"
 	  " from delivery subprocess");
 	break;
 	}
@@ -2518,7 +2518,7 @@ for (addr2 = addr; addr2; addr2 = addr2->next)
       /* coverity[tainted_data] */
       if (read(pfd[pipe_read], big_buffer, llen) != llen)
 	{
-	log_write(0, LOG_MAIN|LOG_PANIC, "bad local_part read"
+	log_write(LOG_MAIN|LOG_PANIC, "bad local_part read"
 	  " from delivery subprocess");
 	break;
 	}
@@ -2541,7 +2541,7 @@ for (addr2 = addr; addr2; addr2 = addr2->next)
 
   else
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "failed to read delivery status for %s "
+    log_write(LOG_MAIN|LOG_PANIC, "failed to read delivery status for %s "
       "from delivery subprocess", addr2->unique);
     break;
     }
@@ -2573,14 +2573,14 @@ if (!shadowing)
       DEBUG(deliver) debug_printf("journalling %s", big_buffer);
       len = Ustrlen(big_buffer);
       if (write(journal_fd, big_buffer, len) != len)
-	log_write(0, LOG_MAIN|LOG_PANIC, "failed to update journal for %s: %s",
+	log_write(LOG_MAIN|LOG_PANIC, "failed to update journal for %s: %s",
 	  big_buffer, strerror(errno));
       }
 
   /* Ensure the journal file is pushed out to disk. */
 
   if (EXIMfsync(journal_fd) < 0)
-    log_write(0, LOG_MAIN|LOG_PANIC, "failed to fsync journal: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "failed to fsync journal: %s",
       strerror(errno));
   }
 
@@ -2595,7 +2595,7 @@ resets SIGCHLD to SIG_DFL, but this code should still be robust. */
 while ((rc = wait(&status)) != pid)
   if (rc < 0 && errno == ECHILD)      /* Process has vanished */
     {
-    log_write(0, LOG_MAIN, "%s transport process vanished unexpectedly",
+    log_write(LOG_MAIN, "%s transport process vanished unexpectedly",
       addr->transport->drinst.driver_name);
     status = 0;
     break;
@@ -2608,7 +2608,7 @@ if ((status & 0xffff) != 0)
   int code = (msb == 0)? (lsb & 0x7f) : msb;
   if (msb != 0 || (code != SIGTERM && code != SIGKILL && code != SIGQUIT))
     addr->special_action = SPECIAL_FREEZE;
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s transport process returned non-zero "
+  log_write(LOG_MAIN|LOG_PANIC, "%s transport process returned non-zero "
     "status 0x%04x: %s %d",
     addr->transport->drinst.driver_name,
     status,
@@ -2630,7 +2630,7 @@ if (addr->special_action == SPECIAL_WARN)
     DEBUG(deliver) debug_printf("Warning message requested by transport\n");
 
     if (!(warn_message = expand_string(warn_message)))
-      log_write(0, LOG_MAIN|LOG_PANIC, "Failed to expand %q (warning "
+      log_write(LOG_MAIN|LOG_PANIC, "Failed to expand %q (warning "
 	"message for %s transport): %s", addr->transport->warn_message,
 	addr->transport->drinst.name, expand_string_message);
 
@@ -2676,7 +2676,7 @@ if (!tp->max_parallel) return FALSE;
 max_parallel = (unsigned) expand_string_integer(tp->max_parallel, TRUE);
 if (expand_string_message)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "Failed to expand max_parallel option "
+  log_write(LOG_MAIN|LOG_PANIC, "Failed to expand max_parallel option "
 	"in %s transport (%s): %s", trname, addr->address,
 	expand_string_message);
   return TRUE;
@@ -2802,7 +2802,7 @@ while (addr_local)
       deliver_set_expansions(NULL);
       if (!batch_id)
         {
-        log_write(0, LOG_MAIN|LOG_PANIC, "Failed to expand batch_id option "
+        log_write(LOG_MAIN|LOG_PANIC, "Failed to expand batch_id option "
           "in %s transport (%s): %s", trname, addr->address,
           expand_string_message);
         batch_count = tp->batch_max;
@@ -2859,7 +2859,7 @@ while (addr_local)
         deliver_set_expansions(NULL);
         if (!bid)
           {
-          log_write(0, LOG_MAIN|LOG_PANIC, "Failed to expand batch_id option "
+          log_write(LOG_MAIN|LOG_PANIC, "Failed to expand batch_id option "
             "in %s transport (%s): %s", trname, next->address,
             expand_string_message);
           ok = FALSE;
@@ -3064,7 +3064,7 @@ while (addr_local)
       if (Ustrcmp(stp->drinst.name, tp->shadow) == 0) break;
 
     if (!stp)
-      log_write(0, LOG_MAIN|LOG_PANIC, "shadow transport %q not found ",
+      log_write(LOG_MAIN|LOG_PANIC, "shadow transport %q not found ",
         tp->shadow);
 
     /* Pick off the addresses that have succeeded, and make clones. Put into
@@ -3854,7 +3854,7 @@ if (msg)
     addr->transport_return = DEFER;
     addr->special_action = SPECIAL_FREEZE;
     addr->message = msg;
-    log_write(0, LOG_MAIN|LOG_PANIC, "Delivery status for %s: %s\n",
+    log_write(LOG_MAIN|LOG_PANIC, "Delivery status for %s: %s\n",
 	      addr->address, addr->message);
     }
 
@@ -4147,7 +4147,7 @@ for (;;)   /* Normally we do not repeat this loop */
             pid_t endedpid = waitpid(pid, &status, 0);
             if (endedpid == pid) goto PROCESS_DONE;
             if (endedpid != (pid_t)(-1) || errno != EINTR)
-              log_write_die(0, LOG_MAIN, "Unexpected error return "
+              log_write_die(LOG_MAIN, "Unexpected error return "
                 "%d (errno = %d) from waitpid() for process %ld",
                 (int)endedpid, errno, (long)pid);
             }
@@ -4171,7 +4171,7 @@ for (;;)   /* Normally we do not repeat this loop */
   /* This situation is an error, but it's probably better to carry on looking
   for another process than to give up (as we used to do). */
 
-  log_write(0, LOG_MAIN|LOG_PANIC, "Process %ld finished: not found in remote "
+  log_write(LOG_MAIN|LOG_PANIC, "Process %ld finished: not found in remote "
     "transport process list", (long)pid);
   }  /* End of the "for" loop */
 
@@ -4270,7 +4270,7 @@ while (parcount > max)
   address_item * doneaddr = par_wait(reason);
   if (!doneaddr)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "remote delivery process count got out of step");
     parcount = 0;
     }
@@ -4302,7 +4302,7 @@ ssize_t ret;
 /* complain to log if someone tries with buffer sizes we can't handle*/
 
 if (size > BIG_BUFFER_SIZE-1)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "Failed writing transport result to pipe: can't handle buffers > %d bytes. truncating!\n",
       BIG_BUFFER_SIZE-1);
   /*NOTREACHED*/
@@ -4313,13 +4313,13 @@ that help? */
 /* convert size to human readable string prepended by id and subid */
 if (PIPE_HEADER_SIZE != snprintf(CS pipe_header, PIPE_HEADER_SIZE+1, "%c%c%05ld",
     id, subid, (long)size))
-  log_write_die(0, LOG_MAIN, "header snprintf failed\n");
+  log_write_die(LOG_MAIN, "header snprintf failed\n");
 
 DEBUG(deliver) debug_printf("header write id:%c,subid:%c,size:%ld,final:%s\n",
                                  id, subid, (long)size, pipe_header);
 
 if ((ret = writev(fd, iov, 2)) != total_len)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "Failed writing transport result to pipe (%ld of %ld bytes): %s",
     (long)ret, (long)total_len, ret == -1 ? strerror(errno) : "short write");
 }
@@ -4945,7 +4945,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 
     if (  (deliver_datafile = Uopen(fname, EXIM_CLOEXEC | O_RDWR | O_APPEND, 0))
 	< 0)
-      log_write_die(0, LOG_MAIN, "Failed to reopen %s for remote "
+      log_write_die(LOG_MAIN, "Failed to reopen %s for remote "
         "parallel delivery: %s", fname, strerror(errno));
     }
 
@@ -5550,7 +5550,7 @@ for (;;)
 if ((yield = expand_string(string_from_gstring(para))))
   return yield;
 
-log_write(0, LOG_MAIN|LOG_PANIC, "Failed to expand string from "
+log_write(LOG_MAIN|LOG_PANIC, "Failed to expand string from "
   "bounce_message_file or warn_message_file (%s): %s", which,
   expand_string_message);
 return NULL;
@@ -5884,14 +5884,14 @@ const uschar * s = expand_string(filename);
 FILE * fp = NULL;
 
 if (!s || !*s)
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "Failed to expand %s: '%s'\n", optname, filename);
 else if (*s != '/' || is_tainted(s))
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "%s is not %s after expansion: '%s'\n",
     optname, *s == '/' ? "untainted" : "absolute", s);
 else if (!(fp = Ufopen(s, "rb")))
-  log_write(0, LOG_MAIN|LOG_PANIC, "Failed to open %s for %s "
+  log_write(LOG_MAIN|LOG_PANIC, "Failed to open %s for %s "
     "message texts: %s", s, reason, strerror(errno));
 return fp;
 }
@@ -5950,7 +5950,7 @@ if (!(bounce_recipient = addr_failed->prop.errors_address))
 /* Make a subprocess to send a message, using its stdin */
 
 if ((pid = child_open_exim(&fd, US"bounce-message")) < 0)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "Process " PID_T_FMT " (parent " PID_T_FMT ") failed to "
     "create child process to send failure message: %s",
     getpid(), getppid(), strerror(errno));
@@ -6359,7 +6359,7 @@ wording. */
       }
     deliver_msglog("Process failed (%d) when writing error message "
       "to %s%s", rc, bounce_recipient, s);
-    log_write(0, LOG_MAIN, "Process failed (%d) when writing error message "
+    log_write(LOG_MAIN, "Process failed (%d) when writing error message "
       "to %s%s", rc, bounce_recipient, s);
     }
 
@@ -6618,7 +6618,7 @@ if (addr_senddsn)
 
   if (pid < 0)  /* Creation of child failed */
     {
-    log_write_die(0, LOG_MAIN,
+    log_write_die(LOG_MAIN,
       "Process " PID_T_FMT " (parent " PID_T_FMT ") failed to "
       "create child process to send success-dsn message: %s",
       getpid(), getppid(), strerror(errno));
@@ -6877,13 +6877,13 @@ give up; if the message has been around for sufficiently long, remove it. */
       struct stat statbuf;
       if (Ustat(spool_fname(US"input", message_subdir, spoolname, US""),
 		&statbuf) == 0)
-	log_write(0, LOG_MAIN, "Format error in spool file %s: "
+	log_write(LOG_MAIN, "Format error in spool file %s: "
 	  "size=" OFF_T_FMT, spoolname, statbuf.st_size);
       else
-	log_write(0, LOG_MAIN, "Format error in spool file %s", spoolname);
+	log_write(LOG_MAIN, "Format error in spool file %s", spoolname);
       }
     else
-      log_write(0, LOG_MAIN, "Error reading spool file %s: %s", spoolname,
+      log_write(LOG_MAIN, "Error reading spool file %s: %s", spoolname,
 	strerror(errno));
 
     /* If we managed to read the envelope data, received_time contains the
@@ -6906,7 +6906,7 @@ give up; if the message has been around for sufficiently long, remove it. */
       Uunlink(spool_fname(US"input", message_subdir, id, US"-D"));
       Uunlink(spool_fname(US"input", message_subdir, id, US"-H"));
       Uunlink(spool_fname(US"input", message_subdir, id, US"-J"));
-      log_write(0, LOG_MAIN, "Message removed because older than %s",
+      log_write(LOG_MAIN, "Message removed because older than %s",
 	readconf_printtime(keep_malformed));
       }
 
@@ -6954,7 +6954,7 @@ Otherwise it might be needed again. */
     }
   else if (errno != ENOENT)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "attempt to open journal for reading gave: "
+    log_write(LOG_MAIN|LOG_PANIC, "attempt to open journal for reading gave: "
       "%s", strerror(errno));
     return continue_closedown();   /* yields DELIVER_NOT_ATTEMPTED */
     }
@@ -6965,7 +6965,7 @@ Otherwise it might be needed again. */
     {
     (void)close(deliver_datafile);
     deliver_datafile = -1;
-    log_write(0, LOG_MAIN, "Spool error: no recipients for %s", fname);
+    log_write(LOG_MAIN, "Spool error: no recipients for %s", fname);
     return continue_closedown();   /* yields DELIVER_NOT_ATTEMPTED */
     }
   }
@@ -6995,7 +6995,7 @@ if (f.deliver_freeze)
 
   if (timeout_frozen_after > 0 && message_age >= timeout_frozen_after)
     {
-    log_write(0, LOG_MAIN, "cancelled by timeout_frozen_after");
+    log_write(LOG_MAIN, "cancelled by timeout_frozen_after");
     process_recipients = RECIP_FAIL_TIMEOUT;
     }
 
@@ -7004,7 +7004,7 @@ if (f.deliver_freeze)
   fails. */
 
   else if (!*sender_address && message_age >= ignore_bounce_errors_after)
-    log_write(0, LOG_MAIN, "Unfrozen by errmsg timer");
+    log_write(LOG_MAIN, "Unfrozen by errmsg timer");
 
   /* If this is a bounce message, or there's no auto thaw, or we haven't
   reached the auto thaw time yet, and this delivery is not forced by an admin
@@ -7024,7 +7024,7 @@ if (f.deliver_freeze)
       {
       (void)close(deliver_datafile);
       deliver_datafile = -1;
-      log_write(L_skip_delivery, LOG_MAIN, "Message is frozen");
+      if (LOGGING(skip_delivery)) log_write(LOG_MAIN, "Message is frozen");
       return continue_closedown();   /* yields DELIVER_NOT_ATTEMPTED */
       }
 
@@ -7034,9 +7034,9 @@ if (f.deliver_freeze)
     if (forced)
       {
       f.deliver_manual_thaw = TRUE;
-      log_write(0, LOG_MAIN, "Unfrozen by forced delivery");
+      log_write(LOG_MAIN, "Unfrozen by forced delivery");
       }
-    else log_write(0, LOG_MAIN, "Unfrozen by auto-thaw");
+    else log_write(LOG_MAIN, "Unfrozen by auto-thaw");
     }
 
   /* We get here if any of the rules for unfreezing have triggered. */
@@ -7059,7 +7059,7 @@ if (message_logs)
 
   if ((fd = open_msglog_file(fname, SPOOL_MODE, &error)) < 0)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Couldn't %s message log %s: %s", error,
+    log_write(LOG_MAIN|LOG_PANIC, "Couldn't %s message log %s: %s", error,
       fname, strerror(errno));
     return continue_closedown();   /* yields DELIVER_NOT_ATTEMPTED */
     }
@@ -7068,7 +7068,7 @@ if (message_logs)
 
   if (!(message_log = fdopen(fd, "a")))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Couldn't fdopen message log %s: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "Couldn't fdopen message log %s: %s",
       fname, strerror(errno));
     return continue_closedown();   /* yields DELIVER_NOT_ATTEMPTED */
     }
@@ -7081,7 +7081,7 @@ the addresses. */
 if (give_up)
   {
   struct passwd *pw = getpwuid(real_uid);
-  log_write(0, LOG_MAIN, "cancelled by %s",
+  log_write(LOG_MAIN, "cancelled by %s",
       pw ? US pw->pw_name : string_sprintf("uid %ld", (long int)real_uid));
   process_recipients = RECIP_FAIL;
   }
@@ -7153,7 +7153,7 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
     {
     (void)close(deliver_datafile);
     deliver_datafile = -1;
-    log_write(0, LOG_MAIN|LOG_PANIC, "Error in system filter: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "Error in system filter: %s",
       string_printing(filter_message));
     return continue_closedown();   /* yields DELIVER_NOT_ATTEMPTED */
     }
@@ -7177,7 +7177,7 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
     {
     process_recipients = RECIP_DEFER;
     deliver_msglog("Delivery deferred by system filter\n");
-    log_write(0, LOG_MAIN, "Delivery deferred by system filter");
+    log_write(LOG_MAIN, "Delivery deferred by system filter");
     }
 
   /* The filter can request that a message be frozen, but this does not
@@ -7230,7 +7230,7 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
         }
       }
 
-    log_write(0, LOG_MAIN, "cancelled by system filter%s%.*s", colon, loglen,
+    log_write(LOG_MAIN, "cancelled by system filter%s%.*s", colon, loglen,
       logmsg);
     }
 
@@ -7241,9 +7241,9 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
     {
     process_recipients = RECIP_IGNORE;
     if (addr_new)
-      log_write(0, LOG_MAIN, "original recipients ignored (system filter)");
+      log_write(LOG_MAIN, "original recipients ignored (system filter)");
     else
-      log_write(0, LOG_MAIN, "=> discarded (system filter)");
+      log_write(LOG_MAIN, "=> discarded (system filter)");
     }
 
   /* If any new addresses were created by the filter, fake up a "parent"
@@ -7274,7 +7274,7 @@ else if (system_filter && process_recipients != RECIP_FAIL_TIMEOUT)
     while (p)
       {
       if (parent->child_count == USHRT_MAX)
-        log_write_die(0, LOG_MAIN, "system filter generated more "
+        log_write_die(LOG_MAIN, "system filter generated more "
           "than %d delivery addresses", USHRT_MAX);
       parent->child_count++;
       p->parent = parent;
@@ -7518,7 +7518,7 @@ if (process_recipients != RECIP_IGNORE)
 	int start, end, dom;
 
 	if (!parse_extract_address(addr, &errmsg, &start, &end, &dom, TRUE))
-	  log_write(0, LOG_MAIN|LOG_PANIC,
+	  log_write(LOG_MAIN|LOG_PANIC,
                 "failed to parse address '%.100s': %s\n", addr, errmsg);
 	else
 	  {
@@ -8292,7 +8292,7 @@ if (  mua_wrapper
   need to do the failure logging. */
 
   if (addr != addr_failed)
-    log_write(0, LOG_MAIN, "** %s routing yielded a %s delivery",
+    log_write(LOG_MAIN, "** %s routing yielded a %s delivery",
       addr->address, which);
 
   /* Always write an error to the caller */
@@ -8371,7 +8371,7 @@ if (addr_local || addr_remote)
     if ((journal_fd = Uopen(fname,
 	      EXIM_CLOEXEC | O_WRONLY|O_APPEND|O_CREAT|O_EXCL, SPOOL_MODE)) < 0)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "Couldn't open journal file %s: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "Couldn't open journal file %s: %s",
 	fname, strerror(errno));
       return DELIVER_NOT_ATTEMPTED;
       }
@@ -8388,10 +8388,10 @@ if (addr_local || addr_remote)
       )
       {
       int ret = Uunlink(fname);
-      log_write(0, LOG_MAIN|LOG_PANIC, "Couldn't set perms on journal file %s: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "Couldn't set perms on journal file %s: %s",
 	fname, strerror(errno));
       if(ret  &&  errno != ENOENT)
-	log_write_die(0, LOG_MAIN, "failed to unlink %s: %s",
+	log_write_die(LOG_MAIN, "failed to unlink %s: %s",
 	  fname, strerror(errno));
       return DELIVER_NOT_ATTEMPTED;
       }
@@ -8461,7 +8461,7 @@ if (addr_remote)
   if (remote_sort_domains) sort_remote_deliveries();
   if (!do_remote_deliveries(FALSE))
     {
-    log_write(0, LOG_MAIN, "** mua_wrapper is set but recipients cannot all "
+    log_write(LOG_MAIN, "** mua_wrapper is set but recipients cannot all "
       "be delivered in one transaction");
     fprintf(stderr, "delivery to smarthost failed (configuration problem)\n");
 
@@ -8524,7 +8524,7 @@ if (mua_wrapper)
     address_item * nextaddr;
     for (address_item * addr = addr_defer; addr; addr = nextaddr)
       {
-      log_write(0, LOG_MAIN, "** %s mua_wrapper forced failure for deferred "
+      log_write(LOG_MAIN, "** %s mua_wrapper forced failure for deferred "
         "delivery", addr->address);
       nextaddr = addr->next;
       addr->next = addr_failed;
@@ -8623,7 +8623,7 @@ if (addr_failed)
       {
       if (  !testflag(addr_failed, af_retry_timedout)
 	 && !addr_failed->prop.ignore_error)
-	log_write(0, LOG_MAIN|LOG_PANIC, "internal error: bounce message "
+	log_write(LOG_MAIN|LOG_PANIC, "internal error: bounce message "
 	  "failure is neither frozen nor ignored (it's been ignored)");
 
       addr_failed->prop.ignore_error = TRUE;
@@ -8645,7 +8645,7 @@ if (addr_failed)
 #ifndef DISABLE_EVENT
       msg_event_raise(US"msg:fail:delivery", addr);
 #endif
-      log_write(0, LOG_MAIN, "%s%s%s%s: error ignored%s",
+      log_write(LOG_MAIN, "%s%s%s%s: error ignored%s",
 	addr->address,
 	!addr->parent ? US"" : US" <",
 	!addr->parent ? US"" : addr->parent->address,
@@ -8705,12 +8705,12 @@ if (!addr_defer)
         rc = Urename(fname, moname);
         }
       if (rc < 0)
-        log_write_die(0, LOG_MAIN, "failed to move %s to the "
+        log_write_die(LOG_MAIN, "failed to move %s to the "
           "msglog.OLD directory", fname);
       }
     else
       if (Uunlink(fname) < 0)
-        log_write_die(0, LOG_MAIN, "failed to unlink %s: %s",
+        log_write_die(LOG_MAIN, "failed to unlink %s: %s",
 		  fname, strerror(errno));
     }
 
@@ -8718,19 +8718,19 @@ if (!addr_defer)
 
   fname = spool_fname(US"input", message_subdir, id, US"-D");
   if (Uunlink(fname) < 0)
-    log_write_die(0, LOG_MAIN, "failed to unlink %s: %s",
+    log_write_die(LOG_MAIN, "failed to unlink %s: %s",
       fname, strerror(errno));
   fname = spool_fname(US"input", message_subdir, id, US"-H");
   if (Uunlink(fname) < 0)
-    log_write_die(0, LOG_MAIN, "failed to unlink %s: %s",
+    log_write_die(LOG_MAIN, "failed to unlink %s: %s",
       fname, strerror(errno));
 
   /* Log the end of this message, with queue time if requested. */
 
   if (LOGGING(queue_time_overall))
-    log_write(0, LOG_MAIN, "Completed QT=%s", string_timesince(&received_time));
+    log_write(LOG_MAIN, "Completed QT=%s", string_timesince(&received_time));
   else
-    log_write(0, LOG_MAIN, "Completed");
+    log_write(LOG_MAIN, "Completed");
 
   /* Unset deliver_freeze so that we won't try to move the spool files further down */
   f.deliver_freeze = FALSE;
@@ -8964,7 +8964,7 @@ else if (addr_defer != (address_item *)(+1))
     of a race problem. */
 
     deliver_msglog("*** Frozen%s\n", frozen_info);
-    log_write(0, LOG_MAIN, "Frozen%s", frozen_info);
+    log_write(LOG_MAIN, "Frozen%s", frozen_info);
     }
 
   /* If there have been any updates to the non-recipients list, or other things
@@ -9006,7 +9006,7 @@ if (remove_journal)
   uschar * fname = spool_fname(US"input", message_subdir, id, US"-J");
 
   if (Uunlink(fname) < 0 && errno != ENOENT)
-    log_write_die(0, LOG_MAIN, "failed to unlink %s: %s", fname,
+    log_write_die(LOG_MAIN, "failed to unlink %s: %s", fname,
       strerror(errno));
 
   /* Move the message off the spool if requested */
@@ -9153,8 +9153,7 @@ return;		/* compiler quietening; control does not reach here. */
 
 #ifndef DISABLE_TLS
 fail:
-  log_write(0,
-    LOG_MAIN | (exec_type == CEE_EXEC_EXIT ? LOG_PANIC : LOG_PANIC_DIE),
+  log_write(LOG_MAIN | (exec_type == CEE_EXEC_EXIT ? LOG_PANIC : LOG_PANIC_DIE),
     "delivery re-exec %s failed: %s", where, strerror(errno));
 
   /* Get here if exec_type == CEE_EXEC_EXIT.

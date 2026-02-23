@@ -497,7 +497,7 @@ DEBUG(tls)
 
 #ifndef DISABLE_OCSP
 if (tls_ocsp_file && (gnutls_buggy_ocsp = tls_is_buggy_ocsp()))
-  log_write(0, LOG_MAIN, "OCSP unusable with this GnuTLS library version");
+  log_write(LOG_MAIN, "OCSP unusable with this GnuTLS library version");
 #endif
 
 exim_gnutls_base_init_done = TRUE;
@@ -591,14 +591,14 @@ if (!state->host)
   uschar * conn_info = smtp_get_connection_info();
   if (Ustrncmp(conn_info, US"SMTP ", 5) == 0) conn_info += 5;
   /* I'd like to get separated H= here, but too hard for now */
-  log_write(0, LOG_MAIN, "TLS error on %s %s", conn_info, errstr);
+  log_write(LOG_MAIN, "TLS error on %s %s", conn_info, errstr);
   }
 else if (  !tls_out.smtp_quit
 #ifdef GNUTLS_E_PREMATURE_TERMINATION
 	|| rc != GNUTLS_E_PREMATURE_TERMINATION
 #endif
 	)
-  log_write(0, LOG_MAIN, "H=%s [%s] TLS error on connection %s",
+  log_write(LOG_MAIN, "H=%s [%s] TLS error on connection %s",
     state->host->name, state->host->address, errstr);
 else DEBUG(tls)
   debug_printf("H=%s [%s] TLS error on connection %s\n",
@@ -1231,7 +1231,7 @@ switch (tls_id)
     DEBUG(tls) debug_printf("\n");
     if (server_seen_alpn > 1)
       {
-      log_write(0, LOG_MAIN, "TLS ALPN (%Y) rejected", g);
+      log_write(LOG_MAIN, "TLS ALPN (%Y) rejected", g);
       DEBUG(tls) debug_printf("TLS: too many ALPNs presented in handshake\n");
       return GNUTLS_E_NO_APPLICATION_PROTOCOL;
       }
@@ -1510,7 +1510,7 @@ else
   {
   if (Ustat(bundle, &statbuf) < 0)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "could not stat '%s' "
+    log_write(LOG_MAIN|LOG_PANIC, "could not stat '%s' "
 	"(tls_verify_certificates): %s", bundle, strerror(errno));
     return DEFER;
     }
@@ -1523,7 +1523,7 @@ else
   So s/!S_ISREG/S_ISDIR/ and change some messaging ... */
   if (S_ISDIR(statbuf.st_mode))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	"tls_verify_certificates %q is a directory", bundle);
     return DEFER;
     }
@@ -2909,7 +2909,7 @@ if ((cert_list = gnutls_certificate_get_peers(session, &cert_list_size)))
     if ((yield = event_raise(state->event_action,
 		US"tls:cert", string_sprintf("%d", cert_list_size), &errno)))
       {
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 		"SSL verify denied by event-action: depth=%d: %s",
 		cert_list_size, yield);
       return 1;                     /* reject */
@@ -3690,7 +3690,7 @@ if (ob->tls_alpn)
       DEBUG(tls) debug_printf("Setting TLS ALPN '%s'\n", ob->tls_alpn);
   }
 #else
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
 	  "ALPN unusable with this GnuTLS library version; ignoring %q\n",
           ob->tls_alpn);
 #endif
@@ -4194,7 +4194,7 @@ while (left > 0)
        )
       {					/* Outlook, dammit */
       if (LOGGING(protocol_detail))
-	log_write(0, LOG_MAIN, "[%s] after QUIT, client reset TCP before"
+	log_write(LOG_MAIN, "[%s] after QUIT, client reset TCP before"
 	  " SMTP response and TLS close\n", sender_host_address);
       else
 	DEBUG(tls) debug_printf("[%s] SSL_write: after QUIT,"
@@ -4348,7 +4348,7 @@ uschar * dummy_errstr;
 #endif
 
 if (exim_gnutls_base_init_done)
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
       "already initialised GnuTLS, Exim developer bug");
 
 #if defined(HAVE_GNUTLS_PKCS11) && !defined(GNUTLS_AUTO_PKCS11_MANUAL)

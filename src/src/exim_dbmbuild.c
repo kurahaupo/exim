@@ -69,7 +69,7 @@ string_format_trc(uschar * buf, int len, const uschar * func, unsigned line,
   const char * fmt, ...)
 { return FALSE; }
 void
-log_write(bitmask_word_t selector, int flags, const char *format, ...)
+log_write(int flags, const char *format, ...)
 { }
 const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
 {return NULL; }

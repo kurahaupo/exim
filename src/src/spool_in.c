@@ -71,7 +71,7 @@ for (int i = 0; i < 2; i++)
     {
     if (i == 0) continue;
     if (!f.queue_running)
-      log_write(0, LOG_MAIN, "Spool%s%s file %s-D not found",
+      log_write(LOG_MAIN, "Spool%s%s file %s-D not found",
 	*queue_name ? US" Q=" : US"",
 	*queue_name ? queue_name : US"",
 	id);
@@ -82,7 +82,7 @@ for (int i = 0; i < 2; i++)
 	id);
     }
   else
-    log_write(0, LOG_MAIN, "Spool error for %s: %s", fname, strerror(errno));
+    log_write(LOG_MAIN, "Spool error for %s: %s", fname, strerror(errno));
   errno = save_errno;
   return -1;
   }
@@ -106,7 +106,8 @@ lock_data.l_len = spool_data_start_offset(id);
 
 if (fcntl(fd, F_SETLK, &lock_data) < 0)
   {
-  log_write(L_skip_delivery, LOG_MAIN,
+  if (LOGGING(skip_delivery))
+    log_write(LOG_MAIN,
       "Spool file for %s is locked (another process is handling this message)",
       id);
   (void)close(fd);

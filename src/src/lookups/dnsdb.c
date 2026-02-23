@@ -509,7 +509,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
         if (rc < 0)
           {
-          log_write(0, LOG_MAIN, "host name alias list truncated: type=%s "
+          log_write(LOG_MAIN, "host name alias list truncated: type=%s "
             "domain=%s", dns_text_type(type), domain);
           break;
           }
@@ -526,7 +526,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	    (DN_EXPAND_ARG4_TYPE)buf, LCL_BUF_SIZE);
 	  if (rc < 0)
 	    {
-	    log_write(0, LOG_MAIN, "responsible-mailbox truncated: type=%s "
+	    log_write(LOG_MAIN, "responsible-mailbox truncated: type=%s "
 	      "domain=%s", dns_text_type(type), domain);
 	    break;
 	    }

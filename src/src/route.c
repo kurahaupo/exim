@@ -237,11 +237,11 @@ for (rr = routers; rr; rr = rr->drinst.next)
   }
 
 if (!rr)
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
     "new_router %q not found for %q router", name, r->drinst.name);
 
 if (after && !afterthis)
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
     "new_router %q does not follow %q router", name, r->drinst.name);
 }
 
@@ -298,11 +298,11 @@ for (router_instance * r = routers; r; r = r->drinst.next)
   /* Check for transport or no transport on certain routers */
 
   if (ri->ri_flags & ri_yestransport && !r->transport_name && !r->verify_only)
-    log_write_die(0, LOG_CONFIG, "%s router:\n  "
+    log_write_die(LOG_CONFIG, "%s router:\n  "
       "a transport is required for this router", r->drinst.name);
 
   if (ri->ri_flags & ri_notransport && r->transport_name)
-    log_write_die(0, LOG_CONFIG, "%s router:\n  "
+    log_write_die(LOG_CONFIG, "%s router:\n  "
       "a transport must not be defined for this router", r->drinst.name);
 
   /* The "self" option needs to be decoded into a code value and possibly a
@@ -327,7 +327,7 @@ for (router_instance * r = routers; r; r = r->drinst.next)
     r->self_code = self_reroute;
     }
 
-  else log_write_die(0, LOG_CONFIG_FOR, "%s router:\n  "
+  else log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
       "%s is not valid for the self option", r->drinst.name, s);
 
   /* If any router has check_local_user set, default retry_use_local_part
@@ -1274,7 +1274,7 @@ if (!user)
   {
   *errmsg = string_sprintf("Failed to expand user string %q for the "
     "%s %s: %s", string, driver_name, driver_type, expand_string_message);
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s", *errmsg);
+  log_write(LOG_MAIN|LOG_PANIC, "%s", *errmsg);
   return FALSE;
   }
 
@@ -1282,7 +1282,7 @@ if (route_finduser(user, pw, uid)) return TRUE;
 
 *errmsg = string_sprintf("Failed to find user %q from expanded string "
   "%q for the %s %s", user, string, driver_name, driver_type);
-log_write(0, LOG_MAIN|LOG_PANIC, "%s", *errmsg);
+log_write(LOG_MAIN|LOG_PANIC, "%s", *errmsg);
 return FALSE;
 }
 
@@ -1316,7 +1316,7 @@ if (!group)
   {
   *errmsg = string_sprintf("Failed to expand group string %q for the "
     "%s %s: %s", string, driver_name, driver_type, expand_string_message);
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s", *errmsg);
+  log_write(LOG_MAIN|LOG_PANIC, "%s", *errmsg);
   return FALSE;
   }
 
@@ -1324,7 +1324,7 @@ if (!route_findgroup(group, gid))
   {
   *errmsg = string_sprintf("Failed to find group %q from expanded string "
     "%q for the %s %s", group, string, driver_name, driver_type);
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s", *errmsg);
+  log_write(LOG_MAIN|LOG_PANIC, "%s", *errmsg);
   yield = FALSE;
   }
 
@@ -1465,7 +1465,7 @@ for (uschar * ele; (ele = string_nextinlist(&varlist, &sep, NULL, 0)); )
 
   if (!name || name[0] != 'r' || name[1] != '_' || !name[2])
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	"bad router variable name '%s' in router '%s'\n", name, drname);
     return FAIL;
     }
@@ -1643,7 +1643,7 @@ for (r = addr->start_router ? addr->start_router : routers; r; r = nextr)
 
     if (loopcount++ > 100)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "routing loop for %s", addr->address);
+      log_write(LOG_MAIN|LOG_PANIC, "routing loop for %s", addr->address);
       yield = DEFER;
       goto ROUTERS_LOOP_EXIT;
       }
@@ -1922,7 +1922,7 @@ if (!r)
 	  message = s;
 	else
 	  if (!f.expand_string_forcedfail)
-	    log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand "
+	    log_write(LOG_MAIN|LOG_PANIC, "failed to expand "
 	      "cannot_route_message in %s router: %s",
 	      addr->router->drinst.name,
 	      expand_string_message);
@@ -1947,7 +1947,7 @@ if (yield == DISCARD) goto ROUTE_EXIT;
 /* The yield must be either OK or REROUTED. */
 
 if (yield != OK && yield != REROUTED)
-  log_write_die(0, LOG_MAIN, "%s router returned unknown value %d",
+  log_write_die(LOG_MAIN, "%s router returned unknown value %d",
     rname_l, yield);
 
 /* If the yield was REROUTED, the router put a child address on the new chain

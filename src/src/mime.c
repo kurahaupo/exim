@@ -783,7 +783,7 @@ while(1)
     mime_current_boundary = NULL;
     if (!mime_decoded_filename)		/* decoding failed */
       {
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 	   "MIME acl condition warning - could not decode RFC822 MIME part to file.");
       rc = DEFER;
       goto out;

@@ -1252,7 +1252,7 @@ if (log_message && log_message != user_message)
   if (!logged)
     {
     int length = Ustrlen(text) + 1;
-    log_write(0, LOG_MAIN, "%s", text);
+    log_write(LOG_MAIN, "%s", text);
     logged = store_malloc(sizeof(string_item) + length);
     logged->text = US logged + sizeof(string_item);
     memcpy(logged->text, text, length);
@@ -1270,7 +1270,7 @@ Log an error. */
 
 if (where > ACL_WHERE_NOTSMTP)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "ACL \"warn\" with \"message\" setting "
+  log_write(LOG_MAIN|LOG_PANIC, "ACL \"warn\" with \"message\" setting "
     "found in a non-message (%s) ACL: cannot specify header lines here: "
     "message ignored", acl_wherenames[where]);
   return;
@@ -2634,7 +2634,7 @@ else switch(mode)
     anchor = &ratelimiters_cmd;
     break;
   default:
-    log_write_die(0, LOG_MAIN,
+    log_write_die(LOG_MAIN,
       "internal ACL error: unknown ratelimit mode %d", mode);
     /*NOTREACHED*/
     break;
@@ -3417,7 +3417,7 @@ for (; cb; cb = cb->next)
     case ACLC_ATRN_DOMAINS:
       if (is_tainted(arg))
 	{
-	log_write(0, LOG_MAIN|LOG_PANIC,
+	log_write(LOG_MAIN|LOG_PANIC,
 		  "attempt to used tainted value '%s' for atrn_domains%#s",
 		    arg,
 		    config_lineno
@@ -3997,7 +3997,7 @@ for (; cb; cb = cb->next)
         else
           {
           logbits |= LOG_MAIN|LOG_REJECT;
-          log_write(0, LOG_MAIN|LOG_PANIC, "unknown log name %q in "
+          log_write(LOG_MAIN|LOG_PANIC, "unknown log name %q in "
             "\"log_reject_target\" in %s ACL", ss, acl_wherenames[where]);
           }
         }
@@ -4033,7 +4033,7 @@ for (; cb; cb = cb->next)
       Uskip_whitespace(&s);
 
       if (logbits == 0) logbits = LOG_MAIN;
-      log_write(0, logbits, "%s", string_printing(s));
+      log_write(logbits, "%s", string_printing(s));
       break;
       }
 
@@ -4214,7 +4214,7 @@ for (; cb; cb = cb->next)
       break;
 
     default:
-      log_write_die(0, LOG_MAIN, "internal ACL error: unknown "
+      log_write_die(LOG_MAIN, "internal ACL error: unknown "
 	"condition %d", cb->type);
       break;
     }
@@ -4270,7 +4270,7 @@ if ((BIT(rc) & msgcond[verb]) != 0)
     if (!expmessage)
       {
       if (!f.expand_string_forcedfail)
-        log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand ACL message %q: %s",
+        log_write(LOG_MAIN|LOG_PANIC, "failed to expand ACL message %q: %s",
           user_message, expand_string_message);
       }
     else if (expmessage[0] != 0) *user_msgptr = expmessage;
@@ -4283,7 +4283,7 @@ if ((BIT(rc) & msgcond[verb]) != 0)
     if (!expmessage)
       {
       if (!f.expand_string_forcedfail)
-        log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand ACL message %q: %s",
+        log_write(LOG_MAIN|LOG_PANIC, "failed to expand ACL message %q: %s",
           log_message, expand_string_message);
       }
     else if (expmessage[0] != 0)
@@ -4497,7 +4497,7 @@ acl_text = ss;
 
 if (is_tainted(acl_text) && !f.running_in_test_harness)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "attempt to use tainted ACL text %q", acl_text);
   /* Avoid leaking info to an attacker */
   *log_msgptr = US"internal configuration error";
@@ -4733,13 +4733,13 @@ while ((acl_current = acl))
 	acl_warn(where, *user_msgptr, *log_msgptr);
       else if (cond == DEFER && LOGGING(acl_warn_skipped))
 	if (config_lineno > 0)
-	  log_write(0, LOG_MAIN,
+	  log_write(LOG_MAIN,
 	    "%s Warning: ACL 'warn' statement skipped (in %s at line %d of %s):"
 	    " condition test deferred%s%s",
 	    host_and_ident(TRUE), acl_name, config_lineno, config_filename,
 	    *log_msgptr ? US": " : US"", *log_msgptr ? *log_msgptr : US"");
 	else
-	  log_write(0, LOG_MAIN,
+	  log_write(LOG_MAIN,
 	    "%s Warning: ACL 'warn' statement skipped (in %s):"
 	    " condition test deferred%s%s",
 	    host_and_ident(TRUE), acl_name,
@@ -4748,7 +4748,7 @@ while ((acl_current = acl))
       break;
 
     default:
-      log_write_die(0, LOG_MAIN, "internal ACL error: unknown verb %d",
+      log_write_die(LOG_MAIN, "internal ACL error: unknown verb %d",
 	acl->verb);
       break;
     }
@@ -5026,7 +5026,7 @@ if (rc == DISCARD)
   {
   if (where > ACL_WHERE_NOTSMTP || where == ACL_WHERE_PREDATA)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "\"discard\" verb not allowed in %s "
+    log_write(LOG_MAIN|LOG_PANIC, "\"discard\" verb not allowed in %s "
       "ACL", acl_wherenames[where]);
     return ERROR;
     }
@@ -5037,7 +5037,7 @@ if (rc == DISCARD)
 
 if (rc == FAIL_DROP && where == ACL_WHERE_MAILAUTH)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "\"drop\" verb not allowed in %s "
+  log_write(LOG_MAIN|LOG_PANIC, "\"drop\" verb not allowed in %s "
     "ACL", acl_wherenames[where]);
   return ERROR;
   }

@@ -372,7 +372,7 @@ if (addr->transport == cutthrough.addr.transport)
 	      US"callout")
 	 || (port = smtp_get_port(tf->port, addr, US"callout")) < 0
 	 )
-	log_write(0, LOG_MAIN|LOG_PANIC, "<%s>: %s", addr->address,
+	log_write(LOG_MAIN|LOG_PANIC, "<%s>: %s", addr->address,
 	  addr->message);
 
       smtp_port_for_connect(host, port);
@@ -591,7 +591,7 @@ if (!addr->transport)
   }
 
 else if (Ustrcmp(addr->transport->drinst.driver_name, "smtp") != 0)
-  log_write(0, LOG_MAIN|LOG_PANIC|LOG_CONFIG_FOR, "callout transport '%s': %s is non-smtp",
+  log_write(LOG_MAIN|LOG_PANIC|LOG_CONFIG_FOR, "callout transport '%s': %s is non-smtp",
     addr->transport->drinst.name, addr->transport->drinst.driver_name);
 else
   {
@@ -609,7 +609,7 @@ else
     GET_OPTION("callout_random_local_part");
     if (  callout_random_local_part
        && !(random_local_part = expand_string(callout_random_local_part)))
-      log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand "
+      log_write(LOG_MAIN|LOG_PANIC, "failed to expand "
         "callout_random_local_part: %s", expand_string_message);
     }
 
@@ -700,7 +700,7 @@ coding means skipping this whole loop and doing the append separately.  */
             US"callout")
        || (port = smtp_get_port(tf->port, addr, US"callout")) < 0
        )
-      log_write(0, LOG_MAIN|LOG_PANIC, "<%s>: %s", addr->address,
+      log_write(LOG_MAIN|LOG_PANIC, "<%s>: %s", addr->address,
         addr->message);
 
     /* Large (12k, 66k if DANE supported.  Tainted, for the receive buffers */
@@ -736,7 +736,7 @@ tls_retry_connection:
        && verify_check_given_host(CUSS &ob->hosts_require_tls, host) != OK
        )
       {
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 	"%s: callout unencrypted to %s [%s] (not in hosts_require_tls)",
 	addr->message, host->name, host->address);
       addr->transport_return = PENDING_DEFER;
@@ -766,7 +766,7 @@ tls_retry_connection:
 	case ENETDOWN:
 	case ENETUNREACH:
 	case EINVAL:			/* OpenBSD gives this for netunreach */
-	  log_write(0, LOG_MAIN|LOG_PANIC,
+	  log_write(LOG_MAIN|LOG_PANIC,
 	    "%s verify %s (making callout connection): T=%s %s",
 	    options & vopt_is_recipient ? "sender" : "recipient",
 	    yield == FAIL ? "fail" : "defer",
@@ -1968,7 +1968,7 @@ while (addr_new)
 	if (!ti->local)
 	  {
 	  if ((tp->setup)(tp, addr, &tf, 0, 0, NULL) != OK)
-	    log_write(0, LOG_MAIN|LOG_PANIC,
+	    log_write(LOG_MAIN|LOG_PANIC,
 	      "setup fail for %s transport for callout (%s)",
 	      tp->drinst.name, expand_string_message);
 
@@ -1983,7 +1983,7 @@ while (addr_new)
 	    host_list = NULL;    /* Ignore the router's hosts */
 
 	    if (!(s = expand_string(tf.hosts)))
-	      log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand list of hosts "
+	      log_write(LOG_MAIN|LOG_PANIC, "failed to expand list of hosts "
 		"%q in %s transport for callout: %s", tf.hosts,
 		tp->drinst.name, expand_string_message);
 	    else
@@ -2847,7 +2847,7 @@ if (ip_connect(ident_conn_ctx.sock, host_af, sender_host_address, port,
 		rfc1413_query_timeout, &early_data) < 0)
   {
   if (errno == ETIMEDOUT && LOGGING(ident_timeout))
-    log_write(0, LOG_MAIN, "ident connection to %s timed out",
+    log_write(LOG_MAIN, "ident connection to %s timed out",
       sender_host_address);
   else
     DEBUG(ident) debug_printf("ident connection to %s failed: %s\n",
@@ -3102,7 +3102,7 @@ if (iplookup)
   /* Find the search type */
 
   if (!(li = search_findtype(t, endname - t)))
-    log_write_die(0, LOG_MAIN, "%s", search_error_message);
+    log_write_die(LOG_MAIN, "%s", search_error_message);
 
   /* Adjust parameters for the type of lookup. For a query-style lookup, there
   is no file name, and the "key" is just the query. For query-style with a file
@@ -3145,7 +3145,7 @@ if (iplookup)
   of the caching arrangements. */
 
   if (!(handle = search_open(filename, li, 0, NULL, NULL)))
-    log_write_die(0, LOG_MAIN, "%s", search_error_message);
+    log_write_die(LOG_MAIN, "%s", search_error_message);
 
   result = search_find(handle, filename, key, -1, NULL, 0, 0, NULL, opts);
   if (valueptr) *valueptr = result;
@@ -3228,7 +3228,7 @@ if ((semicolon = Ustrchr(ss, ';')))
 
   if (!li)				/* Unknown lookup type */
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "%s in host list item %q",
+    log_write(LOG_MAIN|LOG_PANIC, "%s in host list item %q",
       search_error_message, ss);
     return DEFER;
     }

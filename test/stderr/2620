@@ -272,8 +272,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [10.0.0.0]
 sender_rcvhost = [10.0.0.0]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [10.0.0.0]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [10.0.0.0]
 host in host_reject_connection? no (option unset)
@@ -671,8 +669,6 @@ LOG: MAIN REJECT
   H=(test) [10.0.0.0] F=<a@b> rejected RCPT <c@d>: relay not permitted
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test) [10.0.0.0] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
  close PGSQL connection: localhost:PORT_N/test/CALLER

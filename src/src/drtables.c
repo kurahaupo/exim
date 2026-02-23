@@ -87,7 +87,7 @@ Ustrcpy(new->name, li->name);
 if (tree_insertnode(&lookups_tree, new))
   li->acq_num = lookup_list_count++;
 else
-  log_write(0, LOG_MAIN|LOG_PANIC, "Duplicate lookup name '%s'", li->name);
+  log_write(LOG_MAIN|LOG_PANIC, "Duplicate lookup name '%s'", li->name);
 }
 
 
@@ -172,14 +172,14 @@ info = (lookup_module_info *) dlsym(dl, "_lookup_module_info");
 if ((errormsg = dlerror()))
   {
   EARLY_DEBUG(any, "%s does not appear to be a lookup module (%s)\n", name, errormsg);
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s does not appear to be a lookup module (%s)", name, errormsg);
+  log_write(LOG_MAIN|LOG_PANIC, "%s does not appear to be a lookup module (%s)", name, errormsg);
   dlclose(dl);
   return FALSE;
   }
 if (info->magic != LOOKUP_MODULE_INFO_MAGIC)
   {
   EARLY_DEBUG(any, "Lookup module %s is not compatible with this version of Exim\n", name);
-  log_write(0, LOG_MAIN|LOG_PANIC, "Lookup module %s is not compatible with this version of Exim", name);
+  log_write(LOG_MAIN|LOG_PANIC, "Lookup module %s is not compatible with this version of Exim", name);
   dlclose(dl);
   return FALSE;
   }
@@ -342,7 +342,7 @@ if ((errormsg = dlerror()))
   {
   EARLY_DEBUG(any, "%s does not appear to be a '%s' module (%s)\n",
 	  name, name, errormsg);
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "%s does not contain the expected module info symbol (%s)", name, errormsg);
   dlclose(dl);
   return NULL;
@@ -350,7 +350,7 @@ if ((errormsg = dlerror()))
 if (mi->dyn_magic != MISC_MODULE_MAGIC)
   {
   EARLY_DEBUG(any, "Module %s is not compatible with this version of Exim\n", name);
-  log_write(0, LOG_MAIN|LOG_PANIC, "Module %s is not compatible with this version of Exim", name);
+  log_write(LOG_MAIN|LOG_PANIC, "Module %s is not compatible with this version of Exim", name);
   dlclose(dl);
   return FALSE;
   }
@@ -490,7 +490,7 @@ DEBUG(lookup) debug_printf_indent("Total %d built-in lookups\n", lookup_list_cou
 if (!(dd = open_module_dir()))
   {
   EARLY_DEBUG(lookup, "Couldn't open %s: not loading lookup modules\n", LOOKUP_MODULE_DIR);
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
 	  "Couldn't open %s: not loading lookup modules\n", LOOKUP_MODULE_DIR);
   }
 else
@@ -512,7 +512,7 @@ else
       else
 	{
 	EARLY_DEBUG(any, "%s\n", errstr);
-	log_write(0, LOG_MAIN|LOG_PANIC, "%s", errstr);
+	log_write(LOG_MAIN|LOG_PANIC, "%s", errstr);
 	}
       }
   }

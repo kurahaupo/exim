@@ -6,7 +6,7 @@ admin user
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root
 created log directory TESTSUITE/spool/log
 LOG: MAIN
@@ -72,7 +72,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1235 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -83,7 +83,7 @@ admin user
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
@@ -147,7 +147,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1238 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -158,7 +158,7 @@ admin user
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
@@ -225,7 +225,7 @@ Leaving send_to_server transport
 LOG: MAIN
   == tempreject@test.ex R=client T=send_to_server defer (-46) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after pipelined end of data: 451 Service not available
 >>>>>>>>>>>>>>>> Exim pid=p1241 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -236,7 +236,7 @@ admin user
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
@@ -305,7 +305,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1244 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -316,7 +316,7 @@ admin user
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
@@ -385,6 +385,6 @@ Leaving send_to_server transport
 LOG: MAIN
   == dataloss@test.ex R=client T=send_to_server defer (-18) H=127.0.0.1 [127.0.0.1]: Remote host closed connection in response to pipelined end of data
 >>>>>>>>>>>>>>>> Exim pid=p1247 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1246 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

@@ -260,7 +260,7 @@ if (  dkim_collect_input
    && (rc = pdkim_feed(dkim_verify_ctx, data, len)) != PDKIM_OK)
   {
   dkim_collect_error = pdkim_errstr(rc);
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
 	     "DKIM: validation error: %.100s", dkim_collect_error);
   dkim_collect_input = 0;
   }
@@ -304,7 +304,7 @@ dkim_signatures = NULL;
 
 if (dkim_collect_error)
   {
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
       "DKIM: Error during validation, disabling signature verification: %.100s",
       dkim_collect_error);
   f.dkim_disable_verify = TRUE;
@@ -318,7 +318,7 @@ dkim_collect_input = 0;
 rc = pdkim_feed_finish(dkim_verify_ctx, (pdkim_signature **)&dkim_signatures,
 			&errstr);
 if (rc != PDKIM_OK && errstr && *errstr)
-  log_write(0, LOG_MAIN, "DKIM: validation error: %s", errstr);
+  log_write(LOG_MAIN, "DKIM: validation error: %s", errstr);
 
 /* Build a colon-separated list of signing domains (and identities, if present) in dkim_signers */
 
@@ -468,7 +468,7 @@ else
       break;
     }
 
-log_write(0, LOG_MAIN, "%Y", logmsg);
+log_write(LOG_MAIN, "%Y", logmsg);
 return;
 }
 
@@ -610,7 +610,7 @@ if (dkim_verify_signers && *dkim_verify_signers)
 
   if (!dkim_verify_signers_expanded)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "expansion of dkim_verify_signers option failed: %s",
       expand_string_message);
     return DEFER;
@@ -973,7 +973,7 @@ if (dkim_domain)
       pdkim_canon = PDKIM_CANON_SIMPLE;
     else
       {
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 		 "DKIM: unknown canonicalization method '%s', defaulting to 'relaxed'.\n",
 		 dkim_canon_expanded);
       pdkim_canon = PDKIM_CANON_RELAXED;
@@ -1122,7 +1122,7 @@ CLEANUP:
   return sigbuf;
 
 pk_bad:
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
 		"DKIM: signing failed: %.100s", pdkim_errstr(pdkim_rc));
 bad:
   sigbuf = NULL;
@@ -1131,7 +1131,7 @@ bad:
 expand_bad:
   *errstr = string_sprintf("failed to expand %s: %s",
               errwhen, expand_string_message);
-  log_write(0, LOG_MAIN | LOG_PANIC, "%s", *errstr);
+  log_write(LOG_MAIN | LOG_PANIC, "%s", *errstr);
   goto bad;
 }
 

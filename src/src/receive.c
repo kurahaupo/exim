@@ -58,8 +58,8 @@ if (rc == 0)
   if (had_data_timeout)
     {
     fprintf(stderr, "exim: timed out while reading - message abandoned\n");
-    log_write(L_lost_incoming_connection,
-	      LOG_MAIN, "timed out while reading local message");
+    if (LOGGING(lost_incoming_connection))
+      log_write(LOG_MAIN, "timed out while reading local message");
     receive_bomb_out(US"data-timeout", NULL);   /* Does not return */
     }
   if (had_data_sigint)
@@ -68,7 +68,7 @@ if (rc == 0)
       {
       fprintf(stderr, "\nexim: %s received - message abandoned\n",
 	had_data_sigint == SIGTERM ? "SIGTERM" : "SIGINT");
-      log_write(0, LOG_MAIN, "%s received while reading local message",
+      log_write(LOG_MAIN, "%s received while reading local message",
 	had_data_sigint == SIGTERM ? "SIGTERM" : "SIGINT");
       }
     receive_bomb_out(US"signal-exit", NULL);    /* Does not return */
@@ -100,7 +100,7 @@ int
 stdin_ungetc(int c)
 {
 if (stdin_inptr <= stdin_buf)
-  log_write_die(0, LOG_MAIN, "buffer underflow in stdin_ungetc");
+  log_write_die(LOG_MAIN, "buffer underflow in stdin_ungetc");
 
 *--stdin_inptr = c;
 return c;
@@ -245,7 +245,7 @@ if (STATVFS(CS path, &statbuf) != 0)
     }
   else
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "cannot accept message: failed to stat "
+    log_write(LOG_MAIN|LOG_PANIC, "cannot accept message: failed to stat "
       "%s directory %s: %s", name, path, strerror(errno));
     smtp_closedown(US"spool or log directory problem");
     exim_exit(EXIT_FAILURE);
@@ -304,7 +304,7 @@ if (check_spool_space > 0 || msg_size > 0 || check_spool_inodes > 0)
   if (  space >= 0 && space + msg_size / 1024 < check_spool_space
      || inodes >= 0 && inodes < check_spool_inodes)
     {
-    log_write(0, LOG_MAIN, "spool directory space check failed: space="
+    log_write(LOG_MAIN, "spool directory space check failed: space="
       PR_EXIM_ARITH " inodes=%d", space, inodes);
     return FALSE;
     }
@@ -322,7 +322,7 @@ if (check_log_space > 0 || check_log_inodes > 0)
   if (  space >= 0 && space < check_log_space
      || inodes >= 0 && inodes < check_log_inodes)
     {
-    log_write(0, LOG_MAIN, "log directory space check failed: space=" PR_EXIM_ARITH
+    log_write(LOG_MAIN, "log directory space check failed: space=" PR_EXIM_ARITH
       " inodes=%d", space, inodes);
     return FALSE;
     }
@@ -523,7 +523,7 @@ if (recipients_count >= recipients_list_max)
 
   const int safe_recipients_limit = INT_MAX / 2 / sizeof(recipient_item);
   if (recipients_list_max < 0 || recipients_list_max >= safe_recipients_limit)
-    log_write_die(0, LOG_MAIN, "Too many recipients: %d", recipients_list_max);
+    log_write_die(LOG_MAIN, "Too many recipients: %d", recipients_list_max);
 
   recipients_list_max = recipients_list_max ? 2*recipients_list_max : 50;
   recipients_list = store_get(recipients_list_max * sizeof(recipient_item), GET_UNTAINTED);
@@ -1165,8 +1165,9 @@ Returns:   the SMTP response
 static uschar *
 handle_lost_connection(uschar * s)
 {
-log_write(L_lost_incoming_connection | L_smtp_connection, LOG_MAIN,
-  "%s lost while reading message data%s", smtp_get_connection_info(), s);
+if (LOGGING(lost_incoming_connection) || LOGGING(smtp_connection))
+  log_write(LOG_MAIN,
+    "%s lost while reading message data%s", smtp_get_connection_info(), s);
 smtp_notquit_exit(US"connection-lost", NULL, NULL);
 return US"421 Lost incoming connection";
 }
@@ -1251,7 +1252,7 @@ switch(where)
     if (  cutthrough.cctx.sock >= 0 && cutthrough.delivery
        && (acl_removed_headers || acl_added_headers))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Header modification in data ACLs"
+    log_write(LOG_MAIN|LOG_PANIC, "Header modification in data ACLs"
 			" will not take effect on cutthrough deliveries");
     return;
     }
@@ -1494,7 +1495,7 @@ DO_MIME_ACL:
 /* make sure the eml mbox file is spooled up */
 if (!(mbox_file = spool_mbox(&mbox_size, NULL, &mbox_filename)))
   {								/* error while spooling */
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
          "acl_smtp_mime: error while creating mbox spool file, message temporarily rejected.");
   Uunlink(spool_name);
   unspool_mbox();
@@ -1520,7 +1521,7 @@ if (rfc822_file_path)
 
   if (unlink(CS rfc822_file_path) == -1)
     {
-    log_write(0, LOG_PANIC,
+    log_write(LOG_PANIC,
          "acl_smtp_mime: can't unlink RFC822 spool file, skipping.");
     goto END_MIME_ACL;
     }
@@ -1555,7 +1556,7 @@ if (rc == OK)
       mime_part_count_buffer = mime_part_count;
       goto MIME_ACL_CHECK;
       }
-    log_write(0, LOG_PANIC,
+    log_write(LOG_PANIC,
        "acl_smtp_mime: can't open RFC822 spool file, skipping.");
     unlink(CS rfc822_file_path);
     }
@@ -1610,7 +1611,7 @@ if (!received)
   {
   if(spool_name[0] != 0)
     Uunlink(spool_name);           /* Lose the data file */
-  log_write_die(0, LOG_MAIN, "Expansion of %q "
+  log_write_die(LOG_MAIN, "Expansion of %q "
     "(received_header_text) failed: %s", string_printing(received_header_text),
       expand_string_message);
   }
@@ -2085,7 +2086,7 @@ OVERSIZE:
     header_last->next = next;
     header_last = next;
 
-    log_write(0, LOG_MAIN, "ridiculously long message header received from "
+    log_write(LOG_MAIN, "ridiculously long message header received from "
       "%s (more than %d characters): message abandoned",
       f.sender_host_unknown ? sender_ident : sender_fullhost, header_maxsize);
 
@@ -2218,7 +2219,7 @@ OVERSIZE:
       const uschar * uucp_sender;
       GET_OPTION("uucp_from_sender");
       if (!(uucp_sender = expand_string(uucp_from_sender)))
-        log_write(0, LOG_MAIN|LOG_PANIC,
+        log_write(LOG_MAIN|LOG_PANIC,
           "expansion of %q failed after matching "
           "\"From \" line: %s", uucp_from_sender, expand_string_message);
       else
@@ -2323,7 +2324,7 @@ OVERSIZE:
 
     if (header_line_maxsize > 0 && next->slen > header_line_maxsize)
       {
-      log_write(0, LOG_MAIN, "overlong message header line received from "
+      log_write(LOG_MAIN, "overlong message header line received from "
         "%s (more than %d characters): message abandoned",
         f.sender_host_unknown ? sender_ident : sender_fullhost,
         header_line_maxsize);
@@ -2356,11 +2357,12 @@ OVERSIZE:
 
   if (!first_line_ended_crlf && chunking_state > CHUNKING_OFFERED)
     {
-    log_write(L_size_reject, LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
-      "Non-CRLF-terminated header, under CHUNKING: message abandoned",
-      sender_address,
-      sender_fullhost ? " H=" : "", sender_fullhost ? sender_fullhost : US"",
-      sender_ident ? " U=" : "",    sender_ident ? sender_ident : US"");
+    if (LOGGING(size_reject))
+      log_write(LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
+	"Non-CRLF-terminated header, under CHUNKING: message abandoned",
+	sender_address,
+	sender_fullhost ? " H=" : "", sender_fullhost ? sender_fullhost : US"",
+	sender_ident ? " U=" : "",    sender_ident ? sender_ident : US"");
     smtp_printf("552 Message header not CRLF terminated\r\n", SP_NO_MORE);
     bdat_flush_data();
     smtp_reply = US"";
@@ -2857,7 +2859,7 @@ if (  !msgid_header
     if (!new_id_domain)
       {
       if (!f.expand_string_forcedfail)
-        log_write(0, LOG_MAIN|LOG_PANIC,
+        log_write(LOG_MAIN|LOG_PANIC,
           "expansion of %q (message_id_header_domain) "
           "failed: %s", message_id_domain, expand_string_message);
       }
@@ -2881,7 +2883,7 @@ if (  !msgid_header
     if (!new_id_text)
       {
       if (!f.expand_string_forcedfail)
-        log_write(0, LOG_MAIN|LOG_PANIC,
+        log_write(LOG_MAIN|LOG_PANIC,
           "expansion of %q (message_id_header_text) "
           "failed: %s", message_id_text, expand_string_message);
       }
@@ -3095,8 +3097,9 @@ if (  from_header
     if (!sender_address_unrewritten)
       sender_address_unrewritten = sender_address;
     sender_address = generated_sender_address;
-    if (Ustrcmp(sender_address_unrewritten, generated_sender_address) != 0)
-      log_write(L_address_rewrite, LOG_MAIN,
+    if (  LOGGING(address_rewrite)
+       && (Ustrcmp(sender_address_unrewritten, generated_sender_address) != 0))
+      log_write(LOG_MAIN,
         "%q from env-from rewritten as %q by submission mode",
         sender_address_unrewritten, generated_sender_address);
     }
@@ -3208,7 +3211,7 @@ if (cutthrough.cctx.sock >= 0 && cutthrough.delivery)
     {
     cancel_cutthrough_connection(TRUE, US"too many headers");
     if (smtp_input) receive_swallow_smtp();  /* Swallow incoming SMTP */
-    log_write(0, LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
+    log_write(LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
       "Too many \"Received\" headers",
       sender_address,
       sender_fullhost ? "H=" : "", sender_fullhost ? sender_fullhost : US"",
@@ -3239,7 +3242,7 @@ if ((data_fd = Uopen(spool_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE)) < 0)
     data_fd = Uopen(spool_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE);
     }
   if (data_fd < 0)
-    log_write_die(0, LOG_MAIN, "Failed to create spool file %s: %s",
+    log_write_die(LOG_MAIN, "Failed to create spool file %s: %s",
       spool_name, strerror(errno));
   }
 
@@ -3247,7 +3250,7 @@ if ((data_fd = Uopen(spool_name, O_RDWR|O_CREAT|O_EXCL, SPOOL_MODE)) < 0)
 because the group setting doesn't always get set automatically. */
 
 if (0 != exim_fchown(data_fd, exim_uid, exim_gid, spool_name))
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "Failed setting ownership on spool file %s: %s",
     spool_name, strerror(errno));
 (void)fchmod(data_fd, SPOOL_MODE);
@@ -3264,7 +3267,7 @@ lock_data.l_start = 0;
 lock_data.l_len = spool_data_start_offset(message_id);
 
 if (fcntl(data_fd, F_SETLK, &lock_data) < 0)
-  log_write_die(0, LOG_MAIN, "Cannot lock %s (%d): %s", spool_name,
+  log_write_die(LOG_MAIN, "Cannot lock %s (%d): %s", spool_name,
     errno, strerror(errno));
 
 /* We have an open, locked data file. Write the message id to it to make it
@@ -3327,15 +3330,16 @@ if (!ferror(spool_data_file) && !(receive_feof)() && message_ended != END_DOT)
       cancel_cutthrough_connection(TRUE, US"mail too big");
       if (smtp_input) receive_swallow_smtp();  /* Swallow incoming SMTP */
 
-      log_write(L_size_reject, LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
-	"message too big: read=%d max=%d",
-	sender_address,
-	sender_fullhost ? " H=" : "",
-	sender_fullhost ? sender_fullhost : US"",
-	sender_ident ? " U=" : "",
-	sender_ident ? sender_ident : US"",
-	message_size,
-	thismessage_size_limit);
+      if (LOGGING(size_reject))
+	log_write(LOG_MAIN|LOG_REJECT, "rejected from <%s>%s%s%s%s: "
+	  "message too big: read=%d max=%d",
+	  sender_address,
+	  sender_fullhost ? " H=" : "",
+	  sender_fullhost ? sender_fullhost : US"",
+	  sender_ident ? " U=" : "",
+	  sender_ident ? sender_ident : US"",
+	  message_size,
+	  thismessage_size_limit);
 
       if (smtp_input)
 	{
@@ -3386,7 +3390,7 @@ if (fflush(spool_data_file) == EOF || ferror(spool_data_file) ||
     msg_errno,
     sender_fullhost ? sender_fullhost : sender_ident);
 
-  log_write(0, LOG_MAIN, "Message abandoned: %s", msg);
+  log_write(LOG_MAIN, "Message abandoned: %s", msg);
   Uunlink(spool_name);                /* Lose the data file */
   cancel_cutthrough_connection(TRUE, US"error writing spoolfile");
 
@@ -3442,7 +3446,7 @@ if (extract_recip && (bad_addresses || recipients_count == 0))
       }
     }
 
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s found in headers",
+  log_write(LOG_MAIN|LOG_PANIC, "%s found in headers",
     bad_addresses ? "bad addresses" : "no recipients");
 
   fseek(spool_data_file, (long int)spool_data_start_offset(message_id), SEEK_SET);
@@ -3651,9 +3655,9 @@ else
 	      }
 	    smtp_user_msg(code, msg);
 	    }
-	  if (log_msg)       log_write(0, LOG_MAIN, "PRDR %s %s", addr, log_msg);
-	  else if (user_msg) log_write(0, LOG_MAIN, "PRDR %s %s", addr, user_msg);
-	  else               log_write(0, LOG_MAIN, "%s", CS msg);
+	  if (log_msg)       log_write(LOG_MAIN, "PRDR %s %s", addr, log_msg);
+	  else if (user_msg) log_write(LOG_MAIN, "PRDR %s %s", addr, user_msg);
+	  else               log_write(LOG_MAIN, "%s", CS msg);
 
 	  if (rc != OK) { receive_remove_recipient(addr); c--; }
 	  }
@@ -3751,7 +3755,7 @@ else
         nowhere. The default is main and reject logs. */
 
         if (log_reject_target)
-          log_write(0, log_reject_target, "F=<%s> rejected by non-SMTP ACL: %s",
+          log_write(log_reject_target, "F=<%s> rejected by non-SMTP ACL: %s",
             sender_address, log_msg);
 
         if (!user_msg) user_msg = US"local configuration problem";
@@ -3831,7 +3835,7 @@ else
   {
   if (had_local_scan_crash)
     {
-    log_write(0, LOG_MAIN|LOG_REJECT, "local_scan() function crashed with "
+    log_write(LOG_MAIN|LOG_REJECT, "local_scan() function crashed with "
       "signal %d - message temporarily rejected (size %d)",
       had_local_scan_crash, message_size);
     receive_bomb_out(US"local-scan-error", US"local verification problem");
@@ -3839,7 +3843,7 @@ else
     }
   if (had_local_scan_timeout)
     {
-    log_write(0, LOG_MAIN|LOG_REJECT, "local_scan() function timed out - "
+    log_write(LOG_MAIN|LOG_REJECT, "local_scan() function timed out - "
       "message temporarily rejected (size %d)", message_size);
     receive_bomb_out(US"local-scan-timeout", US"local verification problem");
     /* Does not return */
@@ -3908,7 +3912,7 @@ else
   switch(rc)
     {
     default:
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 	"invalid return %d from local_scan(). Temporary rejection given", rc);
       goto TEMPREJECT;
 
@@ -3936,7 +3940,7 @@ else
   g = string_append(NULL, 2, US"F=", *sender_address ? sender_address : US"<>");
   g = add_host_info_for_log(g);
 
-  log_write(0, LOG_MAIN|LOG_REJECT, "%Y %srejected by local_scan(): %.256s",
+  log_write(LOG_MAIN|LOG_REJECT, "%Y %srejected by local_scan(): %.256s",
     g, istemp, string_printing(errmsg));
 
   if (smtp_input)
@@ -4020,7 +4024,7 @@ if (host_checking || blackholed_by)
 else
   if ((msg_size = spool_write_header(message_id, SW_RECEIVING, &errmsg)) < 0)
     {
-    log_write(0, LOG_MAIN, "Message abandoned: %s", errmsg);
+    log_write(LOG_MAIN, "Message abandoned: %s", errmsg);
     Uunlink(spool_name);           /* Lose the data file */
 
     if (smtp_input)
@@ -4053,7 +4057,7 @@ if (  fflush(spool_data_file)
    )
   {
   errmsg = string_sprintf("Spool write error: %s", strerror(errno));
-  log_write(0, LOG_MAIN, "%s\n", errmsg);
+  log_write(LOG_MAIN, "%s\n", errmsg);
   Uunlink(spool_name);           /* Lose the data file */
 
   if (smtp_input)
@@ -4235,14 +4239,14 @@ if (message_logs && !blackholed_by)
     }
 
   if (fd < 0)
-    log_write(0, LOG_MAIN|LOG_PANIC, "Couldn't open message log %s: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "Couldn't open message log %s: %s",
       m_name, strerror(errno));
   else
     {
     FILE *message_log = fdopen(fd, "a");
     if (!message_log)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "Couldn't fdopen message log %s: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "Couldn't fdopen message log %s: %s",
         m_name, strerror(errno));
       (void)close(fd);
       }
@@ -4302,7 +4306,7 @@ if (  smtp_input && sender_host_address && !f.sender_host_notsocket
       gstring_reset(g);
       g = string_cat(g, US"SMTP connection lost after final dot");
       g = add_host_info_for_log(g);
-      log_write(0, LOG_MAIN, "%Y", g);
+      log_write(LOG_MAIN, "%Y", g);
 
       /* Delete the files for this aborted message. */
 
@@ -4366,18 +4370,18 @@ if(!smtp_reply || prdr_requested)
 if(!smtp_reply)
 #endif
   {
-  log_write(0, LOG_MAIN |
+  log_write(LOG_MAIN |
 		(LOGGING(received_recipients) ? LOG_RECIPIENTS : 0) |
 		(LOGGING(received_sender) ? LOG_SENDER : 0),
 	    "%Y", g);
 
   /* Log any control actions taken by an ACL or local_scan(). */
 
-  if (f.deliver_freeze) log_write(0, LOG_MAIN, "frozen by %s", frozen_by);
-  if (f.queue_only_policy) log_write(L_delay_delivery, LOG_MAIN,
-    "no immediate delivery: queued%s%s by %s",
-    *queue_name ? " in " : "", *queue_name ? CS queue_name : "",
-    queued_by);
+  if (f.deliver_freeze) log_write(LOG_MAIN, "frozen by %s", frozen_by);
+  if (f.queue_only_policy && LOGGING(delay_delivery))
+    log_write(LOG_MAIN, "no immediate delivery: queued%s%s by %s",
+		    *queue_name ? " in " : "", *queue_name ? CS queue_name : "",
+		    queued_by);
   }
 f.receive_call_bombout = FALSE;
 
@@ -4438,11 +4442,11 @@ if (spool_data_file && cutthrough_done == NOT_TRIED)
   if (fclose(spool_data_file))				/* Frees the lock */
     {
     log_msg = string_sprintf("spoolfile error on close: %s", strerror(errno));
-    log_write(0, LOG_MAIN|LOG_PANIC |
+    log_write(LOG_MAIN|LOG_PANIC |
 		  (LOGGING(received_recipients) ? LOG_RECIPIENTS : 0) |
 		  (LOGGING(received_sender) ? LOG_SENDER : 0),
 	      "%s", log_msg);
-    log_write(0, LOG_MAIN |
+    log_write(LOG_MAIN |
 		  (LOGGING(received_recipients) ? LOG_RECIPIENTS : 0) |
 		  (LOGGING(received_sender) ? LOG_SENDER : 0),
 	      "rescind the above message-accept");
@@ -4530,7 +4534,7 @@ if (smtp_input)
     switch (cutthrough_done)
       {
       case ACCEPTED:
-	log_write(0, LOG_MAIN, "Completed");/* Delivery was done */
+	log_write(LOG_MAIN, "Completed");/* Delivery was done */
       case PERM_REJ:
 							 /* Delete spool files */
 	Uunlink(spool_name);
@@ -4582,8 +4586,8 @@ if (blackholed_by)
     local_scan_data ? string_printing(local_scan_data) :
 #endif
     string_sprintf("(%s discarded recipients)", blackholed_by);
-  log_write(0, LOG_MAIN, "=> blackhole %s%s", detail, blackhole_log_msg);
-  log_write(0, LOG_MAIN, "Completed");
+  log_write(LOG_MAIN, "=> blackhole %s%s", detail, blackhole_log_msg);
+  log_write(LOG_MAIN, "Completed");
   message_id[0] = 0;
   }
 

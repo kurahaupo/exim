@@ -340,7 +340,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234 -qf
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: aaaa@myhost.test.ex
@@ -593,7 +593,7 @@ cccc@myhost.test.ex was previously delivered (t1 transport): discarded
 aaaa@myhost.test.ex was previously delivered (t1 transport): discarded
 bbbb@myhost.test.ex was previously delivered (t1 transport): discarded
 >>>>>>>>>>>>>>>> Exim pid=p1241 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234 -qf
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -604,7 +604,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1235 -qf
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: aaaa@myhost.test.ex
@@ -857,6 +857,6 @@ cccc@myhost.test.ex was previously delivered (t1 transport): discarded
 aaaa@myhost.test.ex was previously delivered (t1 transport): discarded
 bbbb@myhost.test.ex was previously delivered (t1 transport): discarded
 >>>>>>>>>>>>>>>> Exim pid=p1242 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1235 -qf
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

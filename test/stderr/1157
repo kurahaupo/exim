@@ -5,7 +5,7 @@ admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1242 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1243 (qrun-p1-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -90,7 +90,7 @@ LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1251 (continued-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1252 (tls-proxy) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -100,7 +100,7 @@ admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1235 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1253 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1254 (qrun-p1-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -185,7 +185,7 @@ LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1262 (continued-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1263 (tls-proxy) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1235 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -195,7 +195,7 @@ admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1236 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1264 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1265 (qrun-p1-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -314,7 +314,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1273 (continued-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1236 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 

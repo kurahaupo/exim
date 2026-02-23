@@ -18,7 +18,7 @@ admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234
 search_tidyup called
   search_open: lsearch "TESTSUITE/aux-fixed/0437.ls"
@@ -90,7 +90,7 @@ LOG: MAIN
   Completed
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1238 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

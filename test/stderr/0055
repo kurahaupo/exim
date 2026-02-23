@@ -15,7 +15,7 @@ LOG: MAIN
 LOG: MAIN
   <= CALLER@myhost.ex U=CALLER P=local S=sss
 delivering 10HmaZ-000000005vi-0000
-LOG: retry_defer MAIN
+LOG: MAIN
   == xxx@local.test.ex routing defer (-56): domain is in queue_domains
 LOG: MAIN
   <= CALLER@myhost.ex U=CALLER P=local S=sss
@@ -29,16 +29,16 @@ LOG: MAIN
 delivering 10HmbC-000000005vi-0000
 LOG: MAIN
   == xxx@ten-2.test.ex R=lookuphost T=smtp defer (-1): first-pass only routing due to -odqs, queue_smtp_domains or control=queue
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1236
 delivering 10HmbC-000000005vi-0000 (queue run pid p1236)
 LOG: MAIN
   *> xxx@ten-2.test.ex R=lookuphost T=smtp H=ten-2.test.ex [V4NET.0.0.2] C="delivery bypassed by -N option"
 LOG: MAIN
   Completed
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1236
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1237 -qq
 delivering 10HmbD-000000005vi-0000 (queue run pid p1237)
 delivering 10HmbE-000000005vi-0000 (queue run pid p1237)
@@ -52,7 +52,7 @@ LOG: MAIN
   *> yyy@ten-1.test.ex R=lookuphost T=smtp H=ten-1.test.ex [V4NET.0.0.1] C="delivery bypassed by -N option"
 LOG: MAIN
   Completed
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1237 -qq
 LOG: MAIN
   <= CALLER@myhost.ex U=CALLER P=local S=sss
@@ -67,7 +67,7 @@ LOG: MAIN
 LOG: MAIN
   <= CALLER@myhost.ex U=CALLER P=local S=sss
 delivering 10HmbG-000000005vi-0000
-LOG: retry_defer MAIN
+LOG: MAIN
   == xxx@local.test.ex routing defer (-56): domain is in queue_domains
 delivering 10HmbG-000000005vi-0000
 LOG: MAIN

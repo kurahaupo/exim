@@ -193,7 +193,7 @@ initialise the once. */
 if (!gsasl_ctx)
   {
   if ((rc = gsasl_init(&gsasl_ctx)) != GSASL_OK)
-    log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+    log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
 	      "couldn't initialise GNU SASL library: %s (%s)",
 	      a->name, gsasl_strerror_name(rc), gsasl_strerror(rc));
 
@@ -205,7 +205,7 @@ if (!gsasl_ctx)
 HDEBUG(auth) if (!once)
   {
   if ((rc = gsasl_server_mechlist(gsasl_ctx, &once)) != GSASL_OK)
-    log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+    log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
 	      "failed to retrieve list of mechanisms: %s (%s)",
 	      a->name,  gsasl_strerror_name(rc), gsasl_strerror(rc));
 
@@ -213,7 +213,7 @@ HDEBUG(auth) if (!once)
   }
 
 if (!gsasl_client_support_p(gsasl_ctx, CCS ob->server_mech))
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
 	    "GNU SASL does not support mechanism %q",
 	    a->name, ob->server_mech);
 
@@ -308,7 +308,7 @@ if (cb_state->currently == CURRENTLY_CLIENT)
 else if (cb_state->currently == CURRENTLY_SERVER)
   rc = server_callback(ctx, sctx, prop, cb_state->ablock);
 else
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "unhandled callback state, bug in Exim", cb_state->ablock->drinst.name);
   /* NOTREACHED */
 
@@ -522,7 +522,7 @@ do {
     case GSASL_BASE64_ERROR:
       HDEBUG(auth) debug_printf("GNU SASL permanent error: %s (%s)\n",
 	  gsasl_strerror_name(rc), gsasl_strerror(rc));
-      log_write(0, LOG_REJECT, "%s authenticator (%s):\n  "
+      log_write(LOG_REJECT, "%s authenticator (%s):\n  "
 	  "GNU SASL permanent failure: %s (%s)",
 	  auname, ob->server_mech,
 	  gsasl_strerror_name(rc), gsasl_strerror(rc));
@@ -605,7 +605,7 @@ switch (exim_rc)
   case DEFER:	sasl_error_should_defer = TRUE;
 		return GSASL_AUTHENTICATION_ERROR;
   case FAIL:	return GSASL_AUTHENTICATION_ERROR;
-  default:	log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  default:	log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
 		  "Unhandled return from checking %s: %d",
 		  ablock->drinst.name, label, exim_rc);
   }

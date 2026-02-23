@@ -596,8 +596,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [V4NET.0.0.1]
 sender_rcvhost = [V4NET.0.0.1]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.0.0.1]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.0.0.1]
 host in host_reject_connection? no (option unset)
@@ -650,7 +648,7 @@ deny: condition test succeeded in ACL connect1
 end of ACL connect1: DENY
 SMTP>> 550 Administrative prohibition
 SMTP>- ◀flush▶
-LOG: connection_reject MAIN REJECT
+LOG: MAIN REJECT
   H=ten-1.test.ex [V4NET.0.0.1] rejected connection in "connect" ACL
 SMTP>- ◀flush▶
 search_tidyup called
@@ -669,8 +667,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [V4NET.0.0.2]
 sender_rcvhost = [V4NET.0.0.2]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.0.0.2]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.0.0.2]
 host in host_reject_connection? no (option unset)
@@ -701,7 +697,7 @@ deny: condition test failed in ACL connect2
 end of ACL connect2: implicit DENY
 SMTP>> 550 Administrative prohibition
 SMTP>- ◀flush▶
-LOG: connection_reject MAIN REJECT
+LOG: MAIN REJECT
   H=[V4NET.0.0.2] rejected connection in "connect" ACL
 SMTP>- ◀flush▶
 search_tidyup called

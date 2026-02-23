@@ -19,7 +19,7 @@ host in hosts_connection_nolog?
  list element: e̪m̪p̪t̪y̪
  list element: 127.0.0.1
 host in hosts_connection_nolog? no (end of list)
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from [V4NET.9.8.7]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.9.8.7]
@@ -80,7 +80,7 @@ SMTP>| 250 OK id=10HmbF-000000005vi-0000
 smtp_setup_msg entered
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from (test) [V4NET.9.8.7] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
@@ -106,7 +106,7 @@ host in hosts_connection_nolog?
  list element: e̪m̪p̪t̪y̪
  list element: 127.0.0.1
 host in hosts_connection_nolog? no (end of list)
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from [V4NET.9.8.7]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.9.8.7]
@@ -170,7 +170,7 @@ SMTP>| 250 OK id=10HmbG-000000005vi-0000
 smtp_setup_msg entered
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from (test) [V4NET.9.8.7] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
@@ -196,7 +196,7 @@ host in hosts_connection_nolog?
  list element: e̪m̪p̪t̪y̪
  list element: 127.0.0.1
 host in hosts_connection_nolog? no (end of list)
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from [V4NET.9.8.7]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.9.8.7]
@@ -261,7 +261,7 @@ SMTP>| 250 OK id=10HmbH-000000005vi-0000
 smtp_setup_msg entered
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
+LOG: MAIN
   SMTP connection from (test) [V4NET.9.8.7] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
@@ -424,8 +424,6 @@ LOG: H=(test) [V4NET.9.8.7] F=<x@y> rejected RCPT <host_check2@y>: host data >A 
 >>> end of ACL host_check2: DENY
 LOG: H=(test) [V4NET.9.8.7] F=<x@y> rejected RCPT <host_check2@y>: host data >A host-specific message<
 LOG: SMTP connection from (test) [V4NET.9.8.7] D=qqs closed by QUIT
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 LOG: MAIN
   Connections=0
 LOG: MAIN
@@ -441,7 +439,7 @@ LOG: MAIN
   Completed
 LOG: MAIN
   <= CALLER@test.ex U=CALLER P=local-smtp S=sss
-LOG: delay_delivery MAIN
+LOG: MAIN
   no immediate delivery: queued by ACL
 LOG: MAIN
   <= CALLER@test.ex U=CALLER P=local-smtp S=sss
@@ -450,8 +448,6 @@ LOG: MAIN
   *> accept <accept@y> R=accept T=appendfile
 LOG: MAIN
   Completed
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 >>> host in hosts_connection_nolog?
 >>>  list element: e̪m̪p̪t̪y̪
 >>>  list element: 127.0.0.1

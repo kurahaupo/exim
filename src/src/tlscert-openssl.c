@@ -45,7 +45,7 @@ BIO * bp = BIO_new(BIO_s_mem());
 BOOL fail;
 
 if ((fail = PEM_write_bio_X509(bp, (X509 *)cert) ? 0 : 1))
-  log_write(0, LOG_MAIN, "TLS error in certificate export: %s",
+  log_write(LOG_MAIN, "TLS error in certificate export: %s",
     ERR_error_string(ERR_get_error(), NULL));
 else
   {
@@ -79,7 +79,7 @@ if (x) X509_free(x);
 
 bp = BIO_new_mem_buf(US cp, -1);
 if (!(x = PEM_read_bio_X509(bp, NULL, 0, NULL)))
-  log_write(0, LOG_MAIN, "TLS error in certificate import: %s",
+  log_write(LOG_MAIN, "TLS error in certificate import: %s",
     ERR_error_string(ERR_get_error(), NULL));
 
 *cert = (void *)x;
@@ -494,7 +494,7 @@ BIO * bp = BIO_new(BIO_s_mem());
 uschar * cp = NULL;
 
 if (!i2d_X509_bio(bp, (X509 *)cert))
-  log_write(0, LOG_MAIN, "TLS error in certificate export: %s",
+  log_write(LOG_MAIN, "TLS error in certificate export: %s",
     ERR_error_string(ERR_get_error(), NULL));
 else
   {

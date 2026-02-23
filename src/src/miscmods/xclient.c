@@ -320,11 +320,11 @@ if (!(errmsg = xclient_smtp_command(smtp_cmd_data, &resp, &fatal)))
   return TRUE;
   }
 else if (fatal)
-  *donep = synprot_error(L_smtp_syntax_error, resp, NULL, errmsg);
+  *donep = synprot_error(FALSE, resp, NULL, errmsg);
 else
   {
   smtp_printf("%d %s\r\n", SP_NO_MORE, resp, errmsg);
-  log_write(0, LOG_MAIN|LOG_REJECT, "rejected XCLIENT from %s: %s",
+  log_write(LOG_MAIN|LOG_REJECT, "rejected XCLIENT from %s: %s",
     host_and_ident(FALSE), errmsg);
   }
   

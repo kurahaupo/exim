@@ -406,7 +406,7 @@ int old_pool = store_pool;
 
 if (filename && is_tainted(filename))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "Tainted filename for search: '%s'", filename);
   return NULL;
   }
@@ -447,7 +447,7 @@ recently used one. */
 
 if (li->type == lookup_absfile && open_filecount >= lookup_open_max)
   if (!open_bot)
-    log_write(0, LOG_MAIN|LOG_PANIC, "too many lookups open, but can't find "
+    log_write(LOG_MAIN|LOG_PANIC, "too many lookups open, but can't find "
       "one to close");
   else
     {
@@ -635,8 +635,7 @@ else
     /* If we're called from a transport, no privs to open the paniclog;
     the logging punts to using stderr - and that seems to stop the debug
     stream. */
-    log_write(0,
-      transport_name ? LOG_MAIN : LOG_MAIN|LOG_PANIC,
+    log_write(transport_name ? LOG_MAIN : LOG_MAIN|LOG_PANIC,
       "tainted search query is not properly quoted%s: %s", loc, ks);
 
     DEBUG(lookup)

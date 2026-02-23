@@ -388,8 +388,9 @@ if (recipients_count > 0)
   raw_recipients_count = recipients_count;
   }
 
-log_write(L_smtp_incomplete_transaction, LOG_MAIN|LOG_SENDER|LOG_RECIPIENTS,
-  "%s incomplete transaction (%s)", host_and_ident(TRUE), what);
+if (LOGGING(smtp_incomplete_transaction))
+  log_write(LOG_MAIN|LOG_SENDER|LOG_RECIPIENTS,
+    "%s incomplete transaction (%s)", host_and_ident(TRUE), what);
 }
 
 
@@ -397,16 +398,18 @@ log_write(L_smtp_incomplete_transaction, LOG_MAIN|LOG_SENDER|LOG_RECIPIENTS,
 static void
 log_close_event(const uschar * reason)
 {
-log_write(L_smtp_connection, LOG_MAIN, "%s D=%s closed %s",
-  smtp_get_connection_info(), string_timesince(&smtp_connection_start), reason);
+if (LOGGING(smtp_connection))
+  log_write(LOG_MAIN, "%s D=%s closed %s",
+    smtp_get_connection_info(), string_timesince(&smtp_connection_start),
+    reason);
 }
 
 
 void
 smtp_command_timeout_exit(void)
 {
-log_write(L_lost_incoming_connection,
-	  LOG_MAIN, "SMTP command timeout on%s connection from %s D=%s",
+if (LOGGING(lost_incoming_connection))
+  log_write(LOG_MAIN, "SMTP command timeout on%s connection from %s D=%s",
 	  tls_in.active.sock >= 0 ? " TLS" : "", host_and_ident(FALSE),
 	  string_timesince(&smtp_connection_start));
 if (smtp_batched_input)
@@ -431,10 +434,11 @@ exim_exit(EXIT_FAILURE);
 void
 smtp_data_timeout_exit(void)
 {
-log_write(L_lost_incoming_connection, LOG_MAIN,
-  "SMTP data timeout (message abandoned) on connection from %s F=<%s> D=%s",
-  sender_fullhost ? sender_fullhost : US"local process", sender_address,
-  string_timesince(&smtp_connection_start));
+if (LOGGING(lost_incoming_connection))
+  log_write(LOG_MAIN,
+    "SMTP data timeout (message abandoned) on connection from %s F=<%s> D=%s",
+    sender_fullhost ? sender_fullhost : US"local process", sender_address,
+    string_timesince(&smtp_connection_start));
 receive_bomb_out(US"data-timeout", US"SMTP incoming data timeout");
 /* Does not return */
 }
@@ -460,7 +464,7 @@ call the local functions instead of the standard C ones.  Place a NUL at the
 end of the buffer to safety-stop C-string reads from it. */
 
 if (!(smtp_inbuffer = US malloc(IN_BUFFER_SIZE)))
-  log_write_die(0, LOG_MAIN, "malloc() failed for SMTP input buffer");
+  log_write_die(LOG_MAIN, "malloc() failed for SMTP input buffer");
 smtp_inbuffer[IN_BUFFER_SIZE-1] = '\0';
 
 smtp_inptr = smtp_inend = smtp_inbuffer;
@@ -607,7 +611,7 @@ int
 smtp_ungetc(int ch)
 {
 if (smtp_inptr <= smtp_inbuffer)	/* NB: NOT smtp_hasc() ! */
-  log_write_die(0, LOG_MAIN, "buffer underflow in smtp_ungetc");
+  log_write_die(LOG_MAIN, "buffer underflow in smtp_ungetc");
 
 *--smtp_inptr = ch;
 return ch;
@@ -780,16 +784,16 @@ for(;;)
 
     incomplete_transaction_log(US"sync failure");
     if (buf)
-      log_write(0, LOG_MAIN|LOG_REJECT, "SMTP protocol synchronization error "
+      log_write(LOG_MAIN|LOG_REJECT, "SMTP protocol synchronization error "
 	"(next input sent too soon: pipelining was not advertised): "
 	"rejected %q %s next input=%q%s",
 	smtp_cmd_buffer, host_and_ident(TRUE),
 	string_printing(string_copyn(buf, nchars)),
 	smtp_inend - smtp_inptr > 0 ? "..." : "");
     else
-      log_write(0, LOG_MAIN|LOG_REJECT, "Error or EOF on input from %s",
+      log_write(LOG_MAIN|LOG_REJECT, "Error or EOF on input from %s",
 	host_and_ident(TRUE));
-    (void) synprot_error(L_smtp_protocol_error, 554, NULL,
+    (void) synprot_error(TRUE, 554, NULL,
       US"SMTP synchronization error");
     goto repeat_until_rset;
     }
@@ -817,7 +821,7 @@ next_cmd:
   switch(smtp_read_command(TRUE, 1))
     {
     default:
-      (void) synprot_error(L_smtp_protocol_error, 503, NULL,
+      (void) synprot_error(TRUE, 503, NULL,
 	US"only BDAT permissible after non-LAST BDAT");
 
   repeat_until_rset:
@@ -826,7 +830,7 @@ next_cmd:
 	case QUIT_CMD:	smtp_quit_handler(&user_msg, &log_msg);	/*FALLTHROUGH */
 	case EOF_CMD:	return EOF;
 	case RSET_CMD:	smtp_rset_handler(); return ERR;
-	default:	if (synprot_error(L_smtp_protocol_error, 503, NULL,
+	default:	if (synprot_error(TRUE, 503, NULL,
 					  US"only RSET accepted now") > 0)
 			  return ERR;
 			goto repeat_until_rset;
@@ -853,7 +857,7 @@ next_cmd:
 
       if (sscanf(CS smtp_cmd_data, "%u %n", &chunking_datasize, &n) < 1)
 	{
-	(void) synprot_error(L_smtp_protocol_error, 501, NULL,
+	(void) synprot_error(TRUE, 501, NULL,
 	  US"missing size for BDAT command");
 	return ERR;
 	}
@@ -868,7 +872,7 @@ next_cmd:
 	  return EOD;
 	else
 	  {
-	  (void) synprot_error(L_smtp_protocol_error, 504, NULL,
+	  (void) synprot_error(TRUE, 504, NULL,
 	    US"zero size for BDAT command");
 	  goto repeat_until_rset;
 	  }
@@ -1035,7 +1039,7 @@ DEBUG(receive) for (const uschar * t, * s = gs.s;
 
 if (!yield)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "string too large in smtp_printf()");
+  log_write(LOG_MAIN|LOG_PANIC, "string too large in smtp_printf()");
   smtp_closedown(US"Unexpected error");
   exim_exit(EXIT_FAILURE);
   }
@@ -1425,7 +1429,7 @@ for (;;) switch(smtp_read_command(FALSE, GETC_BUFFER_UNLIMITED))
     break;
 
   case BADARG_CMD:
-    if (synprot_error(L_smtp_syntax_error, 501, NULL,
+    if (synprot_error(FALSE, 501, NULL,
       US"unexpected argument data") > 0) return;
     break;
 
@@ -1603,7 +1607,7 @@ if (sender_host_authenticated)
 g = add_tls_info_for_log(g);
 g = s_connhad_log(g);
 
-log_write(0, LOG_MAIN, "no MAIL in %sSMTP connection from %s D=%s%#Y",
+log_write(LOG_MAIN, "no MAIL in %sSMTP connection from %s D=%s%#Y",
   f.tcp_in_fastopen ? f.tcp_in_fastopen_data ? US"TFO* " : US"TFO " : US"",
   host_and_ident(FALSE), string_timesince(&smtp_connection_start), g);
 }
@@ -2131,7 +2135,7 @@ const uschar * conn_info = smtp_get_connection_info();
 if (Ustrncmp(conn_info, US"SMTP ", 5) == 0) conn_info += 5;
 /* I'd like to get separated H= here, but too hard for now */
 
-log_write(0, LOG_MAIN, "TLS error on %s %s", conn_info, errstr);
+log_write(LOG_MAIN, "TLS error on %s %s", conn_info, errstr);
 return FALSE;
 }
 #endif
@@ -2211,9 +2215,8 @@ else DEBUG(receive)
 static void
 log_connect_tls_drop(const uschar * what, const uschar * log_msg)
 {
-if (log_reject_target)
-  log_write(L_connection_reject,
-    log_reject_target, "%s%s%#Y dropped by %s%s%s",
+if (log_reject_target && LOGGING(connection_reject))
+  log_write(log_reject_target, "%s%s%#Y dropped by %s%s%s",
     LOGGING(dnssec) && sender_host_dnssec ? US" DS" : US"",
     host_and_ident(TRUE),
     add_tls_info_for_log(NULL),
@@ -2339,11 +2342,11 @@ bad_srr:    break;
     }
 
 *p = '\0';
-log_write(0, LOG_MAIN, "%s", big_buffer);
+log_write(LOG_MAIN, "%s", big_buffer);
 
 /* Refuse any call with IP options. This is what tcpwrappers 7.5 does. */
 
-log_write(0, LOG_MAIN|LOG_REJECT,
+log_write(LOG_MAIN|LOG_REJECT,
   "connection from %s refused (IP options)", host_and_ident(FALSE));
 
 smtp_printf("554 SMTP service not available\r\n", SP_NO_MORE);
@@ -2479,10 +2482,10 @@ thismessage_size_limit = expand_string_integer(message_size_limit, TRUE);
 if (expand_string_message)
   {
   if (thismessage_size_limit == -1)
-    log_write(0, LOG_MAIN|LOG_PANIC, "unable to expand message_size_limit: "
+    log_write(LOG_MAIN|LOG_PANIC, "unable to expand message_size_limit: "
       "%s", expand_string_message);
   else
-    log_write(0, LOG_MAIN|LOG_PANIC, "invalid message_size_limit: "
+    log_write(LOG_MAIN|LOG_PANIC, "invalid message_size_limit: "
       "%s", expand_string_message);
   smtp_closedown(US"Temporary local problem - please try later");
   return FALSE;
@@ -2556,7 +2559,7 @@ if (!f.sender_host_unknown)
       {
       if (errno != ENOPROTOOPT)
         {
-        log_write(0, LOG_MAIN, "getsockopt() failed from %s: %s",
+        log_write(LOG_MAIN, "getsockopt() failed from %s: %s",
           host_and_ident(FALSE), strerror(errno));
         smtp_printf("451 SMTP service not available\r\n", SP_NO_MORE);
         return FALSE;
@@ -2609,7 +2612,7 @@ if (!f.sender_host_unknown)
        || !(*exp)
        || (smtp_receive_timeout = readconf_readtime(exp, 0, FALSE)) < 0
        )
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 	"bad value for smtp_receive_timeout: '%s'", exp ? exp : US"");
     }
 
@@ -2617,8 +2620,9 @@ if (!f.sender_host_unknown)
 
   if (verify_check_host(&host_reject_connection) == OK)
     {
-    log_write(L_connection_reject, LOG_MAIN|LOG_REJECT, "refused connection "
-      "from %s (host_reject_connection)", host_and_ident(FALSE));
+    if (LOGGING(connection_reject))
+      log_write(LOG_MAIN|LOG_REJECT, "refused connection "
+	"from %s (host_reject_connection)", host_and_ident(FALSE));
 #ifndef DISABLE_TLS
     if (!tls_in.on_connect)
 #endif
@@ -2634,11 +2638,12 @@ if (!f.sender_host_unknown)
     {
     if ((rc = verify_check_host(&smtp_reserve_hosts)) != OK)
       {
-      log_write(L_connection_reject,
-        LOG_MAIN, "temporarily refused connection from %s: not in "
-        "reserve list: connected=%d max=%d reserve=%d%s",
-        host_and_ident(FALSE), smtp_accept_count - 1, smtp_accept_max,
-        smtp_accept_reserve, (rc == DEFER)? " (lookup deferred)" : "");
+      if (LOGGING(connection_reject))
+	log_write(LOG_MAIN,
+	  "temporarily refused connection from %s: not in "
+	  "reserve list: connected=%d max=%d reserve=%d%s",
+	  host_and_ident(FALSE), smtp_accept_count - 1, smtp_accept_max,
+	  smtp_accept_reserve, (rc == DEFER)? " (lookup deferred)" : "");
       smtp_printf("421 %s: Too many concurrent SMTP connections; "
         "please try again later\r\n", SP_NO_MORE, smtp_active_hostname);
       return FALSE;
@@ -2657,10 +2662,11 @@ if (!f.sender_host_unknown)
        !reserved_host &&
        verify_check_host(&smtp_reserve_hosts) != OK)
     {
-    log_write(L_connection_reject,
-      LOG_MAIN, "temporarily refused connection from %s: not in "
-      "reserve list and load average = %.2f", host_and_ident(FALSE),
-      (double)load_average/1000.0);
+    if (LOGGING(connection_reject))
+      log_write(LOG_MAIN,
+	"temporarily refused connection from %s: not in "
+	"reserve list and load average = %.2f", host_and_ident(FALSE),
+	(double)load_average/1000.0);
     smtp_printf("421 %s: Too much load; please try again later\r\n", SP_NO_MORE,
       smtp_active_hostname);
     return FALSE;
@@ -2767,7 +2773,7 @@ else
   GET_OPTION("smtp_banner");
   if (!(s = expand_string(smtp_banner)))
     {
-    log_write(0, f.expand_string_forcedfail ? LOG_MAIN : LOG_MAIN|LOG_PANIC_DIE,
+    log_write(f.expand_string_forcedfail ? LOG_MAIN : LOG_MAIN|LOG_PANIC_DIE,
       "Expansion of %q (smtp_banner) failed: %s",
       smtp_banner, expand_string_message);
     /* for force-fail */
@@ -2843,7 +2849,7 @@ if (gstring_length(ss) == 0)			/* banner already sent */
   if (f.running_in_test_harness)		/* make visible to testsuite */
     {
     for (int i = 20; i && check_sync(WBR_DATA_OR_EOF); i--) millisleep(5);
-    log_write(0, LOG_MAIN, "Ci=%s SMTP peer appears to have %s our banner",
+    log_write(LOG_MAIN, "Ci=%s SMTP peer appears to have %s our banner",
 		connection_id, check_sync(WBR_DATA_OR_EOF) ? "NOT SEEN" : "seen");
     }
   }
@@ -2865,12 +2871,12 @@ else						/* not already sent */
       uschar * buf = receive_getbuf(&nchars);		/* destructive read */
 
       if (buf)
-	log_write(0, LOG_MAIN|LOG_REJECT, "SMTP protocol "
+	log_write(LOG_MAIN|LOG_REJECT, "SMTP protocol "
 	  "synchronization error (input sent without waiting for greeting): "
 	  "rejected connection from %s input=%q", host_and_ident(TRUE),
 	  string_printing(string_copyn(buf, nchars)));
       else
-	log_write(0, LOG_MAIN|LOG_REJECT, "Error or EOF on input from %s",
+	log_write(LOG_MAIN|LOG_REJECT, "Error or EOF on input from %s",
 	  host_and_ident(TRUE));
       smtp_printf("554 SMTP synchronization error\r\n", SP_NO_MORE);
       return FALSE;
@@ -2911,7 +2917,7 @@ to do so. Then transmit the error response. The return value depends on the
 number of syntax and protocol errors in this SMTP session.
 
 Arguments:
-  type      error type, given as a log flag bit
+  type      error type: TRUE for protocol, FALSE for syntax
   code      response code; <= 0 means don't send a response
   data      data to reflect in the response (can be NULL)
   errmess   the error message
@@ -2923,10 +2929,10 @@ These values fit in with the values of the "done" variable in the main
 processing loop in smtp_setup_msg(). */
 
 int
-synprot_error(int type, int code, uschar *data, uschar *errmess)
+synprot_error(BOOL type, int code, uschar *data, uschar *errmess)
 {
 int yield = -1;
-BOOL syntax_error = type == L_smtp_syntax_error;
+BOOL syntax_error = !type;
 
 #ifndef DISABLE_EVENT
 event_raise(event_action,
@@ -2934,15 +2940,16 @@ event_raise(event_action,
   errmess, NULL);
 #endif
 
-log_write(type, LOG_MAIN, "SMTP %s error in %q %s %s",
-  syntax_error ? "syntax" : "protocol",
-  string_printing(smtp_cmd_buffer), host_and_ident(TRUE), errmess);
+if (syntax_error ? LOGGING(smtp_syntax_error) : LOGGING(smtp_protocol_error))
+  log_write(LOG_MAIN, "SMTP %s error in %q %s %s",
+    syntax_error ? "syntax" : "protocol",
+    string_printing(smtp_cmd_buffer), host_and_ident(TRUE), errmess);
 
 GET_OPTION("smtp_max_synprot_errors");
 if (++synprot_error_count > smtp_max_synprot_errors)
   {
   yield = 1;
-  log_write(0, LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
+  log_write(LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
     "syntax or protocol errors (last command was %q, %Y)",
     host_and_ident(FALSE), string_printing(smtp_cmd_buffer),
     s_connhad_log(NULL)
@@ -3088,7 +3095,7 @@ if (!msg || !*msg || !regex_match(regex_smtp_code, *msg, -1, &match))
 len = Ustrlen(match);
 if (check_valid && (*msg)[0] != (*code)[0])
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "configured error code starts with "
+  log_write(LOG_MAIN|LOG_PANIC, "configured error code starts with "
     "incorrect digit (expected %c) in %q", (*code)[0], *msg);
   if (log_msg && *log_msg == *msg)
     *log_msg = string_sprintf("%s %s", *code, *log_msg + len);
@@ -3218,7 +3225,7 @@ if (sender_verified_failed &&
   setflag(sender_verified_failed, af_sverify_told);
 
   if (rc != FAIL || LOGGING(sender_verify_fail))
-    log_write(0, LOG_MAIN|LOG_REJECT, "%s sender verify %s for <%s>%s",
+    log_write(LOG_MAIN|LOG_REJECT, "%s sender verify %s for <%s>%s",
       host_and_ident(TRUE),
       ((sender_verified_failed->special_action & 255) == DEFER)? "defer":"fail",
       sender_verified_failed->address,
@@ -3291,9 +3298,9 @@ smtp_fflush(SFF_UNCORK);
 the connection is not forcibly to be dropped, return 0. Otherwise, log why it
 is closing if required and return 2.  */
 
-if (log_reject_target)
-  log_write(where == ACL_WHERE_CONNECT ? L_connection_reject : 0,
-    log_reject_target, "%s%s%#Y%s%#Y%#Y%#Y %srejected %s%s",
+if (  log_reject_target
+   && (where != ACL_WHERE_CONNECT || LOGGING(connection_reject)))
+  log_write(log_reject_target, "%s%s%#Y%s%#Y%#Y%#Y %srejected %s%s",
     LOGGING(dnssec) && sender_host_dnssec ? US" DS" : US"",
     host_and_ident(TRUE),
     add_tls_info_for_log(NULL),
@@ -3371,7 +3378,7 @@ we get when the line goes on to drop when CHUNKING. */
 if (smtp_notquit_reason)
   {
 #ifdef notdef
-  log_write(0, LOG_PANIC,
+  log_write(LOG_PANIC,
     "smtp_notquit_exit() called more than once (%s, prev: %s)",
     reason, smtp_notquit_reason);
 #endif
@@ -3385,7 +3392,7 @@ GET_OPTION("acl_smtp_notquit");
 if (acl_smtp_notquit && reason)
   if (acl_check(ACL_WHERE_NOTQUIT, NULL, acl_smtp_notquit, &user_msg,
 		      &log_msg) == ERROR)
-    log_write(0, LOG_MAIN|LOG_PANIC, "ACL for not-QUIT returned ERROR: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "ACL for not-QUIT returned ERROR: %s",
       log_msg);
 
 /* Write an SMTP response if we are expected to give one. As the default
@@ -3703,9 +3710,9 @@ if (f.allow_unqualified_recipient || strcmpic(*recipient, US"postmaster") == 0)
   }
 smtp_printf("501 %s: recipient address must contain a domain\r\n", SP_NO_MORE,
   smtp_cmd_data);
-log_write(L_smtp_syntax_error,
-  LOG_MAIN|LOG_REJECT, "unqualified %s rejected: <%s> %s%s",
-  tag, *recipient, host_and_ident(TRUE), host_lookup_msg);
+if (LOGGING(smtp_syntax_error))
+  log_write(LOG_MAIN|LOG_REJECT, "unqualified %s rejected: <%s> %s%s",
+    tag, *recipient, host_and_ident(TRUE), host_lookup_msg);
 return 0;
 }
 
@@ -3722,7 +3729,7 @@ GET_OPTION("acl_smtp_quit");
 if (  acl_smtp_quit
    && acl_check(ACL_WHERE_QUIT, NULL, acl_smtp_quit, user_msgp, log_msgp)
 	== ERROR)
-    log_write(0, LOG_MAIN|LOG_PANIC, "ACL for QUIT returned ERROR: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "ACL for QUIT returned ERROR: %s",
       *log_msgp);
 
 #ifdef EXIM_TCP_CORK
@@ -3808,7 +3815,7 @@ if (verify_check_host(&wellknown_advertise_hosts) != FAIL)
   }
 
 smtp_printf("554 not permitted\r\n", SP_NO_MORE);
-log_write(0, LOG_MAIN|LOG_REJECT, "rejected %q from %s",
+log_write(LOG_MAIN|LOG_REJECT, "rejected %q from %s",
 	      smtp_cmd_buffer, sender_helo_name, host_and_ident(FALSE));
 return 0;
 }
@@ -3819,7 +3826,7 @@ static int
 expand_mailmax(const uschar * s)
 {
 if (!(s = expand_string(s)))
-  log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand smtp_accept_max_per_connection");
+  log_write(LOG_MAIN|LOG_PANIC, "failed to expand smtp_accept_max_per_connection");
 return *s ? Uatoi(s) : 0;
 }
 
@@ -3835,11 +3842,12 @@ void (*oldsignal)(int);
 pid_t pid;
 
 if (sender_address)
-  return synprot_error(L_smtp_protocol_error, 503, NULL,
+  return synprot_error(TRUE, 503, NULL,
     US"ETRN is not permitted inside a transaction");
 
-log_write(L_etrn, LOG_MAIN, "ETRN %s received from %s", smtp_cmd_argument,
-  host_and_ident(FALSE));
+if (LOGGING(etrn))
+  log_write(LOG_MAIN, "ETRN %s received from %s", smtp_cmd_argument,
+    host_and_ident(FALSE));
 
 GET_OPTION("acl_smtp_etrn");
 if ((rc = acl_check(ACL_WHERE_ETRN, NULL, acl_smtp_etrn,
@@ -3880,7 +3888,7 @@ if (smtp_etrn_command)
   deliver_domain = NULL;
   if (!rc)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "failed to set up ETRN command: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "failed to set up ETRN command: %s",
       error);
     smtp_printf("458 Internal failure\r\n", SP_NO_MORE);
     return 0;
@@ -3892,7 +3900,7 @@ if (smtp_etrn_command)
 else
   {
   if (*smtp_cmd_data++ != '#')
-    return synprot_error(L_smtp_syntax_error, 501, NULL,
+    return synprot_error(FALSE, 501, NULL,
       US"argument must begin with #");
 
   etrn_command = US"exim -R";
@@ -3954,7 +3962,7 @@ if ((pid = exim_fork(US"etrn-command")) == 0)
     exim_nullstd();                   /* Ensure std{in,out,err} exist */
     /* argv[0] should be untainted, from child_exec_exim() */
     execv(CS argv[0], (char *const *)argv);
-    log_write_die(0, LOG_MAIN, "exec of %q (ETRN) failed: %s",
+    log_write_die(LOG_MAIN, "exec of %q (ETRN) failed: %s",
       etrn_command, strerror(errno));
     _exit(EXIT_FAILURE);         /* paranoia */
     }
@@ -3965,7 +3973,7 @@ if ((pid = exim_fork(US"etrn-command")) == 0)
   complete, before removing the serialization. */
 
   if (pid < 0)
-    log_write(0, LOG_MAIN|LOG_PANIC, "2nd fork for serialized ETRN "
+    log_write(LOG_MAIN|LOG_PANIC, "2nd fork for serialized ETRN "
       "failed: %s", strerror(errno));
   else
     {
@@ -3986,7 +3994,7 @@ and restore the signal state. */
 
 if (pid < 0)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "fork of process for ETRN failed: %s",
+  log_write(LOG_MAIN|LOG_PANIC, "fork of process for ETRN failed: %s",
     strerror(errno));
   smtp_printf("458 Unable to fork process\r\n", SP_NO_MORE);
   if (smtp_etrn_serialize) enq_end(etrn_serialize_key);
@@ -4128,7 +4136,7 @@ while (done <= 0)
 	      uschar * save_name = sender_host_authenticated, * logmsg;
 	      sender_host_authenticated = au->drinst.name;
 	      if ((logmsg = event_raise(event_action, US"auth:fail", s, NULL)))
-		log_write(0, LOG_MAIN, "%s", logmsg);
+		log_write(LOG_MAIN, "%s", logmsg);
 	      sender_host_authenticated = save_name;
 	     }
 #endif
@@ -4168,19 +4176,19 @@ while (done <= 0)
 
       if (!fl.auth_advertised && !f.allow_auth_unadvertised)
 	{
-	done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	done = synprot_error(TRUE, 503, NULL,
 	  US"AUTH command used when not advertised");
 	break;
 	}
       if (sender_host_authenticated)
 	{
-	done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	done = synprot_error(TRUE, 503, NULL,
 	  US"already authenticated");
 	break;
 	}
       if (sender_address)
 	{
-	done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	done = synprot_error(TRUE, 503, NULL,
 	  US"not permitted in mail transaction");
 	break;
 	}
@@ -4203,7 +4211,7 @@ while (done <= 0)
       for (; (c = *smtp_cmd_data) && !isspace(c); smtp_cmd_data++)
 	if (!isalnum(c) && c != '-' && c != '_')
 	  {
-	  done = synprot_error(L_smtp_syntax_error, 501, NULL,
+	  done = synprot_error(FALSE, 501, NULL,
 	    US"invalid character in authentication mechanism name");
 	  goto COMMAND_LOOP;
 	  }
@@ -4246,14 +4254,14 @@ while (done <= 0)
 	     }
 #endif
 	    if (logmsg)
-	      log_write(0, LOG_MAIN|LOG_REJECT, "%s", logmsg);
+	      log_write(LOG_MAIN|LOG_REJECT, "%s", logmsg);
 	    else
-	      log_write(0, LOG_MAIN|LOG_REJECT, "%s authenticator failed for %s: %s",
+	      log_write(LOG_MAIN|LOG_REJECT, "%s authenticator failed for %s: %s",
 		au->drinst.name, host_and_ident(TRUE), errmsg);
 	    }
 	  }
 	else
-	  done = synprot_error(L_smtp_protocol_error, 504, NULL,
+	  done = synprot_error(TRUE, 504, NULL,
 	    string_sprintf("%s authentication mechanism not supported", s));
 	}
 
@@ -4297,7 +4305,7 @@ while (done <= 0)
 	{
 	smtp_printf("501 Syntactically invalid %s argument(s)\r\n", SP_NO_MORE, hello);
 
-	log_write(0, LOG_MAIN|LOG_REJECT, "rejected %s from %s: syntactically "
+	log_write(LOG_MAIN|LOG_REJECT, "rejected %s from %s: syntactically "
 	  "invalid argument(s): %s", hello, host_and_ident(FALSE),
 	  *smtp_cmd_argument == 0 ? US"(no argument given)" :
 			     string_printing(smtp_cmd_argument));
@@ -4305,7 +4313,7 @@ while (done <= 0)
 	GET_OPTION("smtp_max_synprot_errors");
 	if (++synprot_error_count > smtp_max_synprot_errors)
 	  {
-	  log_write(0, LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
+	  log_write(LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
 	    "syntax or protocol errors (last command was %q, %Y)",
 	    host_and_ident(FALSE), string_printing(smtp_cmd_buffer),
 	    s_connhad_log(NULL)
@@ -4363,7 +4371,7 @@ while (done <= 0)
 	      {
 	      smtp_printf("%d %s argument does not match calling host\r\n", SP_NO_MORE,
 		tempfail? 451 : 550, hello);
-	      log_write(0, LOG_MAIN|LOG_REJECT, "%srejected \"%s %s\" from %s",
+	      log_write(LOG_MAIN|LOG_REJECT, "%srejected \"%s %s\" from %s",
 		tempfail? "temporarily " : "",
 		hello, sender_helo_name, host_and_ident(FALSE));
 	      f.helo_verified = old_helo_verified;
@@ -4456,7 +4464,7 @@ while (done <= 0)
 	s = string_sprintf("%.*s%s", codelen, smtp_code, user_msg);
 	if ((t= strpbrk(CS s, "\r\n")) != NULL)
 	  {
-	  log_write(0, LOG_MAIN|LOG_PANIC, "EHLO/HELO response must not contain "
+	  log_write(LOG_MAIN|LOG_PANIC, "EHLO/HELO response must not contain "
 	    "newlines: message truncated: %s", string_printing(s));
 	  *t = '\0';
 	  }
@@ -4749,7 +4757,7 @@ while (done <= 0)
       smtp_mailcmd_count++;
 
       if (!xclient_mi)
-	done = synprot_error(L_smtp_syntax_error, 501, NULL,
+	done = synprot_error(FALSE, 501, NULL,
 	  US"XCLIENT command used when not advertised");
       else
 	{
@@ -4780,9 +4788,9 @@ while (done <= 0)
 	if (  fl.helo_verify_required
 	   || verify_check_host(&hosts_require_helo) == OK)
 	  {
-	  log_write(0, LOG_MAIN|LOG_REJECT, "rejected MAIL from %s: no "
+	  log_write(LOG_MAIN|LOG_REJECT, "rejected MAIL from %s: no "
 	    "HELO/EHLO given", host_and_ident(FALSE));
-	  done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	  done = synprot_error(TRUE, 503, NULL,
 		      US"HELO or EHLO required");
 	  break;
 	  }
@@ -4791,14 +4799,14 @@ while (done <= 0)
 
       if (sender_address)
 	{
-	done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	done = synprot_error(TRUE, 503, NULL,
 	  US"sender already given");
 	break;
 	}
 
       if (!*smtp_cmd_data)
 	{
-	done = synprot_error(L_smtp_protocol_error, 501, NULL,
+	done = synprot_error(TRUE, 501, NULL,
 	  US"MAIL must have an address operand");
 	break;
 	}
@@ -4809,7 +4817,7 @@ while (done <= 0)
       if (smtp_mailcmd_max > 0 && smtp_mailcmd_count > smtp_mailcmd_max)
 	{
 	smtp_printf("421 too many messages in this connection\r\n", SP_NO_MORE);
-	log_write(0, LOG_MAIN|LOG_REJECT, "rejected MAIL command %s: too many "
+	log_write(LOG_MAIN|LOG_REJECT, "rejected MAIL command %s: too many "
 	  "messages in one connection", host_and_ident(TRUE));
 	break;
 	}
@@ -4875,7 +4883,7 @@ while (done <= 0)
 	      else
 		{
 		body_8bitmime = 0;
-		done = synprot_error(L_smtp_syntax_error, 501, NULL,
+		done = synprot_error(FALSE, 501, NULL,
 		  US"invalid data for BODY");
 		goto COMMAND_LOOP;
 		}
@@ -4894,7 +4902,7 @@ while (done <= 0)
 	      /* Check if RET has already been set */
 	      if (dsn_ret > 0)
 		{
-		done = synprot_error(L_smtp_syntax_error, 501, NULL,
+		done = synprot_error(FALSE, 501, NULL,
 		  US"RET can be specified once only");
 		goto COMMAND_LOOP;
 		}
@@ -4907,7 +4915,7 @@ while (done <= 0)
 	      /* Check for invalid invalid value, and exit with error */
 	      if (dsn_ret == 0)
 		{
-		done = synprot_error(L_smtp_syntax_error, 501, NULL,
+		done = synprot_error(FALSE, 501, NULL,
 		  US"Value for RET is invalid");
 		goto COMMAND_LOOP;
 		}
@@ -4919,7 +4927,7 @@ while (done <= 0)
 	      /* Check if the dsn envid has been already set */
 	      if (dsn_envid)
 		{
-		done = synprot_error(L_smtp_syntax_error, 501, NULL,
+		done = synprot_error(FALSE, 501, NULL,
 		  US"ENVID can be specified once only");
 		goto COMMAND_LOOP;
 		}
@@ -4946,7 +4954,7 @@ while (done <= 0)
 		/* Put back terminator overrides for error message */
 		value[-1] = '=';
 		name[-1] = ' ';
-		done = synprot_error(L_smtp_syntax_error, 501, NULL,
+		done = synprot_error(FALSE, 501, NULL,
 		  US"invalid data for AUTH");
 		goto COMMAND_LOOP;
 		}
@@ -4981,7 +4989,7 @@ while (done <= 0)
 
 		case FAIL:
 		  authenticated_sender = NULL;
-		  log_write(0, LOG_MAIN, "ignoring AUTH=%s from %s (%s)",
+		  log_write(LOG_MAIN, "ignoring AUTH=%s from %s (%s)",
 		    value, host_and_ident(TRUE), ignore_msg);
 		  break;
 
@@ -5009,7 +5017,7 @@ while (done <= 0)
 	  case ENV_MAIL_OPT_UTF8:
 	    if (!fl.smtputf8_advertised)
 	      {
-	      done = synprot_error(L_smtp_syntax_error, 501, NULL,
+	      done = synprot_error(FALSE, 501, NULL,
 		US"SMTPUTF8 used when not advertised");
 	      goto COMMAND_LOOP;
 	      }
@@ -5072,7 +5080,7 @@ while (done <= 0)
 
       if (!raw_sender)
 	{
-	done = synprot_error(L_smtp_syntax_error, 501, smtp_cmd_data, errmess);
+	done = synprot_error(FALSE, 501, smtp_cmd_data, errmess);
 	break;
 	}
 
@@ -5085,13 +5093,11 @@ while (done <= 0)
       if (thismessage_size_limit > 0 && message_size > thismessage_size_limit)
 	{
 	smtp_printf("552 Message size exceeds maximum permitted\r\n", SP_NO_MORE);
-	log_write(L_size_reject,
-	    LOG_MAIN|LOG_REJECT, "rejected MAIL FROM:<%s> %s: "
-	    "message too big: size%s=%d max=%d",
-	    sender_address,
-	    host_and_ident(TRUE),
-	    (message_size == INT_MAX)? ">" : "",
-	    message_size,
+	if (LOGGING(size_reject))
+	  log_write(LOG_MAIN|LOG_REJECT,
+	    "rejected MAIL FROM:<%s> %s: message too big: size%s=%d max=%d",
+	    sender_address, host_and_ident(TRUE),
+	    message_size == INT_MAX ? ">" : "", message_size,
 	    thismessage_size_limit);
 	sender_address = NULL;
 	break;
@@ -5133,12 +5139,10 @@ while (done <= 0)
 	  {
 	  smtp_printf("501 %s: sender address must contain a domain\r\n", SP_NO_MORE,
 	    smtp_cmd_data);
-	  log_write(L_smtp_syntax_error,
-	    LOG_MAIN|LOG_REJECT,
-	    "unqualified sender rejected: <%s> %s%s",
-	    raw_sender,
-	    host_and_ident(TRUE),
-	    host_lookup_msg);
+	  if (LOGGING(smtp_syntax_error))
+	    log_write(LOG_MAIN|LOG_REJECT,
+	      "unqualified sender rejected: <%s> %s%s",
+	      raw_sender, host_and_ident(TRUE), host_lookup_msg);
 	  sender_address = NULL;
 	  break;
 	  }
@@ -5199,7 +5203,7 @@ while (done <= 0)
       /* We got really to many recipients. A check against configured
       limits is done later */
       if (rcpt_count < 0 || rcpt_count >= INT_MAX/2)
-        log_write_die(0, LOG_MAIN, "Too many recipients: %d", rcpt_count);
+        log_write_die(LOG_MAIN, "Too many recipients: %d", rcpt_count);
       rcpt_count++;
       was_rcpt = fl.rcpt_in_progress = TRUE;
 
@@ -5217,7 +5221,7 @@ while (done <= 0)
 	  }
 	else
 	  {
-	  done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	  done = synprot_error(TRUE, 503, NULL,
 	    US"sender not yet given");
 	  was_rcpt = FALSE;             /* Not a valid RCPT */
 	  }
@@ -5229,7 +5233,7 @@ while (done <= 0)
 
       if (!smtp_cmd_data[0])
 	{
-	done = synprot_error(L_smtp_syntax_error, 501, NULL,
+	done = synprot_error(FALSE, 501, NULL,
 	  US"RCPT must have an address operand");
 	rcpt_fail_count++;
 	break;
@@ -5251,7 +5255,7 @@ while (done <= 0)
 	  /* Check whether orcpt has been already set */
 	  if (rcpt_orcpt)
 	    {
-	    done = synprot_error(L_smtp_syntax_error, 501, NULL,
+	    done = synprot_error(FALSE, 501, NULL,
 	      US"ORCPT can be specified once only");
 	    goto COMMAND_LOOP;
 	    }
@@ -5264,7 +5268,7 @@ while (done <= 0)
 	  /* Check if the notify flags have been already set */
 	  if (rcpt_dsn_flags > 0)
 	    {
-	    done = synprot_error(L_smtp_syntax_error, 501, NULL,
+	    done = synprot_error(FALSE, 501, NULL,
 		US"NOTIFY can be specified once only");
 	    goto COMMAND_LOOP;
 	    }
@@ -5296,7 +5300,7 @@ while (done <= 0)
 	      else
 		{
 		/* Catch any strange values */
-		done = synprot_error(L_smtp_syntax_error, 501, NULL,
+		done = synprot_error(FALSE, 501, NULL,
 		  US"Invalid value for NOTIFY parameter");
 		goto COMMAND_LOOP;
 		}
@@ -5330,7 +5334,7 @@ while (done <= 0)
       if (!(recipient = parse_extract_address(recipient, &errmess, &start, &end,
 	&recipient_domain, FALSE)))
 	{
-	done = synprot_error(L_smtp_syntax_error, 501, smtp_cmd_data, errmess);
+	done = synprot_error(FALSE, 501, smtp_cmd_data, errmess);
 	rcpt_fail_count++;
 	break;
 	}
@@ -5364,7 +5368,7 @@ while (done <= 0)
 	  rcpt_fail_count++;
 	  smtp_printf("552 too many recipients\r\n", SP_NO_MORE);
 	  if (!toomany)
-	    log_write(0, LOG_MAIN|LOG_REJECT, "too many recipients: message "
+	    log_write(LOG_MAIN|LOG_REJECT, "too many recipients: message "
 	      "rejected: sender=<%s> %s", sender_address, host_and_ident(TRUE));
 	  }
 	else
@@ -5372,7 +5376,7 @@ while (done <= 0)
 	  rcpt_defer_count++;
 	  smtp_printf("452 too many recipients\r\n", SP_NO_MORE);
 	  if (!toomany)
-	    log_write(0, LOG_MAIN|LOG_REJECT, "too many recipients: excess "
+	    log_write(LOG_MAIN|LOG_REJECT, "too many recipients: excess "
 	      "temporarily rejected: sender=<%s> %s", sender_address,
 	      host_and_ident(TRUE));
 	  }
@@ -5442,7 +5446,7 @@ while (done <= 0)
 	  smtp_printf("250 Accepted\r\n", SP_NO_MORE);
 	rcpt_fail_count++;
 	discarded = TRUE;
-	log_write(0, LOG_MAIN|LOG_REJECT, "%s F=<%s> RCPT %s: "
+	log_write(LOG_MAIN|LOG_REJECT, "%s F=<%s> RCPT %s: "
 	  "discarded by %s ACL%s%s", host_and_ident(TRUE),
 	  sender_address_unrewritten ? sender_address_unrewritten : sender_address,
 	  smtp_cmd_argument, f.recipients_discarded ? "MAIL" : "RCPT",
@@ -5486,7 +5490,7 @@ while (done <= 0)
       HAD(SCH_BDAT);
       if (chunking_state != CHUNKING_OFFERED)
 	{
-	done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	done = synprot_error(TRUE, 503, NULL,
 	  US"BDAT command used when CHUNKING not advertised");
 	break;
 	}
@@ -5495,7 +5499,7 @@ while (done <= 0)
 
       if (sscanf(CS smtp_cmd_data, "%u %n", &chunking_datasize, &n) < 1)
 	{
-	done = synprot_error(L_smtp_protocol_error, 501, NULL,
+	done = synprot_error(TRUE, 501, NULL,
 	  US"missing size for BDAT command");
 	break;
 	}
@@ -5537,7 +5541,7 @@ while (done <= 0)
 	  smtp_printf("503 Valid RCPT command must precede %s\r\n", SP_NO_MORE,
 	    smtp_names[smtp_connection_had[SMTP_HBUFF_PREV(smtp_ch_index)]]);
 	else
-	  done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	  done = synprot_error(TRUE, 503, NULL,
 	    smtp_connection_had[SMTP_HBUFF_PREV(smtp_ch_index)] == SCH_DATA
 	    ? US"valid RCPT command must precede DATA"
 	    : US"valid RCPT command must precede BDAT");
@@ -5657,7 +5661,7 @@ while (done <= 0)
 	    s = addr->user_message
 	      ? string_sprintf("550 <%s> %s", address, addr->user_message)
 	      : string_sprintf("550 <%s> is not deliverable", address);
-	    log_write(0, LOG_MAIN, "VRFY failed for %s %s",
+	    log_write(LOG_MAIN, "VRFY failed for %s %s",
 	      smtp_cmd_argument, host_and_ident(TRUE));
 	    break;
 	  }
@@ -5693,7 +5697,7 @@ while (done <= 0)
       HAD(SCH_STARTTLS);
       if (!fl.tls_advertised)
 	{
-	done = synprot_error(L_smtp_protocol_error, 503, NULL,
+	done = synprot_error(TRUE, 503, NULL,
 	  US"STARTTLS command used when not advertised");
 	break;
 	}
@@ -5903,20 +5907,22 @@ while (done <= 0)
       */
 
       if (sender_address || recipients_count > 0)
-	log_write(L_lost_incoming_connection, LOG_MAIN,
-	  "unexpected %s while reading SMTP command from %s%s%s D=%s",
-	  f.sender_host_unknown ? "EOF" : "disconnection",
-	  f.tcp_in_fastopen_logged
-	  ? US""
-	  : f.tcp_in_fastopen
-	  ? f.tcp_in_fastopen_data ? US"TFO* " : US"TFO "
-	  : US"",
-	  host_and_ident(FALSE), errstr,
-	  string_timesince(&smtp_connection_start)
-	  );
-
-      else
-	log_write(L_smtp_connection, LOG_MAIN, "%s %slost%s D=%s",
+	{
+	if (LOGGING(lost_incoming_connection))
+	  log_write(LOG_MAIN,
+	    "unexpected %s while reading SMTP command from %s%s%s D=%s",
+	    f.sender_host_unknown ? "EOF" : "disconnection",
+	    f.tcp_in_fastopen_logged
+	    ? US""
+	    : f.tcp_in_fastopen
+	    ? f.tcp_in_fastopen_data ? US"TFO* " : US"TFO "
+	    : US"",
+	    host_and_ident(FALSE), errstr,
+	    string_timesince(&smtp_connection_start)
+	    );
+	  }
+      else if (LOGGING(smtp_connection))
+	log_write(LOG_MAIN, "%s %slost%s D=%s",
 	  smtp_get_connection_info(),
 	  f.tcp_in_fastopen && !f.tcp_in_fastopen_logged ? US"TFO " : US"",
 	  errstr,
@@ -5938,7 +5944,7 @@ while (done <= 0)
       break;
 
     case BADARG_CMD:
-      done = synprot_error(L_smtp_syntax_error, 501, NULL,
+      done = synprot_error(FALSE, 501, NULL,
 	US"unexpected argument data");
       break;
 
@@ -5946,7 +5952,7 @@ while (done <= 0)
     /* This currently happens only for NULLs, but could be extended. */
 
     case BADCHAR_CMD:
-      done = synprot_error(L_smtp_syntax_error, 0, NULL,       /* Just logs */
+      done = synprot_error(FALSE, 0, NULL,       /* Just logs */
 	US"NUL character(s) present (shown as '?')");
       smtp_printf("501 NUL characters are not allowed in SMTP commands\r\n",
 		  SP_NO_MORE);
@@ -5963,7 +5969,7 @@ while (done <= 0)
 	if (buf)
 	  {
 	  buf[nchars] = '\0';
-	  log_write(0, LOG_MAIN|LOG_REJECT,
+	  log_write(LOG_MAIN|LOG_REJECT,
 	    "SMTP protocol synchronization error "
 	    "(next input sent too soon: pipelining was%s advertised): "
 	    "rejected %q %s next input=%q (%u bytes)",
@@ -5972,7 +5978,7 @@ while (done <= 0)
 	    string_printing(buf), nchars);
 	  }
 	else
-	  log_write(0, LOG_MAIN|LOG_REJECT, "Error or EOF on input from %s",
+	  log_write(LOG_MAIN|LOG_REJECT, "Error or EOF on input from %s",
 	    host_and_ident(TRUE));
 	smtp_notquit_exit(US"synchronization-error", US"554",
 	  US"SMTP synchronization error");
@@ -5985,7 +5991,7 @@ while (done <= 0)
       s = smtp_cmd_buffer;
       Uskip_nonwhite(&s);
       incomplete_transaction_log(US"too many non-mail commands");
-      log_write(0, LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
+      log_write(LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
 	"nonmail commands (last was \"%.*s\")",  host_and_ident(FALSE),
 	(int)(s - smtp_cmd_buffer), smtp_cmd_buffer);
       smtp_notquit_exit(US"bad-commands", US"554", US"Too many nonmail commands");
@@ -6002,20 +6008,21 @@ while (done <= 0)
       GET_OPTION("smtp_max_unknown_commands");
       if (unknown_command_count++ >= smtp_max_unknown_commands)
 	{
-	log_write(L_smtp_syntax_error, LOG_MAIN,
-	  "SMTP syntax error in %q %s %s",
-	  string_printing(smtp_cmd_buffer), host_and_ident(TRUE),
-	  US"unrecognized command");
+	if (LOGGING(smtp_syntax_error))
+	  log_write(LOG_MAIN,
+	    "SMTP syntax error in %q %s %s",
+	    string_printing(smtp_cmd_buffer), host_and_ident(TRUE),
+	    US"unrecognized command");
 	incomplete_transaction_log(US"unrecognized command");
 	smtp_notquit_exit(US"bad-commands", US"500",
 	  US"Too many unrecognized commands");
 	done = 2;
-	log_write(0, LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
+	log_write(LOG_MAIN|LOG_REJECT, "SMTP call from %s dropped: too many "
 	  "unrecognized commands (last was %q)", host_and_ident(FALSE),
 	  string_printing(smtp_cmd_buffer));
 	}
       else
-	done = synprot_error(L_smtp_syntax_error, 500, NULL,
+	done = synprot_error(FALSE, 500, NULL,
 	  US"unrecognized command");
       break;
     }

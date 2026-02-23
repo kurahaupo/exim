@@ -106,7 +106,7 @@ for (int i = 0; i < hff_count; i++)
     break;
     }
 if (ob->hff_code < 0)
-  log_write_die(0, LOG_CONFIG_FOR, "%s router:\n  "
+  log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
     "unrecognized setting for host_find_failed option", rblock->name);
 
 for (int i = 1; i < hff_count; i++)   /* NB starts at 1 to skip "ignore" */
@@ -116,14 +116,14 @@ for (int i = 1; i < hff_count; i++)   /* NB starts at 1 to skip "ignore" */
     break;
     }
 if (ob->hai_code < 0)
-  log_write_die(0, LOG_CONFIG_FOR, "%s router:\n  "
+  log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
     "unrecognized setting for host_all_ignored option", rblock->name);
 
 /* One of route_list or route_data must be specified */
 
 if (  !ob->route_list && !ob->route_data
    || ob->route_list && ob->route_data)
-  log_write_die(0, LOG_CONFIG_FOR, "%s router:\n  "
+  log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
     "route_list or route_data (but not both) must be specified",
     rblock->name);
 }
@@ -361,7 +361,7 @@ while (*options)
     if (!t)
       {
       s = string_sprintf("unknown routing option or transport name %q", s);
-      log_write(0, LOG_MAIN, "Error in %s router: %s", rblock->drinst.name, s);
+      log_write(LOG_MAIN, "Error in %s router: %s", rblock->drinst.name, s);
       addr->message = string_sprintf("error in router: %s", s);
       return DEFER;
       }
@@ -438,7 +438,7 @@ if (!hostlist[0])
   if (verify != v_none) goto ROUTED;
   addr->message = string_sprintf("error in %s router: no host(s) specified "
     "for domain %s", rblock->drinst.name, addr->domain);
-  log_write(0, LOG_MAIN, "%s", addr->message);
+  log_write(LOG_MAIN, "%s", addr->message);
   return DEFER;
   }
 
@@ -481,7 +481,7 @@ dealt with above. However, we don't need one if verifying only. */
 
 if (!transport && verify == v_none)
     {
-    log_write(0, LOG_MAIN, "Error in %s router: no transport defined",
+    log_write(LOG_MAIN, "Error in %s router: no transport defined",
       rblock->drinst.name);
     addr->message = US"error in router: transport missing";
     return DEFER;

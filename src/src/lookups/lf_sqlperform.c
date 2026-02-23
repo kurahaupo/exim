@@ -64,7 +64,7 @@ if (Ustrncmp(query, "servers", 7) == 0)
   int qsep = 0;
   const uschar * s, * ss, * qserverlist;
 
-  log_write(0, LOG_MAIN|LOG_CONFIG_IN, "WARNING: obsolete syntax used for lookup");
+  log_write(LOG_MAIN|LOG_CONFIG_IN, "WARNING: obsolete syntax used for lookup");
 
   s = query + 7;
   skip_whitespace(&s);

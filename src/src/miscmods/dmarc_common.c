@@ -66,13 +66,13 @@ dmarc_init(void * dummy)
 uschar * errstr;
 if (!(dmarc_spf_mod_info = misc_mod_find(US"spf", &errstr)))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "dmarc: %s", errstr);
+  log_write(LOG_MAIN|LOG_PANIC, "dmarc: %s", errstr);
   return FALSE;
   }
 
 if (!(dmarc_dkim_mod_info = misc_mod_find(US"dkim", &errstr)))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "dmarc: %s", errstr);
+  log_write(LOG_MAIN|LOG_PANIC, "dmarc: %s", errstr);
   return FALSE;
   }
 
@@ -202,7 +202,7 @@ for (int c = 0; ruf[c]; c++)
 
   if (!moan_send_message(recipient, ERRMESS_DMARC_FORENSIC, eblock,
 			header_list, NULL, NULL))
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "failure to send DMARC forensic report to %s", recipient);
   }
 }
@@ -347,7 +347,7 @@ if (!(s = dmarc_history_file) || !(s = expand_string(s)) || !*s)
 if (!host_checking)	/* -bh mode: nothing written except debug */
   if ((history_file_fd = log_open_as_exim(s)) < 0)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	      "failure to create DMARC history file: %s: %s",
 	      s, strerror(errno));
     return;
@@ -445,7 +445,7 @@ if (!host_checking)
 				string_from_gstring(g), gstring_length(g));
   if (written_len == 0)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	    "failure to write to DMARC history file: %s", dmarc_history_file);
     (void)close(history_file_fd);
     return;

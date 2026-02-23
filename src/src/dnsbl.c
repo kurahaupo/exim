@@ -82,7 +82,7 @@ int qlen, yield;
 query = string_sprintf("%s.%s", prepend, domain);
 if ((qlen = Ustrlen(query)) >= 256)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "dnslist query is too long "
+  log_write(LOG_MAIN|LOG_PANIC, "dnslist query is too long "
     "(ignored): %s...", query);
   yield = FAIL;
   goto out;
@@ -242,7 +242,7 @@ if (cb->rc == DNS_SUCCEED)
 
         if (host_aton(da->address, address) == 1)
 	  if ((address[0] & 0xff000000) != 0x7f000000)    /* 127.0.0.0/8 */
-	    log_write(0, LOG_MAIN,
+	    log_write(LOG_MAIN,
 	      "DNS list lookup for %s at %s returned %s;"
 	      " not in 127.0/8 and discarded",
 	      keydomain, domain, da->address);
@@ -325,7 +325,7 @@ if (cb->rc == DNS_SUCCEED)
 	 )
 	ok = TRUE;
       else
-	log_write(0, LOG_MAIN,
+	log_write(LOG_MAIN,
 	    "DNS list lookup for %s at %s returned %s;"
 	    " not in 127.0/8 and discarded",
 	    keydomain, domain, da->address);
@@ -383,7 +383,7 @@ if (cb->rc == DNS_SUCCEED)
 
 if (cb->rc != DNS_NOMATCH && cb->rc != DNS_NODATA)
   {
-  log_write(L_dnslist_defer, LOG_MAIN,
+  if (LOGGING(dnslist_defer)) log_write(LOG_MAIN,
     "DNS list lookup defer (probably timeout) for %s: %s", query,
     defer_return == OK ?   US"assumed in list" :
     defer_return == FAIL ? US"assumed not in list" :
@@ -515,7 +515,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
     else if (strcmpic(domain, US"+exclude_unknown") == 0) defer_return = FAIL;
     else if (strcmpic(domain, US"+defer_unknown") == 0)   defer_return = DEFER;
     else
-      log_write(0, LOG_MAIN|LOG_PANIC, "unknown item in dnslist (ignored): %s",
+      log_write(LOG_MAIN|LOG_PANIC, "unknown item in dnslist (ignored): %s",
         domain);
     continue;
     }
@@ -574,7 +574,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
   for (const uschar * t = domain; *t; t++)
     if (!isalnum(*t) && *t != '-' && *t != '.' && *t != '_')
       {
-      log_write(0, LOG_MAIN, "dnslists domain %q contains "
+      log_write(LOG_MAIN, "dnslists domain %q contains "
         "strange characters - is this right?", domain);
       break;
       }
@@ -584,7 +584,7 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
   if (domain_txt != domain) for (const uschar * t = domain_txt; *t; t++)
     if (!isalnum(*t) && *t != '-' && *t != '.' && *t != '_')
       {
-      log_write(0, LOG_MAIN, "dnslists domain %q contains "
+      log_write(LOG_MAIN, "dnslists domain %q contains "
         "strange characters - is this right?", domain_txt);
       break;
       }

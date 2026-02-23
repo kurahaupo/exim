@@ -101,7 +101,7 @@ int len, i, j;
 switch(method)
   {
   default:
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "Unrecognised socks auth method %d", method);
     return FAIL;
   case AUTH_NONE:
@@ -130,7 +130,7 @@ switch(method)
       return OK;
       }
 
-    log_write(0, LOG_MAIN|LOG_PANIC, "socks auth failed");
+    log_write(LOG_MAIN|LOG_PANIC, "socks auth failed");
     errno = EPROTO;
     return FAIL;
   }
@@ -175,7 +175,7 @@ for (rnd = random_number(weights), i = 0; i < nproxies; i++)
       return i;
   }
 
-log_write(0, LOG_MAIN|LOG_PANIC,
+log_write(LOG_MAIN|LOG_PANIC,
   "%s unknown error (memory/cpu corruption?)", __FUNCTION__);
 return -1;
 }
@@ -283,7 +283,7 @@ for(;;)
     break;
     }
 
-  log_write(0, LOG_MAIN, "%s: %s", __FUNCTION__, strerror(errno));
+  log_write(LOG_MAIN, "%s: %s", __FUNCTION__, strerror(errno));
   sob->is_failed = TRUE;
   }
 

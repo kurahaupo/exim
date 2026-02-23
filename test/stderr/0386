@@ -19,8 +19,6 @@ sender address = CALLER@test.ex
 sender_fullhost = [V4NET.9.8.7]
 sender_rcvhost = [V4NET.9.8.7]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.9.8.7]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.9.8.7]
 host in host_reject_connection? no (option unset)
@@ -166,8 +164,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.9.8.7] F=<x@y> rejected RCPT <1@b>: No such user here
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test) [V4NET.9.8.7] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -194,8 +190,6 @@ sender_rcvhost = [V4NET.11.12.13] (ident=CALLER)
 set_process_info: pppp handling incoming connection from [V4NET.11.12.13] via -oMa
 set_process_info: pppp accepting a local SMTP message from <CALLER>
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.11.12.13] U=CALLER
 host in host_reject_connection? no (option unset)
@@ -610,8 +604,6 @@ search_tidyup called
 smtp_setup_msg entered
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

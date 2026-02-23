@@ -88,13 +88,13 @@ dmarc_ctx.nscount = 0;
 libdm_status = opendmarc_policy_library_init(&dmarc_ctx);
 if (libdm_status != DMARC_PARSE_OKAY)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "DMARC failure to init library: %s",
+  log_write(LOG_MAIN|LOG_PANIC, "DMARC failure to init library: %s",
 		       opendmarc_policy_status_to_str(libdm_status));
   dmarc_abort = TRUE;
   }
 else if (opendmarc_tld_read_file(CS dmarc_tld_file, NULL, NULL, NULL))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "DMARC failure to load tld list '%s': %s",
+  log_write(LOG_MAIN|LOG_PANIC, "DMARC failure to load tld list '%s': %s",
 		       dmarc_tld_file, strerror(errno));
   dmarc_abort = TRUE;
   }
@@ -105,7 +105,7 @@ if (!dmarc_abort)
   int is_ipv6 = string_is_ip_address(sender_host_address, NULL) == 6;
   if (!(dmarc_pctx = opendmarc_policy_connect_init(sender_host_address, is_ipv6)))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "DMARC failure creating policy context: ip=%s", sender_host_address);
     dmarc_abort = TRUE;
     }
@@ -191,7 +191,7 @@ else if (!dmarc_abort)
     : opendmarc_policy_store_from_domain(dmarc_pctx, dmarc_header_from_sender);
   if (libdm_status != DMARC_PARSE_OKAY)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	      "failure to store header From: in DMARC: %s, header was '%s'",
 	      opendmarc_policy_status_to_str(libdm_status), header_from);
     dmarc_abort = TRUE;
@@ -251,7 +251,7 @@ if (!dmarc_abort && !sender_host_authenticated)
     libdm_status = opendmarc_policy_store_spf(dmarc_pctx, spf_sender_domain,
 				dmarc_spf_result, origin, spf_human_readable);
     if (libdm_status != DMARC_PARSE_OKAY)
-      log_write(0, LOG_MAIN|LOG_PANIC, "failure to store spf for DMARC: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "failure to store spf for DMARC: %s",
 			   opendmarc_policy_status_to_str(libdm_status));
     }
 
@@ -281,7 +281,7 @@ The EDITME provides a DMARC_API variable */
     DEBUG(receive)
       debug_printf_indent("DMARC adding DKIM sender domain = %s\n", sig->domain);
     if (libdm_status != DMARC_PARSE_OKAY)
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 		"failure to store dkim (%s) for DMARC: %s",
 		sig->domain, opendmarc_policy_status_to_str(libdm_status));
 
@@ -356,7 +356,7 @@ The EDITME provides a DMARC_API variable */
   store_release_above(dmarc_used_domain + Ustrlen(dmarc_used_domain)+1);
 
   if (libdm_status != DMARC_PARSE_OKAY)
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "failure to read domainname used for DMARC lookup: %s",
       opendmarc_policy_status_to_str(libdm_status));
 
@@ -411,7 +411,7 @@ The EDITME provides a DMARC_API variable */
   libdm_status = opendmarc_policy_fetch_alignment(dmarc_pctx,
 		    &dmarc_dkim_alignment, &dmarc_spf_alignment);
   if (libdm_status != DMARC_PARSE_OKAY)
-    log_write(0, LOG_MAIN|LOG_PANIC, "failure to read DMARC alignment: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "failure to read DMARC alignment: %s",
 			     opendmarc_policy_status_to_str(libdm_status));
 
   if (has_dmarc_record)

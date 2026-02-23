@@ -309,7 +309,7 @@ extern const uschar *local_part_quote(const uschar *);
 extern void    log_close_all(void);
 extern int     log_open_as_exim(const uschar * const);
 extern gstring *log_portnum(gstring *, int);
-extern void    log_write_die(bitmask_word_t, int, const char * format, ...)
+extern void    log_write_die(int, const char * format, ...)
 		PRINTF_FUNCTION(3,4) NORETURN;
 extern void    logging_modify_channels(const uschar *);
 extern void    logging_set_defaults(void);
@@ -643,7 +643,7 @@ extern int     strncmpic(const uschar *, const uschar *, int);
 extern uschar *strstric(const uschar *, const uschar *, BOOL);
 extern const uschar *strstric_c(const uschar *, const uschar *, BOOL);
 
-extern int     synprot_error(int, int, uschar *, uschar *);
+extern int     synprot_error(BOOL, int, uschar *, uschar *);
 
 extern int     test_harness_fudged_queue_time(int);
 extern void    tcp_init(void);
@@ -1344,7 +1344,7 @@ static inline int
 exim_open2(const char * pathname, int flags)
 {
 if (!is_tainted(pathname)) return open(pathname, flags);
-log_write(0, LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
+log_write(LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
 errno = EACCES;
 return -1;
 }
@@ -1352,7 +1352,7 @@ static inline int
 exim_open(const char *pathname, int flags, mode_t mode)
 {
 if (!is_tainted(pathname)) return open(pathname, flags, mode);
-log_write(0, LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
+log_write(LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
 errno = EACCES;
 return -1;
 }
@@ -1361,7 +1361,7 @@ static inline int
 exim_openat(int dirfd, const char * pathname, int flags)
 {
 if (!is_tainted(pathname)) return openat(dirfd, pathname, flags);
-log_write(0, LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
+log_write(LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
 errno = EACCES;
 return -1;
 }
@@ -1369,7 +1369,7 @@ static inline int
 exim_openat4(int dirfd, const char *pathname, int flags, mode_t mode)
 {
 if (!is_tainted(pathname)) return openat(dirfd, pathname, flags, mode);
-log_write(0, LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
+log_write(LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
 errno = EACCES;
 return -1;
 }
@@ -1379,7 +1379,7 @@ static inline FILE *
 exim_fopen(const char * pathname, const char * mode)
 {
 if (!is_tainted(pathname)) return fopen(pathname, mode);
-log_write(0, LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
+log_write(LOG_MAIN|LOG_PANIC, "Tainted filename '%s'", pathname);
 errno = EACCES;
 return NULL;
 }
@@ -1388,7 +1388,7 @@ static inline DIR *
 exim_opendir(const uschar * name)
 {
 if (!is_tainted(name)) return opendir(CCS name);
-log_write(0, LOG_MAIN|LOG_PANIC, "Tainted dirname '%s'", name);
+log_write(LOG_MAIN|LOG_PANIC, "Tainted dirname '%s'", name);
 errno = EACCES;
 return NULL;
 }

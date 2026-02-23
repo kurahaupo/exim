@@ -73,7 +73,7 @@ if (stat(CS utilname, &statbuf) >= 0)
 
   pid = child_open(argv, NULL, 0000, &infd, &outfd, FALSE, US"fakens-search");
   if (pid < 0)
-    log_write_die(0, LOG_MAIN, "failed to run fakens: %s",
+    log_write_die(LOG_MAIN, "failed to run fakens: %s",
       strerror(errno));
 
   len = 0;
@@ -93,7 +93,7 @@ if (stat(CS utilname, &statbuf) >= 0)
       len += rc;
 
   if (rc < 0)
-    log_write_die(0, LOG_MAIN, "read from fakens failed: %s",
+    log_write_die(LOG_MAIN, "read from fakens failed: %s",
       strerror(errno));
 
   switch(child_close(pid, 0))
@@ -949,7 +949,7 @@ if (dnsa->answerlen < 0) switch (h_errno)
       {
       if (try_again_recursion)
 	{
-	log_write(0, LOG_MAIN|LOG_PANIC,
+	log_write(LOG_MAIN|LOG_PANIC,
 	  "dns_again_means_nonexist recursion seen for %s"
 	  " (assuming nonexist)", name);
 	return dns_fail_return(name, type, dns_expire_from_soa(dnsa, type),
@@ -1148,7 +1148,7 @@ for (int i = 0; i <= dns_cname_loops; i++)
 /* Control reaches here after 10 times round the CNAME loop. Something isn't
 right... */
 
-log_write(0, LOG_MAIN, "CNAME loop for %s encountered", orig_name);
+log_write(LOG_MAIN, "CNAME loop for %s encountered", orig_name);
 errstr = US"cname_loop";
 
 not_good:

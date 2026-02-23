@@ -103,8 +103,7 @@ for (int i = 0; i < 2; i++)
 if (!data_file)
   {
   /* error while spooling */
-  log_write(0, LOG_MAIN|LOG_PANIC,
-	 "DCC: error while opening spool file");
+  log_write(LOG_MAIN|LOG_PANIC, "DCC: error while opening spool file");
   return DEFER;
   }
 
@@ -118,7 +117,7 @@ if (dccifd_address)
     if(sscanf(CS dccifd_address, "%" mac_expanded_string(SOCKIP_USE) "s %u",
 	      sockip, &portnr) != 2)
       {
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 	"DCC: warning - invalid dccifd address: '%s'", dccifd_address);
       (void)fclose(data_file);
       return DEFER;
@@ -178,7 +177,7 @@ if(Ustrcmp(sockip, ""))
     {
     DEBUG(acl)
       debug_printf("DCC: Creating TCP socket connection failed: %s\n", strerror(errno));
-    log_write(0,LOG_PANIC,"DCC: Creating TCP socket connection failed: %s\n", strerror(errno));
+    log_write(LOG_PANIC,"DCC: Creating TCP socket connection failed: %s\n", strerror(errno));
     /* if we cannot create the socket, defer the mail */
     (void)fclose(data_file);
     return retval;
@@ -188,7 +187,7 @@ if(Ustrcmp(sockip, ""))
     {
     DEBUG(acl)
       debug_printf("DCC: Connecting to TCP socket failed: %s\n", strerror(errno));
-    log_write(0,LOG_PANIC,"DCC: Connecting to TCP socket failed: %s\n", strerror(errno));
+    log_write(LOG_PANIC,"DCC: Connecting to TCP socket failed: %s\n", strerror(errno));
     /* if we cannot contact the socket, defer the mail */
     (void)fclose(data_file);
     return retval;
@@ -204,7 +203,7 @@ else
     {
     DEBUG(acl)
       debug_printf("DCC: Creating UNIX socket connection failed: %s\n", strerror(errno));
-    log_write(0,LOG_PANIC,"DCC: Creating UNIX socket connection failed: %s\n", strerror(errno));
+    log_write(LOG_PANIC,"DCC: Creating UNIX socket connection failed: %s\n", strerror(errno));
     /* if we cannot create the socket, defer the mail */
     (void)fclose(data_file);
     return retval;
@@ -214,7 +213,7 @@ else
     {
     DEBUG(acl)
       debug_printf("DCC: Connecting to UNIX socket failed: %s\n", strerror(errno));
-    log_write(0,LOG_PANIC,"DCC: Connecting to UNIX socket failed: %s\n", strerror(errno));
+    log_write(LOG_PANIC,"DCC: Connecting to UNIX socket failed: %s\n", strerror(errno));
     /* if we cannot contact the socket, defer the mail */
     (void)fclose(data_file);
     return retval;
@@ -286,7 +285,7 @@ if(shutdown(sockfd, SHUT_WR) < 0)
   {
   DEBUG(acl)
     debug_printf("DCC: Couldn't shutdown socket: %s\n", strerror(errno));
-  log_write(0,LOG_MAIN,"DCC: Couldn't shutdown socket: %s\n", strerror(errno));
+  log_write(LOG_MAIN,"DCC: Couldn't shutdown socket: %s\n", strerror(errno));
   /* If there is a problem with the shutdown()
    * defer the mail. */
   (void)fclose(data_file);
@@ -358,10 +357,10 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	      dcc_result = US"R";
 	      retval = FAIL;
 	      if(sender_host_name)
-		log_write(0, LOG_MAIN, "H=%s [%s] F=<%s>: rejected by DCC",
+		log_write(LOG_MAIN, "H=%s [%s] F=<%s>: rejected by DCC",
 			   sender_host_name, sender_host_address, sender_address);
 	      else
-		log_write(0, LOG_MAIN, "H=[%s] F=<%s>: rejected by DCC",
+		log_write(LOG_MAIN, "H=[%s] F=<%s>: rejected by DCC",
 			   sender_host_address, sender_address);
 	      break;
 	    case 'S':
@@ -385,7 +384,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	      dcc_return_text = US"Temporary error with DCC";
 	      dcc_result = US"T";
 	      retval = DEFER;
-	      log_write(0,LOG_MAIN,"Temporary error with DCC: %s\n", big_buffer);
+	      log_write(LOG_MAIN,"Temporary error with DCC: %s\n", big_buffer);
 	      break;
 	    default:
 	      DEBUG(acl)
@@ -393,7 +392,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	      dcc_return_text = US"Unknown DCC response";
 	      dcc_result = US"T";
 	      retval = DEFER;
-	      log_write(0,LOG_MAIN,"Unknown DCC response: %s\n", big_buffer);
+	      log_write(LOG_MAIN,"Unknown DCC response: %s\n", big_buffer);
 	      break;
 	    }
 	}
@@ -403,7 +402,7 @@ while((dcc_resplen = read(sockfd, big_buffer, big_buffer_size-1)) > 0)
 	   * there must be something wrong. */
 	  DEBUG(acl) debug_printf("DCC: Line = %d but bufoffset = %d != 0"
 	      "  character is %c - This is wrong!\n", line, bufoffset, big_buffer[bufoffset]);
-	  log_write(0,LOG_MAIN,"Wrong header from DCC, output is %s\n", big_buffer);
+	  log_write(LOG_MAIN,"Wrong header from DCC, output is %s\n", big_buffer);
 	  }
 	}
       else if(line == 2)

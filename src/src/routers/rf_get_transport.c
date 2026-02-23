@@ -71,7 +71,7 @@ if (expandable)
     }
   if (is_tainted(ss))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "attempt to use tainted value '%s' from '%s' for transport", ss, tpname);
     addr->basic_errno = ERRNO_BADTRANSPORT;
     /* Avoid leaking info to an attacker */

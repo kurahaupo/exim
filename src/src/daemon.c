@@ -128,7 +128,7 @@ never_error(uschar *log_msg, uschar *smtp_msg, int was_errno)
 {
 uschar *emsg = was_errno <= 0
   ? US"" : string_sprintf(": %s", strerror(was_errno));
-log_write(0, LOG_MAIN|LOG_PANIC, "%s%s", log_msg, emsg);
+log_write(LOG_MAIN|LOG_PANIC, "%s%s", log_msg, emsg);
 if (smtp_out_fd >= 0) smtp_printf("421 %s\r\n", SP_NO_MORE, smtp_msg);
 }
 
@@ -219,7 +219,7 @@ if ((smtp_in_fd = dup(accept_socket)) < 0)
 if (getsockname(accept_socket, (struct sockaddr *)(&interface_sockaddr),
      &ifsize) < 0)
   {
-  log_write(0, LOG_MAIN | ((errno == ECONNRESET)? 0 : LOG_PANIC),
+  log_write(LOG_MAIN | ((errno == ECONNRESET)? 0 : LOG_PANIC),
     "getsockname() failed: %s", strerror(errno));
   smtp_printf("421 Local problem: getsockname() failed; please try again later\r\n", SP_NO_MORE);
   goto ERROR_RETURN;
@@ -254,9 +254,9 @@ if (smtp_accept_max > 0 && smtp_accept_count >= smtp_accept_max)
     smtp_accept_count, smtp_accept_max);
   smtp_printf("421 Too many concurrent SMTP connections; "
     "please try again later.\r\n", SP_NO_MORE);
-  log_write(L_connection_reject,
-            LOG_MAIN, "Connection from %Y refused: too many connections",
-    whofrom);
+  if (LOGGING(connection_reject))
+    log_write(LOG_MAIN, "Connection from %Y refused: too many connections",
+	    whofrom);
   goto ERROR_RETURN;
   }
 
@@ -273,9 +273,9 @@ if (smtp_load_reserve >= 0)
     DEBUG(any) debug_printf("rejecting SMTP connection: load average = %.2f\n",
       (double)load_average/1000.0);
     smtp_printf("421 Too much load; please try again later.\r\n", SP_NO_MORE);
-    log_write(L_connection_reject,
-              LOG_MAIN, "Connection from %Y refused: load average = %.2f",
-      whofrom, (double)load_average/1000.0);
+    if (LOGGING(connection_reject))
+      log_write(LOG_MAIN, "Connection from %Y refused: load average = %.2f",
+	      whofrom, (double)load_average/1000.0);
     goto ERROR_RETURN;
     }
   }
@@ -295,7 +295,7 @@ if (smtp_accept_max_per_host)
   if (!expanded)
     {
     if (!f.expand_string_forcedfail)
-      log_write(0, LOG_MAIN|LOG_PANIC, "expansion of smtp_accept_max_per_host "
+      log_write(LOG_MAIN|LOG_PANIC, "expansion of smtp_accept_max_per_host "
         "failed for %Y: %s", whofrom, expand_string_message);
     }
   /* For speed, interpret a decimal number inline here */
@@ -305,7 +305,7 @@ if (smtp_accept_max_per_host)
     while (isdigit(*s))
       max_for_this_host = max_for_this_host * 10 + *s++ - '0';
     if (*s)
-      log_write(0, LOG_MAIN|LOG_PANIC, "expansion of smtp_accept_max_per_host "
+      log_write(LOG_MAIN|LOG_PANIC, "expansion of smtp_accept_max_per_host "
         "for %Y contains non-digit: %s", whofrom, expanded);
     }
   }
@@ -344,9 +344,9 @@ if (  smtp_slots
       host_accept_count, max_for_this_host);
     smtp_printf("421 Too many concurrent SMTP connections "
       "from this IP address; please try again later.\r\n", SP_NO_MORE);
-    log_write(L_connection_reject,
-              LOG_MAIN, "Connection from %Y refused: too many connections "
-      "from that IP address", whofrom);
+    if (LOGGING(connection_reject))
+      log_write(LOG_MAIN, "Connection from %Y refused: too many connections "
+	      "from that IP address", whofrom);
     search_tidyup();
     goto ERROR_RETURN;
     }
@@ -391,19 +391,20 @@ if (pid == 0)
 
     if (list && verify_check_host(&list) == OK)
       logging_modify_channels(US"-smtp_connection");
-    else if (LOGGING(connection_id))
-      log_write(L_smtp_connection, LOG_MAIN, "SMTP connection from %Y "
-	"Ci=%s (TCP/IP connection count = %d)",
-	whofrom, connection_id, smtp_accept_count);
-    else
-      log_write(L_smtp_connection, LOG_MAIN, "SMTP connection from %Y "
-	"(TCP/IP connection count = %d)", whofrom, smtp_accept_count);
+    else if (LOGGING(smtp_connection))
+      if (LOGGING(connection_id))
+	log_write(LOG_MAIN, "SMTP connection from %Y "
+	  "Ci=%s (TCP/IP connection count = %d)",
+	  whofrom, connection_id, smtp_accept_count);
+      else
+	log_write(LOG_MAIN, "SMTP connection from %Y "
+	  "(TCP/IP connection count = %d)", whofrom, smtp_accept_count);
     }
 
   /* If the listen backlog was over the monitoring level, log it. */
 
   if (smtp_listen_backlog > smtp_backlog_monitor)
-    log_write(0, LOG_MAIN, "listen backlog %d I=[%s]:%d",
+    log_write(LOG_MAIN, "listen backlog %d I=[%s]:%d",
 		smtp_listen_backlog, interface_address, interface_port);
 
   /* Get the local interface address into permanent store */
@@ -429,7 +430,7 @@ if (pid == 0)
       {
       if (!f.expand_string_forcedfail)
         {
-        log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand %q "
+        log_write(LOG_MAIN|LOG_PANIC, "failed to expand %q "
           "(smtp_active_hostname): %s", raw_active_hostname,
           expand_string_message);
         smtp_printf("421 Local configuration error; "
@@ -658,20 +659,20 @@ if (pid == 0)
     /* Log the queueing here, when it will get a message id attached, but
     not if queue_only is set (case 0). */
 
-    if (local_queue_only) switch(queue_only_reason)
+    if (LOGGING(delay_delivery) && local_queue_only) switch(queue_only_reason)
       {
-      case 1: log_write(L_delay_delivery,
-                LOG_MAIN, "no immediate delivery: too many connections "
-                "(%d, max %d)", smtp_accept_count, smtp_accept_queue);
+      case 1: log_write(LOG_MAIN,
+		"no immediate delivery: too many connections (%d, max %d)",
+		smtp_accept_count, smtp_accept_queue);
 	      break;
 
-      case 2: log_write(L_delay_delivery,
-                LOG_MAIN, "no immediate delivery: more than %d messages "
+      case 2: log_write(LOG_MAIN,
+		"no immediate delivery: more than %d messages "
                 "received in one connection", smtp_accept_queue_per_connection);
 	      break;
 
-      case 3: log_write(L_delay_delivery,
-                LOG_MAIN, "no immediate delivery: load average %.2f",
+      case 3: log_write(LOG_MAIN,
+		"no immediate delivery: load average %.2f",
                 (double)load_average/1000.0);
 	      break;
       }
@@ -729,7 +730,7 @@ if (pid == 0)
       else
 	{
 	cancel_cutthrough_connection(TRUE, US"delivery fork failed");
-        log_write(0, LOG_MAIN|LOG_PANIC, "daemon: delivery process fork "
+        log_write(LOG_MAIN|LOG_PANIC, "daemon: delivery process fork "
           "failed: %s", strerror(errno));
 	}
       }
@@ -776,7 +777,7 @@ descriptors are closed, in order to drop the connection. */
 if (smtp_out_fd >= 0)
   {
   if (close(smtp_out_fd) != 0 && errno != ECONNRESET && errno != EPIPE)
-    log_write(0, LOG_MAIN|LOG_PANIC, "daemon: close(smtp_out_fd) failed: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "daemon: close(smtp_out_fd) failed: %s",
       strerror(errno));
   smtp_out_fd = -1;
   }
@@ -784,7 +785,7 @@ if (smtp_out_fd >= 0)
 if (smtp_in_fd >= 0)
   {
   if (close(smtp_in_fd) != 0 && errno != ECONNRESET && errno != EPIPE)
-    log_write(0, LOG_MAIN|LOG_PANIC, "daemon: close(smtp_in_fd) failed: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "daemon: close(smtp_in_fd) failed: %s",
       strerror(errno));
   smtp_in_fd = -1;
   }
@@ -963,7 +964,7 @@ if (!*pid_file_path)
   pid_file_path = string_sprintf("%s/exim-daemon.pid", spool_directory);
 
 if (pid_file_path[0] != '/')
-  log_write_die(0, LOG_PANIC_DIE,
+  log_write_die(LOG_PANIC_DIE,
 		"pid file path %s must be absolute\n", pid_file_path);
 }
 
@@ -998,7 +999,7 @@ if (pid_len < 2 || pid_len >= (int)sizeof(pid_line)) goto cleanup;
 
 path = string_copy(pid_file_path);
 if ((base = Ustrrchr(path, '/')) == NULL)	/* should not happen, but who knows */
-  log_write_die(0, LOG_MAIN, "pid file path %q does not contain a '/'", pid_file_path);
+  log_write_die(LOG_MAIN, "pid file path %q does not contain a '/'", pid_file_path);
 
 dir = base != path ? path : US"/";
 *base++ = '\0';
@@ -1015,7 +1016,7 @@ if (dir_fd < 0 || fstat(dir_fd, &sb) != 0 || !S_ISDIR(sb.st_mode)) goto cleanup;
 if (fchdir(dir_fd) != 0) goto cleanup;
 base_fd = open(CS base, O_RDONLY | base_flags);
 if (fchdir(cwd_fd) != 0)
-  log_write_die(0, LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
+  log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
 
 if (base_fd >= 0)
   {
@@ -1046,7 +1047,7 @@ if (operation == PID_WRITE)
       if (fchdir(dir_fd) != 0) goto cleanup;
       error = unlink(CS base);
       if (fchdir(cwd_fd) != 0)
-        log_write_die(0, LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
+        log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
       if (error) goto cleanup;
       (void)close(base_fd);
       base_fd = -1;
@@ -1055,7 +1056,7 @@ if (operation == PID_WRITE)
     if (fchdir(dir_fd) != 0) goto cleanup;
     base_fd = open(CS base, O_WRONLY | O_CREAT | O_EXCL | base_flags, base_mode);
     if (fchdir(cwd_fd) != 0)
-        log_write_die(0, LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
+        log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
     if (base_fd < 0) goto cleanup;
     if (fchmod(base_fd, base_mode) != 0) goto cleanup;
     if (write(base_fd, pid_line, pid_len) != pid_len) goto cleanup;
@@ -1072,7 +1073,7 @@ else
     if (fchdir(dir_fd) != 0) goto cleanup;
     error = unlink(CS base);
     if (fchdir(cwd_fd) != 0)
-        log_write_die(0, LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
+        log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
     if (error) goto cleanup;
     }
   }
@@ -1244,7 +1245,7 @@ bad2:
   Uunlink(sa_un.sun_path);
 #endif
 bad:
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s %s: %s",
+  log_write(LOG_MAIN|LOG_PANIC, "%s %s: %s",
     __FUNCTION__, where, strerror(errno));
   close(fd);
   return;
@@ -1364,7 +1365,7 @@ switch (buf[0])
 
     if (sendto(daemon_notifier_fd, qsbuf, len, 0,
 		(const struct sockaddr *)&sa_un, msg.msg_namelen) < 0)
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 	"%s: sendto: %s\n", __FUNCTION__, strerror(errno));
     break;
     }
@@ -1400,7 +1401,7 @@ else
     DEBUG(any)
       debug_printf("inetd wait timeout %d expired, ending daemon\n",
 	  inetd_wait_timeout);
-    log_write(0, LOG_MAIN, "exim %s daemon terminating, inetd wait timeout reached.\n",
+    log_write(LOG_MAIN, "exim %s daemon terminating, inetd wait timeout reached.\n",
 	version_string);
     daemon_die();		/* Does not return */
     }
@@ -1562,7 +1563,7 @@ if (is_multiple_qrun())				/* we are managing periodic runs */
 #ifndef DISABLE_QUEUE_RAMP
 	  if (*queuerun_msgid)
 	    {
-	    log_write(0, LOG_MAIN, "notify triggered queue run");
+	    log_write(LOG_MAIN, "notify triggered queue run");
 	    extra[extracount++] = queuerun_msgid;	/* Trigger only the */
 	    extra[extracount++] = queuerun_msgid;	/* one message      */
 	    }
@@ -1597,7 +1598,7 @@ if (is_multiple_qrun())				/* we are managing periodic runs */
 #ifndef DISABLE_QUEUE_RAMP
 	if (*queuerun_msgid)
 	  {
-	  log_write(0, LOG_MAIN, "notify triggered queue run");
+	  log_write(LOG_MAIN, "notify triggered queue run");
 	  f.queue_2stage = FALSE;
 	  queue_run(q, queuerun_msgid, queuerun_msgid, FALSE);
 	  }
@@ -1609,7 +1610,7 @@ if (is_multiple_qrun())				/* we are managing periodic runs */
 
       if (pid < 0)
 	{
-	log_write(0, LOG_MAIN|LOG_PANIC, "daemon: fork of queue-runner "
+	log_write(LOG_MAIN|LOG_PANIC, "daemon: fork of queue-runner "
 	  "process failed: %s", strerror(errno));
 	log_close_all();
 	}
@@ -1774,7 +1775,7 @@ if (f.inetd_wait_mode)
   listen_socket_count = 1;
   (void) close(3);
   if (dup2(0, 3) == -1)
-    log_write_die(0, LOG_MAIN,
+    log_write_die(LOG_MAIN,
         "failed to dup inetd socket safely away: %s", strerror(errno));
 
   fd_polls[0].fd = 3;
@@ -1801,7 +1802,7 @@ if (f.inetd_wait_mode)
 
   if (tcp_nodelay)
     if (setsockopt(3, IPPROTO_TCP, TCP_NODELAY, US &on, sizeof(on)))
-      log_write_die(0, LOG_MAIN, "failed to set socket NODELAY: %s",
+      log_write_die(LOG_MAIN, "failed to set socket NODELAY: %s",
 	strerror(errno));
   }
 
@@ -1962,13 +1963,13 @@ if (f.daemon_listen && !f.inetd_wait_mode)
       uschar * end;
       default_smtp_port[pct] = Ustrtol(s, &end, 0);
       if (*end)
-        log_write_die(0, LOG_CONFIG, "invalid SMTP port: %s", s);
+        log_write_die(LOG_CONFIG, "invalid SMTP port: %s", s);
       }
     else
       {
       struct servent * smtp_service = getservbyname(CS s, "tcp");
       if (!smtp_service)
-        log_write_die(0, LOG_CONFIG, "TCP port %q not found", s);
+        log_write_die(LOG_CONFIG, "TCP port %q not found", s);
       default_smtp_port[pct] = ntohs(smtp_service->s_port);
       }
   default_smtp_port[pct] = 0;
@@ -1994,7 +1995,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
 	  {
 	  struct servent * smtp_service = getservbyname(CS s, "tcp");
 	  if (!smtp_service)
-	    log_write_die(0, LOG_CONFIG, "TCP port %q not found", s);
+	    log_write_die(LOG_CONFIG, "TCP port %q not found", s);
 	  g = string_append_listele_fmt(g, ':', FALSE, "%d",
 					      (int)ntohs(smtp_service->s_port));
 	  }
@@ -2033,7 +2034,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
     if (ipa->port > 0) continue;
 
     if (!*daemon_smtp_port)
-      log_write_die(0, LOG_MAIN, "no port specified for interface "
+      log_write_die(LOG_MAIN, "no port specified for interface "
         "%s and daemon_smtp_port is unset; cannot start daemon",
         ipa->address[0] == 0 ? US"\"all IPv4\"" :
         ipa->address[1] == 0 ? US"\"all IPv6\"" : ipa->address);
@@ -2172,7 +2173,7 @@ if (f.background_daemon)
     {
     BOOL daemon_listen = f.daemon_listen;
     pid_t pid = exim_fork(US"daemon");
-    if (pid < 0) log_write_die(0, LOG_MAIN,
+    if (pid < 0) log_write_die(LOG_MAIN,
       "fork() failed when starting daemon: %s", strerror(errno));
     if (pid > 0) exim_exit(EXIT_SUCCESS); /* in parent process, just exit */
     (void)setsid();                       /* release controlling terminal */
@@ -2217,11 +2218,11 @@ if (f.daemon_listen && !f.inetd_wait_mode)
       {
       if (check_special_case(0, addresses, ipa, FALSE))
         {
-        log_write(0, LOG_MAIN, "Failed to create IPv6 socket for wildcard "
+        log_write(LOG_MAIN, "Failed to create IPv6 socket for wildcard "
           "listening (%s): will use IPv4", strerror(errno));
         goto SKIP_SOCKET;
         }
-      log_write_die(0, LOG_PANIC_DIE, "IPv%c socket creation failed: %s",
+      log_write_die(LOG_PANIC_DIE, "IPv%c socket creation failed: %s",
         af == AF_INET6 ? '6' : '4', strerror(errno));
       }
 
@@ -2232,7 +2233,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
 #ifdef IPV6_V6ONLY
     if (af == AF_INET6 && wildcard &&
         setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) < 0)
-      log_write(0, LOG_MAIN, "Setting IPV6_V6ONLY on daemon's IPv6 wildcard "
+      log_write(LOG_MAIN, "Setting IPV6_V6ONLY on daemon's IPv6 wildcard "
         "socket failed (%s): carrying on without it", strerror(errno));
 #endif  /* IPV6_V6ONLY */
 
@@ -2241,7 +2242,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
     smtp port for listening. */
 
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
-      log_write_die(0, LOG_MAIN, "setting SO_REUSEADDR on socket "
+      log_write_die(LOG_MAIN, "setting SO_REUSEADDR on socket "
         "failed when starting daemon: %s", strerror(errno));
 
     /* Set TCP_NODELAY; Exim does its own buffering. There is a switch to
@@ -2280,10 +2281,10 @@ if (f.daemon_listen && !f.inetd_wait_mode)
 	: US"(any IPv4)"
 	: ipa->address;
       if (daemon_startup_retries <= 0)
-        log_write_die(0, LOG_MAIN,
+        log_write_die(LOG_MAIN,
           "socket bind() to port %d for address %s failed: %s: "
           "daemon abandoned", ipa->port, addr, msg);
-      log_write(0, LOG_MAIN, "socket bind() to port %d for address %s "
+      log_write(LOG_MAIN, "socket bind() to port %d for address %s "
         "failed: %s: waiting %s before trying again (%d more %s)",
         ipa->port, addr, msg, readconf_printtime(daemon_startup_sleep),
         daemon_startup_retries, (daemon_startup_retries > 1)? "tries" : "try");
@@ -2332,7 +2333,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
     where the IPv6 socket accepts both kinds of call. */
 
     if (!check_special_case(errno, addresses, ipa, TRUE))
-      log_write_die(0, LOG_PANIC_DIE, "listen() failed on interface %s: %s",
+      log_write_die(LOG_PANIC_DIE, "listen() failed on interface %s: %s",
         wildcard
 	? af == AF_INET6 ? US"(any IPv6)" : US"(any IPv4)" : ipa->address,
         strerror(errno));
@@ -2450,7 +2451,7 @@ if (f.inetd_wait_mode)
   else
     sprintf(CS p, "with no wait timeout");
 
-  log_write(0, LOG_MAIN, "exim %s daemon started: pid=" PID_T_FMT
+  log_write(LOG_MAIN, "exim %s daemon started: pid=" PID_T_FMT
 			  ", launched with listening socket, %s",
     version_string, getpid(), big_buffer);
   daemon_process_info = US"pre-listening socket";
@@ -2593,7 +2594,7 @@ else if (f.daemon_listen)
       p += sprintf(CS p, " ...");
     }
 
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
     "exim %s daemon started: pid=" PID_T_FMT ", %s, listening for %s",
     version_string, getpid(), qinfo, big_buffer);
   daemon_process_info =
@@ -2603,7 +2604,7 @@ else if (f.daemon_listen)
 else	/* no listening sockets, only queue-runs */
   {
   const uschar * s = describe_queue_runners();
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
     "exim %s daemon started: pid=" PID_T_FMT ", %s, not listening for SMTP",
     version_string, getpid(), s);
   daemon_process_info = string_sprintf("%s, not listening", s);
@@ -2838,7 +2839,7 @@ for (;;)
 		|| select_failed != accept_retry_select_failed
 		|| accept_retry_count >= 50)
 	  {
-	  log_write(0, LOG_MAIN | (accept_retry_count >= 50 ? LOG_PANIC : 0),
+	  log_write(LOG_MAIN | (accept_retry_count >= 50 ? LOG_PANIC : 0),
 	    "%d %s() failure%s: %s",
 	    accept_retry_count,
 	    accept_retry_select_failed ? "select" : "accept",
@@ -2853,7 +2854,7 @@ for (;;)
         }
       else if (accept_retry_count > 0)
 	{
-	log_write(0, LOG_MAIN, "%d %s() failure%s: %s",
+	log_write(LOG_MAIN, "%d %s() failure%s: %s",
 	  accept_retry_count,
 	  accept_retry_select_failed ? "select" : "accept",
 	  accept_retry_count == 1 ? "" : "s",
@@ -2912,7 +2913,7 @@ for (;;)
 
   if (sighup_seen)
     {
-    log_write(0, LOG_MAIN, "pid " PID_T_FMT ": SIGHUP received: re-exec daemon",
+    log_write(LOG_MAIN, "pid " PID_T_FMT ": SIGHUP received: re-exec daemon",
       getpid());
     close_daemon_sockets(daemon_notifier_fd, fd_polls, listen_socket_count);
     unlink_notifier_socket();
@@ -2921,7 +2922,7 @@ for (;;)
     sighup_argv[0] = exim_path;
     exim_nullstd();
     execv(CS exim_path, (char *const *)sighup_argv);
-    log_write_die(0, LOG_MAIN, "pid " PID_T_FMT ": exec of %s failed: %s",
+    log_write_die(LOG_MAIN, "pid " PID_T_FMT ": exec of %s failed: %s",
       getpid(), exim_path, strerror(errno));
     /*NOTREACHED*/
     }

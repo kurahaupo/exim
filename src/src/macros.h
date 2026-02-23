@@ -406,6 +406,20 @@ and are only ever tested independently, so they do not need bit mask
 declarations. The "all" name string is recognized specially by decode_bits().
 Add also to log_options[] when creating new ones. */
 
+/*XXX The use of this facility in calls to log_write() forces the presence and
+maintenance of this separate table.  It would be good to lose it.  Why cannot
+the LOGWRITE() macro be tested at the call point?
+- currently we debug-output the log call even when a requested log channel
+  is not enabled. A naive replacement would lose that.
+- the fn arg only controls LOG_MAIN log output, not LOG_REJECT or LOG_PANIC
+  - are there such cases?
+    - receive.c 2359, 3330
+    - smtp_in.c 2620, 3706, 5088, 5136
+    - all main+reject
+    - though the docs say only "a log line is written", so a quiet behaviour
+      change could be argued for
+*/
+
 #define LOG_BIT(name) BIT_TABLE_BIT(L, name)
 
 /* Bit numbers used by calls to log_write() */

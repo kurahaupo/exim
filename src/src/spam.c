@@ -123,12 +123,12 @@ if (Ustrncmp(param, "retry=", 6) == 0)
   return 0;
   }
 
-log_write(0, LOG_MAIN, "%s warning - invalid spamd parameter: '%s'",
+log_write(LOG_MAIN, "%s warning - invalid spamd parameter: '%s'",
   loglabel, param);
 return -1; /* syntax error */
 
 badval:
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
     "%s warning - invalid spamd %s value: '%s'", loglabel, name, s);
   return -1; /* syntax error */
 }
@@ -168,7 +168,7 @@ for (long rnd = random_number(weights), i = 0; i < num_servers; i++)
       return i;
   }
 
-log_write(0, LOG_MAIN|LOG_PANIC,
+log_write(LOG_MAIN|LOG_PANIC,
   "%s unknown error (memory/cpu corruption?)", loglabel);
 return -1;
 }
@@ -216,7 +216,7 @@ if (*spamd_address != '$')
   spamd_address_work = spamd_address;
 else if (!(spamd_address_work = expand_string(spamd_address)))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "%s spamd_address starts with $, but expansion failed: %s",
     loglabel, expand_string_message);
   return DEFER;
@@ -239,7 +239,7 @@ if (spam_ok && Ustrcmp(cached_user_name, user_name) == 0)
 
 if (!(mbox_file = spool_mbox(&mbox_size, NULL, NULL)))
   {								/* error while spooling */
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
 	 "%s error while creating mbox spool file", loglabel);
   return DEFER;
   }
@@ -285,7 +285,7 @@ start = time(NULL);
       }
     if (args < 2)
       {
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 	"%s warning - invalid spamd address: '%s'", loglabel, address);
       continue;
       }
@@ -298,7 +298,7 @@ start = time(NULL);
   /* check if we have at least one server */
   if (!num_servers)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
        "%s no useable spamd server addresses in spamd_address configuration option.",
        loglabel);
     goto defer;
@@ -325,13 +325,13 @@ start = time(NULL);
     if (spamd_cctx.sock >= 0)
       break;
 
-    log_write(0, LOG_MAIN, "%s spamd: %s", loglabel, errstr);
+    log_write(LOG_MAIN, "%s spamd: %s", loglabel, errstr);
     sd->is_failed = TRUE;
 
     current_server = spamd_get_server(spamd_address_vector, num_servers);
     if (current_server < 0)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "%s all spamd servers failed", loglabel);
+      log_write(LOG_MAIN|LOG_PANIC, "%s all spamd servers failed", loglabel);
       goto defer;
       }
     sd = spamd_address_vector[current_server];
@@ -378,7 +378,7 @@ else
 if (wrote == -1)
   {
   (void)close(spamd_cctx.sock);
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s spamd %s send failed: %s",
+  log_write(LOG_MAIN|LOG_PANIC, "%s spamd %s send failed: %s",
 	    loglabel, callout_address, strerror(errno));
   goto defer;
   }
@@ -413,13 +413,13 @@ again:
     else if (result < 1)
       {
       if (result == -1)
-	log_write(0, LOG_MAIN|LOG_PANIC,
+	log_write(LOG_MAIN|LOG_PANIC,
 	  "%s %s on spamd %s socket", loglabel, callout_address, strerror(errno));
       else
 	{
 	if (time(NULL) - start < sd->timeout)
 	  goto again;
-	log_write(0, LOG_MAIN|LOG_PANIC,
+	log_write(LOG_MAIN|LOG_PANIC,
 	  "%s timed out writing spamd %s, socket", loglabel, callout_address);
 	}
       (void)close(spamd_cctx.sock);
@@ -429,7 +429,7 @@ again:
     wrote = send(spamd_cctx.sock,spamd_buffer + offset,read - offset,0);
     if (wrote == -1)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 	  "%s %s on spamd %s socket", loglabel, callout_address, strerror(errno));
       (void)close(spamd_cctx.sock);
       goto defer;
@@ -445,7 +445,7 @@ while (!feof(mbox_file) && !ferror(mbox_file));
 
 if (ferror(mbox_file))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "%s error reading spool file: %s", loglabel, strerror(errno));
   (void)close(spamd_cctx.sock);
   goto defer;
@@ -468,7 +468,7 @@ spamd_buffer[offset] = '\0';	/* guard byte */
 /* error handling */
 if (errno != 0)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
        "%s error reading from spamd %s, socket: %s", loglabel, callout_address, strerror(errno));
   (void)close(spamd_cctx.sock);
   return DEFER;
@@ -487,7 +487,7 @@ if (sd->is_rspamd)
      || spamd_report_offset >= offset		/* verify within buffer */
      )
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	      "%s cannot parse spamd %s, output: %d", loglabel, callout_address, r);
     return DEFER;
     }
@@ -516,7 +516,7 @@ else
 	   "SPAMD/%7s 0 EX_OK\r\nSpam: %*s ; %lf / %lf\r\n\r\n%n",
 	   spamd_version,&spamd_score,&spamd_threshold,&spamd_report_offset) != 3)
 	{
-	log_write(0, LOG_MAIN|LOG_PANIC,
+	log_write(LOG_MAIN|LOG_PANIC,
 		  "%s cannot parse spamd %s output", loglabel, callout_address);
 	return DEFER;
 	}

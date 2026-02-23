@@ -149,7 +149,7 @@ arc_init(void * dummy)
 uschar * errstr = NULL;
 if ((arc_dkim_mod_info = misc_mod_find(US"dkim", &errstr)))
   return TRUE;
-log_write(0, LOG_MAIN, "arc: %s", errstr);
+log_write(LOG_MAIN, "arc: %s", errstr);
 return FALSE;
 }
 
@@ -1436,7 +1436,7 @@ errstr = (((fn_t *) arc_dkim_mod_info->functions)[DKIM_SIGN_DATA])
 						  (&hhash, hm, privkey, sig);
 if (errstr)
   {
-  log_write(0, LOG_MAIN, "ARC: %s signing: %s\n", why, errstr);
+  log_write(LOG_MAIN, "ARC: %s signing: %s\n", why, errstr);
   DEBUG(transport)
     debug_printf("private key, or private-key file content, was: '%s'\n",
       privkey);
@@ -1861,7 +1861,7 @@ if ((rheaders = arc_sign_scan_headers(&arc_sign_ctx, sigheaders)))
 
 if (!(arc_sign_find_ar(headers, identity, &ar)))
   {
-  log_write(0, LOG_MAIN, "ARC: no Authentication-Results header for signing");
+  log_write(LOG_MAIN, "ARC: no Authentication-Results header for signing");
   goto ret_sigheaders;
   }
 
@@ -1929,11 +1929,11 @@ out:
 
 
 bad_bodyhash_ret:
-  log_write(0, LOG_MAIN, "ARC: bad message body-hash");
+  log_write(LOG_MAIN, "ARC: bad message body-hash");
   goto ret_sigheaders;
 
 bad_arg_ret:
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
 	    "ARC: bad signing-specification (%s) '%s'", s, orig_signspec);
 ret_sigheaders:
   g = sigheaders;

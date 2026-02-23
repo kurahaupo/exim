@@ -11,8 +11,6 @@ sender address = CALLER@test.ex
 sender_fullhost = [V4NET.0.0.0]
 sender_rcvhost = [V4NET.0.0.0]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.0.0.0]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.0.0.0]
 host in host_reject_connection? no (option unset)
@@ -69,8 +67,6 @@ SMTP>| 250 OK id=10HmaX-000000005vi-0000
 smtp_setup_msg entered
 SMTP<< quit
 SMTP>| 221 mail.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test) [V4NET.0.0.0] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

@@ -135,7 +135,7 @@ for (rewrite_rule * rule = rewrite_rules;
     if (!key)
       {
       if (!f.expand_string_forcedfail)
-        log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand %q while "
+        log_write(LOG_MAIN|LOG_PANIC, "failed to expand %q while "
           "checking for SMTP rewriting: %s", rule->key, expand_string_message);
       continue;
       }
@@ -199,7 +199,7 @@ for (rewrite_rule * rule = rewrite_rules;
 
     expand_string_message = expand_hide_passwords(expand_string_message);
 
-    log_write(0, LOG_MAIN|LOG_PANIC, "Expansion of %s failed while rewriting: "
+    log_write(LOG_MAIN|LOG_PANIC, "Expansion of %s failed while rewriting: "
       "%s", rule->replacement, expand_string_message);
     break;
     }
@@ -212,7 +212,7 @@ for (rewrite_rule * rule = rewrite_rules;
 
   if (!newparsed)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Rewrite of %s yielded unparseable "
+    log_write(LOG_MAIN|LOG_PANIC, "Rewrite of %s yielded unparseable "
       "address: %s in address %s", subject, error, new);
     break;   /* Give up on this address */
     }
@@ -233,7 +233,7 @@ for (rewrite_rule * rule = rewrite_rules;
       }
     else
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "Rewrite of %s yielded unqualified "
+      log_write(LOG_MAIN|LOG_PANIC, "Rewrite of %s yielded unqualified "
         "address %q", subject, new);
       break;   /* Give up on this address */
       }
@@ -249,8 +249,8 @@ for (rewrite_rule * rule = rewrite_rules;
       if (flag == where_list[i].bit)
         { where = where_list[i].string; break; }
 
-    log_write(L_address_rewrite,
-           LOG_MAIN, "\"%s\" from %s rewritten %s \"%s\" by rule %d",
+    if (LOGGING(address_rewrite))
+      log_write(LOG_MAIN, "\"%s\" from %s rewritten %s \"%s\" by rule %d",
            yield, where,
 	   rule->flags & rewrite_whole || !Ustrchr(new, '<')
 	     ?  "as" : "with (address part of)",
@@ -347,7 +347,7 @@ for (rewrite_rule * rule = rewrite_rules;
   if (rule->flags & rewrite_repeat)
     {
     if (count++ < 10) goto REPEAT_RULE;
-    log_write(0, LOG_MAIN|LOG_PANIC, "rewrite rule repeat ignored after 10 "
+    log_write(LOG_MAIN|LOG_PANIC, "rewrite rule repeat ignored after 10 "
       "times");
     }
   }
@@ -502,7 +502,7 @@ while (*s)
     this one and carry on. */
 
     if (Ustrcmp(errmess, "empty address") != 0)
-      log_write(0, LOG_MAIN, "qualify/rewrite: %s", errmess);
+      log_write(LOG_MAIN, "qualify/rewrite: %s", errmess);
 
     loop_reset_point = store_reset(loop_reset_point);
     continue;

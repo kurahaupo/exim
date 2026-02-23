@@ -31,7 +31,7 @@ if (acl_smtp_atrn && !atrn_mode
    && (exp_acl = expand_string(acl_smtp_atrn)) && !*exp_acl)
   exp_acl = NULL;
 if (!exp_acl || !authenticated_id || sender_address)
-  return synprot_error(L_smtp_protocol_error,
+  return synprot_error(TRUE,
     !exp_acl ? 502 : !authenticated_id ? 530 : 503,
     NULL,
     !exp_acl ?		US"ATRN command used when not advertised"
@@ -39,8 +39,9 @@ if (!exp_acl || !authenticated_id || sender_address)
     :			US"ATRN is not permitted inside a transaction"
     );
 
-log_write(L_etrn, LOG_MAIN, "ATRN '%s' received from %s",
-  smtp_cmd_argument, host_and_ident(FALSE));
+if (LOGGING(etrn))
+  log_write(LOG_MAIN, "ATRN '%s' received from %s",
+    smtp_cmd_argument, host_and_ident(FALSE));
 
 if ((rc = acl_check(ACL_WHERE_ATRN, NULL, exp_acl, user_msgp, log_msgp)) != OK)
   return smtp_handle_acl_fail(ACL_WHERE_ATRN, rc, *user_msgp, *log_msgp);

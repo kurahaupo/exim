@@ -6,7 +6,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: userx@domain1
@@ -44,7 +44,7 @@ LOG: MAIN
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: usery@domain1
 unique = usery@domain1
-LOG: retry_defer MAIN
+LOG: MAIN
   == usery@domain1 routing defer (-52): retry time not reached
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
@@ -54,6 +54,6 @@ After routing:
   Deferred addresses:
     usery@domain1
 >>>>>>>>>>>>>>>> Exim pid=p1237 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

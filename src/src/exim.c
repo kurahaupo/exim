@@ -51,7 +51,7 @@ static void *
 function_store_malloc(PCRE2_SIZE size, void * tag)
 {
 if (size > INT_MAX)
-  log_write_die(0, LOG_MAIN, "excessive memory alloc request");
+  log_write_die(LOG_MAIN, "excessive memory alloc request");
 return store_malloc((int)size);
 }
 
@@ -67,7 +67,7 @@ static void *
 function_store_get(PCRE2_SIZE size, void * tag)
 {
 if (size > INT_MAX)
-  log_write_die(0, LOG_MAIN, "excessive memory alloc request");
+  log_write_die(LOG_MAIN, "excessive memory alloc request");
 return store_get((int)size, GET_UNTAINTED);	/* loses track of taint */
 }
 
@@ -262,8 +262,8 @@ void * buf[STACKDUMP_MAX];
 char ** ss;
 int nptrs = backtrace(buf, STACKDUMP_MAX);
 
-log_write(0, LOG_MAIN|LOG_PANIC, "backtrace");
-log_write(0, LOG_MAIN|LOG_PANIC, "---");
+log_write(LOG_MAIN|LOG_PANIC, "backtrace");
+log_write(LOG_MAIN|LOG_PANIC, "---");
 
 /* This function is officially not callable from a signal handler, as it
 calls malloc() for the returned data. However, it seems to work - and we
@@ -273,12 +273,12 @@ A alternative might be backtrace_symbols_fd(). */
 if ((ss = backtrace_symbols(buf, nptrs)))
   {
   for (int i = 0; i < nptrs; i++)
-    log_write(0, LOG_MAIN|LOG_PANIC, "\t%s", ss[i]);
+    log_write(LOG_MAIN|LOG_PANIC, "\t%s", ss[i]);
   free(ss);
   }
 else
-  log_write(0, LOG_MAIN|LOG_PANIC, "backtrace_symbols: %s", strerror(errno));
-log_write(0, LOG_MAIN|LOG_PANIC, "---");
+  log_write(LOG_MAIN|LOG_PANIC, "backtrace_symbols: %s", strerror(errno));
+log_write(LOG_MAIN|LOG_PANIC, "---");
 #endif
 }
 #undef STACKDUMP_MAX
@@ -290,25 +290,25 @@ segv_handler(int sig, siginfo_t * info, void * uctx)
 {
 if (!panic_coredump)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "SIGSEGV (fault address: %p)", info->si_addr);
+  log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (fault address: %p)", info->si_addr);
   # if defined(SEGV_MAPERR) && defined(SEGV_ACCERR) && defined(SEGV_BNDERR) && defined(SEGV_PKUERR)
   switch (info->si_code)
     {
-    case SEGV_MAPERR: log_write(0, LOG_MAIN|LOG_PANIC, "SEGV_MAPERR"); break;
-    case SEGV_ACCERR: log_write(0, LOG_MAIN|LOG_PANIC, "SEGV_ACCERR"); break;
-    case SEGV_BNDERR: log_write(0, LOG_MAIN|LOG_PANIC, "SEGV_BNDERR"); break;
-    case SEGV_PKUERR: log_write(0, LOG_MAIN|LOG_PANIC, "SEGV_PKUERR"); break;
+    case SEGV_MAPERR: log_write(LOG_MAIN|LOG_PANIC, "SEGV_MAPERR"); break;
+    case SEGV_ACCERR: log_write(LOG_MAIN|LOG_PANIC, "SEGV_ACCERR"); break;
+    case SEGV_BNDERR: log_write(LOG_MAIN|LOG_PANIC, "SEGV_BNDERR"); break;
+    case SEGV_PKUERR: log_write(LOG_MAIN|LOG_PANIC, "SEGV_PKUERR"); break;
     }
   # endif
   }
 if (panic_coredump)
-  log_write(0, LOG_MAIN|LOG_PANIC, "SIGSEGV (deliberate trap)");
+  log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (deliberate trap)");
 else if (US info->si_addr < US 4096)
-  log_write(0, LOG_MAIN|LOG_PANIC, "SIGSEGV (null pointer indirection)");
+  log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (null pointer indirection)");
 else
-  log_write(0, LOG_MAIN|LOG_PANIC, "SIGSEGV (maybe attempt to write to immutable memory)");
+  log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (maybe attempt to write to immutable memory)");
 if (process_info_len > 0)
-  log_write(0, LOG_MAIN|LOG_PANIC, "SIGSEGV (%s: %.*s)",
+  log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (%s: %.*s)",
     process_purpose, process_info_len, process_info);
 stackdump();
 signal(SIGSEGV, SIG_DFL);
@@ -318,9 +318,9 @@ kill(getpid(), sig);
 #else
 segv_handler(int sig)
 {
-log_write(0, LOG_MAIN|LOG_PANIC, "SIGSEGV (maybe attempt to write to immutable memory)");
+log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (maybe attempt to write to immutable memory)");
 if (process_info_len > 0)
-  log_write(0, LOG_MAIN|LOG_PANIC, "SIGSEGV (%.*s)", process_info_len, process_info);
+  log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (%.*s)", process_info_len, process_info);
 stackdump();
 signal(SIGSEGV, SIG_DFL);
 kill(getpid(), sig);
@@ -424,7 +424,7 @@ if (itval->it_value.tv_usec < 50 && itval->it_value.tv_sec <= 0)
 (void)sigaddset(&sigmask, SIGALRM);                    /* Add SIGALRM */
 (void)sigprocmask(SIG_BLOCK, &sigmask, &old_sigmask);  /* Block SIGALRM */
 if (setitimer(ITIMER_REAL, itval, NULL) < 0)           /* Start timer */
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "setitimer() failed: %s", strerror(errno));
 (void)sigfillset(&sigmask);                            /* All signals */
 (void)sigdelset(&sigmask, SIGALRM);                    /* Remove SIGALRM */
@@ -672,7 +672,7 @@ for (int i = 0; i <= 2; i++)
   if (fstat(i, &statbuf) < 0 && errno == EBADF)
     {
     if (devnull < 0) devnull = open("/dev/null", O_RDWR);
-    if (devnull < 0) log_write_die(0, LOG_MAIN, "%s",
+    if (devnull < 0) log_write_die(LOG_MAIN, "%s",
       string_open_failed("/dev/null", NULL));
     if (devnull != i) (void)dup2(devnull, i);
     }
@@ -787,16 +787,16 @@ if (euid == root_uid || euid != uid || egid != gid || igflag)
     {
     struct passwd * pw = getpwuid(uid);
     if (!pw)
-      log_write_die(0, LOG_MAIN, "cannot run initgroups(): "
+      log_write_die(LOG_MAIN, "cannot run initgroups(): "
 	"no passwd entry for uid=%ld", (long int)uid);
 
     if (initgroups(pw->pw_name, gid) != 0)
-      log_write_die(0,LOG_MAIN,"initgroups failed for uid=%ld: %s",
+      log_write_die(LOG_MAIN,"initgroups failed for uid=%ld: %s",
 	(long int)uid, strerror(errno));
     }
 
   if (setgid(gid) < 0 || setuid(uid) < 0)
-    log_write_die(0, LOG_MAIN, "unable to set gid=%ld or uid=%ld "
+    log_write_die(LOG_MAIN, "unable to set gid=%ld or uid=%ld "
       "(euid=%ld): %s", (long int)gid, (long int)uid, (long int)euid, msg);
   }
 
@@ -925,7 +925,7 @@ exim_chown_failure(int fd, const uschar *name, uid_t owner, gid_t group)
 {
 int saved_errno = errno;  /* from the preceeding chown call */
 #if 1
-log_write(0, LOG_MAIN|LOG_PANIC,
+log_write(LOG_MAIN|LOG_PANIC,
   __FILE__ ":%d: chown(%s, %d:%d) failed (%s)."
   " Please contact the authors and refer to https://bugs.exim.org/show_bug.cgi?id=2391",
   __LINE__, name?name:US"<unknown>", owner, group, strerror(errno));
@@ -940,9 +940,9 @@ struct stat buf;
 if (0 == (fd < 0 ? stat(name, &buf) : fstat(fd, &buf)))
   {
   if (buf.st_uid == owner && buf.st_gid == group) return 0;
-  log_write(0, LOG_MAIN|LOG_PANIC, "Wrong ownership on %s", name);
+  log_write(LOG_MAIN|LOG_PANIC, "Wrong ownership on %s", name);
   }
-else log_write(0, LOG_MAIN|LOG_PANIC, "Stat failed on %s: %s", name, strerror(errno));
+else log_write(LOG_MAIN|LOG_PANIC, "Stat failed on %s: %s", name, strerror(errno));
 
 #endif
 errno = saved_errno;
@@ -2239,7 +2239,7 @@ unprivileged = (real_uid != root_uid && original_euid != root_uid);
 
 /* Allocate an empty bitmask for debug channels */
 
-debug_modify_channel(US"");
+ debug_modify_channel(US"");
 
 /* Scan the program's arguments. Some can be dealt with right away; others are
 simply recorded for checking and handling afterwards. Do a high-level switch
@@ -4028,7 +4028,7 @@ else
 #ifdef RLIMIT_NOFILE
   if (getrlimit(RLIMIT_NOFILE, &rlp) < 0)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "getrlimit(RLIMIT_NOFILE) failed: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "getrlimit(RLIMIT_NOFILE) failed: %s",
       strerror(errno));
     rlp.rlim_cur = rlp.rlim_max = 0;
     }
@@ -4044,7 +4044,7 @@ else
       {
       rlp.rlim_cur = rlp.rlim_max = 256;
       if (setrlimit(RLIMIT_NOFILE, &rlp) < 0)
-        log_write(0, LOG_MAIN|LOG_PANIC, "setrlimit(RLIMIT_NOFILE) failed: %s",
+        log_write(LOG_MAIN|LOG_PANIC, "setrlimit(RLIMIT_NOFILE) failed: %s",
           strerror(errno));
       }
     }
@@ -4053,7 +4053,7 @@ else
 #ifdef RLIMIT_NPROC
   if (getrlimit(RLIMIT_NPROC, &rlp) < 0)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "getrlimit(RLIMIT_NPROC) failed: %s",
+    log_write(LOG_MAIN|LOG_PANIC, "getrlimit(RLIMIT_NPROC) failed: %s",
       strerror(errno));
     rlp.rlim_cur = rlp.rlim_max = 0;
     }
@@ -4068,7 +4068,7 @@ else
     rlp.rlim_cur = rlp.rlim_max = 1000;
 # endif
     if (setrlimit(RLIMIT_NPROC, &rlp) < 0)
-      log_write(0, LOG_MAIN|LOG_PANIC, "setrlimit(RLIMIT_NPROC) failed: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "setrlimit(RLIMIT_NPROC) failed: %s",
         strerror(errno));
     }
 #endif
@@ -4249,7 +4249,7 @@ defined) */
 /* Now in directory "/" */
 
 if (cleanup_environment() == FALSE)
-  log_write_die(0, LOG_PANIC_DIE, "Can't cleanup environment");
+  log_write_die(LOG_PANIC_DIE, "Can't cleanup environment");
 
 
 /* If an action on specific messages is requested, or if a daemon or queue
@@ -4348,28 +4348,24 @@ log_write() from here will cause the ultimate panic collapse if the complete
 file name exceeds the buffer length. */
 
 if (Ustrlen(log_file_path) > 200)
-  log_write_die(0, LOG_MAIN,
-    "log_file_path is longer than 200 chars: aborting");
+  log_write_die(LOG_MAIN, "log_file_path is longer than 200 chars: aborting");
 
 if (Ustrlen(pid_file_path) > 200)
-  log_write_die(0, LOG_MAIN,
-    "pid_file_path is longer than 200 chars: aborting");
+  log_write_die(LOG_MAIN, "pid_file_path is longer than 200 chars: aborting");
 
 if (Ustrlen(spool_directory) > 200)
-  log_write_die(0, LOG_MAIN,
-    "spool_directory is longer than 200 chars: aborting");
+  log_write_die(LOG_MAIN, "spool_directory is longer than 200 chars: aborting");
 
 /* Length check on the process name given to syslog for its TAG field,
 which is only permitted to be 32 characters or less. See RFC 3164. */
 
 if (Ustrlen(syslog_processname) > 32)
-  log_write_die(0, LOG_MAIN,
-    "syslog_processname is longer than 32 chars: aborting");
+  log_write_die(LOG_MAIN, "syslog_processname is longer than 32 chars: aborting");
 
 if (log_oneline)
   if (f.admin_user)
     {
-    log_write(0, LOG_MAIN, "%s", log_oneline);
+    log_write(LOG_MAIN, "%s", log_oneline);
     return EXIT_SUCCESS;
     }
   else
@@ -4464,7 +4460,7 @@ if (  removed_privilege
   if (deliver_drop_privilege)
     f.really_exim = TRUE; /* let logging work normally */
   else
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "exim user lost privilege for using %s option",
       f.trusted_config? "-D" : "-C");
 
@@ -4511,7 +4507,7 @@ if (  (IS_DEBUG(any) || LOGGING(arguments))
     if (p + len + 8 >= big_buffer + big_buffer_size)
       {
       Ustrcpy(p, US" ...");
-      log_write(0, LOG_MAIN, "%s", big_buffer);
+      log_write(LOG_MAIN, "%s", big_buffer);
       Ustrcpy(big_buffer, US"...");
       p = big_buffer + 3;
       }
@@ -4528,7 +4524,7 @@ if (  (IS_DEBUG(any) || LOGGING(arguments))
     }
 
   if (LOGGING(arguments))
-    log_write(0, LOG_MAIN, "%s", big_buffer);
+    log_write(LOG_MAIN, "%s", big_buffer);
   else
     debug_printf("%s\n", big_buffer);
   }
@@ -4687,7 +4683,7 @@ if (smtp_input)
 
       if (real_uid == root_uid || real_uid == exim_uid || interface_port < 1024)
         {
-        if (mua_wrapper) log_write_die(0, LOG_MAIN, "Input from "
+        if (mua_wrapper) log_write_die(LOG_MAIN, "Input from "
           "inetd is not supported when mua_wrapper is set");
         f.is_inetd = TRUE;
         sender_host_address = host_ntoa(-1, (struct sockaddr *)(&inetd_sock),
@@ -5209,7 +5205,7 @@ if (!originator_login || f.running_in_test_harness)
     if (!originator_name) originator_name = US"";
     }
   if (!originator_login)
-    log_write_die(0, LOG_MAIN, "Failed to get user name for uid %d",
+    log_write_die(LOG_MAIN, "Failed to get user name for uid %d",
       (int)real_uid);
   }
 
@@ -5238,7 +5234,7 @@ if (f.daemon_listen || f.inetd_wait_mode || is_multiple_qrun())
   if (mua_wrapper)
     {
     fprintf(stderr, "Daemon cannot be run when mua_wrapper is set\n");
-    log_write_die(0, LOG_MAIN, "Daemon cannot be run when "
+    log_write_die(LOG_MAIN, "Daemon cannot be run when "
       "mua_wrapper is set");
     }
 
@@ -5514,7 +5510,7 @@ if (raw_active_hostname)
   if (!nah)
     {
     if (!f.expand_string_forcedfail)
-      log_write_die(0, LOG_MAIN, "failed to expand %q "
+      log_write_die(LOG_MAIN, "failed to expand %q "
         "(smtp_active_hostname): %s", raw_active_hostname,
         expand_string_message);
     }
@@ -5571,7 +5567,8 @@ if (host_checking)
 
   if (verify_check_host(&hosts_connection_nolog) == OK)
     logging_modify_channels(US"-smtp_connection -smtp_no_mail");
-  log_write(L_smtp_connection, LOG_MAIN, "%s", smtp_get_connection_info());
+  if (LOGGING(smtp_connection))
+    log_write(LOG_MAIN, "%s", smtp_get_connection_info());
 
   /* NOTE: We do *not* call smtp_log_no_mail() if smtp_start_session() fails,
   because a log line has already been written for all its failure exists
@@ -5763,7 +5760,8 @@ if (smtp_input)
   memset(sender_host_cache, 0, sizeof(sender_host_cache));
   if (verify_check_host(&hosts_connection_nolog) == OK)
     logging_modify_channels(US"-smtp_connection -smtp_no_mail");
-  log_write(L_smtp_connection, LOG_MAIN, "%s", smtp_get_connection_info());
+  if (LOGGING(smtp_connection))
+    log_write(LOG_MAIN, "%s", smtp_get_connection_info());
 
   if (!smtp_start_session())
     exim_exit(EXIT_SUCCESS);
@@ -5778,10 +5776,10 @@ else
   thismessage_size_limit = expand_string_integer(message_size_limit, TRUE);
   if (expand_string_message)
     if (thismessage_size_limit == -1)
-      log_write_die(0, LOG_MAIN, "failed to expand "
+      log_write_die(LOG_MAIN, "failed to expand "
         "message_size_limit: %s", expand_string_message);
     else
-      log_write_die(0, LOG_MAIN, "invalid value for "
+      log_write_die(LOG_MAIN, "invalid value for "
         "message_size_limit: %s", expand_string_message);
 
   setvbuf(stdin, NULL, _IONBF, 0);
@@ -6169,19 +6167,17 @@ for (BOOL more = TRUE; more; )
   if (local_queue_only)
     {
     cancel_cutthrough_connection(TRUE, US"no delivery; queueing");
-    switch(queue_only_reason)
+    if (LOGGING(delay_delivery)) switch(queue_only_reason)
       {
       case 2:
-	log_write(L_delay_delivery,
-		LOG_MAIN, "no immediate delivery: more than %d messages "
-	  "received in one connection", smtp_accept_queue_per_connection);
+	log_write(LOG_MAIN, "no immediate delivery: more than %d messages "
+		"received in one connection", smtp_accept_queue_per_connection);
 	break;
 
       case 3:
-	log_write(L_delay_delivery,
-		LOG_MAIN, "no immediate delivery: load average %.2f",
+	log_write(LOG_MAIN, "no immediate delivery: load average %.2f",
 		(double)load_average/1000.0);
-      break;
+	break;
       }
     }
 
@@ -6227,7 +6223,7 @@ for (BOOL more = TRUE; more; )
     if (pid < 0)
       {
       cancel_cutthrough_connection(TRUE, US"delivery fork failed");
-      log_write(0, LOG_MAIN|LOG_PANIC, "failed to fork automatic delivery "
+      log_write(LOG_MAIN|LOG_PANIC, "failed to fork automatic delivery "
         "process: %s", strerror(errno));
       }
     else
@@ -6242,7 +6238,7 @@ for (BOOL more = TRUE; more; )
 	int status;
 	while (wait(&status) != pid);
 	if ((status & 0x00ff) != 0)
-	  log_write(0, LOG_MAIN|LOG_PANIC,
+	  log_write(LOG_MAIN|LOG_PANIC,
 	    "process " PID_T_FMT " crashed with signal %d while delivering %s",
 	    pid, status & 0x00ff, message_id);
 	if (mua_wrapper && (status & 0xffff) != 0)

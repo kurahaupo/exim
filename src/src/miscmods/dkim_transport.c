@@ -30,7 +30,7 @@ if (dkim->dkim_strict)
       {
       /* Set errno to something halfway meaningful */
       *errp = EACCES;
-      log_write(0, LOG_MAIN, "DKIM: message could not be signed,"
+      log_write(LOG_MAIN, "DKIM: message could not be signed,"
 	" and dkim_strict is set. Deferring message delivery.");
       return FALSE;
       }

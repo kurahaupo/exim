@@ -119,7 +119,7 @@ DEBUG(hints_lookup)
     : "??");
 if (is_tainted(name) || is_tainted(dirname))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "Tainted name for DB file not permitted");
+  log_write(LOG_MAIN|LOG_PANIC, "Tainted name for DB file not permitted");
   dbp = NULL;
   }
 else
@@ -143,7 +143,7 @@ DEBUG(hints_lookup)
     : "??");
 if (is_tainted(name) || is_tainted(dirname))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "Tainted name for DB file not permitted");
+  log_write(LOG_MAIN|LOG_PANIC, "Tainted name for DB file not permitted");
   dbp = NULL;
   }
 else

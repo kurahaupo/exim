@@ -417,7 +417,7 @@ tblock->setup = smtp_transport_setup;
 
 if (ob->command_timeout <= 0 || ob->data_timeout <= 0 ||
     ob->final_timeout <= 0)
-  log_write_die(0, LOG_CONFIG,
+  log_write_die(LOG_CONFIG,
     "command, data, or final timeout value is zero for %s transport",
       t->name);
 
@@ -675,7 +675,7 @@ if (suffix)
 else
   message = string_fmt_append(message, " %s", exim_errstr(basic_errno));
 
-log_write(0, LOG_MAIN, "%Y", message);
+log_write(LOG_MAIN, "%Y", message);
 deliver_msglog("%s %.*s\n", tod_stamp(tod_log), message->ptr, message->s);
 }
 
@@ -1470,7 +1470,7 @@ while (count-- > 0)
 	    if (LOGGING(outgoing_port))
 	      g = log_portnum(g, sx->port == PORT_NONE ? 25 : sx->port);
 	    g = string_fmt_append(g, " %s", addr->message);
-	    log_write(0, LOG_MAIN, "%Y", g);
+	    log_write(LOG_MAIN, "%Y", g);
 	    gstring_reset(g); gstring_release_unused(g);
 	    }
 
@@ -1616,12 +1616,12 @@ switch(rc)
       sender_host_authenticated = au->drinst.name;
       if ((logmsg = event_raise(sx->conn_args.tblock->event_action,
 				US"auth:fail", sx->buffer, NULL)))
-	log_write(0, LOG_MAIN, "%s", logmsg);
+	log_write(LOG_MAIN, "%s", logmsg);
       sender_host_authenticated = save_name;
      }
 #endif
     if (!logmsg)
-      log_write(0, LOG_MAIN, "%s authenticator failed H=%s [%s] %s",
+      log_write(LOG_MAIN, "%s authenticator failed H=%s [%s] %s",
 	au->drinst.name, host->name, host->address, sx->buffer);
     break;
     }
@@ -1634,7 +1634,7 @@ switch(rc)
 
   case CANCELLED:
     if (*sx->buffer != 0)
-      log_write(0, LOG_MAIN, "%s authenticator cancelled "
+      log_write(LOG_MAIN, "%s authenticator cancelled "
 	"authentication H=%s [%s] %s", au->drinst.name, host->name,
 	host->address, sx->buffer);
     break;
@@ -2252,7 +2252,7 @@ else
       }
     else if (strcmpic(ob->protocol, US"smtp") != 0)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 	"bad protocol option in transport: '%s'\n", ob->protocol);
       return ERROR;
       }
@@ -2354,7 +2354,7 @@ if (continue_hostname && continue_proxy_cipher)
   existing conn drop the connection to force a new one. */
 
   if (ob->tls_sni && !(sni = expand_string(ob->tls_sni)))
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "<%s>: failed to expand transport's tls_sni value: %s",
       sx->addrlist->address, expand_string_message);
 
@@ -2570,7 +2570,7 @@ is the non-TFO-C case for smtps, where the Client Hello will go on the 3rd-ack.
   if (sx->helo_data)
     if (!(sx->helo_data = expand_string(sx->helo_data)))
       if (sx->verify)
-	log_write(0, LOG_MAIN|LOG_PANIC,
+	log_write(LOG_MAIN|LOG_PANIC,
 	  "<%s>: failed to expand transport's helo_data value for callout: %s",
 	  sx->addrlist->address, expand_string_message);
 
@@ -2582,7 +2582,7 @@ is the non-TFO-C case for smtps, where the Client Hello will go on the 3rd-ack.
 					      &expand_string_message)),
 	expand_string_message)
       if (sx->verify)
-	log_write(0, LOG_MAIN|LOG_PANIC,
+	log_write(LOG_MAIN|LOG_PANIC,
 	  "<%s>: failed to expand transport's helo_data value for callout: %s",
 	  sx->addrlist->address, expand_string_message);
       else
@@ -2845,7 +2845,7 @@ goto SEND_QUIT;
 # ifdef EXPERIMENTAL_SRV_SMTPS
     else if (sx->conn_args.host->tls_needs == SRV_STARTTLS_MUST)
       {
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 	  "Connection aborted; STARTTLS support by %s [%s] required by DNS SRV"
 	  " but STARTTLS not offered",
 	sx->conn_args.host->name, sx->conn_args.host->address);
@@ -3022,7 +3022,7 @@ if (  smtp_peer_options & OPTION_TLS
 # ifdef SUPPORT_DANE
       if (sx->conn_args.dane)
         {
-	log_write(0, LOG_MAIN,
+	log_write(LOG_MAIN,
 	  "DANE attempt failed; TLS connection to %s [%s]: %s",
 	  sx->conn_args.host->name, sx->conn_args.host->address, tls_errstr);
 #  ifndef DISABLE_EVENT
@@ -4696,7 +4696,7 @@ else
         DEBUG(deliver) debug_printf("S:journalling %s", sx->buffer);
         len = Ustrlen(CS sx->buffer);
         if (write(journal_fd, sx->buffer, len) != len)
-          log_write(0, LOG_MAIN|LOG_PANIC, "failed to write journal for "
+          log_write(LOG_MAIN|LOG_PANIC, "failed to write journal for "
             "%s: %s", sx->buffer, strerror(errno));
         }
       }
@@ -4743,7 +4743,7 @@ else
 	  DEBUG(deliver) debug_printf("journalling(PRDR) %s\n", sx->buffer);
 	  len = Ustrlen(CS sx->buffer);
 	  if (write(journal_fd, sx->buffer, len) != len)
-	    log_write(0, LOG_MAIN|LOG_PANIC, "failed to write journal for "
+	    log_write(LOG_MAIN|LOG_PANIC, "failed to write journal for "
 	      "%s: %s", sx->buffer, strerror(errno));
 	  }
 	else if (addr->transport_return == DEFER)
@@ -4755,7 +4755,7 @@ else
     /* Ensure the journal file is pushed out to disk. */
 
     if (EXIMfsync(journal_fd) < 0)
-      log_write(0, LOG_MAIN|LOG_PANIC, "failed to fsync journal: %s",
+      log_write(LOG_MAIN|LOG_PANIC, "failed to fsync journal: %s",
         strerror(errno));
     }
   }
@@ -4836,7 +4836,7 @@ if (!sx->ok)
 	      break;
 	  if (!addr)	/* all rcpts fates determined */
 	    {
-	    log_write(0, LOG_MAIN, "peer close after all rcpt responses;"
+	    log_write(LOG_MAIN, "peer close after all rcpt responses;"
 	      " converting i/o-error to no-error");
 	    sx->ok = TRUE;
 	    goto happy;
@@ -5122,7 +5122,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 		}
 
 	      if (pid < 0)
-		log_write_die(0, LOG_PANIC_DIE, "fork failed");
+		log_write_die(LOG_PANIC_DIE, "fork failed");
 
 	      close(pfd[0]);
 	      continue_fd = pfd[1];
@@ -5584,7 +5584,7 @@ if (!hostlist || (ob->hosts_override && ob->hosts))
 
     if (is_tainted(s))
       {
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 	"attempt to use tainted host list '%s' from '%s' in transport %s",
 	s, ob->hosts, trname);
       /* Avoid leaking info to an attacker */
@@ -6204,7 +6204,7 @@ retry_non_continued:
 	 && verify_check_given_host(CUSS &ob->hosts_require_tls, host) != OK
 	 )
         {
-        log_write(0, LOG_MAIN,
+        log_write(LOG_MAIN,
 	  "%s: delivering unencrypted to H=%s [%s] (not in hosts_require_tls)",
 	  first_addr->message, host->name, host->address);
         first_addr = prepare_addresses(addrlist, host);

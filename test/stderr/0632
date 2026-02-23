@@ -509,8 +509,6 @@ LOG: MAIN
 search_tidyup called
 Process p1235 is ready for new message
 try option 'acl_smtp_quit'
-LOG: smtp_connection MAIN
-  SMTP connection Ci=p1235 from (test.ex) [127.0.0.1] D=qqs closed by QUIT
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1234 1 SMTP accept process running
@@ -979,8 +977,6 @@ LOG: MAIN
 search_tidyup called
 Process p1236 is ready for new message
 try option 'acl_smtp_quit'
-LOG: smtp_connection MAIN
-  SMTP connection Ci=p1236 from (test.ex) [127.0.0.1] D=qqs closed by QUIT
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1236 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1234 1 SMTP accept process running

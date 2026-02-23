@@ -473,8 +473,6 @@ try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
 try option 'smtp_active_hostname'
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 try option 'message_size_limit'
 try option 'acl_smtp_connect'
 try option 'smtp_banner'
@@ -564,6 +562,4 @@ recipient.domain in "domain=recipient.domain/sender_domain=sender.domain"? no (e
             ╰──(tainted)
 sender.domain in "domain=recipient.domain/sender_domain=sender.domain"? no (end of list)
 try option 'acl_smtp_quit'
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

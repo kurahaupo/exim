@@ -212,7 +212,7 @@ extern void    header_add_at_position(BOOL, uschar *, BOOL, int, const char *, .
 extern void    header_remove(int, const uschar *);
 extern BOOL    header_testname(const header_line *, const uschar *, int, BOOL);
 extern BOOL    header_testname_incomplete(const header_line *, const uschar *, int, BOOL);
-extern void    log_write(bitmask_word_t, int, const char *format, ...) PRINTF_FUNCTION(3,4);
+extern void    log_write(int, const char *format, ...) PRINTF_FUNCTION(2,3);
 extern int     lss_b64decode(uschar *, uschar **);
 extern uschar *lss_b64encode(uschar *, int);
 extern int     lss_match_domain(uschar *, uschar *);

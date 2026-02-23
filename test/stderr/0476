@@ -7,7 +7,7 @@ readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
 set_process_info: pppp running the queue (single queue run)
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234
 set_process_info: pppp running queue: 10HmaX-000000005vi-0000
 set_process_info: pppp delivering 10HmaX-000000005vi-0000 (queue run pid p1234)
@@ -147,12 +147,12 @@ set_process_info: pppp delivering 10HmaY-000000005vi-0000 (just run t1 for usery
 set_process_info: pppp running queue: waiting for 10HmaY-000000005vi-0000 (pppp)
 set_process_info: pppp delivering 10HmaY-000000005vi-0000: waiting for a remote delivery subprocess to finish (delivery wait-all-complete)
 set_process_info: pppp delivering 10HmaY-000000005vi-0000
-LOG: retry_defer MAIN
+LOG: MAIN
   == usery@test.ex R=r1 T=t1 defer (-54): retry time not reached for any host for 'test.ex'
 set_process_info: pppp tidying up after delivering 10HmaY-000000005vi-0000
 >>>>>>>>>>>>>>>> Exim pid=p1241 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 set_process_info: pppp running queue: waiting for children of pppp
 set_process_info: pppp running queue
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

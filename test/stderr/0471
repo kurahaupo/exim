@@ -276,8 +276,6 @@ qualify and rewrite headers
     in TESTSUITE/aux-fixed/0471.rw
   creating new cache entry
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4051 newtype=T newtext:
 To: random@rwtest.example,
     random@test.example,
@@ -463,8 +461,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4053 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -650,8 +646,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4055 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -837,8 +831,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4057 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -1024,8 +1016,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4059 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -1211,8 +1201,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4061 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -1398,8 +1386,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4063 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -1585,8 +1571,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4065 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -1772,8 +1756,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4067 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -1959,8 +1941,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4069 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -2145,8 +2125,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4071 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -2331,8 +2309,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4073 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -2517,8 +2493,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4075 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -2703,8 +2677,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4077 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -2889,8 +2861,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4079 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -3075,8 +3045,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4081 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -3261,8 +3229,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4083 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -3447,8 +3413,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4085 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -3633,8 +3597,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4087 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -3819,8 +3781,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4089 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -4005,8 +3965,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4091 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -4191,8 +4149,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4093 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -4377,8 +4333,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4095 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -4562,8 +4516,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4097 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -4747,8 +4699,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4099 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -4932,8 +4882,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4101 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -5117,8 +5065,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4103 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -5302,8 +5248,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4105 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -5487,8 +5431,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4107 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -5672,8 +5614,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4109 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -5857,8 +5797,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4111 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -6042,8 +5980,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4113 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -6227,8 +6163,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4115 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -6412,8 +6346,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4117 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -6597,8 +6529,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4119 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -6781,8 +6711,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4121 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -6965,8 +6893,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4123 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -7149,8 +7075,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4125 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -7333,8 +7257,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4127 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -7517,8 +7439,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4129 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -7701,8 +7621,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4131 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -7885,8 +7803,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4133 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -8069,8 +7985,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4135 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -8253,8 +8167,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4137 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -8437,8 +8349,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4139 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -8621,8 +8531,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4141 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -8805,8 +8713,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4143 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -8989,8 +8895,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4145 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -9172,8 +9076,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4147 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -9355,8 +9257,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4149 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -9538,8 +9438,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4151 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -9721,8 +9619,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4153 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -9904,8 +9800,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4155 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -10087,8 +9981,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4157 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -10270,8 +10162,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4159 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -10453,8 +10343,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4161 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -10636,8 +10524,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4163 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -10819,8 +10705,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4165 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -11002,8 +10886,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4167 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -11185,8 +11067,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4169 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -11367,8 +11247,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4171 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -11549,8 +11427,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4173 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -11731,8 +11607,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4175 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -11913,8 +11787,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4177 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -12095,8 +11967,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4179 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -12277,8 +12147,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4181 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -12459,8 +12327,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4183 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -12641,8 +12507,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4185 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -12823,8 +12687,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4187 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -13005,8 +12867,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4189 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -13187,8 +13047,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4191 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -13369,8 +13227,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4193 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -13551,8 +13407,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4195 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -13732,8 +13586,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4197 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -13913,8 +13765,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4199 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -14094,8 +13944,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4201 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -14275,8 +14123,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4203 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -14456,8 +14302,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4205 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -14637,8 +14481,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4207 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -14818,8 +14660,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4209 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -14999,8 +14839,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4211 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -15180,8 +15018,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4213 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -15360,8 +15196,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4215 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -15539,8 +15373,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4217 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -15717,8 +15549,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4219 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -15894,8 +15724,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4221 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -16070,8 +15898,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4223 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -16245,8 +16071,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4225 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -16419,8 +16243,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4227 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -16592,8 +16414,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4229 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -16764,8 +16584,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4231 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -16935,8 +16753,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4233 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -17105,8 +16921,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4235 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -17274,8 +17088,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4237 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -17442,8 +17254,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4239 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -17609,8 +17419,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4241 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -17775,8 +17583,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4243 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -17940,8 +17746,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4245 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -18104,8 +17908,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4247 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -18267,8 +18069,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4249 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -18429,8 +18229,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4251 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -18590,8 +18388,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4253 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -18750,8 +18546,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4255 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -18909,8 +18703,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4257 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -19067,8 +18859,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4259 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -19224,8 +19014,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4261 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -19380,8 +19168,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4263 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -19535,8 +19321,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4265 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -19689,8 +19473,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4267 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -19842,8 +19624,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4269 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -19994,8 +19774,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4271 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -20145,8 +19923,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4273 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -20295,8 +20071,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4275 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -20444,8 +20218,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4277 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -20592,8 +20364,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4279 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -20739,8 +20509,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4281 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -20885,8 +20653,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4283 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -21030,8 +20796,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4285 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -21174,8 +20938,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4287 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -21317,8 +21079,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4289 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -21459,8 +21219,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4291 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -21600,8 +21358,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4293 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -21740,8 +21496,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4295 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -21879,8 +21633,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4297 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22017,8 +21769,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4299 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22154,8 +21904,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4301 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22290,8 +22038,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4303 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22425,8 +22171,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4305 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22559,8 +22303,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4307 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22692,8 +22434,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4309 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22824,8 +22564,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4311 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -22955,8 +22693,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4313 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23085,8 +22821,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4315 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23214,8 +22948,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4317 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23342,8 +23074,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4319 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23469,8 +23199,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4321 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23595,8 +23323,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4323 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23720,8 +23446,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4325 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23844,8 +23568,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4327 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -23967,8 +23689,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4329 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24089,8 +23809,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4331 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24210,8 +23928,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4333 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24330,8 +24046,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4335 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24449,8 +24163,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4337 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24567,8 +24279,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4339 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24684,8 +24394,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4341 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24800,8 +24508,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4343 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -24915,8 +24621,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4345 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25029,8 +24733,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4347 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25142,8 +24844,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4349 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25254,8 +24954,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4351 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25365,8 +25063,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4353 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25475,8 +25171,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4355 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25584,8 +25278,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4357 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25692,8 +25384,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4359 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25799,8 +25489,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4361 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -25905,8 +25593,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4363 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -26010,8 +25696,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4365 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -26114,8 +25798,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4367 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -26217,8 +25899,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4369 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -26319,8 +25999,6 @@ remainder: random@test.example,
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4371 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -26420,8 +26098,6 @@ remainder: random@test.example
   cached data used for lookup of test.example
     in TESTSUITE/aux-fixed/0471.rw
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "random@test.example" from to: rewritten as "random@rwtest.example" by rule 2
 newlen=4373 newtype=T newtext:
 To: random@rwtest.example,
     random@rwtest.example,
@@ -26821,8 +26497,6 @@ qualify and rewrite headers
   list element: ^.{40,}@*
   address match test: subject=localpart_with_056_chars_56789012345678901234567890123456@test.example pattern=^.{40,}@*
   localpart_with_056_chars_56789012345678901234567890123456@test.example in "^.{40,}@*"? yes (matched "^.{40,}@*")
-LOG: address_rewrite MAIN
-  "localpart_with_056_chars_56789012345678901234567890123456@test.example" from to: rewritten as "deny_me@test.example" by rule 1
  deny_me@test.example in "*@*"?
   list element: *@*
   address match test: subject=deny_me@test.example pattern=*@*
@@ -26843,8 +26517,6 @@ LOG: address_rewrite MAIN
     in TESTSUITE/aux-fixed/0471.rw
   creating new cache entry
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "deny_me@test.example" from to: rewritten as "deny_me@rwtest.example" by rule 2
 newlen=27 newtype=T newtext:
 To: deny_me@rwtest.example
 remainder: 
@@ -27016,8 +26688,6 @@ qualify and rewrite headers
   list element: ^.{40,}@*
   address match test: subject=localpart_with_236_chars_56789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456@test.example pattern=^.{40,}@*
   localpart_with_236_chars_56789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456@test.example in "^.{40,}@*"? yes (matched "^.{40,}@*")
-LOG: address_rewrite MAIN
-  "localpart_with_236_chars_56789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456@test.example" from to: rewritten as "deny_me@test.example" by rule 1
  deny_me@test.example in "*@*"?
   list element: *@*
   address match test: subject=deny_me@test.example pattern=*@*
@@ -27038,8 +26708,6 @@ LOG: address_rewrite MAIN
     in TESTSUITE/aux-fixed/0471.rw
   creating new cache entry
   lookup yielded: rwtest.example
-LOG: address_rewrite MAIN
-  "deny_me@test.example" from to: rewritten as "deny_me@rwtest.example" by rule 2
 newlen=27 newtype=T newtext:
 To: deny_me@rwtest.example
 remainder: 

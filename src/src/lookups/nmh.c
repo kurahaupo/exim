@@ -106,7 +106,7 @@ if (connect(fd, (const struct sockaddr *)&s_un, (socklen_t)slen) < 0)
   {
   (void) close(fd);
   *errmsg= string_sprintf("connect '%s': %s", server, strerror(errno));
-  log_write(0, LOG_MAIN|LOG_PANIC, "nmh lookup: %s\n", *errmsg);
+  log_write(LOG_MAIN|LOG_PANIC, "nmh lookup: %s\n", *errmsg);
   return -1;
   }
 return fd;
@@ -292,7 +292,7 @@ if (i != gstring_length(g))
 if (!poll_one_fd(sock, POLLIN, read_timeout * 1000))
   {
   *errmsg = US"read timed out";
-  log_write(0, LOG_MAIN|LOG_PANIC, "Timeout on nmh lookup on %q\n", filename);
+  log_write(LOG_MAIN|LOG_PANIC, "Timeout on nmh lookup on %q\n", filename);
   return DEFER;
   }
 if (read(sock, resp, 1) != 1)

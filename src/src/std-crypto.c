@@ -1017,7 +1017,7 @@ for (int first = 0, last = dh_constants_count; last > first; )
   if (c == 0)
     {
     if (dp->logging)
-      log_write(0, dp->logging,
+      log_write(dp->logging,
 	"WARNING: deprecated Diffie-Hellman parameter '%s' used", dp->label);
     return dp->pem;
     }

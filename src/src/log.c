@@ -581,7 +581,7 @@ if (!panic_save_buffer)
   if ((panic_save_buffer = US malloc(LOG_BUFFER_SIZE)))
     memcpy(panic_save_buffer, log_buffer, LOG_BUFFER_SIZE);
 
-log_write_die(0, LOG_PANIC_DIE, "Cannot open %s log file %q: %s: "
+log_write_die(LOG_PANIC_DIE, "Cannot open %s log file %q: %s: "
   "euid=%d egid=%d", log_names[type], buffer, strerror(errno), euid, getegid());
 /* Never returns */
 }
@@ -701,7 +701,7 @@ if (!panic_save_buffer)
   if ((panic_save_buffer = US malloc(LOG_BUFFER_SIZE)))
     memcpy(panic_save_buffer, log_buffer, LOG_BUFFER_SIZE);
 
-log_write_die(0, LOG_PANIC_DIE, "failed to write to %s: length=%d result=%d "
+log_write_die(LOG_PANIC_DIE, "failed to write to %s: length=%d result=%d "
   "errno=%d (%s)", name, length, rc, save_errno,
   save_errno == 0 ? "write incomplete" : strerror(save_errno));
 /* Never returns */
@@ -824,8 +824,6 @@ Malloc is used directly because the store functions may call log_write().
 If a message_id exists, we include it after the timestamp.
 
 Arguments:
-  selector  write to main log or LOG_INFO only if this value is zero, or if
-              its bit is set in log_selector[0]
   flags     each bit indicates some independent action:
               LOG_SENDER      add raw sender to the message
               LOG_RECIPIENTS  add raw recipients list to message
@@ -843,11 +841,10 @@ Returns:    nothing
 */
 
 static void
-log_vwrite(bitmask_word_t selector, int flags, const char * format, va_list ap)
+log_vwrite(int flags, const char * format, va_list ap)
 {
 int paniclogfd;
 ssize_t written_len;
-BOOL will_log = FALSE;
 gstring gs = { .size = LOG_BUFFER_SIZE-2 }, * g = &gs;
 
 /* If panic_recurseflag is set, we have failed to open the panic log. This is
@@ -945,7 +942,7 @@ if (!path_inspected)
   should work since we have now set up the routing. */
 
   if (multiple)
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "More than one path given in log_file_path: using %s", file_path);
   }
 
@@ -961,12 +958,6 @@ DEBUG(any|v)
   {
   va_list aq;
   string_fmt_append_noextend(g, "LOG:");
-
-  /* Show the selector that was passed into the call. */
-
-  for (unsigned bitnum = 0; bitnum < logwrite_options_count; bitnum++)
-    if (bitnum < BITWORDSIZE && selector & BIT(bitnum))
-      string_fmt_append_noextend(g, " %s", logwrite_options[bitnum].name);
 
   string_fmt_append_noextend(g, "%s%s%s%s\n  ",
     flags & LOG_MAIN ?    " MAIN"   : "",
@@ -998,7 +989,7 @@ DEBUG(any|v)
 /* If no log file is specified, we are in a mess. */
 
 if (!(flags & (LOG_MAIN|LOG_PANIC|LOG_REJECT)))
-  log_write_die(0, LOG_MAIN, "log_write called with no log flags set");
+  log_write_die(LOG_MAIN, "log_write called with no log flags set");
 
 /* There are some weird circumstances in which logging is disabled. */
 
@@ -1070,31 +1061,13 @@ gs.size = LOG_BUFFER_SIZE;
 string_fmt_append_noextend(g, "\n");
 string_from_gstring(g);
 
-/* See if the selector means we will log, given the enabled channels */
-
-if (!selector)
-  will_log = TRUE;
-else while (selector)
-  {
-  bitmask_word_t w = selector & ~(selector - 1);	/* lowest set bit */
-  unsigned bitnum = 0;
-  /* This relies on the ordering of logwrite_options[] */
-  while (BIT(bitnum) != w) bitnum++;
-  if (bit_test(log_selector, logwrite_options[bitnum].logchan_bit))
-    {
-    will_log = TRUE;
-    break;
-    }
-  selector &= ~w;					/* clear that bit */
-  }
-
 /* Handle loggable errors when running a utility, or when address testing.
 Write to log_stderr unless debugging (when it will already have been written),
 or unless there is no log_stderr (expn called from daemon, for example). */
 
 if (!f.really_exim || f.log_testing_mode)
   {
-  if (!ANY_DEBUG && log_stderr && will_log)
+  if (!ANY_DEBUG && log_stderr)
     if (host_checking)
 /*XXX +20 wrong if logging millisec or with-TZ */
       fprintf(log_stderr, "LOG: %s", CS log_buffer + 20);  /* no timestamp */
@@ -1111,7 +1084,7 @@ been opened, but we don't want to keep on writing to it for too long after it
 has been renamed. Therefore, do a stat() and see if the inode has changed, and
 if so, re-open. */
 
-if (flags & LOG_MAIN && will_log)
+if (flags & LOG_MAIN)
   {
   if (  logging_mode & LOG_MODE_SYSLOG
      && (syslog_duplication || !(flags & (LOG_REJECT|LOG_PANIC))))
@@ -1320,11 +1293,11 @@ if (flags & LOG_PANIC)
 /* The public interface */
 
 void
-log_write(bitmask_word_t selector, int flags, const char * format, ...)
+log_write(int flags, const char * format, ...)
 {
 va_list ap;
 va_start(ap, format);
-log_vwrite(selector, flags, format, ap);
+log_vwrite(flags, format, ap);
 va_end(ap);
 }
 
@@ -1333,11 +1306,11 @@ We have this as a wrapper so that we can mark it as never returning,
 for the benefit of static analysers. */
 
 void
-log_write_die(bitmask_word_t selector, int flags, const char * format, ...)
+log_write_die(int flags, const char * format, ...)
 {
 va_list ap;
 va_start(ap, format);
-log_vwrite(selector, flags | LOG_PANIC_DIE, format, ap);
+log_vwrite(flags | LOG_PANIC_DIE, format, ap);
 UNREACHABLE;
 }
 
@@ -1540,14 +1513,14 @@ if (flags & DCB_DEBUG)
   {
   if (flags & DCB_FROM_CONFIG)
     {
-    log_write(0, LOG_CONFIG|LOG_PANIC, "%s", errmsg);
+    log_write(LOG_CONFIG|LOG_PANIC, "%s", errmsg);
     return;
     }
   fprintf(stderr, "exim: %s\n", errmsg);
   exim_exit(EXIT_FAILURE);
   }
 else
-  log_write_die(0, LOG_CONFIG, "%s", errmsg);
+  log_write_die(LOG_CONFIG, "%s", errmsg);
 }
 
 
@@ -1612,9 +1585,9 @@ if (debug_file)
 
 if (tag_name && (Ustrchr(tag_name, '/') != NULL))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "debug tag may not contain a '/' in: %s",
+  log_write(LOG_MAIN|LOG_PANIC, "debug tag may not contain a '/' in: %s",
       tag_name);
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
 		  "debug tag may not contain a '/' in: %s", tag_name);
   return;
   }
@@ -1632,7 +1605,7 @@ if (!*file_path)
   set_file_path();
 
 if ((debug_fd = open_log(lt_debug, tag_name)) < 0)
-  log_write(0, LOG_MAIN|LOG_PANIC, "unable to open debug log");
+  log_write(LOG_MAIN|LOG_PANIC, "unable to open debug log");
 
 debug_file = fdopen(debug_fd, "w");
 setbuf(debug_file, NULL);

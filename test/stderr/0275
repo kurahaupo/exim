@@ -533,8 +533,6 @@ sender address = CALLER@test.ex
 sender_fullhost = [127.0.0.1]
 sender_rcvhost = [127.0.0.1]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [127.0.0.1]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [127.0.0.1]
 host in host_reject_connection? no (option unset)
@@ -608,8 +606,6 @@ LOG: MAIN REJECT
   H=(test) [127.0.0.1] F=<test@test.ex> temporarily rejected RCPT <error@test.ex>: domains check lookup or other defer
 SMTP<< QUIT
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test) [127.0.0.1] D=qqs closed by QUIT
 SMTP>- ◀flush▶
   search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

@@ -1005,7 +1005,7 @@ const uschar * ss = expand_string(condition);
 if (!ss)
   {
   if (!f.expand_string_forcedfail && !f.search_find_defer)
-    log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand condition %q "
+    log_write(LOG_MAIN|LOG_PANIC, "failed to expand condition %q "
       "for %s %s: %s", condition, m1, m2, expand_string_message);
   return FALSE;
   }
@@ -2021,7 +2021,7 @@ switch (vp->type)
     if (!(s = *((uschar **)(val)))) return US"";
     if (!(domain = Ustrrchr(s, '@'))) return s;
     if (domain - s > sizeof(var_buffer) - 1)
-      log_write_die(0, LOG_MAIN, "local part longer than " SIZE_T_FMT
+      log_write_die(LOG_MAIN, "local part longer than " SIZE_T_FMT
 	  " in string expansion", sizeof(var_buffer));
     return string_copyn(s, domain - s);
 
@@ -2063,7 +2063,7 @@ switch (vp->type)
 	  }
 	}
       if (lseek(deliver_datafile, start_offset, SEEK_SET) < 0)
-	log_write_die(0, LOG_MAIN, "deliver_datafile lseek: %s",
+	log_write_die(LOG_MAIN, "deliver_datafile lseek: %s",
 	  strerror(errno));
       if ((len = read(deliver_datafile, body, len)) > 0)
 	{
@@ -2171,7 +2171,7 @@ switch (vp->type)
       table_count = mi->variables_count;
       goto sublist;
       }
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "failed to find %s module for %s: %s", US val, name, errstr);
     return US"";
     }
@@ -2194,7 +2194,7 @@ switch (vp->type)
       table_count = li->variables_count;
       goto sublist;
       }
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "failed to find %s module for %s%s%s", US val, name,
 	errstr ? ": " : "", errstr);
     return US"";
@@ -4788,7 +4788,7 @@ if (is_tainted(s))
   {
   expand_string_message =
     string_sprintf("attempt to expand tainted string '%s'", s);
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
+  log_write(LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
   goto EXPAND_FAILED;
   }
 
@@ -6044,7 +6044,7 @@ while (*s)	/* known to be untainted */
 	  expand_string_message =
 	    string_sprintf("attempt to use tainted string '%s' for %s",
 			sub[i], name);
-	  log_write(0, LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
+	  log_write(LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
 	  goto EXPAND_FAILED;
 	  }
         val[i] = (int)Ustrtol(sub[i], &ret, 10);
@@ -7174,7 +7174,7 @@ while (*s)	/* known to be untainted */
           {
           expand_string_message = string_sprintf("dlopen %q failed: %s",
             argv[0], dlerror());
-          log_write(0, LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
+          log_write(LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
           goto EXPAND_FAILED;
           }
         t = store_get_perm(sizeof(tree_node) + Ustrlen(argv[0]), argv[0]);
@@ -7190,7 +7190,7 @@ while (*s)	/* known to be untainted */
         {
         expand_string_message = string_sprintf("dlsym %q in %q failed: "
           "%s", argv[1], argv[0], dlerror());
-        log_write(0, LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
+        log_write(LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
         goto EXPAND_FAILED;
         }
 
@@ -7211,7 +7211,7 @@ while (*s)	/* known to be untainted */
         if (status == FAIL_FORCED)
 	  f.expand_string_forcedfail = TRUE;
 	else if (status != FAIL)
-	  log_write(0, LOG_MAIN|LOG_PANIC, "dlfunc{%s}{%s} failed (%d): %s",
+	  log_write(LOG_MAIN|LOG_PANIC, "dlfunc{%s}{%s} failed (%d): %s",
               argv[0], argv[1], status, expand_string_message);
         goto EXPAND_FAILED;
         }
@@ -8993,7 +8993,7 @@ int fd, off = 0, len;
 
 if ((fd = exim_open2(CS filename, O_RDONLY)) < 0)
   {
-  log_write(0, LOG_MAIN | LOG_PANIC, "unable to open file '%s' for reading: %s",
+  log_write(LOG_MAIN | LOG_PANIC, "unable to open file '%s' for reading: %s",
 	     filename, strerror(errno));
   return NULL;
   }
@@ -9003,7 +9003,7 @@ do
   if ((len = read(fd, big_buffer + off, big_buffer_size - 2 - off)) < 0)
     {
     (void) close(fd);
-    log_write(0, LOG_MAIN|LOG_PANIC, "unable to read file: %s", filename);
+    log_write(LOG_MAIN|LOG_PANIC, "unable to read file: %s", filename);
     return NULL;
     }
   off += len;
@@ -9078,7 +9078,7 @@ tree_walk(tree_unusable,      (twalk_compat) assert_variable_notin, &e);
 check_deliver_addrs_not_freed(assert_variable_notin, &e);
 
 if (e.var_name)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "live variable '%s' destroyed by reset_store at %s:%d\n- value '%.64s'",
     e.var_name, filename, linenumber, e.var_data);
 }

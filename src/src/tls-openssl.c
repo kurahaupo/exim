@@ -672,7 +672,7 @@ if (dh_bitsize <= tls_dh_max_bits)
       == 0)
     {
     ERR_error_string_n(ERR_get_error(), ssl_errstring, sizeof(ssl_errstring));
-    log_write(0, LOG_MAIN|LOG_PANIC, "TLS error (D-H param setting '%s'): %s",
+    log_write(LOG_MAIN|LOG_PANIC, "TLS error (D-H param setting '%s'): %s",
 	dhexpanded ? dhexpanded : US"default", ssl_errstring);
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
     /* EVP_PKEY_free(pkey);  crashes */
@@ -879,7 +879,7 @@ if (  !BN_set_word(bn, (unsigned long)RSA_F4)
 
   {
   ERR_error_string_n(ERR_get_error(), ssl_errstring, sizeof(ssl_errstring));
-  log_write(0, LOG_MAIN|LOG_PANIC, "TLS error (RSA_generate_key): %s",
+  log_write(LOG_MAIN|LOG_PANIC, "TLS error (RSA_generate_key): %s",
     ssl_errstring);
   return NULL;
   }
@@ -1053,7 +1053,7 @@ if (ev)
   /* NB we do not bother setting peerdn */
   if ((yield = event_raise(ev, US"tls:cert", string_sprintf("%d", depth), &errno)))
     {
-    log_write(0, LOG_MAIN, "[%s] %s verify denied by event-action: "
+    log_write(LOG_MAIN, "[%s] %s verify denied by event-action: "
 		"depth=%d cert=%s: %s",
 	      tlsp == &tls_out ? deliver_host_address : sender_host_address,
 	      what, depth, dn, yield);
@@ -1119,7 +1119,7 @@ uschar dn[256];
 if (!X509_NAME_oneline(X509_get_subject_name(cert), CS dn, sizeof(dn)))
   {
   DEBUG(tls) debug_printf("X509_NAME_oneline() error\n");
-  log_write(0, LOG_MAIN, "[%s] SSL verify error: internal error",
+  log_write(LOG_MAIN, "[%s] SSL verify error: internal error",
     tlsp == &tls_out ? deliver_host_address : sender_host_address);
   return 0;
   }
@@ -1131,7 +1131,7 @@ if (preverify_ok == 0)
   uschar * extra = verify_mode ? string_sprintf(" (during %c-verify for [%s])",
       *verify_mode, sender_host_address)
     : US"";
-  log_write(0, LOG_MAIN, "[%s] SSL verify error%s: depth=%d error=%s cert=%s",
+  log_write(LOG_MAIN, "[%s] SSL verify error%s: depth=%d error=%s cert=%s",
     tlsp == &tls_out ? deliver_host_address : sender_host_address,
     extra, depth,
     X509_verify_cert_error_string(X509_STORE_CTX_get_error(x509ctx)), dn);
@@ -1185,7 +1185,7 @@ else
 	{
 	if (rc < 0)
 	  {
-	  log_write(0, LOG_MAIN, "[%s] SSL verify error: internal error",
+	  log_write(LOG_MAIN, "[%s] SSL verify error: internal error",
 	    tlsp == &tls_out ? deliver_host_address : sender_host_address);
 	  name = NULL;
 	  }
@@ -1203,7 +1203,7 @@ else
         ? string_sprintf(" (during %c-verify for [%s])",
 	  *verify_mode, sender_host_address)
 	: US"";
-      log_write(0, LOG_MAIN,
+      log_write(LOG_MAIN,
 	"[%s] SSL verify error%s: certificate name mismatch: DN=%q H=%q",
 	tlsp == &tls_out ? deliver_host_address : sender_host_address,
 	extra, dn, verify_cert_hostnames);
@@ -1266,7 +1266,7 @@ BOOL dummy_called, optional = FALSE;
 if (!X509_NAME_oneline(X509_get_subject_name(cert), CS dn, sizeof(dn)))
   {
   DEBUG(tls) debug_printf("X509_NAME_oneline() error\n");
-  log_write(0, LOG_MAIN, "[%s] SSL verify error: internal error",
+  log_write(LOG_MAIN, "[%s] SSL verify error: internal error",
     deliver_host_address);
   return 0;
   }
@@ -1341,7 +1341,7 @@ if (!filename || !*filename) return;
 ERR_clear_error();
 if (!(bio = BIO_new_file(CS filename, "rb")))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "Failed to open OCSP response file %q: %.100s",
     filename, ERR_reason_error_string(ERR_get_error()));
   return;
@@ -1354,7 +1354,7 @@ if (is_pem)
   long len;
   if (!PEM_read_bio(bio, &dummy, &dummy, &data, &len))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Failed to read PEM file %q: %.100s",
+    log_write(LOG_MAIN|LOG_PANIC, "Failed to read PEM file %q: %.100s",
       filename, ERR_reason_error_string(ERR_get_error()));
     return;
     }
@@ -1368,7 +1368,7 @@ BIO_free(bio);
 
 if (!resp)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "Error reading OCSP response from %q: %s",
+  log_write(LOG_MAIN|LOG_PANIC, "Error reading OCSP response from %q: %s",
       filename, ERR_reason_error_string(ERR_get_error()));
   return;
   }
@@ -2309,7 +2309,7 @@ SSL_set_SSL_CTX(s, server_sni);
 return SSL_TLSEXT_ERR_OK;
 
 bad:
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s", errstr);
+  log_write(LOG_MAIN|LOG_PANIC, "%s", errstr);
   return SSL_TLSEXT_ERR_ALERT_FATAL;
 }
 
@@ -2518,7 +2518,7 @@ if(!p)
     }
 
   if (cbinfo->u_ocsp.client.verify_required && LOGGING(tls_cipher))
-    log_write(0, LOG_MAIN, "Required TLS certificate status not received");
+    log_write(LOG_MAIN, "Required TLS certificate status not received");
   else
     DEBUG(tls) debug_printf(" null\n");
 
@@ -2533,7 +2533,7 @@ if (!(rsp = d2i_OCSP_RESPONSE(NULL, &p, len)))
   {
   tls_out.ocsp = OCSP_FAILED;	/*XXX should use tlsp-> to permit concurrent outbound */
   if (LOGGING(tls_cipher))
-    log_write(0, LOG_MAIN, "Received TLS cert status response, parse error");
+    log_write(LOG_MAIN, "Received TLS cert status response, parse error");
   else
     DEBUG(tls) debug_printf(" parse error\n");
   return 0;
@@ -2543,7 +2543,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
   {
   tls_out.ocsp = OCSP_FAILED;
   if (LOGGING(tls_cipher))
-    log_write(0, LOG_MAIN, "Received TLS cert status response, error parsing response");
+    log_write(LOG_MAIN, "Received TLS cert status response, error parsing response");
   else
     DEBUG(tls) debug_printf(" error parsing response\n");
   OCSP_RESPONSE_free(rsp);
@@ -2689,7 +2689,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
 
 	  X509_NAME_oneline(X509_get_subject_name(SSL_get_peer_certificate(ssl)),
 						  CS peerdn, sizeof(peerdn));
-	  log_write(0, LOG_MAIN,
+	  log_write(LOG_MAIN,
 		"[%s] %s Received TLS cert (DN: '%.*s') status response, "
 		"itself unverifiable: %s",
 		deliver_host_address, deliver_host,
@@ -2756,7 +2756,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
 	DEBUG(tls) ERR_print_errors(bp);
 	cbinfo->u_ocsp.client.verify_errstr =
 		    US"(SSL_connect) Server certificate status is out-of-date";
-	log_write(0, LOG_MAIN, "OCSP dates invalid");
+	log_write(LOG_MAIN, "OCSP dates invalid");
 	goto failed;
 	}
 
@@ -2769,7 +2769,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
 	case V_OCSP_CERTSTATUS_REVOKED:
 	  cbinfo->u_ocsp.client.verify_errstr =
 			US"(SSL_connect) Server certificate revoked";
-	  log_write(0, LOG_MAIN, "Server certificate revoked%s%s",
+	  log_write(LOG_MAIN, "Server certificate revoked%s%s",
 	      reason != -1 ? "; reason: " : "",
 	      reason != -1 ? OCSP_crl_reason_str(reason) : "");
 	  DEBUG(tls) time_print(bp, "Revocation Time", rev);
@@ -2777,7 +2777,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
 	default:
 	  cbinfo->u_ocsp.client.verify_errstr =
 			US"(SSL_connect) Server certificate has unknown status";
-	  log_write(0, LOG_MAIN,
+	  log_write(LOG_MAIN,
 	      "Server certificate status unknown, in OCSP stapling");
 	  break;
 	}
@@ -3250,7 +3250,7 @@ if (expcerts && *expcerts)
 
     if (Ustat(expcerts, &statbuf) < 0)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
 	"failed to stat %s for certificates", expcerts);
       return DEFER;
       }
@@ -3283,7 +3283,7 @@ This is inconsistent with the need to verify the OCSP proof of the server cert.
 	   && !chain_from_pem_file(file, vp)
 	   )
 	  {
-	  log_write(0, LOG_MAIN|LOG_PANIC,
+	  log_write(LOG_MAIN|LOG_PANIC,
 	    "failed to load cert chain from %s", file);
 	  return DEFER;
 	  }
@@ -3343,7 +3343,7 @@ This is inconsistent with the need to verify the OCSP proof of the server cert.
     struct stat statbufcrl;
     if (Ustat(expcrl, &statbufcrl) < 0)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
         "failed to stat %s for certificates revocation lists", expcrl);
       return DEFER;
       }
@@ -3986,7 +3986,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
 if (found)
   return OK;
 
-log_write(0, LOG_MAIN, "DANE error: No usable TLSA records");
+log_write(LOG_MAIN, "DANE error: No usable TLSA records");
 return DEFER;
 }
 #endif	/*SUPPORT_DANE*/
@@ -4390,7 +4390,7 @@ if (ob->tls_alpn)
       DEBUG(tls) debug_printf("Setting TLS ALPN '%s'\n", ob->tls_alpn);
   }
 #else
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
 	  "ALPN unusable with this OpenSSL library version; ignoring %q\n",
           ob->tls_alpn);
 #endif
@@ -4595,7 +4595,7 @@ switch(error)
     if (Ustrncmp(conn_info, US"SMTP ", 5) == 0) conn_info += 5;
     /* I'd like to get separated H= here, but too hard for now */
     ERR_error_string_n(ERR_peek_error(), ssl_errstring, sizeof(ssl_errstring));
-    log_write(0, LOG_MAIN, "TLS error (SSL_read): on %s %s", conn_info, ssl_errstring);
+    log_write(LOG_MAIN, "TLS error (SSL_read): on %s %s", conn_info, ssl_errstring);
     DEBUG(tls) tls_debug_err(ssl, US"SSL_read", inbytes);
     ssl_xfer_error = TRUE;
     return FALSE;
@@ -4828,22 +4828,22 @@ for (int left = len; left > 0;)
 
     case SSL_ERROR_SSL:
       ERR_error_string_n(ERR_get_error(), ssl_errstring, sizeof(ssl_errstring));
-      log_write(0, LOG_MAIN, "TLS error (SSL_write): %s", ssl_errstring);
+      log_write(LOG_MAIN, "TLS error (SSL_write): %s", ssl_errstring);
       return -1;
 
     case SSL_ERROR_ZERO_RETURN:
-      log_write(0, LOG_MAIN, "SSL channel closed on write");
+      log_write(LOG_MAIN, "SSL channel closed on write");
       return -1;
 
     case SSL_ERROR_SYSCALL:
       if (errno == 0)
 	{ DEBUG(tls) debug_printf("- SSL_ERROR_SYSCALL with zero errno\n"); }
       else if (ct_ctx || errno != ECONNRESET || !f.smtp_in_quit)
-	log_write(0, LOG_MAIN, "SSL_write: (from %s) syscall: %s",
+	log_write(LOG_MAIN, "SSL_write: (from %s) syscall: %s",
 	  sender_fullhost ? sender_fullhost : US"<unknown>",
 	  strerror(errno));
       else if (LOGGING(protocol_detail))
-	log_write(0, LOG_MAIN, "[%s] after QUIT, client reset TCP before"
+	log_write(LOG_MAIN, "[%s] after QUIT, client reset TCP before"
 	  " SMTP response and TLS close\n", sender_host_address);
       else
 	DEBUG(tls) debug_printf("[%s] SSL_write: after QUIT,"
@@ -4851,7 +4851,7 @@ for (int left = len; left > 0;)
       return -1;
 
     default:
-      log_write(0, LOG_MAIN, "SSL_write error %d", error);
+      log_write(LOG_MAIN, "SSL_write error %d", error);
       return -1;
     }
   }

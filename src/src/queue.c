@@ -418,14 +418,13 @@ if (!recurse)
       deliver_selectstring_sender);
 
   log_detail = string_copy(big_buffer);
-  if (q->name)
-    log_write(L_queue_run, LOG_MAIN, "Start %s'%s' queue run: %s",
-      atrn_mode ? "ODMR " : "",
-      q->name, log_detail);
-  else
-    log_write(L_queue_run, LOG_MAIN, "Start %squeue run: %s",
-      atrn_mode ? "ODMR " : "",
-      log_detail);
+  if (LOGGING(queue_run))
+    if (q->name)
+      log_write(LOG_MAIN, "Start %s'%s' queue run: %s",
+	atrn_mode ? "ODMR " : "", q->name, log_detail);
+    else
+      log_write(LOG_MAIN, "Start %squeue run: %s",
+	atrn_mode ? "ODMR " : "", log_detail);
 
   single_id = start_id && stop_id && !q->queue_2stage
 	      && Ustrcmp(start_id, stop_id) == 0;
@@ -496,10 +495,11 @@ for (int i = queue_run_in_order ? -1 : 0;
     if (!q->queue_run_force && deliver_queue_load_max >= 0)
       if ((load_average = os_getloadavg()) > deliver_queue_load_max)
         {
-        log_write(L_queue_run, LOG_MAIN, "Abandon queue run: %s (load %.2f, max %.2f)",
-          log_detail,
-          (double)load_average/1000.0,
-          (double)deliver_queue_load_max/1000.0);
+	if (LOGGING(queue_run))
+	  log_write(LOG_MAIN, "Abandon queue run: %s (load %.2f, max %.2f)",
+	    log_detail,
+	    (double)load_average/1000.0,
+	    (double)deliver_queue_load_max/1000.0);
         i = subcount;                 /* Don't process other directories */
         break;
         }
@@ -582,7 +582,7 @@ for (int i = queue_run_in_order ? -1 : 0;
 
       if (f.deliver_freeze && !q->deliver_force_thaw)
         {
-        log_write(L_skip_delivery, LOG_MAIN, "Message is frozen");
+        if (LOGGING(skip_delivery)) log_write(LOG_MAIN, "Message is frozen");
         wanted = FALSE;
         }
 
@@ -657,7 +657,7 @@ for (int i = queue_run_in_order ? -1 : 0;
     pretty cheap. */
 
     if (pipe(pfd) < 0)
-      log_write_die(0, LOG_MAIN, "failed to create pipe in queue "
+      log_write_die(LOG_MAIN, "failed to create pipe in queue "
         "runner process " PID_T_FMT ": %s", queue_run_pid, strerror(errno));
     queue_run_pipe = pfd[pipe_write];  /* To ensure it gets passed on. */
 
@@ -702,7 +702,7 @@ single_item_retry:
 		? EXIT_FAILURE : EXIT_SUCCESS);
       }
     if (pid < 0)
-      log_write_die(0, LOG_MAIN, "fork of delivery process from "
+      log_write_die(LOG_MAIN, "fork of delivery process from "
         "queue runner " PID_T_FMT " failed\n", queue_run_pid);
 
     /* Close the writing end of the synchronizing pipe in this process,
@@ -727,7 +727,7 @@ single_item_retry:
     /* If the process crashed, tell somebody */
 
     else if (status & 0x00ff)
-      log_write(0, LOG_MAIN|LOG_PANIC,
+      log_write(LOG_MAIN|LOG_PANIC,
         "queue run: process %d crashed with signal %d while delivering %s",
         (int)pid, status & 0x00ff, fq->text);
 
@@ -750,7 +750,7 @@ single_item_retry:
 
     set_process_info("running queue: waiting for children of %d", pid);
     if ((status = read(pfd[pipe_read], buffer, sizeof(buffer))) != 0)
-      log_write(0, LOG_MAIN|LOG_PANIC, status > 0 ?
+      log_write(LOG_MAIN|LOG_PANIC, status > 0 ?
 	"queue run: unexpected data on pipe" : "queue run: error on pipe: %s",
 	strerror(errno));
     (void)close(pfd[pipe_read]);
@@ -832,11 +832,11 @@ if (q->queue_2stage)
 
 if (!recurse)
   {
-  if (q->name)
-    log_write(L_queue_run, LOG_MAIN, "End '%s' queue run: %s",
-      q->name, log_detail);
-  else
-    log_write(L_queue_run, LOG_MAIN, "End queue run: %s", log_detail);
+  if (LOGGING(queue_run))
+    if (q->name)
+      log_write(LOG_MAIN, "End '%s' queue run: %s", q->name, log_detail);
+    else
+      log_write(LOG_MAIN, "End queue run: %s", log_detail);
 
   /* If no ATRN messages were sent, try to close the channel semi-cleanly.
   XXX is this the best place to be doing this? We really ought to be
@@ -1368,7 +1368,7 @@ switch(action)
     if (spool_write_header(id, SW_MODIFYING, &errmsg) >= 0)
       {
       printf("is now frozen\n");
-      log_write(0, LOG_MAIN, "frozen by %s", username);
+      log_write(LOG_MAIN, "frozen by %s", username);
       }
     else
       {
@@ -1392,7 +1392,7 @@ switch(action)
     if (spool_write_header(id, SW_MODIFYING, &errmsg) >= 0)
       {
       printf("is no longer frozen\n");
-      log_write(0, LOG_MAIN, "unfrozen by %s", username);
+      log_write(LOG_MAIN, "unfrozen by %s", username);
       }
     else
       {
@@ -1479,7 +1479,7 @@ switch(action)
 	  int start, end, dom;
 
 	  if (!parse_extract_address(addr, &err, &start, &end, &dom, TRUE))
-	    log_write(0, LOG_MAIN|LOG_PANIC,
+	    log_write(LOG_MAIN|LOG_PANIC,
 	      "failed to parse address '%.100s'\n: %s", addr, err);
 	  else
 	    {
@@ -1498,8 +1498,8 @@ switch(action)
 	}
       (void) event_raise(event_action, US"msg:complete", NULL, NULL);
 #endif
-      log_write(0, LOG_MAIN, "removed by %s", username);
-      log_write(0, LOG_MAIN, "Completed");
+      log_write(LOG_MAIN, "removed by %s", username);
+      log_write(LOG_MAIN, "Completed");
       }
     break;
     }
@@ -1521,7 +1521,7 @@ switch(action)
     {
     printf("has been modified\n");
     for (int i = 0; i < recipients_count; i++)
-      log_write(0, LOG_MAIN, "address <%s> marked delivered by %s",
+      log_write(LOG_MAIN, "address <%s> marked delivered by %s",
         recipients_list[i].address, username);
     }
   else
@@ -1586,7 +1586,7 @@ switch(action)
 	if (string_is_utf8(recipient)) allow_utf8_domains = message_smtputf8 = TRUE;
 #endif
         receive_add_recipient(recipient, -1);
-        log_write(0, LOG_MAIN, "recipient <%s> added by %s",
+        log_write(LOG_MAIN, "recipient <%s> added by %s",
           recipient, username);
         }
       else if (action == MSG_MARK_DELIVERED)
@@ -1603,7 +1603,7 @@ switch(action)
         else
           {
           tree_add_nonrecipient(recipients_list[i].address);
-          log_write(0, LOG_MAIN, "address <%s> marked delivered by %s",
+          log_write(LOG_MAIN, "address <%s> marked delivered by %s",
             recipient, username);
           }
         }
@@ -1613,7 +1613,7 @@ switch(action)
 	if (string_is_utf8(recipient)) allow_utf8_domains = message_smtputf8 = TRUE;
 #endif
         sender_address = recipient;
-        log_write(0, LOG_MAIN, "sender address changed to <%s> by %s",
+        log_write(LOG_MAIN, "sender address changed to <%s> by %s",
           recipient, username);
         }
       }

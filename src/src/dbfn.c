@@ -124,7 +124,7 @@ priv_restore();
 
 if (*fdp < 0)
   {
-  log_write(0, LOG_MAIN, "%s",
+  log_write(LOG_MAIN, "%s",
     string_open_failed("database lock file %s", filename));
   errno = 0;      /* Indicates locking failure */
   return FALSE;
@@ -147,7 +147,7 @@ ALARM_CLR(0);
 if (sigalrm_seen) errno = ETIMEDOUT;
 if (rc < 0)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "Failed to get %s lock for %s: %s",
+  log_write(LOG_MAIN|LOG_PANIC, "Failed to get %s lock for %s: %s",
     rdonly ? "read" : "write", filename,
     errno == ETIMEDOUT ? "timed out" : strerror(errno));
   (void)close(*fdp); *fdp = -1;
@@ -251,7 +251,7 @@ if (!dbblock->dbptr)
   {
   errno = save_errno;
   if (lof && save_errno != ENOENT)
-    log_write(0, LOG_MAIN, "%s", string_open_failed("DB file %s",
+    log_write(LOG_MAIN, "%s", string_open_failed("DB file %s",
         filename));
   else
     DEBUG(hints_lookup)
@@ -309,7 +309,7 @@ if (!dbblock->dbptr)
   {
   errno = save_errno;
   if (save_errno != ENOENT)
-    log_write(0, LOG_MAIN, "%s", string_open_failed("DB file %s",
+    log_write(LOG_MAIN, "%s", string_open_failed("DB file %s",
         filename));
   else
     DEBUG(hints_lookup)
@@ -521,7 +521,7 @@ void * yield = dbfn_read_with_length(dbblock, key, &rlen);
 if (yield)
   {
   if (rlen == length) return yield;
-  log_write(0, LOG_MAIN|LOG_PANIC, "Bad db record size for '%s'", key);
+  log_write(LOG_MAIN|LOG_PANIC, "Bad db record size for '%s'", key);
   dbfn_delete(dbblock, key);
   }
 return NULL;

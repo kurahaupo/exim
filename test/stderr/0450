@@ -49,7 +49,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> userx@test.ex <--------
@@ -76,6 +76,6 @@ Leaving t1 transport
 LOG: MAIN
   == userx@test.ex R=r1 T=t1 defer (dd): Connection refused
 >>>>>>>>>>>>>>>> Exim pid=p1239 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

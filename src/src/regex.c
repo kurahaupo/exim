@@ -46,7 +46,7 @@ while ((regex_string = string_nextinlist(&list, &sep, NULL, 0)))
 
     if (!re)
       {
-      log_write(0, LOG_MAIN, "regex acl condition warning - %s, skipped", errstr);
+      log_write(LOG_MAIN, "regex acl condition warning - %s, skipped", errstr);
       continue;
       }
 
@@ -127,7 +127,7 @@ if (!mime_stream)				/* We are in the DATA ACL */
   {
   if (!(mbox_file = spool_mbox(&mbox_size, NULL, NULL)))
     {						/* error while spooling */
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	   "regex acl condition: error while creating mbox spool file");
     return DEFER;
     }
@@ -136,7 +136,7 @@ else
   {
   if ((f_pos = ftell(mime_stream)) < 0)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	   "regex acl condition: mime_stream: %s", strerror(errno));
     return DEFER;
     }
@@ -177,7 +177,7 @@ else
   clearerr(mime_stream);
   if (fseek(mime_stream, f_pos, SEEK_SET) == -1)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
 	   "regex acl condition: mime_stream: %s", strerror(errno));
     clearerr(mime_stream);
     }
@@ -205,7 +205,7 @@ if (!mime_decoded_filename)
   mime_decode(&empty);
   if (!mime_decoded_filename)
     {				/* decoding failed */
-    log_write(0, LOG_MAIN,
+    log_write(LOG_MAIN,
        "mime_regex acl condition warning - could not decode MIME part to file");
     return DEFER;
     }
@@ -214,7 +214,7 @@ if (!mime_decoded_filename)
 /* open file */
 if (!(f = fopen(CS mime_decoded_filename, "rb")))
   {
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
        "mime_regex acl condition warning - can't open '%s' for reading",
        mime_decoded_filename);
   return DEFER;

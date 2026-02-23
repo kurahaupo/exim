@@ -63,7 +63,7 @@ dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: x@test.ex
@@ -86,7 +86,7 @@ retry time not reached: checking ultimate address timeout
 Check retry rule (TESTSUITE/test-config:35) '*@test.ex'
 Check retry rule (TESTSUITE/test-config:36) '*@test.ex'
   received_time=tttt diff=tttt timeout=259200
-LOG: retry_defer MAIN
+LOG: MAIN
   == TESTSUITE/test-mail/rmbox <x@test.ex> R=r1 T=t1 defer (-53): Retry time not yet reached
 Processing retry items
  Succeeded addresses:
@@ -97,6 +97,6 @@ Processing retry items
   x@test.ex: no retry items
 end of retry processing
 >>>>>>>>>>>>>>>> Exim pid=p1238 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

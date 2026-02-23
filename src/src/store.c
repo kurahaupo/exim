@@ -285,7 +285,7 @@ for (pp = paired_pools; pp < paired_pools + N_PAIRED_POOLS; pp++)
 #ifndef COMPILE_UTILITY
 stackdump();
 #endif
-log_write_die(0, LOG_MAIN,
+log_write_die(LOG_MAIN,
   "bad memory reference; pool not found, at %s %d", func, linenumber);
 return NULL;
 }
@@ -344,7 +344,7 @@ return is_tainted_dnsa(p);
 void
 die_tainted(const uschar * msg, const uschar * func, int line)
 {
-log_write_die(0, LOG_MAIN, "Taint mismatch, %s: %s %d\n",
+log_write_die(LOG_MAIN, "Taint mismatch, %s: %s %d\n",
 	msg, func, line);
 }
 
@@ -404,7 +404,7 @@ does this to return a current watermark value for a later release of
 allocated store. */
 
 if (size < 0 || size >= INT_MAX/2)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
             "bad memory allocation requested (%d bytes) from %s %d",
             size, func, linenumber);
 
@@ -460,7 +460,7 @@ if (size > pp->yield_length)
       int err = posix_memalign((void **)&newblock,
 				pgsize, (mlength + pgsize - 1) & ~(pgsize - 1));
       if (err)
-	log_write_die(0, LOG_MAIN,
+	log_write_die(LOG_MAIN,
 	  "failed to alloc (using posix_memalign) %d bytes of memory: '%s'"
 	  "called from line %d in %s",
 	  size, strerror(err), linenumber, func);
@@ -767,7 +767,7 @@ int inc = newsize - oldsize;
 int rounded_oldsize = oldsize;
 
 if (oldsize < 0 || newsize < oldsize || newsize >= INT_MAX/2)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
             "bad memory extension requested (%d -> %d bytes) at %s %d",
             oldsize, newsize, func, linenumber);
 
@@ -867,7 +867,7 @@ if (CS ptr < bc || CS ptr > bc + b->length)
     if (CS ptr >= bc && CS ptr <= bc + b->length) break;
     }
   if (!b)
-    log_write_die(0, LOG_MAIN, "internal error: store_reset(%p) "
+    log_write_die(LOG_MAIN, "internal error: store_reset(%p) "
       "failed: pool=%d %-14s %4d", ptr, pool, func, linenumber);
   }
 
@@ -958,10 +958,10 @@ store_reset_3(rmark r, const char * func, int linenumber)
 void ** ptr = r;
 
 if (store_pool >= POOL_TAINT_BASE)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "store_reset called for pool %d: %s %d\n", store_pool, func, linenumber);
 if (!r)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "store_reset called with bad mark: %s %d\n", func, linenumber);
 
 internal_store_reset(*ptr, store_pool + POOL_TAINT_BASE, func, linenumber);
@@ -1059,7 +1059,7 @@ DEBUG(memory)
 #endif  /* COMPILE_UTILITY */
 
 if (store_pool >= POOL_TAINT_BASE)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "store_mark called for pool %d: %s %d\n", store_pool, func, linenumber);
 
 /* Stash a mark for the tainted-twin release, in the untainted twin. Return
@@ -1159,7 +1159,7 @@ BOOL release_ok = !is_tainted(oldblock) && pp->store_last_get == oldblock;		/*XX
 uschar * newblock;
 
 if (len < 0 || len > newsize)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
             "bad memory extension requested (%d -> %d bytes) at %s %d",
             len, newsize, func, linenumber);
 
@@ -1197,7 +1197,7 @@ void * yield;
 a negative int, to the (unsigned, wider) size_t */
 
 if (size >= INT_MAX/2)
-  log_write_die(0, LOG_MAIN,
+  log_write_die(LOG_MAIN,
     "bad internal_store_malloc request (" SIZE_T_FMT " bytes) from %s %d",
     size, func, line);
 
@@ -1205,7 +1205,7 @@ size += sizeof(size_t);	/* space to store the size, used under debug */
 if (size < 16) size = 16;
 
 if (!(yield = malloc(size)))
-  log_write_die(0, LOG_MAIN, "failed to malloc " SIZE_T_FMT " bytes of memory: "
+  log_write_die(LOG_MAIN, "failed to malloc " SIZE_T_FMT " bytes of memory: "
     "called from line %d in %s", size, line, func);
 
 #ifndef COMPILE_UTILITY

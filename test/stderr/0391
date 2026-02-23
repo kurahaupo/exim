@@ -14,8 +14,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [1.2.3.4]
 sender_rcvhost = [1.2.3.4]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [1.2.3.4]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [1.2.3.4]
 host in host_reject_connection? no (option unset)
@@ -53,7 +51,7 @@ Verifying U@W.x.y
    list element: *.x.y
    w.x.y in "*.x.y"? yes (matched "*.x.y")
   U@W.x.y in "*@*.x.y"? yes (matched "*@*.x.y")
-LOG: address_rewrite MAIN
+LOG: MAIN
   "U@W.x.y" from env-from rewritten as "U@x.y" by rule 1
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering U@x.y
@@ -79,8 +77,6 @@ end of ACL acl_rcpt: ACCEPT
 SMTP>> 250 Accepted
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test) [1.2.3.4] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

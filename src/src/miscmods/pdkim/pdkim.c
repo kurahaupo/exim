@@ -1554,7 +1554,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
   if (!exim_sha_init(&hhash_ctx, pdkim_hashes[sig->hashtype].exim_hashmethod))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC,
+    log_write(LOG_MAIN|LOG_PANIC,
       "DKIM: hash setup error, possibly nonhandled hashtype");
     break;
     }
@@ -1588,7 +1588,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
     if ((*err = exim_dkim_signing_init(CUS sig->privkey, &sctx)))
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "signing_init: %s", *err);
+      log_write(LOG_MAIN|LOG_PANIC, "signing_init: %s", *err);
       return PDKIM_ERR_RSA_PRIVKEY;
       }
     sig->keytype = sctx.keytype;
@@ -1748,7 +1748,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
     if ((*err = exim_dkim_sign(&sctx, hm, &hhash, &sig->sighash)))
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "signing: %s", *err);
+      log_write(LOG_MAIN|LOG_PANIC, "signing: %s", *err);
       return PDKIM_ERR_RSA_SIGNING;
       }
 
@@ -1815,7 +1815,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
     if (!(sig->pubkey = pdkim_key_from_dns(ctx, sig, &vctx, err)))
       {
-      log_write(0, LOG_MAIN, "DKIM: %s%s %s%s [failed key import]",
+      log_write(LOG_MAIN, "DKIM: %s%s %s%s [failed key import]",
 	sig->domain   ? "d=" : "", sig->domain   ? sig->domain   : US"",
 	sig->selector ? "s=" : "", sig->selector ? sig->selector : US"");
       goto NEXT_VERIFY;
@@ -1968,7 +1968,7 @@ for (hashtype = 0; hashtype < nelem(pdkim_hashes); hashtype++)
   { sig->hashtype = hashtype; break; }
 if (hashtype >= nelem(pdkim_hashes))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "DKIM: unrecognised hashname '%s'", hashname);
   return NULL;
   }

@@ -1,4 +1,4 @@
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234 -qf
 delivering 10HmaX-000000005vi-0000 (queue run pid p1234)
 Connecting to 127.0.0.1 [127.0.0.1]:PORT_D ...
@@ -82,7 +82,7 @@ LOG: MAIN
   => abcd@test.ex R=client T=send_to_server2 H=ip4.ip4.ip4.ip4 [ip4.ip4.ip4.ip4] PS=se X=TLS1.x:ke-RSA-AES256-SHAnnn:xxx CV=yes C="250 OK id=10HmbB-000000005vi-0000"
 LOG: MAIN
   Completed
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234 -qf
 
 ******** SERVER ********

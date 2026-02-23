@@ -15,8 +15,6 @@ sender address = CALLER@the.local.host.name
 sender_fullhost = [1.2.3.4]
 sender_rcvhost = [1.2.3.4]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [1.2.3.4]
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [1.2.3.4]
 host in host_reject_connection? no (option unset)
@@ -58,8 +56,6 @@ Verifying a@b
    list element: b
    b in "b"? yes (matched "b")
   a@b in "a@b"? yes (matched "a@b")
-LOG: address_rewrite MAIN
-  "a@b" from env-from rewritten as "rewritten-a@rewritten-b" by rule 1
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering rewritten-a@rewritten-b
  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -100,8 +96,6 @@ end of ACL rcpt: ACCEPT
 SMTP>> 250 Accepted
 SMTP<< quit
 SMTP>| 221 the.local.host.name closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from ([1.2.3.4]) [1.2.3.4] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

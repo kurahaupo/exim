@@ -34,7 +34,7 @@ uschar * s;
 GET_OPTION("dsn_from");
 if (!(s = expand_string(dsn_from)))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "Failed to expand dsn_from (using default): %s", expand_string_message);
   s = expand_string(US DEFAULT_DSN_FROM);
   }
@@ -449,10 +449,10 @@ if (status != 0)
   {
   uschar *msg = US"Child mail process returned status";
   if (status == -257)
-    log_write(0, LOG_MAIN, "%s %d: errno=%d: %s", msg, status, errno,
+    log_write(LOG_MAIN, "%s %d: errno=%d: %s", msg, status, errno,
       strerror(errno));
   else
-    log_write(0, LOG_MAIN, "%s %d", msg, status);
+    log_write(LOG_MAIN, "%s %d", msg, status);
   return FALSE;
   }
 
@@ -526,13 +526,13 @@ switch(ident)
   case ERRMESS_BADARGADDRESS:
   case ERRMESS_BADNOADDRESS:
   case ERRMESS_BADADDRESS:
-  log_write(0, LOG_MAIN, "%s: at least one malformed recipient address: "
+  log_write(LOG_MAIN, "%s: at least one malformed recipient address: "
     "%s - %s", msg, eblock->text1, eblock->text2);
   break;
 
   case ERRMESS_IGADDRESS:
   case ERRMESS_NOADDRESS:
-  log_write(0, LOG_MAIN, "%s: no recipient addresses", msg);
+  log_write(LOG_MAIN, "%s: no recipient addresses", msg);
   break;
 
   /* This error has already been logged. */
@@ -540,35 +540,35 @@ switch(ident)
   break;
 
   case ERRMESS_VLONGHEADER:
-  log_write(0, LOG_MAIN, "%s: excessively long message header section read "
+  log_write(LOG_MAIN, "%s: excessively long message header section read "
     "(more than %d characters)", msg, header_maxsize);
   break;
 
   case ERRMESS_VLONGHDRLINE:
-  log_write(0, LOG_MAIN, "%s: excessively long message header line read "
+  log_write(LOG_MAIN, "%s: excessively long message header line read "
     "(more than %d characters)", msg, header_line_maxsize);
   break;
 
   case ERRMESS_TOOBIG:
-  log_write(0, LOG_MAIN, "%s: message too big (limit set to %d)", msg,
+  log_write(LOG_MAIN, "%s: message too big (limit set to %d)", msg,
     thismessage_size_limit);
   break;
 
   case ERRMESS_TOOMANYRECIP:
-  log_write(0, LOG_MAIN, "%s: too many recipients (max set to %d)", msg,
+  log_write(LOG_MAIN, "%s: too many recipients (max set to %d)", msg,
     recipients_max_expanded);
   break;
 
   case ERRMESS_LOCAL_SCAN:
-  log_write(0, LOG_MAIN, "%s: rejected by local_scan: %s", msg, eblock->text1);
+  log_write(LOG_MAIN, "%s: rejected by local_scan: %s", msg, eblock->text1);
   break;
 
   case ERRMESS_LOCAL_ACL:
-  log_write(0, LOG_MAIN, "%s: rejected by non-SMTP ACL: %s", msg, eblock->text1);
+  log_write(LOG_MAIN, "%s: rejected by non-SMTP ACL: %s", msg, eblock->text1);
   break;
 
   default:
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s: unknown error number %d", msg,
+  log_write(LOG_MAIN|LOG_PANIC, "%s: unknown error number %d", msg,
     ident);
   break;
   }
@@ -773,7 +773,7 @@ while ((item = string_nextinlist(&listptr, &sep, NULL, 0)))
     yield = expand_string_copy(newaddress);
     deliver_domain = deliver_localpart = NULL;
     if (yield == NULL)
-      log_write(0, LOG_MAIN|LOG_PANIC, "Failed to expand %s when processing "
+      log_write(LOG_MAIN|LOG_PANIC, "Failed to expand %s when processing "
         "errors_copy: %s", newaddress, expand_string_message);
     break;
     }
@@ -820,17 +820,17 @@ FILE * f;
 
 for (const error_block * e = eblock; e; e = e->next)
   if (e->text2)
-    log_write(0, LOG_MAIN, "%s router: skipped error: %s in %q",
+    log_write(LOG_MAIN, "%s router: skipped error: %s in %q",
       rname, e->text1, e->text2);
   else
-    log_write(0, LOG_MAIN, "%s router: skipped error: %s", rname,
+    log_write(LOG_MAIN, "%s router: skipped error: %s", rname,
       e->text1);
 
 if (!syntax_errors_to) return TRUE;
 
 if (!(s = expand_string(syntax_errors_to)))
   {
-  log_write(0, LOG_MAIN, "%s router failed to expand %s: %s", rname,
+  log_write(LOG_MAIN, "%s router failed to expand %s: %s", rname,
     syntax_errors_to, expand_string_message);
   return FALSE;
   }
@@ -857,7 +857,7 @@ if (custom)
   {
   if (!(s = expand_string(custom)))
     {
-    log_write(0, LOG_MAIN, "%s router failed to expand %s: %s", rname,
+    log_write(LOG_MAIN, "%s router failed to expand %s: %s", rname,
       custom, expand_string_message);
     return FALSE;
     }

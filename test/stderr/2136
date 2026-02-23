@@ -72,8 +72,6 @@ LOG: MAIN
   <= userc@ok.example H=(test.ex) [ip4.ip4.ip4.ip4] P=esmtp S=sss
 forked delivery process p1244 
 Process p1239 is ready for new message
-LOG: smtp_connection MAIN
-  SMTP connection from (test.ex) [ip4.ip4.ip4.ip4] D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1239 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1236 child p1239 ended: status=0x0
 p1236   normal exit, 0
@@ -144,8 +142,6 @@ LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1248 (daemon-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1246 >>>>>>>>>>>>>>>> Exim pid=p1246 (tls-proxy) terminating with rc=0 >>>>>>>>>>>>>>>>
-p1240 LOG: smtp_connection MAIN
-p1240   SMTP connection from localhost (myhost.test.ex) [127.0.0.1] D=q.qqqs closed by QUIT
 p1240 >>>>>>>>>>>>>>>> Exim pid=p1240 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1236 child p1240 ended: status=0x0
 p1236   normal exit, 0
@@ -224,8 +220,6 @@ LOG: MAIN
   <= usere@ok.example H=(test.ex) [ip4.ip4.ip4.ip4] P=esmtp S=sss
 forked delivery process p1256 
 Process p1251 is ready for new message
-LOG: smtp_connection MAIN
-  SMTP connection from (test.ex) [ip4.ip4.ip4.ip4] D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1251 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1237 child p1251 ended: status=0x0
 p1237   normal exit, 0
@@ -296,8 +290,6 @@ LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1260 (daemon-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1258 >>>>>>>>>>>>>>>> Exim pid=p1258 (tls-proxy) terminating with rc=0 >>>>>>>>>>>>>>>>
-p1252 LOG: smtp_connection MAIN
-p1252   SMTP connection from localhost (myhost.test.ex) [127.0.0.1] D=q.qqqs closed by QUIT
 p1252 >>>>>>>>>>>>>>>> Exim pid=p1252 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1237 child p1252 ended: status=0x0
 p1237   normal exit, 0

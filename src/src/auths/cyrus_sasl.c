@@ -127,14 +127,14 @@ sasl_callback_t cbs[] = {
 if (!ob->server_mech) ob->server_mech = string_copy(ablock->public_name);
 
 if (!(expanded_hostname = expand_string(ob->server_hostname)))
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't expand server_hostname [%s]: %s",
       a->name, ob->server_hostname, expand_string_message);
 
 realm_expanded = NULL;
 if (  ob->server_realm
    && !(realm_expanded = CS expand_string(ob->server_realm)))
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't expand server_realm [%s]: %s",
       a->name, ob->server_realm, expand_string_message);
 
@@ -145,16 +145,16 @@ cbs[0].proc = (int(*)(void)) &mysasl_config;
 cbs[0].context = ob->server_mech;
 
 if (sasl_server_init(cbs, "exim") != SASL_OK)
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't initialise Cyrus SASL library.", a->name);
 
 if (sasl_server_new(CS ob->server_service, CS expanded_hostname,
                    realm_expanded, NULL, NULL, NULL, 0, &conn) != SASL_OK)
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't initialise Cyrus SASL server connection.", a->name);
 
 if (sasl_listmech(conn, NULL, "", ":", "", CCSS &list, &len, NULL) != SASL_OK)
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't get Cyrus SASL mechanism list.", a->name);
 
 sep = ':';
@@ -180,7 +180,7 @@ while (  (buffer = string_nextinlist(&listptr, &sep, NULL, 0))
       && strcmpic(buffer,ob->server_mech) );
 
 if (!buffer)
-  log_write_die(0, LOG_CONFIG_FOR, "%s authenticator:  "
+  log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "Cyrus SASL doesn't know about mechanism %s.", a->name, ob->server_mech);
 
 store_reset(rs_point);
@@ -378,7 +378,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
     HDEBUG(auth)
       debug_printf("Cyrus SASL library will not tell us the username: %s\n",
 	  sasl_errstring(rc, NULL, NULL));
-    log_write(0, LOG_REJECT, "%s authenticator (%s): "
+    log_write(LOG_REJECT, "%s authenticator (%s): "
        "Cyrus SASL username fetch problem: %s", auname, ob->server_mech,
        sasl_errstring(rc, NULL, NULL));
     sasl_dispose(&conn);
@@ -397,7 +397,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       /* these are considered permanent failure codes */
       HDEBUG(auth)
 	debug_printf("Cyrus SASL permanent failure %d (%s)\n", rc, sasl_errstring(rc, NULL, NULL));
-      log_write(0, LOG_REJECT, "%s authenticator (%s): "
+      log_write(LOG_REJECT, "%s authenticator (%s): "
 	 "Cyrus SASL permanent failure: %s", auname, ob->server_mech,
 	 sasl_errstring(rc, NULL, NULL));
       sasl_dispose(&conn);
@@ -427,7 +427,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
 	HDEBUG(auth)
 	  debug_printf("Cyrus SASL library will not tell us the SSF: %s\n",
 	      sasl_errstring(rc, NULL, NULL));
-	log_write(0, LOG_REJECT, "%s authenticator (%s): "
+	log_write(LOG_REJECT, "%s authenticator (%s): "
 	    "Cyrus SASL SSF value not available: %s", auname, ob->server_mech,
 	    sasl_errstring(rc, NULL, NULL));
 	sasl_dispose(&conn);
@@ -441,7 +441,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
 	{
 	HDEBUG(auth)
 	  debug_printf("Exim does not implement SASL wrapping (needed for SSF %d).\n", negotiated_ssf);
-	log_write(0, LOG_REJECT, "%s authenticator (%s): "
+	log_write(LOG_REJECT, "%s authenticator (%s): "
 	    "Cyrus SASL SSF %d not supported by Exim", auname, ob->server_mech, negotiated_ssf);
 	sasl_dispose(&conn);
 	sasl_done();

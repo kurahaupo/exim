@@ -982,7 +982,7 @@ for (int i = 0; i < 3; i++)
           addr->user_message = addr->user_message
 	    ? string_sprintf("%s: retry timeout exceeded", addr->user_message)
 	    : US"retry timeout exceeded";
-          log_write(0, LOG_MAIN, "** %s%s%s%s: retry timeout exceeded",
+          log_write(LOG_MAIN, "** %s%s%s%s: retry timeout exceeded",
             addr->address,
             addr->parent ? US" <" : US"",
             addr->parent ? addr->parent->address : US"",

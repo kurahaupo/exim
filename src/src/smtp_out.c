@@ -57,7 +57,7 @@ if (!(expint = expand_string(istring)))
 
 if (is_tainted(expint))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
     "attempt to use tainted value '%s' from '%s' for interface",
     expint, istring);
   addr->transport_return = PANIC;
@@ -425,7 +425,7 @@ if (!save_errno)
     sending_ip_address = host_ntoa(-1, &interface_sock, NULL, &sending_port);
   else
     {
-    log_write(0, LOG_MAIN | ((errno == ECONNRESET)? 0 : LOG_PANIC),
+    log_write(LOG_MAIN | ((errno == ECONNRESET)? 0 : LOG_PANIC),
       "getsockname() failed: %s", strerror(errno));
     close(sock);
     return -1;
@@ -514,7 +514,7 @@ if (ob->socks_proxy)
   {
   if (!(ob->socks_proxy = expand_string(ob->socks_proxy)))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Bad expansion for socks_proxy in %s",
+    log_write(LOG_MAIN|LOG_PANIC, "Bad expansion for socks_proxy in %s",
       sc->tblock->drinst.name);
     return -1;
     }
@@ -559,7 +559,7 @@ HDEBUG(transport|acl) debug_printf_indent("cmd buf flush %d bytes%s\n", n,
 
 if (!(cctx = outblock->cctx))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "null conn-context pointer");
+  log_write(LOG_MAIN|LOG_PANIC, "null conn-context pointer");
   errno = 0;
   return FALSE;
   }
@@ -665,12 +665,12 @@ if (format)
 
   va_start(ap, format);
   if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS format, ap))
-    log_write_die(0, LOG_MAIN, "overlong write_command in outgoing "
+    log_write_die(LOG_MAIN, "overlong write_command in outgoing "
       "SMTP");
   va_end(ap);
 
   if (gs.ptr > outblock->buffersize)
-    log_write_die(0, LOG_MAIN, "overlong write_command in outgoing "
+    log_write_die(LOG_MAIN, "overlong write_command in outgoing "
       "SMTP");
 
   if (gs.ptr > outblock->buffersize - (outblock->ptr - outblock->buffer))

@@ -492,7 +492,7 @@ ip_address_item *last = NULL;
 ip_address_item  *next;
 
 if (getifaddrs(&ifalist) != 0)
-  log_write_die(0, LOG_PANIC_DIE, "Unable to call getifaddrs: %d %s",
+  log_write_die(LOG_PANIC_DIE, "Unable to call getifaddrs: %d %s",
     errno, strerror(errno));
 
 for (struct ifaddrs * ifa = ifalist; ifa; ifa = ifa->ifa_next)
@@ -637,7 +637,7 @@ if ((vs = socket(FAMILY, SOCK_DGRAM, 0)) < 0)
   vs = socket(AF_INET, SOCK_DGRAM, 0);
   if (vs < 0)
 #endif
-  log_write_die(0, LOG_PANIC_DIE, "Unable to create IPv4 socket to find interface "
+  log_write_die(LOG_PANIC_DIE, "Unable to create IPv4 socket to find interface "
     "addresses: %d %s", errno, strerror(errno));
   }
 
@@ -653,7 +653,7 @@ ifc.V_ifc_flags = 0;
 #endif
 
 if (ioctl(vs, V_GIFCONF, CS &ifc) < 0)
-  log_write_die(0, LOG_PANIC_DIE, "Unable to get interface configuration: %d %s",
+  log_write_die(LOG_PANIC_DIE, "Unable to get interface configuration: %d %s",
     errno, strerror(errno));
 
 /* If the buffer is big enough, the ioctl sets the value of ifc.V_ifc_len to
@@ -697,7 +697,7 @@ for (char * cp = buf; cp < buf + ifc.V_ifc_len; cp += len)
           ifreq.ifr_addr.sa_len : sizeof(ifreq.ifr_addr)) +
          sizeof(ifreq.V_ifr_name);
   if (len > sizeof(addrbuf))
-    log_write_die(0, LOG_PANIC_DIE, "Address for %s interface is absurdly long",
+    log_write_die(LOG_PANIC_DIE, "Address for %s interface is absurdly long",
         ifreq.V_ifr_name);
 
   #endif
@@ -721,7 +721,7 @@ for (char * cp = buf; cp < buf + ifc.V_ifc_len; cp += len)
     {
     continue;
     /*************
-    log_write(0, LOG_PANIC_DIE, "Unable to get flags for %s interface: %d %s",
+    log_write(LOG_PANIC_DIE, "Unable to get flags for %s interface: %d %s",
       ifreq.V_ifr_name, errno, strerror(errno));
     *************/
     }
@@ -734,7 +734,7 @@ for (char * cp = buf; cp < buf + ifc.V_ifc_len; cp += len)
 
   #ifndef SIOCGIFCONF_GIVES_ADDR
   if (ioctl(vs, V_GIFADDR, CS &ifreq) < 0)
-    log_write_die(0, LOG_PANIC_DIE, "Unable to get IP address for %s interface: "
+    log_write_die(LOG_PANIC_DIE, "Unable to get IP address for %s interface: "
       "%d %s", ifreq.V_ifr_name, errno, strerror(errno));
   addrp = &ifreq.V_ifr_addr;
 

@@ -7,8 +7,6 @@ readconf_rest: routers
 readconf_rest: transports
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
 SMTP>- ◀flush▶
@@ -104,8 +102,6 @@ log directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100
 SMTP>> 250 OK
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 SMTP>- ◀flush▶
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -118,8 +114,6 @@ readconf_rest: transports
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@myhost.test.ex
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [1.2.3.4]
 host in host_lookup? no (option unset)
 host in host_reject_connection? no (option unset)
 host in sender_unqualified_hosts? no (option unset)
@@ -168,8 +162,6 @@ end of inline ACL: ACCEPT
 SMTP>> 250 Accepted
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test) [1.2.3.4] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -182,8 +174,6 @@ readconf_rest: transports
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@myhost.test.ex
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.9.8.7]
 host in host_lookup? no (option unset)
 host in host_reject_connection? no (option unset)
 host in sender_unqualified_hosts? no (option unset)
@@ -233,8 +223,6 @@ end of inline ACL: ACCEPT
 SMTP>> 250 Accepted
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test) [V4NET.9.8.7] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -246,8 +234,6 @@ readconf_rest: routers
 readconf_rest: transports
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
 SMTP>- ◀flush▶
@@ -307,7 +293,5 @@ log directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100
 SMTP>> 250 OK
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 SMTP>- ◀flush▶
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

@@ -8,7 +8,7 @@ readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
 Single queue run
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234 -qq
 queue running combined directories
 looking in TESTSUITE/spool//input
@@ -81,7 +81,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1243 (continued-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234 -qq
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
@@ -94,7 +94,7 @@ readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
 Single queue run
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1235 -qq
 queue running combined directories
 looking in TESTSUITE/spool//input
@@ -169,10 +169,10 @@ LOG: MAIN
 LOG: MAIN
   == b@test.ex R=client T=send_to_server defer (dd): Connection refused
 >>>>>>>>>>>>>>>> Exim pid=p1252 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1235 -qq
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1236 -qqf
 delivering 10HmbA-000000005vi-0000 (queue run pid p1236)
 R: client  (ACL)
@@ -212,5 +212,5 @@ LOG: MAIN
   <= <> R=10HmbA-000000005vi-0000 U=EXIMUSER P=local S=sss
 LOG: MAIN
   Completed
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1236 -qqf

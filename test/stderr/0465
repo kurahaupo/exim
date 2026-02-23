@@ -14,8 +14,6 @@ originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
 set_process_info: pppp accepting a local SMTP message from <CALLER>
  in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
 SMTP>- ◀flush▶
@@ -26,13 +24,9 @@ spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 
 log directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100
 SMTP>> 250 OK
 SMTP<< rcpt to:<abc@domain.>
-LOG: smtp_syntax_error MAIN
-  SMTP syntax error in "rcpt to:<abc@domain.>" U=CALLER domain missing or malformed
 SMTP>> 501 <abc@domain.>: domain missing or malformed
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -53,8 +47,6 @@ originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
 set_process_info: pppp accepting a local SMTP message from <CALLER>
  in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
 SMTP>- ◀flush▶
@@ -111,8 +103,6 @@ SMTP>| 250 OK id=10HmaY-000000005vi-0000
 smtp_setup_msg entered
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -132,8 +122,6 @@ originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
 set_process_info: pppp accepting a local SMTP message from <CALLER>
  in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
 SMTP>- ◀flush▶
@@ -188,8 +176,6 @@ receive_msg: tidyup
 smtp_setup_msg entered
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

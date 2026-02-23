@@ -129,7 +129,7 @@ const uschar * s;
 if (items != 1)
   croak("Usage: Exim::log_write(string)");
 s = US SvPV(ST(0), len);
-log_write(0, LOG_MAIN, "%.*s", (int)len, s);
+log_write(LOG_MAIN, "%.*s", (int)len, s);
 }
 
 /* Do a DNS lookup using Exim's facilities.

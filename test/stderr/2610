@@ -284,8 +284,6 @@ search_tidyup called
 01:01:01 p1235  sender_fullhost = [10.0.0.0]
 01:01:01 p1235  sender_rcvhost = [10.0.0.0]
 01:01:01 p1235  host in hosts_connection_nolog? no (option unset)
-01:01:01 p1235  LOG: smtp_connection MAIN
-01:01:01 p1235    SMTP connection from [10.0.0.0]
 01:01:01 p1235  try option 'message_size_limit'
 01:01:01 p1235  host in host_lookup? no (option unset)
 01:01:01 p1235  set_process_info: pppp handling incoming connection from [10.0.0.0]
@@ -735,8 +733,6 @@ search_tidyup called
 01:01:01 p1235  SMTP<< quit
 01:01:01 p1235  try option 'acl_smtp_quit'
 01:01:01 p1235  SMTP>| 221 myhost.test.ex closing connection
-01:01:01 p1235  LOG: smtp_connection MAIN
-01:01:01 p1235    SMTP connection from (test) [10.0.0.0] D=qqs closed by QUIT
 01:01:01 p1235  SMTP>- ◀flush▶
 01:01:01 p1235  search_tidyup called
 01:01:01 p1235   close MYSQL connection: 127.0.0.1:PORT_N/test/root

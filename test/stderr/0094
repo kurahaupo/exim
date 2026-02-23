@@ -119,8 +119,6 @@ sender address = CALLER@test.ex
 sender_fullhost = [V4NET.99.99.90]
 sender_rcvhost = [V4NET.99.99.90]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.99.99.90]
 host in host_lookup?
  list element: 0.0.0.0/0
   host in host_lookup? yes (matched "0.0.0.0/0")
@@ -234,8 +232,6 @@ LOG: MAIN REJECT
   H=oneback.test.ex (test) [V4NET.99.99.90] F=<userx@test.ex> rejected RCPT <userx@cam.ac.uk>: relay not permitted
 SMTP<< quit
 SMTP>| 221 the.local.host.name closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from oneback.test.ex (test) [V4NET.99.99.90] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

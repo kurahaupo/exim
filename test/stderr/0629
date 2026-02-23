@@ -16,8 +16,6 @@ LOG: PANIC
 SMTP>- ◀flush▶
 SMTP<< QUIT
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from (test.ex) [127.0.0.1] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 SMTP>- ◀flush▶
 search_tidyup called

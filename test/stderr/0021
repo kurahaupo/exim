@@ -7,8 +7,6 @@ readconf_rest: acl
 readconf_rest: routers
 readconf_rest: transports
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 host in host_lookup? no (option unset)
 host in host_reject_connection? no (option unset)
 host in sender_unqualified_hosts? no (option unset)
@@ -156,8 +154,6 @@ LOG: PANIC
   rcpt accepted C=MAIL,MAIL,RCPT,RCPT
 accept: condition test succeeded in ACL rcpt
 end of ACL rcpt: ACCEPT
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 1999-03-02 09:44:33 ACL "warn" with "message" setting found in a non-message (EHLO or HELO) ACL: cannot specify header lines here: message ignored
 Exim version x.yz ....
@@ -169,8 +165,6 @@ readconf_rest: acl
 readconf_rest: routers
 readconf_rest: transports
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 host in host_lookup? no (option unset)
 host in host_reject_connection? no (option unset)
 host in sender_unqualified_hosts? no (option unset)
@@ -307,8 +301,6 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1236 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 1999-03-02 09:44:33 ACL "warn" with "message" setting found in a non-message (EHLO or HELO) ACL: cannot specify header lines here: message ignored
 1999-03-02 09:44:33 rcpt accepted C=EHLO,MAIL,RCPT

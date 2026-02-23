@@ -159,7 +159,6 @@ from modules such as store.c when things go drastically wrong (e.g. malloc()
 failing). In normal use they won't get obeyed.
 
 Arguments:
-  selector  not relevant when running a utility
   flags     not relevant when running a utility
   format    a printf() format
   ...       arguments for format
@@ -168,7 +167,7 @@ Returns:    nothing
 */
 
 void
-log_write(bitmask_word_t selector, int flags, const char *format, ...)
+log_write(int flags, const char *format, ...)
 {
 va_list ap;
 va_start(ap, format);
@@ -179,7 +178,7 @@ va_end(ap);
 
 
 void
-log_write_die(bitmask_word_t selector, int flags, const char *format, ...)
+log_write_die(int flags, const char *format, ...)
 {
 va_list ap;
 va_start(ap, format);

@@ -117,7 +117,7 @@ else if (  !(*result = expand_string(US s)) /* need to clean up const more */
 	)
   {
   *errstr = US"Internal error";
-  log_write(0, LOG_MAIN|LOG_PANIC, "expansion of %s failed: %s", name,
+  log_write(LOG_MAIN|LOG_PANIC, "expansion of %s failed: %s", name,
     expand_string_message);
   return FALSE;
   }
@@ -505,7 +505,7 @@ int
 tls_ungetc(int ch)
 {
 if (ssl_xfer_buffer_lwm <= 0)
-  log_write_die(0, LOG_MAIN, "buffer underflow in tls_ungetc");
+  log_write_die(LOG_MAIN, "buffer underflow in tls_ungetc");
 
 ssl_xfer_buffer[--ssl_xfer_buffer_lwm] = ch;
 return ch;
@@ -791,7 +791,7 @@ if (  !tls_advertise_hosts
    )
   return TRUE;
 else if (!nowarn && !tls_certificate)
-  log_write(0, LOG_MAIN,
+  log_write(LOG_MAIN,
     "Warning: No server certificate defined; will use a selfsigned one.\n"
     " Suggested action: either install a certificate or change tls_advertise_hosts option");
 
@@ -799,7 +799,7 @@ oldsignal = signal(SIGCHLD, SIG_DFL);
 
 fflush(NULL);
 if ((pid = exim_fork(US"cipher-validate")) < 0)
-  log_write_die(0, LOG_MAIN, "fork failed for TLS check");
+  log_write_die(LOG_MAIN, "fork failed for TLS check");
 
 if (pid == 0)
   {
@@ -809,8 +809,7 @@ if (pid == 0)
         US"calling tls_validate_require_cipher");
 
   if ((errmsg = tls_validate_require_cipher()))
-    log_write_die(0, LOG_CONFIG,
-        "tls_require_ciphers invalid: %s", errmsg);
+    log_write_die(LOG_CONFIG, "tls_require_ciphers invalid: %s", errmsg);
   fflush(NULL);
   exim_underbar_exit(EXIT_SUCCESS);
   }

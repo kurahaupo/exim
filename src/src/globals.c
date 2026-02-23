@@ -959,35 +959,6 @@ uschar *log_file_path          = US LOG_FILE_PATH
 
 const uschar * const log_notall_names[] = { NULL };
 
-/* Table for selectors for log_write() calls.
-It is used for translating Li_* values, using the position in this table,
-to Lt_* values and name strings.
-Must have names that are in both enum logwrite_bit and logging_test_bit. */
-
-#define BIT_TABLE(chan) {.name = US #chan, .logchan_bit = Lt_##chan }
-
-bit_table logwrite_options[] = {
-  BIT_TABLE(address_rewrite),
-  BIT_TABLE(all_parents),
-  BIT_TABLE(connection_reject),
-  BIT_TABLE(delay_delivery),
-  BIT_TABLE(dnslist_defer),
-  BIT_TABLE(etrn),
-  BIT_TABLE(host_lookup_failed),
-  BIT_TABLE(lost_incoming_connection),
-  BIT_TABLE(queue_run),
-  BIT_TABLE(retry_defer),
-  BIT_TABLE(size_reject),
-  BIT_TABLE(skip_delivery),
-  BIT_TABLE(smtp_connection),
-  BIT_TABLE(smtp_incomplete_transaction),
-  BIT_TABLE(smtp_protocol_error),
-  BIT_TABLE(smtp_syntax_error),
-};
-#undef BIT_TABLE
-int     logwrite_options_count      = nelem(logwrite_options);
-
-
 /* List of names for logging channels.  Must be in alphabetical order.
 Must match enum logging_test_bit (macros.h).
 This is a superset of logwrite_options[]. */

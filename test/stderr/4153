@@ -61,13 +61,13 @@ admin user
 dropping to exim gid; retaining priv uid
 readconf_rest: routers
 readconf_rest: retry
-LOG: queue_run MAIN
+LOG: MAIN
   Start queue run: pid=p1234 -qf
 LOG: MAIN
   cancelled by timeout_frozen_after
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1239 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-LOG: queue_run MAIN
+LOG: MAIN
   End queue run: pid=p1234 -qf
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

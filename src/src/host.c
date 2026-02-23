@@ -113,7 +113,7 @@ slow_lookup_log milliseconds
 static void
 log_long_lookup(const uschar * type, const uschar * data, unsigned long msec)
 {
-log_write(0, LOG_MAIN, "Long %s lookup for '%s': %lu msec",
+log_write(LOG_MAIN, "Long %s lookup for '%s': %lu msec",
   type, data, msec);
 }
 
@@ -684,7 +684,7 @@ while ((s = string_nextinlist(&list, &sep, NULL, 0)))
   int port = host_address_extract_port(s);            /* Leaves just the IP address */
 
   if (!(ipv = string_is_ip_address(s, NULL)))
-    log_write_die(0, LOG_MAIN, "Malformed IP address %q in %s",
+    log_write_die(LOG_MAIN, "Malformed IP address %q in %s",
       s, name);
 
   /* Skip IPv6 addresses if IPv6 is disabled. */
@@ -960,7 +960,7 @@ if (Ustrchr(address, ':') != NULL)
     {
     int len = Ustrcspn(p, ":%");
     if (len == 0) nulloffset = ci;
-    if (ci > 7) log_write_die(0, LOG_MAIN,
+    if (ci > 7) log_write_die(LOG_MAIN,
       "Internal error: invalid IPv6 address %q passed to host_aton()",
       address);
     else component[ci++] = p;
@@ -1459,7 +1459,7 @@ if (Ustrchr(sender_host_address, ':') != NULL)
   {
   struct in6_addr addr6;
   if (inet_pton(AF_INET6, CS sender_host_address, &addr6) != 1)
-    log_write_die(0, LOG_MAIN, "unable to parse %q as an "
+    log_write_die(LOG_MAIN, "unable to parse %q as an "
       "IPv6 address", sender_host_address);
   #if HAVE_GETIPNODEBYADDR
   hosts = getipnodebyaddr(CS &addr6, sizeof(addr6), AF_INET6, &h_errno);
@@ -1470,7 +1470,7 @@ if (Ustrchr(sender_host_address, ':') != NULL)
 else
   {
   if (inet_pton(AF_INET, CS sender_host_address, &addr) != 1)
-    log_write_die(0, LOG_MAIN, "unable to parse %q as an "
+    log_write_die(LOG_MAIN, "unable to parse %q as an "
       "IPv4 address", sender_host_address);
   #if HAVE_GETIPNODEBYADDR
   hosts = getipnodebyaddr(CS &addr, sizeof(addr), AF_INET, &h_errno);
@@ -1670,7 +1670,7 @@ while ((ordername = string_nextinlist(&list, &sep, NULL, 0)))
         if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen,
              US rr->data, (DN_EXPAND_ARG4_TYPE)(s), ssize) < 0)
           {
-          log_write(0, LOG_MAIN, "host name alias list truncated for %s",
+          log_write(LOG_MAIN, "host name alias list truncated for %s",
             sender_host_address);
           break;
           }
@@ -1735,9 +1735,9 @@ NB host_lookup_msg must be in permanent store.  */
 
 if (!sender_host_name)
   {
-  if (host_checking || !f.log_testing_mode)
-    log_write(L_host_lookup_failed, LOG_MAIN, "no host name found for IP "
-      "address %s", sender_host_address);
+  if ((host_checking || !f.log_testing_mode) && LOGGING(host_lookup_failed))
+    log_write(LOG_MAIN, "no host name found for IP address %s",
+			    sender_host_address);
   host_lookup_msg = US" (failed to find host name from IP address)";
   host_lookup_failed = TRUE;
   yield = FAIL;
@@ -2112,7 +2112,7 @@ so we pass that back. */
 
 if (!host->address)
   {
-  uschar *msg =
+  uschar * msg =
 #ifndef STAND_ALONE
     !message_id[0] && smtp_in_fd >= 0
       ? string_sprintf("no IP address found for host %s (during %s)", host->name,
@@ -2122,8 +2122,8 @@ if (!host->address)
 
   HDEBUG(host_lookup) debug_printf_indent("%s\n", msg);
   if (temp_error) goto RETURN_AGAIN;
-  if (host_checking || !f.log_testing_mode)
-    log_write(L_host_lookup_failed, LOG_MAIN, "%s", msg);
+  if ((host_checking || !f.log_testing_mode) && LOGGING(host_lookup_failed))
+    log_write(LOG_MAIN, "%s", msg);
   return HOST_FIND_FAILED;
   }
 
@@ -2619,7 +2619,7 @@ if (whichrrs & HOST_FIND_BY_SRV)
 
     if (rc == DNS_SUCCEED && dnssec_require && !dns_is_secure(dnsa))
       {
-      log_write(L_host_lookup_failed, LOG_MAIN,
+      if (LOGGING(host_lookup_failed)) log_write(LOG_MAIN,
 		  "dnssec fail on SRV for %.256s", host->name);
       rc = DNS_FAIL;
       }
@@ -3249,7 +3249,7 @@ switch (rc)
 	}
       return OK;
       }
-    log_write(0, LOG_MAIN,
+    log_write(LOG_MAIN,
       "DANE error: TLSA lookup for %s not DNSSEC", host->name);
     /*FALLTRHOUGH*/
 

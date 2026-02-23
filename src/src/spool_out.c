@@ -52,7 +52,7 @@ if (f) (void)fclose(f);
 if (errmsg)
   *errmsg = msg;
 else
-  log_write_die(0, LOG_MAIN, "%s", msg);
+  log_write_die(LOG_MAIN, "%s", msg);
 
 return -1;
 }
@@ -465,7 +465,7 @@ uschar * fname = spool_fname(string_sprintf("%s%s", from, dir), subdir, id, suff
 uschar * tname = spool_q_fname(string_sprintf("%s%s", to,   dir), dq, subdir, id, suffix);
 if (Ulink(fname, tname) < 0 && (!noentok || errno != ENOENT))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "link(%q, %q) failed while moving "
+  log_write(LOG_MAIN|LOG_PANIC, "link(%q, %q) failed while moving "
     "message: %s", fname, tname, strerror(errno));
   return FALSE;
   }
@@ -501,7 +501,7 @@ break_link(const uschar * dir, const uschar * subdir, const uschar * id,
 uschar * fname = spool_fname(string_sprintf("%s%s", from, dir), subdir, id, suffix);
 if (Uunlink(fname) < 0 && (!noentok || errno != ENOENT))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "unlink(%q) failed while moving "
+  log_write(LOG_MAIN|LOG_PANIC, "unlink(%q) failed while moving "
     "message: %s", fname, strerror(errno));
   return FALSE;
   }
@@ -565,7 +565,7 @@ if (!break_link(US"input",  subdir, id, US"-H", from, FALSE) ||
     !break_link(US"msglog", subdir, id, US"", from, TRUE))
   return FALSE;
 
-log_write(0, LOG_MAIN, "moved from %s%s%s%sinput, %smsglog to %s%s%s%sinput, %smsglog",
+log_write(LOG_MAIN, "moved from %s%s%s%sinput, %smsglog to %s%s%s%sinput, %smsglog",
    *queue_name?"(":"", *queue_name?queue_name:US"", *queue_name?") ":"",
    from, from,
    *dest_qname?"(":"", *dest_qname?dest_qname:US"", *dest_qname?") ":"",

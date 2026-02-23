@@ -41,7 +41,7 @@ ip_socket(int type, int af)
 {
 int sock = socket(af, type, 0);
 if (sock < 0)
-  log_write(0, LOG_MAIN, "IPv%c socket creation failed: %s",
+  log_write(LOG_MAIN, "IPv%c socket creation failed: %s",
     (af == AF_INET6)? '6':'4', strerror(errno));
 return sock;
 }
@@ -77,7 +77,7 @@ ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
 #ifdef IPV6_USE_INET_PTON
 
   if (inet_pton(AF_INET6, CCS address, &saddr->sin6_addr) != 1)
-    log_write_die(0, LOG_MAIN, "unable to parse %q as an "
+    log_write_die(LOG_MAIN, "unable to parse %q as an "
       "IP address", address);
   saddr->sin6_family = AF_INET6;
 
@@ -90,7 +90,7 @@ ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_NUMERICHOST;
   if ((rc = getaddrinfo(CCS address, NULL, &hints, &res)) != 0 || res == NULL)
-    log_write_die(0, LOG_MAIN, "unable to parse %q as an "
+    log_write_die(LOG_MAIN, "unable to parse %q as an "
       "IP address: %s", address,
       rc == 0 ? "NULL result returned" : gai_strerror(rc));
   else
@@ -163,7 +163,7 @@ union sockaddr_46 sin;
 int s_len = ip_addr(&sin, af, address, port);
 int rc = bind(sock, (struct sockaddr *)&sin, s_len);
 if (rc < 0)
-  log_write(0, LOG_MAIN, "bind of [%s]:%d failed", address, port);
+  log_write(LOG_MAIN, "bind of [%s]:%d failed", address, port);
 return rc;
 }
 
@@ -573,7 +573,7 @@ ip_keepalive(int sock, const uschar *address, BOOL torf)
 int fodder = 1;
 if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE,
     US (&fodder), sizeof(fodder)) != 0)
-  log_write(0, LOG_MAIN, "setsockopt(SO_KEEPALIVE) on connection %s %s "
+  log_write(LOG_MAIN, "setsockopt(SO_KEEPALIVE) on connection %s %s "
     "failed: %s", torf? "to":"from", address, strerror(errno));
 }
 

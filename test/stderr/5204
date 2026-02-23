@@ -300,8 +300,6 @@ readconf_rest: routers
 readconf_rest: transports
 readconf_rest: retry
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.2.3.4]
 host in host_lookup? no (option unset)
 host in host_reject_connection? no (option unset)
 host in sender_unqualified_hosts? no (option unset)
@@ -355,6 +353,4 @@ accept: condition test failed in inline ACL
 end of inline ACL: implicit DENY
 LOG: MAIN REJECT
   H=(some.name) [V4NET.2.3.4] F=<x@y> rejected RCPT <"FAIL cannot route this one (FAIL)"@some.host>: cannot route this one (FAIL)
-LOG: smtp_connection MAIN
-  SMTP connection from (some.name) [V4NET.2.3.4] D=qqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1242 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

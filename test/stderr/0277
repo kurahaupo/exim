@@ -11,8 +11,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [V4NET.2.3.4]
 sender_rcvhost = [V4NET.2.3.4]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.2.3.4]
 host in host_lookup?
  list element: +lookup_hosts
   start sublist lookup_hosts
@@ -28,7 +26,7 @@ looking up host name for V4NET.2.3.4
  DNS: couldn't fake dnsa len
  DNS: no SOA record found for neg-TTL
   writing neg-cache entry for 4.3.2.V4NET.in-addr.arpa-PTR-xxxx, ttl -1
-LOG: host_lookup_failed MAIN
+LOG: MAIN
   no host name found for IP address V4NET.2.3.4
 sender_fullhost = [V4NET.2.3.4]
 sender_rcvhost = [V4NET.2.3.4]
@@ -48,8 +46,6 @@ smtp_setup_msg entered
 SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.2.3.4] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -66,8 +62,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [V4NET.6.7.8]
 sender_rcvhost = [V4NET.6.7.8]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.6.7.8]
 host in host_lookup?
  list element: +lookup_hosts
   start sublist lookup_hosts
@@ -111,8 +105,6 @@ smtp_setup_msg entered
 SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.6.7.8] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -129,8 +121,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [V4NET.10.11.12]
 sender_rcvhost = [V4NET.10.11.12]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.10.11.12]
 host in host_lookup?
  list element: +lookup_hosts
   start sublist lookup_hosts
@@ -152,7 +142,7 @@ looking up host name for V4NET.10.11.12
  DNS: couldn't fake dnsa len
  DNS: no SOA record found for neg-TTL
   writing neg-cache entry for 12.11.10.V4NET.in-addr.arpa-PTR-xxxx, ttl -1
-LOG: host_lookup_failed MAIN
+LOG: MAIN
   no host name found for IP address V4NET.10.11.12
 sender_fullhost = [V4NET.10.11.12]
 sender_rcvhost = [V4NET.10.11.12]
@@ -185,8 +175,6 @@ smtp_setup_msg entered
 SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.10.11.12] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -203,8 +191,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [V4NET.1.1.1]
 sender_rcvhost = [V4NET.1.1.1]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.1.1.1]
 host in host_lookup?
  list element: +lookup_hosts
   start sublist lookup_hosts
@@ -226,7 +212,7 @@ looking up host name for V4NET.1.1.1
  DNS: couldn't fake dnsa len
  DNS: no SOA record found for neg-TTL
   writing neg-cache entry for 1.1.1.V4NET.in-addr.arpa-PTR-xxxx, ttl -1
-LOG: host_lookup_failed MAIN
+LOG: MAIN
   no host name found for IP address V4NET.1.1.1
 sender_fullhost = [V4NET.1.1.1]
 sender_rcvhost = [V4NET.1.1.1]
@@ -259,8 +245,6 @@ smtp_setup_msg entered
 SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.1.1.1] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -277,8 +261,6 @@ sender address = CALLER@myhost.test.ex
 sender_fullhost = [V4NET.2.2.2]
 sender_rcvhost = [V4NET.2.2.2]
 host in hosts_connection_nolog? no (option unset)
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.2.2.2]
 host in host_lookup?
  list element: +lookup_hosts
   start sublist lookup_hosts
@@ -300,7 +282,7 @@ looking up host name for V4NET.2.2.2
  DNS: couldn't fake dnsa len
  DNS: no SOA record found for neg-TTL
   writing neg-cache entry for 2.2.2.V4NET.in-addr.arpa-PTR-xxxx, ttl -1
-LOG: host_lookup_failed MAIN
+LOG: MAIN
   no host name found for IP address V4NET.2.2.2
 sender_fullhost = [V4NET.2.2.2]
 sender_rcvhost = [V4NET.2.2.2]
@@ -327,8 +309,6 @@ smtp_setup_msg entered
 SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
-LOG: smtp_connection MAIN
-  SMTP connection from [V4NET.2.2.2] D=qqs closed by QUIT
 SMTP>- ◀flush▶
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

@@ -54,7 +54,7 @@ if (!spool_mbox_ok)
   s = string_sprintf("scan/%s", message_id);
   if (!directory_make(spool_directory, s, 0750, FALSE))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "%s",
+    log_write(LOG_MAIN|LOG_PANIC, "%s",
       string_open_failed("scan directory %s/scan/%s", spool_directory, s));
     goto OUT;
     }
@@ -63,7 +63,7 @@ if (!spool_mbox_ok)
 
   if (!(mbox_file = modefopen(mbox_path, "wb", SPOOL_MODE)))
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "%s",
+    log_write(LOG_MAIN|LOG_PANIC, "%s",
       string_open_failed("scan file %s", mbox_path));
     goto OUT;
     }
@@ -81,7 +81,7 @@ if (!spool_mbox_ok)
   if (s)
     if (fwrite(s, Ustrlen(s), 1, mbox_file) != 1)
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "Error/short write while writing \
+      log_write(LOG_MAIN|LOG_PANIC, "Error/short write while writing \
 	  mailbox headers to %s", mbox_path);
       goto OUT;
       }
@@ -93,7 +93,7 @@ if (!spool_mbox_ok)
     if (my_headerlist->type != '*')
       if (fwrite(my_headerlist->text, my_headerlist->slen, 1, mbox_file) != 1)
 	{
-	log_write(0, LOG_MAIN|LOG_PANIC, "Error/short write while writing \
+	log_write(LOG_MAIN|LOG_PANIC, "Error/short write while writing \
 	    message headers to %s", mbox_path);
 	goto OUT;
 	}
@@ -102,7 +102,7 @@ if (!spool_mbox_ok)
 
   if (fwrite("\n", 1, 1, mbox_file) != 1)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Error/short write while writing \
+    log_write(LOG_MAIN|LOG_PANIC, "Error/short write while writing \
       message headers to %s", mbox_path);
     goto OUT;
     }
@@ -125,7 +125,7 @@ if (!spool_mbox_ok)
 
   if (!l_data_file)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "Could not open datafile for message %s",
+    log_write(LOG_MAIN|LOG_PANIC, "Could not open datafile for message %s",
       message_id);
     goto OUT;
     }
@@ -166,7 +166,7 @@ if (!spool_mbox_ok)
     if (j > 0)
       if (fwrite(buffer, j, 1, mbox_file) != 1)
         {
-	log_write(0, LOG_MAIN|LOG_PANIC, "Error/short write while writing \
+	log_write(LOG_MAIN|LOG_PANIC, "Error/short write while writing \
 	    message body to %s", mbox_path);
 	goto OUT;
 	}
@@ -185,7 +185,7 @@ if (!spool_mbox_ok)
 if (  !(yield = Ufopen(mbox_path,"rb"))
    || fstat(fileno(yield), &statbuf) != 0
    )
-  log_write(0, LOG_MAIN|LOG_PANIC, "%s",
+  log_write(LOG_MAIN|LOG_PANIC, "%s",
     string_open_failed( "scan file %s", mbox_path));
 else
   *mbox_file_size = statbuf.st_size;
@@ -231,14 +231,14 @@ if (spool_mbox_ok && !f.no_mbox_unspool)
     file_path = string_sprintf("%s/%s", mbox_path, name);
     debug_printf("unspool_mbox(): unlinking '%s'\n", file_path);
     if (unlink(CS file_path) != 0)
-      log_write(0, LOG_MAIN|LOG_PANIC, "unlink(%s): %s", file_path, strerror(errno));
+      log_write(LOG_MAIN|LOG_PANIC, "unlink(%s): %s", file_path, strerror(errno));
     }
 
   closedir(tempdir);
 
   /* remove directory */
   if (rmdir(CS mbox_path) != 0)
-    log_write(0, LOG_MAIN|LOG_PANIC, "rmdir(%s): %s", mbox_path, strerror(errno));
+    log_write(LOG_MAIN|LOG_PANIC, "rmdir(%s): %s", mbox_path, strerror(errno));
   store_reset(reset_point);
   }
 spool_mbox_ok = 0;

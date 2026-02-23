@@ -252,7 +252,7 @@ if (!cctx->tls_ctx)
   FILE * fp = fdopen(cctx->sock, "rb");
   if (!fp)
     {
-    log_write(0, LOG_MAIN|LOG_PANIC, "readsock fdopen: %s\n", strerror(errno));
+    log_write(LOG_MAIN|LOG_PANIC, "readsock fdopen: %s\n", strerror(errno));
     goto out;
     }
   ALARM(timeout);

@@ -41,7 +41,7 @@ is_tainted_metadata(const uschar * s)
 {
 /* Not enforcing for now, only logging; will enforce in a future release */
 if (is_tainted(s))
-  log_write(0, LOG_MAIN|LOG_PANIC,
+  log_write(LOG_MAIN|LOG_PANIC,
 	    "attempt to use tainted list metadata %s", s);
 return FALSE;
 }
@@ -286,7 +286,7 @@ li = search_findtype_partial(pattern, &partial, &affix, &affixlen,
   &starflags, &opts);
 *semicolon = ';';
 if (!li)
-  log_write_die(0, LOG_MAIN, "%s", search_error_message);
+  log_write_die(LOG_MAIN, "%s", search_error_message);
 
 /* Partial matching is not appropriate for certain lookups (e.g. when looking
 up user@domain for sender rejection). There's a flag to disable it. */
@@ -302,7 +302,7 @@ for; partial matching is all handled inside search_find(). Note that there is
 no search_close() because of the caching arrangements. */
 
 if (!(handle = search_open(filename, li, 0, NULL, NULL)))
-  log_write_die(0, LOG_MAIN, "%s", search_error_message);
+  log_write_die(LOG_MAIN, "%s", search_error_message);
 result = search_find(handle, filename, keyquery, partial, affix, affixlen,
   starflags, &expand_setup, opts);
 
@@ -530,7 +530,7 @@ else
         "assume not in this list\n", *listptr);
       return FAIL;
       }
-    log_write(0, LOG_MAIN|LOG_PANIC, "failed to expand %q while checking "
+    log_write(LOG_MAIN|LOG_PANIC, "failed to expand %q while checking "
       "a list: %s", *listptr, expand_string_message);
     return DEFER;
     }
@@ -682,7 +682,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
       const uschar * listname = readconf_find_option(listptr);
       if (!*listname)
         listname = string_sprintf("%q", *listptr);
-      log_write_die(0, LOG_MAIN, "%s",
+      log_write_die(LOG_MAIN, "%s",
         string_open_failed("%s when checking %s", sss, listname));
       goto cppcheck_silencing;
       }
@@ -749,7 +749,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	  (void)fclose(f);
 	  if (!include_defer)
 	    goto DEFER_RETURN;
-	  log_write(0, LOG_MAIN, "%s: accepted by +include_defer", error);
+	  log_write(LOG_MAIN, "%s: accepted by +include_defer", error);
 	  goto OK_RETURN;
 
         /* The ERROR return occurs when checking hosts, when either a forward
@@ -771,10 +771,10 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	    if (!include_unknown)
 	      {
 	      if (LOGGING(unknown_in_list))
-		log_write(0, LOG_MAIN, "list matching forced to fail: %s", error);
+		log_write(LOG_MAIN, "list matching forced to fail: %s", error);
 	      goto FAIL_RETURN;
 	      }
-	    log_write(0, LOG_MAIN, "%s: accepted by +include_unknown", error);
+	    log_write(LOG_MAIN, "%s: accepted by +include_unknown", error);
 	    goto OK_RETURN;
 	    }
         }
@@ -807,7 +807,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
     if (is_tainted_metadata(ss)) goto BAD_TAINT;
     if (!(t = tree_search(*anchorptr, ss+1)))
       {
-      log_write(0, LOG_MAIN|LOG_PANIC, "unknown named%s list %q",
+      log_write(LOG_MAIN|LOG_PANIC, "unknown named%s list %q",
 	type == MCL_DOMAIN ?    " domain" :
 	type == MCL_HOST ?      " host" :
 	type == MCL_ADDRESS ?   " address" :
@@ -947,7 +947,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	  }
 	if (include_defer)
 	  {
-	  log_write(0, LOG_MAIN, "%s: accepted by +include_defer", error);
+	  log_write(LOG_MAIN, "%s: accepted by +include_defer", error);
 	  return OK;
 	  }
 	if (!search_error_message) search_error_message = error;
@@ -971,10 +971,10 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 	  if (!include_unknown)
 	    {
 	    if (LOGGING(unknown_in_list))
-	      log_write(0, LOG_MAIN, "list matching forced to fail: %s", error);
+	      log_write(LOG_MAIN, "list matching forced to fail: %s", error);
 	    return FAIL;
 	    }
-	  log_write(0, LOG_MAIN, "%s: accepted by +include_unknown", error);
+	  log_write(LOG_MAIN, "%s: accepted by +include_unknown", error);
 	  return OK;
 	  }
       }
@@ -1133,7 +1133,7 @@ empty. Otherwise, a subject with no domain is a serious configuration error. */
 
 if (!sdomain && *subject)
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "no @ found in the subject of an "
+  log_write(LOG_MAIN|LOG_PANIC, "no @ found in the subject of an "
     "address list match: subject=%q pattern=%q", subject, pattern);
   return FAIL;
   }
@@ -1160,7 +1160,7 @@ but write a panic log entry. However, *@ matching will be honoured. */
 if (*s == ';')
   {
   if (Ustrncmp(pattern, "partial-", 8) == 0)
-    log_write(0, LOG_MAIN|LOG_PANIC, "partial matching is not applicable to "
+    log_write(LOG_MAIN|LOG_PANIC, "partial matching is not applicable to "
       "whole-address lookups: ignored \"partial-\" in %q", pattern);
   return match_check_string(subject, pattern, -1, cb->flags, valueptr);
   }
@@ -1238,7 +1238,7 @@ if (pattern[0] == '@' && pattern[1] == '@')
   /* End of chain loop; panic if too many times */
 
   if (watchdog <= 0)
-    log_write_die(0, LOG_MAIN, "Loop detected in lookup of "
+    log_write_die(LOG_MAIN, "Loop detected in lookup of "
       "local part of %s in %s", subject, pattern);
 
   /* Otherwise the local part check has failed, so the whole match

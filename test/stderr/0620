@@ -10,8 +10,6 @@ try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
 try option 'smtp_active_hostname'
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 try option 'message_size_limit'
 try option 'acl_smtp_connect'
 try option 'smtp_banner'
@@ -71,8 +69,6 @@ LOG: MAIN
 LOG: MAIN
   $0 'trythiskey.ex'  $1 ''
 try option 'acl_smtp_quit'
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 Hints DB:
@@ -86,8 +82,6 @@ try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
 try option 'smtp_active_hostname'
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER
 try option 'message_size_limit'
 try option 'acl_smtp_connect'
 try option 'smtp_banner'
@@ -146,6 +140,4 @@ LOG: MAIN
 LOG: MAIN
   $0 'trythiskey.ex'  $1 ''
 try option 'acl_smtp_quit'
-LOG: smtp_connection MAIN
-  SMTP connection from CALLER D=qqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

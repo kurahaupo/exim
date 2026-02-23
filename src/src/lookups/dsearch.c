@@ -32,7 +32,7 @@ struct stat statbuf;
 
 if (is_tainted(dirname))
   {
-  log_write(0, LOG_MAIN|LOG_PANIC, "Tainted dirname '%s'", dirname);
+  log_write(LOG_MAIN|LOG_PANIC, "Tainted dirname '%s'", dirname);
   errno = EACCES;
   }
 else if (Ustat(dirname, &statbuf) >= 0)
