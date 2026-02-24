@@ -103,12 +103,17 @@ JH/24 Bug 3197: Fix logged autoreply size. If enabled, sizes for delivery lines
 
 BQ/26 Bug 3199/3200: Remove Brightmail and Interbase support.
 
-JH/25 Reworked debug-channel control, to work with channels counts exceeding
+JH/25 Reworked debug-channel control, to work with channel counts exceeding
       the machine word size. Note that this results in local_scan() API changes.
 
 JH/26 Reworked logging-channel control, rationalising older architecture calls
       that controlled only mainlog output.  Channel controls now affect all log
       streams.
+
+JH/27 Bug 3204: force a 4xx SMTP response to end-of-data if the final close
+      of the written spoolfile returns an error.  Previously, a full filesystem
+      did not reliably result in a temp-error; depending on previous paths
+      taken, a permanent error code (5xx) could be emitted as the SMTP response.
 
 
 Exim version 4.99.1
