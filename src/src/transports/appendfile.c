@@ -1854,7 +1854,7 @@ if (!isdirectory)
           }
         addr->basic_errno = errno;
         if (isfifo)
-          addr->message = string_sprintf("while opening named pipe %s %s "
+          addr->message = string_sprintf("while opening named pipe %q: %s "
             "(could mean no process is reading it)", filename, strerror(errno));
         else if (errno != EWOULDBLOCK)
           addr->message = string_sprintf("while opening mailbox %s", filename);

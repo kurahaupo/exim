@@ -474,7 +474,7 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/Failed to open \S+( \([^\)]+\))? file/Failed to open hintsdb file/;
 
   # The message for a non-listening FIFO varies
-  s/:[^:]+: while opening named pipe/: Error: while opening named pipe/;
+  s/while opening named pipe .*: \K[^(]+(?= \(could mean no process is)/Error:/;
 
   # Debugging output of lists of hosts may have different sort keys
   s/^\s*\S+ (?:\d+\.){3}\d+ mx=\S+ sort=\K\S+/xx/;

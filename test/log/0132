@@ -1,2 +1,2 @@
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-2026-02-24 23:14: Error: while opening named pipe TESTSUITE/test-fifo No such device or address (could mean no process is reading it)
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == userx@test.ex R=local T=appendfile defer: while opening named pipe "TESTSUITE/test-fifo": Error: (could mean no process is reading it)
