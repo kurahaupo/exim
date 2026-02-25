@@ -514,6 +514,9 @@ RESET_AFTER_EXTRA_LINE_READ:
   # more_errno values in retry dumpdb output which are times
   s/T:(\S+)\s-22\s(\S+)\s/T:$1 -22 xxxx /;
 
+  # errno values in retry dumpdb output
+  s/T:\S+ \K\d+(?= (?:65 Connection refused|321 Connection timed out))/EEE/;
+
   # port numbers in retry dumpdb output
   s/T:([a-z0-9.]+(:[0-9.]+|:\[[^]]+])?):$parm_port_n /T:$1:PORT_N /;
   s/T:([a-z0-9.[\]]+(:[0-9.]+|:\[[^]]+])?):$parm_port_s /T:$1:PORT_S /;

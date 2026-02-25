@@ -1,44 +1,44 @@
 +++++++++++++++++++++++++++
-  T:thishost.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
 +++++++++++++++++++++++++++
-  T:thishost.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
 +++++++++++++++++++++++++++
-  T:thishost.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N 111 65 Connection refused
-first failed = time last try = time2 next try = time2 + 1200
-+++++++++++++++++++++++++++
-  T:thishost.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
-first failed = time last try = time2 next try = time2 + 1200
-  T:thishost.test.ex:PORT_N 111 65 Connection refused
-first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
-first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
 +++++++++++++++++++++++++++
-  T:thishost.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thishost.test.ex:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
 +++++++++++++++++++++++++++
-  T:thishost.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thishost.test.ex:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N 111 65 Connection refused
++++++++++++++++++++++++++++
+  T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
+first failed = time last try = time2 next try = time2 + 1200
+  T:thishost.test.ex:PORT_N EEE 65 Connection refused
+first failed = time last try = time2 next try = time2 + 1200
+  T:thisloop.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
+first failed = time last try = time2 next try = time2 + 1200
+  T:thisloop.test.ex:PORT_N EEE 65 Connection refused
+first failed = time last try = time2 next try = time2 + 1200
+  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
 +++++++++++++++++++++++++++
   R:mxnonexist.test.ex -55 0 missing MX, or all MXs point to missing A records, and defer requested
@@ -47,15 +47,15 @@ first failed = time last try = time2 next try = time2 + 1200
 first failed = time last try = time2 next try = time2 + 1200
   R:nonexist -32 0 lookup of host "nonexist.test.ex" failed in all router
 first failed = time last try = time2 next try = time2 + 1800
-  T:thishost.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thishost.test.ex:PORT_N 111 65 Connection refused
+  T:thishost.test.ex:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:127.0.0.1:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
-  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N 111 65 Connection refused
+  T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
 Retry rule: *.star.ex  *  F,3d,10m; 
 Retry rule: lsearch*@;TESTSUITE/aux-fixed/0099.rlist  *  F,1d,3m; 
