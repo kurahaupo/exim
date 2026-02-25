@@ -38,7 +38,7 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:451:QUIT+:250'
 reading retry information for R:userx@test.ex:<CALLER@test.ex> from subprocess
   added retry item
 LOG: MAIN
-  == userx@test.ex R=r1 T=t1 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
+  == userx@test.ex R=r1 T=t1 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
 Processing retry items
  Succeeded addresses:
  Failed addresses:
@@ -96,7 +96,7 @@ reading retry information for R:userx@test.ex from subprocess
 reading retry information for R:userx@test.ex:<CALLER@test.ex> from subprocess
   delete item not added: non-delete item exists
 LOG: MAIN
-  == userx@test.ex R=r1 T=t1 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
+  == userx@test.ex R=r1 T=t1 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
 Processing retry items
  Succeeded addresses:
  Failed addresses:
@@ -158,7 +158,7 @@ reading retry information for R:userx@test.ex from subprocess
 reading retry information for R:userx@test.ex:<CALLER@test.ex> from subprocess
   delete item not added: non-delete item exists
 LOG: MAIN
-  == userx@test.ex R=r1 T=t1 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
+  == userx@test.ex R=r1 T=t1 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
 Processing retry items
  Succeeded addresses:
  Failed addresses:
@@ -197,7 +197,7 @@ retry time not reached: checking ultimate address timeout
 Check retry rule (TESTSUITE/test-config:36) '*'
   received_time=tttt diff=tttt timeout=3600
 LOG: MAIN
-  == userx@test.ex routing defer (-52): retry time not reached
+  == userx@test.ex routing defer: retry time not reached
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:

@@ -11,7 +11,7 @@
 2017-07-30 18:51:05.712 SMTP connection from root
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 <= fred@myhost.test.ex U=root P=local-smtp S=sss for tempreject@test.ex
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after pipelined end of data: 451 Service not available
-2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 == tempreject@test.ex R=client T=send_to_server defer (-46) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after pipelined end of data: 451 Service not available
+2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 == tempreject@test.ex R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after pipelined end of data: 451 Service not available
 2017-07-30 18:51:05.712 SMTP connection from root D=q.qqqs closed by QUIT
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 removed by CALLER
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 Completed
@@ -24,7 +24,7 @@
 2017-07-30 18:51:05.712 SMTP connection from root
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 <= fred@myhost.test.ex U=root P=local-smtp S=sss for dataloss@test.ex
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 H=127.0.0.1 [127.0.0.1]: Remote host closed connection in response to pipelined end of data
-2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == dataloss@test.ex R=client T=send_to_server defer (-18) H=127.0.0.1 [127.0.0.1]: Remote host closed connection in response to pipelined end of data
+2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == dataloss@test.ex R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: Remote host closed connection in response to pipelined end of data
 2017-07-30 18:51:05.712 SMTP connection from root D=q.qqqs closed by QUIT
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 removed by CALLER
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 Completed

@@ -8,14 +8,14 @@
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for A@test.ex B@test.ex C@test.ex D@test.ex E@test.ex F@test.ex
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 => a@test.ex <A@test.ex> R=client T=send_to_server H=127.0.0.1 [127.0.0.1] C="250 OK id=10HmbC-000000005vi-0000"
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == b@test.ex <B@test.ex> R=client T=send_to_server defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<B@test.ex>: 452 4.5.3 Try again
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == c@test.ex <C@test.ex> R=client T=send_to_server defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<C@test.ex>: 452 4.5.3 Try again
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == d@test.ex <D@test.ex> R=client T=send_to_server defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<D@test.ex>: 452 4.5.3 Try again
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == e@test.ex <E@test.ex> R=client T=send_to_server defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<E@test.ex>: 452 4.5.3 Try again
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == f@test.ex <F@test.ex> R=client T=send_to_server defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<F@test.ex>: 452 4.5.3 Try again
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == b@test.ex <B@test.ex> R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<B@test.ex>: 452 4.5.3 Try again
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == c@test.ex <C@test.ex> R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<C@test.ex>: 452 4.5.3 Try again
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == d@test.ex <D@test.ex> R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<D@test.ex>: 452 4.5.3 Try again
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == e@test.ex <E@test.ex> R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<E@test.ex>: 452 4.5.3 Try again
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == f@test.ex <F@test.ex> R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<F@test.ex>: 452 4.5.3 Try again
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 => b@test.ex <B@test.ex> R=client T=send_to_server H=127.0.0.1 [127.0.0.1] C="250 OK id=10HmbD-000000005vi-0000"
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == c@test.ex <C@test.ex> R=client T=send_to_server defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<C@test.ex>: 452 4.5.3 Try again
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == d@test.ex <D@test.ex> R=client T=send_to_server defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<D@test.ex>: 452 4.5.3 Try again
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == c@test.ex <C@test.ex> R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<C@test.ex>: 452 4.5.3 Try again
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == d@test.ex <D@test.ex> R=client T=send_to_server defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<D@test.ex>: 452 4.5.3 Try again
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 -> e@test.ex <E@test.ex> R=client T=send_to_server H=127.0.0.1 [127.0.0.1] C="250 OK id=10HmbD-000000005vi-0000"
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 -> f@test.ex <F@test.ex> R=client T=send_to_server H=127.0.0.1 [127.0.0.1] C="250 OK id=10HmbD-000000005vi-0000"
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 => c@test.ex <C@test.ex> R=client T=send_to_server H=127.0.0.1 [127.0.0.1] C="250 OK id=10HmbE-000000005vi-0000"

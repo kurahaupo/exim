@@ -39713,7 +39713,7 @@ because it is aliased to &":blackhole:"& the log line is like this:
 When a delivery is deferred, a line of the following form is logged:
 .code
 2002-12-19 16:20:23 16aiQz-0002Q5-00 == marvin@endrest.example
-  R=dnslookup T=smtp defer (146): Connection refused
+  R=dnslookup T=smtp defer : Connection refused
 .endd
 In the case of remote deliveries, the error is the one that was given for the
 last IP address that was tried. Details of individual SMTP failures are also

@@ -45,7 +45,7 @@ LOG: MAIN
 Considering: usery@domain1
 unique = usery@domain1
 LOG: MAIN
-  == usery@domain1 routing defer (-52): retry time not reached
+  == usery@domain1 routing defer: retry time not reached
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:

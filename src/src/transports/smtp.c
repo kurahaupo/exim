@@ -5909,8 +5909,11 @@ retry_non_continued:
       expired = FALSE;
       for (address_item * addr = addrlist; addr; addr = addr->next)
         if (addr->transport_return == DEFER)
+	  {
+	  addr->basic_errno = ERRNO_PASSONE;
 	  addr->message = US"first-pass only routing due to -odqs, "
 			    "queue_smtp_domains or control=queue";
+	  }
       continue;      /* With next host */
       }
 

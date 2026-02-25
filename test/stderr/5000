@@ -1,4 +1,4 @@
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 == userx@myhost.test.ex R=localuser T=maildir_tagged_appendfile defer (-1): Expansion of "${if eq{0}{1}{rhubarb}" (maildir_tag for maildir_tagged_appendfile transport) failed: syntax error in "if" item - "fail" expected
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == userx@myhost.test.ex R=localuser T=maildir_tagged_appendfile defer: Expansion of "${if eq{0}{1}{rhubarb}" (maildir_tag for maildir_tagged_appendfile transport) failed: syntax error in "if" item - "fail" expected
 Exim version x.yz ....
 Hints DB:
 configuration file is TESTSUITE/test-config
@@ -55,6 +55,6 @@ appendfile yields 1 with errno=-22 more_errno=dd
 maildir_taggedX_appendfile transport returned DEFER for userx@myhost.test.ex
 added retry item for T:userx@myhost.test.ex: errno=-22 more_errno=dd flags=0
 LOG: MAIN
-  == userx@myhost.test.ex R=localuser T=maildir_taggedX_appendfile defer (-22): mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
+  == userx@myhost.test.ex R=localuser T=maildir_taggedX_appendfile defer: mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
 >>>>>>>>>>>>>>>> Exim pid=p1235 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

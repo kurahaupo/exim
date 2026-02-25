@@ -10,15 +10,15 @@
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 <= CALLER@server1.example.com U=CALLER P=local S=sss for nostaple_required@mxdane256tak.test.ex
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 Required TLS certificate status not received
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 DANE attempt failed; TLS connection to dane256tak.test.ex [ip4.ip4.ip4.ip4]: (SSL_connect) Required TLS certificate status not received
-1999-03-02 09:44:33 10HmbD-000000005vi-0000 == nostaple_required@mxdane256tak.test.ex R=client T=send_to_server3 defer (-37) H=dane256tak.test.ex [ip4.ip4.ip4.ip4]: TLS session: (SSL_connect) Required TLS certificate status not received
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 == nostaple_required@mxdane256tak.test.ex R=client T=send_to_server3 defer H=dane256tak.test.ex [ip4.ip4.ip4.ip4]: TLS session: (SSL_connect) Required TLS certificate status not received
 1999-03-02 09:44:33 10HmbE-000000005vi-0000 <= CALLER@server1.example.com U=CALLER P=local S=sss for revoked@mxdane256tak.test.ex
 1999-03-02 09:44:33 10HmbE-000000005vi-0000 Server certificate revoked; reason: superseded
 1999-03-02 09:44:33 10HmbE-000000005vi-0000 DANE attempt failed; TLS connection to dane256tak.test.ex [ip4.ip4.ip4.ip4]: (SSL_connect) Server certificate revoked
-1999-03-02 09:44:33 10HmbE-000000005vi-0000 == revoked@mxdane256tak.test.ex R=client T=send_to_server3 defer (-37) H=dane256tak.test.ex [ip4.ip4.ip4.ip4]: TLS session: (SSL_connect) Server certificate revoked
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 == revoked@mxdane256tak.test.ex R=client T=send_to_server3 defer H=dane256tak.test.ex [ip4.ip4.ip4.ip4]: TLS session: (SSL_connect) Server certificate revoked
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 <= CALLER@server1.example.com U=CALLER P=local S=sss for expired@mxdane256tak.test.ex
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 OCSP dates invalid
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 DANE attempt failed; TLS connection to dane256tak.test.ex [ip4.ip4.ip4.ip4]: (SSL_connect) Server certificate status is out-of-date
-1999-03-02 09:44:33 10HmbF-000000005vi-0000 == expired@mxdane256tak.test.ex R=client T=send_to_server3 defer (-37) H=dane256tak.test.ex [ip4.ip4.ip4.ip4]: TLS session: (SSL_connect) Server certificate status is out-of-date
+1999-03-02 09:44:33 10HmbF-000000005vi-0000 == expired@mxdane256tak.test.ex R=client T=send_to_server3 defer H=dane256tak.test.ex [ip4.ip4.ip4.ip4]: TLS session: (SSL_connect) Server certificate status is out-of-date
 1999-03-02 09:44:33 10HmbG-000000005vi-0000 <= CALLER@server1.example.com U=CALLER P=local S=sss for goodstaple_le@mxdane256tak.test.ex
 1999-03-02 09:44:33 10HmbG-000000005vi-0000 => goodstaple_le@mxdane256tak.test.ex R=client T=send_to_server3 H=dane256tak.test.ex [ip4.ip4.ip4.ip4] X=TLS1.x:ke-RSA-AES256-SHAnnn:xxx CV=dane DN="/CN=server1.example.com" C="250 OK id=10HmbH-000000005vi-0000"
 1999-03-02 09:44:33 10HmbG-000000005vi-0000 Completed

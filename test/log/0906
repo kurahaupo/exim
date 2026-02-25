@@ -31,7 +31,7 @@
 2017-07-30 18:51:05.712 10HmbE-000000005vi-0000 Completed
 2017-07-30 18:51:05.712 10HmbF-000000005vi-0000 <= sender@dom U=root Ci=p1242 P=local-bsmtp S=sss for u@test.ex
 2017-07-30 18:51:05.712 10HmbF-000000005vi-0000 H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after pipelined sending data block: 400 oops nonlast bdat
-2017-07-30 18:51:05.712 10HmbF-000000005vi-0000 == u@test.ex R=to_server T=remote_smtp defer (-46) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after pipelined sending data block: 400 oops nonlast bdat
+2017-07-30 18:51:05.712 10HmbF-000000005vi-0000 == u@test.ex R=to_server T=remote_smtp defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after pipelined sending data block: 400 oops nonlast bdat
 2017-07-30 18:51:05.712 10HmbG-000000005vi-0000 <= sender@dom U=root Ci=p1243 P=local-bsmtp S=sss for p@test.ex
 2017-07-30 18:51:05.712 10HmbG-000000005vi-0000 => p@test.ex R=to_server T=remote_smtp H=127.0.0.1 [127.0.0.1] K C="250 OK bdat"
 2017-07-30 18:51:05.712 10HmbG-000000005vi-0000 Completed

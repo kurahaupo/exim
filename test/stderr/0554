@@ -27,7 +27,7 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:451:QUIT+:250'
 reading retry information for R:x@y:<CALLER@myhost.test.ex> from subprocess
   added retry item
 LOG: MAIN
-  == x@y R=r1 T=smtp defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<x@y>: 451 Temporary error
+  == x@y R=r1 T=smtp defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<x@y>: 451 Temporary error
 Processing retry items
  Succeeded addresses:
  Failed addresses:

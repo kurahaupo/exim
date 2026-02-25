@@ -1098,7 +1098,7 @@ return g;
 
 
 static gstring *
-delivery_log_dsn(gstring * g, const address_item * addr)
+d_dsnlog(gstring * g, const address_item * addr)
 {
 return LOGGING(dsn)
   ? dsn_ret || dsn_envid || addr->dsn_flags & rf_dsnflags || addr->dsn_orcpt
@@ -1251,7 +1251,7 @@ else
     g = string_catn(g, US" K", 2);
   }
 
-g = delivery_log_dsn(g, addr);
+g = d_dsnlog(g, addr);
 
 #ifndef DISABLE_DKIM
 if (addr->dkim_used && LOGGING(dkim_verbose))
@@ -1292,14 +1292,13 @@ if (LOGGING(queue_time))
 if (LOGGING(deliver_time))
   g = string_append(g, 2, US" DT=", string_timediff(&addr->delivery_time));
 
-/* string_cat() always leaves room for the terminator. Release the
-store we used to build the line after writing it. */
-
 log_write(flags, "%Y", g);
 
 #ifndef DISABLE_EVENT
 if (!msg) msg_event_raise(US"msg:delivery", addr);
 #endif
+
+/*  Release the store we used to build the line after writing it. */
 
 store_reset(reset_point);
 return;
@@ -1312,7 +1311,7 @@ deferral_log(address_item * addr, uschar * now,
   int logflags, uschar * driver_name, uschar * driver_kind)
 {
 rmark reset_point = store_mark();
-gstring * g = string_get(256);
+gstring * g = string_get_tainted(256, GET_TAINTED);
 
 /* Build up the line that is used for both the message log and the main
 log. */
@@ -1340,15 +1339,15 @@ if (driver_name)
 else if (driver_kind)
   g = string_append(g, 2, US" ", driver_kind);
 
-g = string_fmt_append(g, " defer (%d)", addr->basic_errno);
+g = string_catn(g, US" defer", 6);
 
-if (addr->basic_errno > 0)
-  g = string_append(g, 2, US": ", US strerror(addr->basic_errno));
+if (addr->basic_errno != 0 && !addr->message)
+  g = string_fmt_append(g, " (%s)", exim_errstr(addr->basic_errno));
 
 if (addr->host_used)
   g = d_hostlog(g, addr);
 
-g = delivery_log_dsn(g, addr);
+g = d_dsnlog(g, addr);
 
 if (LOGGING(deliver_time))
   g = string_append(g, 2, US" DT=", string_timediff(&addr->delivery_time));
@@ -1382,7 +1381,7 @@ static void
 failure_log(address_item * addr, uschar * driver_kind, uschar * now)
 {
 rmark reset_point = store_mark();
-gstring * g = string_get(256);
+gstring * g = string_get_tainted(256, GET_TAINTED);	
 
 #ifndef DISABLE_EVENT
 /* Message failures for which we will send a DSN get their event raised
@@ -1427,13 +1426,13 @@ if (LOGGING(protocol_detail) && addr->protocol_sequence)
 g = d_tlslog(g, addr);
 #endif
 
-g = delivery_log_dsn(g, addr);
-
-if (addr->basic_errno > 0)
-  g = string_append(g, 2, US" : ", US strerror(addr->basic_errno));
+g = d_dsnlog(g, addr);
 
 if (addr->message)
   g = string_append(g, 2, US" : ", addr->message);
+else if (addr->basic_errno != 0)
+  g = string_fmt_append(g, " (%s)", exim_errstr(addr->basic_errno));
+
 
 if (LOGGING(deliver_time))
   g = string_append(g, 2, US" DT=", string_timediff(&addr->delivery_time));
@@ -1517,9 +1516,12 @@ malformed, it won't ever have gone near LDAP.) */
 if (addr->message)
   {
   const uschar * s = string_printing(addr->message);
+  uschar * t;
 
-  /* deconst cast ok as string_printing known to have alloc'n'copied */
-  addr->message = expand_hide_passwords(US s);
+  /* deconst cast ok IF string_printing known to have alloc'n'copied */
+
+  t = s == addr->message ? string_copy(s) : US s;
+  addr->message = expand_hide_passwords(t);
   }
 
 /* If we used a transport that has one of the "return_output" options set, and
@@ -1538,7 +1540,8 @@ if (addr->return_file >= 0 && addr->return_filename)
   {
   BOOL return_output = FALSE;
   struct stat statbuf;
-  (void)EXIMfsync(addr->return_file);
+
+  (void) EXIMfsync(addr->return_file);
 
   /* If there is no output, do nothing. */
 
@@ -2019,9 +2022,9 @@ if (expand_string_message)
 else if (size_limit > 0 && message_size > size_limit)
   {
   rc = FAIL;
+  addr->basic_errno = ERRNO_TPTLIMIT;
   addr->message =
-    string_sprintf("message is too big (transport limit = %d)",
-      size_limit);
+    string_sprintf("message is too big (transport limit = %d)", size_limit);
   }
 
 return rc;
@@ -4624,8 +4627,10 @@ Does that also apply to address_data?
       return_path = new_return_path;
     else if (!f.expand_string_forcedfail)
       {
-      panicmsg = string_sprintf("Failed to expand return path %q: %s",
-	tp->return_path, expand_string_message);
+      common_error(FALSE, addr, ERRNO_EXPANDFAIL,
+		    US "Failed to expand return path %q: %s",
+		    tp->return_path, expand_string_message);
+      panicmsg = addr->message;
       goto enq_continue;
       }
     }
@@ -5348,6 +5353,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
     (void)close(pfd[pipe_read]);
     panicmsg = string_sprintf("fork failed for remote delivery to %s: %s",
         addr->domain, strerror(errno));
+    addr->basic_errno = errno;
     goto enq_continue;
     }
 

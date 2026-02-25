@@ -97,7 +97,7 @@ extract item: :defer: Forcibly deferred
 r2 router: defer for defer@test.ex
   message: Forcibly deferred
 LOG: MAIN
-  == defer@test.ex <cms@test.ex> R=r2 defer (-1): Forcibly deferred
+  == defer@test.ex <cms@test.ex> R=r2 defer: Forcibly deferred
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing unknown@recurse.test.ex
 --------> v0 router <--------
@@ -246,7 +246,7 @@ extract item: :defer: Forcibly deferred
 r2 router: defer for defer@test.ex
   message: Forcibly deferred
 LOG: MAIN
-  == defer@test.ex <cms@test.ex> R=r2 defer (-1): Forcibly deferred
+  == defer@test.ex <cms@test.ex> R=r2 defer: Forcibly deferred
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:

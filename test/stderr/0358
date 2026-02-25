@@ -47,9 +47,9 @@ reading retry information for R:userx@test.ex:<CALLER@test.ex> from subprocess
 reading retry information for R:usery@test.ex:<CALLER@test.ex> from subprocess
   added retry item
 LOG: MAIN
-  == userx@test.ex R=r1 T=t1 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
+  == userx@test.ex R=r1 T=t1 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
 LOG: MAIN
-  == usery@test.ex R=r1 T=t1 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<usery@test.ex>: 451 Temporary error
+  == usery@test.ex R=r1 T=t1 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<usery@test.ex>: 451 Temporary error
 Processing retry items
  Succeeded addresses:
  Failed addresses:
@@ -135,9 +135,9 @@ reading retry information for R:usery@test.ex from subprocess
 reading retry information for R:usery@test.ex:<CALLER@test.ex> from subprocess
   delete item not added: non-delete item exists
 LOG: MAIN
-  == userx@test.ex R=r1 T=t1 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
+  == userx@test.ex R=r1 T=t1 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<userx@test.ex>: 451 Temporary error
 LOG: MAIN
-  == usery@test.ex R=r1 T=t1 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<usery@test.ex>: 451 Temporary error
+  == usery@test.ex R=r1 T=t1 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<usery@test.ex>: 451 Temporary error
 Processing retry items
  Succeeded addresses:
  Failed addresses:

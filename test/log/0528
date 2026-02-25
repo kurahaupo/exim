@@ -6,4 +6,4 @@
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 H=ip4.ip4.ip4.ip4 [ip4.ip4.ip4.ip4]:PORT_N Connection refused
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 H=127.0.0.1 [127.0.0.1]:PORT_S Connection refused
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 H=ip4.ip4.ip4.ip4 [ip4.ip4.ip4.ip4]:PORT_D Connection refused
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 == x@y R=r1 T=t1 defer (dd): Connection refused
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == x@y R=r1 T=t1 defer (Connection refused)

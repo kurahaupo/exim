@@ -3,19 +3,19 @@
 2017-07-30 18:51:05.712 10HmaX-000000005vi-0000 Completed
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 H=thishost.test.ex [127.0.0.1]:PORT_N Connection refused
-2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 == x2@thishost.test.ex R=r1 T=t1 defer (dd): Connection refused
+2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 == x2@thishost.test.ex R=r1 T=t1 defer (Connection refused)
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 ** x2@thishost.test.ex: retry timeout exceeded
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 x2@thishost.test.ex: error ignored
 2017-07-30 18:51:05.712 10HmaZ-000000005vi-0000 Completed
 2017-07-30 18:51:05.712 10HmbA-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 2017-07-30 18:51:05.712 10HmbA-000000005vi-0000 H=thishost.test.ex [127.0.0.1]:10001: SMTP timeout after initial connection: Connection timed out
-2017-07-30 18:51:05.712 10HmbA-000000005vi-0000 == x3@thishost.test.ex R=r1 T=t1 defer (dd): Connection timed out H=thishost.test.ex [127.0.0.1]:PORT_D: SMTP timeout after initial connection
+2017-07-30 18:51:05.712 10HmbA-000000005vi-0000 == x3@thishost.test.ex R=r1 T=t1 defer H=thishost.test.ex [127.0.0.1]:PORT_D: SMTP timeout after initial connection
 2017-07-30 18:51:05.712 10HmbA-000000005vi-0000 ** x3@thishost.test.ex: retry timeout exceeded
 2017-07-30 18:51:05.712 10HmbA-000000005vi-0000 x3@thishost.test.ex: error ignored
 2017-07-30 18:51:05.712 10HmbA-000000005vi-0000 Completed
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 H=thishost.test.ex [127.0.0.1]:10001: SMTP timeout after initial connection: Connection timed out
-2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == x4@thishost.test.ex R=r1 T=t1 defer (dd): Connection timed out H=thishost.test.ex [127.0.0.1]:PORT_D: SMTP timeout after initial connection
+2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == x4@thishost.test.ex R=r1 T=t1 defer H=thishost.test.ex [127.0.0.1]:PORT_D: SMTP timeout after initial connection
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 ** x4@thishost.test.ex: retry timeout exceeded
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 x4@thishost.test.ex: error ignored
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 Completed

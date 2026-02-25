@@ -18,10 +18,10 @@
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 H=V4NET.0.0.2 [V4NET.0.0.2] Network Error
-1999-03-02 09:44:33 10HmbC-000000005vi-0000 == userx@test.ex R=r1 T=t1 defer (dd): Network Error
+1999-03-02 09:44:33 10HmbC-000000005vi-0000 == userx@test.ex R=r1 T=t1 defer (Network Error)
 1999-03-02 09:44:33 Start queue run: pid=p1234
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 H=V4NET.0.0.2 [V4NET.0.0.2] Network Error
-1999-03-02 09:44:33 10HmbC-000000005vi-0000 == userx@test.ex R=r1 T=t1 defer (dd): Network Error
+1999-03-02 09:44:33 10HmbC-000000005vi-0000 == userx@test.ex R=r1 T=t1 defer (Network Error)
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 ** userx@test.ex: retry timeout exceeded
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 <= <> R=10HmbC-000000005vi-0000 U=EXIMUSER P=local S=sss
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 => CALLER <CALLER@test.ex> R=r0 T=t2

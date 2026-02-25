@@ -55,7 +55,7 @@ number definitions in macros.h */
 
 static const uschar * exim_errstrings[] = {
   [0] = US"",
-  [- ERRNO_UNKNOWNERROR] =	US"unknown error",
+  [- ERRNO_UNKNOWNERROR] =	US"error-code not set",
   [- ERRNO_USERSLASH] =		US"user slash",
   [- ERRNO_EXISTRACE] =		US"exist race",
   [- ERRNO_NOTREGULAR] =	US"not regular",
@@ -81,7 +81,7 @@ static const uschar * exim_errstrings[] = {
   [- ERRNO_FILTER_FAIL] =	US"Delivery filter process failure",
   [- ERRNO_CHHEADER_FAIL] =	US"Delivery add/remove header failure",
   [- ERRNO_WRITEINCOMPLETE] =	US"Delivery write incomplete error",
-  [- ERRNO_EXPANDFAIL] =	US"Some expansion failed",
+  [- ERRNO_EXPANDFAIL] =	US"string expansion failed",
   [- ERRNO_GIDFAIL] =		US"Failed to get gid",
   [- ERRNO_UIDFAIL] =		US"Failed to get uid",
   [- ERRNO_BADTRANSPORT] =	US"Unset or non-existent transport",
@@ -105,6 +105,12 @@ static const uschar * exim_errstrings[] = {
   [- ERRNO_AUTHPROB] =		US"Authenticator 'other' failure",
   [- ERRNO_UTF8_FWD] =		US"target not supporting SMTPUTF8",
   [- ERRNO_HOST_IS_LOCAL] =	US"host is local",
+  [- ERRNO_PASSONE] =		US"pass1",
+  [- ERRNO_NOROUTER] =		US"no handling router",
+  [- ERRNO_ROUTERDEFER] =	US"rt-defer",
+  [- ERRNO_ROUTERFAIL] =	US"rt-fail",
+  [- ERRNO_MXDEFER] =		US"mxdefer",
+  [- ERRNO_TPTLIMIT] =		US"tpt-lim",
   [- ERRNO_TAINT] =		US"tainted filename",
 
   [- ERRNO_RRETRY] =		US"Not time for routing",

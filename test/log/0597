@@ -33,8 +33,8 @@
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 no immediate delivery: queued by ACL
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 <= CALLER@test.ex H=(me) [127.0.0.1] P=smtp S=sss
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 no immediate delivery: queued by ACL
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == first_pass_route_1@test.ex R=outbound T=smtp defer (0): SMTP delivery explicitly queued
-1999-03-02 09:44:33 10HmbD-000000005vi-0000 == first_pass_route_2@test.ex R=outbound T=smtp defer (0): SMTP delivery explicitly queued
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == first_pass_route_1@test.ex R=outbound T=smtp defer: SMTP delivery explicitly queued
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 == first_pass_route_2@test.ex R=outbound T=smtp defer: SMTP delivery explicitly queued
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 <= CALLER@test.ex H=the.local.host.name [ip4.ip4.ip4.ip4] P=esmtp S=sss
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 no immediate delivery: queued by ACL
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 => :blackhole: <first_pass_route_1@test.ex> R=discard_remote_source

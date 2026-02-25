@@ -301,13 +301,14 @@ for (;;)
           &domainlist_anchor, addr->domain_cache, MCL_DOMAIN, TRUE, NULL))
       {
       case DEFER:
-      addr->message = US"lookup defer for mx_domains";
-      return DEFER;
+	addr->basic_errno = ERRNO_DNSDEFER;
+	addr->message = US"lookup defer for mx_domains";
+	return DEFER;
 
       case OK:
-      DEBUG(route) debug_printf("%s router rejected %s: no MX record(s)\n",
-        rblock->drinst.name, fully_qualified_name);
-      continue;
+	DEBUG(route) debug_printf("%s router rejected %s: no MX record(s)\n",
+	  rblock->drinst.name, fully_qualified_name);
+	continue;
       }
 
   /* Deferral returns forthwith, and anything other than failure breaks the
@@ -315,6 +316,7 @@ for (;;)
 
   if (rc == HOST_FIND_SECURITY)
     {
+    addr->basic_errno = ERRNO_DNSDEFER;
     addr->message = US"host lookup done insecurely";
     return DEFER;
     }
@@ -326,6 +328,7 @@ for (;;)
         rblock->drinst.name);
       return PASS;
       }
+    addr->basic_errno = ERRNO_DNSDEFER;
     addr->message = US"host lookup did not complete";
     return DEFER;
     }
@@ -338,12 +341,14 @@ for (;;)
 	  &domainlist_anchor, addr->domain_cache, MCL_DOMAIN, TRUE, NULL))
       {
       case DEFER:
+	addr->basic_errno = ERRNO_DNSDEFER;
 	addr->message = US"lookup defer for fail_defer_domains option";
 	return DEFER;
 
       case OK:
 	DEBUG(route) debug_printf("%s router: matched fail_defer_domains\n",
 	  rblock->drinst.name);
+	addr->basic_errno = ERRNO_MXDEFER;
 	addr->message = US"missing MX, or all MXs point to missing A records,"
 	  " and defer requested";
 	return DEFER;

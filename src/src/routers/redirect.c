@@ -604,10 +604,12 @@ switch (frc)
     verifying. Remove any SMTP code if it is not allowed. */
 
   case FF_DEFER:
+    addr->basic_errno = ERRNO_ROUTERDEFER;
     yield = DEFER;
     goto SORT_MESSAGE;
 
   case FF_FAIL:
+    addr->basic_errno = ERRNO_ROUTERFAIL;
     if ((xrc = sort_errors_and_headers(rblock, addr, verify, &addr_prop)) != OK)
       return xrc;
     add_generated(rblock, addr_new, addr, generated, &addr_prop, &ugid, pw);

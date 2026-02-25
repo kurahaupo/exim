@@ -925,11 +925,11 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/Network(?: is)? unreachable/Network Error/;
   s/Invalid argument/Network Error/;
 
-  s/\(\d+\): Network/(dd): Network/;
-  s/\(\d+\): Connection refused/(dd): Connection refused/;
-  s/\(\d+\): Connection timed out/(dd): Connection timed out/;
-  s/\d+ 65 Connection refused/dd 65 Connection refused/;
-  s/\d+ 321 Connection timed out/dd 321 Connection timed out/;
+#  s/\(\d+\): Network/(dd): Network/;
+#  s/\(\d+\): Connection refused/(dd): Connection refused/;
+#  s/\(\d+\): Connection timed out/(dd): Connection timed out/;
+#  s/\d+ 65 Connection refused/dd 65 Connection refused/;
+#  s/\d+ 321 Connection timed out/dd 321 Connection timed out/;
 
 
   # ======== Other error numbers ========

@@ -19,9 +19,9 @@
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == userx@myhost.test.ex R=all T=piperet defer (0): Child process of piperet transport returned 75 (could mean temporary error) from command: TESTSUITE/aux-fixed/0194.ret
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == usery@myhost.test.ex R=all T=piperet defer (0): Child process of piperet transport returned 75 (could mean temporary error) from command: TESTSUITE/aux-fixed/0194.ret
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == userz@myhost.test.ex R=all T=piperet defer (0): Child process of piperet transport returned 75 (could mean temporary error) from command: TESTSUITE/aux-fixed/0194.ret
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == userx@myhost.test.ex R=all T=piperet defer: Child process of piperet transport returned 75 (could mean temporary error) from command: TESTSUITE/aux-fixed/0194.ret
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == usery@myhost.test.ex R=all T=piperet defer: Child process of piperet transport returned 75 (could mean temporary error) from command: TESTSUITE/aux-fixed/0194.ret
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == userz@myhost.test.ex R=all T=piperet defer: Child process of piperet transport returned 75 (could mean temporary error) from command: TESTSUITE/aux-fixed/0194.ret
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 ** userx@myhost.test.ex R=all T=piperet : Child process of piperet transport returned 99 from command: TESTSUITE/aux-fixed/0194.ret
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 ** usery@myhost.test.ex R=all T=piperet : Child process of piperet transport returned 99 from command: TESTSUITE/aux-fixed/0194.ret

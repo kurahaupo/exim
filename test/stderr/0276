@@ -30,7 +30,7 @@ cmdlog: (unset)
 LOG: MAIN
   H=127.0.0.1 [127.0.0.1] Connection refused
 LOG: MAIN
-  == CALLER@test.ex R=r1 T=t1 defer (dd): Connection refused
+  == CALLER@test.ex R=r1 T=t1 defer (Connection refused)
 LOG: MAIN
   ** CALLER@test.ex: retry timeout exceeded
 LOG: MAIN
@@ -70,7 +70,7 @@ cmdlog: (unset)
 LOG: MAIN
   H=127.0.0.1 [127.0.0.1] Connection refused
 LOG: MAIN
-  == CALLER@test.ex R=r1 T=t1 defer (dd): Connection refused
+  == CALLER@test.ex R=r1 T=t1 defer (Connection refused)
 LOG: MAIN
   ** CALLER@test.ex: retry timeout exceeded
 LOG: MAIN

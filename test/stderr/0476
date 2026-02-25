@@ -117,7 +117,7 @@ set_process_info: pppp delivering 10HmaZ-000000005vi-0000 (just run t1 for CALLE
 set_process_info: pppp delivering 10HmaZ-000000005vi-0000: waiting for a remote delivery subprocess to finish (delivery wait-all-complete)
 set_process_info: pppp delivering 10HmaZ-000000005vi-0000
 LOG: MAIN
-  == CALLER@the.local.host.name R=r1 T=t1 defer (dd): Connection refused
+  == CALLER@the.local.host.name R=r1 T=t1 defer (Connection refused)
 set_process_info: pppp tidying up after delivering 10HmaZ-000000005vi-0000
 >>>>>>>>>>>>>>>> Exim pid=p1237 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1236 (bounce-message) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -148,7 +148,7 @@ set_process_info: pppp running queue: waiting for 10HmaY-000000005vi-0000 (pppp)
 set_process_info: pppp delivering 10HmaY-000000005vi-0000: waiting for a remote delivery subprocess to finish (delivery wait-all-complete)
 set_process_info: pppp delivering 10HmaY-000000005vi-0000
 LOG: MAIN
-  == usery@test.ex R=r1 T=t1 defer (-54): retry time not reached for any host for 'test.ex'
+  == usery@test.ex R=r1 T=t1 defer: retry time not reached for any host for 'test.ex'
 set_process_info: pppp tidying up after delivering 10HmaY-000000005vi-0000
 >>>>>>>>>>>>>>>> Exim pid=p1241 (qrun-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 set_process_info: pppp running queue: waiting for children of pppp

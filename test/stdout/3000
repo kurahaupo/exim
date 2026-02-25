@@ -23,7 +23,7 @@
 > Tue, 2 Mar 1999 09:44:33 +0000 // Changed locale // dim., 10 févr 2019 20:05:49 +0000
 > 
 > local:    exim.example.com.
-> external: a.iana-servers.net.
+> external: 
 > 
 > Subroutine foo called with args: arg1
 > Failed: Perl subroutine "foo_undef" returned undef to force failure

@@ -8956,6 +8956,7 @@ return OK;
 
 
 /* Avoid potentially exposing a password in a string about to be logged */
+/*XXX potential constify? */
 
 uschar *
 expand_hide_passwords(uschar * s)

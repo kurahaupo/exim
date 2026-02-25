@@ -1,5 +1,5 @@
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 <= abcd@x.y.z U=CALLER P=local-smtp S=sss
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 == forwarder2@test.ex R=forward defer (-17): error in filter file: errors_to must point to the caller's address
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == forwarder2@test.ex R=forward defer: error in filter file: errors_to must point to the caller's address
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 ** unknown@test.ex <forwarder@test.ex> R=unknown : Address unknown (:fail:)
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 ** forwarder2@test.ex: retry timeout exceeded
 1999-03-02 09:44:33 10HmaY-000000005vi-0000 <= <> R=10HmaX-000000005vi-0000 U=EXIMUSER P=local S=sss
@@ -11,7 +11,7 @@
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 <= abcd@x.y.z U=CALLER P=local-smtp S=sss
-1999-03-02 09:44:33 10HmbA-000000005vi-0000 == forwarder2@test.ex R=forward defer (-17): error in filter file: errors_to must point to the caller's address
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 == forwarder2@test.ex R=forward defer: error in filter file: errors_to must point to the caller's address
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 ** unknown@test.ex <forwarder@test.ex> R=unknown : Address unknown (:fail:)
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 ** forwarder2@test.ex: retry timeout exceeded
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 <= <> R=10HmbA-000000005vi-0000 U=EXIMUSER P=local S=sss

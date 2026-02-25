@@ -960,8 +960,7 @@ uschar *log_file_path          = US LOG_FILE_PATH
 const uschar * const log_notall_names[] = { NULL };
 
 /* List of names for logging channels.  Must be in alphabetical order.
-Must match enum logging_test_bit (macros.h).
-This is a superset of logwrite_options[]. */
+Must match enum logging_test_bit (macros.h). */
 
 #define LOG_CHAN(chan) {.name = US #chan, .logchan_bit = Lt_##chan}
 

@@ -11,7 +11,7 @@
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 => :blackhole: <":blackhole:"@special> R=special
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 == :defer: defer message@special <":defer: defer message"@special> R=special defer (-1): defer message
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == :defer: defer message@special <":defer: defer message"@special> R=special defer: defer message
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
 1999-03-02 09:44:33 10HmbC-000000005vi-0000 ** :fail: fail message@special <":fail: fail message"@special> R=special : fail message
 1999-03-02 09:44:33 10HmbD-000000005vi-0000 <= <> R=10HmbC-000000005vi-0000 U=EXIMUSER P=local S=sss

@@ -1,6 +1,6 @@
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 == userx@test.ex R=first defer (-1): force defer on first delivery
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 == userx@test.ex R=second defer (-1): force defer on non-queue run
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == userx@test.ex R=first defer: force defer on first delivery
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == userx@test.ex R=second defer: force defer on non-queue run
 1999-03-02 09:44:33 Start queue run: pid=p1234 -qf
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 => userx <userx@test.ex> R=third T=appendfile
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 Completed

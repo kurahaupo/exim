@@ -20,10 +20,10 @@ Key file = aux-fixed/cert2
 ??? 220
 <<< 220 TLS go ahead
 Attempting to start TLS
-gnutls_record_recv: A TLS fatal alert has been received.
-Failed to start TLS
+Succeeded in starting TLS
 >>> nop
 ????554
+A TLS fatal alert has been received.
 End of script
 Connecting to ip4.ip4.ip4.ip4 port PORT_D ... connected
 Certificate file = aux-fixed/cert2

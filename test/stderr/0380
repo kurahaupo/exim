@@ -77,7 +77,7 @@ routing aaaa@myhost.test.ex
 r1 router: defer for aaaa@myhost.test.ex
   message: failed to stat TESTSUITE/non-exist/. (No such file or directory)
 LOG: MAIN
-  == aaaa@myhost.test.ex R=r1 defer (-1): failed to stat TESTSUITE/non-exist/. (No such file or directory)
+  == aaaa@myhost.test.ex R=r1 defer: failed to stat TESTSUITE/non-exist/. (No such file or directory)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:

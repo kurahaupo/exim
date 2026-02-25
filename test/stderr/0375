@@ -99,7 +99,7 @@ routing g1@myhost.test.ex
  checking local_parts
  processing address_data
 LOG: MAIN
-  == g1@myhost.test.ex R=ut7 defer (-1): expansion of "$bad expansion" failed in ut7 router: unknown variable name "bad"
+  == g1@myhost.test.ex R=ut7 defer: expansion of "$bad expansion" failed in ut7 router: unknown variable name "bad"
 log writing disabled
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing f3@myhost.test.ex
@@ -880,7 +880,7 @@ log writing disabled
 transport error EPIPE ignored
 >>>>>>>>>>>>>>>> Exim pid=p1249 (delivery-local) terminating with rc=0 >>>>>>>>>>>>>>>>
 LOG: MAIN
-  == c1@myhost.test.ex R=ut3 T=ut3 defer (0): Child process of ut3 transport returned 127 (could mean unable to exec or command does not exist) from command: /non/existent/file
+  == c1@myhost.test.ex R=ut3 T=ut3 defer: Child process of ut3 transport returned 127 (could mean unable to exec or command does not exist) from command: /non/existent/file
 log writing disabled
 cmdlog: '220:EHLO:220:MAIL:250:RCPT:250:DATA:334:.:250:QUIT+:250'
 >>>>>>>>>>>>>>>> Exim pid=p1250 (transport) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -890,7 +890,7 @@ log writing disabled
 cmdlog: '220:EHLO:220:MAIL:250:RCPT:450:QUIT+:250'
 >>>>>>>>>>>>>>>> Exim pid=p1251 (transport) terminating with rc=0 >>>>>>>>>>>>>>>>
 LOG: MAIN
-  == d2@myhost.test.ex R=ut4 T=ut4 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<d2@myhost.test.ex>: 450 soft error
+  == d2@myhost.test.ex R=ut4 T=ut4 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<d2@myhost.test.ex>: 450 soft error
 log writing disabled
 cmdlog: '220:EHLO:220:MAIL:250:RCPT:550:QUIT+:250'
 >>>>>>>>>>>>>>>> Exim pid=p1252 (transport) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -910,7 +910,7 @@ log writing disabled
 cmdlog: '220:EHLO:220:MAIL:250:RCPT:450:QUIT+:250'
 >>>>>>>>>>>>>>>> Exim pid=p1255 (transport) terminating with rc=0 >>>>>>>>>>>>>>>>
 LOG: MAIN
-  == f2@myhost.test.ex R=ut6 T=ut6 defer (-44) H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<f2@myhost.test.ex>: 450 soft error
+  == f2@myhost.test.ex R=ut6 T=ut6 defer H=127.0.0.1 [127.0.0.1]: SMTP error from remote mail server after RCPT TO:<f2@myhost.test.ex>: 450 soft error
 log writing disabled
 cmdlog: '220:EHLO:220:MAIL:250:RCPT:550:QUIT+:250'
 >>>>>>>>>>>>>>>> Exim pid=p1256 (transport) terminating with rc=0 >>>>>>>>>>>>>>>>

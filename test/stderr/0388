@@ -136,7 +136,7 @@ reading retry information for R:x@y from subprocess
   added retry item
 set_process_info: pppp delivering 10HmaX-000000005vi-0000
 LOG: MAIN
-  == x@y R=r1 T=smtp defer (dd): Network Error H=127.0.0.1 [127.0.0.1]
+  == x@y R=r1 T=smtp defer (Network Error) H=127.0.0.1 [127.0.0.1]
 set_process_info: pppp tidying up after delivering 10HmaX-000000005vi-0000
 Processing retry items
  Succeeded addresses:

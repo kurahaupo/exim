@@ -1909,6 +1909,7 @@ running a router go direct to ROUTE_EXIT from code above. */
 if (!r)
   {
   HDEBUG(route) debug_printf_indent("no more routers\n");
+  addr->basic_errno = ERRNO_NOROUTER;
   if (!addr->message)
     {
     uschar * message = US"Unrouteable address";

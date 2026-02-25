@@ -9,7 +9,7 @@
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbA-000000005vi-0000 == userx@test.ex R=filter defer (-1): subject was "freeze this (1)"
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 == userx@test.ex R=filter defer: subject was "freeze this (1)"
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 <= <> R=10HmbA-000000005vi-0000 U=CALLER P=local S=sss
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 => usery <usery@test.ex> R=all_L T=appendfile
 1999-03-02 09:44:33 10HmbB-000000005vi-0000 Completed
@@ -31,7 +31,7 @@
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 Completed
 1999-03-02 09:44:33 End queue run: pid=p1235 -qff
 1999-03-02 09:44:33 10HmbE-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbE-000000005vi-0000 == userx@test.ex R=filter defer (-1): subject was "freeze this (2)"
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 == userx@test.ex R=filter defer: subject was "freeze this (2)"
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 <= <> R=10HmbE-000000005vi-0000 U=CALLER P=local S=sss
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 => usery <usery@test.ex> R=all_L T=appendfile
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 Completed
@@ -43,7 +43,7 @@
 1999-03-02 09:44:33 10HmbE-000000005vi-0000 Completed
 1999-03-02 09:44:33 End queue run: pid=p1236 -qqff -R userx
 1999-03-02 09:44:33 10HmbG-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbG-000000005vi-0000 == userz@test.ex R=filter defer (-1): subject was "freeze this (3)"
+1999-03-02 09:44:33 10HmbG-000000005vi-0000 == userz@test.ex R=filter defer: subject was "freeze this (3)"
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 <= <> R=10HmbG-000000005vi-0000 U=CALLER P=local S=sss
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 => usery <usery@test.ex> R=all_L T=appendfile
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 Completed

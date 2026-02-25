@@ -48,27 +48,27 @@
 2017-07-30 18:51:05.712 10HmbL-000000005vi-0000 Completed
 2017-07-30 18:51:05.712 10HmbK-000000005vi-0000 Completed
 2017-07-30 18:51:05.712 10HmbM-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for delay_p@test.ex
-2017-07-30 18:51:05.712 10HmbM-000000005vi-0000 == delay_p@test.ex R=delay defer (-1): deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbM-000000005vi-0000 == delay_p@test.ex R=delay defer: deliberate for test purposes
 2017-07-30 18:51:05.712 10HmbN-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for delay_q@test.ex
-2017-07-30 18:51:05.712 10HmbN-000000005vi-0000 == delay_q@test.ex R=delay defer (-1): deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbN-000000005vi-0000 == delay_q@test.ex R=delay defer: deliberate for test purposes
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for delay_r@test.ex
-2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == delay_r@test.ex R=delay defer (-1): deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == delay_r@test.ex R=delay defer: deliberate for test purposes
 2017-07-30 18:51:05.712 10HmbO-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for delay_s@test.ex
-2017-07-30 18:51:05.712 10HmbO-000000005vi-0000 == delay_s@test.ex R=delay defer (-1): deliberate for test purposes
-2017-07-30 18:51:05.712 10HmbM-000000005vi-0000 == delay_p@test.ex R=delay defer (-1): deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbO-000000005vi-0000 == delay_s@test.ex R=delay defer: deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbM-000000005vi-0000 == delay_p@test.ex R=delay defer: deliberate for test purposes
 2017-07-30 18:51:05.712 10HmbP-000000005vi-0000 <= <> R=10HmbM-000000005vi-0000 U=EXIMUSER P=local S=sss for CALLER@myhost.test.ex
 2017-07-30 18:51:05.712 10HmbP-000000005vi-0000 => CALLER <CALLER@myhost.test.ex> R=bounces T=savebounce
 2017-07-30 18:51:05.712 10HmbP-000000005vi-0000 Completed
-2017-07-30 18:51:05.712 10HmbN-000000005vi-0000 == delay_q@test.ex R=delay defer (-1): deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbN-000000005vi-0000 == delay_q@test.ex R=delay defer: deliberate for test purposes
 2017-07-30 18:51:05.712 10HmbQ-000000005vi-0000 <= <> R=10HmbN-000000005vi-0000 U=EXIMUSER P=local S=sss for CALLER@myhost.test.ex
 2017-07-30 18:51:05.712 10HmbQ-000000005vi-0000 => CALLER <CALLER@myhost.test.ex> R=bounces T=savebounce
 2017-07-30 18:51:05.712 10HmbQ-000000005vi-0000 Completed
-2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == delay_r@test.ex R=delay defer (-1): deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 == delay_r@test.ex R=delay defer: deliberate for test purposes
 2017-07-30 18:51:05.712 10HmbB-000000005vi-0000 Failed to open TESTSUITE/aux-fixed/0608.nonexist.tmpl for warning message texts: No such file or directory
 2017-07-30 18:51:05.712 10HmbR-000000005vi-0000 <= <> R=10HmbB-000000005vi-0000 U=EXIMUSER P=local S=sss for CALLER@myhost.test.ex
 2017-07-30 18:51:05.712 10HmbR-000000005vi-0000 => CALLER <CALLER@myhost.test.ex> R=bounces T=savebounce
 2017-07-30 18:51:05.712 10HmbR-000000005vi-0000 Completed
-2017-07-30 18:51:05.712 10HmbO-000000005vi-0000 == delay_s@test.ex R=delay defer (-1): deliberate for test purposes
+2017-07-30 18:51:05.712 10HmbO-000000005vi-0000 == delay_s@test.ex R=delay defer: deliberate for test purposes
 2017-07-30 18:51:05.712 10HmbS-000000005vi-0000 <= <> R=10HmbO-000000005vi-0000 U=EXIMUSER P=local S=sss for CALLER@myhost.test.ex
 2017-07-30 18:51:05.712 10HmbS-000000005vi-0000 => CALLER <CALLER@myhost.test.ex> R=bounces T=savebounce
 2017-07-30 18:51:05.712 10HmbS-000000005vi-0000 Completed

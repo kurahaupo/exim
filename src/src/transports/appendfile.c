@@ -1580,9 +1580,9 @@ if (!isdirectory)
         {
         addr->basic_errno = errno;
         addr->message =
-          string_sprintf("creating lock file hitching post %s "
-            "(euid=%ld egid=%ld)", hitchname, (long int)geteuid(),
-            (long int)getegid());
+          string_sprintf("creating lock file hitching post %s %s "
+            "(euid=%ld egid=%ld)", hitchname,
+	    strerror(errno), (long int)geteuid(), (long int)getegid());
         return FALSE;
         }
 
@@ -1854,8 +1854,8 @@ if (!isdirectory)
           }
         addr->basic_errno = errno;
         if (isfifo)
-          addr->message = string_sprintf("while opening named pipe %s "
-            "(could mean no process is reading it)", filename);
+          addr->message = string_sprintf("while opening named pipe %s %s "
+            "(could mean no process is reading it)", filename, strerror(errno));
         else if (errno != EWOULDBLOCK)
           addr->message = string_sprintf("while opening mailbox %s", filename);
         goto RETURN;

@@ -26,14 +26,14 @@
 1999-03-02 09:44:33 Start queue run: pid=p1236 -qf
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 H=danelazy.test.ex [ip4.ip4.ip4.ip4]: DANE error: tlsa lookup DEFER
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 H=danelazy2.test.ex [127.0.0.1]: DANE error: tlsa lookup DEFER
-1999-03-02 09:44:33 10HmbH-000000005vi-0000 == t8@mxdanelazy.test.ex R=client T=send_to_server defer (-36): DANE error: tlsa lookup DEFER
+1999-03-02 09:44:33 10HmbH-000000005vi-0000 == t8@mxdanelazy.test.ex R=client T=send_to_server defer: DANE error: tlsa lookup DEFER
 1999-03-02 09:44:33 10HmbI-000000005vi-0000 ** t9@dane.no.1.test.ex R=client T=send_to_server : DANE error: tlsa lookup FAIL
 1999-03-02 09:44:33 10HmbI-000000005vi-0000 t9@dane.no.1.test.ex: error ignored
 1999-03-02 09:44:33 10HmbI-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbJ-000000005vi-0000 => t10@dane.no.2.test.ex R=client T=send_to_server H=dane.no.2.test.ex [127.0.0.1] X=TLS1.x:ke-RSA-AES256-SHAnnn:xxx CV=no DN="CN=server1.example.com" C="250 OK id=10HmbN-000000005vi-0000"
 1999-03-02 09:44:33 10HmbJ-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbK-000000005vi-0000 H=danebroken1.test.ex [127.0.0.1]: DANE error: tlsa lookup DEFER
-1999-03-02 09:44:33 10HmbK-000000005vi-0000 == t11@danebroken1.test.ex R=client T=send_to_server defer (-36): DANE error: tlsa lookup DEFER
+1999-03-02 09:44:33 10HmbK-000000005vi-0000 == t11@danebroken1.test.ex R=client T=send_to_server defer: DANE error: tlsa lookup DEFER
 1999-03-02 09:44:33 10HmbL-000000005vi-0000 ** t12@dane.no.3.test.ex R=client T=send_to_server : DANE error: tlsa lookup FAIL
 1999-03-02 09:44:33 10HmbL-000000005vi-0000 t12@dane.no.3.test.ex: error ignored
 1999-03-02 09:44:33 10HmbL-000000005vi-0000 Completed
@@ -46,7 +46,7 @@
 1999-03-02 09:44:33 10HmbK-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbP-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for t14@danebroken2.test.ex
 1999-03-02 09:44:33 10HmbP-000000005vi-0000 DANE attempt failed; TLS connection to danebroken2.test.ex [127.0.0.1]: (certificate verification failed): Verification failed. CA constrains were violated. 
-1999-03-02 09:44:33 10HmbP-000000005vi-0000 == t14@danebroken2.test.ex R=client T=send_to_server defer (-37) H=danebroken2.test.ex [127.0.0.1]: TLS session: (certificate verification failed): Verification failed. CA constrains were violated. 
+1999-03-02 09:44:33 10HmbP-000000005vi-0000 == t14@danebroken2.test.ex R=client T=send_to_server defer H=danebroken2.test.ex [127.0.0.1]: TLS session: (certificate verification failed): Verification failed. CA constrains were violated. 
 1999-03-02 09:44:33 10HmbQ-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for t15@danebroken3.test.ex
 1999-03-02 09:44:33 10HmbQ-000000005vi-0000 DANE error: TLSA lookup for danebroken3.test.ex not DNSSEC
 1999-03-02 09:44:33 10HmbQ-000000005vi-0000 => t15@danebroken3.test.ex R=client T=send_to_server H=danebroken3.test.ex [127.0.0.1] X=TLS1.x:ke-RSA-AES256-SHAnnn:xxx CV=no DN="CN=server1.example.com" C="250 OK id=10HmbR-000000005vi-0000"
@@ -68,7 +68,7 @@
 1999-03-02 09:44:33 10HmbW-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbY-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for t19@danebroken7.example.com
 1999-03-02 09:44:33 10HmbY-000000005vi-0000 DANE attempt failed; TLS connection to danebroken7.example.com [127.0.0.1]: (certificate verification failed): certificate invalid
-1999-03-02 09:44:33 10HmbY-000000005vi-0000 == t19@danebroken7.example.com R=client T=send_to_server defer (-37) H=danebroken7.example.com [127.0.0.1]: TLS session: (certificate verification failed): certificate invalid
+1999-03-02 09:44:33 10HmbY-000000005vi-0000 == t19@danebroken7.example.com R=client T=send_to_server defer H=danebroken7.example.com [127.0.0.1]: TLS session: (certificate verification failed): certificate invalid
 1999-03-02 09:44:33 10HmbZ-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for t20@danebroken8.example.com
 1999-03-02 09:44:33 10HmbZ-000000005vi-0000 => t20@danebroken8.example.com R=client T=send_to_server H=danebroken8.example.com [127.0.0.1] X=TLS1.x:ke-RSA-AES256-SHAnnn:xxx CV=dane DN="CN=server1.example.net" C="250 OK id=10HmcA-000000005vi-0000"
 1999-03-02 09:44:33 10HmbZ-000000005vi-0000 Completed

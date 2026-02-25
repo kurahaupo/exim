@@ -9,7 +9,7 @@
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 Completed
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 => user6@h4.test.ex R=client T=send_to_server4 H=::1 [::1] C="250 OK id=10HmbD-000000005vi-0000"
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 Completed
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 == user6@h5.test.ex R=client T=send_to_server5 defer (-1): failed to expand "interface" option for send_to_server5 transport: condition name expected, but found ""
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == user6@h5.test.ex R=client T=send_to_server5 defer: failed to expand "interface" option for send_to_server5 transport: condition name expected, but found ""
 1999-03-02 09:44:33 End queue run: pid=p1234 -qf
 
 ******** SERVER ********

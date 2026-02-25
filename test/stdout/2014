@@ -19,10 +19,10 @@ Connecting to ip4.ip4.ip4.ip4 port PORT_D ... connected
 ??? 220
 <<< 220 TLS go ahead
 Attempting to start TLS
-gnutls_record_recv: A TLS fatal alert has been received.
-Failed to start TLS
+Succeeded in starting TLS
 >>> nop
 ????554
+A TLS fatal alert has been received.
 End of script
 ### No certificate, certificate optional at TLS time, required by ACL
 Connecting to 127.0.0.1 port PORT_D ... connected
@@ -156,10 +156,10 @@ Key file = aux-fixed/exim-ca/example.net/server1.example.net/server1.example.net
 ??? 220
 <<< 220 TLS go ahead
 Attempting to start TLS
-gnutls_record_recv: A TLS fatal alert has been received.
-Failed to start TLS
+Succeeded in starting TLS
 >>> nop
 ????554
+A TLS fatal alert has been received.
 End of script
 ### Bad certificate, certificate optional at TLS time, reject at ACL time
 Connecting to 127.0.0.1 port PORT_D ... connected

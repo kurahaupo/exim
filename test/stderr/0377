@@ -181,7 +181,7 @@ extract item: :defer: forced defer
 defer router: defer for defer_cccc@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer_cccc@myhost.test.ex <cccc@myhost.test.ex> R=defer defer (-1): forced defer
+  == defer_cccc@myhost.test.ex <cccc@myhost.test.ex> R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing cccc@myhost.test.ex
 --------> defer router <--------
@@ -244,7 +244,7 @@ extract item: :defer: forced defer
 defer router: defer for defer_bbbb@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer_bbbb@myhost.test.ex <bbbb@myhost.test.ex> R=defer defer (-1): forced defer
+  == defer_bbbb@myhost.test.ex <bbbb@myhost.test.ex> R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing bbbb@myhost.test.ex
 --------> defer router <--------
@@ -292,7 +292,7 @@ extract item: :defer: forced defer
 defer router: defer for defer_aaaa@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer_aaaa@myhost.test.ex <aaaa@myhost.test.ex> R=defer defer (-1): forced defer
+  == defer_aaaa@myhost.test.ex <aaaa@myhost.test.ex> R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing aaaa@myhost.test.ex
 --------> seen_aaaa router <--------
@@ -533,7 +533,7 @@ extract item: :defer: forced defer
 defer router: defer for defer_cccc@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer_cccc@myhost.test.ex <cccc@myhost.test.ex> R=defer defer (-1): forced defer
+  == defer_cccc@myhost.test.ex <cccc@myhost.test.ex> R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing cccc@myhost.test.ex
 --------> defer router <--------
@@ -797,7 +797,7 @@ extract item: :defer: forced defer
 defer router: defer for defer_cccc@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer_cccc@myhost.test.ex <cccc@myhost.test.ex> R=defer defer (-1): forced defer
+  == defer_cccc@myhost.test.ex <cccc@myhost.test.ex> R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing cccc@myhost.test.ex
 --------> defer router <--------

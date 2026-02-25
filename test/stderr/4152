@@ -114,7 +114,7 @@ extract item: :defer: forced defer
 defer router: defer for defer_aaaa@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer_aaaa@myhost.test.ex <aaaa@myhost.test.ex> R=defer defer (-1): forced defer
+  == defer_aaaa@myhost.test.ex <aaaa@myhost.test.ex> R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:
@@ -319,7 +319,7 @@ extract item: :defer: forced defer
 defer router: defer for defer_aaaa@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer_aaaa@myhost.test.ex <aaaa@myhost.test.ex> R=defer defer (-1): forced defer
+  == defer_aaaa@myhost.test.ex <aaaa@myhost.test.ex> R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:

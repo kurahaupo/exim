@@ -77,10 +77,10 @@ parse_forward_list: :defer: not just now
 extract item: :defer: not just now
 r_remain router: defer for rz.b@outside
   message: not just now
-added retry item for R:outside: errno=-1 more_errno=dd flags=0
+added retry item for R:outside: errno=-53 more_errno=dd flags=0
 post-process rz.b@outside (DEFER)
 LOG: MAIN
-  == rz.b@outside R=r_remain defer (-1): not just now
+  == rz.b@outside R=r_remain defer: not just now
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:
@@ -106,7 +106,7 @@ Processing retry items
    failing_interval=ttt message_age=ttt
    Writing retry data for R:outside
      first failed=dddd last try=dddd next try=+300 expired=0
-     errno=-1 more_errno=dd not just now
+     errno=-53 more_errno=dd not just now
 end of retry processing
 time on queue = 0s  id 10HmbJ-000000005vi-0000  addr rz.b@outside
 warning counts: required 0 done 0

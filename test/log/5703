@@ -9,4 +9,4 @@
 1999-03-02 09:44:33 H=(test.again.dns) [127.0.0.1] F=<a@b> rejected RCPT <c@d>
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 <= a@b H=(localhost) [127.0.0.1] P=smtp S=sss
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 T <dns:fail> <DNS_NOMATCH:nonexistent.test.ex:A>
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 == bad_a@nonexistent.test.ex <bad_A@nonexistent.test.ex> R=all T=all defer (-32): failed to lookup IP address for nonexistent.test.ex
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == bad_a@nonexistent.test.ex <bad_A@nonexistent.test.ex> R=all T=all defer: failed to lookup IP address for nonexistent.test.ex

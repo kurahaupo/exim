@@ -543,7 +543,7 @@ t1 transport returned DEFER for userx@test.ex
 added retry item for T:userx@test.ex: errno=-22 more_errno=dd flags=0
 post-process userx@test.ex (DEFER)
 LOG: MAIN
-  == userx@test.ex R=r1 T=t1 defer (-22): mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
+  == userx@test.ex R=r1 T=t1 defer: mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
 set_process_info: pppp tidying up after delivering 10HmaZ-000000005vi-0000
 Processing retry items
@@ -736,7 +736,7 @@ t1 transport returned DEFER for userx@test.ex
 added retry item for T:userx@test.ex: errno=-22 more_errno=dd flags=0
 post-process userx@test.ex (DEFER)
 LOG: MAIN
-  == userx@test.ex R=r1 T=t1 defer (-22): mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
+  == userx@test.ex R=r1 T=t1 defer: mailbox is full (MTA-imposed quota exceeded while writing to tmp/MAILDIR.myhost.test.ex)
 >>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>
 set_process_info: pppp tidying up after delivering 10HmbA-000000005vi-0000
 Processing retry items

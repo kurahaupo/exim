@@ -66,7 +66,7 @@ extract item: :defer: forced defer
 defer router: defer for defer@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer@myhost.test.ex R=defer defer (-1): forced defer
+  == defer@myhost.test.ex R=defer defer: forced defer
 no retry data available
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: bbbb@myhost.test.ex
@@ -172,7 +172,7 @@ extract item: :defer: forced defer
 defer router: defer for defer@myhost.test.ex
   message: forced defer
 LOG: MAIN
-  == defer@myhost.test.ex R=defer defer (-1): forced defer
+  == defer@myhost.test.ex R=defer defer: forced defer
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 After routing:
   Local deliveries:

@@ -90,6 +90,7 @@ switch (code)
     return DEFER;
 
   case self_defer:
+    addr->basic_errno = ERRNO_ROUTERDEFER;
     addr->message = msg;
     return DEFER;
 
@@ -115,6 +116,7 @@ switch (code)
     DEBUG(route)
       debug_printf_indent("%s: %s: address failed (self = fail)\n", msg, addr->domain);
     addr->message = msg;
+    addr->basic_errno = ERRNO_HOST_IS_LOCAL;
     setflag(addr, af_pass_message);
     return FAIL;
   }
