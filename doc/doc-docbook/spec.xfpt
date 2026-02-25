@@ -43550,7 +43550,7 @@ Example usage:
 
   warn    dmarc_status   = quarantine
           !authenticated = *
-          set $acl_m_quarantine = 1
+          set acl_m_quarantine = 1
           # Do something in a transport with this flag variable
 
   deny    condition      = ${if eq{$dmarc_domain_policy}{reject}}
