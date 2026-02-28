@@ -43907,7 +43907,9 @@ Events have names which correspond to the point in process at which they fire.
 The name is placed in the variable &$event_name$& and the event action
 expansion must check this, as it will be called for every possible event type.
 
+.new
 The current list of events is:
+.wen
 .itable all 0 0 4 25* left 10* center 15* center 50* left
 .row auth:fail		    after    both	"per driver per authentication attempt"
 .row dane:fail              after    transport  "per connection"
@@ -43915,11 +43917,12 @@ The current list of events is:
 .row msg:complete           after    main       "per message"
 .row msg:defer              after    transport  "per message per delivery try"
 .row msg:delivery           after    transport  "per recipient"
-.row msg:rcpt:host:defer    after    transport  "per recipient per host"
-.row msg:rcpt:defer         after    transport  "per recipient"
-.row msg:host:defer         after    transport  "per host per delivery try; host errors"
 .row msg:fail:delivery      after    transport  "per recipient"
 .row msg:fail:internal      after    main       "per recipient"
+.row msg:host:defer         after    transport  "per host per delivery try; host errors"
+.row msg:rcpt:host:defer    after    transport  "per recipient per host"
+.row msg:rcpt:defer         after    transport  "per recipient"
+.row proc:deliver           before   main       "per string of deliveries"
 .row tcp:connect            before   transport  "per connection"
 .row tcp:close              after    transport  "per connection"
 .row tls:cert               before   both       "per certificate in verification chain"
@@ -43955,6 +43958,7 @@ with the event type:
 .row msg:host:defer       "error string"
 .row msg:rcpt:host:defer  "error string"
 .row msg:rcpt:defer       "error string"
+.row proc:deliver         "initial message id"
 .row tls:cert             "verification chain depth"
 .row tls:fail:connect     "error string"
 .row smtp:connect         "smtp banner"
@@ -44001,6 +44005,12 @@ loaded locally.
 
 For dns:fail events from dnsdb lookups, a &"defer_never"& option does not
 affect the reporting of DNS_AGAIN.
+
+.new
+For proc:deliver events, will not be called for subsequent message delivery
+attempts resulting from retry database linkage.
+However, will be called for both phases of a 2-phase queue run.
+.wen
 
 . ////////////////////////////////////////////////////////////////////////////
 . ////////////////////////////////////////////////////////////////////////////

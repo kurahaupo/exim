@@ -6784,6 +6784,10 @@ open_db dbblock, * dbm_file = NULL;
 BOOL has_privs = TRUE;
 rmark reset_point;
 
+#ifndef DISABLE_EVENT
+(void) event_raise(event_action, US"proc:deliver", id, NULL);
+#endif
+
 CONTINUED_ID:
 reset_point = store_mark();
 

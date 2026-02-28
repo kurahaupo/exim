@@ -39,7 +39,9 @@ begin acl
 
 .ifdef _HAVE_EVENT
 ev_log:
-  accept logwrite = event $event_name data "$event_data"
+  accept	condition = ${if !eq {$event_name}{proc:deliver}}
+		logwrite = event $event_name data "$event_data"
+  accept
 .endif
 
 rcpt:

@@ -25,6 +25,8 @@ Since Version 4.99
 
  7. Main config option "bounce_charset", for setting Content-type: headers.
 
+ 8. Event "proc:deliver".
+
 
 Version 4.99
 ------------

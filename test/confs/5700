@@ -10,6 +10,8 @@ acl_smtp_data = accept
 
 event_action = ${acl {logger}}
 
+log_selector = +pid
+
 
 # ----- ACL -----
 

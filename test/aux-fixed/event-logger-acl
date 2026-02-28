@@ -85,9 +85,17 @@ ev_auth:
 
     accept logwrite =	UNEXPECTED $event_name
 
+ev_proc:
+    accept condition = ${if eq {$event_name}{proc:deliver}}
+	   logwrite = . \
+		      "proc deliver" \
+		      event_data <$event_data>
+
+    accept logwrite =	UNEXPECTED $event_name
+
 logger:
     warn   logwrite = event $event_name
 	   set acl_m1 = ${listextract{1}{$event_name}}
-    accept condition =	${if inlist{$acl_m1}{tcp:smtp:msg:auth}}
+    accept condition =	${if inlist{$acl_m1}{tcp:smtp:msg:auth:proc}}
 	   acl =	ev_$acl_m1
     accept logwrite =	UNEXPECTED $event_name
