@@ -39,6 +39,7 @@
                              "Resent-Sender:Resent-To:Resent-Cc:"\
                              "Resent-Message-ID:In-Reply-To:References:"\
                              "List-Id:List-Help:List-Unsubscribe:"\
+			     "List-Unsubscribe-Post:"\
                              "List-Subscribe:List-Post:List-Owner:List-Archive"
 
 #define PDKIM_OVERSIGN_HEADERS "+From:+Sender:+Reply-To:+Subject:+Date:"\
@@ -48,6 +49,7 @@
                              "+Resent-Sender:+Resent-To:+Resent-Cc:"\
                              "+Resent-Message-ID:+In-Reply-To:+References:"\
                              "+List-Id:+List-Help:+List-Unsubscribe:"\
+			     "+List-Unsubscribe-Post:"\
                              "+List-Subscribe:+List-Post:+List-Owner:+List-Archive"
 
 /* -------------------------------------------------------------------------- */

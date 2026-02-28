@@ -1,5 +1,5 @@
-_DKIM_OVERSIGN_HEADERS=+From:+Sender:+Reply-To:+Subject:+Date:+Message-ID:+To:+Cc:+MIME-Version:+Content-Type:+Content-Transfer-Encoding:+Content-ID:+Content-Description:+Resent-Date:+Resent-From:+Resent-Sender:+Resent-To:+Resent-Cc:+Resent-Message-ID:+In-Reply-To:+References:+List-Id:+List-Help:+List-Unsubscribe:+List-Subscribe:+List-Post:+List-Owner:+List-Archive
-_DKIM_SIGN_HEADERS=From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive
+_DKIM_OVERSIGN_HEADERS=+From:+Sender:+Reply-To:+Subject:+Date:+Message-ID:+To:+Cc:+MIME-Version:+Content-Type:+Content-Transfer-Encoding:+Content-ID:+Content-Description:+Resent-Date:+Resent-From:+Resent-Sender:+Resent-To:+Resent-Cc:+Resent-Message-ID:+In-Reply-To:+References:+List-Id:+List-Help:+List-Unsubscribe:+List-Unsubscribe-Post:+List-Subscribe:+List-Post:+List-Owner:+List-Archive
+_DKIM_SIGN_HEADERS=From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive
 _EXP_VAR_DKIM_VERIFY_STATUS=y
 _EXP_VAR_DKIM_VERIFY_SIGNERS=y
 _EXP_VAR_DKIM_VERIFY_REASON=y
