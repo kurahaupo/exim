@@ -482,19 +482,16 @@ int redirect_router_entry(
 {
 redirect_router_options_block * ob =
   (redirect_router_options_block *)(rblock->drinst.options_block);
-address_item *generated = NULL;
-const uschar *save_qualify_domain_recipient = qualify_domain_recipient;
-uschar *discarded = US"discarded";
+address_item * generated = NULL;
+const uschar * save_qualify_domain_recipient = qualify_domain_recipient;
+uschar * discarded = US"discarded";
 address_item_propagated addr_prop;
-error_block *eblock = NULL;
+error_block * eblock = NULL;
 ugid_block ugid;
 redirect_block redirect;
 sieve_block sieve;
-int filtertype = FILTER_UNSET;
-int yield = OK;
-int options = ob->bit_options;
-int frc = 0;
-int xrc = 0;
+int filtertype = FILTER_UNSET, yield = OK, options = ob->bit_options;
+int frc = 0, xrc = 0;
 
 /* Initialize the data to be propagated to the children */
 

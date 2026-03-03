@@ -562,8 +562,8 @@ Returns:        values from extraction function, or FF_NONEXIST:
 int
 rda_interpret(redirect_block * rdata, int options,
   const uschar * include_directory, const sieve_block * sieve,
-  const ugid_block * ugid, address_item ** generated,
-  uschar ** error, error_block ** eblockp, int * filtertype, const uschar * rname)
+  const ugid_block * ugid, address_item ** generated, uschar ** error,
+  error_block ** eblockp, int * filtertype, const uschar * rname)
 {
 int fd, rc, pfd[2];
 int yield, status;

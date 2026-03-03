@@ -5736,9 +5736,8 @@ while (*s)
 a bounce or a warning message. It tries to format the message reasonably as
 required by RFC 3461 by adding a space after each newline
 
-it uses the same logic as print_address_error() above. if af_pass_message is true
-and addr->message is set it uses the remote host answer. if not addr->user_message
-is used instead if available.
+If af_pass_message and addr->message are set, we assume the latter contains,
+as a trailing component, the error information.
 
 Arguments:
   addr         the address
@@ -5748,7 +5747,7 @@ Returns:       nothing
 */
 
 static void
-print_dsn_diagnostic_code(const address_item *addr, FILE *f)
+print_dsn_diagnostic_code(const address_item * addr, FILE * f)
 {
 uschar * s = testflag(addr, af_pass_message) ? addr->message : NULL;
 unsigned cnt;
@@ -5761,6 +5760,11 @@ DEBUG(deliver)
   debug_printf("DSN Diagnostic-Code: addr->message = %s\n", addr->message);
 
 /* search first ": ". we assume to find the remote-MTA answer there */
+
+/*XXX Fragile.  Very easy for what is in addr->message to be changed
+in maintenance, eg. adding an earlier ": ".  But, also, a remote reponse
+could include one.  Do we need a separate copy of the response? */
+
 if (!(s = Ustrstr(addr->message, ": ")))
   return;				/* not found, bail out */
 
