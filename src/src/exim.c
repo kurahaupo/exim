@@ -1844,70 +1844,37 @@ int
 main(int argc, char ** cargv)
 {
 const uschar ** argv = CUSS cargv;
-int  arg_receive_timeout = -1;
-int  arg_smtp_receive_timeout = -1;
-int  arg_error_handling = error_handling;
-int  filter_sfd = -1;
-int  filter_ufd = -1;
-int  group_count;
-int  i, rv;
-int  list_queue_option = QL_BASIC;
-int  msg_action = 0;
-int  msg_action_arg = -1;
-int  namelen = argv[0] ? Ustrlen(argv[0]) : 0;
-int  queue_only_reason = 0;
+int  arg_receive_timeout = -1, arg_smtp_receive_timeout = -1,
+	arg_error_handling = error_handling, filter_sfd = -1, filter_ufd = -1,
+	group_count, i, rv, list_queue_option = QL_BASIC, msg_action = 0,
+	msg_action_arg = -1, namelen = argv[0] ? Ustrlen(argv[0]) : 0,
+	queue_only_reason = 0, rcpt_dsn_flags = 0, recipients_arg = argc,
+	sender_address_domain = 0, test_retry_arg = -1, test_rewrite_arg = -1;
 #ifdef EXIM_PERL
 int  perl_start_option = 0;
 #endif
-int  recipients_arg = argc;
-int  sender_address_domain = 0;
-int  test_retry_arg = -1;
-int  test_rewrite_arg = -1;
 gid_t original_egid;
-BOOL arg_queue_only = FALSE;
-BOOL bi_option = FALSE;
-BOOL checking = FALSE;
-BOOL count_queue = FALSE;
-BOOL extract_recipients = FALSE;
-BOOL flag_G = FALSE;
-BOOL flag_n = FALSE;
-BOOL forced_delivery = FALSE;
-BOOL f_end_dot = FALSE;
-BOOL deliver_give_up = FALSE;
-BOOL list_queue = FALSE;
-BOOL list_options = FALSE;
-BOOL list_config = FALSE;
-BOOL local_queue_only;
-BOOL one_msg_action = FALSE;
-BOOL opt_D_used = FALSE;
-BOOL queue_only_set = FALSE;
-BOOL receiving_message = TRUE;
-BOOL sender_ident_set = FALSE;
-BOOL session_local_queue_only;
-BOOL unprivileged;
-BOOL removed_privilege = FALSE;
-BOOL usage_wanted = FALSE;
-BOOL verify_address_mode = FALSE;
-BOOL verify_as_sender = FALSE;
-BOOL rcpt_verify_quota = FALSE;
-BOOL version_printed = FALSE;
-const uschar * alias_arg = NULL;
-const uschar * called_as = US"";
-const uschar * cmdline_syslog_name = NULL;
-const uschar * start_queue_run_id = NULL;
-const uschar * stop_queue_run_id = NULL;
-const uschar * expansion_test_message = NULL;
-const uschar * ftest_domain = NULL;
-const uschar * ftest_localpart = NULL;
-const uschar * ftest_prefix = NULL;
-const uschar * ftest_suffix = NULL;
+BOOL arg_queue_only = FALSE, bi_option = FALSE, checking = FALSE,
+	count_queue = FALSE, extract_recipients = FALSE, flag_G = FALSE,
+	flag_n = FALSE, forced_delivery = FALSE, f_end_dot = FALSE,
+	deliver_give_up = FALSE, list_queue = FALSE, list_options = FALSE,
+	list_config = FALSE, local_queue_only, one_msg_action = FALSE,
+	opt_D_used = FALSE, queue_only_set = FALSE, receiving_message = TRUE,
+	sender_ident_set = FALSE, session_local_queue_only, unprivileged,
+	removed_privilege = FALSE, usage_wanted = FALSE,
+	verify_address_mode = FALSE, verify_as_sender = FALSE,
+	rcpt_verify_quota = FALSE, version_printed = FALSE;
+const uschar * alias_arg = NULL, * called_as = US"",
+	* cmdline_syslog_name = NULL, * start_queue_run_id = NULL,
+	* stop_queue_run_id = NULL, * expansion_test_message = NULL,
+	* ftest_domain = NULL, * ftest_localpart = NULL,
+	* ftest_prefix = NULL, * ftest_suffix = NULL,
+	* malware_test_file = NULL, * real_sender_address;
 uschar * log_oneline = NULL;
-const uschar * malware_test_file = NULL;
-const uschar * real_sender_address;
 uschar * originator_home = US"/";
 size_t sz;
 
-struct passwd *pw;
+struct passwd * pw;
 struct stat statbuf;
 pid_t passed_qr_pid = (pid_t)0;
 int passed_qr_pipe = -1;
@@ -1919,13 +1886,13 @@ BOOL info_stdout = FALSE;
 
 /* Possible options for -R and -S */
 
-static uschar *rsopts[] = { US"f", US"ff", US"r", US"rf", US"rff" };
+static uschar * rsopts[] = { US"f", US"ff", US"r", US"rf", US"rff" };
 
 /* Need to define this in case we need to change the environment in order
 to get rid of a bogus time zone. We have to make it char rather than uschar
-because some OS define it in /usr/include/unistd.h. */
+because some OS' define it in /usr/include/unistd.h. */
 
-extern char **environ;
+extern char ** environ;
 
 #ifdef MEASURE_TIMING
 (void)gettimeofday(&timestamp_startup, NULL);
@@ -3406,6 +3373,77 @@ on the second character (the one after '-'), to save some effort. */
 	  if (!isdigit(*p))
 	    exim_fail("number expected after -oB");
 	  connection_max_messages = Uatoi(p);
+	  }
+	}
+	break;
+
+      /* -oDSN: RFC 3461 DSN options:
+	  -oDSN N=[never,success,failure,delay]
+	  -oDSN R=[full,hdrs]
+	  -oDSN V=<envid>
+      */
+      case 'D':
+	{
+	const uschar * s;
+	uschar c;
+
+	if (Ustrcmp(argrest, "SN") != 0)
+	  {
+	  badarg = TRUE;
+	  break;
+	  }
+	if (i+1 >= argc) exim_fail("string expected after -oDSN");
+	switch (c = *(s = argv[++i]))
+	  {
+	  default:  exim_fail("only subcases N,R,V expected for -oDSN");
+	  case 'N': case 'R': case 'V':
+		    if (*++s == '=') break;
+		    exim_fail("equals expected after -oDSN subcase letter");
+	  }
+	s++;
+	switch (c)
+	  {
+	  case 'N':
+	    while (*s)
+	      {
+	      if (Ustrncmp(s, "never", 5) == 0)
+		if (*(s += 5) || rcpt_dsn_flags)
+		  exim_fail("DSN NOTIFY=never may not be combined");
+		else
+		  rcpt_dsn_flags = rf_notify_never;
+	      else if (Ustrncmp(s, "success", 7) == 0)
+		{ rcpt_dsn_flags |= rf_notify_success; s += 7; }
+	      else if (Ustrncmp(s, "failure", 7) == 0)
+		{ rcpt_dsn_flags |= rf_notify_failure; s += 7; }
+	      else if (Ustrncmp(s, "delay", 5) == 0)
+		{ rcpt_dsn_flags |= rf_notify_delay;   s += 5; }
+	      else
+		exim_fail("DSN NOTIFY bad value");
+
+	      if (!s) break;
+	      if (*s == ',') s++;
+	      }
+	    break;
+
+	  case 'R':
+	    if (Ustrcmp(s, "full") == 0)
+	      dsn_ret = dsn_ret_full;
+	    else if (Ustrcmp(s, "hdrs") == 0)
+	      dsn_ret = dsn_ret_hdrs;
+	    else
+	      exim_fail("bad value for DSN RET");
+	    break;
+
+	  case 'V':	/* per rfc 3461 4.4 - 100 char max, after xtext-enc
+			and the "ENVID=" prefix */
+	    {
+	    unsigned n = 0;
+	    for (const uschar * t = s; *t; t++, n++)
+	      if (!isprint(*t)) exim_fail("DSN ENVID has bad character");
+	    dsn_envid = xtextencode(s, n);
+	    if (Ustrlen(dsn_envid) > 100-6) exim_fail("DSN ENVID is oversize");
+	    break;
+	    }
 	  }
 	}
 	break;
@@ -5439,7 +5477,7 @@ if (f.expansion_test)
     filter_test = FTEST_USER;      /* Fudge to make it look like filter test */
     message_ended = END_NOTENDED;
     recipients_max_expanded = atoi(CCS rme);
-    read_message_body(receive_msg(extract_recipients));
+    read_message_body(receive_msg(extract_recipients, rf_notify_unset));
     message_linecount += body_linecount;
     (void)dup2(save_stdin, 0);
     (void)close(save_stdin);
@@ -5581,7 +5619,7 @@ if (host_checking)
     for (; (reset_point = store_mark()); store_reset(reset_point))
       {
       if (smtp_setup_msg() <= 0) break;
-      if (!receive_msg(FALSE)) break;
+      if (!receive_msg(FALSE, rf_notify_unset)) break;
 
       return_path = sender_address = NULL;
       dnslist_domain = dnslist_matched = NULL;
@@ -5880,7 +5918,7 @@ for (BOOL more = TRUE; more; )
 
       /* Now get the data for the message */
 
-      more = receive_msg(extract_recipients);
+      more = receive_msg(extract_recipients, rcpt_dsn_flags);
       if (!message_id[0])
         {
 	cancel_cutthrough_connection(TRUE, US"receive dropped");
@@ -6006,7 +6044,10 @@ for (BOOL more = TRUE; more; )
             }
 	  }
 
-        receive_add_recipient(string_copy_taint(recipient, GET_TAINTED), -1);
+	/*XXX no way to set orcpt from cmdline, yet */
+        receive_add_recipient(string_copy_taint(recipient, GET_TAINTED), -1,
+	  rcpt_dsn_flags, NULL);
+
         s = ss;
         if (!finished)
           while (*++s && (*s == ',' || isspace(*s)));
@@ -6054,7 +6095,7 @@ for (BOOL more = TRUE; more; )
     spool. */
 
     message_ended = END_NOTENDED;
-    more = receive_msg(extract_recipients);
+    more = receive_msg(extract_recipients, rcpt_dsn_flags);
 
     /* more is always FALSE here (not SMTP message) when reading a message
     for real; when reading the headers of a message for filter testing,
@@ -6094,7 +6135,8 @@ for (BOOL more = TRUE; more; )
         ftest_prefix ? ftest_prefix : US"",
         deliver_localpart,
         ftest_suffix ? ftest_suffix : US"",
-        deliver_domain), -1);
+        deliver_domain),
+      -1, rcpt_dsn_flags, NULL);
 
     printf("Recipient   = %s\n", recipients_list[0].address);
     if (ftest_prefix) printf("Prefix    = %s\n", ftest_prefix);

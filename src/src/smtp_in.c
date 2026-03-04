@@ -1997,6 +1997,8 @@ while (done <= 0)
 	else
 	  moan_smtp_batch(smtp_cmd_buffer, "501 sender address must contain "
 	    "a domain");
+
+      /*XXX Note: we do not handle DSN options on MAIL */
       break;
 
 
@@ -2057,7 +2059,8 @@ while (done <= 0)
 	  moan_smtp_batch(smtp_cmd_buffer,
 	    "501 recipient address must contain a domain");
 
-      receive_add_recipient(recipient, -1);
+      /*XXX Note: we do not handle DSN options on RCPT */
+      receive_add_recipient(recipient, -1, rf_notify_unset, NULL);
       break;
 
 
@@ -5425,15 +5428,7 @@ while (done <= 0)
 	  smtp_user_msg(US"250", user_msg);
 	else
 	  smtp_printf("250 Accepted\r\n", more);
-	receive_add_recipient(recipient, -1);
-
-	/* Set the dsn flags in the recipients_list */
-	recipients_list[recipients_count-1].orcpt = rcpt_orcpt;
-	recipients_list[recipients_count-1].dsn_flags = rcpt_dsn_flags;
-
-	/* DEBUG(receive) debug_printf("DSN: orcpt: %s  flags: %d\n",
-	  recipients_list[recipients_count-1].orcpt,
-	  recipients_list[recipients_count-1].dsn_flags); */
+	receive_add_recipient(recipient, -1, rcpt_dsn_flags, rcpt_orcpt);
 	}
 
       /* The recipient was discarded */

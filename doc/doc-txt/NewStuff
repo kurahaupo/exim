@@ -27,6 +27,8 @@ Since Version 4.99
 
  8. Event "proc:deliver".
 
+ 9. Commandline option "-oDSN" for DSN options on commandline sourced messages.
+
 
 Version 4.99
 ------------

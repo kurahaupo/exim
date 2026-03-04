@@ -839,12 +839,8 @@ the Coverity error on recipients_count */
 where = US"recipient";
 for (recipients_count = 0; recipients_count < rcount; recipients_count++)
   {
-  int nn;
-  int pno = -1;
-  int dsn_flags = 0;
-  uschar *orcpt = NULL;
-  uschar *errors_to = NULL;
-  uschar *p;
+  int nn, pno = -1, dsn_flags = 0;
+  uschar * orcpt = NULL, * errors_to = NULL, * p;
 
   if (fgets_big_buffer(fp) == NULL) goto SPOOL_READ_ERROR;
   nn = Ustrlen(big_buffer);

@@ -1,0 +1,45 @@
+
+******** SERVER ********
+Listening on port PORT_D ... 
+Connection request from [127.0.0.1]
+220 go
+EHLO the.local.host.name
+250-hi there
+250-DSN
+250 OK
+MAIL FROM:<CALLER@test.ex> RET=FULL ENVID=hello.+2B012
+250 OK
+RCPT TO:<a@test.ex> NOTIFY=NEVER
+550 nope
+QUIT
+250 bye
+End of script
+Listening on port PORT_D ... 
+Connection request from [127.0.0.1]
+220 go
+EHLO the.local.host.name
+250-hi there
+250-DSN
+250 OK
+MAIL FROM:<CALLER@test.ex>
+250 OK
+RCPT TO:<a@test.ex> NOTIFY=SUCCESS,FAILURE,DELAY
+250 accepted
+RCPT TO:<b@test.ex> NOTIFY=SUCCESS,FAILURE,DELAY
+550 not liked
+DATA
+354 go ahead
+Received: from CALLER by the.local.host.name with local (Exim x.yz)
+	(envelope-from <CALLER@test.ex>)
+	id 10HmaY-000000005vi-0000;
+	Tue, 2 Mar 1999 09:44:33 +0000
+Subject: test2
+Message-Id: <E10HmaY-000000005vi-0000@the.local.host.name>
+From: CALLER_NAME <CALLER@test.ex>
+Date: Tue, 2 Mar 1999 09:44:33 +0000
+
+.
+250 message accepted
+QUIT
+250 bye
+End of script

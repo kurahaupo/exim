@@ -560,7 +560,7 @@ typedef struct address_item {
   uschar *message;                /* error message */
   uschar *user_message;           /* error message that can be sent over SMTP
                                      or quoted in bounce message */
-  const uschar *onetime_parent;         /* saved original parent for onetime */
+  const uschar *onetime_parent;   /* saved original parent for onetime */
   uschar **pipe_expandn;          /* numeric expansions for pipe from filter */
   uschar *return_filename;        /* name of return file */
   uschar *self_hostname;          /* after self=pass */
@@ -589,7 +589,7 @@ typedef struct address_item {
   uschar *auth_id;		  /* auth "login" name used by transport */
   uschar *auth_sndr;		  /* AUTH arg to SMTP MAIL, used by transport */
 
-  uschar *dsn_orcpt;              /* DSN orcpt value */
+  const uschar *dsn_orcpt;        /* DSN orcpt value */
   int     dsn_flags;              /* DSN flags */
   int     dsn_aware;              /* DSN aware flag */
 

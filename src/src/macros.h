@@ -923,6 +923,7 @@ enum {
 
 /* Flags for recipient_block, used in DSN support */
 
+#define rf_notify_unset		0x00
 #define rf_dsnlasthop           0x01  /* Do not propagate DSN any further */
 #define rf_notify_never         0x02  /* NOTIFY= settings */
 #define rf_notify_success       0x04

@@ -8840,7 +8840,8 @@ else if (addr_defer != (address_item *)(+1))
         {
         DEBUG(deliver) debug_printf("one_time: adding %s in place of %s\n",
           otaddr->address, otaddr->parent->address);
-        receive_add_recipient(otaddr->address, t);
+	/*XXX should we copy the parent dsn_flags,orcpt ? */
+        receive_add_recipient(otaddr->address, t, rf_notify_unset, NULL);
         recipients_list[recipients_count-1].errors_to = otaddr->prop.errors_address;
         tree_add_nonrecipient(otaddr->parent->address);
         update_spool = TRUE;

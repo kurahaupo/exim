@@ -453,7 +453,7 @@ extern void    read_message_body(BOOL);
 extern void    receive_bomb_out(const uschar *, uschar *) NORETURN;
 extern BOOL    receive_check_fs(int);
 extern BOOL    receive_check_set_sender(const uschar *);
-extern BOOL    receive_msg(BOOL);
+extern BOOL    receive_msg(BOOL, int);
 extern int_eximarith_t receive_statvfs(BOOL, int *);
 extern void    receive_swallow_smtp(void);
 extern int     recv_fd_from_sock(int);

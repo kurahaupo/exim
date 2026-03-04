@@ -576,7 +576,7 @@ if (pid == 0)
       }
 
      {
-      BOOL ok = receive_msg(FALSE);
+      BOOL ok = receive_msg(FALSE, rf_notify_unset);
       search_tidyup();                    /* Close cached databases */
       if (!ok)                            /* Connection was dropped */
         {

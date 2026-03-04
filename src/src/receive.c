@@ -509,13 +509,18 @@ format.
 Arguments:
   recipient   the next address to add to recipients_list
   pno         parent number for fixed aliases; -1 otherwise
+  dsn_flags   classes of notify
+  dsn_orcpt   original recipient
 
 Returns:      nothing
 */
 
 void
-receive_add_recipient(const uschar * recipient, int pno)
+receive_add_recipient(const uschar * recipient, int pno, int dsn_flags,
+  const uschar * dsn_orcpt)
 {
+recipient_item * rp;
+
 if (recipients_count >= recipients_list_max)
   {
   const recipient_item * oldlist = recipients_list;
@@ -531,11 +536,15 @@ if (recipients_count >= recipients_list_max)
     memcpy(recipients_list, oldlist, oldmax * sizeof(recipient_item));
   }
 
-recipients_list[recipients_count].address = recipient;
-recipients_list[recipients_count].pno = pno;
-recipients_list[recipients_count].orcpt = NULL;
-recipients_list[recipients_count].dsn_flags = 0;
-recipients_list[recipients_count++].errors_to = NULL;
+rp = recipients_list + recipients_count++;
+rp->address = recipient;
+rp->pno = pno;
+rp->orcpt = dsn_orcpt;
+rp->dsn_flags = dsn_flags;
+rp->errors_to = NULL;
+
+/* DEBUG(receive) debug_printf("DSN: orcpt: %s  flags: %d\n",
+  rp->orcpt, rp->dsn_flags); */
 }
 
 
@@ -1721,6 +1730,7 @@ terminated by CRLF is treated in the same way as a bare CR.
 Arguments:
   extract_recip  TRUE if recipients are to be extracted from the message's
                    headers
+  rcpt_dsn_flags notify classes, used only if extract_recip
 
 Returns:  TRUE   there are more messages to be read (SMTP input)
           FALSE  there are no more messages to be read (non-SMTP input
@@ -1731,7 +1741,7 @@ whether the headers (which is all that is read) were terminated by '.' or
 not. */
 
 BOOL
-receive_msg(BOOL extract_recip)
+receive_msg(BOOL extract_recip, int rcpt_dsn_flags)
 {
 int  rc = FAIL, msg_size = 0, process_info_len = Ustrlen(process_info);
 int  header_size = 256, had_zero = 0, prevlines_length = 0, ptr = 0;
@@ -2726,12 +2736,10 @@ if (extract_recip)
         no recipients left. */
 
         else if (recipient)
-          {
           if (tree_search(tree_nonrecipients, recipient) == NULL)
-            receive_add_recipient(recipient, -1);
+            receive_add_recipient(recipient, -1, rcpt_dsn_flags, NULL);
           else
             extracted_ignored = TRUE;
-          }
 
         /* Move on past this address */
 

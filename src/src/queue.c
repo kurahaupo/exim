@@ -1585,7 +1585,7 @@ switch(action)
 #ifdef SUPPORT_I18N
 	if (string_is_utf8(recipient)) allow_utf8_domains = message_smtputf8 = TRUE;
 #endif
-        receive_add_recipient(recipient, -1);
+        receive_add_recipient(recipient, -1, rf_notify_unset, NULL);
         log_write(LOG_MAIN, "recipient <%s> added by %s",
           recipient, username);
         }

@@ -1,0 +1,58 @@
+# DSN commandline options
+#
+# -oDSN N=[never,success,failure,delay]
+# -oDSN R=[full,hdrs]
+# -oDSN V=<envid>
+#
+# inject on cmdline, check presence in onward smtp transmission
+#
+# basics
+server PORT_D
+220 go
+EHLO
+250-hi there
+250-DSN
+250 OK
+MAIL
+250 OK
+RCPT
+550 nope
+QUIT
+250 bye
+****
+#
+exim -odi -oDSN V=hello.+012 -oDSN R=full -oDSN N=never a@test.ex
+Subject: test1
+****
+#
+# notify classes should replicate on multiple recipients
+# also, notify cmdline options can be stacked
+server PORT_D
+220 go
+EHLO
+250-hi there
+250-DSN
+250 OK
+MAIL
+250 OK
+RCPT
+250 accepted
+RCPT
+550 not liked
+DATA
+354 go ahead
+.
+250 message accepted
+QUIT
+250 bye
+****
+#
+exim -odi -oDSN N=delay -oDSN N=success,failure,delay a@test.ex b@test.ex
+Subject: test2
+****
+#
+# cannot use never in combination with another notify
+1
+exim -odi -oDSN N=success,never a@test.ex
+Subject: test3
+****

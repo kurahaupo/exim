@@ -159,7 +159,7 @@ typedef struct recipient_item {
   const uschar *address;        /* the recipient address */
   int     pno;                  /* parent number for "one_time" alias, or -1 */
   const uschar *errors_to;      /* the errors_to address or NULL */
-  uschar *orcpt;                /* DSN orcpt */
+  const uschar *orcpt;          /* DSN orcpt */
   int     dsn_flags;            /* DSN flags */
 } recipient_item;
 
@@ -219,7 +219,7 @@ extern int     lss_match_domain(uschar *, uschar *);
 extern int     lss_match_local_part(uschar *, uschar *, BOOL);
 extern int     lss_match_address(uschar *, uschar *, BOOL);
 extern int     lss_match_host(uschar *, uschar *, uschar *);
-extern void    receive_add_recipient(const uschar *, int);
+extern void    receive_add_recipient(const uschar *, int, int, const uschar *);
 extern BOOL    receive_remove_recipient(const uschar *);
 extern uschar *rfc2047_decode(uschar *, BOOL, const uschar *, int, int *,
 			      uschar **);

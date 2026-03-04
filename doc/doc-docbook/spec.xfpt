@@ -4248,6 +4248,30 @@ This is a debugging option which limits the maximum number of messages that can
 be delivered down one SMTP connection, overriding the value set in any &(smtp)&
 transport. If <&'n'&> is omitted, the limit is set to 1.
 
+.new
+.cmdopt -oDSN <&'option'&>
+.cindex "Delivery Status Notification" "commandline settings"
+.cindex DSN "commandline settings"
+DSN extensions (&url(https://www.rfc-editor.org/rfc/rfc3461,RFC 3461))
+will be used, if possible, on commandline-sourced messages sent when
+one or more of these options are used.
+
+The option value must start with a code letter and an equals sign.
+
+Code letter N requests a NOTIFY parameter on SMTP RCPT commands;
+the equals may be followed by either "never",
+or a comma-separated list with any combination of "success", "failure"
+and "delay".
+The NOTIFY is applied to all recipients of the message.
+
+Code letter R requests a RET parameter on the SMTP MAIL command;
+the equals must be followed by either "full" or "hdrs".
+
+Code letter V requests an ENVID parameter on the SMTP MAIL command;
+the equals should be followed by an "envelope identifier" value
+for the message.
+.wen
+
 .cmdopt -odb
 .cindex "background delivery"
 .cindex "delivery" "in the background"

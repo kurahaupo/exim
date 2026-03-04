@@ -1,0 +1,39 @@
+# Exim test configuration 0015
+
+.include DIR/aux-var/std_conf_prefix
+
+
+# ----- Main settings -----
+
+qualify_domain = test.ex
+
+# ----- Routers -----
+
+begin routers
+
+bouncedump:
+  driver =	redirect
+  senders =	:
+  data =	:blackhole:
+
+r1:
+  driver =	accept
+  transport =	t1
+
+# ----- Transports -----
+
+begin transports
+
+t1:
+  driver =	smtp
+  hosts =	127.0.0.1
+  port =	PORT_D
+  hosts_try_fastopen = :
+  allow_localhost
+
+# ----- Retry -----
+
+begin retry
+* * F,5d,1d
+
+# End
