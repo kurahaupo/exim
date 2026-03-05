@@ -9124,7 +9124,10 @@ uschar buffer[1024];
 debug_modify_channel(US"+v");
 debug_file = stderr;
 debug_fd = fileno(debug_file);
-big_buffer = malloc(big_buffer_size);
+
+if (!(big_buffer = malloc(big_buffer_size)))
+  { perror("malloc"); exit(EXIT_FAILURE); }
+
 store_init();
 
 for (int i = 1; i < argc; i++)

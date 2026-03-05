@@ -92,6 +92,7 @@ xtextdecode(const uschar * code, uschar ** ptr)
 int x;
 #ifdef COMPILE_UTILITY
 uschar * result = malloc(Ustrlen(code) + 1);
+if (!result) return -1'
 #else
 uschar * result = store_get(Ustrlen(code) + 1, code);
 #endif

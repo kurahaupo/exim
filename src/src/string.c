@@ -2110,7 +2110,8 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
 
     else
       {
-      uschar *sss = malloc(s - ss + 1);
+      uschar * sss = malloc(s - ss + 1);
+      if (!sss) { perror("malloc"); return EXIT_FAILURE; }
       Ustrncpy(sss, ss, s-ss);
       args[n++] = sss;
       }
@@ -2133,7 +2134,7 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
   if (countset) printf("count=%d\n", count);
   }
 
-return 0;
+return EXIT_SUCCESS;
 }
 #endif
 

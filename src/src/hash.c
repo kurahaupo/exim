@@ -836,7 +836,9 @@ for (i = 0; i < sizeof(tests)/sizeof(uschar *); i ++)
 
 /* 1 000 000 repetitions of "a" */
 
-ctest = malloc(1000000);
+if (!(ctest = malloc(1000000)))
+  { perror("malloc"); exit(EXIT_FAILURE); }
+
 memset(ctest, 'a', 1000000);
 
 printf("1 000 000 repetitions of 'a'\n");

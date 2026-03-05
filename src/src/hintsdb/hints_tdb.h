@@ -126,6 +126,7 @@ exim_dbcreate_cursor(EXIM_DB * dbp)
 {
 # ifdef COMPILE_UTILITY
 EXIM_CURSOR * c = malloc(sizeof(TDB_DATA));
+if (!c) return c;
 # else
 EXIM_CURSOR * c = store_malloc(sizeof(TDB_DATA));
 # endif

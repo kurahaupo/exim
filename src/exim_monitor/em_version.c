@@ -31,14 +31,15 @@ uschar today[20];
 #endif
 
 version_string = US"2.06";
+version_date = US store_malloc(32);
+version_date[0] = 0;
 
 #ifdef EXIM_BUILD_DATE_OVERRIDE
-/* Reproducible build support; build tooling should have given us something looking like
- * "25-Feb-2017 20:15:40" in EXIM_BUILD_DATE_OVERRIDE based on $SOURCE_DATE_EPOCH in environ
- * per <https://reproducible-builds.org/specs/source-date-epoch/>
- */
-version_date = US malloc(32);
-version_date[0] = 0;
+/* Reproducible build support; build tooling should have given us something
+looking like "25-Feb-2017 20:15:40" in EXIM_BUILD_DATE_OVERRIDE based on
+$SOURCE_DATE_EPOCH in environ per
+<https://reproducible-builds.org/specs/source-date-epoch/> */
+
 Ustrncat(version_date, EXIM_BUILD_DATE_OVERRIDE, 31);
 
 #else
@@ -46,8 +47,6 @@ Ustrcpy(today, US __DATE__);
 if (today[4] == ' ') i = 1;
 today[3] = today[6] = '-';
 
-version_date = US malloc(32);
-version_date[0] = 0;
 Ustrncat(version_date, today+4+i, 3-i);
 Ustrncat(version_date, today, 4);
 Ustrncat(version_date, today+7, 4);

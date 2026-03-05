@@ -299,9 +299,11 @@ if (use_lockfile)
   primary_hostname = s.nodename;
 
   len = (int)strlen(filename);
-  lockname = malloc(len + 8);
+  if (  !(lockname = malloc(len + 8))
+     || !(hitchname = malloc(len + 32 + (int)strlen(primary_hostname))))
+    { perror("malloc"); exit(EXIT_FAILURE); }
+
   sprintf(lockname, "%s.lock", filename);
-  hitchname = malloc(len + 32 + (int)strlen(primary_hostname));
 
   /* Presumably, this must match appendfile.c */
   sprintf(hitchname, "%s.%s.%08x.%08x", lockname, primary_hostname,

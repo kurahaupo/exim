@@ -213,6 +213,9 @@ uschar  dirname[512];
 uschar *buffer = malloc(max_outsize);
 uschar *line = malloc(max_insize);
 
+if (!buffer || !line)
+  { perror("malloc"); exit(EXIT_FAILURE); }
+
 while (argc > 1)
   {
   if      (Ustrcmp(argv[arg], "-nolc") == 0)     lowercase = FALSE;

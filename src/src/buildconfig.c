@@ -97,7 +97,7 @@ if (!OK)
   printf("\n*** \"%s\" (%s) must contain precisely one occurrence of\n"
     "*** \"%%s\". Please review your build-time configuration.\n\n/", value,
     name);
-  exit(1);
+  exit(EXIT_FAILURE);
   }
 }
 
@@ -115,14 +115,14 @@ char buffer[1024];
 if (argc != 1)
   {
   printf("*** Buildconfig: called with incorrect arguments\n");
-  exit(1);
+  exit(EXIT_FAILURE);
   }
 
 new = fopen("config.h", "wb");
 if (new == NULL)
   {
   printf("*** Buildconfig: failed to open config.h for output\n");
-  exit(1);
+  exit(EXIT_FAILURE);
   }
 
 printf("Building configuration file config.h\n");
@@ -216,7 +216,7 @@ if (!(base = fopen("Makefile", "rb")))
   {
   printf("*** Buildconfig: failed to open Makefile\n");
   (void)fclose(new);
-  exit(1);
+  exit(EXIT_FAILURE);
   }
 
 errno_quota[0] = 0;    /* no over-riding value set */
@@ -257,7 +257,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
           {
           printf("*** Only one of USE_DB, USE_GDBM, USE_SQLITE or USE_TDB should be "
             "defined in Local/Makefile\n");
-          exit(1);
+          exit(EXIT_FAILURE);
           }
         use_which_db_in_local_makefile = 1;
         }
@@ -279,7 +279,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
       if (*p++ != '=')
         {
         printf("*** Buildconfig: syntax error in Makefile line %d\n", linecount);
-        exit(1);
+        exit(EXIT_FAILURE);
         }
       while (isspace((unsigned char)*p)) p++;
       if (strcmp(p, "YES") == 0 || strcmp(p, "yes") == 0) *(h->flag) = 1;
@@ -302,7 +302,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
       if (*p++ != '=')
         {
         printf("*** Buildconfig: syntax error in Makefile line %d\n", linecount);
-        exit(1);
+        exit(EXIT_FAILURE);
         }
       while (isspace((unsigned char)*p)) p++;
       strcpy(s->data, p);
@@ -338,7 +338,7 @@ if (base == NULL)
   {
   printf("*** Buildconfig: failed to open ../src/config.h.defaults\n");
   (void)fclose(new);
-  exit(1);
+  exit(EXIT_FAILURE);
   }
 
 while (fgets(buffer, sizeof(buffer), base) != NULL)
@@ -411,7 +411,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
       printf("\n*** EXIM_USER has not been defined in any of the Makefiles in "
         "the\n    \"Local\" directory. Please review your build-time "
         "configuration.\n\n");
-      return 1;
+      return EXIT_FAILURE;
       }
 
     while (isspace((unsigned char)(*user))) user++;
@@ -420,7 +420,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
       printf("\n*** EXIM_USER is defined as an empty string in one of the "
         "files\n    in the \"Local\" directory. Please review your build-time"
         "\n    configuration.\n\n");
-      return 1;
+      return EXIT_FAILURE;
       }
 
     for (s = user; *s; s++)
@@ -429,7 +429,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         printf("\n*** EXIM_USER contains the control character 0x%02X in one "
           "of the files\n    in the \"Local\" directory. Please review your "
           "build-time\n    configuration.\n\n", *s);
-        return 1;
+        return EXIT_FAILURE;
         }
 
     /* Numeric uid given */
@@ -458,7 +458,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         printf("\n*** User \"%s\" (specified in one of the Makefiles) does not "
           "exist.\n    Please review your build-time configuration.\n\n",
           user);
-        return 1;
+        return EXIT_FAILURE;
         }
 
       uid = pw->pw_uid;
@@ -484,7 +484,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         else printf("EXIM_USER is defined numerically, so there is no"
           "\n    default for EXIM_GROUP and you must set it explicitly.\n    P");
         printf("lease review your build-time configuration.\n\n");
-        return 1;
+        return EXIT_FAILURE;
         }
 
       for (s = group; *s; s++)
@@ -493,7 +493,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
           printf("\n*** EXIM_GROUP contains the control character 0x%02X in one "
             "of the files\n    in the \"Local\" directory. Please review your "
             "build-time\n    configuration.\n\n", *s);
-          return 1;
+          return EXIT_FAILURE;
           }
 
       /* Group name given. This may be by reference or to be looked up now,
@@ -520,7 +520,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
           printf("\n*** Group \"%s\" (specified in one of the Makefiles) does "
             "not exist.\n   Please review your build-time configuration.\n\n",
             group);
-          return 1;
+          return EXIT_FAILURE;
           }
         gid = gr->gr_gid;
         }
@@ -532,7 +532,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
       {
       printf("\n*** No group set for Exim. Please review your build-time "
         "configuration.\n\n");
-      return 1;
+      return EXIT_FAILURE;
       }
 
     /* security sanity checks
@@ -545,7 +545,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
           (strcmp(username, "toor") == 0) )))
       {
       printf("\n*** Exim's internal user must not be root.\n\n");
-      return 1;
+      return EXIT_FAILURE;
       }
 
     /* Output user and group names or uid/gid. When names are set, uid/gid
@@ -590,7 +590,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         printf("\n*** %s contains the control character 0x%02X in "
           "one of the files\n    in the \"Local\" directory. Please review "
           "your build-time\n    configuration.\n\n", name, *s);
-        return 1;
+        return EXIT_FAILURE;
         }
 
     /* Numeric uid given */
@@ -620,7 +620,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         printf("\n*** Group \"%s\" (specified in one of the Makefiles) does not "
           "exist.\n    Please review your build-time configuration.\n\n",
           user);
-        return 1;
+        return EXIT_FAILURE;
         }
       gid = gr->gr_gid;
       }
@@ -633,7 +633,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         printf("\n*** User \"%s\" (specified in one of the Makefiles) does not "
           "exist.\n    Please review your build-time configuration.\n\n",
           user);
-        return 1;
+        return EXIT_FAILURE;
         }
       uid = pw->pw_uid;
       }
@@ -668,7 +668,11 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
       char *p = list;
       while (*p != 0) if (*p++ == ':') count++;
 
-      vector = malloc((count+1) * sizeof(uid_t));
+      if (!(vector = malloc((count+1) * sizeof(uid_t))))
+	{
+	perror("malloc");
+	exit(EXIT_FAILURE);
+	}
       vector[0] = (uid_t)count;
 
       for (int i = 1; i <= count; list++, i++)
@@ -693,7 +697,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
 	      " in one of the Makefiles) does not exist.\n"
 	      "   Please review your build-time configuration.\n\n",
               name);
-            return 1;
+            return EXIT_FAILURE;
             }
           vector[j++] = pw->pw_uid;
           }
@@ -750,7 +754,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         {
         printf("\n*** LDAP_LIB_TYPE=%s is not a recognized LDAP library type."
           "\n*** Please review your build-time configuration.\n\n", value);
-        return 1;
+        return EXIT_FAILURE;
         }
       }
 
@@ -766,7 +770,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         {
         printf("\n*** RADIUS_LIB_TYPE=%s is not a recognized RADIUS library type."
           "\n*** Please review your build-time configuration.\n\n", value);
-        return 1;
+        return EXIT_FAILURE;
         }
       }
 
@@ -832,7 +836,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         else
           {
           printf("Value of %s should be -1..9\n", name);
-          return 1;
+          return EXIT_FAILURE;
           }
         }
 
@@ -854,7 +858,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         else
           {
           printf("Unreasonable value (%s) of \"%s\".\n", value, name);
-          return 1;
+          return EXIT_FAILURE;
           }
         }
 
@@ -883,7 +887,7 @@ while (fgets(buffer, sizeof(buffer), base) != NULL)
         printf("\n*** %s has not been defined in any of the Makefiles in the\n"
           "    \"Local\" directory. "
           "Please review your build-time configuration.\n\n", name);
-        return 1;
+        return EXIT_FAILURE;
         }
 
       if (strcmp(name, "TIMEZONE_DEFAULT") == 0)
@@ -930,7 +934,7 @@ Some OS' have released with it broken. */
 
 fprintf(new, "\n/* End of config.h */\n");
 (void)fclose(new);
-return 0;
+return EXIT_SUCCESS;
 }
 
 /* End of buildconfig.c */

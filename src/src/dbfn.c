@@ -687,7 +687,11 @@ spool_directory = argv[1];
 debug_modify_channel(US"");
 debug_modify_channel(US"+all-memory");
 debug_file = stderr;
-big_buffer = malloc(big_buffer_size);
+if (!(big_buffer = malloc(big_buffer_size)))
+  {
+  perror("malloc");
+  return 1;
+  }
 
 for (i = 0; i < max_db; i++) dbblock[i].dbptr = NULL;
 

@@ -416,6 +416,7 @@ add_driver_info(driver_info ** drlist_p, const driver_info * newent,
 {
 #ifdef MACRO_PREDEF
 driver_info * listent = malloc(size);
+if (!listent) return;
 #else
 driver_info * listent = store_get(size, newent);
 #endif
