@@ -391,8 +391,9 @@ for (router_instance * r = routers; r; r = r->drinst.next)
 *************************************************/
 
 /* This function is handed a local part and a list of possible prefixes; if any
-one matches, return the prefix length. A prefix beginning with '*' is a
-wildcard.
+one matches, return the prefix length.
+A prefix beginning with '*' is a greedy wildcard (longest match), one beginning
+with '~' is a nongreedy wildcard.
 
 Arguments:
   local_part    the local part to check
@@ -407,16 +408,13 @@ route_check_prefix(const uschar * local_part, const uschar * prefixes,
   unsigned * vp)
 {
 int sep = 0;
-uschar *prefix;
-const uschar *listptr = prefixes;
-
-while ((prefix = string_nextinlist(&listptr, &sep, NULL, 0)))
+for (const uschar * prefix; prefix = string_nextinlist(&prefixes,&sep,NULL,0); )
   {
-  int plen = Ustrlen(prefix);
-  if (prefix[0] == '*')
+  unsigned plen = Ustrlen(prefix);
+  if (*prefix == '*')
     {
-    prefix++;
-    for (const uschar * p = local_part + Ustrlen(local_part) - (--plen);
+    prefix++; plen--;
+    for (const uschar * p = local_part + Ustrlen(local_part) - plen;
          p >= local_part; p--)
       if (strncmpic(prefix, p, plen) == 0)
 	{
@@ -424,6 +422,16 @@ while ((prefix = string_nextinlist(&listptr, &sep, NULL, 0)))
 	if (vp) *vp = vlen;
 	return plen + vlen;
 	}
+    }
+  else if (*prefix == '~')
+    {
+    const uschar * p = strstric(local_part, ++prefix, FALSE);
+    if (p)
+      {
+      unsigned vlen = p - local_part;
+      if (vp) *vp = vlen;
+      return plen-1 + vlen;
+      }
     }
   else
     if (strncmpic(prefix, local_part, plen) == 0)
@@ -443,8 +451,9 @@ return 0;
 *************************************************/
 
 /* This function is handed a local part and a list of possible suffixes;
-if any one matches, return the suffix length. A suffix ending with '*'
-is a wildcard.
+if any one matches, return the suffix length.
+A suffix ending with '*' is a greedy wildcard (longest match), one ending
+with '~' is a nongreedy wildcard.
 
 Arguments:
   local_part    the local part to check
@@ -459,31 +468,47 @@ route_check_suffix(const uschar * local_part, const uschar * suffixes,
   unsigned * vp)
 {
 int sep = 0, alen = Ustrlen(local_part);
-const uschar * listptr = suffixes, * suffix;
+unsigned suffix_len, vlen;
 
-while ((suffix = string_nextinlist(&listptr, &sep, NULL, 0)))
+for (uschar * suffix; suffix = string_nextinlist(&suffixes, &sep, NULL, 0); )
   {
   int slen = Ustrlen(suffix);
-  if (suffix[slen-1] == '*')
+  uschar c = suffix[slen-1];
+  if (c == '*')
     {
-    const uschar * pend = local_part + alen - (--slen) + 1;
-    for (const uschar * p = local_part; p < pend; p++)
+    for (const uschar * p = local_part, * pend = p + alen - (--slen) + 1;
+	 p < pend; p++)
       if (strncmpic(suffix, p, slen) == 0)
 	{
-	int tlen = alen - (p - local_part);
-	if (vp) *vp = tlen - slen;
-	return tlen;
+	suffix_len = alen - (p - local_part);
+	vlen = suffix_len - slen;
+	goto out;
+	}
+    }
+  else if (c == '~')
+    {
+    for (const uschar * p = local_part + alen - (--slen) + 1;
+	 p >= local_part; p--)
+      if (strncmpic(suffix, p, slen) == 0)
+	{
+	suffix_len = alen - (p - local_part);
+	vlen = suffix_len - slen;
+	goto out;
 	}
     }
   else
     if (alen > slen && strncmpic(suffix, local_part + alen - slen, slen) == 0)
       {
-      if (vp) *vp = 0;
-      return slen;
+      suffix_len = slen; vlen = 0;
+      goto out;
       }
   }
 
 return 0;
+
+out:
+  if (vp) *vp = vlen;
+  return suffix_len;
 }
 
 

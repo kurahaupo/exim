@@ -19883,9 +19883,15 @@ section &<<SECTrouprecon>>& for a list of the order in which preconditions are
 evaluated.
 
 The list is scanned from left to right, and the first prefix that matches is
-used. A limited form of wildcard is available; if the prefix begins with an
+used.
+Limited forms of wildcard are available; if the prefix begins with an
 asterisk, it matches the longest possible sequence of arbitrary characters at
-the start of the local part. An asterisk should therefore always be followed by
+the start of the local part.
+.new
+If is begins with a tilde, it matches the shortest possible sequence.
+An asterisk or tilde
+.wen
+should therefore always be followed by
 some character that does not occur in normal local parts.
 .cindex "multiple mailboxes"
 .cindex "mailbox" "multiple"
@@ -19948,7 +19954,12 @@ See &%local_part_prefix%& above.
 This option operates in the same way as &%local_part_prefix%&, except that the
 local part must end (rather than start) with the given string, the
 &%local_part_suffix_optional%& option determines whether the suffix is
-mandatory, and the wildcard * character, if present, must be the last
+mandatory, and the wildcard
+*
+.new
+or ~
+.wen
+character, if present, must be the last
 character of the suffix. This option facility is commonly used to handle local
 parts of the form &%something-request%& and multiple user mailboxes of the form
 &%username-foo%&.

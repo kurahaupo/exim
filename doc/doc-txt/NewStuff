@@ -29,6 +29,8 @@ Since Version 4.99
 
  9. Commandline option "-oDSN" for DSN options on commandline sourced messages.
 
+10. Nongreedy wildcards for local_parts affixes.
+
 
 Version 4.99
 ------------

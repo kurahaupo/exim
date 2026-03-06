@@ -1,24 +1,13 @@
-# local part prefix
+# local part prefix, suffix
 need_ipv4
 #
+# prefix, local delivery
 exim -odi page+ux
 Some more message text.
 ****
-server PORT_S
-220 Server ready
-EHLO
-250 OK
-MAIL FROM
-250 OK
-RCPT TO
-250 OK
-DATA
-300 go ahead
-.
-250 OK
-QUIT
-250 OK
-****
+#
+#
+# suffix, smtp delivery
 server PORT_S
 220 Server ready
 EHLO
@@ -36,4 +25,22 @@ QUIT
 ****
 exim -odi Userx-S@Test.Ex
 More text.
+****
+#
+#
+#
+# Check that a *prefix is greedy
+exim -odi fred+bill+greed
+****
+#
+# Check that a ~prefix is nongreedy
+exim -odi fred+bill+nongreed
+****
+#
+# Check that a suffix* is greedy
+exim -odi s_greed+one+two
+****
+#
+# Check that a suffix~ is nongreedy
+exim -odi s_nongreed+one+two
 ****

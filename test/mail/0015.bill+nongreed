@@ -1,20 +1,19 @@
 From CALLER@test.ex Tue Mar 02 09:44:33 1999
 Return-path: <CALLER@test.ex>
-Envelope-to: page+ux@test.ex
+Envelope-to: fred+bill+nongreed@test.ex
 Delivery-date: Tue, 2 Mar 1999 09:44:33 +0000
 Received: from CALLER by the.local.host.name with local (Exim x.yz)
 	(envelope-from <CALLER@test.ex>)
-	id 10HmaX-000000005vi-0000
-	for page+ux@test.ex;
+	id 10HmbA-000000005vi-0000
+	for fred+bill+nongreed@test.ex;
 	Tue, 2 Mar 1999 09:44:33 +0000
-Message-Id: <E10HmaX-000000005vi-0000@the.local.host.name>
+Message-Id: <E10HmbA-000000005vi-0000@the.local.host.name>
 From: CALLER_NAME <CALLER@test.ex>
 Date: Tue, 2 Mar 1999 09:44:33 +0000
-X-local_part: userx
-X-local_part_prefix: page+
-X-local_part_prefix_v: page
+X-local_part: bill+nongreed
+X-local_part_prefix: fred+
+X-local_part_prefix_v: fred
 X-local_part_suffix: 
 X-local_part_suffix_v: 
 
-Some more message text.
 

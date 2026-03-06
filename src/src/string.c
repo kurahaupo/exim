@@ -828,10 +828,8 @@ Returns:         pointer to substring in string, or NULL if not found
 const uschar *
 strstric_c(const uschar * s, const uschar * t, BOOL space_follows)
 {
-const uschar * p = t;
-const uschar * yield = NULL;
-int cl = tolower(*p);
-int cu = toupper(*p);
+const uschar * p = t, * yield = NULL;
+int cl = tolower(*p), cu = toupper(*p);
 
 while (*s)
   {
