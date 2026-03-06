@@ -603,7 +603,7 @@ for (int i = queue_run_in_order ? -1 : 0;
       else if (  deliver_selectstring_sender
 	      && !(f.deliver_selectstring_sender_regex
 		  ? regex_match(selectstring_regex_sender, sender_address, -1, NULL)
-		  : (strstric_c(sender_address, deliver_selectstring_sender, FALSE)
+		  : (strstric(sender_address, deliver_selectstring_sender, FALSE)
 		      != NULL)
 	      )   )
         {
@@ -622,7 +622,7 @@ for (int i = queue_run_in_order ? -1 : 0;
           const uschar * address = recipients_list[i].address;
           if (  (f.deliver_selectstring_regex
 		? regex_match(selectstring_regex, address, -1, NULL)
-                : (strstric_c(address, deliver_selectstring, FALSE) != NULL)
+                : (strstric(address, deliver_selectstring, FALSE) != NULL)
 		)
              && tree_search(tree_nonrecipients, address) == NULL
 	     )

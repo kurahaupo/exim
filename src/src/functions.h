@@ -640,8 +640,12 @@ extern uschar *string_nextinlist_trc(const uschar **listptr, int *separator, usc
 
 extern int     strcmpic(const uschar *, const uschar *);
 extern int     strncmpic(const uschar *, const uschar *, int);
-extern uschar *strstric(const uschar *, const uschar *, BOOL);
-extern const uschar *strstric_c(const uschar *, const uschar *, BOOL);
+extern uschar *       strstric_nc(const uschar *, const uschar *, BOOL);
+extern const uschar * strstric_c(const uschar *, const uschar *, BOOL);
+#define strstric(X, Y, B) _Generic((X),     \
+	      uschar *:		strstric_nc, \
+	      const uschar *:	strstric_c \
+	      )(X, Y, B)
 
 extern int     synprot_error(BOOL, int, uschar *, uschar *);
 

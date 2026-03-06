@@ -860,12 +860,8 @@ while (*s)
 return NULL;
 }
 
-/*XXX C11 apparently has "generic functions", which allow the tracking
-of a parameter's type through to the return type.  Thit would neatly
-permit a single function name to be used, with better dev-safety, for this. */
-
 uschar *
-strstric(const uschar * s, const uschar * t, BOOL space_follows)
+strstric_nc(const uschar * s, const uschar * t, BOOL space_follows)
 {
 return US strstric_c(s, t, space_follows);
 }
