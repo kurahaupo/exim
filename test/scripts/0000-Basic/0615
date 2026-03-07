@@ -4,7 +4,7 @@
 echo Note this takes 3 minutes to run
 # Build with -DMEASURE_TIMING if a performance test is wanted,
 # to lose the deliberate testsuite-mode delays.
-# Also, if a real 2-phase qrun is wanted, lose the queue_run_in_order
+# Also, if a real 2-phase qrun is wanted, lose the queue_run_order setting
 #
 exim -DSERVER=server -bd -oX PORT_D
 ****

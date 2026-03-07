@@ -8,7 +8,7 @@ primary_hostname = myhost.test.ex
 # ----- Main settings -----
 
 qualify_domain = test.ex
-queue_run_in_order
+queue_run_order = oldest
 remote_max_parallel = 2
 
 

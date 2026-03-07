@@ -465,6 +465,7 @@ queue_only_load                      fixed-point     unset         main
 queue_only_load_latch                boolean         true          main              4.68
 queue_only_override                  boolean         true          main              4.21
 queue_run_in_order                   boolean         false         main              1.70
+queue_run_order                      string          random        main              4.100
 queue_run_max                        integer         5             main
 queue_smtp_domains                   domain list     unset         main
 quota                                string*         unset         appendfile        1.60

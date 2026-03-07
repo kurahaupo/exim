@@ -10,7 +10,7 @@ SERVER=
 acl_smtp_connect = acl_connect
 acl_smtp_rcpt = acl_rcpt
 qualify_domain = test.ex
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- ACLs -----

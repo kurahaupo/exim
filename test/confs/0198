@@ -2,7 +2,7 @@
 
 .include DIR/aux-var/std_conf_prefix
 
-queue_run_in_order
+queue_run_order = oldest
 trusted_users = CALLER
 
 # This test originated as an Exim configuration check local parts before

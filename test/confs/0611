@@ -22,7 +22,7 @@ dmarc_tld_file =
 log_file_path = DIR/spool/log/${if eq {SERVER}{server} {server_}{}}%slog
 
 qualify_domain = test.ex
-queue_run_in_order
+queue_run_order = oldest
 log_selector = +received_recipients
 
 acl_smtp_rcpt = accept ${if eq {SERVER}{server} {delay = 2s}}

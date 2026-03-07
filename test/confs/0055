@@ -10,7 +10,7 @@ domainlist local_domains = test.ex : myhost.ex
 domainlist some_domains = ten-1.test.ex
 
 queue_domains = !unknown.test.ex : !^ten-\\d+\\.test\\.ex\$ : *.test.ex
-queue_run_in_order
+queue_run_order = oldest
 queue_smtp_domains = !+some_domains : \N^ten-\d+\.test\.ex$\N
 
 

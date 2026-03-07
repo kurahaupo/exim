@@ -19,7 +19,7 @@ dkim_verify_min_keysizes = MSIZE
 .endif
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 
 begin acl

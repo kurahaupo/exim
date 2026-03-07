@@ -39,14 +39,15 @@ static BOOL queue_tls_init = FALSE;
 queue_get_spool_list() below.
 
 Arguments:
-  a            points to an ordered list of queue_filename items
-  b            points to another ordered list
+  a		points to an ordered list of queue_filename items
+  b		points to another ordered list
+  order		older/newer first
 
-Returns:       a pointer to a merged ordered list
+Returns:	a pointer to a merged ordered list
 */
 
 static queue_filename *
-merge_queue_lists(queue_filename * a, queue_filename * b)
+merge_queue_lists(queue_filename * a, queue_filename * b, s_order_t order)
 {
 queue_filename * first = NULL, ** append = &first;
 
@@ -60,7 +61,7 @@ while (a && b)
     d = Ustrcmp(a->text + (a_old ? 6+1+6+1 : MESSAGE_ID_TIME_LEN + 1 + MESSAGE_ID_PID_LEN + 1),
 		b->text + (b_old ? 6+1+6+1 : MESSAGE_ID_TIME_LEN + 1 + MESSAGE_ID_PID_LEN + 1));
     }
-  if (d < 0)
+  if ((d < 0) == (order == SLIST_OLDER_FIRST))
     {
     *append = a;
     append= &a->next;
@@ -100,7 +101,7 @@ therein. Single-character sub-directories are handled as follows:
   identifying character of the subdirectory, if any. The subdirs vector is
   still required as an argument.
 
-If the randomize argument is TRUE, messages are returned in "randomized" order.
+If random order requested messages are returned in "randomized" order.
 Actually, the order is anything but random, but the algorithm is cheap, and the
 point is simply to ensure that the same order doesn't occur every time, in case
 a particular message is causing a remote MTA to barf - we would like to try
@@ -110,7 +111,7 @@ If the randomize argument is FALSE, sort the list according to the file name.
 This should give the order in which the messages arrived. It is normally used
 only for presentation to humans, in which case the (possibly expensive) sort
 that it does is not part of the normal operational code. However, if
-queue_run_in_order is set, sorting has to take place for queue runs as well.
+running ordered, sorting has to take place for queue runs as well.
 When randomize is FALSE, the first argument is normally -1, so all messages are
 included.
 
@@ -118,7 +119,7 @@ Arguments:
   subdiroffset   sub-directory character offset, or 0 or -1 (see above)
   subdirs        vector to store list of subdirchars
   subcount       pointer to int in which to store count of subdirs
-  randomize      TRUE if the order of the list is to be unpredictable
+  order		 dontcare/oldest/random/newest-first
   pcount	 If not NULL, fill in with count of files and do not return list
 
 Returns:         pointer to a chain of queue name items
@@ -126,7 +127,7 @@ Returns:         pointer to a chain of queue name items
 
 static queue_filename *
 queue_get_spool_list(int subdiroffset, uschar * subdirs, int * subcount,
-  BOOL randomize, unsigned * pcount)
+  s_order_t order, unsigned * pcount)
 {
 int i, flags = 0, resetflags = -1, subptr;
 queue_filename * yield = NULL, * last = NULL;
@@ -140,7 +141,7 @@ not randomizing, initialize the sublists for the bottom-up merge sort. */
 
 if (pcount)
   *pcount = 0;
-else if (randomize)
+else if (order == SLIST_RANDOM)
   resetflags = time(NULL) & 0xFFFF;
 else
    for (i = 0; i < LOG2_MAXNODES; i++)
@@ -174,7 +175,7 @@ for (; i <= *subcount; i++)
   {
   int count = 0;
   int subdirchar = subdirs[i];      /* 0 for main directory */
-  DIR *dd;
+  DIR * dd;
 
   if (subdirchar != 0)
     {
@@ -221,13 +222,14 @@ for (; i <= *subcount; i++)
 	Ustrcpy(next->text, name);
 	next->dir_uschar = subdirchar;
 
-	/* Handle the creation of a randomized list. The first item becomes both
-	the top and bottom of the list. Subsequent items are inserted either at
-	the top or the bottom, randomly. This is, I argue, faster than doing a
-	sort by allocating a random number to each item, and it also saves having
-	to store the number with each item. */
+	if (order == SLIST_RANDOM)
+	  {
+	  /* Handle the creation of a randomized list. The first item becomes
+	  both the top and bottom of the list. Subsequent items are inserted
+	  either at the top or the bottom, randomly. This is, I argue, faster
+	  than doing a sort by allocating a random number to each item, and it
+	  also saves having to store the number with each item. */
 
-	if (randomize)
 	  if (!yield)
 	    {
 	    next->next = NULL;
@@ -237,7 +239,7 @@ for (; i <= *subcount; i++)
 	    {
 	    if (flags == 0)
 	      flags = resetflags;
-	    if ((flags & 1) == 0)
+	    if (!(flags & 1))
 	      {
 	      next->next = yield;
 	      yield = next;
@@ -250,16 +252,16 @@ for (; i <= *subcount; i++)
 	      }
 	    flags = flags >> 1;
 	    }
-
-	/* Otherwise do a bottom-up merge sort based on the name. */
-
+	  }
 	else
 	  {
+	  /* Do a bottom-up merge sort based on the name. */
+
 	  next->next = NULL;
 	  for (int j = 0; j < LOG2_MAXNODES; j++)
 	    if (root[j])
 	      {
-	      next = merge_queue_lists(next, root[j]);
+	      next = merge_queue_lists(next, root[j], order);
 	      root[j] = j == LOG2_MAXNODES - 1 ? next : NULL;
 	      }
 	    else
@@ -305,9 +307,9 @@ for (; i <= *subcount; i++)
 /* When using a bottom-up merge sort, do the final merging of the sublists.
 Then pass back the final list of file items. */
 
-if (!pcount && !randomize)
+if (!pcount && order != SLIST_RANDOM)
   for (i = 0; i < LOG2_MAXNODES; ++i)
-    yield = merge_queue_lists(yield, root[i]);
+    yield = merge_queue_lists(yield, root[i], order);
 
 return yield;
 }
@@ -363,6 +365,7 @@ int subcount = 0;
 uschar subdirs[64];
 pid_t qpid[4] = {0};	/* Parallelism factor for q2stage 1st phase */
 BOOL single_id = FALSE, msg_handled = FALSE;
+s_order_t order;
 
 #ifdef MEASURE_TIMING
 report_time_since(&timestamp_startup, US"queue_run start");
@@ -387,6 +390,21 @@ f.queue_smtp = q->queue_2stage;
 
 queue_run_pid = getpid();
 f.queue_running = TRUE;
+
+GET_OPTION("queue_run_order");
+order = SLIST_RANDOM;			/* default */
+if (queue_run_order)
+  {
+  if (Ustrcmp(queue_run_order, "oldest") == 0)
+    order = SLIST_OLDER_FIRST;
+  else if (Ustrcmp(queue_run_order, "newest") == 0)
+    order = SLIST_NEWER_FIRST;
+  }
+else
+  {
+  GET_OPTION("queue_run_in_order");	/* Obsolete option, 4.100 onwards */
+  if (queue_run_in_order) order = SLIST_OLDER_FIRST;
+  }
 
 /* Log the true start of a queue run, and fancy options */
 
@@ -451,7 +469,7 @@ if (!queue_tls_init)
 /* If the spool is split into subdirectories, we want to process it one
 directory at a time, so as to spread out the directory scanning and the
 delivering when there are lots of messages involved, except when
-queue_run_in_order is set.
+running the queue in (some) order.
 
 In the random order case, this loop runs once for the main directory (handling
 any messages therein), and then repeats for any subdirectories that were found.
@@ -460,11 +478,11 @@ directory, fills in subdirs, and sets subcount. The order of the directories is
 then randomized after the first time through, before they are scanned in
 subsequent iterations.
 
-When the first argument of queue_get_spool_list() is -1 (for queue_run_in_
-order), it scans all directories and makes a single message list. */
+When the first argument of queue_get_spool_list() is -1 (for ordered queue runs)
+it scans all directories and makes a single message list. */
 
-for (int i = queue_run_in_order ? -1 : 0;
-     i <= (queue_run_in_order ? -1 : subcount);
+for (int i = order == SLIST_RANDOM ? 0 : -1;
+     i <= (order == SLIST_RANDOM ? subcount : -1);
      i++)
   {
   rmark reset_point1 = store_mark();
@@ -480,7 +498,7 @@ for (int i = queue_run_in_order ? -1 : 0;
     }
 
   for (queue_filename * fq = queue_get_spool_list(i, subdirs, &subcount,
-					     !queue_run_in_order, NULL);
+					     order, NULL);
        fq; fq = fq->next)
     {
     pid_t pid;
@@ -511,7 +529,7 @@ for (int i = queue_run_in_order ? -1 : 0;
     /* If initial of a 2-phase run (and not under the test-harness)
     maintain a set of child procs to get disk parallelism */
 
-    if (q->queue_2stage && !queue_run_in_order)
+    if (q->queue_2stage && order == SLIST_RANDOM)
       {
       int j;
       if (qpid[
@@ -758,7 +776,7 @@ single_item_retry:
 
     /* If initial of a 2-phase run, we are a child - so just exit */
 
-    if (q->queue_2stage && !queue_run_in_order)
+    if (q->queue_2stage && order == SLIST_RANDOM)
       exim_exit(EXIT_SUCCESS);
 
     /* If we are in the test harness, and this is not the first of a 2-stage
@@ -775,7 +793,7 @@ single_item_retry:
 
   go_around:
     /* If initial of a 2-phase run, we are a child - so just exit */
-    if (q->queue_2stage && !queue_run_in_order)
+    if (q->queue_2stage && order == SLIST_RANDOM)
       exim_exit(EXIT_SUCCESS);
     }                                  /* End loop for list of messages */
 
@@ -785,7 +803,7 @@ single_item_retry:
   /* If this was the first time through for random order processing, and
   sub-directories have been found, randomize their order if necessary. */
 
-  if (i == 0 && subcount > 1 && !queue_run_in_order)
+  if (i == 0 && subcount > 1 && order == SLIST_RANDOM)
     for (int j = 1; j <= subcount; j++)
       {
       int r;
@@ -893,7 +911,7 @@ tls_support orig_tls_in = tls_in;
 for (queue_filename * fq = queue_get_spool_list(-1,	/* entire queue */
 				      subdirs,		/* for holding sublist*/
 				      &subcount,	/* for subcount */
-				      FALSE,		/* not random */
+				      SLIST_OLDER_FIRST, /* not random */
 				      NULL);
      fq && yield != OK; fq = fq->next)
   {
@@ -954,7 +972,7 @@ uschar subdirs[64];
 (void) queue_get_spool_list(-1,		/* entire queue */
 			subdirs,        /* for holding sub list */
 			&subcount,      /* for subcount */
-			FALSE,		/* not random */
+			SLIST_ORDER_UNDEFINED,
 			&count);	/* just get the count */
 return count;
 }
@@ -1054,7 +1072,7 @@ else
           -1,				/* entire queue */
           subdirs,			/* for holding sub list */
           &subcount,			/* for subcount */
-          option >= QL_UNSORTED,	/* randomize if required */
+          option >= QL_UNSORTED ? SLIST_RANDOM : SLIST_OLDER_FIRST,
 	  NULL);			/* don't just count */
 
 option &= ~QL_UNSORTED;

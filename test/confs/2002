@@ -12,7 +12,7 @@ acl_smtp_rcpt = check_recipient
 log_selector = +tls_peerdn
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 tls_advertise_hosts = 127.0.0.1 : HOSTIPV4
 

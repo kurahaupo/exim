@@ -10,7 +10,7 @@ acl_smtp_rcpt = rcpt
 acl_not_smtp_start = not_smtp
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 #---------------
 

@@ -21,7 +21,7 @@ log_selector = +received_recipients +sender_on_delivery
 
 .ifdef SERVER
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 .endif
 
 smtputf8_advertise_hosts = OPTION

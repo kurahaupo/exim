@@ -10,7 +10,7 @@ acl_smtp_rcpt = accept
 local_interfaces = <; 127.0.0.1.PORT_D ; [127.0.0.1]:PORT_D2 ; HOSTIPV4 ; 127.0.0.1.PORT_D4
 log_selector = +incoming_interface+incoming_port
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 # ----- Routers -----
 

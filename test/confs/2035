@@ -25,7 +25,7 @@ log_selector = +received_recipients +outgoing_port
 
 .ifdef SERVER
 queue_only
-queue_run_in_order = true
+queue_run_order = oldest
 .endif
 
 # ----- ACLs -----

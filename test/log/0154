@@ -1,13 +1,15 @@
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmaY-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmaZ-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbA-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbC-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbD-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbE-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbF-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
-1999-03-02 09:44:33 10HmbG-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for a@test.ex
+1999-03-02 09:44:33 10HmaY-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for b@test.ex
+1999-03-02 09:44:33 10HmaZ-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for c@test.ex
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for d@test.ex
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for e@test.ex
+1999-03-02 09:44:33 10HmbC-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for f@test.ex
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for g@test.ex
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for h@test.ex
+1999-03-02 09:44:33 10HmbF-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for i@test.ex
+1999-03-02 09:44:33 10HmbG-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for j@test.ex
+1999-03-02 09:44:33 ------
+1999-03-02 09:44:33 oldest
 1999-03-02 09:44:33 Start queue run: pid=p1234
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 == a@test.ex R=defer_always defer: forced defer
 1999-03-02 09:44:33 10HmaY-000000005vi-0000 == b@test.ex R=defer_always defer: forced defer
@@ -20,3 +22,53 @@
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 == i@test.ex R=defer_always defer: forced defer
 1999-03-02 09:44:33 10HmbG-000000005vi-0000 == j@test.ex R=defer_always defer: forced defer
 1999-03-02 09:44:33 End queue run: pid=p1234
+1999-03-02 09:44:33 ------
+1999-03-02 09:44:33 oldest (obsolete)
+1999-03-02 09:44:33 Start queue run: pid=p1235
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == a@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmaY-000000005vi-0000 == b@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmaZ-000000005vi-0000 == c@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 == d@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == e@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbC-000000005vi-0000 == f@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 == g@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 == h@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbF-000000005vi-0000 == i@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbG-000000005vi-0000 == j@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 End queue run: pid=p1235
+1999-03-02 09:44:33 ------
+1999-03-02 09:44:33 more new items
+1999-03-02 09:44:33 10HmbH-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for a2@test.ex
+1999-03-02 09:44:33 10HmbI-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for b2@test.ex
+1999-03-02 09:44:33 10HmbJ-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for c2@test.ex
+1999-03-02 09:44:33 10HmbK-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for d2@test.ex
+1999-03-02 09:44:33 10HmbL-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for e2@test.ex
+1999-03-02 09:44:33 10HmbM-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for f2@test.ex
+1999-03-02 09:44:33 10HmbN-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for g2@test.ex
+1999-03-02 09:44:33 10HmbO-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for h2@test.ex
+1999-03-02 09:44:33 10HmbP-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for i2@test.ex
+1999-03-02 09:44:33 10HmbQ-000000005vi-0000 <= CALLER@test.ex U=CALLER P=local S=sss for j2@test.ex
+1999-03-02 09:44:33 ------
+1999-03-02 09:44:33 newest
+1999-03-02 09:44:33 Start queue run: pid=p1236
+1999-03-02 09:44:33 10HmbQ-000000005vi-0000 == j2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbP-000000005vi-0000 == i2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbO-000000005vi-0000 == h2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbN-000000005vi-0000 == g2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbM-000000005vi-0000 == f2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbL-000000005vi-0000 == e2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbK-000000005vi-0000 == d2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbJ-000000005vi-0000 == c2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbI-000000005vi-0000 == b2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbH-000000005vi-0000 == a2@test.ex R=defer_always defer: forced defer
+1999-03-02 09:44:33 10HmbG-000000005vi-0000 == j@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbF-000000005vi-0000 == i@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 == h@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 == g@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbC-000000005vi-0000 == f@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 == e@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 == d@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmaZ-000000005vi-0000 == c@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmaY-000000005vi-0000 == b@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 == a@test.ex routing defer: retry time not reached
+1999-03-02 09:44:33 End queue run: pid=p1236

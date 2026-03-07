@@ -10,7 +10,7 @@ primary_hostname = myhost.test.ex
 
 acl_smtp_rcpt = accept
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 remote_max_parallel = 1
 
 

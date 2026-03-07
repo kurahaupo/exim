@@ -7,7 +7,15 @@
 
 domainlist local_domains = test.ex
 qualify_domain = test.ex
+
+.ifdef ORDER
+queue_run_order = ORDER
+.endif
+.ifdef OPTION
 queue_run_in_order
+.endif
+
+log_selector = +received_recipients
 
 
 # ----- Routers -----

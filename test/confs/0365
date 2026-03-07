@@ -12,7 +12,7 @@ acl_smtp_data = acl_data
 acl_smtp_rcpt = acl_rcpt
 log_selector = SELECTOR
 qualify_domain = test.ex
-queue_run_in_order
+queue_run_order = oldest
 smtp_return_error_details = DETAILS
 trusted_users = CALLER
 

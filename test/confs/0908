@@ -41,7 +41,7 @@ tls_certificate = DIR/aux-fixed/cert1
 tls_privatekey = DIR/aux-fixed/cert1
 .endif
 
-queue_run_in_order = true
+queue_run_order = oldest
 
 # ----- ACL -----
 

@@ -30,6 +30,60 @@ exim -odq j@test.ex
 ****
 exim -bp
 ****
-exim -q
+exim -z "------"
+****
+exim -z "oldest"
+****
+exim -DORDER=oldest -q
+****
+# Obsolete option variant
+exim -z "------"
+****
+exim -z "oldest (obsolete)"
+****
+exim -DOPTION=y -q
+****
+#
+exim -z "------"
+****
+exim -z "more new items"
+****
+millisleep 500
+exim -odq a2@test.ex
+****
+millisleep 500
+exim -odq b2@test.ex
+****
+millisleep 500
+exim -odq c2@test.ex
+****
+millisleep 500
+exim -odq d2@test.ex
+****
+millisleep 500
+exim -odq e2@test.ex
+****
+millisleep 500
+exim -odq f2@test.ex
+****
+millisleep 500
+exim -odq g2@test.ex
+****
+millisleep 500
+exim -odq h2@test.ex
+****
+millisleep 500
+exim -odq i2@test.ex
+****
+millisleep 500
+exim -odq j2@test.ex
+****
+exim -bp
+****
+exim -z "------"
+****
+exim -z "newest"
+****
+exim -DORDER=newest -q
 ****
 no_msglog_check

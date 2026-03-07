@@ -16,7 +16,7 @@ log_selector = +dkim_verbose
 dkim_verify_signers = DYNAMIC_OPTION
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 # ----- ACL ---------
 

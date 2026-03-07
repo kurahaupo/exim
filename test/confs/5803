@@ -13,7 +13,7 @@ acl_smtp_rcpt = accept verify = recipient/callout
 
 log_selector =  +received_recipients +tls_certificate_verified +tls_sni
 
-queue_run_in_order
+queue_run_order = oldest
 
 tls_advertise_hosts = *
 .ifdef _HAVE_GNUTLS

@@ -17,7 +17,7 @@ log_selector = +dkim_verbose
 dkim_verify_hashes = sha256 : sha512
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 
 begin acl

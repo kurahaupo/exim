@@ -6,7 +6,7 @@
 # ----- Main settings -----
 
 qualify_domain = test.ex
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- Routers -----

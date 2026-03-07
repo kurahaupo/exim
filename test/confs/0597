@@ -11,7 +11,7 @@ domainlist local_domains = @
 acl_smtp_rcpt = check_rcpt
 
 trusted_users = CALLER
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- ACL -----

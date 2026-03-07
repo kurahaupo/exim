@@ -15,7 +15,7 @@ exim -oMt this-user -f this-user -odq first-user@test.ex
 ****
 exim -oMt this-user -f this-user -odq second-user@test.ex
 ****
-exim -DALLOW=queue_run_in_order -qq
+exim -DALLOW=queue_run_order=oldest -qq
 ****
 #
 killdaemon

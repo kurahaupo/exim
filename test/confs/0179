@@ -6,7 +6,7 @@ primary_hostname = myhost.test.ex
 
 # ----- Main settings -----
 
-queue_run_in_order
+queue_run_order = oldest
 # incoming_interface is used here to get the _outgoing_ local port
 log_selector = +outgoing_port +incoming_interface +received_recipients
 

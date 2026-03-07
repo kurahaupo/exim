@@ -13,7 +13,7 @@ domainlist local_domains = test.ex : *.test.ex
 smtp_banner = $smtp_active_hostname ESMTP Exim $version_number
 acl_smtp_rcpt = check_recipient
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 remote_max_parallel = 1
 
 tls_advertise_hosts = *

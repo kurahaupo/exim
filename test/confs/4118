@@ -20,7 +20,7 @@ delay_warning_condition = ${if !eq{$domain}{another.test.ex}{yes}{no}}
 
 log_selector = +subject
 
-queue_run_in_order
+queue_run_order = oldest
 
 WMF
 

@@ -31,6 +31,8 @@ Since Version 4.99
 
 10. Nongreedy wildcards for local_parts affixes.
 
+11. Main config option "queue_run_order", obsoleting "queue_run_in_order".
+
 
 Version 4.99
 ------------

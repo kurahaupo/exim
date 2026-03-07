@@ -13,7 +13,7 @@ acl_smtp_rcpt = accept
 log_selector = +smtp_connection+incoming_port+received_recipients
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 remote_max_parallel = 1
 
 smtp_accept_max_nonmail = 0

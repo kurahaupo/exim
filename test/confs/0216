@@ -13,7 +13,7 @@ log_selector = +pipelining
 
 acl_smtp_rcpt = accept
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- Routers -----

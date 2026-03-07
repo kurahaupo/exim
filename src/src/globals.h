@@ -830,7 +830,8 @@ extern int     queue_only_load;        /* Max load before auto-queue */
 extern BOOL    queue_only_load_latch;  /* Latch queue_only_load TRUE */
 extern uschar *queue_only_file;        /* Queue if file exists/not-exists */
 extern BOOL    queue_only_override;    /* Allow override from command line */
-extern BOOL    queue_run_in_order;     /* As opposed to random */
+extern BOOL    queue_run_in_order;     /* (obsolete) As opposed to random */
+extern const uschar * queue_run_order; /* undef/old/random/new-first */
 extern uschar *queue_run_max;          /* Max queue runners */
 extern unsigned queue_size;            /* items in queue */
 extern time_t  queue_size_next;        /* next time to evaluate queue_size */

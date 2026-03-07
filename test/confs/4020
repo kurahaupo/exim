@@ -5,7 +5,7 @@ OPTION =
 .include DIR/aux-var/std_conf_prefix
 
 primary_hostname = myhost.test.ex
-queue_run_in_order
+queue_run_order = oldest
 
 # ----- Main settings -----
 

@@ -8,7 +8,7 @@ log_selector = +received_recipients +sender_on_delivery
 
 acl_smtp_rcpt = accept
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 #---------------
 

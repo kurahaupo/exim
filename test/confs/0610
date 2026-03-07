@@ -13,7 +13,7 @@ acl_smtp_rcpt = accept
 
 untrusted_set_sender = *
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 # ----- ACL -----
 

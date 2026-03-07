@@ -8,7 +8,7 @@
 acl_smtp_rcpt = check_recipient
 domainlist local_domains = test.ex
 qualify_domain = test.ex
-queue_run_in_order
+queue_run_order = oldest
 
 # ----- ACL -----
 

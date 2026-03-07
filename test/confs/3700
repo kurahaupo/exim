@@ -15,7 +15,7 @@ acl_smtp_rcpt = check_authd
 acl_smtp_data = ar_header
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 trusted_users = CALLER
 
 tls_on_connect_ports = PORT_S

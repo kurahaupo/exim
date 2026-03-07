@@ -11,7 +11,7 @@ acl_smtp_atrn = ${if = {$received_port}{PORT_D2} {check_atrn}{}}
 acl_smtp_rcpt = accept
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 # ----- ACL -----
 

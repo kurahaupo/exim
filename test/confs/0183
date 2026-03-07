@@ -7,7 +7,7 @@ primary_hostname = myhost.test.ex
 # ----- Main settings -----
 
 dns_ipv4_lookup = *
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- ACL -----

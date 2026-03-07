@@ -5,7 +5,7 @@
 
 # ----- Main settings -----
 
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- Routers -----

@@ -26,7 +26,7 @@ log_selector = +received_recipients +dsn
 .endif
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 
 .ifdef _HAVE_EVENT

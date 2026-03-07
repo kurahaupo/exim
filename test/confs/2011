@@ -37,7 +37,7 @@ acl_smtp_rcpt = check_rcpt
 
 log_selector = +received_recipients +dkim_verbose
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 # ----- ACL -----
 begin acl

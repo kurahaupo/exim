@@ -1048,5 +1048,11 @@ typedef struct misc_module_info {
 
 #define MISC_MODULE_MAGIC	0x4d4d4d31	/* MMM1 */
 
+
+/* Spool list ordering */
+typedef enum {
+  SLIST_ORDER_UNDEFINED, SLIST_OLDER_FIRST, SLIST_RANDOM, SLIST_NEWER_FIRST
+} s_order_t;
+
 #endif	/* whole file */
 /* End of structs.h */

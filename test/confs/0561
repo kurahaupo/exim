@@ -12,7 +12,7 @@ acl_smtp_rcpt = accept
 
 queue_only_load = 0.001
 queue_only_load_latch = QOLL
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- Routers -----

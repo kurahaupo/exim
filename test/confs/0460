@@ -9,7 +9,7 @@ primary_hostname = myhost.test.ex
 
 qualify_domain = test.ex
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 acl_smtp_rcpt = accept
 

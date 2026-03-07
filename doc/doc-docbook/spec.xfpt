@@ -4631,7 +4631,7 @@ MTA have a chance of getting through if they get tried first.
 
 It is possible to cause the messages to be processed in lexical message id
 order, which is essentially the order in which they arrived, by setting the
-&%queue_run_in_order%& option, but this is not recommended for normal use.
+&%queue_run_order%& option, but this is not recommended for normal use.
 
 .vitem &%-q%&<&'qflags'&>
 .oindex &%-q%&
@@ -4652,7 +4652,8 @@ stage, the queue is scanned as if the &%queue_smtp_domains%& option matched
 every domain. Addresses are routed, local deliveries happen, but no remote
 transports are run.
 
-Performance will be best if the &%queue_run_in_order%& option is false.
+Performance will be best if the &%queue_run_order%& option is unset
+or "random").
 If that is so and
 the &%queue_fast_ramp%& option is true
 and a daemon-notifier socket is available
@@ -15323,6 +15324,7 @@ See also the &'Policy controls'& section above.
 .row &%queue_only_override%&         "allow command line to override"
 .row &%queue_run_in_order%&          "order of arrival"
 .row &%queue_run_max%&               "of simultaneous queue runners"
+.row &%queue_run_order%&             "time, reverse-time, or random"
 .row &%queue_smtp_domains%&          "no immediate SMTP delivery for these"
 .row &%remote_max_parallel%&         "parallel SMTP delivery per message"
 .row &%remote_sort_domains%&         "order of remote deliveries"
@@ -17692,19 +17694,39 @@ setting of &%queue_only%& or &%queue_only_file%& in the configuration file. If
 to override; they are accepted, but ignored.
 
 
+.new
+.option queue_run_order main string random
 .option queue_run_in_order main boolean false
 .cindex "queue runner" "processing messages in order"
-If this option is set, queue runs happen in order of message arrival instead of
+Permissible values for the string option are
+.ilist
+random
+.next
+oldest
+.next
+newest
+.endlist
+
+The boolean option is obsolete, replaced by the string option.
+For now it is still supported but it will be removed in a future release.
+If set true, it corresponds to &"oldest"&.
+
+If this option indicates a time-order,
+queue runs happen either oldest or newest first instead of
 in an arbitrary order. For this to happen, a complete list of the entire queue
 must be set up before the deliveries start. When the queue is all held in a
 single directory (the default), a single list is created for both the ordered
-and the non-ordered cases. However, if &%split_spool_directory%& is set, a
-single list is not created when &%queue_run_in_order%& is false. In this case,
+and the non-ordered cases.
+However, if &%split_spool_directory%& is set, a
+single list is not created when time-ordering is not required. In this case,
 the sub-directories are processed one at a time (in a random order), and this
-avoids setting up one huge list for the whole queue. Thus, setting
-&%queue_run_in_order%& with &%split_spool_directory%& may degrade performance
+avoids setting up one huge list for the whole queue.
+Thus, setting a value other than &"random"&
+with &%split_spool_directory%& may degrade performance
 when the queue is large, because of the extra work in setting up the single,
-large list. In most situations, &%queue_run_in_order%& should not be set.
+large list.
+In most situations, &%queue_run_order%& should not be set.
+.wen
 
 
 
@@ -18529,8 +18551,9 @@ trying to deliver each one, in turn, it constructs a list of those in one
 sub-directory and tries to deliver them, before moving on to the next
 sub-directory. The sub-directories are processed in a random order. This
 spreads out the scanning of the input directories, and uses less memory. It is
-particularly beneficial when there are lots of messages in the queue. However,
-if &%queue_run_in_order%& is set, none of this new processing happens. The
+particularly beneficial when there are lots of messages in the queue.
+However, if &%queue_run_order%& requires a time order,
+none of this new processing happens. The
 entire queue has to be scanned and sorted before any deliveries can start.
 
 

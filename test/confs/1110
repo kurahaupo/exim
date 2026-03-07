@@ -9,7 +9,7 @@ primary_hostname = myhost.test.ex
 acl_smtp_rcpt = check_recipient
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 tls_advertise_hosts = *
 

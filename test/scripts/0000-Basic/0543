@@ -23,7 +23,7 @@ Test message 2
 ****
 1
 dump wait-smtp
-# A queue run will try these in order, since queue_run_in_order is set. The
+# A queue run will try these in order, since queue_run_order is "oldest". The
 # first one is accepted, but it shouldn't fire up the second on the same
 # connection, because a 4xx error should no longer put the message on the list.
 server PORT_S

@@ -9,7 +9,7 @@ primary_hostname = myhost.test.ex
 
 ignore_bounce_errors_after = 4s
 timeout_frozen_after = 10s
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- Routers -----

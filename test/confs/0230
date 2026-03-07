@@ -15,7 +15,7 @@ log_selector =  \
               +incoming_interface \
               +smtp_connection +connection_id
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 
 # ----- ACL -----

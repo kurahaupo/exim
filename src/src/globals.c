@@ -369,6 +369,7 @@ BOOL    queue_only             = FALSE;
 BOOL    queue_only_load_latch  = TRUE;
 BOOL    queue_only_override    = TRUE;
 BOOL    queue_run_in_order     = FALSE;
+const uschar * queue_run_order = NULL;
 BOOL    recipients_max_reject  = FALSE;
 BOOL    return_path_remove     = TRUE;
 

@@ -6,7 +6,7 @@
 # ----- Main settings -----
 
 qualify_domain = test.ex
-queue_run_in_order
+queue_run_order = oldest
 
 delay_warning = 1s
 delay_warning_condition = ${if first_delivery{no}{yes}}

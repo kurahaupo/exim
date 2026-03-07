@@ -13,7 +13,7 @@ acl_smtp_rcpt = accept
 log_selector = +tls_peerdn
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 tls_advertise_hosts = *
 

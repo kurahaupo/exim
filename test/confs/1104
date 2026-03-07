@@ -10,7 +10,7 @@ acl_smtp_rcpt = check_recipient
 hostlist tls_hosts = 127.0.0.1
 
 queue_only
-queue_run_in_order
+queue_run_order = oldest
 
 tls_certificate = DIR/aux-fixed/cert1
 tls_privatekey = DIR/aux-fixed/cert1
