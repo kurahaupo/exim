@@ -92,6 +92,5 @@ extern void spa_smb_encrypt (unsigned char * passwd, unsigned char * c8,
                              unsigned char * p24);
 extern void spa_smb_nt_encrypt (unsigned char * passwd, unsigned char * c8,
                                 unsigned char * p24);
-extern char *unicodeToString(char *p, size_t len);
 extern void spa_build_auth_challenge(SPAAuthRequest *, SPAAuthChallenge *);
 

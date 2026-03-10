@@ -161,7 +161,6 @@ extern int DEBUGLEVEL;
 
 #include "../exim.h"
 #include "auth-spa.h"
-#include <assert.h>
 
 
 #ifndef _BYTEORDER_H
@@ -408,6 +407,8 @@ spa_base64_to_bits(char *out, int outlength, const char *in)
 {
 int len = 0;
 uschar digit1, digit2, digit3, digit4;
+
+memset(out, 0, outlength);
 
 if (in[0] == '+' && in[1] == ' ')
   in += 2;
@@ -1233,14 +1234,10 @@ spa_bytes_add(buffer, off, header, string, len);
 }
 
 static uschar *
-strToUnicode(const uschar * p)
+strToUnicode(const uschar * p, int len)
 {
-static uschar buf[1024];
-size_t l = Ustrlen(p);
-
-assert(l * 2 < sizeof buf);
-
-for (int i = 0; l--; ) { buf[i++] = *p++; buf[i++] = 0; }
+uschar * buf = store_get(len * 2, p);
+for (int i = 0; len--; ) { buf[i++] = *p++; buf[i++] = 0; }
 return buf;
 }
 
@@ -1253,38 +1250,18 @@ int len = 0;
 if (p)
   {
   len = Ustrlen(p);
-  b = US strToUnicode(p);
+  b = strToUnicode(p, len);
   }
 spa_bytes_add(buffer, off, header, b, len*2);
 }
 
 
-#ifdef notdef
 
-#define DumpBuffer(fp, structPtr, header) \
- dumpRaw(fp,(US structPtr)+IVAL(&structPtr->header.offset,0),SVAL(&structPtr->header.len,0))
-
-
-static void
-dumpRaw(FILE * fp, uschar *buf, size_t len)
+uschar *
+unicodeToString(char * p, size_t len)
 {
 int i;
-
-for (i = 0; i < len; ++i)
-  fprintf(fp, "%02x ", buf[i]);
-
-fprintf(fp, "\n");
-}
-
-#endif
-
-char *
-unicodeToString(char *p, size_t len)
-{
-int i;
-static char buf[1024];
-
-assert(len + 1 < sizeof buf);
+uschar * buf = store_get((int)len + 1, p);
 
 for (i = 0; i < len; ++i)
   {
@@ -1299,83 +1276,31 @@ return buf;
 static uschar *
 toString(const char * p, size_t len)
 {
-static uschar buf[1024];
-
-assert(len + 1 < sizeof buf);
+uschar * buf = store_get((int)len + 1, p);
 
 memcpy(buf, p, len);
-buf[len] = 0;
+buf[len] = '\0';
 return buf;
 }
 
 static inline uschar *
 get_challenge_unistr(SPAAuthChallenge * challenge, SPAStrHeader * hdr)
 {
-int offset= IVAL(&hdr->offset, 0);
-int len = SVAL(&hdr->len, 0);
-return offset+ len < sizeof(SPAAuthChallenge)
-  ? US unicodeToString(CS challenge + offset, len/2) : US"";
+int offset = IVAL(&hdr->offset, 0), len = SVAL(&hdr->len, 0);
+
+return offset + len < sizeof(SPAAuthChallenge)
+  ? unicodeToString(CS challenge + offset, len/2) : US"";
 }
 
-static inline uschar *
+static uschar *
 get_challenge_str(SPAAuthChallenge * challenge, SPAStrHeader * hdr)
 {
-int offset= IVAL(&hdr->offset, 0);
-int len = SVAL(&hdr->len, 0);
-return offset+ len < sizeof(SPAAuthChallenge)
-  ? US toString(CS challenge + offset, len) : US"";
+int offset = IVAL(&hdr->offset, 0), len = SVAL(&hdr->len, 0);
+
+return offset + len < sizeof(SPAAuthChallenge)
+  ? toString(CS challenge + offset, len) : US"";
 }
 
-#ifdef notdef
-
-#define GetUnicodeString(structPtr, header) \
- unicodeToString(((char*)structPtr) + IVAL(&structPtr->header.offset,0) , SVAL(&structPtr->header.len,0)/2)
-
-#define GetString(structPtr, header) \
- toString(((CS structPtr) + IVAL(&structPtr->header.offset,0)), SVAL(&structPtr->header.len,0))
-
-
-void
-dumpSmbNtlmAuthRequest(FILE * fp, SPAAuthRequest * request)
-{
-fprintf(fp, "NTLM Request:\n");
-fprintf(fp, "      Ident = %s\n", request->ident);
-fprintf(fp, "      mType = %d\n", IVAL(&request->msgType, 0));
-fprintf(fp, "      Flags = %08x\n", IVAL(&request->flags, 0));
-fprintf(fp, "       User = %s\n", GetString(request, user));
-fprintf(fp, "     Domain = %s\n", GetString(request, domain));
-}
-
-void
-dumpSmbNtlmAuthChallenge(FILE * fp, SPAAuthChallenge * challenge)
-{
-fprintf(fp, "NTLM Challenge:\n");
-fprintf(fp, "      Ident = %s\n", challenge->ident);
-fprintf(fp, "      mType = %d\n", IVAL(&challenge->msgType, 0));
-fprintf(fp, "     Domain = %s\n", GetUnicodeString(challenge, uDomain));
-fprintf(fp, "      Flags = %08x\n", IVAL(&challenge->flags, 0));
-fprintf(fp, "  Challenge = ");
-dumpRaw(fp, challenge->challengeData, 8);
-}
-
-void
-dumpSmbNtlmAuthResponse(FILE * fp, SPAAuthResponse * response)
-{
-fprintf(fp, "NTLM Response:\n");
-fprintf(fp, "      Ident = %s\n", response->ident);
-fprintf(fp, "      mType = %d\n", IVAL(&response->msgType, 0));
-fprintf(fp, "     LmResp = ");
-DumpBuffer(fp, response, lmResponse);
-fprintf(fp, "     NTResp = ");
-DumpBuffer(fp, response, ntResponse);
-fprintf(fp, "     Domain = %s\n", GetUnicodeString(response, uDomain));
-fprintf(fp, "       User = %s\n", GetUnicodeString(response, uUser));
-fprintf(fp, "        Wks = %s\n", GetUnicodeString(response, uWks));
-fprintf(fp, "       sKey = ");
-DumpBuffer(fp, response, sessionKey);
-fprintf(fp, "      Flags = %08x\n", IVAL(&response->flags, 0));
-}
-#endif
 
 void
 spa_build_auth_request(SPAAuthRequest * request,

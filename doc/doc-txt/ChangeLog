@@ -144,6 +144,10 @@ JH/35 CVE-2026-40686: The ${from_utf8:} expansion operator, fed malformed input,
       could read into the heap. If the result was used for an SMTP rejection
       message, data exfiltration would be possible.
 
+JH/36 CVE-2026-40687: The spa authenticator used an unitialized buffer, which
+      could result in a leak of data. It also had potential for wrting past the
+      end of static buffers, by choice of data provided by the client.
+
 
 Exim version 4.99.2
 -------------------
