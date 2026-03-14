@@ -117,6 +117,8 @@ JH/27 Bug 3204: force a 4xx SMTP response to end-of-data if the final close
 
 JH/28 Numeric error codes are no longer included in log lines.
 
+JH/29 ACL "seen" condition: fix timestamp written for a refresh operation.
+
 
 Exim version 4.99.1
 -------------------

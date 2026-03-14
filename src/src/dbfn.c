@@ -545,7 +545,8 @@ Returns:    the yield of the underlying dbm or db "write" function. If this
 */
 
 int
-dbfn_write(open_db * dbblock, const uschar * key, void * ptr, int length)
+dbfn_write_ts(open_db * dbblock, const uschar * key, void * ptr, int length,
+  time_t ts)
 {
 EXIM_DATUM key_datum, value_datum;
 dbdata_generic * gptr = (dbdata_generic *)ptr;
@@ -555,7 +556,7 @@ uschar * key_copy = store_get(klen, key);
 memcpy(key_copy, key, klen);
 gptr->version = HINTS_VERSION;
 gptr->tainted = is_tainted(ptr);
-gptr->time_stamp = time(NULL);
+gptr->time_stamp = ts;
 
 DEBUG(hints_lookup)
   debug_printf_indent("dbfn_write: key=%s datalen %d\n", key, length);
@@ -567,6 +568,12 @@ exim_datum_size_set(&key_datum, klen);
 exim_datum_data_set(&value_datum, ptr);
 exim_datum_size_set(&value_datum, length);
 return exim_dbput(dbblock->dbptr, &key_datum, &value_datum);
+}
+
+int
+dbfn_write(open_db * dbblock, const uschar * key, void * ptr, int length)
+{
+return dbfn_write_ts(dbblock, key, ptr, length, time(NULL));
 }
 
 
@@ -795,6 +802,7 @@ while (Ufgets(buffer, 256, stdin) != NULL)
     Uskip_whitespace(&data);
 
     dbwait = (dbdata_wait *)(&structbuffer);
+    memset(dbwait, 0, sizeof(dbdata_generic));
     Ustrcpy(dbwait->text, data);
 
     start = clock();

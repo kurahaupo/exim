@@ -23,6 +23,7 @@ void    *dbfn_read_with_length(open_db *, const uschar *, int *);
 void    *dbfn_read_enforce_length(open_db *, const uschar *, size_t);
 uschar  *dbfn_scan(open_db *, BOOL, EXIM_CURSOR **);
 int      dbfn_write(open_db *, const uschar *, void *, int);
+int      dbfn_write_ts(open_db *, const uschar *, void *, int, time_t);
 BOOL	 dbfn_transaction_start(open_db *);
 void	 dbfn_transaction_commit(open_db *);
 

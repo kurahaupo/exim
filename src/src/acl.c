@@ -2452,22 +2452,18 @@ Returns:       OK        - Sender's rate is above limit
 */
 
 static int
-acl_ratelimit(const uschar *arg, int where, uschar **log_msgptr)
+acl_ratelimit(const uschar * arg, int where, uschar ** log_msgptr)
 {
 double limit, period, count;
-uschar *ss;
-uschar *key = NULL;
-uschar *unique = NULL;
-int sep = '/';
+uschar * ss, * key = NULL, * unique = NULL;
+int sep = '/', mode = RATE_PER_WHAT, old_pool, rc;
 BOOL leaky = FALSE, strict = FALSE, readonly = FALSE;
 BOOL noupdate = FALSE, badacl = FALSE;
-int mode = RATE_PER_WHAT;
-int old_pool, rc;
 tree_node ** anchor = NULL, * t;
-open_db dbblock, *dbm;
+open_db dbblock, * dbm;
 int dbdb_size;
-dbdata_ratelimit *dbd;
-dbdata_ratelimit_unique *dbdb;
+dbdata_ratelimit * dbd;
+dbdata_ratelimit_unique * dbdb;
 struct timeval tv;
 
 /* Parse the first two options and record their values in expansion
@@ -3057,14 +3053,12 @@ if (dbd)		/* an existing record */
     { HDEBUG(acl) debug_printf_indent("seen db not written (readonly)\n"); }
   else if (mode == SEEN_WRITE || !before)
     {
-    dbd->gen.time_stamp = now;
-    dbfn_write(dbm, key, dbd, sizeof(*dbd));
+    dbfn_write_ts(dbm, key, dbd, sizeof(*dbd), now);
     HDEBUG(acl) debug_printf_indent("seen db written (update)\n");
     }
   else if (diff >= refresh)
     {
-    dbd->gen.time_stamp = now - interval;
-    dbfn_write(dbm, key, dbd, sizeof(*dbd));
+    dbfn_write_ts(dbm, key, dbd, sizeof(*dbd), now - interval);
     HDEBUG(acl) debug_printf_indent("seen db written (refresh)\n");
     }
   }
@@ -3072,8 +3066,8 @@ else
   {			/* No record found, yield always FAIL */
   if (mode != SEEN_READONLY)
     {
-    dbdata_seen d = {.gen = {.time_stamp = now}};
-    dbfn_write(dbm, key, &d, sizeof(*dbd));
+    dbdata_seen d = {0};
+    dbfn_write_ts(dbm, key, &d, sizeof(d), now);
     HDEBUG(acl) debug_printf_indent("seen db written (create)\n");
     }
   else
