@@ -15,11 +15,6 @@
 #ifdef WITH_CONTENT_SCAN
 #include "spam.h"
 
-uschar spam_score_buffer[16];
-uschar spam_score_int_buffer[16];
-uschar spam_bar_buffer[128];
-uschar spam_action_buffer[32];
-uschar spam_report_buffer[32600];
 const uschar * cached_user_name = NULL;
 BOOL spam_ok = FALSE;
 int spam_rc = 0;
@@ -185,7 +180,6 @@ client_conn_ctx spamd_cctx = {.sock = -1};
 uschar spamd_buffer[32600];
 int i, j, offset;
 uschar spamd_version[8], spamd_short_result[8];
-uschar spamd_score_char;
 double spamd_threshold, spamd_score, spamd_reject_score;
 int spamd_report_offset;
 uschar *p,*q;
@@ -497,10 +491,8 @@ if (sd->is_rspamd)
   if (Ustrncmp(p, "Action: ", sizeof("Action: ") - 1) == 0)
     {
     p += sizeof("Action: ") - 1;
-    q = &spam_action_buffer[0];
-    while (*p && *p != '\r' && (q - spam_action_buffer) < sizeof(spam_action_buffer) - 1)
-      *q++ = *p++;
-    *q = '\0';
+    for (q = p; *q != '\r' && q - p < 32; ) q++;
+    spam_action = string_copyn(p, q - p);
     }
   }
 else
@@ -522,63 +514,47 @@ else
 	}
     }
 
-  Ustrcpy(spam_action_buffer,
-    spamd_score >= spamd_threshold ? US"reject" : US"no action");
+  spam_action = spamd_score >= spamd_threshold ? US"reject" : US"no action";
   }
 
 /* Create report. Since this is a multiline string,
 we must hack it into shape first */
-p = &spamd_buffer[spamd_report_offset];
-q = spam_report_buffer;
-while (*p != '\0')
   {
-  /* skip \r */
-  if (*p == '\r')
-    {
-    p++;
-    continue;
-    }
-  *q++ = *p;
-  if (*p++ == '\n')
-    {
-    /* add an extra space after the newline to ensure
-    that it is treated as a header continuation line */
-    *q++ = ' ';
-    }
-  }
-/* NULL-terminate */
-*q-- = '\0';
-/* cut off trailing leftovers */
-while (*q <= ' ')
-  *q-- = '\0';
+  gstring * g = NULL;
 
-spam_report = spam_report_buffer;
-spam_action = spam_action_buffer;
+  for (const uschar * p = &spamd_buffer[spamd_report_offset]; *p; p++)
+    if (*p != '\r')
+      {
+      g = string_catn(g, p, 1);
+
+      /* add an extra space after the newline to ensure
+      that it is treated as a header continuation line */
+      if (*p == '\n') g = string_catn(g, US" ", 1);
+      }
+
+  for (uschar c; (c = gstring_last_char(g)) && c <= ' '; )
+    gstring_trim(g, 1);
+
+  spam_report = string_from_gstring(g);
+  }
 
 /* create spam bar */
-spamd_score_char = spamd_score > 0 ? '+' : '-';
-j = abs((int)(spamd_score));
-i = 0;
-if (j != 0)
-  while ((i < j) && (i <= MAX_SPAM_BAR_CHARS))
-     spam_bar_buffer[i++] = spamd_score_char;
+j = abs((int)spamd_score);
+j = MIN(j, MAX_SPAM_BAR_CHARS);
+if (j == 0)
+  spam_bar = string_copyn(US"/", 1);
 else
   {
-  spam_bar_buffer[0] = '/';
-  i = 1;
+  gstring * g = string_get(j+1);
+  while(j--) g = string_catn(g, spamd_score > 0 ? US"+" : US"-", 1);
+  spam_bar = string_from_gstring(g);
   }
-spam_bar_buffer[i] = '\0';
-spam_bar = spam_bar_buffer;
 
 /* create "float" spam score */
-(void)string_format(spam_score_buffer, sizeof(spam_score_buffer),
-	"%.1f", spamd_score);
-spam_score = spam_score_buffer;
+spam_score = string_sprintf("%.1f", spamd_score);
 
 /* create "int" spam score */
-(void)string_format(spam_score_int_buffer, sizeof(spam_score_int_buffer),
-	"%.0f", spamd_score*10);
-spam_score_int = spam_score_int_buffer;
+spam_score_int = string_sprintf("%.0f", spamd_score*10);
 
 /* compare threshold against score */
 spam_rc = spamd_score >= spamd_threshold

@@ -6308,6 +6308,7 @@ MORELOOP:
 #ifdef WITH_CONTENT_SCAN
   malware_name = NULL;
   regex_vars_clear();
+  spam_action = spam_report = spam_bar = spam_score = spam_score_int = NULL;
 #endif
   callout_address = NULL;
   sending_ip_address = NULL;

@@ -291,10 +291,8 @@ tls_in.sni = NULL;
 tls_in.ocsp = OCSP_NOT_REQ;
 #endif
 
-#ifdef WITH_CONTENT_SCAN
-spam_bar = NULL;
-spam_score = NULL;
-spam_score_int = NULL;
+#if defined(WITH_CONTENT_SCAN) && !defined(COMPILE_UTILITY)
+spam_action = spam_report = spam_bar = spam_score = spam_score_int = NULL;
 #endif
 
 #if defined(SUPPORT_I18N) && !defined(COMPILE_UTILITY)
