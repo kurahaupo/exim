@@ -119,6 +119,9 @@ JH/28 Numeric error codes are no longer included in log lines.
 
 JH/29 ACL "seen" condition: fix timestamp written for a refresh operation.
 
+JH/30 Bug 2987: fix $spam_score_int for negative values. Previously rounding
+      was applied in the wrong direction. Fix by Martin Kealey.
+
 
 Exim version 4.99.1
 -------------------

@@ -3,7 +3,7 @@
 *************************************************/
 
 /*
- * Copyright (c) The Exim Maintainers 2016 - 2025
+ * Copyright (c) The Exim Maintainers 2016 - 2026
  * Copyright (c) Tom Kistner <tom@duncanthrax.net> 2003 - 2015
  * License: GPL
  * SPDX-License-Identifier: GPL-2.0-or-later
@@ -576,9 +576,8 @@ spam_bar = spam_bar_buffer;
 spam_score = spam_score_buffer;
 
 /* create "int" spam score */
-j = (int)((spamd_score + 0.001)*10);
 (void)string_format(spam_score_int_buffer, sizeof(spam_score_int_buffer),
-	"%d", j);
+	"%.0f", spamd_score*10);
 spam_score_int = spam_score_int_buffer;
 
 /* compare threshold against score */
