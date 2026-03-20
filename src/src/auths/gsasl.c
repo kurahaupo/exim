@@ -446,7 +446,7 @@ preload_prop(sctx, GSASL_QOPS, US "qop-auth");
 #ifndef DISABLE_TLS
 if (tls_in.channelbinding)
   {
-  /* Some auth mechanisms can ensure that both sides are talking withing the
+  /* Some auth mechanisms can ensure that both sides are talking within the
   same security context; for TLS, this means that even if a bad certificate
   has been accepted, they remain MitM-proof because both sides must be within
   the same negotiated session; if someone is terminating one session and
@@ -472,8 +472,7 @@ if (tls_in.channelbinding)
   */
   if (ob->server_channelbinding)
     {
-    HDEBUG(auth) debug_printf("Auth %s: Enabling channel-binding\n",
-	auname);
+    HDEBUG(auth) debug_printf("Auth %s: Enabling channel-binding\n", auname);
 # ifndef CHANNELBIND_HACK
     preload_prop(sctx,
 #  ifdef EXIM_GSASL_HAVE_EXPORTER

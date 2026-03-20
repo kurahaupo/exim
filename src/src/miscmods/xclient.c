@@ -222,10 +222,7 @@ for (state = XCLIENT_SKIP_SPACES; *s; )
 	    authentication_failed = FALSE;
 	    }
 	  else
-	    {
-	    authenticated_id = NULL;
-	    sender_host_authenticated = NULL;
-	    }
+	    authenticated_id = sender_host_authenticated = NULL;
 	  break;
 
 # ifdef XCLIENT_V1

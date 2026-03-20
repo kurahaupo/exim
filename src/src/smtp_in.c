@@ -4977,14 +4977,14 @@ while (done <= 0)
 	      switch (rc)
 		{
 		case OK:
-		  if (authenticated_by == NULL ||
-		      authenticated_by->mail_auth_condition == NULL ||
-		      expand_check_condition(authenticated_by->mail_auth_condition,
+		  if (!authenticated_by
+		     || !authenticated_by->mail_auth_condition
+		     || expand_check_condition(authenticated_by->mail_auth_condition,
 			  authenticated_by->drinst.name, US"authenticator"))
 		    break;     /* Accept the AUTH */
 
 		  ignore_msg = US"server_mail_auth_condition failed";
-		  if (authenticated_id != NULL)
+		  if (authenticated_id)
 		    ignore_msg = string_sprintf("%s: authenticated ID=%q",
 		      ignore_msg, authenticated_id);
 

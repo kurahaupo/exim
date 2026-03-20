@@ -29148,10 +29148,11 @@ Some mechanisms will use this data.
 
 
 .option server_mech gsasl string "see below"
-This option selects the authentication mechanism this driver should use. The
-default is the value of the generic &%public_name%& option. This option allows
-you to use a different underlying mechanism from the advertised name. For
-example:
+This option selects the authentication mechanism this driver should use.
+It applies to both server and client modes.
+The default is the value of the generic &%public_name%& option.
+This option allows you to use a different underlying mechanism from the
+advertised name. For example:
 .code
 sasl:
   driver = gsasl

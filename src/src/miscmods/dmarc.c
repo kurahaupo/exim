@@ -198,8 +198,8 @@ else if (!dmarc_abort)
     }
   }
 
-/* Skip DMARC if connection is SMTP Auth. Temporarily, admin should
-instead do this in the ACLs.  */
+/* Skip DMARC if connection is SMTP Auth. Preferably this should not be
+hardwired; the admin should instead do this in the ACLs.  */
 
 if (!dmarc_abort && !sender_host_authenticated)
   {
