@@ -84,6 +84,7 @@ set_process_info: pppp handling incoming connection from [V4NET.0.0.1]
    ├considering: }░{2}░{30}}s
    ├───expanded: $sender_host_address
    ╰─────result: V4NET.0.0.1
+  cond "eq" res: T
  ├──condition: eq░{V4NET.0.0.1}░{$sender_host_address}
  ├─────result: true
   ╭considering: 2}░{30}}s

@@ -89,6 +89,7 @@ p1235    ├considering: /exim_daemon_notify
 p1235    ├───────text: /exim_daemon_notify
 p1235    ├───expanded: $spool_directory/exim_daemon_notify
 p1235    ╰─────result: TESTSUITE/spool/exim_daemon_notify
+p1235   cond "match" res: F
 p1235  ├──condition: match░{a_random_string}░{static_RE}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{static_RE}}
@@ -118,6 +119,7 @@ p1235    ├considering: /exim_daemon_notify
 p1235    ├───────text: /exim_daemon_notify
 p1235    ├───expanded: $spool_directory/exim_daemon_notify
 p1235    ╰─────result: TESTSUITE/spool/exim_daemon_notify
+p1235   cond "match" res: F
 p1235  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{tricky_static_RE\$}}
@@ -138,6 +140,7 @@ p1235    ├considering: }}
 p1235    ├───expanded: pid=${pid}░uncacheable_RE
 p1235    ╰─────result: pid=p1235░uncacheable_RE
 p1235   compiling RE 'pid=p1235 uncacheable_RE'
+p1235   cond "match" res: F
 p1235  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable_RE}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
@@ -145,6 +148,19 @@ p1235  ╰─────result: e̪m̪p̪t̪y̪
 p1235 try option 'acl_smtp_predata'
 p1235 search_tidyup called
 p1235 search_tidyup called
+1 SMTP accept process running
+daemon_notification (from unknown addr)
+compiled caseless RE '^nomatch_list' not found in local cache
+compiling caseless RE '^nomatch_list'
+compiled RE '^nomatch_list' saved in local cache
+daemon_notification (from unknown addr)
+compiled RE 'static_RE' not found in local cache
+compiling RE 'static_RE'
+compiled RE 'static_RE' saved in local cache
+daemon_notification (from unknown addr)
+compiled RE 'tricky_static_RE$' not found in local cache
+compiling RE 'tricky_static_RE$'
+compiled RE 'tricky_static_RE$' saved in local cache
 p1235  ╭considering: ${tod_full}
 p1235  ├───expanded: ${tod_full}
 p1235  ╰─────result: Tue,░2░Mar░1999░09:44:33░+0000
@@ -164,7 +180,7 @@ p1235  ␉}}(Exim░$version_number)↩
 p1235  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235  ␉for░$received_for}}
-p1235   cond: def
+p1235   cond "def" res: T
 p1235  ├──condition: def:sender_rcvhost
 p1235  ├─────result: true
 p1235   ╭considering: from░$sender_rcvhost↩
@@ -210,7 +226,6 @@ p1235   ␉}}(Exim░$version_number)↩
 p1235   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235   ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235   ␉for░$received_for}}
-p1235    cond: def
 p1235   ├──condition: def:sender_ident
 p1235   ├─────result: false
 p1235    ╭───scanning: from░${quote_local_part:$sender_ident}░}}${if░def:sender_helo_name░{(helo=$sender_helo_name)↩
@@ -265,7 +280,6 @@ p1235   ␉}}(Exim░$version_number)↩
 p1235   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235   ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235   ␉for░$received_for}}
-p1235    cond: def
 p1235   ├──condition: def:sender_helo_name
 p1235   ├─────result: false
 p1235    ╭───scanning: (helo=$sender_helo_name)↩
@@ -335,7 +349,7 @@ p1235  ␉}}(Exim░$version_number)↩
 p1235  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235  ␉for░$received_for}}
-p1235   cond: def
+p1235   cond "def" res: T
 p1235  ├──condition: def:received_protocol
 p1235  ├─────result: true
 p1235   ╭considering: with░$received_protocol░}}${if░def:tls_in_ver░░░░░░░░{░($tls_in_ver)}}${if░def:tls_in_cipher_std░{░tls░$tls_in_cipher_std↩
@@ -370,7 +384,7 @@ p1235  ␉}}(Exim░$version_number)↩
 p1235  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235  ␉for░$received_for}}
-p1235   cond: def
+p1235   cond "def" res: F
 p1235   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235   ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235   ␉for░$received_for}}
@@ -383,7 +397,7 @@ p1235  ␉}}(Exim░$version_number)↩
 p1235  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235  ␉for░$received_for}}
-p1235   cond: def
+p1235   cond "def" res: F
 p1235  ├──condition: def:tls_in_cipher_std
 p1235  ├─────result: false
 p1235   ╭───scanning: ░tls░$tls_in_cipher_std↩
@@ -433,7 +447,7 @@ p1235  ␉
 p1235  ├considering: ${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1235  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1235  ␉for░$received_for}}
-p1235   cond: def
+p1235   cond "def" res: T
 p1235  ├──condition: def:sender_address
 p1235  ├─────result: true
 p1235   ╭considering: (envelope-from░<$sender_address>)↩
@@ -468,7 +482,7 @@ p1235  ␉for░$received_for}}
 p1235  ├──────value: 10HmaX-000000005vi-0000
 p1235  ├considering: ${if░def:received_for░{↩
 p1235  ␉for░$received_for}}
-p1235   cond: def
+p1235   cond "def" res: T
 p1235  ├──condition: def:received_for
 p1235  ├─────result: true
 p1235   ╭considering: ↩
@@ -511,22 +525,9 @@ Process p1235 is ready for new message
 try option 'acl_smtp_quit'
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
-p1234 1 SMTP accept process running
 p1234 child p1235 ended: status=0x0
 p1234   normal exit, 0
 p1234 0 SMTP accept processes now running
-p1234 daemon_notification (from unknown addr)
-p1234 compiled caseless RE '^nomatch_list' not found in local cache
-p1234 compiling caseless RE '^nomatch_list'
-p1234 compiled RE '^nomatch_list' saved in local cache
-p1234 daemon_notification (from unknown addr)
-p1234 compiled RE 'static_RE' not found in local cache
-p1234 compiling RE 'static_RE'
-p1234 compiled RE 'static_RE' saved in local cache
-p1234 daemon_notification (from unknown addr)
-p1234 compiled RE 'tricky_static_RE$' not found in local cache
-p1234 compiling RE 'tricky_static_RE$'
-p1234 compiled RE 'tricky_static_RE$' saved in local cache
 p1234 Connection request from 127.0.0.1 port sssss
 p1234 try option 'smtp_accept_max_per_host'
 p1234 search_tidyup called
@@ -567,6 +568,7 @@ p1236    ├considering: }}
 p1236    ├───expanded: static_RE
 p1236    ╰─────result: static_RE
 p1236   compiled RE 'static_RE' found in local cache
+p1236   cond "match" res: F
 p1236  ├──condition: match░{a_random_string}░{static_RE}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{static_RE}}
@@ -586,6 +588,7 @@ p1236    ├considering: }}
 p1236    ├───expanded: tricky_static_RE\$
 p1236    ╰─────result: tricky_static_RE$
 p1236   compiled RE 'tricky_static_RE$' found in local cache
+p1236   cond "match" res: F
 p1236  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{tricky_static_RE\$}}
@@ -606,6 +609,7 @@ p1236    ├considering: }}
 p1236    ├───expanded: pid=${pid}░uncacheable_RE
 p1236    ╰─────result: pid=p1236░uncacheable_RE
 p1236   compiling RE 'pid=p1236 uncacheable_RE'
+p1236   cond "match" res: F
 p1236  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable_RE}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
@@ -632,7 +636,7 @@ p1236  ␉}}(Exim░$version_number)↩
 p1236  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236  ␉for░$received_for}}
-p1236   cond: def
+p1236   cond "def" res: T
 p1236  ├──condition: def:sender_rcvhost
 p1236  ├─────result: true
 p1236   ╭considering: from░$sender_rcvhost↩
@@ -678,7 +682,6 @@ p1236   ␉}}(Exim░$version_number)↩
 p1236   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236   ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236   ␉for░$received_for}}
-p1236    cond: def
 p1236   ├──condition: def:sender_ident
 p1236   ├─────result: false
 p1236    ╭───scanning: from░${quote_local_part:$sender_ident}░}}${if░def:sender_helo_name░{(helo=$sender_helo_name)↩
@@ -733,7 +736,6 @@ p1236   ␉}}(Exim░$version_number)↩
 p1236   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236   ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236   ␉for░$received_for}}
-p1236    cond: def
 p1236   ├──condition: def:sender_helo_name
 p1236   ├─────result: false
 p1236    ╭───scanning: (helo=$sender_helo_name)↩
@@ -803,7 +805,7 @@ p1236  ␉}}(Exim░$version_number)↩
 p1236  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236  ␉for░$received_for}}
-p1236   cond: def
+p1236   cond "def" res: T
 p1236  ├──condition: def:received_protocol
 p1236  ├─────result: true
 p1236   ╭considering: with░$received_protocol░}}${if░def:tls_in_ver░░░░░░░░{░($tls_in_ver)}}${if░def:tls_in_cipher_std░{░tls░$tls_in_cipher_std↩
@@ -838,7 +840,7 @@ p1236  ␉}}(Exim░$version_number)↩
 p1236  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236  ␉for░$received_for}}
-p1236   cond: def
+p1236   cond "def" res: F
 p1236   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236   ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236   ␉for░$received_for}}
@@ -851,7 +853,7 @@ p1236  ␉}}(Exim░$version_number)↩
 p1236  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236  ␉for░$received_for}}
-p1236   cond: def
+p1236   cond "def" res: F
 p1236  ├──condition: def:tls_in_cipher_std
 p1236  ├─────result: false
 p1236   ╭───scanning: ░tls░$tls_in_cipher_std↩
@@ -901,7 +903,7 @@ p1236  ␉
 p1236  ├considering: ${if░def:sender_address░{(envelope-from░<$sender_address>)↩
 p1236  ␉}}id░$message_exim_id${if░def:received_for░{↩
 p1236  ␉for░$received_for}}
-p1236   cond: def
+p1236   cond "def" res: T
 p1236  ├──condition: def:sender_address
 p1236  ├─────result: true
 p1236   ╭considering: (envelope-from░<$sender_address>)↩
@@ -936,7 +938,7 @@ p1236  ␉for░$received_for}}
 p1236  ├──────value: 10HmaY-000000005vi-0000
 p1236  ├considering: ${if░def:received_for░{↩
 p1236  ␉for░$received_for}}
-p1236   cond: def
+p1236   cond "def" res: T
 p1236  ├──condition: def:received_for
 p1236  ├─────result: true
 p1236   ╭considering: ↩

@@ -55,6 +55,7 @@ try option 'acl_smtp_rcpt'
    ├considering: }{queue}{cutthrough}}
    ├───expanded: server
    ╰─────result: server
+  cond "eq" res: F
  ├──condition: eq░{SERVER}{server}
  ├─────result: false
   ╭───scanning: queue}{cutthrough}}
@@ -156,6 +157,8 @@ cmd buf flush ddd bytes
          250-PIPELINING
          250-STARTTLS
          250 HELP
+ ├───expanded: ${if░and░{{match{$host}{.outlook.com\$}}░{match{$item}{\N^250-([\w.]+)\s\N}}}░{$1}}
+ ╰─────result: e̪m̪p̪t̪y̪
  ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
   cond: eq
    ╭considering: $address_data}{usery}{*}{:}}
@@ -170,6 +173,7 @@ cmd buf flush ddd bytes
    ├considering: }{*}{:}}
    ├───expanded: usery
    ╰─────result: usery
+  cond "eq" res: F
  ├──condition: eq░{$address_data}{usery}
  ├─────result: false
   ╭───scanning: *}{:}}
@@ -202,6 +206,7 @@ cmd buf flush ddd bytes
    ├considering: }{*}{:}}
    ├───expanded: userz
    ╰─────result: userz
+  cond "eq" res: F
  ├──condition: eq░{$address_data}{userz}
  ├─────result: false
   ╭───scanning: *}{:}}
@@ -277,7 +282,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
  ├──condition: def:sender_rcvhost
  ├─────result: false
   ╭───scanning: from░$sender_rcvhost↩
@@ -321,7 +326,7 @@ try option 'received_header_text'
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
-   cond: def
+   cond "def" res: T
   ├──condition: def:sender_ident
   ├─────result: true
    ╭considering: from░${quote_local_part:$sender_ident}░}}${if░def:sender_helo_name░{(helo=$sender_helo_name)↩
@@ -375,7 +380,7 @@ try option 'received_header_text'
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
-   cond: def
+   cond "def" res: T
   ├──condition: def:sender_helo_name
   ├─────result: true
    ╭considering: (helo=$sender_helo_name)↩
@@ -450,7 +455,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:received_protocol
  ├─────result: true
   ╭considering: with░$received_protocol░}}${if░def:tls_in_ver░░░░░░░░{░($tls_in_ver)}}${if░def:tls_in_cipher_std░{░tls░$tls_in_cipher_std↩
@@ -485,7 +490,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
@@ -498,7 +503,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
  ├──condition: def:tls_in_cipher_std
  ├─────result: false
   ╭───scanning: ░tls░$tls_in_cipher_std↩
@@ -548,7 +553,7 @@ try option 'received_header_text'
  ├considering: ${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:sender_address
  ├─────result: true
   ╭considering: (envelope-from░<$sender_address>)↩
@@ -581,7 +586,7 @@ try option 'received_header_text'
  ├──────value: 10HmaX-000000005vi-0000
  ├considering: ${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:received_for
  ├─────result: true
   ╭considering: ↩
@@ -691,6 +696,7 @@ try option 'acl_smtp_rcpt'
    ├considering: }{queue}{cutthrough}}
    ├───expanded: server
    ╰─────result: server
+  cond "eq" res: F
  ├──condition: eq░{SERVER}{server}
  ├─────result: false
   ╭───scanning: queue}{cutthrough}}
@@ -792,6 +798,8 @@ cmd buf flush ddd bytes
          250-PIPELINING
          250-STARTTLS
          250 HELP
+ ├───expanded: ${if░and░{{match{$host}{.outlook.com\$}}░{match{$item}{\N^250-([\w.]+)\s\N}}}░{$1}}
+ ╰─────result: e̪m̪p̪t̪y̪
  ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
   cond: eq
    ╭considering: $address_data}{usery}{*}{:}}
@@ -806,6 +814,7 @@ cmd buf flush ddd bytes
    ├considering: }{*}{:}}
    ├───expanded: usery
    ╰─────result: usery
+  cond "eq" res: T
  ├──condition: eq░{$address_data}{usery}
  ├─────result: true
   ╭considering: *}{:}}
@@ -865,7 +874,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
  ├──condition: def:sender_rcvhost
  ├─────result: false
   ╭───scanning: from░$sender_rcvhost↩
@@ -909,7 +918,7 @@ try option 'received_header_text'
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
-   cond: def
+   cond "def" res: T
   ├──condition: def:sender_ident
   ├─────result: true
    ╭considering: from░${quote_local_part:$sender_ident}░}}${if░def:sender_helo_name░{(helo=$sender_helo_name)↩
@@ -963,7 +972,7 @@ try option 'received_header_text'
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
-   cond: def
+   cond "def" res: T
   ├──condition: def:sender_helo_name
   ├─────result: true
    ╭considering: (helo=$sender_helo_name)↩
@@ -1038,7 +1047,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:received_protocol
  ├─────result: true
   ╭considering: with░$received_protocol░}}${if░def:tls_in_ver░░░░░░░░{░($tls_in_ver)}}${if░def:tls_in_cipher_std░{░tls░$tls_in_cipher_std↩
@@ -1073,7 +1082,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
@@ -1086,7 +1095,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
  ├──condition: def:tls_in_cipher_std
  ├─────result: false
   ╭───scanning: ░tls░$tls_in_cipher_std↩
@@ -1136,7 +1145,7 @@ try option 'received_header_text'
  ├considering: ${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:sender_address
  ├─────result: true
   ╭considering: (envelope-from░<$sender_address>)↩
@@ -1169,7 +1178,7 @@ try option 'received_header_text'
  ├──────value: 10HmaZ-000000005vi-0000
  ├considering: ${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:received_for
  ├─────result: true
   ╭considering: ↩
@@ -1279,6 +1288,7 @@ try option 'acl_smtp_rcpt'
    ├considering: }{queue}{cutthrough}}
    ├───expanded: server
    ╰─────result: server
+  cond "eq" res: F
  ├──condition: eq░{SERVER}{server}
  ├─────result: false
   ╭───scanning: queue}{cutthrough}}
@@ -1380,6 +1390,8 @@ cmd buf flush ddd bytes
          250-PIPELINING
          250-STARTTLS
          250 HELP
+ ├───expanded: ${if░and░{{match{$host}{.outlook.com\$}}░{match{$item}{\N^250-([\w.]+)\s\N}}}░{$1}}
+ ╰─────result: e̪m̪p̪t̪y̪
  ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
   cond: eq
    ╭considering: $address_data}{usery}{*}{:}}
@@ -1394,6 +1406,7 @@ cmd buf flush ddd bytes
    ├considering: }{*}{:}}
    ├───expanded: usery
    ╰─────result: usery
+  cond "eq" res: T
  ├──condition: eq░{$address_data}{usery}
  ├─────result: true
   ╭considering: *}{:}}
@@ -1453,7 +1466,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
  ├──condition: def:sender_rcvhost
  ├─────result: false
   ╭───scanning: from░$sender_rcvhost↩
@@ -1497,7 +1510,7 @@ try option 'received_header_text'
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
-   cond: def
+   cond "def" res: T
   ├──condition: def:sender_ident
   ├─────result: true
    ╭considering: from░${quote_local_part:$sender_ident}░}}${if░def:sender_helo_name░{(helo=$sender_helo_name)↩
@@ -1551,7 +1564,7 @@ try option 'received_header_text'
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
-   cond: def
+   cond "def" res: T
   ├──condition: def:sender_helo_name
   ├─────result: true
    ╭considering: (helo=$sender_helo_name)↩
@@ -1626,7 +1639,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:received_protocol
  ├─────result: true
   ╭considering: with░$received_protocol░}}${if░def:tls_in_ver░░░░░░░░{░($tls_in_ver)}}${if░def:tls_in_cipher_std░{░tls░$tls_in_cipher_std↩
@@ -1661,7 +1674,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
   ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
   ␉}}id░$message_exim_id${if░def:received_for░{↩
   ␉for░$received_for}}
@@ -1674,7 +1687,7 @@ try option 'received_header_text'
  ␉${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: F
  ├──condition: def:tls_in_cipher_std
  ├─────result: false
   ╭───scanning: ░tls░$tls_in_cipher_std↩
@@ -1724,7 +1737,7 @@ try option 'received_header_text'
  ├considering: ${if░def:sender_address░{(envelope-from░<$sender_address>)↩
  ␉}}id░$message_exim_id${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:sender_address
  ├─────result: true
   ╭considering: (envelope-from░<$sender_address>)↩
@@ -1757,7 +1770,7 @@ try option 'received_header_text'
  ├──────value: 10HmbB-000000005vi-0000
  ├considering: ${if░def:received_for░{↩
  ␉for░$received_for}}
-  cond: def
+  cond "def" res: T
  ├──condition: def:received_for
  ├─────result: true
   ╭considering: ↩

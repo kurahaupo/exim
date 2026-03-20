@@ -2510,7 +2510,8 @@ if (!name[0])
     "but found \"%.16s\"", s);
   return -1;
   }
-DEBUG(expand) debug_printf_indent("cond: %s\n", name);
+DEBUG(expand) if (Ustrcmp(name, "def") != 0)
+  debug_printf_indent("cond: %s\n", name);
 if (opname)
   *opname = string_copy(name);
 
@@ -3747,6 +3748,8 @@ goto failout;
 failout:
   next = NULL;
 out:
+  DEBUG(expand) if (yield && next)
+    debug_printf_indent("cond %q res: %s\n", opname, *yield ? "T" : "F");
   expand_level--;
   return next;
 }
