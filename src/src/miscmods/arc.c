@@ -158,6 +158,7 @@ arc_smtp_reset(void)
 {
 arc_state = arc_state_reason = NULL;
 arc_received_instance = 0;
+memset(&arc_verify_ctx, 0, sizeof(arc_verify_ctx));
 }
 
 /******************************************************************************/
