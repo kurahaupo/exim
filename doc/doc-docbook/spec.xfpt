@@ -11233,7 +11233,11 @@ Backslashes and DEL characters are also converted.
 These items supports simple arithmetic and bitwise logical operations in
 expansion strings. The string (after expansion) must be a conventional
 arithmetic expression, but it is limited to basic arithmetic operators, bitwise
-logical operators, and parentheses. All operations are carried out using
+logical operators, and parentheses.
+.new
+It may not be tainted.
+.wen
+All operations are carried out using
 integer arithmetic. The operator priorities are as follows (the same as in the
 C programming language):
 .table2 70pt 300pt

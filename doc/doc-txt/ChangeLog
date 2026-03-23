@@ -148,6 +148,8 @@ JH/36 CVE-2026-40687: The spa authenticator used an unitialized buffer, which
       could result in a leak of data. It also had potential for wrting past the
       end of static buffers, by choice of data provided by the client.
 
+JH/37 The "eval" expansion operator now specifically refuses a tainted argument.
+
 
 Exim version 4.99.2
 -------------------
@@ -160,6 +162,7 @@ covers four CVEs:
   CVE-2026-40687  Possible OOB read/write with SPA authenticator
 
 JH/01 Combined set of fixes.
+
 
 Exim version 4.99.1
 -------------------

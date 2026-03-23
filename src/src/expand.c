@@ -8288,9 +8288,18 @@ NOT_ITEM: ;
       case EOP_EVAL:
       case EOP_EVAL10:
 	{
-	uschar *save_sub = sub;
-	uschar *error = NULL;
-	int_eximarith_t n = eval_expr(&sub, (c == EOP_EVAL10), &error, FALSE);
+	uschar * save_sub = sub, * error = NULL;
+	int_eximarith_t n;
+
+	if (is_tainted(sub))
+	  {
+	  expand_string_message =
+	    string_sprintf("attempt to eval tainted string '%s'", sub);
+	  log_write(LOG_MAIN|LOG_PANIC, "%s", expand_string_message);
+	  goto EXPAND_FAILED;
+	  }
+
+	n = eval_expr(&sub, (c == EOP_EVAL10), &error, FALSE);
 	if (error)
 	  {
 	  expand_string_message = string_sprintf("error in expression "
