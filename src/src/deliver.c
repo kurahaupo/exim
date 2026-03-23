@@ -8401,9 +8401,9 @@ if (addr_local || addr_remote)
 #endif
       )
       {
-      int ret = Uunlink(fname);
+      int fault_errno = errno, ret = Uunlink(fname);
       log_write(LOG_MAIN|LOG_PANIC, "Couldn't set perms on journal file %s: %s",
-	fname, strerror(errno));
+	fname, strerror(fault_errno));
       if(ret  &&  errno != ENOENT)
 	log_write_die(LOG_MAIN, "failed to unlink %s: %s",
 	  fname, strerror(errno));
