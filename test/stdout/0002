@@ -352,7 +352,7 @@ newline	tab\134backslash ~tilde\177DEL\200\201.
 > # Error forms
 > 
 > Failed: Not enough arguments for 'hash' (min is 2)
-> Failed: "nonnumber" is not a number (in "hash" expansion)
+> Failed: "nonnumber" is not a positive number (in "hash" expansion)
 > Failed: Too many arguments for 'hash' (max is 3)
 > Failed: "-2" is not a positive number (in "substr" expansion)
 > 

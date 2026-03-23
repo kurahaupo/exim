@@ -5033,7 +5033,7 @@ while (*s)	/* known to be untainted */
   expansion. */
   {
   int expansion_start = gstring_length(yield);
-  switch(item_type)
+  switch (item_type)
     {
     /* Call an ACL from an expansion.  We feed data in via $acl_arg1 - $acl_arg9.
     If the ACL returns accept or reject we return content set by "message ="
@@ -6042,6 +6042,8 @@ while (*s)	/* known to be untainted */
 
       for (int i = 0; i < 2; i++) if (sub[i])
         {
+	BOOL req_pos =
+	  i != 0 || item_type == EITEM_HASH || item_type == EITEM_NHASH;
 	if (is_tainted(sub[i]))
 	  {
 	  expand_string_message =
@@ -6051,10 +6053,10 @@ while (*s)	/* known to be untainted */
 	  goto EXPAND_FAILED;
 	  }
         val[i] = (int)Ustrtol(sub[i], &ret, 10);
-        if (*ret != 0  ||  i != 0 && val[i] < 0)
+        if (*ret != 0  ||  req_pos && val[i] < 0)
           {
           expand_string_message = string_sprintf("%q is not a%s number "
-            "(in %q expansion)", sub[i], i != 0 ? " positive" : "", name);
+            "(in %q expansion)", sub[i], req_pos ? " positive" : "", name);
           goto EXPAND_FAILED;
           }
         }
