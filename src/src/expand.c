@@ -931,7 +931,7 @@ static int utf8_table2[] = { 0xff, 0x1f, 0x0f, 0x07, 0x03, 0x01};
     int a = utf8_table1[c & 0x3f];  /* Number of additional bytes */ \
     int s = 6*a; \
     c = (c & utf8_table2[a]) << s; \
-    while (a-- > 0) \
+    while (a-- > 0 && *ptr) \
       { \
       s -= 6; \
       c |= (*ptr++ & 0x3f) << s; \

@@ -1,0 +1,11 @@
+CVE2026-40686
+
+Vulnerability conditions
+------------------------
+
+- Config using UTF-8 operations on externally-provided input
+
+Impact
+------
+
+- Heap data exfiltration
