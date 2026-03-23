@@ -6061,6 +6061,13 @@ while (*s)	/* known to be untainted */
           }
         }
 
+      if (item_type == EITEM_NHASH && val[0] == 0)
+          {
+          expand_string_message = string_sprintf("%q is zero (in %q expansion)",
+						sub[0], name);
+          goto EXPAND_FAILED;
+          }
+
       ret =
         item_type == EITEM_HASH
 	?  compute_hash(sub[2], val[0], val[1], &len)
