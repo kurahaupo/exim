@@ -335,14 +335,14 @@ Arguments:
 Returns:        string with non-printers encoded as printing sequences
 */
 
-const uschar *
+static const uschar *
 string_printing3(const uschar * s, int flags, int len)
 {
 int nonprintcount = 0, olen = 0;
 const uschar * t = s;
 uschar * ss, * tt;
 
-for (int n = len; n != 0 && *t; n--)
+for (int n = len; *t && (n < 0 || n-- > 0); )
   {
   int c = *t++;
   if (  !mac_isprint(c)
@@ -362,7 +362,7 @@ tt = ss = store_get(olen + nonprintcount * 3 + 1, s);
 
 /* Copy everything, escaping non printers. */
 
-for (t = s; *t; )
+for (t = s; *t && (len < 0 || len-- > 0); )
   {
   int c = *t;
   /*XXX does \ go through unchanged here?  Since we use it for escaping,
