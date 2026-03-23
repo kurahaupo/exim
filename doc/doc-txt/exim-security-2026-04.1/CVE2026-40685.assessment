@@ -1,0 +1,11 @@
+CVE2026-40685
+
+Vulnerability conditions
+------------------------
+
+- Config uses json operators on externally-provided input
+
+Impact
+------
+
+- Remote-triggered heap corruption

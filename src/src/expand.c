@@ -2408,7 +2408,7 @@ if (Uskip_whitespace(&p) == *wrap)
   wrap++;
   while (*p)
     {
-    if (*p == '\\') p++;
+    if (*p == '\\' && *(p+1)) p++;
     else if (!quotesmode && *p == wrap[-1]) depth++;
     else if (*p == *wrap)
       if (depth == 0)

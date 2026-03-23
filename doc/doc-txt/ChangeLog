@@ -101,7 +101,7 @@ JH/24 Bug 3197: Fix logged autoreply size. If enabled, sizes for delivery lines
       size would be claimed.  Fix by counting all components of a generated
       message.
 
-BQ/26 Bug 3199/3200: Remove Brightmail and Interbase support.
+BQ/01 Bug 3199/3200: Remove Brightmail and Interbase support.
 
 JH/25 Reworked debug-channel control, to work with channel counts exceeding
       the machine word size. Note that this results in local_scan() API changes.
@@ -136,6 +136,9 @@ JH/33 Bug 3215: Fix GnuTLS hostname verify of a server certificate with a
 JH/34 CVE-2026-40684: A crafted DNS record could cause a crash of the Exim
       process acessing it, when operating with musl libc. This could be the
       daemon. An Exim using Gnu libc is not affeected.
+
+BQ/02 CVE-2026-40685: JSON string expansions could, when fed crafted source
+      strings, corrupt the heap.
 
 
 Exim version 4.99.2
