@@ -299,7 +299,8 @@ res = search_find(handle, dmarc_tld_file, dom, partial, affix,
 		  affixlen, starflags, &expand_setup, opts);
 
 out:
-  cached_key = dom; cached_res = res;
+  cached_key = string_copy_perm(dom, FALSE);
+  cached_res = string_copy_perm(res, FALSE);
   expand_level--;
   return res;
 }
