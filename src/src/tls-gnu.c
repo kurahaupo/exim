@@ -1220,13 +1220,16 @@ switch (tls_id)
     a single bad ALPN being offered (the common case). */
     {
     gstring * g = NULL;
+    int asize;
 
     DEBUG(tls) debug_printf("Seen ALPN extension from client (s=%u):", size);
-    for (const uschar * s = data+2; s-data < size-1; s += *s + 1)
+    for (const uschar * s = data+2;
+	 s-data < size && (asize = *s++) > 0 && s+asize - data <= size;
+	 s += asize)
       {
       server_seen_alpn++;
-      g = string_append_listele_n(g, ':', s+1, *s);
-      DEBUG(tls) debug_printf(" '%.*s'", (int)*s, s+1);
+      g = string_append_listele_n(g, ':', s, asize);
+      DEBUG(tls) debug_printf(" '%.*s'", asize, s);
       }
     DEBUG(tls) debug_printf("\n");
     if (server_seen_alpn > 1)
