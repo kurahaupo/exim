@@ -1000,7 +1000,8 @@ Returns:                TRUE on success; FALSE (with errno) on failure.
 static BOOL
 internal_transport_write_message(transport_ctx * tctx, int size_limit)
 {
-int len, size = 0;
+int len;
+size_t size = 0;
 
 /* Initialize pointer in output buffer. */
 
