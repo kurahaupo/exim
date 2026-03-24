@@ -1601,21 +1601,31 @@ while (*fp)
     case 'E':
     case 'g':
     case 'G':
-      if (precision < 0) precision = 6;
-      if ((need = g->ptr + precision + 8) > lim)
+      {
+      unsigned nsize;
+      union { double d; long double ld; } u;
+
+      strncpy(newformat, item_start, fp - item_start);
+      newformat[fp-item_start] = '\0';
+      if (length == L_LONGDOUBLE)	u.ld = va_arg(ap, long double);
+      else				u.d = va_arg(ap, double);
+
+      need = length == L_LONGDOUBLE
+	    ? snprintf(gp, 0, newformat, u.ld)
+	    : snprintf(gp, 0, newformat, u.d);
+
+      if ((nsize = g->ptr + need) > lim)
 	{
-	if (!(flags & SVFMT_EXTEND || need >= size_limit)) return NULL;
-	gstring_grow(g, precision+8);
+	if (!(flags & SVFMT_EXTEND || nsize >= size_limit)) return NULL;
+	gstring_grow(g, need);
 	lim = g->size - 1;
 	gp = CS g->s + g->ptr;
 	}
-      strncpy(newformat, item_start, fp - item_start);
-      newformat[fp-item_start] = '\0';
-      if (length == L_LONGDOUBLE)
-	g->ptr += sprintf(gp, newformat, va_arg(ap, long double));
-      else
-	g->ptr += sprintf(gp, newformat, va_arg(ap, double));
+      g->ptr += length == L_LONGDOUBLE
+		? sprintf(gp, newformat, u.ld)
+		: sprintf(gp, newformat, u.d);
       break;
+      }
 
     /* String types */
 
