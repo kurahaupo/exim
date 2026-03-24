@@ -183,9 +183,9 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
       case T_AAAA:
       default:
 	{
-	uschar * buf = store_malloc(dnsa->answerlen + 1);
+	uschar * buf = store_malloc(rr->size + 1);
 	/* Again, we lose taint-tracking here */
-	s = memcpy(buf, s, dnsa->answerlen + 1);
+	s = memcpy(buf, s, rr->size + 1);
 	break;
 	}
       }
