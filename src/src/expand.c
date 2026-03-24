@@ -6406,7 +6406,15 @@ while (*s)	/* known to be untainted */
 	      field_number = -1;
 	      p++;
 	      }
-	    while (*p && isdigit(*p)) x = x * 10 + *p++ - '0';
+	    for (int digits = 0; isdigit(*p); digits++)
+	      if (digits > 5)
+		{
+		expand_string_message = US"extract: field number too large";
+		goto EXPAND_FAILED;
+		}
+	      else
+		x = x * 10 + *p++ - '0';
+
 	    if (!*p)
 	      {
 	      field_number *= x;
