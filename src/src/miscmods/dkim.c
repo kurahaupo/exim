@@ -100,6 +100,8 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
       {
       uschar len = rr->data[rr_offset++];
 
+      if (rr_offset + len > rr->size)
+	goto bad;
       g = string_catn(g, US(rr->data + rr_offset), len);
       if (g->ptr >= PDKIM_DNS_TXT_MAX_RECLEN)
 	goto bad;
