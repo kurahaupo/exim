@@ -1521,7 +1521,7 @@ mime_is_rfc822 = 0;
 
 MIME_ACL_CHECK:
 mime_part_count = -1;
-rc = mime_acl_check(acl, mbox_file, NULL, &user_msg, &log_msg);
+rc = mime_acl_check(acl, mbox_file, NULL, &user_msg, &log_msg, 0);
 (void)fclose(mbox_file);
 
 if (rfc822_file_path)

@@ -354,8 +354,8 @@ extern void    md5_start(md5 *);
 extern void    millisleep(int);
 #ifdef WITH_CONTENT_SCAN
 struct mime_boundary_context;
-extern int     mime_acl_check(uschar *, FILE *,
-                 struct mime_boundary_context *, uschar **, uschar **);
+extern int     mime_acl_check(uschar *, FILE *, struct mime_boundary_context *,
+		uschar **, uschar **, unsigned);
 extern int     mime_decode(const uschar **);
 extern ssize_t mime_decode_base64(FILE *, FILE *, const uschar *);
 extern int     mime_regex(const uschar **, BOOL);

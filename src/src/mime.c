@@ -488,19 +488,27 @@ return string_from_gstring(val);
 }
 
 
+#define MIME_MAX_DEPTH 64
+
 int
-mime_acl_check(uschar *acl, FILE *f, struct mime_boundary_context *context,
-    uschar **user_msgptr, uschar **log_msgptr)
+mime_acl_check(uschar * acl, FILE * f, struct mime_boundary_context * context,
+    uschar ** user_msgptr, uschar ** log_msgptr, unsigned depth)
 {
 int rc = OK;
 uschar * header = NULL;
 struct mime_boundary_context nested_context;
 
+if (depth >= MIME_MAX_DEPTH)
+  {
+  log_write(LOG_MAIN, "MIME acl condition fail: excessive nesting depth");
+  return FAIL;
+  }
+
 /* reserve a line buffer to work in.  Assume tainted data. */
 header = store_get(MIME_MAX_HEADER_SIZE+1, GET_TAINTED);
 
 /* Not actually used at the moment, but will be vital to fixing
- * some RFC 2046 nonconformance later... */
+some RFC 2046 nonconformance later... */
 nested_context.parent = context;
 
 /* loop through parts */
@@ -749,7 +757,8 @@ while(1)
       ? MBC_COVERLETTER_ALL
       : MBC_COVERLETTER_ONESHOT;
 
-    rc = mime_acl_check(acl, f, &nested_context, user_msgptr, log_msgptr);
+    rc = mime_acl_check(acl, f, &nested_context, user_msgptr, log_msgptr,
+			depth+1);
     if (rc != OK) break;
     }
   else if (  mime_content_type
