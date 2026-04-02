@@ -360,6 +360,10 @@ After a success:
   $proxy_external_address, $proxy_external_port have the proxy "outside" values
   $sender_host_address, $sender_host_port have the remot client values
 
+If the proxy has accepted a login then the name appears in $authenticated_id
+and $sender_host_authenticated is set to "xclient". Note that this is delegating
+authentication to the proxy; values should only be used without further checking
+if the proxy and the connection with the proxy are trusted.
 
 
 SRV SMTPS
