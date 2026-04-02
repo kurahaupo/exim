@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -863,13 +863,10 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
   additional data. Otherwise, the possibilities are as follows:
 
   Exim 3 type:       <address><space><digits>,<digits>,<digits>
+    - no longer handled
 
-    The second set of digits is the parent number for one_time addresses. The
-    other values were remnants of earlier experiments that were abandoned.
-
-  Exim 4 first type: <address><space><digits>
-
-    The digits are the parent number for one_time addresses.
+  Exim 4 first type (pre 4.50): <address><space><digits>
+    - no longer handled
 
   Exim 4 new type:   <address><space><data>#<type bits>
 
@@ -886,31 +883,15 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
 
   while (isdigit(*p)) p--;
 
-  /* Handle Exim 3 spool files */
+  /* Fail Exim 3 and pre-4.50 spool files */
 
-  if (*p == ',')
+  if (*p == ',' || *p == ' ')
     {
-    int dummy;
-#if !defined (COMPILE_UTILITY)
-    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - Exim 3 spool file\n");
-#endif
-    while (isdigit(*(--p)) || *p == ',');
-    if (*p == ' ')
-      {
-      *p++ = 0;
-      (void)sscanf(CS p, "%d,%d", &dummy, &pno);
-      }
-    }
-
-  /* Handle early Exim 4 spool files */
-
-  else if (*p == ' ')
-    {
-#if !defined (COMPILE_UTILITY)
-    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - early Exim 4 spool file\n");
-#endif
-    *p++ = 0;
-    (void)sscanf(CS p, "%d", &pno);
+    log_write(LOG_MAIN|LOG_PANIC, "Spool%s%s file %s bad format",
+      *queue_name ? US" Q=" : US"",
+      *queue_name ? queue_name : US"",
+      fname);
+    return spool_read_hdrerror;
     }
 
   /* Handle current format Exim 4 spool files */

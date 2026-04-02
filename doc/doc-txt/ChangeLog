@@ -122,6 +122,8 @@ JH/29 ACL "seen" condition: fix timestamp written for a refresh operation.
 JH/30 Bug 2987: fix $spam_score_int for negative values. Previously rounding
       was applied in the wrong direction. Fix by Martin Kealey.
 
+JH/31 Support for spoolfiles for Exim version preceding 4.50 is removed.
+
 
 Exim version 4.99.1
 -------------------
