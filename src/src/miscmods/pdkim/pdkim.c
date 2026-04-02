@@ -504,7 +504,7 @@ for (uschar * p = raw_hdr; ; p++)
 	    DEBUG(acl) debug_printf_indent("space in tag name\n");
 	    return NULL;
 	  }
-      DONE_FWS:
+      DONE_FWS: ;
       }
     if (c == '=')
       {
