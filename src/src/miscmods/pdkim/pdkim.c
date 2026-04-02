@@ -473,13 +473,39 @@ for (uschar * p = raw_hdr; ; p++)
   if (where == PDKIM_HDR_LIMBO)
     {
     /* In limbo, just wait for a tag-char to appear */
-    if (!(c >= 'a' && c <= 'z'))
+    if (!c || isspace(c))
       goto NEXT_CHAR;
+    if (!(c >= 'a' && c <= 'z'))
+      {
+      DEBUG(acl) debug_printf_indent("bad char %W starting tag name\n", p);
+      return NULL;
+      }
 
     where = PDKIM_HDR_TAG;
     }
 
   if (where == PDKIM_HDR_TAG)
+    {
+    if (c == ' ' || c == '\t')			/* Permit FWS after tag name */
+      {
+      while (c = *++p)
+	if (c != ' ' && c != '\t') switch (c)
+	  {
+	  case '\r':
+	    if (*++p != '\n' || (c = *++p) != ' ' && c != '\t')
+	      {
+	      DEBUG(acl) debug_printf_indent("bad FWS after tag name\n");
+	      return NULL;
+	      }
+	    break;
+	  case '=': case ';':
+	    goto DONE_FWS;
+	  default:
+	    DEBUG(acl) debug_printf_indent("space in tag name\n");
+	    return NULL;
+	  }
+      DONE_FWS:
+      }
     if (c == '=')
       {
       if (Ustrcmp(string_from_gstring(cur_tag), "b") == 0)
@@ -490,8 +516,9 @@ for (uschar * p = raw_hdr; ; p++)
       where = PDKIM_HDR_VALUE;
       goto NEXT_CHAR;
       }
-    else if (!isspace(c))
+    else
       cur_tag = string_catn(cur_tag, p, 1);
+    }
 
   if (where == PDKIM_HDR_VALUE)
     {
