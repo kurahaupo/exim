@@ -881,7 +881,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
      with orcpt len(orcpt),dsn_flags
    */
 
-  while (isdigit(*p)) p--;
+  while (p > big_buffer && isdigit(*p)) p--;
 
   /* Fail Exim 3 and pre-4.50 spool files */
 
@@ -909,10 +909,10 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     if (flags & 0x01)      /* one_time data exists */
       {
       int len;
-      while (isdigit(*(--p)) || *p == ',' || *p == '-');
+      while (p > big_buffer && (isdigit(*(--p)) || *p == ',' || *p == '-')) ;
       (void)sscanf(CS p+1, "%d,%d", &len, &pno);
       *p = 0;
-      if (len > 0)
+      if (len > 0 && p > big_buffer + len)
         {
         p -= len;
         errors_to = string_copy_taint(p, GET_TAINTED);
@@ -920,13 +920,13 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
       }
 
     *--p = 0;   /* Terminate address */
-    if (flags & 0x02)      /* one_time data exists */
+    if (flags & 0x02)      /* orcpt data exists */
       {
       int len;
-      while (isdigit(*(--p)) || *p == ',' || *p == '-');
+      while (p > big_buffer && (isdigit(*(--p)) || *p == ',' || *p == '-')) ;
       (void)sscanf(CS p+1, "%d,%d", &len, &dsn_flags);
       *p = 0;
-      if (len > 0)
+      if (len > 0 && p > big_buffer + len)
         {
         p -= len;
         orcpt = string_copy_taint(p, GET_TAINTED);
