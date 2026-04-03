@@ -821,27 +821,28 @@ typedef int (*fn_t)
 
 /* Get the public key from DNS */
 
-/*XXX dkim module */
 if (!(pubkey = arc_line_to_pubkey(al, &errstr)))
+  rc = ERROR;
+else
   {
-  *errstr_p = string_sprintf("%s (%s)", errstr, why);
-  return ERROR;
+  rc = (((fn_t *) arc_dkim_mod_info->functions)[DKIM_SIG_VERIFY])
+			    (sighash, hhash_computed, hm, pubkey, &errstr);
+  switch (rc)
+    {
+    case OK:
+      break;
+    case FAIL:
+      DEBUG(acl)
+	debug_printf("ARC i=%d %s verify %s\n", as->instance, why, errstr);
+      break;
+    case ERROR:
+      DEBUG(acl) debug_printf("ARC verify %s init: %s\n", why, errstr);
+      break;
+    }
   }
 
-rc = (((fn_t *) arc_dkim_mod_info->functions)[DKIM_SIG_VERIFY])
-			  (sighash, hhash_computed, hm, pubkey, &errstr);
-switch (rc)
-  {
-  case OK:
-    break;
-  case FAIL:
-    DEBUG(acl)
-      debug_printf("ARC i=%d %s verify %s\n", as->instance, why, errstr);
-    break;
-  case ERROR:
-    DEBUG(acl) debug_printf("ARC verify %s init: %s\n", why, errstr);
-    break;
-  }
+if (rc != OK)
+  *errstr_p = string_sprintf("%s (%s)", errstr, why);
 return rc;
 }
 

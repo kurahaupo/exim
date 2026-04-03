@@ -825,7 +825,8 @@ switch(fmt)
   case KEYFMT_DER:
     /*XXX hmm, we never free this */
     if (!(verify_ctx->key = d2i_PUBKEY(NULL, &s, pubkey->len)))
-      ret = US ERR_error_string(ERR_get_error(), NULL);
+      ret = string_sprintf("deccoding pubkey DER:%s",
+				ERR_reason_error_string(ERR_get_error()));
     break;
 #ifdef SIGN_HAVE_ED25519
   case KEYFMT_ED25519_BARE:

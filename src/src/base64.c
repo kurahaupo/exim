@@ -137,8 +137,8 @@ Returns:      the number of bytes in the result,
               or -1 if the input was malformed
 
 Whitespace in the input is ignored.
-A zero is added on to the end to make it easy in cases where the result is to
-be interpreted as text. This is not included in the count. */
+A zero byte is added on to the end to make it easy in cases where the result is
+to be interpreted as text. This is not included in the count. */
 
 static uschar dec64table[] = {
   255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255, /*  0-15 */
@@ -156,7 +156,7 @@ b64decode(const uschar * code, uschar ** ptr, const void * proto_mem)
 {
 
 int x, y;
-uschar *result;
+uschar * result;
 
  {
   int l = Ustrlen(code);

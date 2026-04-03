@@ -124,6 +124,9 @@ JH/30 Bug 2987: fix $spam_score_int for negative values. Previously rounding
 
 JH/31 Support for spoolfiles for Exim version preceding 4.50 is removed.
 
+JH/32 ARC: fix crash on a non-decodable public key record. Previously, a badly
+      constructed key could result in a spurious memory access and segfault.
+
 
 Exim version 4.99.1
 -------------------
