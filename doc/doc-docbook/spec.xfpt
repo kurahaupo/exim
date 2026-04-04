@@ -16911,34 +16911,41 @@ option.
 .option local_from_check main boolean true
 .cindex "&'Sender:'& header line" "disabling addition of"
 .cindex "&'From:'& header line" "disabling checking of"
-When a message is submitted locally (that is, not over a TCP/IP connection) by
-an untrusted user, Exim removes any existing &'Sender:'& header line, and
+Normally Exim processes &'From:'& and &'Sender:'& headers in messages
+considered &"local"&.
+The &%local_from_check%& option can be set to false to disable this processing.
+
+For these purposes, &"local"& means either the message was 
+submitted locally (that is, not over a TCP/IP connection) by
+an untrusted user,
+or an ACL has specified &"submission mode"& for the message.
+See section &<<SECTthesenhea>>&, which
+has more details about &'Sender:'& processing.
+
+Exim removes any existing &'Sender:'& header line, and
 checks that the &'From:'& header line matches the login of the calling user and
 the domain specified by &%qualify_domain%&.
+You can use &%local_from_prefix%& and &%local_from_suffix%& to permit affixes
+on the local part.
 
 &*Note*&: An unqualified address (no domain) in the &'From:'& header in a
 locally submitted message is automatically qualified by Exim, unless the
 &%-bnq%& command line option is used.
 
-You can use &%local_from_prefix%& and &%local_from_suffix%& to permit affixes
-on the local part. If the &'From:'& header line does not match, Exim adds a
+If the &'From:'& header line does not match, Exim adds a
 &'Sender:'& header with an address constructed from the calling user's login
 and the default qualify domain.
 
-If &%local_from_check%& is set false, the &'From:'& header check is disabled,
-and no &'Sender:'& header is ever added. If, in addition, you want to retain
-&'Sender:'& header lines supplied by untrusted users, you must also set
-&%local_sender_retain%& to be true.
+&*Note*&: Even with &%local_from_check%& set false
+if, in addition, you want to retain
+&'Sender:'& header lines supplied by untrusted users,
+you must also set &%local_sender_retain%& to be true.
 
 .cindex "envelope from"
 .cindex "envelope sender"
 These options affect only the header lines in the message. The envelope sender
 is still forced to be the login id at the qualify domain unless
 &%untrusted_set_sender%& permits the user to supply an envelope sender.
-
-For messages received over TCP/IP, an ACL can specify &"submission mode"& to
-request similar header line checking. See section &<<SECTthesenhea>>&, which
-has more details about &'Sender:'& processing.
 
 
 
