@@ -592,11 +592,7 @@ SUPPORT_DANE=yes
 # If you have content scanning you may wish to only include some of the scanner
 # interfaces.  Uncomment any of these lines to remove that code.
 
-# DISABLE_MAL_FFROTD=yes
-# DISABLE_MAL_FFROT6D=yes
-# DISABLE_MAL_DRWEB=yes
 # DISABLE_MAL_FSECURE=yes
-# DISABLE_MAL_SOPHIE=yes
 # DISABLE_MAL_CLAM=yes
 # DISABLE_MAL_AVAST=yes
 # DISABLE_MAL_SOCK=yes

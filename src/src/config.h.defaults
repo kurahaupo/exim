@@ -202,11 +202,7 @@ Do not put spaces between # and the 'define'.
 #define WHITELIST_D_MACROS
 
 #define WITH_CONTENT_SCAN
-#define DISABLE_MAL_FFROTD
-#define DISABLE_MAL_FFROT6D
-#define DISABLE_MAL_DRWEB
 #define DISABLE_MAL_FSECURE
-#define DISABLE_MAL_SOPHIE
 #define DISABLE_MAL_CLAM
 #define DISABLE_MAL_AVAST
 #define DISABLE_MAL_SOCK

@@ -35269,52 +35269,6 @@ av_scanner = cmdline:\
              /path/to/sweep -ss -all -rec -archive %s:\
              found in file:'(.+)'
 .endd
-.vitem &%drweb%&
-.cindex "virus scanners" "DrWeb"
-The DrWeb daemon scanner (&url(https://www.sald.ru/)) interface
-takes one option,
-either a full path to a UNIX socket,
-or host and port specifiers separated by white space.
-The host may be a name or an IP address; the port is either a
-single number or a pair of numbers with a dash between.
-For example:
-.code
-av_scanner = drweb:/var/run/drwebd.sock
-av_scanner = drweb:192.168.2.20 31337
-.endd
-If you omit the argument, the default path &_/usr/local/drweb/run/drwebd.sock_&
-is used. Thanks to Alex Miller for contributing the code for this scanner.
-
-.vitem &%f-protd%&
-.cindex "virus scanners" "f-protd"
-The f-protd scanner is accessed via HTTP over TCP.
-One argument is taken, being a space-separated hostname and port number
-(or port-range).
-For example:
-.code
-av_scanner = f-protd:localhost 10200-10204
-.endd
-If you omit the argument, the default values shown above are used.
-
-.vitem &%f-prot6d%&
-.cindex "virus scanners" "f-prot6d"
-The f-prot6d scanner is accessed using the FPSCAND protocol over TCP.
-One argument is taken, being a space-separated hostname and port number.
-For example:
-.code
-av_scanner = f-prot6d:localhost 10200
-.endd
-If you omit the argument, the default values show above are used.
-
-.vitem &%fsecure%&
-.cindex "virus scanners" "F-Secure"
-The F-Secure daemon scanner (&url(https://www.f-secure.com/)) takes one
-argument which is the path to a UNIX socket. For example:
-.code
-av_scanner = fsecure:/path/to/.fsav
-.endd
-If no argument is given, the default is &_/var/run/.fsav_&. Thanks to Johan
-Thelmen for contributing the code for this scanner.
 
 .vitem &%sock%&
 .cindex "virus scanners" "simple socket-connected"
@@ -35336,17 +35290,6 @@ The socket specifier and both regular-expressions are required.
 Default for the commandline is &_%s\n_& (note this does have a trailing newline);
 specify an empty element to get this.
 
-.vitem &%sophie%&
-.cindex "virus scanners" "Sophos and Sophie"
-Sophie is a daemon that uses Sophos' &%libsavi%& library to scan for viruses.
-You can get Sophie at &url(http://sophie.sourceforge.net/). The only option
-for this scanner type is the path to the UNIX socket that Sophie uses for
-client communication. For example:
-.code
-av_scanner = sophie:/tmp/sophie
-.endd
-The default path is &_/var/run/sophie_&, so if you are using this, you can omit
-the option.
 .endlist
 
 When &%av_scanner%& is correctly set, you can use the &%malware%& condition in
