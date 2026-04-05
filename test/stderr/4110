@@ -19,8 +19,8 @@ rda_interpret (file): 'TESTSUITE/aux-var/4110.F'
 expanded: 'TESTSUITE/aux-var/4110.F'
  ssss bytes read from TESTSUITE/aux-var/4110.F
  data is an Exim filter program
-Filter: start of processing
-Filter: end of processing
+ Filter: start of processing
+ Filter: end of processing
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: filter-userx@test.ex
 unique = filter-userx@test.ex
@@ -51,8 +51,8 @@ $home = >/usr<
  expanded: 'TESTSUITE/aux-var/4110.f-user'
   ssss bytes read from TESTSUITE/aux-var/4110.f-user
   data is an Exim filter program
-Filter: start of processing
-Filter: end of processing
+  Filter: start of processing
+  Filter: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1240 (router-interpret) terminating with rc=0 >>>>>>>>>>>>>>>>
  rda_interpret: subprocess yield=0 error=NULL
 userfilter router generated userx@test.ex

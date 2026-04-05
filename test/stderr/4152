@@ -52,8 +52,8 @@ routing aaaa@myhost.test.ex
  mail subject autoreply
  text "This is an autoreply"' (tainted)
   data is an Exim filter program
-Filter: start of processing
-Filter: end of processing
+  Filter: start of processing
+  Filter: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1237 (router-interpret) terminating with rc=0 >>>>>>>>>>>>>>>>
  rda_interpret: subprocess yield=0 error=NULL
  set transport 't3'
@@ -258,8 +258,8 @@ routing aaaa@myhost.test.ex
  mail subject autoreply
  text "This is an autoreply"' (tainted)
   data is an Exim filter program
-Filter: start of processing
-Filter: end of processing
+  Filter: start of processing
+  Filter: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1243 (router-interpret) terminating with rc=0 >>>>>>>>>>>>>>>>
  rda_interpret: subprocess yield=0 error=NULL
  set transport 't3'
