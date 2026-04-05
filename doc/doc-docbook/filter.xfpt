@@ -1219,6 +1219,11 @@ does nothing when mail is being delivered. However, when the filtering code is
 being tested by means of the &%-bf%& option (see section &<<SECTtesting>>&
 above), the value of the string is written to the standard output.
 
+.new
+Alternatively, if the &"filter"& debug channel is enabled (using the
+&%-v%& option) standard error is used.
+.wen
+
 
 .section "The fail command" "SECTfail"
 When Exim's filtering facilities are being used as a system filter, the

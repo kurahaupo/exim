@@ -2500,7 +2500,7 @@ while (commands)
 	if (filter_test != FTEST_NONE || IS_DEBUG(filter))
 	  {
 	  const uschar * t = string_printing(expargs[0]);
-	  if (filter_test == FTEST_NONE)
+	  DEBUG(filter)
 	    debug_printf_indent("Filter: testprint: %s\n", t);
 	  else
 	    printf("Testprint: %s\n", t);
