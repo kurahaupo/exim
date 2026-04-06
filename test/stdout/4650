@@ -88,8 +88,6 @@ sp 0
 align_dkim 5
 align_spf 5
 action 2
-arc 11
-arc_policy 1 json[ ]
 job 10HmaY-000000005vi-0000
 reporter myhost.test.ex
 received 1692480217
@@ -97,7 +95,7 @@ ipaddr ip4.ip4.ip4.ip4
 from test.ex
 mfrom not-exist.test.ex
 spf 6
-dkim test.ex sel 0
+dkim test.ex 0
 pdomain test.ex
 policy 15
 rua mailto:CALLER@test.ex!5m
@@ -109,8 +107,6 @@ sp 0
 align_dkim 4
 align_spf 5
 action 2
-arc 11
-arc_policy 1 json[ ]
 job 10HmaZ-000000005vi-0000
 reporter myhost.test.ex
 received 1692480217
@@ -129,5 +125,3 @@ sp 0
 align_dkim 5
 align_spf 5
 action 2
-arc 11
-arc_policy 1 json[ ]

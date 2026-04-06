@@ -1203,9 +1203,12 @@ RESET_AFTER_EXTRA_LINE_READ:
     s/received \K\d{10}$/1692480217/;
     # -be debug
     next if /^macro \'_HAVE_DMARC\'/;
+    # library version, API version difference
+    s/^dkim test.ex sel 0$/dkim test.ex 0/;
 
     # ARC is not always supported by the build
     next if /^arc_sign =/;
+    next if /^arc(?: 11|_policy 1 json\[ \])$/;
 
     # LIMITS is not always supported by the build
     # - we generally run with limits disabled, via aux-va-src/tls_conf_prefix

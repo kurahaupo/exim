@@ -41,6 +41,9 @@ exim -DSERVER=server -DNOTDAEMON -q
 ****
 #
 killdaemon
+#
+# This gets a stdout diff on library dmarc with DMARC_API < 100400
+# which did not support ARC
 cat DIR/tmp/TESTNUM.hist.dmarc
 #
 sudo rm -fr DIR/tmp
