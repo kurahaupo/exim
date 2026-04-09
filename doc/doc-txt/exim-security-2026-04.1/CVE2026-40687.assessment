@@ -1,0 +1,12 @@
+CVE2026-40687
+
+Vulnerability conditions
+------------------------
+
+- Config uses the "spa" authenticator driver
+
+Impact
+------
+
+- Remote-triggered crash (only of connection process, not daemon)
+- Infoleak
