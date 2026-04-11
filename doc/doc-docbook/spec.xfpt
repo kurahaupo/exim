@@ -575,12 +575,11 @@ inside the &_exim4_& directory of the FTP site:
 &_exim-html-n.nn.tar.gz_&
 &_exim-pdf-n.nn.tar.gz_&
 &_exim-postscript-n.nn.tar.gz_&
+&_exim-info-n.nn.tar.gz_&
+&_exim-texinfo-n.nn.tar.gz_&
 .endd
 These tar files contain only the &_doc_& directory, not the complete
 distribution, and are also available in &_.bz2_& and &_.xz_& forms.
-
-. &_exim-texinfo-n.nn.tar.gz_& seems to be no longer built; there are
-. traces in doc-docbook/Makefile, and Andreas builds it for Debian (2025/07)
 
 
 .section "Limitations" "SECID6"
@@ -17518,11 +17517,19 @@ volume of mail. Use with care!
 .cindex "host" "name of local"
 .cindex "local host" "name of"
 .vindex "&$primary_hostname$&"
-This specifies the name of the current host. It is used in the default EHLO or
+This specifies the name of the current host. It is used:
+.ilist square
+in the default EHLO or
 HELO command for outgoing SMTP messages (changeable via the &%helo_data%&
-option in the &(smtp)& transport), and as the default for &%qualify_domain%&.
-The value is also used by default in some SMTP response messages from an Exim
+option in the &(smtp)& transport)
+.next
+as the default for &%qualify_domain%&
+.next
+by default, in some SMTP response messages from an Exim
 server. This can be changed dynamically by setting &%smtp_active_hostname%&.
+.next
+as the value represented by a single &'@'& character in a domain list
+.endlist
 
 If &%primary_hostname%& is not set, Exim calls &[uname()]& to find the host
 name. If this fails, Exim panics and dies. If the name returned by &[uname()]&
