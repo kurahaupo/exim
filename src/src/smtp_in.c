@@ -5203,7 +5203,7 @@ while (done <= 0)
 
     case RCPT_CMD:
       HAD(SCH_RCPT);
-      /* We got really to many recipients. A check against configured
+      /* We got badly too many recipients. A check against configured
       limits is done later */
       if (rcpt_count < 0 || rcpt_count >= INT_MAX/2)
         log_write_die(LOG_MAIN, "Too many recipients: %d", rcpt_count);

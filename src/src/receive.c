@@ -825,7 +825,7 @@ SMTP, in which case the CRs are optional, but...
 
 FUDGE: It seems that sites on the net send out messages with just LF
 terminators, despite the warnings in the RFCs, and other MTAs handle this. So
-we make the CRs optional in all cases.
+we make the CRs optional in all cases [no longer; see below].
 
 July 2003: Bare CRs cause trouble. We now treat them as line terminators as
 well, so that there are no CRs in spooled messages. However, the message

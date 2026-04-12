@@ -17867,13 +17867,14 @@ option was not set.
 .cindex "recipient" "maximum number"
 If the value resulting from expanding this option
 is set greater than zero, it specifies the maximum number of
-original recipients for any message. Additional recipients that are generated
+original recipients for any message being received.
+Additional recipients that are generated
 by aliasing or forwarding do not count. SMTP messages get a 452 response for
 all recipients over the limit; earlier recipients are delivered as normal.
 Non-SMTP messages with too many recipients are failed, and no deliveries are
 done.
 
-For SMTP message the expansion is done after the connection is
+For SMTP messages the expansion is done after the connection is
 accepted (but before any SMTP conversation) and may depend on
 the IP addresses and port numbers of the connection.
 &*Note*&: If an expansion is used for the option,
