@@ -9199,7 +9199,8 @@ while (a)
 void
 check_deliver_addrs_not_freed(void (*f)(const uschar*, const uschar*, void*), void * ctx)
 {
-check_addr_list(US"(addr_defer)",	addr_defer,	f, ctx);
+if (addr_defer != (address_item *)(+1))
+  check_addr_list(US"(addr_defer)",	addr_defer,	f, ctx);
 check_addr_list(US"(addr_failed)",	addr_failed,	f, ctx);
 check_addr_list(US"(addr_fallback)",	addr_fallback,	f, ctx);
 check_addr_list(US"(addr_local)",	addr_local,	f, ctx);
