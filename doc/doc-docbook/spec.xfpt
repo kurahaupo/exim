@@ -6767,9 +6767,10 @@ time, be aware that some of it will make a lot more sense after you have read
 chapters &<<CHAPdomhosaddlists>>& and &<<CHAPexpand>>&.
 
 .section "Examples of different lookup syntax" "SECID60"
-It is easy to confuse the two different kinds of lookup, especially as the
-lists that may contain the second kind are always expanded before being
-processed as lists. Therefore, they may also contain lookups of the first kind.
+It is easy to confuse the two different kinds of lookup, especially as lists
+(which may contain elements that are the second kind of lookup)
+are always expanded before being processed as lists.
+Therefore, they may also contain lookups of the first kind.
 Be careful to distinguish between the following two examples:
 .code
 domains = ${lookup{$sender_host_address}lsearch{/some/file}}
