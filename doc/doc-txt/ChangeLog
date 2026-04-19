@@ -127,6 +127,12 @@ JH/31 Support for spoolfiles for Exim version preceding 4.50 is removed.
 JH/32 ARC: fix crash on a non-decodable public key record. Previously, a badly
       constructed key could result in a spurious memory access and segfault.
 
+JH/33 Bug 3215: Fix GnuTLS hostname verify of a server certificate with a
+      zero-length Subject. These are now being handed out by LetsEncrypt; note
+      that this means they carry no DN (as well as no SN, that having decreed
+      deprecated in favour of SANs). The $tls_*peerdn variables relating to
+      these certificates will be empty strings.
+
 
 Exim version 4.99.1
 -------------------

@@ -2372,7 +2372,6 @@ gnutls_kx_algorithm_t kx;
 gnutls_mac_algorithm_t mac;
 gnutls_certificate_type_t ct;
 gnutls_x509_crt_t crt;
-uschar * dn_buf;
 size_t sz;
 
 if (state->have_set_peerdn)
@@ -2516,18 +2515,26 @@ exim_gnutls_peer_err(US"cert 0");
 
 state->tlsp->peercert = state->peercert = crt;
 
+state->peerdn = US"";
 sz = 0;
-rc = gnutls_x509_crt_get_dn(crt, NULL, &sz);
-if (rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
+if (!(rc = gnutls_x509_crt_get_dn(crt, NULL, &sz)))
+  { DEBUG(tls) debug_printf_indent("TLS: zero-length DN\n"); }
+else if (rc == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
+  { DEBUG(tls) debug_printf_indent("TLS: no DN\n"); }
+else
   {
-  exim_gnutls_peer_err(US"getting size for cert DN failed");
-  return FAIL; /* should not happen */
-  }
-dn_buf = store_get_perm(sz, GET_TAINTED);
-rc = gnutls_x509_crt_get_dn(crt, CS dn_buf, &sz);
-exim_gnutls_peer_err(US"failed to extract certificate DN [gnutls_x509_crt_get_dn(cert 0)]");
+  uschar * dn_buf;
+  if (rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
+    {
+    exim_gnutls_peer_err(US"getting size for cert DN failed");
+    return FAIL; /* should not happen */
+    }
+  dn_buf = store_get_perm(sz, GET_TAINTED);
+  rc = gnutls_x509_crt_get_dn(crt, CS dn_buf, &sz);
+  exim_gnutls_peer_err(US"failed to extract certificate DN [gnutls_x509_crt_get_dn(cert 0)]");
 
-state->peerdn = dn_buf;
+  state->peerdn = dn_buf;
+  }
 
 return OK;
 #undef exim_gnutls_peer_err
