@@ -167,14 +167,8 @@ routed by r2 router
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 search_tidyup called
 search_tidyup called
 search_open: dnsdb "NULL"
@@ -215,15 +209,8 @@ search_tidyup called
 
 ******** SERVER ********
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 daemon_smtp_port overridden by -oX:
   <: PORT_D
 creating notifier socket

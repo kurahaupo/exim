@@ -1,13 +1,9 @@
 1999-03-02 09:44:33 this is a warning at TESTSUITE/aux-fixed/3000.pl line 26.
 Exim version x.yz ....
-Hints DB:
 environment after trimming:
  PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: acl
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'

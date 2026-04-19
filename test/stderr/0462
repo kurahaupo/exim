@@ -1,12 +1,6 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying Ok@localhost
@@ -54,14 +48,8 @@ Attempting full verification using callout
  callout cache: address record is positive
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying NOTok@elsewhere
@@ -93,14 +81,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.2] U=root F=<NOTok@elsewhere> rejected RCPT <nocheckpm@test.ex>: Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying NOTok2@elsewhere

@@ -1,21 +1,10 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   <= CALLER@the.local.host.name U=CALLER P=local S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> extchange@test.ex <--------
 smtp transport entered

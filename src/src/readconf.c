@@ -4607,7 +4607,7 @@ while(*next_section)
   int mid = last/2;
   int n = Ustrlen(next_section);
 
-  EARLY_DEBUG(any, "%s: %s\n", __FUNCTION__, next_section);
+  EARLY_DEBUG(start, "%s: %s\n", __FUNCTION__, next_section);
   expand_level++;
   if (tolower(next_section[n-1]) != 's') Ustrcpy(next_section+n, US"s");
 

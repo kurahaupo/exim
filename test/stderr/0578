@@ -1,12 +1,6 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
@@ -44,14 +38,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
@@ -71,14 +59,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
@@ -98,14 +80,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<ok@localhost> temporarily rejected RCPT <z@test.ex>: Could not complete sender verify callout
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying bad@localhost
@@ -139,14 +115,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<bad@localhost> rejected RCPT <z@test.ex>: (recipient): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying bad@localhost
@@ -162,14 +132,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<bad@localhost> rejected RCPT <z@test.ex>: (recipient): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
@@ -202,14 +166,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<ok@localhost> rejected RCPT <z@test.ex>: (mail): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
@@ -224,14 +182,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<ok@localhost> rejected RCPT <z@test.ex>: (mail): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -273,14 +225,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.2] U=root F=<ok@otherhost> rejected RCPT <z@test.ex>: Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -296,14 +242,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.2] U=root F=<ok@otherhost> rejected RCPT <z@test.ex>: Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1242 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -348,14 +288,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -376,14 +310,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1244 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -422,14 +350,8 @@ LOG: MAIN
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1245 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -450,14 +372,8 @@ LOG: MAIN
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1246 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -496,14 +412,8 @@ LOG: MAIN
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1247 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -524,14 +434,8 @@ LOG: MAIN
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1248 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -582,14 +486,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1249 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -611,14 +509,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1250 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -663,14 +555,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1251 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -709,14 +595,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1252 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -760,14 +640,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1253 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -806,14 +680,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1254 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -857,14 +725,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1255 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -900,14 +762,8 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.5] U=root F=<okok@otherhost51> temporarily rejected RCPT <z@test.ex>: Could not complete sender verify callout
 >>>>>>>>>>>>>>>> Exim pid=p1256 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -952,14 +808,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1257 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -1002,14 +852,8 @@ LOG: MAIN
   <= ok7@otherhost53 H=(test) [V4NET.0.0.7] U=root P=smtp S=sss
 >>>>>>>>>>>>>>>> Exim pid=p1258 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -1050,14 +894,8 @@ LOG: MAIN
   <= ok7@otherhost53 H=(test) [V4NET.0.0.8] U=root P=smtp S=sss
 >>>>>>>>>>>>>>>> Exim pid=p1259 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)
@@ -1104,14 +942,8 @@ host in "V4NET.0.0.10"? no (end of list)
 host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1260 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 test in helo_lookup_domains? no (end of list)
 host in "V4NET.0.0.1"? no (end of list)
 host in "V4NET.0.0.2"? no (end of list)

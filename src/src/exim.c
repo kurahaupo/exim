@@ -1268,7 +1268,8 @@ g = transport_show_supported(g);
 #ifdef WITH_CONTENT_SCAN
 g = malware_show_supported(g);
 #endif
-show_string(is_stdout, g); g = NULL;
+show_string(is_stdout, g);
+gstring_reset(g);
 
 if (fixed_never_users[0] > 0)
   {
@@ -1326,7 +1327,7 @@ DEBUG(any)
 Currently they are output in misc_mod_add() */
 
   show_string(is_stdout, g);
-  g = NULL;
+  gstring_reset(g);
 
   for (auth_info * ai = auths_available; ai; ai = (auth_info *)ai->drinfo.next)
     if (ai->version_report)
@@ -1349,7 +1350,7 @@ Currently they are output in misc_mod_add() */
     }
 
   show_string(is_stdout, g);
-  g = NULL;
+  gstring_reset(g);
 
   /* Has to be before the lookups as the spf lookup calls into the spf module */
   init_misc_mod_list();
@@ -1357,7 +1358,7 @@ Currently they are output in misc_mod_add() */
   init_lookup_list();
   tree_walk(lookups_tree, lookup_version_report_cb, &g);
   show_string(is_stdout, g);
-  g = NULL;
+  gstring_reset(g);
 
 #ifdef WHITELIST_D_MACROS
   g = string_fmt_append(g, "WHITELIST_D_MACROS: %q\n", WHITELIST_D_MACROS);
@@ -1735,7 +1736,8 @@ for (macro_item * m = macros_user; m; m = m->next) if (m->command_line)
   if (!regex_match(regex_whitelisted_macro, m->replacement, len, NULL))
     return FALSE;
   }
-DEBUG(any) debug_printf("macros_trusted overridden to true by whitelisting\n");
+DEBUG(start)
+  debug_printf("macros_trusted overridden to true by whitelisting\n");
 return TRUE;
 #endif
 }
@@ -4044,7 +4046,7 @@ if (ANY_DEBUG)
     debug_printf("Exim version %s uid=%ld gid=%ld pid=" PID_T_FMT " %Y\n",
       version_string, (long int)real_uid, (long int)real_gid, getpid(),
       debug_selector_dump(NULL));
-    if (!version_printed)
+    DEBUG(start) if (!version_printed)
       show_whats_supported(FALSE);
     }
   }
@@ -4343,7 +4345,7 @@ if (checking && commandline_checks_require_admin && !f.admin_user)
 decode_bits(log_selector, log_selector_size, log_notall_names,
   log_selector_string, log_channels, log_chan_count, DCB_LOG);
 
-DEBUG(any)
+DEBUG(start)
   {
   debug_printf("configuration file is %s\n", config_main_filename);
   debug_printf("log selectors =");
@@ -4619,8 +4621,11 @@ if (bi_option)
 configuration file.  We leave these prints here to ensure that syslog setup,
 logfile setup, and so on has already happened. */
 
-if (f.trusted_caller) DEBUG(any) debug_printf("trusted user\n");
-if (f.admin_user) DEBUG(any) debug_printf("admin user\n");
+DEBUG(any)
+  {
+  if (f.trusted_caller)	debug_printf("trusted user\n");
+  if (f.admin_user)	debug_printf("admin user\n");
+  }
 
 /* Only an admin user may start the daemon or force a queue run in the default
 configuration, but the queue run restriction can be relaxed. Only an admin
@@ -4787,7 +4792,7 @@ if (  !unprivileged				/* originally had root AND */
 else
   {
   int rv;
-  DEBUG(any) debug_printf("dropping to exim gid; retaining priv uid\n");
+  DEBUG(start) debug_printf("dropping to exim gid; retaining priv uid\n");
   rv = setgid(exim_gid);
   /* Impact of failure is that some stuff might end up with an incorrect group.
   We track this for failures from root, since any attempt to change privilege

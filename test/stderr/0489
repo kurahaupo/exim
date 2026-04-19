@@ -1,6 +1,4 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="Phil Q. Hazel"
@@ -34,8 +32,6 @@ created log directory TESTSUITE/spool/log
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=John "Jack" Smith
@@ -68,8 +64,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=John "Jack" "Q." Smith
@@ -102,8 +96,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="John (Jack) Q. Smith"
@@ -136,8 +128,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=John ("Jack") "Q." Smith
@@ -170,8 +160,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="John (\"Jack\") Q. Smith"
@@ -204,8 +192,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="Phil \"Q Hazel"
@@ -238,8 +224,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="Phil \"Q" "X." Hazel

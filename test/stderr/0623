@@ -1,21 +1,10 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> tempreject@test.ex <--------
 send_to_server transport entered
@@ -73,23 +62,12 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1235 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> permreject@test.ex <--------
 send_to_server transport entered
@@ -149,23 +127,12 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1238 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> permreject@test.ex <--------
 send_to_server transport entered

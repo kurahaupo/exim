@@ -1,10 +1,5 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
 LOG: MAIN
   Start queue run: pid=p1234 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1242 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -94,12 +89,7 @@ LOG: MAIN
   End queue run: pid=p1234 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
 LOG: MAIN
   Start queue run: pid=p1235 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1253 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -189,12 +179,7 @@ LOG: MAIN
   End queue run: pid=p1235 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
 LOG: MAIN
   Start queue run: pid=p1236 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1264 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>

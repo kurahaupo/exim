@@ -1,11 +1,8 @@
 Exim version x.yz ....
-Hints DB:
 environment after trimming:
  PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'

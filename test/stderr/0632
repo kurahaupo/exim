@@ -1,15 +1,10 @@
 
 ******** SERVER ********
 Exim version x.yz ....
-Hints DB:
 environment after trimming:
  PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: acl
-readconf_rest: routers
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -148,19 +143,6 @@ p1235  ╰─────result: e̪m̪p̪t̪y̪
 p1235 try option 'acl_smtp_predata'
 p1235 search_tidyup called
 p1235 search_tidyup called
-1 SMTP accept process running
-daemon_notification (from unknown addr)
-compiled caseless RE '^nomatch_list' not found in local cache
-compiling caseless RE '^nomatch_list'
-compiled RE '^nomatch_list' saved in local cache
-daemon_notification (from unknown addr)
-compiled RE 'static_RE' not found in local cache
-compiling RE 'static_RE'
-compiled RE 'static_RE' saved in local cache
-daemon_notification (from unknown addr)
-compiled RE 'tricky_static_RE$' not found in local cache
-compiling RE 'tricky_static_RE$'
-compiled RE 'tricky_static_RE$' saved in local cache
 p1235  ╭considering: ${tod_full}
 p1235  ├───expanded: ${tod_full}
 p1235  ╰─────result: Tue,░2░Mar░1999░09:44:33░+0000
@@ -525,9 +507,22 @@ Process p1235 is ready for new message
 try option 'acl_smtp_quit'
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
+p1234 1 SMTP accept process running
 p1234 child p1235 ended: status=0x0
 p1234   normal exit, 0
 p1234 0 SMTP accept processes now running
+p1234 daemon_notification (from unknown addr)
+p1234 compiled caseless RE '^nomatch_list' not found in local cache
+p1234 compiling caseless RE '^nomatch_list'
+p1234 compiled RE '^nomatch_list' saved in local cache
+p1234 daemon_notification (from unknown addr)
+p1234 compiled RE 'static_RE' not found in local cache
+p1234 compiling RE 'static_RE'
+p1234 compiled RE 'static_RE' saved in local cache
+p1234 daemon_notification (from unknown addr)
+p1234 compiled RE 'tricky_static_RE$' not found in local cache
+p1234 compiling RE 'tricky_static_RE$'
+p1234 compiled RE 'tricky_static_RE$' saved in local cache
 p1234 Connection request from 127.0.0.1 port sssss
 p1234 try option 'smtp_accept_max_per_host'
 p1234 search_tidyup called

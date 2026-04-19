@@ -304,7 +304,7 @@ misc_module_list = mi;
 
 if (mi->init)
   {
-  EARLY_DEBUG(any, "Module init: %q\n", mi->name);
+  EARLY_DEBUG(start, "Module init: %q\n", mi->name);
   expand_level++;
   if (!mi->init(mi))
     EARLY_DEBUG(any, "module init call failed for %q\n", mi->name);
@@ -312,7 +312,7 @@ if (mi->init)
   }
 
 if (mi->lib_vers_report)
-  DEBUG(any) debug_printf_indent("%Y", mi->lib_vers_report(NULL));
+  DEBUG(start) debug_printf_indent("%Y", mi->lib_vers_report(NULL));
 
 /* EARLY_DEBUG(any, "added %q\n", mi->name); */
 }

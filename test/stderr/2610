@@ -4,13 +4,7 @@
 ### insert some data
 ### -be tests
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
  search_open: mysql "NULL"
  search_find: file="NULL"
    key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -796,7 +790,7 @@ LOG: MAIN
 created log directory TESTSUITE/spool/log
 receive_msg: tidyup
 search_tidyup called
-exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test-config -d=0xfffffffee70973ff -MCd local-accept-delivery -odi -Mc 10HmaX-000000005vi-0000
+exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test-config -d=0xfffffffde70973ff -MCd local-accept-delivery -odi -Mc 10HmaX-000000005vi-0000
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective

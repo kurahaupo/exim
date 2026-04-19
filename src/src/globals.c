@@ -691,7 +691,8 @@ bit_table debug_channels[] = {
   DEBUG_CHAN(retry),
   DEBUG_CHAN(rewrite),
   DEBUG_CHAN(route),
-  DEBUG_CHAN(timestamp),	/* 32 */
+  DEBUG_CHAN(start),		/* 32 */
+  DEBUG_CHAN(timestamp),
   DEBUG_CHAN(tls),
   DEBUG_CHAN(transport),
   DEBUG_CHAN(uid),

@@ -1,20 +1,11 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: routers
-readconf_rest: transports
 LOG: MAIN
   <= CALLER@test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
 rda_interpret (file): 'TESTSUITE/aux-var/4110.F'
 expanded: 'TESTSUITE/aux-var/4110.F'
  ssss bytes read from TESTSUITE/aux-var/4110.F

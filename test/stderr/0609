@@ -1,13 +1,7 @@
 
 ******** SERVER ********
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
 daemon_smtp_port overridden by -oX:
   <: PORT_D
 creating notifier socket

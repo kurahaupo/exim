@@ -1,10 +1,5 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
 LOG: MAIN
   U=CALLER Warning: sender_data=SenderData recipient_data=RecipData
 created log directory TESTSUITE/spool/log

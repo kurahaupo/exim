@@ -1,25 +1,14 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   SMTP connection from root
 created log directory TESTSUITE/spool/log
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> good@test.ex <--------
 send_to_server transport entered
@@ -76,26 +65,15 @@ LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> nopipe@test.ex <--------
 send_to_server transport entered
@@ -151,26 +129,15 @@ LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> tempreject@test.ex <--------
 send_to_server transport entered
@@ -229,26 +196,15 @@ LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> permreject@test.ex <--------
 send_to_server transport entered
@@ -309,26 +265,15 @@ LOG: MAIN
   SMTP connection from root D=q.qqqs closed by QUIT
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 LOG: MAIN
   SMTP connection from root
 LOG: MAIN
   <= fred@myhost.test.ex U=root P=local-smtp S=sss
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> dataloss@test.ex <--------
 send_to_server transport entered

@@ -3749,6 +3749,7 @@ are:
 .irow retry          "retry handling"
 .irow rewrite        "address rewriting"
 .irow route          "address routing"
+.irow start          "on startup, information about the build"
 .irow timestamp      "modifier: add timestamp to debug output lines"
 .irow tls            "TLS logic"
 .irow transport      "transports"
@@ -3760,7 +3761,7 @@ The &`all`& option excludes &`memory`&,
 .new
 &`macro`& and &`regex`&
 .wen
-when used as &`+all`&, but includes it
+when used as &`+all`&, but includes them
 for &`-all`&. The reason for this is that &`+all`& is something that people
 tend to use when generating debug output for Exim maintainers. If &`+memory`&
 is included, an awful lot of output that is very rarely of interest is

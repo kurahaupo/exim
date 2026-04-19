@@ -1,11 +1,5 @@
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 admin user
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
  Connecting to 127.0.0.1 [127.0.0.1]:PORT_D ...
  connected
    SMTP<< 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
@@ -41,15 +35,8 @@ LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local-smtp S=sss
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-Hints DB:
-configuration file is TESTSUITE/test-config
 trusted user
 admin user
-dropping to exim gid; retaining priv uid
-readconf_rest: acl
-readconf_rest: routers
-readconf_rest: transports
-readconf_rest: retry
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> userb@test.ex <--------
 t1 transport entered
