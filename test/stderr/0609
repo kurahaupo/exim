@@ -16,7 +16,6 @@ LOG: MAIN
   SMTP connection from [127.0.0.1] (TCP/IP connection count = 1)
 Process p1235 is handling incoming connection from [127.0.0.1]
 Process p1235 is ready for new message
-test in helo_lookup_domains? no (end of list)
 using ACL "delay4_accept"
 processing ACL delay4_accept "accept" (TESTSUITE/test-config 24)
 check delay = 4s
@@ -35,7 +34,6 @@ LOG: MAIN
   SMTP connection from [127.0.0.1] (TCP/IP connection count = 1)
 Process p1236 is handling incoming connection from [127.0.0.1]
 Process p1236 is ready for new message
-test in helo_lookup_domains? no (end of list)
 using ACL "delay4_accept"
 processing ACL delay4_accept "accept" (TESTSUITE/test-config 24)
 check delay = 4s

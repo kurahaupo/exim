@@ -24,7 +24,6 @@ routing bbbb@myhost.test.ex
 --------> r1 router <--------
  local_part=bbbb domain=myhost.test.ex
  checking local_parts
- bbbb in local_parts? no (end of list)
  r1 router skipped: local_parts mismatch
 --------> r2 router <--------
  local_part=bbbb domain=myhost.test.ex

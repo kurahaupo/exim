@@ -127,7 +127,6 @@ try option 'unknown_login'
    ╰─────result: a.b.c
 LOG: MAIN PANIC
   no @ found in the subject of an address list match: subject="a.b.c" pattern="a.b.c"
-  a.b.c in "a.b.c"? no (end of list)
   cond "match_address" res: F
  ├──condition: match_address{a.b.c}{a.b.c}
  ├─────result: false
@@ -317,7 +316,6 @@ try option 'unknown_login'
    \_____result: a.b.c
 LOG: MAIN PANIC
   no @ found in the subject of an address list match: subject="a.b.c" pattern="a.b.c"
-  a.b.c in "a.b.c"? no (end of list)
   cond "match_address" res: F
  |--condition: match_address{a.b.c}{a.b.c}
  |-----result: false

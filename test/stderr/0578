@@ -1,7 +1,6 @@
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -28,19 +27,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for localhost:
    result=1 postmaster=0 random=0
  wrote positive callout cache address record for ok@localhost
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -49,19 +39,10 @@ Attempting full verification using callout
  callout cache: found domain record for localhost
  callout cache: found address record for ok@localhost
  callout cache: address record is positive
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -82,7 +63,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying bad@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -117,7 +97,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying bad@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -134,7 +113,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -168,7 +146,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -184,8 +161,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -227,8 +202,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -244,8 +217,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost2
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -279,19 +250,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:RSET:250:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost2:
    result=1 postmaster=1 random=0
  wrote positive callout cache address record for ok@otherhost2
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost2
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -301,20 +263,10 @@ Attempting full verification using callout
  callout cache: domain accepts RCPT TO:<postmaster@domain>
  callout cache: found address record for ok@otherhost2
  callout cache: address record is positive
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1244 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost3
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -340,21 +292,12 @@ interface=NULL port=PORT_S
 cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost3:
    result=1 postmaster=0 random=1
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 LOG: MAIN
   (random)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1245 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying otherok@otherhost3
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -362,22 +305,12 @@ Considering otherok@otherhost3
 Attempting full verification using callout
  callout cache: found domain record for otherhost3
  callout cache: domain accepts random addresses
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 LOG: MAIN
   (random)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1246 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost4
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -403,21 +336,12 @@ interface=NULL port=PORT_S
 cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost4:
    result=1 postmaster=0 random=1
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 LOG: MAIN
   (random)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1247 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost4
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -425,21 +349,12 @@ Considering ok@otherhost4
 Attempting full verification using callout
  callout cache: found domain record for otherhost4
  callout cache: domain accepts random addresses
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 LOG: MAIN
   (random)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1248 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost41
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -479,19 +394,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:550:RSET:250:MAIL|:RCPT:250:250:RSET:250:M
  wrote callout cache domain record for otherhost41:
    result=1 postmaster=1 random=2
  wrote positive callout cache address record for ok@otherhost41
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1249 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost41
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -502,17 +408,10 @@ Attempting full verification using callout
  callout cache: domain accepts RCPT TO:<postmaster@domain>
  callout cache: found address record for ok@otherhost41
  callout cache: address record is positive
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1250 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost21
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -546,19 +445,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:RSET:250:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost21:
    result=1 postmaster=1 random=0
  wrote positive callout cache address record for ok@otherhost21
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1251 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok2@otherhost21
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -586,20 +476,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost21:
    result=1 postmaster=1 random=0
  wrote positive callout cache address record for ok2@otherhost21
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1252 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost31
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -632,19 +512,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:550:RSET:250:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost31:
    result=1 postmaster=0 random=2
  wrote positive callout cache address record for ok@otherhost31
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1253 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okok@otherhost31
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -672,19 +543,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost31:
    result=1 postmaster=0 random=2
  wrote positive callout cache address record for okok@otherhost31
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1254 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okokok@otherhost31
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -717,21 +579,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:550:RSET:250:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost31:
    result=1 postmaster=0 random=2
  wrote positive callout cache address record for okokok@otherhost31
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1255 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okok@otherhost51
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -764,12 +615,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okokok@otherhost52
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -803,23 +648,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:RSET:250:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for otherhost52:
    result=1 postmaster=1 random=0
  wrote positive callout cache address record for okokok@otherhost52
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1257 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 verifying Reply-To: header address abcd@x.y.z
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying abcd@x.y.z
@@ -847,24 +679,12 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:QUIT:250'
  wrote callout cache domain record for x.y.z:
    result=1 postmaster=0 random=0
  wrote positive callout cache address record for abcd@x.y.z/<somesender@a.domain>
-host in "V4NET.0.0.8"? no (end of list)
 LOG: MAIN
   <= ok7@otherhost53 H=(test) [V4NET.0.0.7] U=root P=smtp S=sss
 >>>>>>>>>>>>>>>> Exim pid=p1258 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.7"? no (end of list)
 verifying Reply-To: header address abcd@x.y.z
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying abcd@x.y.z
@@ -896,13 +716,6 @@ LOG: MAIN
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost9
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -938,20 +751,10 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT:250:250:RSET:250:MAIL|:RCPT:250:550:RCPT:250:Q
  wrote callout cache domain record for otherhost9:
    result=1 postmaster=1 random=0
  wrote positive callout cache address record for ok@otherhost9
-host in "V4NET.0.0.10"? no (end of list)
-host in "V4NET.0.0.10"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1260 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
-host in "V4NET.0.0.1"? no (end of list)
-host in "V4NET.0.0.2"? no (end of list)
-host in "V4NET.0.0.3"? no (end of list)
-host in "V4NET.0.0.4"? no (end of list)
-host in "V4NET.0.0.5"? no (end of list)
-host in "V4NET.0.0.6"? no (end of list)
-host in "V4NET.0.0.9"? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying z@test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

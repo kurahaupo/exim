@@ -7,14 +7,10 @@ routing "DECLINE cannot route this one (DECLINE)"@some.host
 --------> b router <--------
  local_part=decline cannot route this one (decline) domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=DECLINE cannot route this one (DECLINE) domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for "DECLINE cannot route this one (DECLINE)"@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -30,14 +26,10 @@ routing "FAIL cannot route this one (FAIL)"@some.host
 --------> b router <--------
  local_part=fail cannot route this one (fail) domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=FAIL cannot route this one (FAIL) domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for "FAIL cannot route this one (FAIL)"@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -51,14 +43,10 @@ routing "ERROR cannot route this one (ERROR)"@some.host
 --------> b router <--------
  local_part=error cannot route this one (error) domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=ERROR cannot route this one (ERROR) domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for "ERROR cannot route this one (ERROR)"@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -75,14 +63,10 @@ routing "DEFER cannot route this one (DEFER)"@some.host
 --------> b router <--------
  local_part=defer cannot route this one (defer) domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=DEFER cannot route this one (DEFER) domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for "DEFER cannot route this one (DEFER)"@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -97,14 +81,10 @@ routing "ACCEPT transport = other_smtp hosts=ten-1.test.ex"@some.host
 --------> b router <--------
  local_part=accept transport = other_smtp hosts=ten-1.test.ex domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=ACCEPT transport = other_smtp hosts=ten-1.test.ex domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for "ACCEPT transport = other_smtp hosts=ten-1.test.ex"@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -127,14 +107,10 @@ routing PASS@some.host
 --------> b router <--------
  local_part=pass domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=PASS domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for PASS@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -143,7 +119,6 @@ command wrote: PASS
 --------> s router <--------
  local_part=pass domain=some.host
  checking domains
- some.host in domains? yes (end of list)
  calling s router
  s router called for PASS@some.host
    domain = some.host
@@ -170,14 +145,10 @@ routing "FREEZE cannot route this one (FREEZE)"@some.host
 --------> b router <--------
  local_part=freeze cannot route this one (freeze) domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=FREEZE cannot route this one (FREEZE) domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for "FREEZE cannot route this one (FREEZE)"@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -192,14 +163,10 @@ routing "REDIRECT postmaster@test.ex"@some.host
 --------> b router <--------
  local_part=redirect postmaster@test.ex domain=some.host
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=REDIRECT postmaster@test.ex domain=some.host
  checking domains
- some.host in "test.ex"? no (end of list)
- some.host in domains? yes (end of list)
  calling q router
  q router called for "REDIRECT postmaster@test.ex"@some.host: domain = some.host
 requires uid=EXIM_UID gid=EXIM_GID current_directory=/
@@ -218,8 +185,6 @@ routing postmaster@test.ex
 --------> b router <--------
  local_part=postmaster domain=test.ex
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  b router skipped: senders mismatch
 --------> q router <--------
  local_part=postmaster domain=test.ex

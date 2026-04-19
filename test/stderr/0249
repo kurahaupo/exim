@@ -1,22 +1,5 @@
 Exim version x.yz ....
 admin user
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-c.domain in "a.domain"? no (end of list)
-User@c.domain in "*@a.domain"? no (end of list)
-User@d.domain in "a@b"? no (end of list)
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)

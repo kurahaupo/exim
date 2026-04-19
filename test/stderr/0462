@@ -1,7 +1,6 @@
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying Ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -50,7 +49,6 @@ Attempting full verification using callout
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying NOTok@elsewhere
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -83,7 +81,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
-test in helo_lookup_domains? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying NOTok2@elsewhere
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

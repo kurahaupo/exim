@@ -6,8 +6,6 @@ created log directory TESTSUITE/spool/log
 Exim version x.yz ....
 trusted user
 admin user
- domain.com in "test.ex : *.test.ex"? no (end of list)
- domain.com in domains? yes (end of list)
 router_name <my_main_router>
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> userx@domain.com <--------

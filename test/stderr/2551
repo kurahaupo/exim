@@ -224,7 +224,6 @@ Connection request from 127.0.0.1 port sssss
 p1238 Process p1238 is handling incoming connection from [127.0.0.1]
 p1238 Process p1238 is ready for new message
 1 SMTP accept process running
-p1238 host in chunking_advertise_hosts? no (end of list)
 p1238 dnslists check: rbl.test.ex/V4NET.11.12.14
 p1238 new DNS lookup for 14.12.11.V4NET.rbl.test.ex
 p1238 dnslists: wrote cache entry, ttl=2

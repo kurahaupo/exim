@@ -16,13 +16,10 @@ routing aaaa@myhost.test.ex
 --------> bounce router <--------
  local_part=aaaa domain=myhost.test.ex
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  bounce router skipped: senders mismatch
 --------> defer router <--------
  local_part=aaaa domain=myhost.test.ex
  checking local_parts
- aaaa in local_parts? no (end of list)
  defer router skipped: local_parts mismatch
 --------> aaaa_2nd_time router <--------
  local_part=aaaa domain=myhost.test.ex
@@ -88,8 +85,6 @@ routing defer_aaaa@myhost.test.ex
 --------> bounce router <--------
  local_part=defer_aaaa domain=myhost.test.ex
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  bounce router skipped: senders mismatch
 --------> defer router <--------
  local_part=defer_aaaa domain=myhost.test.ex
@@ -175,13 +170,10 @@ routing aaaa@myhost.test.ex
 --------> bounce router <--------
  local_part=aaaa domain=myhost.test.ex
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  bounce router skipped: senders mismatch
 --------> defer router <--------
  local_part=aaaa domain=myhost.test.ex
  checking local_parts
- aaaa in local_parts? no (end of list)
  defer router skipped: local_parts mismatch
 --------> aaaa_2nd_time router <--------
  local_part=aaaa domain=myhost.test.ex
@@ -208,13 +200,10 @@ routing aaaa@myhost.test.ex
 --------> bounce router <--------
  local_part=aaaa domain=myhost.test.ex
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  bounce router skipped: senders mismatch
 --------> defer router <--------
  local_part=aaaa domain=myhost.test.ex
  checking local_parts
- aaaa in local_parts? no (end of list)
  defer router skipped: local_parts mismatch
 --------> aaaa_2nd_time router <--------
  aaaa_2nd_time router skipped: previously routed aaaa@myhost.test.ex
@@ -276,8 +265,6 @@ routing defer_aaaa@myhost.test.ex
 --------> bounce router <--------
  local_part=defer_aaaa domain=myhost.test.ex
  checking senders
- myhost.test.ex in ""? no (end of list)
- CALLER@myhost.test.ex in senders? no (end of list)
  bounce router skipped: senders mismatch
 --------> defer router <--------
  local_part=defer_aaaa domain=myhost.test.ex

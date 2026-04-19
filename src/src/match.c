@@ -477,7 +477,7 @@ BOOL textonly_re;
 
 /* Save time by not scanning for the option name when we don't need it. */
 
-HDEBUG(any)
+HDEBUG(lists)
   {
   const uschar * listname = readconf_find_option(listptr);
   if (*listname) ot = string_sprintf("%s in %s?", name, listname);
@@ -551,7 +551,7 @@ if (textonly_re) switch (type)
 /* For an unnamed list, use the expanded version in comments */
 #define LIST_LIMIT_PR 2048
 
-HDEBUG(any) if (!ot)
+HDEBUG(lists) if (!ot)
   {	/* We failed to identify an option name, so give the list text */
   int n, m;
   gstring * g = string_fmt_append(NULL, "%s in \"%n%.*s%n\"",
@@ -984,7 +984,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
 
 /* End of list reached: if the last item was negated yield OK, else FAIL. */
 
-HDEBUG(any)
+HDEBUG(lists)
   {
   HDEBUG(lists) expand_level--;
   debug_printf_indent("%s %s (end of list)\n", ot, yield == OK ? "no":"yes");

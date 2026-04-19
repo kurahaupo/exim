@@ -1,7 +1,6 @@
 Exim version x.yz ....
 trusted user
 admin user
- in chunking_advertise_hosts? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying r11@two.test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -30,7 +29,6 @@ LOG: MAIN REJECT
 Exim version x.yz ....
 trusted user
 admin user
- in chunking_advertise_hosts? no (end of list)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying r11@two.test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

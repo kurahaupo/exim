@@ -16,8 +16,6 @@ routing x@uppercase.test.ex
 --------> r0 router <--------
  local_part=x domain=uppercase.test.ex
  checking senders
- test.ex in ""? no (end of list)
- CALLER@test.ex in senders? no (end of list)
  r0 router skipped: senders mismatch
 --------> r1 router <--------
  local_part=x domain=uppercase.test.ex
