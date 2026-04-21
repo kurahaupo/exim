@@ -150,6 +150,8 @@ JH/36 CVE-2026-40687: The spa authenticator used an unitialized buffer, which
 
 JH/37 The "eval" expansion operator now specifically refuses a tainted argument.
 
+JH/38 An excessively-long output from a pipe transport is now truncated.
+
 
 Exim version 4.99.2
 -------------------

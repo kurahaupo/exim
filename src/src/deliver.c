@@ -2535,9 +2535,14 @@ for (addr2 = addr; addr2; addr2 = addr2->next)
       len = read(pfd[pipe_read], &message_length, sizeof(int));
       if (message_length > 0)
         {
-        len = read(pfd[pipe_read], big_buffer, message_length);
+        len = read(pfd[pipe_read], big_buffer, MIN(message_length, big_buffer_size));
 	big_buffer[big_buffer_size-1] = '\0';		/* guard byte */
-        if (len > 0) *sptr = string_copy(big_buffer);
+        if (len > 0)
+	  {
+	  *sptr = string_copy(big_buffer);
+	  while ((message_length -= len) > 0)		/* dump oversize data */
+	    len = read(pfd[pipe_read], big_buffer, big_buffer_size);
+	  }
         }
       }
     }
