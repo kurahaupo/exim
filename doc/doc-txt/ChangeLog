@@ -152,6 +152,8 @@ JH/37 The "eval" expansion operator now specifically refuses a tainted argument.
 
 JH/38 An excessively-long output from a pipe transport is now truncated.
 
+JH/39 Rspamd: ensure local-part passed to external is quoted when needed.
+
 
 Exim version 4.99.2
 -------------------
@@ -164,7 +166,6 @@ covers four CVEs:
   CVE-2026-40687  Possible OOB read/write with SPA authenticator
 
 JH/01 Combined set of fixes.
-
 
 Exim version 4.99.1
 -------------------

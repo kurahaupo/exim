@@ -169,6 +169,51 @@ return -1;
 }
 
 
+/* Quote, if needed, the local-part of an address.
+Method copied from ${local_part:} coding.
+*/
+
+static const uschar *
+quote_addr_localpart(const uschar * s)
+{
+int start, end, end_l, domain;
+uschar * errmsg;
+
+if (!(s = parse_extract_address(s, &errmsg, &start, &end, &domain, FALSE)))
+  log_write(LOG_MAIN|LOG_PANIC_DIE, "failed splitting address: %s", errmsg);
+
+end_l = domain == 0 ? end : domain-1;
+for (int i = start; i < end_l; i++)
+  {
+  uschar c = s[i];
+  if (  !isalnum(c)
+     && strchr("!#$%&'*+-/=?^_`{|}~", c) == NULL
+     && (c != '.' || i == 0 || !s[i+1])
+     )
+    {						/* local-part needs quoting */
+    gstring * g = string_catn(NULL, US"\"", 1);
+
+    for (const uschar * t = s + start; t < s + end_l; t++)
+      if (*t == '\n')
+	g = string_catn(g, US"\\n", 2);
+      else if (*t == '\r')
+	g = string_catn(g, US"\\r", 2);
+      else
+	{
+	if (*t == '\\' || *t == '"')
+	  g = string_catn(g, US"\\", 1);
+	g = string_catn(g, t, 1);
+	}
+
+    g = domain == 0
+      ? string_catn(g, US"\"", 1)
+      : string_fmt_append(g, "\"@%s", s + domain);
+    return string_from_gstring(g);
+    }
+  }
+return s;
+}
+
 int
 spam(const uschar **listptr)
 {
@@ -347,7 +392,7 @@ if (sd->is_rspamd)
 
   for (int i = 0; i < recipients_count; i++)
     req_str = string_append(req_str, 3,
-      "Rcpt: <", recipients_list[i].address, ">\r\n");
+      "Rcpt: <", quote_addr_localpart(recipients_list[i].address), ">\r\n");
   if ((s = expand_string(US"$sender_helo_name")) && *s)
     req_str = string_append(req_str, 3, "Helo: ", s, "\r\n");
   if ((s = expand_string(US"$sender_host_name")) && *s)
