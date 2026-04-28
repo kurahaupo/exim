@@ -133,6 +133,22 @@ JH/33 Bug 3215: Fix GnuTLS hostname verify of a server certificate with a
       deprecated in favour of SANs). The $tls_*peerdn variables relating to
       these certificates will be empty strings.
 
+JH/34 CVE-2026-40684: A crafted DNS record could cause a crash of the Exim
+      process acessing it, when operating with musl libc. This could be the
+      daemon. An Exim using Gnu libc is not affeected.
+
+
+Exim version 4.99.2
+-------------------
+
+This is a security release, addressing Exim-Security-2026-04.1, which
+covers four CVEs:
+  CVE-2026-40684  Possible crash with malicious DNS data when using musl libc
+  CVE-2026-40685  Possible OOB read/write on corrupt JSON in header
+  CVE-2026-40686  Possible OOB read with large UTF8 trailing characters
+  CVE-2026-40687  Possible OOB read/write with SPA authenticator
+
+JH/01 Combined set of fixes.
 
 Exim version 4.99.1
 -------------------

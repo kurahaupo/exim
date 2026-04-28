@@ -626,17 +626,17 @@ uschar * yield;
 uschar * ss = yield = store_get(Ustrlen(s) + 1, GET_TAINTED);	/* always treat as tainted */
 
 while (*s)
-  {
   if (*s != '\\')
     *ss++ = *s++;
-  else if (isdigit(s[1]))
-    {
-    *ss++ = (s[1] - '0')*100 + (s[2] - '0')*10 + s[3] - '0';
-    s += 4;
+  else if (isdigit(*++s)) /* Apparently, musl libc dn_expand seen doing \DD */
+    {	/* and \D also. We can only hope not when a real digit follows. */
+    uschar c = *s++ - '0';
+    if (isdigit(*s)) c = c * 10 + *s++ - '0';
+    if (isdigit(*s)) c = c * 10 + *s++ - '0';
+    *ss++ = c;
     }
   else if (*++s)
     *ss++ = *s++;
-  }
 
 *ss = 0;
 return yield;

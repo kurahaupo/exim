@@ -1,0 +1,12 @@
+CVE2026-40684
+
+Vulnerability conditions
+------------------------
+
+- Exim build/run using musl libc (not gnulibc)
+- Deamon running, accepting connections
+
+Impact
+------
+
+Remote-triggered crash, via crafted PTR record
