@@ -7009,6 +7009,9 @@ ${lookup {foo/bar} dsearch,key=path {/etc}}
 .endd
 If this option is used, a ".." component in the key is specifically disallowed.
 The default operation is that the key may only be a single path component.
+.new
+Lookups violating restrictions will behave as for no match.
+.wen
 
 An example of how this
 lookup can be used to support virtual domains is given in section

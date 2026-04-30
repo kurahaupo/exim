@@ -2,25 +2,29 @@
 # This test will fail on a case-insensitive filesystem (e.g. MacOS default)
 exim -be
 dsearch specifics
-ok:         ${lookup{TESTNUM.tst}		dsearch{DIR/aux-fixed}{$value}{FAIL}}
-fail:       ${lookup{TESTNUM.file_not_here}	dsearch{DIR/aux-fixed}{$value}{FAIL}}
+DA=DIR/aux-fixed
+ok:         ${lookup{TESTNUM.tst}		dsearch{DA}{$value}{FAIL}}
+fail:       ${lookup{TESTNUM.file_not_here}	dsearch{DA}{$value}{FAIL}}
 fail:       ${lookup{TESTNUM.tst}		dsearch{DIR/dir_not_here}{$value}{FAIL}}
-fail(case): ${lookup{TESTNUM.TST}		dsearch{DIR/aux-fixed}{$value}{FAIL}}
+fail(case): ${lookup{TESTNUM.TST}		dsearch{DA}{$value}{FAIL}}
 fail(case): ${lookup{TESTNUM.TST}		dsearch{DIR/AUX-fixed}{$value}{FAIL}}
 fail(path): ${lookup{TESTNUM.tst}		dsearch{.}{$value}{OTHER}}
-ok,full:    ${lookup{TESTNUM.tst} dsearch,ret=full      {DIR/aux-fixed}{$value}{FAIL}}
-ok,key:     ${lookup{TESTNUM.tst} dsearch,ret=key       {DIR/aux-fixed}{$value}{FAIL}}
-ok,file:    ${lookup{TESTNUM.tst} dsearch,filter=file   {DIR/aux-fixed}{$value}{FAIL}}
-fail,file:  ${lookup{TESTNUM.dir} dsearch,filter=file   {DIR/aux-fixed}{$value}{FAIL}}
-ok,dir:     ${lookup{TESTNUM.dir} dsearch,filter=dir    {DIR/aux-fixed}{$value}{FAIL}}
-fail,dir:   ${lookup{TESTNUM.tst} dsearch,filter=dir    {DIR/aux-fixed}{$value}{FAIL}}
-ok,subdir:  ${lookup{TESTNUM.dir} dsearch,filter=subdir {DIR/aux-fixed}{$value}{FAIL}}
-fail,subdir(..):${lookup{..}          dsearch,filter=subdir {DIR/aux-fixed}{$value}{FAIL}}
-fail,subdir(.) :${lookup{.}           dsearch,filter=subdir {DIR/aux-fixed}{$value}{FAIL}}
-fail,subdir(f) :${lookup{TESTNUM.tst} dsearch,filter=subdir {DIR/aux-fixed}{$value}{FAIL}}
-ok,subdir(..d) :${lookup{..subdir}    dsearch,filter=subdir {DIR/aux-fixed/TESTNUM.dir}{$value}{FAIL}}
-fail.path:  ${lookup{TESTNUM.dir/regfile} dsearch          {DIR/aux-fixed}{$value}{FAIL}}
-ok.path:    ${lookup{TESTNUM.dir/regfile} dsearch,key=path {DIR/aux-fixed}{$value}{FAIL}}
+ok,full:    ${lookup{TESTNUM.tst} dsearch,ret=full      {DA}{$value}{FAIL}}
+ok,key:     ${lookup{TESTNUM.tst} dsearch,ret=key       {DA}{$value}{FAIL}}
+ok,file:    ${lookup{TESTNUM.tst} dsearch,filter=file   {DA}{$value}{FAIL}}
+fail,file:  ${lookup{TESTNUM.dir} dsearch,filter=file   {DA}{$value}{FAIL}}
+ok,dir:     ${lookup{TESTNUM.dir} dsearch,filter=dir    {DA}{$value}{FAIL}}
+fail,dir:   ${lookup{TESTNUM.tst} dsearch,filter=dir    {DA}{$value}{FAIL}}
+ok,subdir:  ${lookup{TESTNUM.dir} dsearch,filter=subdir {DA}{$value}{FAIL}}
+fail,subdir(..):${lookup{..}          dsearch,filter=subdir {DA}{$value}{FAIL}}
+fail,subdir(.) :${lookup{.}           dsearch,filter=subdir {DA}{$value}{FAIL}}
+fail,subdir(f) :${lookup{TESTNUM.tst} dsearch,filter=subdir {DA}{$value}{FAIL}}
+ok,subdir(..d) :${lookup{..subdir}    dsearch,filter=subdir {DA/TESTNUM.dir}{$value}{FAIL}}
+fail.path:  ${lookup{TESTNUM.dir/regfile} dsearch          {DA}{$value}{FAIL}}
+ok.path:    ${lookup{TESTNUM.dir/regfile} dsearch,key=path {DA}{$value}{FAIL}}
+fail.badpath: ${lookup{TESTNUM.dir/../TESTNUM.dir/regfile} dsearch,key=path {DA}{$value}{FAIL}}
+fail.badpath: ${lookup{../test/TESTNUM.dir/regfile} dsearch,key=path {DA}{$value}{FAIL}}
+fail.badpath: ${lookup{TESTNUM.dir/TESTNUM.dir/regfile/..} dsearch,key=path {DA}{$value}{FAIL}}
 
 cachelayer tests
 fail:       ${lookup{test-data}   dsearch               {DIR/}          {$value}{FAIL}}

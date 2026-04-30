@@ -154,6 +154,10 @@ JH/38 An excessively-long output from a pipe transport is now truncated.
 
 JH/39 Rspamd: ensure local-part passed to external is quoted when needed.
 
+JH/40 Lookup dsearch: fix the restriction on key=path to match the
+      documentation.  Also, fail lookups that violate key restrictions (both
+      plain and key=path) rather than returning "defer".
+
 
 Exim version 4.99.2
 -------------------

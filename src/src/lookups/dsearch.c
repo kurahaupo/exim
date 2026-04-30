@@ -106,21 +106,32 @@ if (opts)
       flags |= ALLOW_PATH;
   }
 
+/* For key=path, disallow any ".." component.  One could be leading, embedded or
+last in the path.  For non-path, disallow any path separators. */
+
 if (flags & ALLOW_PATH)
   {
-  if (Ustrstr(keystring, "/../") != NULL || Ustrstr(keystring, "/./"))
+  if (regex_match(
+	    regex_must_compile(US"(?:^|/)\\.\\.(?:/|$)", MCS_CACHEABLE, FALSE),
+	    keystring, -1, NULL))
     {
     *errmsg = string_sprintf(
       "key for dsearch lookup contains bad component: %s", keystring);
-    return DEFER;
+    DEBUG(lookup) debug_printf_indent("%s\n", *errmsg);
+    return FAIL;
     }
   }
 else if (Ustrchr(keystring, '/') != NULL)
   {
   *errmsg = string_sprintf("key for dsearch lookup contains a slash: %s",
     keystring);
-  return DEFER;
+  DEBUG(lookup) debug_printf_indent("%s\n", *errmsg);
+  return FAIL;
   }
+
+/* See if the file exists. Apply filtering: for "file" require a regular file,
+for "dir" or "subdir" require a directory and for "subdir" disallow "." and ".."
+*/
 
 filename = string_sprintf("%s/%s", dirname, keystring);
 if (  Ulstat(filename, &statbuf) >= 0
@@ -134,7 +145,9 @@ if (  Ulstat(filename, &statbuf) >= 0
    )  )  )  )
   {
   /* Since the filename exists in the filesystem, we can return a
-  non-tainted result. */
+  non-tainted result. For "ret=full" return the whole built-up path; otherwise
+  return just the key. */
+
   *result = string_copy_taint(flags & RET_FULL ? filename : keystring, GET_UNTAINTED);
   return OK;
   }

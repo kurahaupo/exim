@@ -1,4 +1,5 @@
 > dsearch specifics
+> Defined macro 'DA'
 > ok:         2500.tst
 > fail:       FAIL
 > Failed: failed to open TESTSUITE/dir_not_here for directory search: No such file or directory
@@ -16,8 +17,11 @@
 > fail,subdir(.) :FAIL
 > fail,subdir(f) :FAIL
 > ok,subdir(..d) :..subdir
-> Failed: lookup of "2500.dir/regfile" gave DEFER: "key for dsearch lookup contains a slash: 2500.dir/regfile"
+> fail.path:  FAIL
 > ok.path:    2500.dir/regfile
+> fail.badpath: FAIL
+> fail.badpath: FAIL
+> fail.badpath: FAIL
 > 
 > cachelayer tests
 > fail:       FAIL
