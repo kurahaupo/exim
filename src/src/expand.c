@@ -1113,16 +1113,17 @@ Ustrchr() yields non-NULL if the character is zero (which is not something
 I expected). */
 
 static const uschar *
-read_name(uschar * name, int max, const uschar * s, const uschar * extras)
+read_name(uschar * name, size_t max, const uschar * s, const uschar * extras)
 {
 int ptr = 0;
 if (f.running_in_test_harness) assert(!is_tainted(s));
+max -= 2;
 while (*s && (isalnum(*s) || Ustrchr(extras, *s) != NULL))
   {
-  if (ptr < max-1) name[ptr++] = *s;
+  if (ptr < max) name[ptr++] = *s;
   s++;
   }
-name[ptr] = 0;
+name[ptr] = '\0';
 return s;
 }
 
@@ -1148,19 +1149,20 @@ Returns:    a pointer to the first character after the header name
 */
 
 static const uschar *
-read_header_name(uschar *name, int max, const uschar *s)
+read_header_name(uschar * name, size_t max, const uschar * s)
 {
 int prelen = Ustrchr(name, '_') - name + 1;
 int ptr = Ustrlen(name) - prelen;
 if (ptr > 0) memmove(name, name+prelen, ptr);
+max -= 3;
 while (mac_isgraph(*s) && *s != ':')
   {
-  if (ptr < max-1) name[ptr++] = *s;
+  if (ptr < max) name[ptr++] = *s;
   s++;
   }
 if (*s == ':') s++;
 name[ptr++] = ':';
-name[ptr] = 0;
+name[ptr] = '\0';
 return s;
 }
 
