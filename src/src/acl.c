@@ -872,11 +872,8 @@ Returns:      pointer to ACL, or NULL
 acl_block *
 acl_read(uschar *(*func)(void), uschar **error)
 {
-acl_block *yield = NULL;
-acl_block **lastp = &yield;
-acl_block *this = NULL;
-acl_condition_block *cond;
-acl_condition_block **condp = NULL;
+acl_block * yield = NULL, ** lastp = &yield, * this = NULL;
+acl_condition_block * cond, ** condp = NULL;
 const uschar * s;
 
 *error = NULL;
@@ -4327,8 +4324,8 @@ Returns:   a pointer to the next line
 */
 
 
-static uschar *acl_text;          /* Current pointer in the text */
-static uschar *acl_text_end;      /* Points one past the terminating '0' */
+static uschar * acl_text;          /* Current pointer in the text */
+static uschar * acl_text_end;      /* Points one past the terminating '0' */
 
 
 static uschar *
@@ -4447,13 +4444,12 @@ Returns:       OK         access is granted
 */
 
 static int
-acl_check_internal(int where, address_item *addr, uschar *s,
-  uschar **user_msgptr, uschar **log_msgptr)
+acl_check_internal(int where, address_item * addr, uschar * s,
+  uschar ** user_msgptr, uschar ** log_msgptr)
 {
 int fd = -1;
-acl_block *acl = NULL;
-uschar *acl_name = US"inline ACL";
-uschar *ss;
+acl_block * acl = NULL;
+uschar * acl_name = US"inline ACL", * ss;
 
 /* Catch configuration loops */
 
@@ -4832,10 +4828,9 @@ return f.search_find_defer ? DEFER : ERROR;
 
 /* Alternate interface for ACL, used by expansions */
 int
-acl_eval(int where, uschar *s, uschar **user_msgptr, uschar **log_msgptr)
+acl_eval(int where, uschar * s, uschar ** user_msgptr, uschar ** log_msgptr)
 {
-address_item adb;
-address_item *addr = NULL;
+address_item adb, * addr = NULL;
 int rc;
 
 *user_msgptr = *log_msgptr = NULL;
@@ -4853,6 +4848,9 @@ if (where == ACL_WHERE_RCPT)
   addr->cc_local_part = deliver_localpart;
   addr->lc_local_part = deliver_localpart;
   }
+
+acl_text = s;
+acl_text_end = s + Ustrlen(s) + 1;
 
 acl_level++;
 rc = acl_check_internal(where, addr, s, user_msgptr, log_msgptr);
@@ -4887,8 +4885,7 @@ acl_check(int where, const uschar * recipient, uschar * s,
   uschar ** user_msgptr, uschar ** log_msgptr)
 {
 int rc;
-address_item adb;
-address_item *addr = NULL;
+address_item adb,  * addr = NULL;
 
 *user_msgptr = *log_msgptr = NULL;
 sender_verified_failed = NULL;
