@@ -3418,18 +3418,17 @@ Arguments:
 */
 
 void
-invert_address(uschar *buffer, uschar *address)
+invert_address(uschar * buffer, const uschar * address)
 {
 int bin[4];
-uschar *bptr = buffer;
+uschar * bptr = buffer;
 
 /* If this is an IPv4 address mapped into IPv6 format, adjust the pointer
 to the IPv4 part only. */
 
 if (Ustrncmp(address, "::ffff:", 7) == 0) address += 7;
 
-/* Handle IPv4 address: when HAVE_IPV6 is false, the result of host_aton() is
-always 1. */
+/* Handle IPv4 address */
 
 if (host_aton(address, bin) == 1)
   {
@@ -3458,13 +3457,15 @@ else
       x >>= 4;
       }
     }
+#else
+bptr = buffer + 1;
 #endif
 
 /* Remove trailing period -- this is needed so that both arbitrary
 dnsbl keydomains and inverted addresses may be combined with the
 same format string, "%s.%s" */
 
-*(--bptr) = 0;
+*(--bptr) = '\0';
 }
 
 
