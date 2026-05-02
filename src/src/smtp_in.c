@@ -720,6 +720,18 @@ return wouldblock_reading(eof_ok);
 /******************************************************************************/
 /* Variants of the smtp_* input handling functions for use in CHUNKING mode */
 
+static inline void
+smtp_rcv_cleartext(void)
+{
+receive_getc = smtp_getc;
+receive_getbuf = smtp_getbuf;
+receive_get_cache = smtp_get_cache;
+receive_hasc = smtp_hasc;
+receive_ungetc = smtp_ungetc;
+receive_feof = smtp_feof;
+receive_ferror = smtp_ferror;
+}
+
 /* Forward declarations */
 static inline void bdat_push_receive_functions(void);
 static inline void bdat_pop_receive_functions(void);
@@ -748,6 +760,7 @@ uschar * user_msg = NULL, * log_msg;
 int rc;
 
 #ifndef DISABLE_DKIM
+/*XXX this should be cached */
 misc_module_info * dkim_info = misc_mod_findonly(US"dkim");
 typedef void (*dkim_pause_t)(BOOL);
 dkim_pause_t dkim_pause;
@@ -970,6 +983,32 @@ return lwr_receive_ungetc(ch);
 }
 
 
+
+#ifndef DISABLE_TLS
+/* The TLS layer has received a Close notification alert, meaning no
+more encrypted data will be received.
+
+To preserve layering of the receive processing if a BDAT chunk is still
+in progress, pop the bdat layer, reset to plaintext processing then
+re-push the bdat layer.
+Then close our writing side of the TLS channel.
+
+Any chunk in progress will likely error out anyway; let the existing
+processing handle it.
+*/
+
+void
+tls_close_notify(void)
+{
+if (chunking_state > CHUNKING_OFFERED)
+  {
+  bdat_pop_receive_functions();
+  smtp_rcv_cleartext();
+  bdat_push_receive_functions();
+  }
+tls_close(NULL, TLS_NO_SHUTDOWN);
+}
+#endif
 
 /******************************************************************************/
 
@@ -2432,15 +2471,8 @@ if (atrn_mode && tls_in.active.sock >= 0)
   }
 else
 #endif
-  {
-  receive_getc = smtp_getc;
-  receive_getbuf = smtp_getbuf;
-  receive_get_cache = smtp_get_cache;
-  receive_hasc = smtp_hasc;
-  receive_ungetc = smtp_ungetc;
-  receive_feof = smtp_feof;
-  receive_ferror = smtp_ferror;
-  }
+  smtp_rcv_cleartext();
+
 lwr_receive_getc = NULL;
 lwr_receive_getbuf = NULL;
 lwr_receive_hasc = NULL;

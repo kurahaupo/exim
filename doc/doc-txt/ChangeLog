@@ -2,6 +2,18 @@ This document describes *changes* to previous versions, that might
 affect Exim's operation, with an unchanged configuration file.  For new
 options, and new features, see the NewStuff file next to this ChangeLog.
 
+Exim version 4.99.3
+-------------------
+
+This is a security release addressing Exim-Security-2026-05-01.1.
+A CVE number isn't assigned yet.
+
+JH/01 GnuTLS: when a TLS close alert was received with CHUNKING still active
+      a one-byte write into a freed buffer was possible.  Fix by reinstating
+      the plaintext input handlers on TLS close while maintaining the bdat
+      handlers.
+
+
 Exim version 4.99.2
 -------------------
 
@@ -11,6 +23,7 @@ covers four CVEs:
   CVE-2026-40685  Possible OOB read/write on corrupt JSON in header
   CVE-2026-40686  Possible OOB read with large UTF8 trailing characters
   CVE-2026-40687  Possible OOB read/write with SPA authenticator
+
 
 Exim version 4.99.1
 -------------------

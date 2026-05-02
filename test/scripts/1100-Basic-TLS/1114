@@ -3,7 +3,7 @@ gnutls
 exim -DSERVER=server -DSRV=tls -bd -oX PORT_D
 ****
 #
-# non-piplined
+### non-piplined
 client-anytls 127.0.0.1 PORT_D
 ??? 220
 EHLO rhu.barb
@@ -38,7 +38,7 @@ QUIT
 ??? 221
 ****
 #
-# pipelined
+### pipelined
 client-anytls 127.0.0.1 PORT_D
 ??? 220
 EHLO rhu.barb
@@ -67,6 +67,42 @@ QUIT
 ??? 221
 ****
 #
+### short bdat data, tls close, more data
+client-anytls 127.0.0.1 PORT_D
+??? 220
+EHLO rhu.barb
+??? 250-
+??? 250-SIZE
+??? 250-8BITMIME
+??? 250-PIPELINING
+??? 250-CHUNKING
+??? 250-STARTTLS
+??? 250 HELP
+STARTTLS
+??? 220
+EHLO rhu.barb
+??? 250-
+??? 250-SIZE
+??? 250-8BITMIME
+??? 250-PIPELINING
+??? 250-CHUNKING
+??? 250 HELP
+MAIL FROM:<someone@some.domain>
+??? 250
+RCPT TO:<CALLER@test.ex>
+??? 250
+BDAT 89 LAST
+To: Susan@random.com
+From: Sam@random.com
+Subject: This is a bodyless TEST message
+
+STOPTLS
+>>> x
+??? 250-
+??? 250
+QUIT
+??? 221
+****
 #
 killdaemon
 no_msglog_check
