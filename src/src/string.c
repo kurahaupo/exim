@@ -329,7 +329,7 @@ Arguments:
   flags		Bit 0: convert tabs.
 		Bit 1: convert spaces.
 		Bit 2: convert doublequotes.
-  len		if >= 0, max size of string
+  len		if >= 0, max size of input string
 		otherwise, NUL-terminated
 
 Returns:        string with non-printers encoded as printing sequences
@@ -353,7 +353,8 @@ for (int n = len; *t && (n < 0 || n-- > 0); )
   olen++;
   }
 
-if (nonprintcount == 0) return s;
+if (nonprintcount == 0)
+  return *t ? string_copyn(s, len) : s;
 
 /* Get a new block of store guaranteed big enough to hold the
 expanded string. */
@@ -365,6 +366,7 @@ tt = ss = store_get(olen + nonprintcount * 3 + 1, s);
 for (t = s; *t && (len < 0 || len-- > 0); )
   {
   int c = *t;
+
   /*XXX does \ go through unchanged here?  Since we use it for escaping,
   surely it should be doubled? */
   if (  mac_isprint(c)
