@@ -191,37 +191,38 @@ const pcre2_code *
 regex_compile(const uschar * pattern, mcs_flags flags, uschar ** errstr,
   pcre2_compile_context * cctx)
 {
-const uschar * key = pattern;
 BOOL caseless = !!(flags & MCS_CASELESS);
-int err;
-PCRE2_SIZE offset;
 const pcre2_code * yield;
-int old_pool = store_pool;
 
+expand_level++;
 /* Optionally, check the cache and return if found */
 
-if (  flags & MCS_CACHEABLE
-   && (yield = regex_from_cache(key, caseless)))
-  return yield;
-
-DEBUG(regex) debug_printf_indent("compiling %sRE '%s'\n",
-				caseless ? "caseless " : "", pattern);
-
-store_pool = POOL_PERM;
-if (!(yield = pcre2_compile((PCRE2_SPTR)pattern, PCRE2_ZERO_TERMINATED,
-		caseless ? PCRE_COPT|PCRE2_CASELESS : PCRE_COPT,
-		&err, &offset, cctx)))
+if (  !(flags & MCS_CACHEABLE)
+   || !(yield = regex_from_cache(pattern, caseless)))
   {
-  uschar errbuf[128];
-  pcre2_get_error_message(err, errbuf, sizeof(errbuf));
-  store_pool = old_pool;
-  *errstr = string_sprintf("regular expression error in "
-	    "%q: %s at offset %ld", pattern, errbuf, (long)offset);
-  }
-else if (flags & MCS_CACHEABLE)
-  regex_to_cache(key, caseless, yield);
-store_pool = old_pool;
+  int old_pool = store_pool, err;
+  PCRE2_SIZE offset;
 
+  DEBUG(regex) debug_printf_indent("compiling %sRE '%s'\n",
+				  caseless ? "caseless " : "", pattern);
+  store_pool = POOL_PERM;
+  if (!(yield = pcre2_compile((PCRE2_SPTR)pattern, PCRE2_ZERO_TERMINATED,
+		  caseless ? PCRE_COPT|PCRE2_CASELESS : PCRE_COPT,
+		  &err, &offset, cctx)))
+    {
+    uschar errbuf[128];
+    pcre2_get_error_message(err, errbuf, sizeof(errbuf));
+    store_pool = old_pool;
+    *errstr = string_sprintf("regular expression error in "
+	      "%q: %s at offset %ld", pattern, errbuf, (long)offset);
+    DEBUG(regex) debug_printf_indent("'%s'\n%*s\n", pattern, (int)offset, "^");
+    }
+  else if (flags & MCS_CACHEABLE)
+    regex_to_cache(pattern, caseless, yield);
+  store_pool = old_pool;
+  }
+
+expand_level--;
 return yield;
 }
 

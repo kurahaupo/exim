@@ -73,17 +73,17 @@ p1235    ├───────text: static_RE
 p1235    ├considering: }}
 p1235    ├───expanded: static_RE
 p1235    ╰─────result: static_RE
-p1235   compiled RE 'static_RE' not found in local cache
-p1235   compiling RE 'static_RE'
-p1235   compiled RE 'static_RE' saved in local cache
-p1235   sending RE 'static_RE' to daemon
-p1235   try option 'notifier_socket'
-p1235    ╭considering: $spool_directory/exim_daemon_notify
-p1235    ├──────value: TESTSUITE/spool
-p1235    ├considering: /exim_daemon_notify
-p1235    ├───────text: /exim_daemon_notify
-p1235    ├───expanded: $spool_directory/exim_daemon_notify
-p1235    ╰─────result: TESTSUITE/spool/exim_daemon_notify
+p1235    compiled RE 'static_RE' not found in local cache
+p1235    compiling RE 'static_RE'
+p1235    compiled RE 'static_RE' saved in local cache
+p1235    sending RE 'static_RE' to daemon
+p1235    try option 'notifier_socket'
+p1235    ╎╭considering: $spool_directory/exim_daemon_notify
+p1235    ╎├──────value: TESTSUITE/spool
+p1235    ╎├considering: /exim_daemon_notify
+p1235    ╎├───────text: /exim_daemon_notify
+p1235    ╎├───expanded: $spool_directory/exim_daemon_notify
+p1235    ╎╰─────result: TESTSUITE/spool/exim_daemon_notify
 p1235   cond "match" res: F
 p1235  ├──condition: match░{a_random_string}░{static_RE}
 p1235  ├─────result: false
@@ -103,17 +103,17 @@ p1235    ├backslashed: '\$'
 p1235    ├considering: }}
 p1235    ├───expanded: tricky_static_RE\$
 p1235    ╰─────result: tricky_static_RE$
-p1235   compiled RE 'tricky_static_RE$' not found in local cache
-p1235   compiling RE 'tricky_static_RE$'
-p1235   compiled RE 'tricky_static_RE$' saved in local cache
-p1235   sending RE 'tricky_static_RE$' to daemon
-p1235   try option 'notifier_socket'
-p1235    ╭considering: $spool_directory/exim_daemon_notify
-p1235    ├──────value: TESTSUITE/spool
-p1235    ├considering: /exim_daemon_notify
-p1235    ├───────text: /exim_daemon_notify
-p1235    ├───expanded: $spool_directory/exim_daemon_notify
-p1235    ╰─────result: TESTSUITE/spool/exim_daemon_notify
+p1235    compiled RE 'tricky_static_RE$' not found in local cache
+p1235    compiling RE 'tricky_static_RE$'
+p1235    compiled RE 'tricky_static_RE$' saved in local cache
+p1235    sending RE 'tricky_static_RE$' to daemon
+p1235    try option 'notifier_socket'
+p1235    ╎╭considering: $spool_directory/exim_daemon_notify
+p1235    ╎├──────value: TESTSUITE/spool
+p1235    ╎├considering: /exim_daemon_notify
+p1235    ╎├───────text: /exim_daemon_notify
+p1235    ╎├───expanded: $spool_directory/exim_daemon_notify
+p1235    ╎╰─────result: TESTSUITE/spool/exim_daemon_notify
 p1235   cond "match" res: F
 p1235  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1235  ├─────result: false
@@ -134,7 +134,7 @@ p1235    ├───────text: ░uncacheable_RE
 p1235    ├considering: }}
 p1235    ├───expanded: pid=${pid}░uncacheable_RE
 p1235    ╰─────result: pid=p1235░uncacheable_RE
-p1235   compiling RE 'pid=p1235 uncacheable_RE'
+p1235    compiling RE 'pid=p1235 uncacheable_RE'
 p1235   cond "match" res: F
 p1235  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable_RE}
 p1235  ├─────result: false
@@ -512,17 +512,17 @@ p1234 child p1235 ended: status=0x0
 p1234   normal exit, 0
 p1234 0 SMTP accept processes now running
 p1234 daemon_notification (from unknown addr)
-p1234 compiled caseless RE '^nomatch_list' not found in local cache
-p1234 compiling caseless RE '^nomatch_list'
-p1234 compiled RE '^nomatch_list' saved in local cache
+p1234  compiled caseless RE '^nomatch_list' not found in local cache
+p1234  compiling caseless RE '^nomatch_list'
+p1234  compiled RE '^nomatch_list' saved in local cache
 p1234 daemon_notification (from unknown addr)
-p1234 compiled RE 'static_RE' not found in local cache
-p1234 compiling RE 'static_RE'
-p1234 compiled RE 'static_RE' saved in local cache
+p1234  compiled RE 'static_RE' not found in local cache
+p1234  compiling RE 'static_RE'
+p1234  compiled RE 'static_RE' saved in local cache
 p1234 daemon_notification (from unknown addr)
-p1234 compiled RE 'tricky_static_RE$' not found in local cache
-p1234 compiling RE 'tricky_static_RE$'
-p1234 compiled RE 'tricky_static_RE$' saved in local cache
+p1234  compiled RE 'tricky_static_RE$' not found in local cache
+p1234  compiling RE 'tricky_static_RE$'
+p1234  compiled RE 'tricky_static_RE$' saved in local cache
 p1234 Connection request from 127.0.0.1 port sssss
 p1234 try option 'smtp_accept_max_per_host'
 p1234 search_tidyup called
@@ -562,7 +562,7 @@ p1236    ├───────text: static_RE
 p1236    ├considering: }}
 p1236    ├───expanded: static_RE
 p1236    ╰─────result: static_RE
-p1236   compiled RE 'static_RE' found in local cache
+p1236    compiled RE 'static_RE' found in local cache
 p1236   cond "match" res: F
 p1236  ├──condition: match░{a_random_string}░{static_RE}
 p1236  ├─────result: false
@@ -582,7 +582,7 @@ p1236    ├backslashed: '\$'
 p1236    ├considering: }}
 p1236    ├───expanded: tricky_static_RE\$
 p1236    ╰─────result: tricky_static_RE$
-p1236   compiled RE 'tricky_static_RE$' found in local cache
+p1236    compiled RE 'tricky_static_RE$' found in local cache
 p1236   cond "match" res: F
 p1236  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1236  ├─────result: false
@@ -603,7 +603,7 @@ p1236    ├───────text: ░uncacheable_RE
 p1236    ├considering: }}
 p1236    ├───expanded: pid=${pid}░uncacheable_RE
 p1236    ╰─────result: pid=p1236░uncacheable_RE
-p1236   compiling RE 'pid=p1236 uncacheable_RE'
+p1236    compiling RE 'pid=p1236 uncacheable_RE'
 p1236   cond "match" res: F
 p1236  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable_RE}
 p1236  ├─────result: false
