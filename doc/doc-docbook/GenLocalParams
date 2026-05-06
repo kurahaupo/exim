@@ -13,8 +13,9 @@ fi
 
 exec > "$output"
 cat <<EOTEMPLATE
-. # if this file changes, the build process will rebuild everything
-. # locale's charset $charset
+. # If this file changes, the build process will rebuild everything
+. # locale's charset $charset.
+. # This file is built by the GenLocalParams scipt.
 .macro version
 ${EXIM_VER}
 .endmacro

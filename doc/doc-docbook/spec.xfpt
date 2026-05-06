@@ -7064,7 +7064,7 @@ The key is a list of subelement selectors
 which are applied in turn to select smaller and smaller portions
 of the JSON structure.
 If a selector is numeric, it must apply to a JSON array; the (zero-based)
-nunbered array element is selected.
+numbered array element is selected.
 Otherwise it must apply to a JSON object; the named element is selected.
 The final resulting element can be a simple JSON type or a JSON object
 or array; for the latter two a string-representation of the JSON
