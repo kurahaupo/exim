@@ -314,7 +314,15 @@ __
         }
         else {
             waitpid($pid, 0);
-            exit $? >> 8 if $?;
+            if ($?) {
+                my $exit_code = $? >> 8;
+                if (!defined $ENV{DOCBOOK2TEXI} || $ENV{DOCBOOK2TEXI} !~ /docbook2x-texi/) {
+                    warn "\n*** Documentation build failed with exit code $exit_code. ***\n";
+                    warn "*** Hint: If you are seeing entity errors (like 'X20AC is not a function name'),\n";
+                    warn "*** try running the script with: DOCBOOK2TEXI=\"docbook2x-texi --encoding=UTF-8\"\n\n";
+                }
+                exit $exit_code;
+            }
         }
 
         $context->copy_docbook_files;
