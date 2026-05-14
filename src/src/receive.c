@@ -50,9 +50,9 @@ uschar * stdin_inptr = stdin_buf;
 uschar * stdin_inend = stdin_buf;
 
 static BOOL
-stdin_refill(void)
+stdin_refill(unsigned lim)
 {
-size_t rc = fread(stdin_buf, 1, sizeof(stdin_buf), stdin);
+size_t rc = fread(stdin_buf, 1, MIN(sizeof(stdin_buf), lim), stdin);
 if (rc == 0)
   {
   if (had_data_timeout)
@@ -84,7 +84,7 @@ int
 stdin_getc(unsigned lim)
 {
 if (stdin_inptr >= stdin_inend)
-  if (!stdin_refill())
+  if (!stdin_refill(lim))
       return EOF;
 return *stdin_inptr++;
 }
@@ -104,7 +104,7 @@ stdin_getbuf(unsigned * len)
 unsigned size;
 uschar * buf;
 
-if (!stdin_hasc() && !stdin_refill())
+if (!stdin_hasc() && !stdin_refill(*len))
   { *len = 0; return NULL; }
 
 if ((size = stdin_inend - stdin_inptr) > *len) size = *len;
