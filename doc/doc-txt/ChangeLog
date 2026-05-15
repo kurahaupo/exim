@@ -5,8 +5,8 @@ options, and new features, see the NewStuff file next to this ChangeLog.
 Exim version 4.99.3
 -------------------
 
-This is a security release addressing Exim-Security-2026-05-01.1.
-A CVE number isn't assigned yet.
+This is a security release addressing Exim-Security-2026-05-01.1
+(CVE-2026-45185).
 
 JH/01 GnuTLS: when a TLS close alert was received with CHUNKING still active
       a one-byte write into a freed buffer was possible.  Fix by reinstating
