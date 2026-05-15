@@ -54,6 +54,7 @@ extern BOOL    tls_client_adjunct_start(host_item *, client_conn_ctx *,
 extern void    tls_client_creds_reload(BOOL);
 
 extern void    tls_close(void *, int);
+extern void    tls_close_notify(void);
 extern BOOL    tls_could_getc(void);
 extern void    tls_daemon_init(void);
 extern int     tls_daemon_tick(void);

@@ -1,0 +1,5 @@
+2026-05-01: received report from federic.kirschbaum@xbow.com to security@exim.org
+2026-05-05: acknowledged the report to the reporter
+2026-05-07: announcement to distros@vs.openwall.org
+2026-05-10: restricted access to fixes provided for distributors
+2026-05-12: public coordinated release of the fix and advisory (Exim 4.99.3)

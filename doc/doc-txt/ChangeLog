@@ -159,6 +159,18 @@ JH/40 Lookup dsearch: fix the restriction on key=path to match the
       plain and key=path) rather than returning "defer".
 
 
+Exim version 4.99.3
+-------------------
+
+This is a security release addressing Exim-Security-2026-05-01.1
+(CVE-2026-45185).
+
+JH/01 GnuTLS: when a TLS close alert was received with CHUNKING still active
+      a one-byte write into a freed buffer was possible.  Fix by reinstating
+      the plaintext input handlers on TLS close while maintaining the bdat
+      handlers.
+
+
 Exim version 4.99.2
 -------------------
 
@@ -169,7 +181,6 @@ covers four CVEs:
   CVE-2026-40686  Possible OOB read with large UTF8 trailing characters
   CVE-2026-40687  Possible OOB read/write with SPA authenticator
 
-JH/01 Combined set of fixes.
 
 Exim version 4.99.1
 -------------------

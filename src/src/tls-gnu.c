@@ -651,7 +651,7 @@ if (sigalrm_seen)
 else if (inbytes == 0)
   {
   DEBUG(tls) debug_printf("Got TLS_EOF\n");
-  tls_close(NULL, TLS_NO_SHUTDOWN);
+  tls_close_notify();
   return FALSE;
   }
 
@@ -1828,7 +1828,7 @@ depends on DANE or plain usage. */
 #if defined(EXIM_HAVE_INOTIFY) || defined(EXIM_HAVE_KEVENT)
 /* Invalidate the creds cached, by dropping the current ones.
 Call when we notice one of the source files has changed. */
- 
+
 static void
 tls_server_creds_invalidate(void)
 {
@@ -3293,7 +3293,7 @@ if (  gnutls_protocol_get_version(state->session) > GNUTLS_TLS1_2
    && state->early_banner)
   {
   tls_write(NULL, banner->s, banner->ptr, SP_NO_MORE);
-  DEBUG(receive) 
+  DEBUG(receive)
     { gstring_trim(banner, 2); debug_printf("SMTP>> %Y\n", banner); }
   gstring_reset(banner);
 

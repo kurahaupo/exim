@@ -4585,7 +4585,7 @@ switch(error)
     if (SSL_get_shutdown(ssl) == SSL_RECEIVED_SHUTDOWN)
 	  SSL_shutdown(ssl);
 
-    tls_close(NULL, TLS_NO_SHUTDOWN);
+    tls_close_notify();
     return FALSE;
 
   /* Handle genuine errors */

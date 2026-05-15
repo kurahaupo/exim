@@ -1,0 +1,63 @@
+Title: Exim Security Advisory for EXIM-Security-2026-05-01.1 / CVE-2026-45185
+Announced: 2026-05-12
+Reporter: federic.kirschbaum@xbow.com
+Affects: Exim 4.97 up to and including 4.99.2
+Corrected: Exim 4.99.3
+
+Exim Security Vulnerability: EXIM-Security-2026-05-01.1
+=========================================================
+
+Identifier:   EXIM-Security-2026-05-01.1 (CVE-2026-45185)
+Type:         Remote Use-After-Free (UAF)
+Severity:     [TO BE DETERMINED]
+Credit:       federic.kirschbaum@xbow.com
+
+Timeline
+--------
+
+2026-05-01 17:29:41 UTC: Initial security report received from Federico Kirschbaum (XBOW Security).
+2026-05-04 20:00:54 UTC: Federico Kirschbaum follows up, inquiring about the review of their submission.
+2026-05-05 02:53:xx UTC: Exim maintainers (Heiko Schlittermann) acknowledge the report and confirm a fix is being prepared in private repositories.
+2026-05-07 14:14:23 UTC: Reporter inquires about disclosure planning. Exim maintainers confirm coordinated release planning is underway.
+2026-05-07 22:00:45 UTC: Announcement to distros@vs.openwall.org
+2026-05-10 20:00:xx UTC: Restricted access to fixes provided for distributors.
+2026-05-12 14:00:xx UTC: Public coordinated release of the fix and advisory.
+2026-05-12          UTC: CVE-2026-45185 assigned.
+
+Vulnerability Summary
+---------------------
+
+A remotely reachable memory corruption issue was discovered in Exim's GnuTLS backend. The vulnerability is triggered during BDAT message body handling when a client sends a TLS close_notify alert before the body transfer is complete, and then follows up with a final byte in cleartext on the same TCP connection.
+
+This sequence of events can cause Exim to write into a memory buffer that has already been freed during the TLS session teardown, leading to heap corruption. An attacker only needs to be able to establish a TLS connection and use the CHUNKING (BDAT) SMTP extension.
+
+Affected Versions
+-----------------
+
+- All Exim versions from 4.97 up to and including 4.99.2 are affected.
+- This vulnerability only impacts builds that use USE_GNUTLS=yes. Builds using OpenSSL or other TLS libraries are not affected.
+
+Mitigation
+----------
+
+- There is no known mitigation other than upgrading.
+
+Resolution
+----------
+
+The issue is resolved in Exim version 4.99.3. All users of affected versions are strongly encouraged to upgrade as soon as possible.
+
+The fix ensures that the input processing stack is cleanly reset when a TLS close notification is received during an active BDAT transfer, preventing the stale pointers from being used.
+
+References
+----------
+
+- https://xbow.com/blog/dead-letter-cve-2026-45185-xbow-found-rce-exim
+
+Downloads
+---------
+
+The new version will be available from the usual locations upon release:
+
+- https://ftp.exim.org/pub/exim/exim4/
+- https://code.exim.org/exim/exim/releases
