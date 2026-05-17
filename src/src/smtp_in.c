@@ -945,25 +945,27 @@ static in_processing bdat_template = {
   .ungetc = bdat_ungetc
 };
 
+/* We're only expecting one bdat layer at a time, but we do bounce it in and
+out a lot.  So use a static struct rather than allocating. */
+static in_processing bdat_proc;
+
 static inline void
 bdat_push_receive_functions(void)
 {
 /* push the current receive_* function on the "stack", and
 replace them by bdat_getc(), which in turn will use the lwr_receive_*
 functions to do the dirty work. */
+
 if (!lwr_receive_getc)
   {
-  /*XXX maybe prefer to use a static buffer here? */
-  in_processing * inp = store_get(sizeof(*inp), GET_UNTAINTED);
-
   lwr_receive_getc = receive_getc;
   lwr_receive_getbuf = receive_getbuf;
   lwr_receive_hasc = receive_hasc;
   lwr_receive_ungetc = receive_ungetc;
 
-  *inp = bdat_template;
-  inp->lower = rx_prc;
-  rx_prc = inp;
+  bdat_proc = bdat_template;
+  bdat_proc.lower = rx_prc;
+  rx_prc = &bdat_proc;
   }
 else
   DEBUG(receive) debug_printf("chunking double-push receive functions\n");
