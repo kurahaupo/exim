@@ -545,8 +545,8 @@ static var_entry var_table[] = {
   { "host",                vtype_stringptr,   &deliver_host },
   { "host_address",        vtype_stringptr,   &deliver_host_address },
   { "host_data",           vtype_stringptr,   &host_data },
-  { "host_lookup_deferred",vtype_int,         &host_lookup_deferred },
-  { "host_lookup_failed",  vtype_int,         &host_lookup_failed },
+  { "host_lookup_deferred",vtype_boolint,     &host_lookup_deferred },
+  { "host_lookup_failed",  vtype_boolint,     &host_lookup_failed },
   { "host_port",           vtype_int,         &deliver_host_port },
   { "initial_cwd",         vtype_stringptr,   &initial_cwd },
   { "inode",               vtype_ino,         &deliver_inode },
@@ -2000,6 +2000,10 @@ switch (vp->type)
 
   case vtype_bool:
     sprintf(CS var_buffer, "%s", *(BOOL *)(val) ? "yes" : "no"); /* bool */
+    return var_buffer;
+
+  case vtype_boolint:	/* a logical bool, presented as an int 1/0 */
+    sprintf(CS var_buffer, "%c", *(BOOL *)(val) ? '1' : '0');    /* bool */
     return var_buffer;
 
   case vtype_stringptr:                      /* Pointer to string */

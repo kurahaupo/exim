@@ -983,6 +983,7 @@ enum vtypes {
   vtype_ino,            /* value is address of ino_t (not always an int) */
   vtype_uid,            /* value is address of uid_t (not always an int) */
   vtype_gid,            /* value is address of gid_t (not always an int) */
+  vtype_boolint,        /* value is address of bool; present as int */
   vtype_bool,           /* value is address of bool */
   vtype_stringptr,      /* value is address of pointer to string */
   vtype_msgbody,        /* as stringptr, but read when first required */
