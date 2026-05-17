@@ -611,19 +611,20 @@ static BOOL
 tls_refill(unsigned lim)
 {
 exim_gnutls_state_st * state = &state_server;
+uschar * s = state->xfer_buffer + IN_UNGET_MAX;
 ssize_t inbytes;
 
 DEBUG(tls) debug_printf("Calling gnutls_record_recv"
   "(session=%p, buffer=%p, buffersize=%u)\n",
-  state->session, state->xfer_buffer, ssl_xfer_buffer_size);
+  state->session, s, ssl_xfer_buffer_rsize);
 
 sigalrm_seen = FALSE;
 if (smtp_receive_timeout > 0) ALARM(smtp_receive_timeout);
 
 errno = 0;
 do
-  inbytes = gnutls_record_recv(state->session, state->xfer_buffer,
-    MIN(ssl_xfer_buffer_size, lim));
+  inbytes = gnutls_record_recv(state->session, s,
+    MIN(ssl_xfer_buffer_rsize, lim));
 while (inbytes == GNUTLS_E_AGAIN);
 
 if (smtp_receive_timeout > 0) ALARM_CLR(0);
@@ -665,10 +666,10 @@ else if (inbytes < 0)
   return FALSE;
   }
 #ifndef DISABLE_DKIM
-smtp_verify_feed(state->xfer_buffer, inbytes);
+smtp_verify_feed(s, inbytes);
 #endif
-state->xfer_buffer_hwm = (int) inbytes;
-state->xfer_buffer_lwm = 0;
+state->xfer_buffer_hwm = (int) inbytes + IN_UNGET_MAX;
+state->xfer_buffer_lwm = IN_UNGET_MAX;
 return TRUE;
 }
 

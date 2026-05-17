@@ -28,7 +28,8 @@ we need room to handle large base64-encoded AUTHs for GSSAPI.
 
 /* Size of buffer for reading SMTP incoming packets */
 
-#define IN_BUFFER_SIZE		8192
+#define IN_UNGET_MAX		2
+#define IN_BUFFER_SIZE		IN_UNGET_MAX + 8192
 
 /* Buffer for SMTP responses */
 
@@ -348,8 +349,8 @@ one incoming SMTP call, we just use a single buffer and flags. There is no need
 to implement a complicated private FILE-like structure.*/
 
 static uschar *smtp_inbuffer;
-static uschar *smtp_inptr;
-static uschar *smtp_inend;
+static uschar *smtp_inptr;		/* read point */
+static uschar *smtp_inend;		/* write point */
 static int     smtp_had_eof;
 static int     smtp_had_error;
 
@@ -467,7 +468,7 @@ if (!(smtp_inbuffer = US malloc(IN_BUFFER_SIZE)))
   log_write_die(LOG_MAIN, "malloc() failed for SMTP input buffer");
 smtp_inbuffer[IN_BUFFER_SIZE-1] = '\0';
 
-smtp_inptr = smtp_inend = smtp_inbuffer;
+smtp_inptr = smtp_inend = smtp_inbuffer + IN_UNGET_MAX;
 smtp_had_eof = smtp_had_error = 0;
 }
 
@@ -497,6 +498,7 @@ Return false for error or EOF.
 static BOOL
 smtp_refill(unsigned lim)
 {
+uschar * s;
 int rc, save_errno;
 
 if (smtp_out_fd < 0 || smtp_in_fd < 0) return FALSE;
@@ -505,9 +507,11 @@ smtp_fflush(SFF_UNCORK);
 if (smtp_receive_timeout > 0) ALARM(smtp_receive_timeout);
 
 /* Limit amount read, so non-message data is not fed to DKIM.
-Take care to not touch the safety NUL at the end of the buffer. */
+Take care to not touch the safety NUL at the end of the buffer.
+Leave two unused bytes at the start of the buffer for ungetc operations. */
 
-rc = read(smtp_in_fd, smtp_inbuffer, MIN(IN_BUFFER_SIZE-1, lim));
+s = smtp_inbuffer + IN_UNGET_MAX;
+rc = read(smtp_in_fd, s, MIN(IN_BUFFER_SIZE-IN_UNGET_MAX-1, lim));
 save_errno = errno;
 if (smtp_receive_timeout > 0) ALARM_CLR(0);
 if (rc <= 0)
@@ -530,10 +534,10 @@ if (rc <= 0)
   return FALSE;
   }
 #ifndef DISABLE_DKIM
-smtp_verify_feed(smtp_inbuffer, rc);
+smtp_verify_feed(s, rc);
 #endif
-smtp_inend = smtp_inbuffer + rc;
-smtp_inptr = smtp_inbuffer;
+smtp_inend = s + rc;
+smtp_inptr = s;
 return TRUE;
 }
 
@@ -599,7 +603,9 @@ if (n > 0)
 
 
 /* SMTP version of ungetc()
-Puts a character back in the input buffer. Only ever called once.
+Puts a character back in the input buffer. Usually only ever called once,
+with a char just gotten - but the bdat layer, for certain error situations
+can call a sequence of two.
 
 Arguments:
   ch           the character

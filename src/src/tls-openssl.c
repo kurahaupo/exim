@@ -3858,7 +3858,7 @@ tls_get_channel_binding(ssl, &tls_in, GET_UNTAINTED);
    Hence no need to duplicate for _in and _out.
  */
 if (!ssl_xfer_buffer) ssl_xfer_buffer = store_malloc(ssl_xfer_buffer_size);
-ssl_xfer_buffer_lwm = ssl_xfer_buffer_hwm = 0;
+ssl_xfer_buffer_lwm = ssl_xfer_buffer_hwm = IN_UNGETC_MAX;
 ssl_xfer_eof = ssl_xfer_error = FALSE;
 
 receive_getc = tls_getc;
@@ -4549,15 +4549,15 @@ static BOOL
 tls_refill(unsigned lim)
 {
 SSL * ssl = state_server.lib_state.lib_ssl;
+uschar * s = ssl_xfer_buffer + IN_UNGETC_MAX;
 int error, inbytes;
 
 DEBUG(tls) debug_printf("Calling SSL_read(tls_refill %p, %p, %u)\n",
-  ssl, ssl_xfer_buffer, ssl_xfer_buffer_size);
+  ssl, s, ssl_xfer_buffer_rsize);
 
 ERR_clear_error();
 if (smtp_receive_timeout > 0) ALARM(smtp_receive_timeout);
-inbytes = SSL_read(ssl, CS ssl_xfer_buffer,
-		  MIN(ssl_xfer_buffer_size, lim));
+inbytes = SSL_read(ssl, CS s, MIN(ssl_xfer_buffer_rsize, lim));
 error = SSL_get_error(ssl, inbytes);
 if (smtp_receive_timeout > 0) ALARM_CLR(0);
 
@@ -4621,10 +4621,10 @@ switch(error)
   }
 
 #ifndef DISABLE_DKIM
-smtp_verify_feed(ssl_xfer_buffer, inbytes);
+smtp_verify_feed(s, inbytes);
 #endif
-ssl_xfer_buffer_hwm = inbytes;
-ssl_xfer_buffer_lwm = 0;
+ssl_xfer_buffer_hwm = inbytes + IN_UNGETC_MAX;
+ssl_xfer_buffer_lwm = IN_UNGETC_MAX;
 return TRUE;
 }
 
@@ -5307,7 +5307,7 @@ tls_state_out_to_in(int newfd, const uschar * ipaddr, int port)
 exim_openssl_client_tls_ctx * exim_client_ctx = tls_out.active.tls_ctx;
 
 if (!ssl_xfer_buffer) ssl_xfer_buffer = store_malloc(ssl_xfer_buffer_size);
-ssl_xfer_buffer_lwm = ssl_xfer_buffer_hwm = 0;
+ssl_xfer_buffer_lwm = ssl_xfer_buffer_hwm = IN_UNGETC_MAX;
 ssl_xfer_eof = ssl_xfer_error = FALSE;
 
 state_server.is_server = TRUE;

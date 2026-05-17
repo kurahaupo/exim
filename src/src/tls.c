@@ -25,6 +25,9 @@ functions from the OpenSSL or GNU TLS libraries. */
 # error One of USE_OPENSSL or USE_GNUTLS must be defined for a TLS build
 #endif
 
+/* Space to reserve at start of buffer for ungetc ops. */
+
+#define IN_UNGETC_MAX	2
 
 #if defined(MACRO_PREDEF) && !defined(DISABLE_TLS)
 # include "macro_predef.h"
@@ -71,11 +74,13 @@ functions and the common functions below.
 We're moving away from this; GnuTLS is already using a state, which
 can switch, so we can do TLS callouts during ACLs. */
 
-static const int ssl_xfer_buffer_size = 4096;
+static const int ssl_xfer_buffer_size = 8192;
+static const int ssl_xfer_buffer_rsize = 8192 - IN_UNGETC_MAX;
+
 #ifdef USE_OPENSSL
 static uschar *ssl_xfer_buffer = NULL;
-static int ssl_xfer_buffer_lwm = 0;
-static int ssl_xfer_buffer_hwm = 0;
+static int ssl_xfer_buffer_lwm = IN_UNGETC_MAX;		/* read point */
+static int ssl_xfer_buffer_hwm = IN_UNGETC_MAX;
 static int ssl_xfer_eof = FALSE;
 static BOOL ssl_xfer_error = FALSE;
 #endif
@@ -491,8 +496,10 @@ static void tls_client_resmption_key(tls_support *, const smtp_connect_args *,
 *           TLS version of ungetc                *
 *************************************************/
 
-/* Puts a character back in the input buffer. Only ever
-called once.
+/* Put a character back in the input buffer. Usually only called once, with
+a char just gotten - but the bdat layer, for certain error situations, can call
+a sequence of two.
+
 Only used by the server-side TLS.
 
 Arguments:
