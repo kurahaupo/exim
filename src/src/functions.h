@@ -658,6 +658,8 @@ extern void    tfo_probe(void);
 #endif
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
 extern void    tls_modify_variables(tls_support *);
+extern in_processing * tls_pop_receive_functions(in_processing *);
+extern in_processing * tls_push_receive_functions(in_processing *);
 #endif
 extern uschar *tod_stamp(int);
 

@@ -3868,7 +3868,7 @@ receive_hasc = tls_hasc;
 receive_ungetc = tls_ungetc;
 receive_feof = tls_feof;
 receive_ferror = tls_ferror;
-rx_prc = &tls_template;
+rx_prc = tls_push_receive_functions(rx_prc);
 
 tls_in.active.sock = smtp_out_fd;
 tls_in.active.tls_ctx = NULL;	/* not using explicit ctx for server-side */
@@ -4637,8 +4637,7 @@ tls_getc(in_processing * inp, unsigned lim)
 {
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(lim))
-    /*XXX the false ret w/o error happens on a tls closedown */
-    return ssl_xfer_error ? EOF : smtp_getc(NULL, lim);
+    return ssl_xfer_error ? EOF : smtp_getc(rx_prc, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4660,7 +4659,7 @@ uschar * buf;
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!ssl_xfer_error) return smtp_getbuf(NULL, len);
+    if (!ssl_xfer_error) return smtp_getbuf(rx_prc, len);
     *len = 0;
     return NULL;
     }
@@ -4953,7 +4952,7 @@ if (!o_ctx)		/* server side */
   receive_ungetc =	smtp_ungetc;
   receive_feof =	smtp_feof;
   receive_ferror =	smtp_ferror;
-  rx_prc = &smtp_template;
+  rx_prc = tls_pop_receive_functions(rx_prc);
 
   tls_in.active.tls_ctx = NULL;
   tls_in.sni = NULL;

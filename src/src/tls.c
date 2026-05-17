@@ -571,7 +571,43 @@ return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 }
 
 
+
+/******************************************************************************/
+/* Push TLS receive processing onto the stack. The functions do not directly use
+the underlying stack element, but this lets us unstack neatly on a TLS close.
+We do not expect more than one TLS layer active, so can use a static struct
+rather than allocating.
+
+Argument: current stack top.
+Return the putative stack top, but let the caller actually set the modification.
+*/
+
+in_processing *
+tls_push_receive_functions(in_processing * inp)
+{
+static in_processing tls_proc = {
+  .getc =	tls_getc,
+  .getbuf =	tls_getbuf,
+  .getcache =	tls_get_cache,
+  .hasc =	tls_hasc,
+  .ungetc =	tls_ungetc,
+  .feof =	tls_feof,
+  .ferror =	tls_ferror
+};
+tls_proc.lower = inp;
+return &tls_proc;
+}
+
+/* Pop TLS receive processing */
+in_processing *
+tls_pop_receive_functions(in_processing * inp)
+{
+return inp->lower;
+}
+
+
 #endif  /*DISABLE_TLS*/
+/******************************************************************************/
 
 void
 tls_modify_variables(tls_support * dest_tsp)

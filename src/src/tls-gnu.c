@@ -3368,7 +3368,7 @@ receive_hasc = tls_hasc;
 receive_ungetc = tls_ungetc;
 receive_feof = tls_feof;
 receive_ferror = tls_ferror;
-rx_prc = &tls_template;
+rx_prc = tls_push_receive_functions(rx_prc);
 
 return OK;
 }
@@ -3994,7 +3994,7 @@ if (!ct_ctx)	/* server */
   receive_ungetc =	smtp_ungetc;
   receive_feof =	smtp_feof;
   receive_ferror =	smtp_ferror;
-  rx_prc = &smtp_template;
+  rx_prc = tls_pop_receive_functions(rx_prc);
   }
 
 gnutls_deinit(state->session);

@@ -2507,6 +2507,7 @@ else
 call the local functions instead of the standard C ones. */
 
 smtp_buf_init();
+smtp_rcv_cleartext();
 
 #ifndef DISABLE_TLS
 if (atrn_mode && tls_in.active.sock >= 0)
@@ -2518,11 +2519,9 @@ if (atrn_mode && tls_in.active.sock >= 0)
   receive_ungetc = tls_ungetc;
   receive_feof = tls_feof;
   receive_ferror = tls_ferror;
-  rx_prc = &tls_template;
+  rx_prc = tls_push_receive_functions(rx_prc);
   }
-else
 #endif
-  smtp_rcv_cleartext();
 
 lwr_receive_getc = NULL;
 lwr_receive_getbuf = NULL;

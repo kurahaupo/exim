@@ -90,7 +90,6 @@ typedef struct {
 } tls_support;
 extern tls_support tls_in;
 extern tls_support tls_out;
-extern in_processing tls_template;     /* Input processing functions */
 #endif	/*!MACRO_PREDEF*/
 
 #ifndef DISABLE_TLS

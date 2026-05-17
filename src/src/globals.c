@@ -76,15 +76,6 @@ tls_support tls_out = {
  .active =		{.sock = -1},
  /* all other elements zero */
 };
-in_processing tls_template = {
-  .getc =	tls_getc,
-  .getbuf =	tls_getbuf,
-  .getcache =	tls_get_cache,
-  .hasc =	tls_hasc,
-  .ungetc =	tls_ungetc,
-  .feof =	tls_feof,
-  .ferror =	tls_ferror
-};
 #endif
 
 uschar *dsn_envid              = NULL;
