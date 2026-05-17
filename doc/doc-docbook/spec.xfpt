@@ -23895,7 +23895,9 @@ specifies a path.
 .cindex "locking files"
 .cindex "lock files"
 If you are using more than one host to deliver over NFS into the same
-mailboxes, you should always use lock files.
+mailboxes, every program that opens the mailbox must use compatible locking.
+Lock files are the safest choice when you cannot guarantee that all such
+programs (including MUAs) use &[fcntl()]& locking.
 
 The string value is expanded for each delivery, and must yield an absolute
 path. The most common settings of this option are variations on one of these
@@ -24409,10 +24411,13 @@ sure that every MUA that is ever going to look at your users' mailboxes uses
 delivering over NFS from more than one host.
 
 .cindex "NFS" "lock file"
-In order to append to an NFS file safely from more than one host, it is
-necessary to take out a lock &'before'& opening the file, and the lock file
-achieves this. Otherwise, even with &[fcntl()]& locking, there is a risk of
-file corruption.
+Historically, lock files were recommended for mailboxes appended to from more
+than one host over NFS, because some MUAs do not use &[fcntl()]& locking, and
+because &[fcntl()]& locking was unreliable on older NFS implementations. On
+modern NFS (NFSv3 with NLM, NFSv4) &[fcntl()]& locking is reliable provided
+every program that touches the mailbox uses it. A lock file is still required
+when interoperating with user agents that use dot-locking, or in environments
+where &[fcntl()]& over NFS cannot be trusted.
 
 The &%use_lockfile%& option is set by default unless &%use_mbx_lock%& is set.
 It is not possible to turn both &%use_lockfile%& and &%use_fcntl_lock%& off,
