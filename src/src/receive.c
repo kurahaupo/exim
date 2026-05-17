@@ -49,8 +49,8 @@ uschar stdin_buf[4096];
 uschar * stdin_inptr = stdin_buf;
 uschar * stdin_inend = stdin_buf;
 
-static BOOL
-stdin_refill(unsigned lim)
+BOOL
+stdin_refill(in_processing * inp, unsigned lim)
 {
 size_t rc = fread(stdin_buf, 1, MIN(sizeof(stdin_buf), lim), stdin);
 if (rc == 0)
@@ -81,17 +81,17 @@ return TRUE;
 }
 
 int
-stdin_getc(unsigned lim)
+stdin_getc(in_processing * inp, unsigned lim)
 {
 if (stdin_inptr >= stdin_inend)
-  if (!stdin_refill(lim))
+  if (!stdin_refill(inp, lim))
       return EOF;
 return *stdin_inptr++;
 }
 
 
 BOOL
-stdin_hasc(void)
+stdin_hasc(in_processing * inp)
 {
 return stdin_inptr < stdin_inend;
 }
@@ -99,12 +99,12 @@ return stdin_inptr < stdin_inend;
 /* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
 
 uschar *
-stdin_getbuf(unsigned * len)
+stdin_getbuf(in_processing * inp, unsigned * len)
 {
 unsigned size;
 uschar * buf;
 
-if (!stdin_hasc() && !stdin_refill(*len))
+if (!stdin_hasc(inp) && !stdin_refill(inp, *len))
   { *len = 0; return NULL; }
 
 if ((size = stdin_inend - stdin_inptr) > *len) size = *len;
@@ -115,7 +115,7 @@ return buf;
 }
 
 int
-stdin_ungetc(int c)
+stdin_ungetc(in_processing * inp, int c)
 {
 if (stdin_inptr <= stdin_buf)
   log_write_die(LOG_MAIN, "buffer underflow in stdin_ungetc");
@@ -125,13 +125,13 @@ return c;
 }
 
 int
-stdin_feof(void)
+stdin_feof(in_processing * inp)
 {
-return stdin_hasc() ? FALSE : feof(stdin);
+return stdin_hasc(inp) ? FALSE : feof(stdin);
 }
 
 int
-stdin_ferror(void)
+stdin_ferror(in_processing * inp)
 {
 return ferror(stdin);
 }
@@ -648,7 +648,7 @@ the file copy. */
 static void
 log_close_chk(void)
 {
-if (!receive_timeout && !receive_hasc())
+if (!receive_timeout && !receive_hasc(rx_prc))
   {
   struct timeval t;
   timesince(&t, &received_time);
@@ -711,7 +711,7 @@ if (!f.dot_ends)
   int last_ch = '\n';
 
   for ( ;
-       log_close_chk(), (ch = (receive_getc)(GETC_BUFFER_UNLIMITED)) >= 0;
+       log_close_chk(), (ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) >= 0;
        last_ch = ch)
     {
     if (ch == 0) body_zerocount++;
@@ -754,7 +754,8 @@ if (!f.dot_ends)
 
 ch_state = 1;
 
-while (log_close_chk(), (ch = (receive_getc)(GETC_BUFFER_UNLIMITED)) >= 0)
+while (log_close_chk(),
+       (ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) >= 0)
   {
   if (ch == 0) body_zerocount++;
   switch (ch_state)
@@ -878,7 +879,7 @@ enum { s_linestart, s_normal, s_had_cr, s_had_nl_dot, s_had_dot_cr } ch_state =
 	      s_linestart;
 int linelength = 0, ch;
 
-while ((ch = (receive_getc)(GETC_BUFFER_UNLIMITED)) >= 0)
+while ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) >= 0)
   {
   if (ch == 0) body_zerocount++;
   switch (ch_state)
@@ -1020,7 +1021,7 @@ BOOL fix_nl = FALSE;
 
 for(;;)
   {
-  switch ((ch = bdat_getc(GETC_BUFFER_UNLIMITED)))
+  switch ((ch = bdat_getc(rx_prc, GETC_BUFFER_UNLIMITED)))
     {
     case EOF:	return END_EOF;
     case ERR:	return END_PROTOCOL;
@@ -1046,11 +1047,11 @@ for(;;)
       if (linelength == -1)    /* \r already seen (see below) */
         {
         DEBUG(receive) debug_printf("Add missing LF\n");
-        bdat_ungetc('\n');
+        bdat_ungetc(rx_prc, '\n');
         continue;
         }
       DEBUG(receive) debug_printf("Add missing CRLF\n");
-      bdat_ungetc('\r');      /* not even \r was seen */
+      bdat_ungetc(rx_prc, '\r');      /* not even \r was seen */
       fix_nl = TRUE;
 
       continue;
@@ -1074,7 +1075,7 @@ for(;;)
       else if (ch == '\r')
 	{
 	ch_state = CR_SEEN;
-       if (fix_nl) bdat_ungetc('\n');
+       if (fix_nl) bdat_ungetc(rx_prc, '\n');
 	continue;			/* don't write CR */
 	}
       break;
@@ -1133,13 +1134,13 @@ for (;;)
   if (chunking_data_left > 0)
     {
     unsigned len = MAX(chunking_data_left, thismessage_size_limit - message_size + 1);
-    const uschar * buf = bdat_getbuf(&len);
+    const uschar * buf = bdat_getbuf(rx_prc, &len);
 
     if (!buf) return END_EOF;
     message_size += len;
     if (fout && fwrite(buf, len, 1, fout) != 1) return END_WERROR;
     }
-  else switch (ch = bdat_getc(GETC_BUFFER_UNLIMITED))
+  else switch (ch = bdat_getc(rx_prc, GETC_BUFFER_UNLIMITED))
     {
     case EOF: return END_EOF;
     case EOD: return END_DOT;
@@ -1962,7 +1963,7 @@ next->text. */
 
 for (;;)
   {
-  int ch = (receive_getc)(GETC_BUFFER_UNLIMITED);
+  int ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED);
 
   /* If we hit EOF on a SMTP connection, it's an error, since incoming
   SMTP must have a correct "." terminator. */
@@ -2029,7 +2030,7 @@ for (;;)
     if (first_line_ended_crlf == TRUE_UNSET)
       first_line_ended_crlf = FALSE;
     else if (first_line_ended_crlf)
-      receive_ungetc(' ');
+      receive_ungetc(rx_prc, ' ');
     goto EOL;
     }
 
@@ -2046,7 +2047,7 @@ for (;;)
   if (f.dot_ends && ptr == 0 && ch == '.')
     {
     /* leading dot while in headers-read mode */
-    if ((ch = (receive_getc)(GETC_BUFFER_UNLIMITED)) < 0)
+    if ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) < 0)
       goto CONN_GONE;
     if (ch == '\n' && first_line_ended_crlf == TRUE /* and not TRUE_UNSET */ )
     		/* dot, LF  but we are in CRLF mode.  Attack? */
@@ -2054,11 +2055,11 @@ for (;;)
 
     else if (ch == '\r')
       {
-      if ((ch = (receive_getc)(GETC_BUFFER_UNLIMITED)) < 0)
+      if ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) < 0)
 	goto CONN_GONE;
       if (ch != '\n')
         {
-	if (ch >= 0) receive_ungetc(ch);
+	if (ch >= 0) receive_ungetc(rx_prc, ch);
         ch = '\r';              /* Revert to CR */
         }
       }
@@ -2086,7 +2087,7 @@ for (;;)
 
   if (ch == '\r')
     {
-    if ((ch = (receive_getc)(GETC_BUFFER_UNLIMITED)) < 0)
+    if ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) < 0)
       goto CONN_GONE;
     if (ch == '\n')
       {
@@ -2098,7 +2099,7 @@ for (;;)
     /* Otherwise, put back the character after CR, and turn the bare CR
     into LF SP. */
 
-    if (ch >= 0) (receive_ungetc)(ch);
+    if (ch >= 0) (receive_ungetc)(rx_prc, ch);
     next->text[ptr++] = '\n';
     message_size++;
     ch = ' ';
@@ -2184,7 +2185,7 @@ OVERSIZE:
 
   if (ch >= 0)
     {
-    int nextch = (receive_getc)(GETC_BUFFER_UNLIMITED);
+    int nextch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED);
     if (nextch == ' ' || nextch == '\t')
       {
       next->text[ptr++] = nextch;
@@ -2193,7 +2194,7 @@ OVERSIZE:
       continue;                      /* Iterate the loop */
       }
     else if (nextch >= 0)	/* not EOF, ERR etc */
-      (receive_ungetc)(nextch);   /* For next time */
+      (receive_ungetc)(rx_prc, nextch);   /* For next time */
     else ch = nextch;                   /* Cause main loop to exit at end */
     }
 
@@ -2402,7 +2403,7 @@ OVERSIZE:
 	sender_fullhost ? " H=" : "", sender_fullhost ? sender_fullhost : US"",
 	sender_ident ? " U=" : "",    sender_ident ? sender_ident : US"");
     smtp_printf("552 Message header not CRLF terminated\r\n", SP_NO_MORE);
-    bdat_flush_data();
+    bdat_flush_data(rx_prc);
     smtp_reply = US"";
     goto TIDYUP;                             /* Skip to end of function */
     }
@@ -2452,7 +2453,7 @@ skipped if already at EOF.
 In CHUNKING mode, a protocol error makes us give up on the message. */
 
 if (smtp_input)
-  if ((receive_feof)())
+  if ((receive_feof)(rx_prc))
     {
     smtp_reply = handle_lost_connection(US" (after header)");
     smtp_yield = FALSE;
@@ -3326,7 +3327,7 @@ if (next)
 (indicated by '.'), or might have encountered an error while writing the
 message id or "next" line. */
 
-if (!ferror(spool_data_file) && !(receive_feof)() && message_ended != END_DOT)
+if (!ferror(spool_data_file) && !(receive_feof)(rx_prc) && message_ended != END_DOT)
   {
   if (smtp_input)
     {
@@ -3417,10 +3418,10 @@ the input in cases of output errors, since the far end doesn't expect to see
 anything until the terminating dot line is sent. */
 
 if (fflush(spool_data_file) == EOF || ferror(spool_data_file) ||
-    EXIMfsync(fileno(spool_data_file)) < 0 || (receive_ferror)())
+    EXIMfsync(fileno(spool_data_file)) < 0 || (receive_ferror)(rx_prc))
   {
   uschar *msg_errno = US strerror(errno);
-  BOOL input_error = (receive_ferror)() != 0;
+  BOOL input_error = (receive_ferror)(rx_prc) != 0;
   uschar *msg = string_sprintf("%s error (%s) while receiving message from %s",
     input_error? "Input read" : "Spool write",
     msg_errno,
@@ -4327,12 +4328,12 @@ connection will vanish between the time of this test and the sending of the
 response, but the chance of this happening should be small. */
 
 if (  smtp_input && sender_host_address && !f.sender_host_notsocket
-   && !receive_hasc())
+   && !receive_hasc(rx_prc))
   {
   if (poll_one_fd(smtp_in_fd, POLLIN, 0) != 0)
     {
-    int c = (receive_getc)(GETC_BUFFER_UNLIMITED);
-    if (c >= 0) (receive_ungetc)(c);
+    int c = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED);
+    if (c >= 0) (receive_ungetc)(rx_prc, c);
     else
       {
       smtp_notquit_exit(US"connection-lost", NULL, NULL);
@@ -4548,12 +4549,12 @@ if (smtp_input)
 	the socket. */
 
         smtp_printf("250- %u byte chunk, total %d\r\n250 OK id=%s\r\n",
-	    receive_hasc(),
+	    receive_hasc(rx_prc),
 	    chunking_datasize, message_size+message_linecount, message_id);
 	chunking_state = CHUNKING_OFFERED;
 	}
       else
-        smtp_printf("250 OK id=%s\r\n", receive_hasc(), message_id);
+        smtp_printf("250 OK id=%s\r\n", receive_hasc(rx_prc), message_id);
 
       if (host_checking)
         smtp_printf("\n**** SMTP testing: that is not a real message id!\n\n",

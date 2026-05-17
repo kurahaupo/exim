@@ -1054,16 +1054,34 @@ typedef enum {
   SLIST_ORDER_UNDEFINED, SLIST_OLDER_FIRST, SLIST_RANDOM, SLIST_NEWER_FIRST
 } s_order_t;
 
+
 /* Input processing layer */
 typedef struct in_processing {
-  BOOL	(*refill)(unsigned);	/* buffer refill; arg: byte count limit. Ret: success */
-  int	(*getc)(unsigned);	/* get byte, refill if needed w/ byte count limit */
-  BOOL	(*hasc)(void);		/* predicate: byte avail for reading (without refill) */
-  uschar * (*getbuf)(unsigned *);/* get many bytes, with refill; arg req/ret byte cnt */
-  int	(*ungetc)(int);		/* push one byte back into buffer */
-  int	(*feof)(void);		/* predicate: EOF status */
-  int	(*ferror)(void);	/* predicate: error status */
-  struct in_processing * lower;	/* underlying layer, or NULL */
+  /* buffer refill; arg: byte count limit. Ret: success */
+  BOOL	(*refill)(struct in_processing *, unsigned);
+
+  /* get byte, refill if needed w/ byte count limit */
+  int	(*getc)(struct in_processing *, unsigned);
+
+  /* predicate: byte avail for reading (without refill) */
+  BOOL	(*hasc)(struct in_processing *);	
+
+  /* get many bytes, with refill; arg req/ret byte cnt */
+  uschar * (*getbuf)(struct in_processing *, unsigned *);
+
+  /* get up to the given number of bytes from any cached data, and feed to dkim. */
+  void	(*getcache)(struct in_processing *, unsigned);
+
+  /* push one byte back into buffer */
+  int	(*ungetc)(struct in_processing *, int);
+
+  /* predicate: EOF status */
+  int	(*feof)(struct in_processing *);
+
+  /* predicate: error status */
+  int	(*ferror)(struct in_processing *);
+
+  struct in_processing * lower;		/* underlying layer, or NULL */
 } in_processing;
 
 #endif	/* whole file */

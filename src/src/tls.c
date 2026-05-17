@@ -502,7 +502,7 @@ Returns:       the character
 */
 
 int
-tls_ungetc(int ch)
+tls_ungetc(in_processing * inp, int ch)
 {
 if (ssl_xfer_buffer_lwm <= 0)
   log_write_die(LOG_MAIN, "buffer underflow in tls_ungetc");
@@ -525,7 +525,7 @@ Returns:       non-zero if the eof flag is set
 */
 
 int
-tls_feof(void)
+tls_feof(in_processing * inp)
 {
 return (int)ssl_xfer_eof;
 }
@@ -547,7 +547,7 @@ Returns:       non-zero if the error flag is set
 */
 
 int
-tls_ferror(void)
+tls_ferror(in_processing * inp)
 {
 return (int)ssl_xfer_error;
 }

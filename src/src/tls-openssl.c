@@ -3868,6 +3868,7 @@ receive_hasc = tls_hasc;
 receive_ungetc = tls_ungetc;
 receive_feof = tls_feof;
 receive_ferror = tls_ferror;
+rx_prc = &tls_template;
 
 tls_in.active.sock = smtp_out_fd;
 tls_in.active.tls_ctx = NULL;	/* not using explicit ctx for server-side */
@@ -4632,11 +4633,12 @@ Only used by the server-side TLS.
 */
 
 int
-tls_getc(unsigned lim)
+tls_getc(in_processing * inp, unsigned lim)
 {
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(lim))
-    return ssl_xfer_error ? EOF : smtp_getc(lim);
+    /*XXX the false ret w/o error happens on a tls closedown */
+    return ssl_xfer_error ? EOF : smtp_getc(NULL, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4644,13 +4646,13 @@ return ssl_xfer_buffer[ssl_xfer_buffer_lwm++];
 }
 
 BOOL
-tls_hasc(void)
+tls_hasc(in_processing * inp)
 {
 return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 }
 
 uschar *
-tls_getbuf(unsigned * len)
+tls_getbuf(in_processing * inp, unsigned * len)
 {
 unsigned size;
 uschar * buf;
@@ -4658,7 +4660,7 @@ uschar * buf;
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!ssl_xfer_error) return smtp_getbuf(len);
+    if (!ssl_xfer_error) return smtp_getbuf(NULL, len);
     *len = 0;
     return NULL;
     }
@@ -4673,7 +4675,7 @@ return buf;
 
 
 void
-tls_get_cache(unsigned lim)
+tls_get_cache(in_processing * inp, unsigned lim)
 {
 #ifndef DISABLE_DKIM
 int n = ssl_xfer_buffer_hwm - ssl_xfer_buffer_lwm;
@@ -4695,7 +4697,7 @@ if (ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm) return TRUE;
 
 FD_ZERO(&fds);
 FD_SET(tls_in.active.sock, &fds);
-return select(tls_in.active.sock+ 1, (SELECT_ARG2_TYPE *)&fds,
+return select(tls_in.active.sock + 1, (SELECT_ARG2_TYPE *)&fds,
 	      NULL, NULL, &tzero) > 0;
 }
 
@@ -4951,6 +4953,8 @@ if (!o_ctx)		/* server side */
   receive_ungetc =	smtp_ungetc;
   receive_feof =	smtp_feof;
   receive_ferror =	smtp_ferror;
+  rx_prc = &smtp_template;
+
   tls_in.active.tls_ctx = NULL;
   tls_in.sni = NULL;
   /* Leave bits, peercert, cipher, peerdn, certificate_verified set, for logging */

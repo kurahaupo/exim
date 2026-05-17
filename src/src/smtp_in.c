@@ -495,7 +495,7 @@ Return false for error or EOF.
 */
 
 static BOOL
-smtp_refill(unsigned lim)
+smtp_refill(in_processing * inp, unsigned lim)
 {
 int rc, save_errno;
 
@@ -541,7 +541,7 @@ return TRUE;
 /* Check if there is buffered data */
 
 BOOL
-smtp_hasc(void)
+smtp_hasc(in_processing * inp)
 {
 return smtp_inptr < smtp_inend;
 }
@@ -558,21 +558,21 @@ Returns:    the next character or EOF
 */
 
 int
-smtp_getc(unsigned lim)
+smtp_getc(in_processing * inp, unsigned lim)
 {
-if (!smtp_hasc() && !smtp_refill(lim)) return EOF;
+if (!smtp_hasc(inp) && !smtp_refill(inp, lim)) return EOF;
 return *smtp_inptr++;
 }
 
 /* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
 
 uschar *
-smtp_getbuf(unsigned * len)
+smtp_getbuf(in_processing * inp, unsigned * len)
 {
 unsigned size;
 uschar * buf;
 
-if (!smtp_hasc() && !smtp_refill(*len))
+if (!smtp_hasc(inp) && !smtp_refill(inp, *len))
   { *len = 0; return NULL; }
 
 if ((size = smtp_inend - smtp_inptr) > *len) size = *len;
@@ -586,7 +586,7 @@ return buf;
 Called, unless TLS, just before starting to read message headers. */
 
 void
-smtp_get_cache(unsigned lim)
+smtp_get_cache(in_processing * inp, unsigned lim)
 {
 #ifndef DISABLE_DKIM
 int n = smtp_inend - smtp_inptr;
@@ -608,7 +608,7 @@ Returns:       the character
 */
 
 int
-smtp_ungetc(int ch)
+smtp_ungetc(in_processing *, int ch)
 {
 if (smtp_inptr <= smtp_inbuffer)	/* NB: NOT smtp_hasc() ! */
   log_write_die(LOG_MAIN, "buffer underflow in smtp_ungetc");
@@ -626,7 +626,7 @@ Returns:       non-zero if the eof flag is set
 */
 
 int
-smtp_feof(void)
+smtp_feof(in_processing *)
 {
 return smtp_had_eof;
 }
@@ -641,7 +641,7 @@ Returns:       non-zero if the error flag is set
 */
 
 int
-smtp_ferror(void)
+smtp_ferror(in_processing *)
 {
 errno = smtp_had_error;
 return smtp_had_error;
@@ -669,10 +669,10 @@ if (rc <= 0) return FALSE;	/* Not ready to read */
 if (eof_ok) return TRUE;	/* A read will not block */
 
 /* Check for actual data */
-rc = smtp_getc(GETC_BUFFER_UNLIMITED);
+rc = smtp_getc(rx_prc, GETC_BUFFER_UNLIMITED);
 if (rc < 0) return FALSE;      /* End of file or error */
 
-smtp_ungetc(rc);
+smtp_ungetc(rx_prc, rc);
 return TRUE;
 }
 
@@ -737,6 +737,7 @@ receive_hasc = smtp_hasc;
 receive_ungetc = smtp_ungetc;
 receive_feof = smtp_feof;
 receive_ferror = smtp_ferror;
+rx_prc = &smtp_template;
 }
 
 /* Forward declarations */
@@ -761,7 +762,7 @@ Returns:    the next character or ERR, EOD or EOF
 */
 
 int
-bdat_getc(unsigned lim)
+bdat_getc(in_processing * inp, unsigned lim)
 {
 uschar * user_msg = NULL, * log_msg;
 int rc;
@@ -780,7 +781,7 @@ for(;;)
   {
 
   if (chunking_data_left > 0)
-    return lwr_receive_getc(chunking_data_left--);
+    return lwr_receive_getc(inp->lower, chunking_data_left--);
 
   bdat_pop_receive_functions();
 #ifndef DISABLE_DKIM
@@ -793,7 +794,7 @@ for(;;)
   if (!f.smtp_in_pipelining_advertised && !check_sync(WBR_DATA_ONLY))
     {
     unsigned nchars = 32;
-    uschar * buf = receive_getbuf(&nchars);		/* destructive read */
+    uschar * buf = receive_getbuf(rx_prc, &nchars);		/* destructive read */
 
     incomplete_transaction_log(US"sync failure");
     if (buf)
@@ -901,15 +902,15 @@ next_cmd:
 }
 
 BOOL
-bdat_hasc(void)
+bdat_hasc(in_processing * inp)
 {
 if (chunking_data_left > 0)
-  return lwr_receive_hasc();
+  return lwr_receive_hasc(inp->lower);
 return TRUE;
 }
 
 uschar *
-bdat_getbuf(unsigned * len)
+bdat_getbuf(in_processing * inp, unsigned * len)
 {
 uschar * buf;
 
@@ -917,18 +918,18 @@ if (chunking_data_left == 0)
   { *len = 0; return NULL; }
 
 if (*len > chunking_data_left) *len = chunking_data_left;
-buf = lwr_receive_getbuf(len);	/* Either smtp_getbuf or tls_getbuf */
+buf = lwr_receive_getbuf(inp->lower, len);	/* Either smtp_getbuf or tls_getbuf */
 chunking_data_left -= *len;
 return buf;
 }
 
 void
-bdat_flush_data(void)
+bdat_flush_data(in_processing * inp)
 {
 while (chunking_data_left)
   {
   unsigned n = chunking_data_left;
-  if (!bdat_getbuf(&n)) break;
+  if (!bdat_getbuf(inp, &n)) break;
   }
 
 bdat_pop_receive_functions();
@@ -937,6 +938,12 @@ DEBUG(receive)
   debug_printf("chunking state '%s'\n", chunking_states[chunking_state]);
 }
 
+static in_processing bdat_template = {
+  .getc = bdat_getc,
+  .getbuf = bdat_getbuf,
+  .hasc = bdat_hasc,
+  .ungetc = bdat_ungetc
+};
 
 static inline void
 bdat_push_receive_functions(void)
@@ -946,10 +953,17 @@ replace them by bdat_getc(), which in turn will use the lwr_receive_*
 functions to do the dirty work. */
 if (!lwr_receive_getc)
   {
+  /*XXX maybe prefer to use a static buffer here? */
+  in_processing * inp = store_get(sizeof(*inp), GET_UNTAINTED);
+
   lwr_receive_getc = receive_getc;
   lwr_receive_getbuf = receive_getbuf;
   lwr_receive_hasc = receive_hasc;
   lwr_receive_ungetc = receive_ungetc;
+
+  *inp = bdat_template;
+  inp->lower = rx_prc;
+  rx_prc = inp;
   }
 else
   DEBUG(receive) debug_printf("chunking double-push receive functions\n");
@@ -977,14 +991,16 @@ lwr_receive_getc = NULL;
 lwr_receive_getbuf = NULL;
 lwr_receive_hasc = NULL;
 lwr_receive_ungetc = NULL;
+
+rx_prc = rx_prc->lower;
 }
 
 int
-bdat_ungetc(int ch)
+bdat_ungetc(in_processing * inp, int ch)
 {
 chunking_data_left++;
 bdat_push_receive_functions();  /* we're not done yet, calling push is safe, because it checks the state before pushing anything */
-return lwr_receive_ungetc(ch);
+return lwr_receive_ungetc(rx_prc->lower, ch);
 }
 
 
@@ -1304,7 +1320,7 @@ os_non_restarting_signal(SIGALRM, command_timeout_handler);
 
 /* Read up to end of line */
 
-while ((c = (receive_getc)(buffer_lim)) != '\n')
+while ((c = (receive_getc)(rx_prc, buffer_lim)) != '\n')
   {
   /* If hit end of file, return pseudo EOF command. Whether we have a
   part-line already read doesn't matter, since this is an error state. */
@@ -1948,7 +1964,7 @@ like HELO and RSET count as whole transactions. */
 
 bsmtp_transaction_linecount = receive_linecount;
 
-if ((receive_feof)()) return 0;   /* Treat EOF as QUIT */
+if ((receive_feof)(rx_prc)) return 0;   /* Treat EOF as QUIT */
 
 cancel_cutthrough_connection(TRUE, US"smtp_setup_batch_msg");
 reset_point = smtp_reset(reset_point);		/* Reset for start of message */
@@ -2500,6 +2516,7 @@ if (atrn_mode && tls_in.active.sock >= 0)
   receive_ungetc = tls_ungetc;
   receive_feof = tls_feof;
   receive_ferror = tls_ferror;
+  rx_prc = &tls_template;
   }
 else
 #endif
@@ -2903,7 +2920,7 @@ else						/* not already sent */
 #endif
       {
       unsigned nchars = 128;
-      uschar * buf = receive_getbuf(&nchars);		/* destructive read */
+      uschar * buf = receive_getbuf(rx_prc, &nchars);	/* destructive read */
 
       if (buf)
 	log_write(LOG_MAIN|LOG_REJECT, "SMTP protocol "
@@ -5576,7 +5593,7 @@ while (done <= 0)
 	if (chunking_state > CHUNKING_OFFERED)
 	  {
 	  bdat_push_receive_functions();
-	  bdat_flush_data();
+	  bdat_flush_data(rx_prc);
 	  }
 	break;
 	}
@@ -5590,7 +5607,7 @@ while (done <= 0)
 	if (chunking_state > CHUNKING_OFFERED)
 	  {
 	  bdat_push_receive_functions();
-	  bdat_flush_data();
+	  bdat_flush_data(rx_prc);
 	  }
 	break;
 	}
@@ -5760,7 +5777,7 @@ while (done <= 0)
       Pipelining sync checks will normally have protected us too, unless
       disabled by configuration. */
 
-      if (receive_hasc())
+      if (receive_hasc(rx_prc))
 	{
 	DEBUG(any)
 	  debug_printf("Non-empty input buffer after STARTTLS; naive attack?\n");
@@ -5922,7 +5939,7 @@ while (done <= 0)
 
     case EOF_CMD:
       {
-      uschar * errstr = smtp_ferror()
+      uschar * errstr = smtp_ferror(rx_prc)
 	? string_sprintf(" (error: %s)", strerror(errno)) : US"";
 
       incomplete_transaction_log(US"connection lost");
@@ -5990,7 +6007,7 @@ while (done <= 0)
     SYNC_FAILURE:
       {
 	unsigned nchars = 150;
-	uschar * buf = receive_getbuf(&nchars);		/* destructive read */
+	uschar * buf = receive_getbuf(rx_prc, &nchars);	/* destructive read */
 
 	incomplete_transaction_log(US"sync failure");
 	if (buf)

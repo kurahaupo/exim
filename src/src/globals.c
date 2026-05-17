@@ -76,6 +76,15 @@ tls_support tls_out = {
  .active =		{.sock = -1},
  /* all other elements zero */
 };
+in_processing tls_template = {
+  .getc =	tls_getc,
+  .getbuf =	tls_getbuf,
+  .getcache =	tls_get_cache,
+  .hasc =	tls_hasc,
+  .ungetc =	tls_ungetc,
+  .feof =	tls_feof,
+  .ferror =	tls_ferror
+};
 #endif
 
 uschar *dsn_envid              = NULL;
@@ -135,18 +144,19 @@ incoming TCP/IP. The defaults use stdin. We never need these for any
 stand-alone tests. */
 
 #if !defined(STAND_ALONE) && !defined(MACRO_PREDEF)
-int	(*lwr_receive_getc)(unsigned)	= stdin_getc;
-uschar * (*lwr_receive_getbuf)(unsigned *) = NULL;
-int	(*lwr_receive_ungetc)(int)	= stdin_ungetc;
-BOOL	(*lwr_receive_hasc)(void)	= stdin_hasc;
+int	(*lwr_receive_getc)(in_processing *, unsigned)	= stdin_getc;
+uschar * (*lwr_receive_getbuf)(in_processing *, unsigned *) = NULL;
+int	(*lwr_receive_ungetc)(in_processing *, int)	= stdin_ungetc;
+BOOL	(*lwr_receive_hasc)(in_processing *)	= stdin_hasc;
 
-int	(*receive_getc)(unsigned) 	= stdin_getc;
-uschar * (*receive_getbuf)(unsigned *) 	= stdin_getbuf;
-void	(*receive_get_cache)(unsigned)	= NULL;
-BOOL	(*receive_hasc)(void)		= stdin_hasc;
-int	(*receive_ungetc)(int)    	= stdin_ungetc;
-int	(*receive_feof)(void)     	= stdin_feof;
-int	(*receive_ferror)(void)   	= stdin_ferror;
+int	(*receive_getc)(in_processing *, unsigned) 	= stdin_getc;
+uschar * (*receive_getbuf)(in_processing *, unsigned *) 	= stdin_getbuf;
+void	(*receive_get_cache)(in_processing *, unsigned)	= NULL;
+BOOL	(*receive_hasc)(in_processing *)		= stdin_hasc;
+int	(*receive_ungetc)(in_processing *, int)    	= stdin_ungetc;
+int	(*receive_feof)(in_processing *)     	= stdin_feof;
+int	(*receive_ferror)(in_processing *)   	= stdin_ferror;
+in_processing * rx_prc = &stdin_template;
 #endif
 
 
@@ -1372,6 +1382,17 @@ int     smtp_rlr_base          = 0;
 double  smtp_rlr_factor        = 0.0;
 int     smtp_rlr_limit         = 0;
 int     smtp_rlr_threshold     = INT_MAX;
+#ifndef MACRO_PREDEF
+in_processing smtp_template = {
+  .getc =	smtp_getc,
+  .getbuf =	smtp_getbuf,
+  .getcache =	smtp_get_cache,
+  .hasc =	smtp_hasc,
+  .ungetc =	smtp_ungetc,
+  .feof =	smtp_feof,
+  .ferror =	smtp_ferror
+};
+#endif
 #ifdef SUPPORT_I18N
 const uschar *smtputf8_advertise_hosts = US"*";	/* overridden under test-harness */
 #endif

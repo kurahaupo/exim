@@ -3368,6 +3368,7 @@ receive_hasc = tls_hasc;
 receive_ungetc = tls_ungetc;
 receive_feof = tls_feof;
 receive_ferror = tls_ferror;
+rx_prc = &tls_template;
 
 return OK;
 }
@@ -3993,6 +3994,7 @@ if (!ct_ctx)	/* server */
   receive_ungetc =	smtp_ungetc;
   receive_feof =	smtp_feof;
   receive_ferror =	smtp_ferror;
+  rx_prc = &smtp_template;
   }
 
 gnutls_deinit(state->session);
@@ -4023,13 +4025,13 @@ Returns:    the next character or EOF
 */
 
 int
-tls_getc(unsigned lim)
+tls_getc(in_processing * inp, unsigned lim)
 {
 exim_gnutls_state_st * state = &state_server;
 
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(lim))
-    return state->xfer_error ? EOF : smtp_getc(lim);
+    return state->xfer_error ? EOF : smtp_getc(NULL, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4037,14 +4039,14 @@ return state->xfer_buffer[state->xfer_buffer_lwm++];
 }
 
 BOOL
-tls_hasc(void)
+tls_hasc(in_processing * inp)
 {
 const exim_gnutls_state_st * state = &state_server;
 return state->xfer_buffer_lwm < state->xfer_buffer_hwm;
 }
 
 uschar *
-tls_getbuf(unsigned * len)
+tls_getbuf(in_processing * inp, unsigned * len)
 {
 exim_gnutls_state_st * state = &state_server;
 unsigned size;
@@ -4053,7 +4055,7 @@ uschar * buf;
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!state->xfer_error) return smtp_getbuf(len);
+    if (!state->xfer_error) return smtp_getbuf(NULL, len);
     *len = 0;
     return NULL;
     }
@@ -4069,7 +4071,7 @@ return buf;
 
 /* Get up to the given number of bytes from any cached data, and feed to dkim. */
 void
-tls_get_cache(unsigned lim)
+tls_get_cache(in_processing * inp, unsigned lim)
 {
 #ifndef DISABLE_DKIM
 exim_gnutls_state_st * state = &state_server;

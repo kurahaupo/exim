@@ -90,6 +90,7 @@ typedef struct {
 } tls_support;
 extern tls_support tls_in;
 extern tls_support tls_out;
+extern in_processing tls_template;     /* Input processing functions */
 #endif	/*!MACRO_PREDEF*/
 
 #ifndef DISABLE_TLS
@@ -131,18 +132,19 @@ extern const uschar  *dsn_advertise_hosts;   /* host for which TLS is advertised
 /* Input-reading functions for messages, so we can use special ones for
 incoming TCP/IP. */
 
-extern int (*lwr_receive_getc)(unsigned);
-extern uschar * (*lwr_receive_getbuf)(unsigned *);
-extern BOOL (*lwr_receive_hasc)(void);
-extern int (*lwr_receive_ungetc)(int);
+extern int (*lwr_receive_getc)(in_processing *, unsigned);
+extern uschar * (*lwr_receive_getbuf)(in_processing *, unsigned *);
+extern BOOL (*lwr_receive_hasc)(in_processing *);
+extern int (*lwr_receive_ungetc)(in_processing *, int);
 
-extern int (*receive_getc)(unsigned);
-extern uschar * (*receive_getbuf)(unsigned *);
-extern BOOL (*receive_hasc)(void);
-extern void (*receive_get_cache)(unsigned);
-extern int (*receive_ungetc)(int);
-extern int (*receive_feof)(void);
-extern int (*receive_ferror)(void);
+extern int (*receive_getc)(in_processing *, unsigned);
+extern uschar * (*receive_getbuf)(in_processing *, unsigned *);
+extern BOOL (*receive_hasc)(in_processing *);
+extern void (*receive_get_cache)(in_processing *, unsigned);
+extern int (*receive_ungetc)(in_processing *, int);
+extern int (*receive_feof)(in_processing *);
+extern int (*receive_ferror)(in_processing *);
+extern in_processing * rx_prc;
 
 
 /* For clearing, saving, restoring address expansion variables. We have to have
@@ -993,6 +995,9 @@ extern int     smtp_rlr_base;          /* Base interval for RCPT rate limit */
 extern double  smtp_rlr_factor;        /* Factor for RCPT rate limit */
 extern int     smtp_rlr_limit;         /* Max delay */
 extern int     smtp_rlr_threshold;     /* Threshold for RCPT rate limit */
+#ifndef MACRO_PREDEF
+extern in_processing smtp_template;    /* Input processing functions */
+#endif
 extern unsigned smtp_peer_options;     /* Global flags for passed connections */
 extern unsigned smtp_peer_options_wrap; /* stacked version hidden by TLS */
 #ifdef SUPPORT_I18N

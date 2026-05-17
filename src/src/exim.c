@@ -4291,7 +4291,6 @@ defined) */
 if (cleanup_environment() == FALSE)
   log_write_die(LOG_PANIC_DIE, "Can't cleanup environment");
 
-
 /* If an action on specific messages is requested, or if a daemon or queue
 runner is being started, we need to know if Exim was called by an admin user.
 This is the case if the real user is root or exim, or if the real group is
