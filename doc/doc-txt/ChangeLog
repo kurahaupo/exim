@@ -2,6 +2,20 @@ This document describes *changes* to previous versions, that might
 affect Exim's operation, with an unchanged configuration file.  For new
 options, and new features, see the NewStuff file next to this ChangeLog.
 
+Exim version 4.99.4
+-------------------
+
+This is a security release.
+
+HS/01 Security: PROXYv2 parser: reject PROXY frames whose declared payload
+      length is too short for the claimed address family (12 bytes for
+      TCPv4/0x11, 36 bytes for TCPv6/0x21).  Previously a frame with
+      family=0x21 and len=0 caused 16 bytes of uninitialized stack to be
+      formatted as the sender's IPv6 address and disclosed in the SMTP
+      greeting banner.  Affects configurations with SUPPORT_PROXY and
+      `hosts_proxy` set.  Reported by Warisjeet Singh (sin99xx).
+
+
 Exim version 4.99.3
 -------------------
 
