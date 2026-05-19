@@ -7268,7 +7268,7 @@ any attribute values. See section &<<SECTldap>>&.
 .cindex "MySQL" "lookup type"
 .cindex "lookup" "MySQL"
 The format of the query is an SQL statement that is passed to a
-MySQL database. See section &<<SECTsql>>&.
+MySQL (MariaDB) database. See section &<<SECTsql>>&.
 
 .subsection nisplus
 .cindex "NIS+ lookup type"
@@ -8189,7 +8189,7 @@ operator is to double any quote characters within the text.
 .cindex "lookup" "Oracle"
 .cindex "Redis lookup type"
 .cindex lookup Redis
-Exim can support lookups in MySQL, Oracle, PostgreSQL, Redis,
+Exim can support lookups in MySQL (MariaDB), Oracle, PostgreSQL, Redis,
 and SQLite
 databases. Queries for these databases contain SQL statements, so an example
 might be
@@ -8340,7 +8340,7 @@ This syntax will be removed in a future release.
 
 
 .subsection "Special MySQL features" SECID73
-For MySQL, an empty host name or the use of &"localhost"& in &%mysql_servers%&
+For MySQL (MariaDB), an empty host name or the use of &"localhost"& in &%mysql_servers%&
 causes a connection to the server on the local host by means of a Unix domain
 socket. An alternate socket can be specified in parentheses.
 An option group name for MySQL option files can be specified in square brackets;
