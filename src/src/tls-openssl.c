@@ -4586,7 +4586,7 @@ switch(error)
     if (SSL_get_shutdown(ssl) == SSL_RECEIVED_SHUTDOWN)
 	  SSL_shutdown(ssl);
 
-    tls_close_notify();
+    tls_close(NULL, TLS_NO_SHUTDOWN);
     return FALSE;
 
   /* Handle genuine errors */
@@ -4945,18 +4945,7 @@ if (!o_ctx)		/* server side */
   state_server.u_ocsp.server.verify_stack = NULL;
 #endif
 
-  receive_getc =	smtp_getc;
-  receive_getbuf =	smtp_getbuf;
-  receive_get_cache =	smtp_get_cache;
-  receive_hasc =	smtp_hasc;
-  receive_ungetc =	smtp_ungetc;
-  receive_feof =	smtp_feof;
-  receive_ferror =	smtp_ferror;
-  rx_prc = tls_pop_receive_functions(rx_prc);
-
-  tls_in.active.tls_ctx = NULL;
-  tls_in.sni = NULL;
-  /* Leave bits, peercert, cipher, peerdn, certificate_verified set, for logging */
+  tls_receive_done();
   }
 
 SSL_free(*sslp);

@@ -586,6 +586,7 @@ in_processing *
 tls_push_receive_functions(in_processing * inp)
 {
 static in_processing tls_proc = {
+  .layer_name =	US"tls",
   .getc =	tls_getc,
   .getbuf =	tls_getbuf,
   .getcache =	tls_get_cache,

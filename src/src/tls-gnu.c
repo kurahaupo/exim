@@ -651,7 +651,7 @@ if (sigalrm_seen)
 else if (inbytes == 0)
   {
   DEBUG(tls) debug_printf("Got TLS_EOF\n");
-  tls_close_notify();
+  tls_close(NULL, TLS_NO_SHUTDOWN);
   return FALSE;
   }
 
@@ -3986,16 +3986,7 @@ if (do_shutdown)
   }
 
 if (!ct_ctx)	/* server */
-  {
-  receive_getc =	smtp_getc;
-  receive_getbuf =	smtp_getbuf;
-  receive_get_cache =	smtp_get_cache;
-  receive_hasc =	smtp_hasc;
-  receive_ungetc =	smtp_ungetc;
-  receive_feof =	smtp_feof;
-  receive_ferror =	smtp_ferror;
-  rx_prc = tls_pop_receive_functions(rx_prc);
-  }
+  tls_receive_done();
 
 gnutls_deinit(state->session);
 tlsp->active.sock = -1;

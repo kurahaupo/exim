@@ -1082,6 +1082,7 @@ typedef struct in_processing {
   int	(*ferror)(struct in_processing *);
 
   struct in_processing * lower;		/* underlying layer, or NULL */
+  const uschar * layer_name;
 } in_processing;
 
 #endif	/* whole file */

@@ -781,7 +781,10 @@ for(;;)
   {
 
   if (chunking_data_left > 0)
-    return lwr_receive_getc(inp->lower, chunking_data_left--);
+    {
+    in_processing * lwr_inp = inp->lower;
+    return lwr_inp->getc(lwr_inp, chunking_data_left--);
+    }
 
   bdat_pop_receive_functions();
 #ifndef DISABLE_DKIM
@@ -905,20 +908,25 @@ BOOL
 bdat_hasc(in_processing * inp)
 {
 if (chunking_data_left > 0)
-  return lwr_receive_hasc(inp->lower);
+  {
+  in_processing * lwr_inp = inp->lower;
+  return lwr_inp->hasc(lwr_inp);
+  }
 return TRUE;
 }
 
 uschar *
 bdat_getbuf(in_processing * inp, unsigned * len)
 {
+in_processing * lwr_inp;
 uschar * buf;
 
 if (chunking_data_left == 0)
   { *len = 0; return NULL; }
 
 if (*len > chunking_data_left) *len = chunking_data_left;
-buf = lwr_receive_getbuf(inp->lower, len);	/* Either smtp_getbuf or tls_getbuf */
+lwr_inp = inp->lower;
+buf = lwr_inp->getbuf(lwr_inp, len);	/* Either smtp_getbuf or tls_getbuf */
 chunking_data_left -= *len;
 return buf;
 }
@@ -939,10 +947,11 @@ DEBUG(receive)
 }
 
 static in_processing bdat_template = {
-  .getc = bdat_getc,
-  .getbuf = bdat_getbuf,
-  .hasc = bdat_hasc,
-  .ungetc = bdat_ungetc
+  .layer_name =	US"bdat",
+  .getc =	bdat_getc,
+  .getbuf =	bdat_getbuf,
+  .hasc =	bdat_hasc,
+  .ungetc =	bdat_ungetc
 };
 
 /* We're only expecting one bdat layer at a time, but we do bounce it in and
@@ -997,37 +1006,49 @@ rx_prc = rx_prc->lower;
 int
 bdat_ungetc(in_processing * inp, int ch)
 {
+in_processing * lwr_inp = inp->lower;
 chunking_data_left++;
-return lwr_receive_ungetc(rx_prc->lower, ch);
+return lwr_inp->ungetc(lwr_inp, ch);
 }
 
 
 
 #ifndef DISABLE_TLS
-/* The TLS layer has received a Close notification alert, meaning no
-more encrypted data will be received.
+/* The TLS layer Is done with receiving.
 
 To preserve layering of the receive processing if a BDAT chunk is still
 in progress, pop the bdat layer, reset to plaintext processing then
 re-push the bdat layer.
-Then close our writing side of the TLS channel.
 
 Any chunk in progress will likely error out anyway; let the existing
 processing handle it.
 */
 
 void
-tls_close_notify(void)
+tls_receive_done(void)
 {
 if (chunking_state > CHUNKING_OFFERED)
-  {
   bdat_pop_receive_functions();
-  smtp_rcv_cleartext();
+
+assert(rx_prc != &smtp_template);
+
+receive_getc =		smtp_getc;
+receive_getbuf =	smtp_getbuf;
+receive_get_cache =	smtp_get_cache;
+receive_hasc =		smtp_hasc;
+receive_ungetc =	smtp_ungetc;
+receive_feof =		smtp_feof;
+receive_ferror =	smtp_ferror;
+rx_prc = tls_pop_receive_functions(rx_prc);
+
+tls_in.active.tls_ctx = NULL;
+tls_in.sni = NULL;
+/* Leave bits, peercert, cipher, peerdn, certificate_verified set, for logging */
+
+if (chunking_state > CHUNKING_OFFERED)
   bdat_push_receive_functions();
-  }
-tls_close(NULL, TLS_NO_SHUTDOWN);
 }
-#endif
+#endif	/*DISABLE_TLS*/
 
 /******************************************************************************/
 
@@ -4115,7 +4136,7 @@ cmd_list[CL_EHLO].is_mail_cmd = TRUE;
 cmd_list[CL_STLS].is_mail_cmd = TRUE;
 #endif
 
-if (lwr_receive_getc && !atrn_mode)
+if (rx_prc->lower && !atrn_mode)
   {
   /* This should have already happened, but if we've gotten confused,
   force a reset here. */

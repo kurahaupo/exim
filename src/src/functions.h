@@ -54,7 +54,6 @@ extern BOOL    tls_client_adjunct_start(host_item *, client_conn_ctx *,
 extern void    tls_client_creds_reload(BOOL);
 
 extern void    tls_close(void *, int);
-extern void    tls_close_notify(void);
 extern BOOL    tls_could_getc(void);
 extern void    tls_daemon_init(void);
 extern int     tls_daemon_tick(void);
@@ -76,6 +75,7 @@ extern BOOL    tls_is_name_for_cert(const uschar *, void *);
 extern BOOL    tls_openssl_options_parse(const uschar *, long *);
 #  endif
 extern int     tls_read(void *, uschar *, size_t);
+extern void    tls_receive_done(void);
 extern int     tls_server_start(uschar **, gstring *);
 extern void    tls_shutdown_wr(void *);
 extern BOOL    tls_smtp_buffered(void);
