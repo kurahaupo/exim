@@ -878,6 +878,8 @@ nextinput:
     if (strcmp(CS out, "stoptls") == 0 ||
         strcmp(CS out, "STOPTLS") == 0)
       {
+      uschar c;
+
       if (!srv->tls_active)
         {
         printf("STOPTLS read when TLS not active\n");
@@ -887,11 +889,20 @@ nextinput:
 
       #ifdef HAVE_OPENSSL
       SSL_shutdown(srv->ssl);
+      while ((rc = SSL_read(srv->ssl, &c, 1)) > 0)
+	printf(" (read TLS byte 0x%x)\n", c);
+      if (SSL_get_shutdown(srv->ssl) == SSL_RECEIVED_SHUTDOWN)
+	printf(" (rxd shutdown)\n");
+      else
+	printf(" (SSL_read ret %d\n", rc);
       SSL_free(srv->ssl);
       #endif
 
       #ifdef HAVE_GNUTLS
       gnutls_bye(tls_session, GNUTLS_SHUT_WR);
+      while ((rc = gnutls_record_recv(tls_session, &c, 1)) == GNUTLS_E_AGAIN
+	    || rc > 0)	/* zero signals rxd-shutdown */
+	;
       gnutls_deinit(tls_session);
       tls_session = NULL;
       gnutls_global_deinit();

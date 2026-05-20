@@ -4577,6 +4577,7 @@ non-SSL handling. */
 switch(error)
   {
   case SSL_ERROR_NONE:
+    DEBUG(tls) debug_printf("inbytes=%d\n", inbytes);
     break;
 
   case SSL_ERROR_ZERO_RETURN:
@@ -4595,9 +4596,19 @@ switch(error)
     if (Ustrncmp(conn_info, US"SMTP ", 5) == 0) conn_info += 5;
     /* I'd like to get separated H= here, but too hard for now */
     ERR_error_string_n(ERR_peek_error(), ssl_errstring, sizeof(ssl_errstring));
-    log_write(LOG_MAIN, "TLS error (SSL_read): on %s %s", conn_info, ssl_errstring);
-    DEBUG(tls) tls_debug_err(ssl, US"SSL_read", inbytes);
-    ssl_xfer_error = TRUE;
+
+    if (SSL_get_shutdown(ssl) == SSL_RECEIVED_SHUTDOWN)
+      {
+      DEBUG(tls) debug_printf_indent("SSL_read: have rxd shutdown\n");
+      SSL_shutdown(ssl);
+      tls_close_notify();
+      }
+    else
+      {
+      DEBUG(tls) tls_debug_err(ssl, US"SSL_read", inbytes);
+      log_write(LOG_MAIN, "TLS error (SSL_read): on %s %s", conn_info, ssl_errstring);
+      ssl_xfer_error = TRUE;
+      }
     return FALSE;
     }
 
