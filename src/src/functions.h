@@ -135,11 +135,13 @@ extern gstring *authres_smtpauth(gstring *);
 extern uschar *b64encode(const uschar *, int);
 extern uschar *b64encode_taint(const uschar *, int, const void *);
 extern int     b64decode(const uschar *, uschar **, const void *);
+
+extern void    bdat_flush_data(in_processing *);
 extern int     bdat_getc(in_processing *, unsigned);
 extern uschar *bdat_getbuf(in_processing *, unsigned *);
 extern BOOL    bdat_hasc(in_processing *);
+extern void    bdat_push_receive_functions(void);
 extern int     bdat_ungetc(in_processing *, int);
-extern void    bdat_flush_data(in_processing *);
 
 extern void    cancel_cutthrough_connection(BOOL, const uschar *);
 extern gstring *cat_file(FILE *, gstring *, const uschar *);

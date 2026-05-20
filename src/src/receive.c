@@ -1026,35 +1026,45 @@ for(;;)
     case EOF:	return END_EOF;
     case ERR:	return END_PROTOCOL;
     case EOD:
-      /* Nothing to get from the sender anymore. We check the last
-      character written to the spool.
+      /* Nothing to get from the sender anymore according to the BDAT commands.
+      We check the last character written to the spool.
 
       RFC 3030 states, that BDAT chunks are normal text, terminated by CRLF.
       If we would be strict, we would refuse such broken messages.
       But we are liberal, so we fix it.  It would be easy just to append
       the "\n" to the spool.
 
-      But there are some more things (line counting, message size calculation and such),
-      that would need to be duplicated here.  So we simply do some ungetc
-      trickery.
+      But there are some more things (line counting, message size calculation
+      and such), that would need to be duplicated here.  So we simply do some
+      ungetc trickery.
       */
       if (fout)
 	{
 	if (fseek(fout, -1, SEEK_CUR) < 0)	return END_PROTOCOL;
-	if (fgetc(fout) == '\n')		return END_DOT;
+	if (fgetc(fout) == '\n')		return END_DOT; /* good exit */
 	}
+
+      /* The last char in the file was not \n */
 
       if (linelength == -1)    /* \r already seen (see below) */
         {
         DEBUG(receive) debug_printf("Add missing LF\n");
-        bdat_ungetc(rx_prc, '\n');
-        continue;
+	ch = '\n';
         }
-      DEBUG(receive) debug_printf("Add missing CRLF\n");
-      bdat_ungetc(rx_prc, '\r');      /* not even \r was seen */
-      fix_nl = TRUE;
+      else
+	{				/* not even \r was seen */
+	DEBUG(receive) debug_printf("Add missing CRLF\n");
+	fix_nl = TRUE;
+	ch = '\r';
+	}
 
+      /* For an EOD return, the bdat layer was popped. But we're not done yet
+      because we have to unget, so re-push it. */
+
+      bdat_push_receive_functions();
+      bdat_ungetc(rx_prc, ch);
       continue;
+
     case '\0':  body_zerocount++; break;
     }
   switch (ch_state)
@@ -1075,7 +1085,7 @@ for(;;)
       else if (ch == '\r')
 	{
 	ch_state = CR_SEEN;
-       if (fix_nl) bdat_ungetc(rx_prc, '\n');
+	if (fix_nl) bdat_ungetc(rx_prc, '\n');
 	continue;			/* don't write CR */
 	}
       break;

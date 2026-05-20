@@ -741,7 +741,6 @@ rx_prc = &smtp_template;
 }
 
 /* Forward declarations */
-static inline void bdat_push_receive_functions(void);
 static inline void bdat_pop_receive_functions(void);
 
 
@@ -757,8 +756,9 @@ to handle the BDAT command/response.
 Placed here due to the correlation with the above smtp_getc(), which it wraps,
 and also by the need to do smtp command/response handling.
 
-Arguments:  lim		(ignored)
-Returns:    the next character or ERR, EOD or EOF
+Arguments:	lim		(ignored)
+Returns:	The next character or ERR, EOD or EOF.
+		For all of those last three status codes, the bdat layer has been popped.
 */
 
 int
@@ -949,26 +949,23 @@ static in_processing bdat_template = {
 out a lot.  So use a static struct rather than allocating. */
 static in_processing bdat_proc;
 
-static inline void
+void
 bdat_push_receive_functions(void)
 {
 /* push the current receive_* function on the "stack", and
 replace them by bdat_getc(), which in turn will use the lwr_receive_*
 functions to do the dirty work. */
 
-if (!lwr_receive_getc)
-  {
-  lwr_receive_getc = receive_getc;
-  lwr_receive_getbuf = receive_getbuf;
-  lwr_receive_hasc = receive_hasc;
-  lwr_receive_ungetc = receive_ungetc;
+assert(!lwr_receive_getc);
 
-  bdat_proc = bdat_template;
-  bdat_proc.lower = rx_prc;
-  rx_prc = &bdat_proc;
-  }
-else
-  DEBUG(receive) debug_printf("chunking double-push receive functions\n");
+lwr_receive_getc = receive_getc;
+lwr_receive_getbuf = receive_getbuf;
+lwr_receive_hasc = receive_hasc;
+lwr_receive_ungetc = receive_ungetc;
+
+bdat_proc = bdat_template;
+bdat_proc.lower = rx_prc;
+rx_prc = &bdat_proc;
 
 receive_getc = bdat_getc;
 receive_getbuf = bdat_getbuf;
@@ -1001,7 +998,6 @@ int
 bdat_ungetc(in_processing * inp, int ch)
 {
 chunking_data_left++;
-bdat_push_receive_functions();  /* we're not done yet, calling push is safe, because it checks the state before pushing anything */
 return lwr_receive_ungetc(rx_prc->lower, ch);
 }
 
