@@ -23,9 +23,19 @@ BINARIES =	bin/cf bin/client $(CLIENT_OPENSSL) $(CLIENT_GNUTLS) $(CLIENT_ANYTLS)
 
 # List of targets
 
-all:            binaries sysbinaries
+all:            binaries sysbinaries fix-aux-perms
 
 binaries:	$(BINARIES)
+
+# Exim's runtime sanity checks refuse to read configuration / aux files
+# that are group-writeable ("Server return code 99").  The git index marks
+# everything under aux-fixed as mode 0644/0755, but a working copy created
+# with umask 002 picks up the group-write bit anyway -- a recurring trap
+# documented in test/README under "OTHER ISSUES".  Strip it on every make
+# so the suite Just Works regardless of the caller's umask.
+.PHONY: fix-aux-perms
+fix-aux-perms:
+		chmod -R g-w aux-fixed
 
 sysbinaries:	FORCE binaries
 		rm -f bin.sys/*
