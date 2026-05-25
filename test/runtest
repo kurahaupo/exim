@@ -4586,8 +4586,12 @@ DIR: for (my $i = 0; $i < @test_dirs; $i++)
   undef @testlist;
   map { push @testlist, $_ if exists $wanted{$_} } grep { /^\d+(?:\.\d+)?$/ } map { basename $_ } glob "scripts/$testdir/*";
 
-  tests_exit(-1, "Failed to read test scripts from `scripts/$testdir/*': $!")
-    if not @testlist;
+  # A test subdirectory legitimately contributes no tests when the requested
+  # test-number range does not overlap any of its scripts (e.g. running
+  # `runtest 1300` against a dir that only holds test 1199).  Previously
+  # this killed the run with a misleading "Failed to read test scripts"
+  # error.  Silently skip such directories instead.
+  next if not @testlist;
 
   foreach $test (@testlist)
     {
