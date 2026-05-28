@@ -5113,7 +5113,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 	    smtp_peer_options |= OPTION_TLS;
 	    if ((sx->ok = socketpair(AF_UNIX, SOCK_STREAM, 0, pfd) == 0))
 	      {
-	      pid_t pid = exim_fork(US"tls-proxy-interproc");
+	      pid_t pid = exim_fork(US"tls-proxy-interproc/t");
 	      if (pid == 0)	/* child; fork again to disconnect totally */
 		{
 		/* does not return */

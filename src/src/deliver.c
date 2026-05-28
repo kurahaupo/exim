@@ -9145,7 +9145,7 @@ if (cutthrough.cctx.sock >= 0 && cutthrough.callout_hold_only)
 
     where = US"fork";
     testharness_pause_ms(150);
-    if ((pid = exim_fork(US"tls-proxy-interproc")) < 0)
+    if ((pid = exim_fork(US"tls-proxy-interproc/d")) < 0)
       goto fail;
 
     if (pid == 0)	/* child: will fork again to totally disconnect */
