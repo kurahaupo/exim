@@ -305,6 +305,12 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
       switch (hdr.v2.fam)
         {
         case 0x11:  /* TCPv4 address type */
+          if (ntohs(hdr.v2.len) < 12)
+            {
+            DEBUG(D_receive) debug_printf("PROXYv2 TCPv4 payload too short (%d)\n",
+                ntohs(hdr.v2.len));
+            goto proxyfail;
+            }
           iptype = US"IPv4";
           tmpaddr.sin_addr.s_addr = hdr.v2.addr.ip4.src_addr;
           inet_ntop(AF_INET, &tmpaddr.sin_addr, CS &tmpip, sizeof(tmpip));
@@ -331,6 +337,12 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
           proxy_external_port  = tmpport;
           goto done;
         case 0x21:  /* TCPv6 address type */
+          if (ntohs(hdr.v2.len) < 36)
+            {
+            DEBUG(D_receive) debug_printf("PROXYv2 TCPv6 payload too short (%d)\n",
+                ntohs(hdr.v2.len));
+            goto proxyfail;
+            }
           iptype = US"IPv6";
           memmove(tmpaddr6.sin6_addr.s6_addr, hdr.v2.addr.ip6.src_addr, 16);
           inet_ntop(AF_INET6, &tmpaddr6.sin6_addr, CS &tmpip6, sizeof(tmpip6));

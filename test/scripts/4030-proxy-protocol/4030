@@ -71,6 +71,18 @@ QUIT
 #
 #
 #
+### protocol v2 short TCPv6 rejected
+client HOSTIPV4 PORT_D
+>>> \x0D\x0A\x0D\x0A\x00\x0D\x0A\x51\x55\x49\x54\x0A\x21\x21\x00\x00
+??? 220
+HELO clientname
+??? 503
+QUIT
+??? 221
+****
+#
+#
+#
 ### proxy timeout
 client HOSTIPV4 PORT_D
 ??? 220
