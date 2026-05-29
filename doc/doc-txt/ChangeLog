@@ -158,6 +158,8 @@ JH/40 Lookup dsearch: fix the restriction on key=path to match the
       documentation.  Also, fail lookups that violate key restrictions (both
       plain and key=path) rather than returning "defer".
 
+JH/41 DKIM: harden the authresults expansion against malicious senders.
+
 
 Exim version 4.99.3
 -------------------

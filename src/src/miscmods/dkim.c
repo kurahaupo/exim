@@ -1290,7 +1290,7 @@ for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
     default:                   g = string_cat(g, US"permerror"); break;
     }
   if (sig->domain)   g = string_append(g, 2, US" header.d=", sig->domain);
-  if (sig->identity) g = string_append(g, 2, US" header.i=", sig->identity);
+  if (sig->identity) g = string_append(g, 2, US" header.i=", string_printing(sig->identity));
   if (sig->selector) g = string_append(g, 2, US" header.s=", sig->selector);
   g = string_append(g, 2, US" header.a=", dkim_sig_to_a_tag(sig));
   }
