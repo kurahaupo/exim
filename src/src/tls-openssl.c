@@ -3861,13 +3861,6 @@ if (!ssl_xfer_buffer) ssl_xfer_buffer = store_malloc(ssl_xfer_buffer_size);
 ssl_xfer_buffer_lwm = ssl_xfer_buffer_hwm = 0;
 ssl_xfer_eof = ssl_xfer_error = FALSE;
 
-receive_getc = tls_getc;
-receive_getbuf = tls_getbuf;
-receive_get_cache = tls_get_cache;
-receive_hasc = tls_hasc;
-receive_ungetc = tls_ungetc;
-receive_feof = tls_feof;
-receive_ferror = tls_ferror;
 rx_prc = tls_push_receive_functions(rx_prc);
 DEBUG(receive) debug_print_processing_stack();
 
@@ -4634,7 +4627,7 @@ Only used by the server-side TLS.
 */
 
 int
-tls_getc(in_processing * inp, unsigned lim)
+tls_getc(const const in_processing * inp, unsigned lim)
 {
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(lim))
@@ -4646,13 +4639,13 @@ return ssl_xfer_buffer[ssl_xfer_buffer_lwm++];
 }
 
 BOOL
-tls_hasc(in_processing * inp)
+tls_hasc(const const in_processing * inp)
 {
 return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 }
 
 uschar *
-tls_getbuf(in_processing * inp, unsigned * len)
+tls_getbuf(const in_processing * inp, unsigned * len)
 {
 unsigned size;
 uschar * buf;
@@ -4675,7 +4668,7 @@ return buf;
 
 
 void
-tls_get_cache(in_processing * inp, unsigned lim)
+tls_get_cache(const in_processing * inp, unsigned lim)
 {
 #ifndef DISABLE_DKIM
 int n = ssl_xfer_buffer_hwm - ssl_xfer_buffer_lwm;

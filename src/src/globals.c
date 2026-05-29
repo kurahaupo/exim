@@ -135,19 +135,7 @@ incoming TCP/IP. The defaults use stdin. We never need these for any
 stand-alone tests. */
 
 #if !defined(STAND_ALONE) && !defined(MACRO_PREDEF)
-int	(*lwr_receive_getc)(in_processing *, unsigned)	= stdin_getc;
-uschar * (*lwr_receive_getbuf)(in_processing *, unsigned *) = NULL;
-int	(*lwr_receive_ungetc)(in_processing *, int)	= stdin_ungetc;
-BOOL	(*lwr_receive_hasc)(in_processing *)	= stdin_hasc;
-
-int	(*receive_getc)(in_processing *, unsigned) 	= stdin_getc;
-uschar * (*receive_getbuf)(in_processing *, unsigned *) 	= stdin_getbuf;
-void	(*receive_get_cache)(in_processing *, unsigned)	= NULL;
-BOOL	(*receive_hasc)(in_processing *)		= stdin_hasc;
-int	(*receive_ungetc)(in_processing *, int)    	= stdin_ungetc;
-int	(*receive_feof)(in_processing *)     	= stdin_feof;
-int	(*receive_ferror)(in_processing *)   	= stdin_ferror;
-in_processing * rx_prc = &stdin_template;
+const in_processing * rx_prc = &stdin_template;
 #endif
 
 

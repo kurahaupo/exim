@@ -185,7 +185,7 @@ void
 debug_print_processing_stack(void)
 {
 debug_printf_indent("inp: ");
-for (in_processing * inp = rx_prc; inp; inp = inp->lower)
+for (const in_processing * inp = rx_prc; inp; inp = inp->lower)
   debug_printf("/%s", inp->layer_name);
 debug_printf("\n");
 }

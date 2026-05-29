@@ -50,7 +50,7 @@ uschar * stdin_inptr = stdin_buf;
 uschar * stdin_inend = stdin_buf;
 
 BOOL
-stdin_refill(in_processing * inp, unsigned lim)
+stdin_refill(const in_processing * inp, unsigned lim)
 {
 size_t rc = fread(stdin_buf, 1, MIN(sizeof(stdin_buf), lim), stdin);
 if (rc == 0)
@@ -81,7 +81,7 @@ return TRUE;
 }
 
 int
-stdin_getc(in_processing * inp, unsigned lim)
+stdin_getc(const in_processing * inp, unsigned lim)
 {
 if (stdin_inptr >= stdin_inend)
   if (!stdin_refill(inp, lim))
@@ -91,7 +91,7 @@ return *stdin_inptr++;
 
 
 BOOL
-stdin_hasc(in_processing * inp)
+stdin_hasc(const in_processing * inp)
 {
 return stdin_inptr < stdin_inend;
 }
@@ -99,7 +99,7 @@ return stdin_inptr < stdin_inend;
 /* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
 
 uschar *
-stdin_getbuf(in_processing * inp, unsigned * len)
+stdin_getbuf(const in_processing * inp, unsigned * len)
 {
 unsigned size;
 uschar * buf;
@@ -115,7 +115,7 @@ return buf;
 }
 
 int
-stdin_ungetc(in_processing * inp, int c)
+stdin_ungetc(const in_processing * inp, int c)
 {
 if (stdin_inptr <= stdin_buf)
   log_write_die(LOG_MAIN, "buffer underflow in stdin_ungetc");
@@ -125,13 +125,13 @@ return c;
 }
 
 int
-stdin_feof(in_processing * inp)
+stdin_feof(const in_processing * inp)
 {
 return stdin_hasc(inp) ? FALSE : feof(stdin);
 }
 
 int
-stdin_ferror(in_processing * inp)
+stdin_ferror(const in_processing * inp)
 {
 return ferror(stdin);
 }
@@ -649,7 +649,7 @@ the file copy. */
 static void
 log_close_chk(void)
 {
-if (!receive_timeout && !receive_hasc(rx_prc))
+if (!receive_timeout && !receive_hasc())
   {
   struct timeval t;
   timesince(&t, &received_time);
@@ -712,7 +712,7 @@ if (!f.dot_ends)
   int last_ch = '\n';
 
   for ( ;
-       log_close_chk(), (ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) >= 0;
+       log_close_chk(), (ch = receive_getc(GETC_BUFFER_UNLIMITED)) >= 0;
        last_ch = ch)
     {
     if (ch == 0) body_zerocount++;
@@ -756,7 +756,7 @@ if (!f.dot_ends)
 ch_state = 1;
 
 while (log_close_chk(),
-       (ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) >= 0)
+       (ch = receive_getc(GETC_BUFFER_UNLIMITED)) >= 0)
   {
   if (ch == 0) body_zerocount++;
   switch (ch_state)
@@ -880,7 +880,7 @@ enum { s_linestart, s_normal, s_had_cr, s_had_nl_dot, s_had_dot_cr } ch_state =
 	      s_linestart;
 int linelength = 0, ch;
 
-while ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) >= 0)
+while ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) >= 0)
   {
   if (ch == 0) body_zerocount++;
   switch (ch_state)
@@ -1974,7 +1974,7 @@ next->text. */
 
 for (;;)
   {
-  int ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED);
+  int ch = receive_getc(GETC_BUFFER_UNLIMITED);
 
   /* If we hit EOF on a SMTP connection, it's an error, since incoming
   SMTP must have a correct "." terminator. */
@@ -2041,7 +2041,7 @@ for (;;)
     if (first_line_ended_crlf == TRUE_UNSET)
       first_line_ended_crlf = FALSE;
     else if (first_line_ended_crlf)
-      receive_ungetc(rx_prc, ' ');
+      receive_ungetc(' ');
     goto EOL;
     }
 
@@ -2058,7 +2058,7 @@ for (;;)
   if (f.dot_ends && ptr == 0 && ch == '.')
     {
     /* leading dot while in headers-read mode */
-    if ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) < 0)
+    if ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) < 0)
       goto CONN_GONE;
     if (ch == '\n' && first_line_ended_crlf == TRUE /* and not TRUE_UNSET */ )
     		/* dot, LF  but we are in CRLF mode.  Attack? */
@@ -2066,11 +2066,11 @@ for (;;)
 
     else if (ch == '\r')
       {
-      if ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) < 0)
+      if ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) < 0)
 	goto CONN_GONE;
       if (ch != '\n')
         {
-	if (ch >= 0) receive_ungetc(rx_prc, ch);
+	if (ch >= 0) receive_ungetc(ch);
         ch = '\r';              /* Revert to CR */
         }
       }
@@ -2098,7 +2098,7 @@ for (;;)
 
   if (ch == '\r')
     {
-    if ((ch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED)) < 0)
+    if ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) < 0)
       goto CONN_GONE;
     if (ch == '\n')
       {
@@ -2110,7 +2110,7 @@ for (;;)
     /* Otherwise, put back the character after CR, and turn the bare CR
     into LF SP. */
 
-    if (ch >= 0) (receive_ungetc)(rx_prc, ch);
+    if (ch >= 0) receive_ungetc(ch);
     next->text[ptr++] = '\n';
     message_size++;
     ch = ' ';
@@ -2196,7 +2196,7 @@ OVERSIZE:
 
   if (ch >= 0)
     {
-    int nextch = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED);
+    int nextch = receive_getc(GETC_BUFFER_UNLIMITED);
     if (nextch == ' ' || nextch == '\t')
       {
       next->text[ptr++] = nextch;
@@ -2205,7 +2205,7 @@ OVERSIZE:
       continue;                      /* Iterate the loop */
       }
     else if (nextch >= 0)	/* not EOF, ERR etc */
-      (receive_ungetc)(rx_prc, nextch);   /* For next time */
+      receive_ungetc(nextch);		/* For next time */
     else ch = nextch;                   /* Cause main loop to exit at end */
     }
 
@@ -2464,7 +2464,7 @@ skipped if already at EOF.
 In CHUNKING mode, a protocol error makes us give up on the message. */
 
 if (smtp_input)
-  if ((receive_feof)(rx_prc))
+  if (receive_feof())
     {
     smtp_reply = handle_lost_connection(US" (after header)");
     smtp_yield = FALSE;
@@ -3338,7 +3338,7 @@ if (next)
 (indicated by '.'), or might have encountered an error while writing the
 message id or "next" line. */
 
-if (!ferror(spool_data_file) && !(receive_feof)(rx_prc) && message_ended != END_DOT)
+if (!ferror(spool_data_file) && !receive_feof() && message_ended != END_DOT)
   {
   if (smtp_input)
     {
@@ -3429,10 +3429,10 @@ the input in cases of output errors, since the far end doesn't expect to see
 anything until the terminating dot line is sent. */
 
 if (fflush(spool_data_file) == EOF || ferror(spool_data_file) ||
-    EXIMfsync(fileno(spool_data_file)) < 0 || (receive_ferror)(rx_prc))
+    EXIMfsync(fileno(spool_data_file)) < 0 || receive_ferror())
   {
   uschar *msg_errno = US strerror(errno);
-  BOOL input_error = (receive_ferror)(rx_prc) != 0;
+  BOOL input_error = receive_ferror() != 0;
   uschar *msg = string_sprintf("%s error (%s) while receiving message from %s",
     input_error? "Input read" : "Spool write",
     msg_errno,
@@ -4339,12 +4339,12 @@ connection will vanish between the time of this test and the sending of the
 response, but the chance of this happening should be small. */
 
 if (  smtp_input && sender_host_address && !f.sender_host_notsocket
-   && !receive_hasc(rx_prc))
+   && !receive_hasc())
   {
   if (poll_one_fd(smtp_in_fd, POLLIN, 0) != 0)
     {
-    int c = (receive_getc)(rx_prc, GETC_BUFFER_UNLIMITED);
-    if (c >= 0) (receive_ungetc)(rx_prc, c);
+    int c = receive_getc(GETC_BUFFER_UNLIMITED);
+    if (c >= 0) receive_ungetc(c);
     else
       {
       smtp_notquit_exit(US"connection-lost", NULL, NULL);
@@ -4560,12 +4560,12 @@ if (smtp_input)
 	the socket. */
 
         smtp_printf("250- %u byte chunk, total %d\r\n250 OK id=%s\r\n",
-	    receive_hasc(rx_prc),
+	    receive_hasc(),
 	    chunking_datasize, message_size+message_linecount, message_id);
 	chunking_state = CHUNKING_OFFERED;
 	}
       else
-        smtp_printf("250 OK id=%s\r\n", receive_hasc(rx_prc), message_id);
+        smtp_printf("250 OK id=%s\r\n", receive_hasc(), message_id);
 
       if (host_checking)
         smtp_printf("\n**** SMTP testing: that is not a real message id!\n\n",

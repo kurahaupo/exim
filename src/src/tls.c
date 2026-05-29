@@ -502,7 +502,7 @@ Returns:       the character
 */
 
 int
-tls_ungetc(in_processing * inp, int ch)
+tls_ungetc(const in_processing * inp, int ch)
 {
 if (ssl_xfer_buffer_lwm <= 0)
   log_write_die(LOG_MAIN, "buffer underflow in tls_ungetc");
@@ -525,7 +525,7 @@ Returns:       non-zero if the eof flag is set
 */
 
 int
-tls_feof(in_processing * inp)
+tls_feof(const in_processing * inp)
 {
 return (int)ssl_xfer_eof;
 }
@@ -547,7 +547,7 @@ Returns:       non-zero if the error flag is set
 */
 
 int
-tls_ferror(in_processing * inp)
+tls_ferror(const in_processing * inp)
 {
 return (int)ssl_xfer_error;
 }
@@ -582,8 +582,8 @@ Argument: current stack top.
 Return the putative stack top, but let the caller actually set the modification.
 */
 
-in_processing *
-tls_push_receive_functions(in_processing * inp)
+const in_processing *
+tls_push_receive_functions(const in_processing * inp)
 {
 static in_processing tls_proc = {
   .layer_name =	US"tls",
@@ -600,8 +600,8 @@ return &tls_proc;
 }
 
 /* Pop TLS receive processing */
-in_processing *
-tls_pop_receive_functions(in_processing * inp)
+const in_processing *
+tls_pop_receive_functions(const in_processing * inp)
 {
 return inp->lower;
 }

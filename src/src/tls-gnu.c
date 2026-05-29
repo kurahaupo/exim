@@ -3361,13 +3361,6 @@ extract_exim_vars_from_tls_state(state);
 /* TLS has been set up. Adjust the input functions to read via TLS,
 and initialize appropriately. */
 
-receive_getc = tls_getc;
-receive_getbuf = tls_getbuf;
-receive_get_cache = tls_get_cache;
-receive_hasc = tls_hasc;
-receive_ungetc = tls_ungetc;
-receive_feof = tls_feof;
-receive_ferror = tls_ferror;
 rx_prc = tls_push_receive_functions(rx_prc);
 DEBUG(receive) debug_print_processing_stack();
 
@@ -4017,7 +4010,7 @@ Returns:    the next character or EOF
 */
 
 int
-tls_getc(in_processing * inp, unsigned lim)
+tls_getc(const const in_processing * inp, unsigned lim)
 {
 exim_gnutls_state_st * state = &state_server;
 
@@ -4031,14 +4024,14 @@ return state->xfer_buffer[state->xfer_buffer_lwm++];
 }
 
 BOOL
-tls_hasc(in_processing * inp)
+tls_hasc(const in_processing * inp)
 {
 const exim_gnutls_state_st * state = &state_server;
 return state->xfer_buffer_lwm < state->xfer_buffer_hwm;
 }
 
 uschar *
-tls_getbuf(in_processing * inp, unsigned * len)
+tls_getbuf(const in_processing * inp, unsigned * len)
 {
 exim_gnutls_state_st * state = &state_server;
 unsigned size;
@@ -4063,7 +4056,7 @@ return buf;
 
 /* Get up to the given number of bytes from any cached data, and feed to dkim. */
 void
-tls_get_cache(in_processing * inp, unsigned lim)
+tls_get_cache(const in_processing * inp, unsigned lim)
 {
 #ifndef DISABLE_DKIM
 exim_gnutls_state_st * state = &state_server;

@@ -131,19 +131,7 @@ extern const uschar  *dsn_advertise_hosts;   /* host for which TLS is advertised
 /* Input-reading functions for messages, so we can use special ones for
 incoming TCP/IP. */
 
-extern int (*lwr_receive_getc)(in_processing *, unsigned);
-extern uschar * (*lwr_receive_getbuf)(in_processing *, unsigned *);
-extern BOOL (*lwr_receive_hasc)(in_processing *);
-extern int (*lwr_receive_ungetc)(in_processing *, int);
-
-extern int (*receive_getc)(in_processing *, unsigned);
-extern uschar * (*receive_getbuf)(in_processing *, unsigned *);
-extern BOOL (*receive_hasc)(in_processing *);
-extern void (*receive_get_cache)(in_processing *, unsigned);
-extern int (*receive_ungetc)(in_processing *, int);
-extern int (*receive_feof)(in_processing *);
-extern int (*receive_ferror)(in_processing *);
-extern in_processing * rx_prc;
+extern const in_processing * rx_prc;
 
 
 /* For clearing, saving, restoring address expansion variables. We have to have
