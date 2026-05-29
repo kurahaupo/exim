@@ -305,6 +305,7 @@ search_tidyup called
 01:01:01 p1235   list element: e̪m̪p̪t̪y̪
 01:01:01 p1235  SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 01:01:01 p1235  smtp_setup_msg entered
+01:01:01 p1235  inp: /smtp
 01:01:01 p1235  SMTP>- ◀flush▶
 01:01:01 p1235  SMTP<< helo test
 01:01:01 p1235  test in helo_lookup_domains?

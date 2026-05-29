@@ -15,6 +15,7 @@ set_process_info: pppp accepting a local SMTP message from <CALLER@myhost.test.e
  in hosts_connection_nolog? no (option unset)
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< helo test
 SMTP>| 250 myhost.test.ex Hello CALLER at test

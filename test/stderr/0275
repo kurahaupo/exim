@@ -543,6 +543,7 @@ host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< HELO test
 test in helo_lookup_domains?

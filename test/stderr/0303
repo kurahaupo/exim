@@ -81,6 +81,7 @@ host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< EHLO [V4NET.2.3.4]
 [V4NET.2.3.4] in helo_lookup_domains?
@@ -134,6 +135,7 @@ LOG: MAIN
 receive_msg: tidyup
 SMTP>| 250 OK id=10HmaX-000000005vi-0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶
@@ -165,6 +167,7 @@ host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< EHLO [V4NET.2.3.4]
 sender_fullhost = host.name.tld [V4NET.2.3.4]
@@ -214,6 +217,7 @@ LOG: MAIN
 receive_msg: tidyup
 SMTP>| 250 OK id=10HmaY-000000005vi-0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶

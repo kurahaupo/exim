@@ -21,6 +21,7 @@
 01:01:01 p1237  forked delivery process p1238 
 01:01:01 p1237  Process p1237 is ready for new message
 01:01:01 p1237  smtp_setup_msg entered
+01:01:01 p1237  inp: /smtp
 01:01:01 p1237  SMTP>- ◀flush▶
 01:01:01 p1237  SMTP<< QUIT
 01:01:01 p1237  try option 'acl_smtp_quit'
@@ -141,6 +142,7 @@
 01:01:01 p1239    dest2@test.ex
 01:01:01 p1239  Process p1239 is ready for new message
 01:01:01 p1239  smtp_setup_msg entered
+01:01:01 p1239  inp: /smtp
 01:01:01 p1239  SMTP>- ◀flush▶
 01:01:01 p1239  SMTP<< QUIT
 01:01:01 p1239  try option 'acl_smtp_quit'

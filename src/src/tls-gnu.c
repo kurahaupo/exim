@@ -3369,6 +3369,7 @@ receive_ungetc = tls_ungetc;
 receive_feof = tls_feof;
 receive_ferror = tls_ferror;
 rx_prc = tls_push_receive_functions(rx_prc);
+DEBUG(receive) debug_print_processing_stack();
 
 return OK;
 }

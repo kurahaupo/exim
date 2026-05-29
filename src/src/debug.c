@@ -169,7 +169,6 @@ debug_printf("%s uid=%ld gid=%ld euid=%ld egid=%ld\n", s,
 }
 
 /************************************************/
-
 /* Give a string for a return-code */
 
 const uschar *
@@ -178,6 +177,18 @@ rc_to_string(int rc)
 return rc < 0 || rc >= nelem(rc_names) ? US"?" : rc_names[rc];
 }
 
+
+/************************************************/
+/* Print the receive processing stack */
+
+void
+debug_print_processing_stack(void)
+{
+debug_printf_indent("inp: ");
+for (in_processing * inp = rx_prc; inp; inp = inp->lower)
+  debug_printf("/%s", inp->layer_name);
+debug_printf("\n");
+}
 
 
 

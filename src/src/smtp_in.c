@@ -980,6 +980,8 @@ receive_getc = bdat_getc;
 receive_getbuf = bdat_getbuf;
 receive_hasc = bdat_hasc;
 receive_ungetc = bdat_ungetc;
+
+DEBUG(receive) debug_print_processing_stack();
 }
 
 static inline void
@@ -1001,6 +1003,7 @@ lwr_receive_hasc = NULL;
 lwr_receive_ungetc = NULL;
 
 rx_prc = rx_prc->lower;
+DEBUG(receive) debug_print_processing_stack();
 }
 
 int
@@ -1040,6 +1043,7 @@ receive_ungetc =	smtp_ungetc;
 receive_feof =		smtp_feof;
 receive_ferror =	smtp_ferror;
 rx_prc = tls_pop_receive_functions(rx_prc);
+DEBUG(receive) debug_print_processing_stack();
 
 tls_in.active.tls_ctx = NULL;
 tls_in.sni = NULL;
@@ -2537,6 +2541,7 @@ if (atrn_mode && tls_in.active.sock >= 0)
   receive_feof = tls_feof;
   receive_ferror = tls_ferror;
   rx_prc = tls_push_receive_functions(rx_prc);
+  DEBUG(receive) debug_print_processing_stack();
   }
 #endif
 
@@ -4116,7 +4121,8 @@ static misc_module_info * xclient_mi = NULL;
 #endif
 rmark reset_point = store_mark();
 
-DEBUG(receive) debug_printf("smtp_setup_msg entered\n");
+DEBUG(receive)
+  { debug_printf("smtp_setup_msg entered\n"); debug_print_processing_stack(); }
 
 /* Reset for start of new message. We allow one RSET not to be counted as a
 nonmail command, for those MTAs that insist on sending it between every

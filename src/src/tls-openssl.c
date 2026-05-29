@@ -3869,6 +3869,7 @@ receive_ungetc = tls_ungetc;
 receive_feof = tls_feof;
 receive_ferror = tls_ferror;
 rx_prc = tls_push_receive_functions(rx_prc);
+DEBUG(receive) debug_print_processing_stack();
 
 tls_in.active.sock = smtp_out_fd;
 tls_in.active.tls_ctx = NULL;	/* not using explicit ctx for server-side */

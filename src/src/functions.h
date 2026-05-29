@@ -180,23 +180,24 @@ extern int     dcc_process(uschar **);
 
 extern BOOL    debug_disable(void);
 extern void    debug_decode_bits(bitmask_word_t **, const uschar *, int);
+extern void    debug_enable(void);
 
 extern void    debug_logging_activate(const uschar *, const uschar *);
 extern void    debug_logging_from_spool(const uschar *);
 extern void    debug_logging_stop(BOOL);
-extern void    debug_print_argv(const uschar **);
-extern void    debug_print_ids(uschar *);
-extern void    debug_printf_indent(const char *, ...) PRINTF_FUNCTION(1,2);
-extern void    debug_print_string(uschar *);
-extern void    debug_print_tree(const char *, tree_node *);
-extern void    debug_vprintf(int, const char *, va_list);
 extern void    debug_pretrigger_setup(const uschar *);
 extern void    debug_pretrigger_discard(void);
+extern void    debug_print_argv(const uschar **);
+extern void    debug_print_ids(uschar *);
+extern void    debug_print_processing_stack(void);
+extern void    debug_print_string(uschar *);
+extern void    debug_print_tree(const char *, tree_node *);
+extern void    debug_printf_indent(const char *, ...) PRINTF_FUNCTION(1,2);
 extern void    debug_print_socket(int);
 extern gstring * debug_selector_dump(gstring *);
 extern void    debug_set_default_bits(bitmask_word_t **);
-extern void    debug_enable(void);
 extern void    debug_trigger_fire(void);
+extern void    debug_vprintf(int, const char *, va_list);
 
 extern void    decode_bits(bitmask_word_t *, size_t, const uschar * const *,
 	           const uschar *, bit_table *, int, int);
