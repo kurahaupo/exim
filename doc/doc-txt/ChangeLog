@@ -14,6 +14,7 @@ HS/01 Security: PROXYv2 parser: reject PROXY frames whose declared payload
       formatted as the sender's IPv6 address and disclosed in the SMTP
       greeting banner.  Affects configurations with SUPPORT_PROXY and
       `hosts_proxy` set.  Reported by Warisjeet Singh (sin99xx).
+      (CVE-2026-48840, EXIM-Security-2026-05-19.1)
 
 
 Exim version 4.99.3
