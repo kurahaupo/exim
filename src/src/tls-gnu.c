@@ -4016,7 +4016,7 @@ exim_gnutls_state_st * state = &state_server;
 
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(lim))
-    return state->xfer_error ? EOF : smtp_getc(NULL, lim);
+    return state->xfer_error ? EOF : inp_getc(rx_prc->lower, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4040,7 +4040,7 @@ uschar * buf;
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!state->xfer_error) return smtp_getbuf(NULL, len);
+    if (!state->xfer_error) return inp_getbuf(rx_prc->lower, len);
     *len = 0;
     return NULL;
     }

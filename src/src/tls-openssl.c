@@ -4631,7 +4631,7 @@ tls_getc(const const in_processing * inp, unsigned lim)
 {
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(lim))
-    return ssl_xfer_error ? EOF : smtp_getc(rx_prc, lim);
+    return ssl_xfer_error ? EOF : inp_getc(rx_prc->lower, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4653,7 +4653,7 @@ uschar * buf;
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!ssl_xfer_error) return smtp_getbuf(rx_prc, len);
+    if (!ssl_xfer_error) return inp_getbuf(rx_prc->lower, len);
     *len = 0;
     return NULL;
     }

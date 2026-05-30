@@ -1022,7 +1022,7 @@ BOOL fix_nl = FALSE;
 
 for(;;)
   {
-  switch ((ch = bdat_getc(rx_prc, GETC_BUFFER_UNLIMITED)))
+  switch ((ch = receive_getc(GETC_BUFFER_UNLIMITED)))
     {
     case EOF:	return END_EOF;
     case ERR:	return END_PROTOCOL;
@@ -1063,7 +1063,7 @@ for(;;)
       because we have to unget, so re-push it. */
 
       bdat_push_receive_functions();
-      bdat_ungetc(rx_prc, ch);
+      receive_ungetc(ch);
       continue;
 
     case '\0':  body_zerocount++; break;
@@ -1086,7 +1086,7 @@ for(;;)
       else if (ch == '\r')
 	{
 	ch_state = CR_SEEN;
-	if (fix_nl) bdat_ungetc(rx_prc, '\n');
+	if (fix_nl) receive_ungetc('\n');
 	continue;			/* don't write CR */
 	}
       break;
@@ -1145,13 +1145,13 @@ for (;;)
   if (chunking_data_left > 0)
     {
     unsigned len = MAX(chunking_data_left, thismessage_size_limit - message_size + 1);
-    const uschar * buf = bdat_getbuf(rx_prc, &len);
+    const uschar * buf = receive_getbuf(&len);
 
     if (!buf) return END_EOF;
     message_size += len;
     if (fout && fwrite(buf, len, 1, fout) != 1) return END_WERROR;
     }
-  else switch (ch = bdat_getc(rx_prc, GETC_BUFFER_UNLIMITED))
+  else switch (ch = receive_getc(GETC_BUFFER_UNLIMITED))
     {
     case EOF: return END_EOF;
     case EOD: return END_DOT;

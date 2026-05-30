@@ -1361,18 +1361,6 @@ int     smtp_rlr_base          = 0;
 double  smtp_rlr_factor        = 0.0;
 int     smtp_rlr_limit         = 0;
 int     smtp_rlr_threshold     = INT_MAX;
-#ifndef MACRO_PREDEF
-in_processing smtp_template = {
-  .layer_name =	US"smtp",
-  .getc =	smtp_getc,
-  .getbuf =	smtp_getbuf,
-  .getcache =	smtp_get_cache,
-  .hasc =	smtp_hasc,
-  .ungetc =	smtp_ungetc,
-  .feof =	smtp_feof,
-  .ferror =	smtp_ferror
-};
-#endif
 #ifdef SUPPORT_I18N
 const uschar *smtputf8_advertise_hosts = US"*";	/* overridden under test-harness */
 #endif

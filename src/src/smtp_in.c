@@ -647,6 +647,18 @@ errno = smtp_had_error;
 return smtp_had_error;
 }
 
+in_processing smtp_template = {
+  .layer_name =	US"smtp",
+  .getc =	smtp_getc,
+  .getbuf =	smtp_getbuf,
+  .getcache =	smtp_get_cache,
+  .hasc =	smtp_hasc,
+  .ungetc =	smtp_ungetc,
+  .feof =	smtp_feof,
+  .ferror =	smtp_ferror
+};
+
+
 
 /* Check if a getc will block or not */
 /*XXX should convert from select() to poll() */
@@ -902,6 +914,13 @@ if (chunking_data_left > 0)
 return TRUE;
 }
 
+int
+bdat_ungetc(const in_processing * inp, int ch)
+{
+chunking_data_left++;
+return inp_ungetc(inp->lower, ch);
+}
+
 uschar *
 bdat_getbuf(const in_processing * inp, unsigned * len)
 {
@@ -981,13 +1000,6 @@ if (!rx_prc->lower)
 
 rx_prc = rx_prc->lower;
 DEBUG(receive) debug_print_processing_stack();
-}
-
-int
-bdat_ungetc(const in_processing * inp, int ch)
-{
-chunking_data_left++;
-return inp_ungetc(inp->lower, ch);
 }
 
 
