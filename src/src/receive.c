@@ -136,6 +136,16 @@ stdin_ferror(void)
 return ferror(stdin);
 }
 
+in_processing stdin_template = {
+  .refill = stdin_refill,
+  .getc = stdin_getc,
+  .hasc = stdin_hasc,
+  .getbuf = stdin_getbuf,
+  .ungetc = stdin_ungetc,
+  .feof = stdin_feof,
+  .ferror = stdin_ferror
+};
+
 
 
 

@@ -1054,5 +1054,17 @@ typedef enum {
   SLIST_ORDER_UNDEFINED, SLIST_OLDER_FIRST, SLIST_RANDOM, SLIST_NEWER_FIRST
 } s_order_t;
 
+/* Input processing layer */
+typedef struct in_processing {
+  BOOL	(*refill)(unsigned);	/* buffer refill; arg: byte count limit. Ret: success */
+  int	(*getc)(unsigned);	/* get byte, refill if needed w/ byte count limit */
+  BOOL	(*hasc)(void);		/* predicate: byte avail for reading (without refill) */
+  uschar * (*getbuf)(unsigned *);/* get many bytes, with refill; arg req/ret byte cnt */
+  int	(*ungetc)(int);		/* push one byte back into buffer */
+  int	(*feof)(void);		/* predicate: EOF status */
+  int	(*ferror)(void);	/* predicate: error status */
+  struct in_processing * lower;	/* underlying layer, or NULL */
+} in_processing;
+
 #endif	/* whole file */
 /* End of structs.h */

@@ -1014,6 +1014,7 @@ extern BOOL    spool_wireformat;       /* can write wireformat -D files */
 #ifdef SUPPORT_SRS
 extern uschar *srs_recipient;          /* SRS recipient */
 #endif
+extern in_processing stdin_template;   /* stackable input processing methods */
 extern BOOL    strict_acl_vars;        /* ACL variables have to be set before being used */
 extern int     string_datestamp_offset;/* After insertion by string_format */
 extern int     string_datestamp_length;/* After insertion by string_format */
