@@ -572,6 +572,7 @@ extern int     spool_open_temp(uschar *);
 extern int     spool_read_header(uschar *, BOOL, BOOL);
 extern uschar *spool_sender_from_msgid(const uschar *);
 extern int     spool_write_header(const uschar *, int, uschar **);
+extern uschar *stdin_getbuf(unsigned *);
 extern int     stdin_getc(unsigned);
 extern int     stdin_feof(void);
 extern int     stdin_ferror(void);

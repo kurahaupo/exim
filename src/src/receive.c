@@ -96,6 +96,24 @@ stdin_hasc(void)
 return stdin_inptr < stdin_inend;
 }
 
+/* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
+
+uschar *
+stdin_getbuf(unsigned * len)
+{
+unsigned size;
+uschar * buf;
+
+if (!stdin_hasc() && !stdin_refill())
+  { *len = 0; return NULL; }
+
+if ((size = stdin_inend - stdin_inptr) > *len) size = *len;
+buf = stdin_inptr;
+stdin_inptr += size;
+*len = size;
+return buf;
+}
+
 int
 stdin_ungetc(int c)
 {
