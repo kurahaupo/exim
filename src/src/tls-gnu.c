@@ -611,7 +611,7 @@ static BOOL
 tls_refill(unsigned lim)
 {
 exim_gnutls_state_st * state = &state_server;
-uschar * s = state->xfer_buffer + IN_UNGET_MAX;
+uschar * s = state->xfer_buffer + IN_UNGETC_MAX;
 ssize_t inbytes;
 
 DEBUG(tls) debug_printf("Calling gnutls_record_recv"
@@ -668,8 +668,8 @@ else if (inbytes < 0)
 #ifndef DISABLE_DKIM
 smtp_verify_feed(s, inbytes);
 #endif
-state->xfer_buffer_hwm = (int) inbytes + IN_UNGET_MAX;
-state->xfer_buffer_lwm = IN_UNGET_MAX;
+state->xfer_buffer_hwm = (int) inbytes + IN_UNGETC_MAX;
+state->xfer_buffer_lwm = IN_UNGETC_MAX;
 return TRUE;
 }
 
