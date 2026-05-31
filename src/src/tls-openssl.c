@@ -4619,6 +4619,11 @@ return TRUE;
 
 /* This gets the next byte from the TLS input buffer. If the buffer is empty,
 it refills the buffer via the SSL reading function.
+If that errors - or the TLS inbound has been closed and we are receiving a
+mail message - return EOF.  For the closed case while between messages, drop
+to the cleartext layer getc; this supports continued-connection receive when
+the sender cannot maintain a TLS session (for Exim, when configured to not
+use a tls-proxy process).
 
 Arguments:  lim		Maximum amount to read/buffer
 Returns:    the next character or EOF
@@ -4631,7 +4636,7 @@ tls_getc(const const in_processing * inp, unsigned lim)
 {
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(lim))
-    return ssl_xfer_error ? EOF : inp_getc(rx_prc->lower, lim);
+    return ssl_xfer_error || message_id[0] ? EOF : inp_getc(inp->lower, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4653,7 +4658,7 @@ uschar * buf;
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!ssl_xfer_error) return inp_getbuf(rx_prc->lower, len);
+    if (!ssl_xfer_error && !message_id[0]) return inp_getbuf(inp->lower, len);
     *len = 0;
     return NULL;
     }
