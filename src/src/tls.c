@@ -595,15 +595,36 @@ static in_processing tls_proc = {
   .feof =	tls_feof,
   .ferror =	tls_ferror
 };
+
+/* Only legitimate over smtp layer. */
+
+if (ANY_DEBUG || f.running_in_test_harness)
+  if (Ustrcmp(inp->layer_name, "smtp") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, inp->layer_name);
+
 tls_proc.lower = inp;
 return &tls_proc;
 }
 
 /* Pop TLS receive processing */
+
 const in_processing *
 tls_pop_receive_functions(const in_processing * inp)
 {
-return inp->lower;
+const in_processing * lwr = inp->lower;
+
+if (ANY_DEBUG || f.running_in_test_harness)
+  {
+  if (Ustrcmp(inp->layer_name, "tls") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad current layer %s", __FUNCTION__, inp->layer_name);
+  if (Ustrcmp(lwr->layer_name, "smtp") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, lwr->layer_name);
+  }
+
+return lwr;
 }
 
 

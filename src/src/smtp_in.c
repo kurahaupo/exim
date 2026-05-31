@@ -978,7 +978,15 @@ static in_processing bdat_proc;
 void
 bdat_push_receive_functions(void)
 {
-/* push the current receive_* function on the "stack", and
+/* Only legitimate over smtp or tls layer. */
+
+if (ANY_DEBUG || f.running_in_test_harness)
+  if (  Ustrcmp(rx_prc->layer_name, "smtp") != 0
+     && Ustrcmp(rx_prc->layer_name, "tls") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, rx_prc->layer_name);
+
+/* Push the current receive_* function on the "stack", and
 replace them by bdat_getc(), which in turn will use the next lower layer
 functions to do the dirty work. */
 
@@ -992,20 +1000,30 @@ DEBUG(receive) debug_print_processing_stack();
 static inline void
 bdat_pop_receive_functions(void)
 {
-if (!rx_prc->lower)
+const in_processing * lwr = rx_prc->lower;
+
+if (!lwr)
+  log_write(LOG_PANIC_DIE, "%s: bad substrate <none>", __FUNCTION__);
+
+if (ANY_DEBUG || f.running_in_test_harness)
   {
-  DEBUG(receive) debug_printf("chunking double-pop receive functions\n");
-  return;
+  if (Ustrcmp(rx_prc->layer_name, "bdat") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad current layer %s", __FUNCTION__, rx_prc->layer_name);
+  if (  Ustrcmp(lwr->layer_name, "smtp") != 0
+     && Ustrcmp(lwr->layer_name, "tls") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, lwr->layer_name);
   }
 
-rx_prc = rx_prc->lower;
+rx_prc = lwr;
 DEBUG(receive) debug_print_processing_stack();
 }
 
 
 
 #ifndef DISABLE_TLS
-/* The TLS layer Is done with receiving.
+/* The TLS layer is done with receiving.
 
 To preserve layering of the receive processing if a BDAT chunk is still
 in progress, pop the bdat layer, reset to plaintext processing then
@@ -1020,8 +1038,6 @@ tls_receive_done(void)
 {
 if (chunking_state > CHUNKING_OFFERED)
   bdat_pop_receive_functions();
-
-assert(rx_prc != &smtp_template);
 
 rx_prc = tls_pop_receive_functions(rx_prc);
 DEBUG(receive) debug_print_processing_stack();
