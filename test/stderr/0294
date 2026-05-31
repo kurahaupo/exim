@@ -5,6 +5,7 @@ originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< helo test
 SMTP>| 250 myhost.test.ex Hello CALLER at test
@@ -57,6 +58,7 @@ created log directory TESTSUITE/spool/log
 receive_msg: tidyup
 SMTP>| 250 OK id=10HmaX-000000005vi-0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP<< mail from:<x@y>
 rate limit MAIL: delay 1 sec
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -91,6 +93,7 @@ LOG: MAIN
 receive_msg: tidyup
 SMTP>| 250 OK id=10HmaY-000000005vi-0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP<< mail from:<x@y>
 rate limit MAIL: delay 2 sec
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -115,6 +118,7 @@ host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< helo test
 test in helo_lookup_domains?
@@ -171,6 +175,7 @@ host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< helo test
 test in helo_lookup_domains?
@@ -220,6 +225,7 @@ originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< helo test
 SMTP>| 250 myhost.test.ex Hello CALLER at test

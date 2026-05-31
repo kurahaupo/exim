@@ -496,7 +496,7 @@ Return false for error or EOF.
 */
 
 static BOOL
-smtp_refill(unsigned lim)
+smtp_refill(const in_processing * inp, unsigned lim)
 {
 uschar * s;
 int rc, save_errno;
@@ -545,7 +545,7 @@ return TRUE;
 /* Check if there is buffered data */
 
 BOOL
-smtp_hasc(void)
+smtp_hasc(const in_processing * inp)
 {
 return smtp_inptr < smtp_inend;
 }
@@ -562,21 +562,21 @@ Returns:    the next character or EOF
 */
 
 int
-smtp_getc(unsigned lim)
+smtp_getc(const in_processing * inp, unsigned lim)
 {
-if (!smtp_hasc() && !smtp_refill(lim)) return EOF;
+if (!smtp_hasc(inp) && !smtp_refill(inp, lim)) return EOF;
 return *smtp_inptr++;
 }
 
 /* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
 
 uschar *
-smtp_getbuf(unsigned * len)
+smtp_getbuf(const in_processing * inp, unsigned * len)
 {
 unsigned size;
 uschar * buf;
 
-if (!smtp_hasc() && !smtp_refill(*len))
+if (!smtp_hasc(inp) && !smtp_refill(inp, *len))
   { *len = 0; return NULL; }
 
 if ((size = smtp_inend - smtp_inptr) > *len) size = *len;
@@ -590,7 +590,7 @@ return buf;
 Called, unless TLS, just before starting to read message headers. */
 
 void
-smtp_get_cache(unsigned lim)
+smtp_get_cache(const in_processing * inp, unsigned lim)
 {
 #ifndef DISABLE_DKIM
 int n = smtp_inend - smtp_inptr;
@@ -614,7 +614,7 @@ Returns:       the character
 */
 
 int
-smtp_ungetc(int ch)
+smtp_ungetc(const in_processing * inp, int ch)
 {
 if (smtp_inptr <= smtp_inbuffer)	/* NB: NOT smtp_hasc() ! */
   log_write_die(LOG_MAIN, "buffer underflow in smtp_ungetc");
@@ -632,7 +632,7 @@ Returns:       non-zero if the eof flag is set
 */
 
 int
-smtp_feof(void)
+smtp_feof(const in_processing * inp)
 {
 return smtp_had_eof;
 }
@@ -647,11 +647,23 @@ Returns:       non-zero if the error flag is set
 */
 
 int
-smtp_ferror(void)
+smtp_ferror(const in_processing * inp)
 {
 errno = smtp_had_error;
 return smtp_had_error;
 }
+
+in_processing smtp_template = {
+  .layer_name =	US"smtp",
+  .getc =	smtp_getc,
+  .getbuf =	smtp_getbuf,
+  .getcache =	smtp_get_cache,
+  .hasc =	smtp_hasc,
+  .ungetc =	smtp_ungetc,
+  .feof =	smtp_feof,
+  .ferror =	smtp_ferror
+};
+
 
 
 /* Check if a getc will block or not */
@@ -675,10 +687,10 @@ if (rc <= 0) return FALSE;	/* Not ready to read */
 if (eof_ok) return TRUE;	/* A read will not block */
 
 /* Check for actual data */
-rc = smtp_getc(GETC_BUFFER_UNLIMITED);
+rc = smtp_getc(rx_prc, GETC_BUFFER_UNLIMITED);
 if (rc < 0) return FALSE;      /* End of file or error */
 
-smtp_ungetc(rc);
+smtp_ungetc(rx_prc, rc);
 return TRUE;
 }
 
@@ -736,17 +748,10 @@ return wouldblock_reading(eof_ok);
 static inline void
 smtp_rcv_cleartext(void)
 {
-receive_getc = smtp_getc;
-receive_getbuf = smtp_getbuf;
-receive_get_cache = smtp_get_cache;
-receive_hasc = smtp_hasc;
-receive_ungetc = smtp_ungetc;
-receive_feof = smtp_feof;
-receive_ferror = smtp_ferror;
+rx_prc = &smtp_template;
 }
 
 /* Forward declarations */
-static inline void bdat_push_receive_functions(void);
 static inline void bdat_pop_receive_functions(void);
 
 
@@ -762,12 +767,13 @@ to handle the BDAT command/response.
 Placed here due to the correlation with the above smtp_getc(), which it wraps,
 and also by the need to do smtp command/response handling.
 
-Arguments:  lim		(ignored)
-Returns:    the next character or ERR, EOD or EOF
+Arguments:	lim		(ignored)
+Returns:	The next character or ERR, EOD or EOF.
+		For all of those last three status codes, the bdat layer has been popped.
 */
 
 int
-bdat_getc(unsigned lim)
+bdat_getc(const in_processing * inp, unsigned lim)
 {
 uschar * user_msg = NULL, * log_msg;
 int rc;
@@ -786,7 +792,7 @@ for(;;)
   {
 
   if (chunking_data_left > 0)
-    return lwr_receive_getc(chunking_data_left--);
+    return inp_getc(inp->lower, chunking_data_left--);
 
   bdat_pop_receive_functions();
 #ifndef DISABLE_DKIM
@@ -907,15 +913,22 @@ next_cmd:
 }
 
 BOOL
-bdat_hasc(void)
+bdat_hasc(const in_processing * inp)
 {
 if (chunking_data_left > 0)
-  return lwr_receive_hasc();
+  return inp_hasc(inp->lower);
 return TRUE;
 }
 
+int
+bdat_ungetc(const in_processing * inp, int ch)
+{
+chunking_data_left++;
+return inp_ungetc(inp->lower, ch);
+}
+
 uschar *
-bdat_getbuf(unsigned * len)
+bdat_getbuf(const in_processing * inp, unsigned * len)
 {
 uschar * buf;
 
@@ -923,18 +936,29 @@ if (chunking_data_left == 0)
   { *len = 0; return NULL; }
 
 if (*len > chunking_data_left) *len = chunking_data_left;
-buf = lwr_receive_getbuf(len);	/* Either smtp_getbuf or tls_getbuf */
+buf = inp_getbuf(inp->lower, len);	/* Either smtp_getbuf or tls_getbuf */
 chunking_data_left -= *len;
 return buf;
 }
 
 void
-bdat_flush_data(void)
+bdat_get_cache(const in_processing * inp, unsigned lim)
+{
+inp_get_cache(inp->lower, lim);
+}
+int
+bdat_feof(const in_processing * inp)
+{
+return inp_feof(inp->lower);
+}
+
+void
+bdat_flush_data(const in_processing * inp)
 {
 while (chunking_data_left)
   {
   unsigned n = chunking_data_left;
-  if (!bdat_getbuf(&n)) break;
+  if (!bdat_getbuf(inp, &n)) break;
   }
 
 bdat_pop_receive_functions();
@@ -943,83 +967,95 @@ DEBUG(receive)
   debug_printf("chunking state '%s'\n", chunking_states[chunking_state]);
 }
 
+static in_processing bdat_template = {
+  .layer_name =	US"bdat",
+  .getc =	bdat_getc,
+  .getbuf =	bdat_getbuf,
+  .getcache =	bdat_get_cache,
+  .hasc =	bdat_hasc,
+  .ungetc =	bdat_ungetc,
+  .feof =	bdat_feof,
+};
 
-static inline void
+/* We're only expecting one bdat layer at a time, but we do bounce it in and
+out a lot.  So use a static struct rather than allocating. */
+static in_processing bdat_proc;
+
+void
 bdat_push_receive_functions(void)
 {
-/* push the current receive_* function on the "stack", and
-replace them by bdat_getc(), which in turn will use the lwr_receive_*
-functions to do the dirty work. */
-if (!lwr_receive_getc)
-  {
-  lwr_receive_getc = receive_getc;
-  lwr_receive_getbuf = receive_getbuf;
-  lwr_receive_hasc = receive_hasc;
-  lwr_receive_ungetc = receive_ungetc;
-  }
-else
-  DEBUG(receive) debug_printf("chunking double-push receive functions\n");
+/* Only legitimate over smtp or tls layer. */
 
-receive_getc = bdat_getc;
-receive_getbuf = bdat_getbuf;
-receive_hasc = bdat_hasc;
-receive_ungetc = bdat_ungetc;
+if (ANY_DEBUG || f.running_in_test_harness)
+  if (  Ustrcmp(rx_prc->layer_name, "smtp") != 0
+     && Ustrcmp(rx_prc->layer_name, "tls") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, rx_prc->layer_name);
+
+/* Push the current receive_* function on the "stack", and
+replace them by bdat_getc(), which in turn will use the next lower layer
+functions to do the dirty work. */
+
+bdat_proc = bdat_template;
+bdat_proc.lower = rx_prc;
+rx_prc = &bdat_proc;
+
+DEBUG(receive) debug_print_processing_stack();
 }
 
 static inline void
 bdat_pop_receive_functions(void)
 {
-if (!lwr_receive_getc)
+const in_processing * lwr = rx_prc->lower;
+
+if (!lwr)
+  log_write(LOG_PANIC_DIE, "%s: bad substrate <none>", __FUNCTION__);
+
+if (ANY_DEBUG || f.running_in_test_harness)
   {
-  DEBUG(receive) debug_printf("chunking double-pop receive functions\n");
-  return;
+  if (Ustrcmp(rx_prc->layer_name, "bdat") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad current layer %s", __FUNCTION__, rx_prc->layer_name);
+  if (  Ustrcmp(lwr->layer_name, "smtp") != 0
+     && Ustrcmp(lwr->layer_name, "tls") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, lwr->layer_name);
   }
-receive_getc = lwr_receive_getc;
-receive_getbuf = lwr_receive_getbuf;
-receive_hasc = lwr_receive_hasc;
-receive_ungetc = lwr_receive_ungetc;
 
-lwr_receive_getc = NULL;
-lwr_receive_getbuf = NULL;
-lwr_receive_hasc = NULL;
-lwr_receive_ungetc = NULL;
-}
-
-int
-bdat_ungetc(int ch)
-{
-chunking_data_left++;
-bdat_push_receive_functions();  /* we're not done yet, calling push is safe, because it checks the state before pushing anything */
-return lwr_receive_ungetc(ch);
+rx_prc = lwr;
+DEBUG(receive) debug_print_processing_stack();
 }
 
 
 
 #ifndef DISABLE_TLS
-/* The TLS layer has received a Close notification alert, meaning no
-more encrypted data will be received.
+/* The TLS layer is done with receiving.
 
 To preserve layering of the receive processing if a BDAT chunk is still
 in progress, pop the bdat layer, reset to plaintext processing then
 re-push the bdat layer.
-Then close our writing side of the TLS channel.
 
 Any chunk in progress will likely error out anyway; let the existing
 processing handle it.
 */
 
 void
-tls_close_notify(void)
+tls_receive_done(void)
 {
 if (chunking_state > CHUNKING_OFFERED)
-  {
   bdat_pop_receive_functions();
-  smtp_rcv_cleartext();
+
+rx_prc = tls_pop_receive_functions(rx_prc);
+DEBUG(receive) debug_print_processing_stack();
+
+tls_in.active.tls_ctx = NULL;
+tls_in.sni = NULL;
+/* Leave bits, peercert, cipher, peerdn, certificate_verified set, for logging */
+
+if (chunking_state > CHUNKING_OFFERED)
   bdat_push_receive_functions();
-  }
-tls_close(NULL, TLS_NO_SHUTDOWN);
 }
-#endif
+#endif	/*DISABLE_TLS*/
 
 /******************************************************************************/
 
@@ -1310,7 +1346,7 @@ os_non_restarting_signal(SIGALRM, command_timeout_handler);
 
 /* Read up to end of line */
 
-while ((c = (receive_getc)(buffer_lim)) != '\n')
+while ((c = receive_getc(buffer_lim)) != '\n')
   {
   /* If hit end of file, return pseudo EOF command. Whether we have a
   part-line already read doesn't matter, since this is an error state. */
@@ -1954,7 +1990,7 @@ like HELO and RSET count as whole transactions. */
 
 bsmtp_transaction_linecount = receive_linecount;
 
-if ((receive_feof)()) return 0;   /* Treat EOF as QUIT */
+if (receive_feof()) return 0;   /* Treat EOF as QUIT */
 
 cancel_cutthrough_connection(TRUE, US"smtp_setup_batch_msg");
 reset_point = smtp_reset(reset_point);		/* Reset for start of message */
@@ -2495,26 +2531,15 @@ else
 call the local functions instead of the standard C ones. */
 
 smtp_buf_init();
+smtp_rcv_cleartext();
 
 #ifndef DISABLE_TLS
 if (atrn_mode && tls_in.active.sock >= 0)
   {
-  receive_getc = tls_getc;
-  receive_getbuf = tls_getbuf;
-  receive_get_cache = tls_get_cache;
-  receive_hasc = tls_hasc;
-  receive_ungetc = tls_ungetc;
-  receive_feof = tls_feof;
-  receive_ferror = tls_ferror;
+  rx_prc = tls_push_receive_functions(rx_prc);
+  DEBUG(receive) debug_print_processing_stack();
   }
-else
 #endif
-  smtp_rcv_cleartext();
-
-lwr_receive_getc = NULL;
-lwr_receive_getbuf = NULL;
-lwr_receive_hasc = NULL;
-lwr_receive_ungetc = NULL;
 
 /* Set up the message size limit; this may be host-specific */
 
@@ -4087,7 +4112,8 @@ static misc_module_info * xclient_mi = NULL;
 #endif
 rmark reset_point = store_mark();
 
-DEBUG(receive) debug_printf("smtp_setup_msg entered\n");
+DEBUG(receive)
+  { debug_printf("smtp_setup_msg entered\n"); debug_print_processing_stack(); }
 
 /* Reset for start of new message. We allow one RSET not to be counted as a
 nonmail command, for those MTAs that insist on sending it between every
@@ -4106,14 +4132,6 @@ cmd_list[CL_EHLO].is_mail_cmd = TRUE;
 #ifndef DISABLE_TLS
 cmd_list[CL_STLS].is_mail_cmd = TRUE;
 #endif
-
-if (lwr_receive_getc && !atrn_mode)
-  {
-  /* This should have already happened, but if we've gotten confused,
-  force a reset here. */
-  DEBUG(receive) debug_printf("WARNING: smtp_setup_msg had to restore receive functions to lowers\n");
-  bdat_pop_receive_functions();
-  }
 
 /* Set the local signal handler for SIGTERM - it tries to end off tidily */
 
@@ -5582,7 +5600,7 @@ while (done <= 0)
 	if (chunking_state > CHUNKING_OFFERED)
 	  {
 	  bdat_push_receive_functions();
-	  bdat_flush_data();
+	  bdat_flush_data(rx_prc);
 	  }
 	break;
 	}
@@ -5596,7 +5614,7 @@ while (done <= 0)
 	if (chunking_state > CHUNKING_OFFERED)
 	  {
 	  bdat_push_receive_functions();
-	  bdat_flush_data();
+	  bdat_flush_data(rx_prc);
 	  }
 	break;
 	}
@@ -5928,7 +5946,7 @@ while (done <= 0)
 
     case EOF_CMD:
       {
-      uschar * errstr = smtp_ferror()
+      uschar * errstr = smtp_ferror(rx_prc)
 	? string_sprintf(" (error: %s)", strerror(errno)) : US"";
 
       incomplete_transaction_log(US"connection lost");

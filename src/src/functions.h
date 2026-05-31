@@ -54,20 +54,13 @@ extern BOOL    tls_client_adjunct_start(host_item *, client_conn_ctx *,
 extern void    tls_client_creds_reload(BOOL);
 
 extern void    tls_close(void *, int);
-extern void    tls_close_notify(void);
 extern BOOL    tls_could_getc(void);
 extern void    tls_daemon_init(void);
 extern int     tls_daemon_tick(void);
 extern BOOL    tls_dropprivs_validate_require_cipher(BOOL);
 extern BOOL    tls_export_cert(uschar *, size_t, void *);
-extern int     tls_feof(void);
-extern int     tls_ferror(void);
 extern uschar *tls_field_from_dn(uschar *, const uschar *);
 extern void    tls_free_cert(void **);
-extern int     tls_getc(unsigned);
-extern uschar *tls_getbuf(unsigned *);
-extern void    tls_get_cache(unsigned);
-extern BOOL    tls_hasc(void);
 extern BOOL    tls_import_cert(const uschar *, void **);
 extern void    tls_state_in_to_out(int, const uschar *, int);
 extern void    tls_state_out_to_in(int, const uschar *, int);
@@ -76,10 +69,10 @@ extern BOOL    tls_is_name_for_cert(const uschar *, void *);
 extern BOOL    tls_openssl_options_parse(const uschar *, long *);
 #  endif
 extern int     tls_read(void *, uschar *, size_t);
+extern void    tls_receive_done(void);
 extern int     tls_server_start(uschar **, gstring *);
 extern void    tls_shutdown_wr(void *);
 extern BOOL    tls_smtp_buffered(void);
-extern int     tls_ungetc(int);
 #  if defined(EXIM_HAVE_INOTIFY) || defined(EXIM_HAVE_KEVENT)
 extern void    tls_watch_discard_event(int);
 extern void    tls_watch_invalidate(void);
@@ -135,11 +128,9 @@ extern gstring *authres_smtpauth(gstring *);
 extern uschar *b64encode(const uschar *, int);
 extern uschar *b64encode_taint(const uschar *, int, const void *);
 extern int     b64decode(const uschar *, uschar **, const void *);
-extern int     bdat_getc(unsigned);
-extern uschar *bdat_getbuf(unsigned *);
-extern BOOL    bdat_hasc(void);
-extern int     bdat_ungetc(int);
-extern void    bdat_flush_data(void);
+
+extern void    bdat_flush_data(const in_processing *);
+extern void    bdat_push_receive_functions(void);
 
 extern void    cancel_cutthrough_connection(BOOL, const uschar *);
 extern gstring *cat_file(FILE *, gstring *, const uschar *);
@@ -178,23 +169,24 @@ extern int     dcc_process(uschar **);
 
 extern BOOL    debug_disable(void);
 extern void    debug_decode_bits(bitmask_word_t **, const uschar *, int);
+extern void    debug_enable(void);
 
 extern void    debug_logging_activate(const uschar *, const uschar *);
 extern void    debug_logging_from_spool(const uschar *);
 extern void    debug_logging_stop(BOOL);
-extern void    debug_print_argv(const uschar **);
-extern void    debug_print_ids(uschar *);
-extern void    debug_printf_indent(const char *, ...) PRINTF_FUNCTION(1,2);
-extern void    debug_print_string(uschar *);
-extern void    debug_print_tree(const char *, tree_node *);
-extern void    debug_vprintf(int, const char *, va_list);
 extern void    debug_pretrigger_setup(const uschar *);
 extern void    debug_pretrigger_discard(void);
+extern void    debug_print_argv(const uschar **);
+extern void    debug_print_ids(uschar *);
+extern void    debug_print_processing_stack(void);
+extern void    debug_print_string(uschar *);
+extern void    debug_print_tree(const char *, tree_node *);
+extern void    debug_printf_indent(const char *, ...) PRINTF_FUNCTION(1,2);
 extern void    debug_print_socket(int);
 extern gstring * debug_selector_dump(gstring *);
 extern void    debug_set_default_bits(bitmask_word_t **);
-extern void    debug_enable(void);
 extern void    debug_trigger_fire(void);
+extern void    debug_vprintf(int, const char *, va_list);
 
 extern void    decode_bits(bitmask_word_t *, size_t, const uschar * const *,
 	           const uschar *, bit_table *, int, int);
@@ -532,16 +524,10 @@ extern void    smtp_data_sigint_exit(void) NORETURN;
 extern void    smtp_deliver_init(void);
 extern uschar *smtp_cmd_hist(void);
 extern int     smtp_connect(smtp_connect_args *, const blob *);
-extern int     smtp_feof(void);
-extern int     smtp_ferror(void);
 extern uschar *smtp_get_connection_info(void);
 extern BOOL    smtp_get_interface(const uschar *, int, address_item *,
                  const uschar **, const uschar *);
 extern int     smtp_get_port(const uschar *, address_item *, const uschar *);
-extern int     smtp_getc(unsigned);
-extern uschar *smtp_getbuf(unsigned *);
-extern void    smtp_get_cache(unsigned);
-extern BOOL    smtp_hasc(void);
 extern int     smtp_handle_acl_fail(int, int, uschar *, uschar *);
 extern void    smtp_log_no_mail(void);
 extern void    smtp_message_code(uschar **, int *, uschar **, uschar **, BOOL);
@@ -555,7 +541,6 @@ extern void    smtp_send_prohibition_message(int, uschar *);
 extern int     smtp_setup_msg(void);
 extern int     smtp_sock_connect(smtp_connect_args *, int, const blob *);
 extern BOOL    smtp_start_session(void);
-extern int     smtp_ungetc(int);
 extern void    smtp_verify_feed(const uschar *, unsigned);
 extern BOOL    smtp_verify_helo(void);
 extern int     smtp_write_atrn(address_item *, cut_t *);
@@ -572,11 +557,13 @@ extern int     spool_open_temp(uschar *);
 extern int     spool_read_header(uschar *, BOOL, BOOL);
 extern uschar *spool_sender_from_msgid(const uschar *);
 extern int     spool_write_header(const uschar *, int, uschar **);
-extern int     stdin_getc(unsigned);
-extern int     stdin_feof(void);
-extern int     stdin_ferror(void);
-extern BOOL    stdin_hasc(void);
-extern int     stdin_ungetc(int);
+extern uschar *stdin_getbuf(const in_processing *, unsigned *);
+extern int     stdin_getc(const in_processing *, unsigned);
+extern int     stdin_feof(const in_processing *);
+extern int     stdin_ferror(const in_processing *);
+extern BOOL    stdin_hasc(const in_processing *);
+extern BOOL    stdin_refill(const in_processing *, unsigned);
+extern int     stdin_ungetc(const in_processing *, int);
 
 extern void    stackdump(void);
 extern void    store_exit(void);
@@ -656,6 +643,8 @@ extern void    tfo_probe(void);
 #endif
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
 extern void    tls_modify_variables(tls_support *);
+extern const in_processing * tls_pop_receive_functions(const in_processing *);
+extern const in_processing * tls_push_receive_functions(const in_processing *);
 #endif
 extern uschar *tod_stamp(int);
 
@@ -1575,6 +1564,47 @@ is_multiple_qrun(void)
 {
 return qrunners && (qrunners->interval > 0 || qrunners->next);
 }
+
+/******************************************************************************/
+/* Recieve input processing */
+
+static inline int
+inp_getc(const in_processing * inp, unsigned maxbuf)
+{ return inp->getc(inp, maxbuf); }
+static inline uschar *
+inp_getbuf(const in_processing * inp, unsigned * len)
+{ return inp->getbuf(inp, len); }
+static inline BOOL
+inp_hasc(const in_processing * inp)
+{ return inp->hasc(inp); }
+static inline void
+inp_get_cache(const in_processing * inp, unsigned lim)
+{ inp->getcache(inp, lim); }
+static inline int
+inp_ungetc(const in_processing * inp, int ch)
+{ return inp->ungetc(inp, ch); }
+static inline int
+inp_feof(const in_processing * inp)
+{ return inp->feof(inp); }
+static inline int
+inp_ferror(const in_processing * inp)
+{ return inp->ferror(inp); }
+
+static inline int
+receive_getc(unsigned maxbuf) { return inp_getc(rx_prc, maxbuf); }
+static inline uschar *
+receive_getbuf(unsigned * len) { return inp_getbuf(rx_prc, len); }
+static inline BOOL
+receive_hasc(void) { return inp_hasc(rx_prc); }
+static inline void
+receive_get_cache(unsigned lim) { inp_get_cache(rx_prc, lim); }
+static inline int
+receive_ungetc(int ch) { return inp_ungetc(rx_prc, ch); }
+static inline int
+receive_feof(void) { return inp_feof(rx_prc); }
+static inline int
+receive_ferror(void) { return inp_ferror(rx_prc); }
+
 
 # endif	/* !COMPILE_UTILITY */
 

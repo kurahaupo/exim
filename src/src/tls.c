@@ -509,7 +509,7 @@ Returns:       the character
 */
 
 int
-tls_ungetc(int ch)
+tls_ungetc(const in_processing * inp, int ch)
 {
 if (ssl_xfer_buffer_lwm <= 0)
   log_write_die(LOG_MAIN, "buffer underflow in tls_ungetc");
@@ -532,7 +532,7 @@ Returns:       non-zero if the eof flag is set
 */
 
 int
-tls_feof(void)
+tls_feof(const in_processing * inp)
 {
 return (int)ssl_xfer_eof;
 }
@@ -554,7 +554,7 @@ Returns:       non-zero if the error flag is set
 */
 
 int
-tls_ferror(void)
+tls_ferror(const in_processing * inp)
 {
 return (int)ssl_xfer_error;
 }
@@ -578,7 +578,65 @@ return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 }
 
 
+
+/******************************************************************************/
+/* Push TLS receive processing onto the stack. The functions do not directly use
+the underlying stack element, but this lets us unstack neatly on a TLS close.
+We do not expect more than one TLS layer active, so can use a static struct
+rather than allocating.
+
+Argument: current stack top.
+Return the putative stack top, but let the caller actually set the modification.
+*/
+
+const in_processing *
+tls_push_receive_functions(const in_processing * inp)
+{
+static in_processing tls_proc = {
+  .layer_name =	US"tls",
+  .getc =	tls_getc,
+  .getbuf =	tls_getbuf,
+  .getcache =	tls_get_cache,
+  .hasc =	tls_hasc,
+  .ungetc =	tls_ungetc,
+  .feof =	tls_feof,
+  .ferror =	tls_ferror
+};
+
+/* Only legitimate over smtp layer. */
+
+if (ANY_DEBUG || f.running_in_test_harness)
+  if (Ustrcmp(inp->layer_name, "smtp") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, inp->layer_name);
+
+tls_proc.lower = inp;
+return &tls_proc;
+}
+
+/* Pop TLS receive processing */
+
+const in_processing *
+tls_pop_receive_functions(const in_processing * inp)
+{
+const in_processing * lwr = inp->lower;
+
+if (ANY_DEBUG || f.running_in_test_harness)
+  {
+  if (Ustrcmp(inp->layer_name, "tls") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad current layer %s", __FUNCTION__, inp->layer_name);
+  if (Ustrcmp(lwr->layer_name, "smtp") != 0)
+    log_write(LOG_PANIC_DIE,
+	      "%s: bad substrate %s", __FUNCTION__, lwr->layer_name);
+  }
+
+return lwr;
+}
+
+
 #endif  /*DISABLE_TLS*/
+/******************************************************************************/
 
 void
 tls_modify_variables(tls_support * dest_tsp)

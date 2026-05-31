@@ -131,18 +131,7 @@ extern const uschar  *dsn_advertise_hosts;   /* host for which TLS is advertised
 /* Input-reading functions for messages, so we can use special ones for
 incoming TCP/IP. */
 
-extern int (*lwr_receive_getc)(unsigned);
-extern uschar * (*lwr_receive_getbuf)(unsigned *);
-extern BOOL (*lwr_receive_hasc)(void);
-extern int (*lwr_receive_ungetc)(int);
-
-extern int (*receive_getc)(unsigned);
-extern uschar * (*receive_getbuf)(unsigned *);
-extern BOOL (*receive_hasc)(void);
-extern void (*receive_get_cache)(unsigned);
-extern int (*receive_ungetc)(int);
-extern int (*receive_feof)(void);
-extern int (*receive_ferror)(void);
+extern const in_processing * rx_prc;
 
 
 /* For clearing, saving, restoring address expansion variables. We have to have
@@ -1014,6 +1003,7 @@ extern BOOL    spool_wireformat;       /* can write wireformat -D files */
 #ifdef SUPPORT_SRS
 extern uschar *srs_recipient;          /* SRS recipient */
 #endif
+extern in_processing stdin_template;   /* stackable input processing methods */
 extern BOOL    strict_acl_vars;        /* ACL variables have to be set before being used */
 extern int     string_datestamp_offset;/* After insertion by string_format */
 extern int     string_datestamp_length;/* After insertion by string_format */

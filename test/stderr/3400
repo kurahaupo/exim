@@ -733,6 +733,7 @@ accept: condition test succeeded in ACL check_connect
 end of ACL check_connect: ACCEPT
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 smtp_setup_msg entered
+inp: /smtp
 SMTP>- ◀flush▶
 SMTP<< ehlo testing.testing
 testing.testing in helo_lookup_domains?

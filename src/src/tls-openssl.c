@@ -3861,13 +3861,8 @@ if (!ssl_xfer_buffer) ssl_xfer_buffer = store_malloc(ssl_xfer_buffer_size);
 ssl_xfer_buffer_lwm = ssl_xfer_buffer_hwm = IN_UNGETC_MAX;
 ssl_xfer_eof = ssl_xfer_error = FALSE;
 
-receive_getc = tls_getc;
-receive_getbuf = tls_getbuf;
-receive_get_cache = tls_get_cache;
-receive_hasc = tls_hasc;
-receive_ungetc = tls_ungetc;
-receive_feof = tls_feof;
-receive_ferror = tls_ferror;
+rx_prc = tls_push_receive_functions(rx_prc);
+DEBUG(receive) debug_print_processing_stack();
 
 tls_in.active.sock = smtp_out_fd;
 tls_in.active.tls_ctx = NULL;	/* not using explicit ctx for server-side */
@@ -4586,31 +4581,28 @@ switch(error)
     if (SSL_get_shutdown(ssl) == SSL_RECEIVED_SHUTDOWN)
 	  SSL_shutdown(ssl);
 
-    tls_close_notify();
+    tls_close(NULL, TLS_NO_SHUTDOWN);
     return FALSE;
 
   /* Handle genuine errors */
   case SSL_ERROR_SSL:
-    {
-    uschar * conn_info = smtp_get_connection_info();
-    if (Ustrncmp(conn_info, US"SMTP ", 5) == 0) conn_info += 5;
-    /* I'd like to get separated H= here, but too hard for now */
-    ERR_error_string_n(ERR_peek_error(), ssl_errstring, sizeof(ssl_errstring));
-
     if (SSL_get_shutdown(ssl) == SSL_RECEIVED_SHUTDOWN)
       {
       DEBUG(tls) debug_printf_indent("SSL_read: have rxd shutdown\n");
-      SSL_shutdown(ssl);
-      tls_close_notify();
+      tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
       }
     else
       {
+      uschar * conn_info = smtp_get_connection_info();
+      if (Ustrncmp(conn_info, US"SMTP ", 5) == 0) conn_info += 5;
+      /* I'd like to get separated H= here, but too hard for now */
+      ERR_error_string_n(ERR_peek_error(), ssl_errstring, sizeof(ssl_errstring));
+
       DEBUG(tls) tls_debug_err(ssl, US"SSL_read", inbytes);
       log_write(LOG_MAIN, "TLS error (SSL_read): on %s %s", conn_info, ssl_errstring);
       ssl_xfer_error = TRUE;
       }
     return FALSE;
-    }
 
   default:
     DEBUG(tls) debug_printf("Got SSL error %d\n", error);
@@ -4648,11 +4640,11 @@ Only used by the server-side TLS.
 */
 
 int
-tls_getc(unsigned lim)
+tls_getc(const const in_processing * inp, unsigned lim)
 {
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(lim))
-    return ssl_xfer_error || message_id[0] ? EOF : smtp_getc(lim);
+    return ssl_xfer_error || message_id[0] ? EOF : inp_getc(inp->lower, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4660,13 +4652,13 @@ return ssl_xfer_buffer[ssl_xfer_buffer_lwm++];
 }
 
 BOOL
-tls_hasc(void)
+tls_hasc(const const in_processing * inp)
 {
 return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 }
 
 uschar *
-tls_getbuf(unsigned * len)
+tls_getbuf(const in_processing * inp, unsigned * len)
 {
 unsigned size;
 uschar * buf;
@@ -4674,7 +4666,7 @@ uschar * buf;
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!ssl_xfer_error && !message_id[0]) return smtp_getbuf(len);
+    if (!ssl_xfer_error && !message_id[0]) return inp_getbuf(inp->lower, len);
     *len = 0;
     return NULL;
     }
@@ -4689,7 +4681,7 @@ return buf;
 
 
 void
-tls_get_cache(unsigned lim)
+tls_get_cache(const in_processing * inp, unsigned lim)
 {
 #ifndef DISABLE_DKIM
 int n = ssl_xfer_buffer_hwm - ssl_xfer_buffer_lwm;
@@ -4711,7 +4703,7 @@ if (ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm) return TRUE;
 
 FD_ZERO(&fds);
 FD_SET(tls_in.active.sock, &fds);
-return select(tls_in.active.sock+ 1, (SELECT_ARG2_TYPE *)&fds,
+return select(tls_in.active.sock + 1, (SELECT_ARG2_TYPE *)&fds,
 	      NULL, NULL, &tzero) > 0;
 }
 
@@ -4960,16 +4952,7 @@ if (!o_ctx)		/* server side */
   state_server.u_ocsp.server.verify_stack = NULL;
 #endif
 
-  receive_getc =	smtp_getc;
-  receive_getbuf =	smtp_getbuf;
-  receive_get_cache =	smtp_get_cache;
-  receive_hasc =	smtp_hasc;
-  receive_ungetc =	smtp_ungetc;
-  receive_feof =	smtp_feof;
-  receive_ferror =	smtp_ferror;
-  tls_in.active.tls_ctx = NULL;
-  tls_in.sni = NULL;
-  /* Leave bits, peercert, cipher, peerdn, certificate_verified set, for logging */
+  tls_receive_done();
   }
 
 SSL_free(*sslp);

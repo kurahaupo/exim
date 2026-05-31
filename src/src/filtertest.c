@@ -47,11 +47,11 @@ body_len = 0;
 body_linecount = 0;
 header_size = message_size;
 
-if (!dot_ended && !stdin_feof())
+if (!dot_ended && !stdin_feof(NULL))
   {
   if (!f.dot_ends)
     {
-    while ((ch = stdin_getc(GETC_BUFFER_UNLIMITED)) != EOF)
+    while ((ch = stdin_getc(NULL, GETC_BUFFER_UNLIMITED)) != EOF)
       {
       if (ch == 0) body_zerocount++;
       if (ch == '\n') body_linecount++;
@@ -64,7 +64,7 @@ if (!dot_ended && !stdin_feof())
   else
     {
     int ch_state = 1;
-    while ((ch = stdin_getc(GETC_BUFFER_UNLIMITED)) != EOF)
+    while ((ch = stdin_getc(NULL, GETC_BUFFER_UNLIMITED)) != EOF)
       {
       if (ch == 0) body_zerocount++;
       switch (ch_state)
