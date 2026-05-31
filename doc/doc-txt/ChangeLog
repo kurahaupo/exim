@@ -160,6 +160,9 @@ JH/40 Lookup dsearch: fix the restriction on key=path to match the
 
 JH/41 DKIM: harden the authresults expansion against malicious senders.
 
+JH/42 TLS: a session-close while handling a mail reception is now treated
+      the same as a TCP connection close.
+
 
 Exim version 4.99.4
 -------------------

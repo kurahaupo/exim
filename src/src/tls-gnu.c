@@ -639,8 +639,8 @@ if (had_data_sigint)
   smtp_data_sigint_exit();
 
 /* Timeouts do not get this far.  A zero-byte return appears to mean that the
-TLS session has been closed down, not that the socket itself has been closed
-down. Revert to non-TLS handling. */
+TLS session has been closed down (for incoming), not that the socket itself has
+been closed down. Revert to non-TLS handling for both directions. */
 
 if (sigalrm_seen)
   {
@@ -652,6 +652,7 @@ if (sigalrm_seen)
 else if (inbytes == 0)
   {
   DEBUG(tls) debug_printf("Got TLS_EOF\n");
+  tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
   tls_close_notify();
   return FALSE;
   }
@@ -4014,9 +4015,14 @@ if (state->xfer_buffer) store_free(state->xfer_buffer);
 *************************************************/
 
 /* This gets the next byte from the TLS input buffer. If the buffer is empty,
-it refills the buffer via the GnuTLS reading function.
-Only used by the server-side TLS.
+it refills the buffer via the SSL reading function.
+If that errors - or the TLS inbound has been closed and we are receiving a
+mail message - return EOF.  For the closed case while between messages, drop
+to the cleartext layer getc; this supports continued-connection receive when
+the sender cannot maintain a TLS session (for Exim, when configured to not
+use a tls-proxy process).
 
+Only used by the server-side TLS.
 This feeds DKIM and should be used for all message-body reads.
 
 Arguments:  lim		Maximum amount to read/buffer
@@ -4030,7 +4036,7 @@ exim_gnutls_state_st * state = &state_server;
 
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(lim))
-    return state->xfer_error ? EOF : smtp_getc(lim);
+    return state->xfer_error || message_id[0] ? EOF : smtp_getc(lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4054,7 +4060,7 @@ uschar * buf;
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
-    if (!state->xfer_error) return smtp_getbuf(len);
+    if (!state->xfer_error && !message_id[0]) return smtp_getbuf(len);
     *len = 0;
     return NULL;
     }

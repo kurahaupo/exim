@@ -1,8 +1,10 @@
 ### non-piplined
 ### pipelined
-### short bdat data, tls close, more data
+### short bdat data, tls close: get a 4xx and TCP close
+### short bdat data, tls close, more data (hits a closed socket)
 
 ******** SERVER ********
 ### non-piplined
 ### pipelined
-### short bdat data, tls close, more data
+### short bdat data, tls close: get a 4xx and TCP close
+### short bdat data, tls close, more data (hits a closed socket)

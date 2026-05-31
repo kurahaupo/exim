@@ -104,7 +104,61 @@ Succeeded in starting TLS
 ??? 221
 <<< 221 testhost.test.ex closing connection
 End of script
-### short bdat data, tls close, more data
+### short bdat data, tls close: get a 4xx and TCP close
+Connecting to 127.0.0.1 port PORT_D ... connected
+??? 220
+<<< 220 testhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+>>> EHLO rhu.barb
+??? 250-
+<<< 250-testhost.test.ex Hello rhu.barb [127.0.0.1]
+??? 250-SIZE
+<<< 250-SIZE 52428800
+??? 250-8BITMIME
+<<< 250-8BITMIME
+??? 250-PIPELINING
+<<< 250-PIPELINING
+??? 250-CHUNKING
+<<< 250-CHUNKING
+??? 250-STARTTLS
+<<< 250-STARTTLS
+??? 250 HELP
+<<< 250 HELP
+>>> STARTTLS
+??? 220
+<<< 220 TLS go ahead
+Attempting to start TLS
+Succeeded in starting TLS
+>>> EHLO rhu.barb
+??? 250-
+<<< 250-testhost.test.ex Hello rhu.barb [127.0.0.1]
+??? 250-SIZE
+<<< 250-SIZE 52428800
+??? 250-8BITMIME
+<<< 250-8BITMIME
+??? 250-PIPELINING
+<<< 250-PIPELINING
+??? 250-CHUNKING
+<<< 250-CHUNKING
+??? 250 HELP
+<<< 250 HELP
+>>> MAIL FROM:<someone@some.domain>
+??? 250
+<<< 250 OK
+>>> RCPT TO:<CALLER@test.ex>
+??? 250
+<<< 250 Accepted
+>>> BDAT 89 LAST
+>>> To: Susan@random.com
+>>> From: Sam@random.com
+>>> Subject: This is a bodyless TEST message
+>>> 
+Shutting down TLS encryption
+??? 421
+<<< 421 Lost incoming connection
+???*
+Expected EOF read
+End of script
+### short bdat data, tls close, more data (hits a closed socket)
 Connecting to 127.0.0.1 port PORT_D ... connected
 ??? 220
 <<< 220 testhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
@@ -154,16 +208,12 @@ Succeeded in starting TLS
 >>> 
 Shutting down TLS encryption
 >>> x
-??? 250-
-<<< 250- 89 byte chunk, total 91
-??? 250
-<<< 250 OK id=10HmaZ-000000005vi-0000
->>> QUIT
-??? 221
-<<< 221 testhost.test.ex closing connection
+??? 421
+<<< 421 Lost incoming connection
 End of script
 
 ******** SERVER ********
 ### non-piplined
 ### pipelined
-### short bdat data, tls close, more data
+### short bdat data, tls close: get a 4xx and TCP close
+### short bdat data, tls close, more data (hits a closed socket)
