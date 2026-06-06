@@ -716,16 +716,16 @@ extern const uschar *message_reference;/* Reference for error messages */
 #ifdef WITH_CONTENT_SCAN
 extern int     mime_anomaly_level;
 extern const uschar *mime_anomaly_text;
-extern uschar *mime_boundary;
-extern uschar *mime_charset;
-extern uschar *mime_content_description;
-extern uschar *mime_content_disposition;
-extern uschar *mime_content_id;
+extern const uschar *mime_boundary;
+extern const uschar *mime_charset;
+extern const uschar *mime_content_description;
+extern const uschar *mime_content_disposition;
+extern const uschar *mime_content_id;
 extern unsigned int mime_content_size;
-extern uschar *mime_content_transfer_encoding;
-extern uschar *mime_content_type;
+extern const uschar *mime_content_transfer_encoding;
+extern const uschar *mime_content_type;
 extern uschar *mime_decoded_filename;
-extern uschar *mime_filename;
+extern const uschar *mime_filename;
 extern int     mime_is_multipart;
 extern int     mime_is_coverletter;
 extern int     mime_is_rfc822;

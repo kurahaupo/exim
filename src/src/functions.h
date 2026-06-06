@@ -478,7 +478,7 @@ extern header_line *rewrite_header(header_line *,
 extern const uschar *rewrite_one(const uschar *, int, BOOL *, BOOL, uschar *,
                  rewrite_rule *);
 extern void    rewrite_test(const uschar *);
-extern uschar *rfc2047_decode2(uschar *, BOOL, const uschar *, int, int *,
+extern const uschar *rfc2047_decode2(const uschar *, BOOL, const uschar *, int, int *,
 				     int *, uschar **);
 extern int     route_address(address_item *, address_item **, address_item **,
                  address_item **, address_item **, int);

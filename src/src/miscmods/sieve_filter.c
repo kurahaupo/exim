@@ -798,8 +798,10 @@ if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
     case COMP_ASCII_NUMERIC: debug_printf_indent("i;ascii-numeric"); break;
     }
   debug_printf_indent("\"):\n");
-  debug_printf_indent("  Search = %s (%d chars)\n", needle->s, needle->ptr);
-  debug_printf_indent("  Inside = %s (%d chars)\n", haystack->s, haystack->ptr);
+  debug_printf_indent("  Search = %.*W (%d chars)\n",
+				  needle->ptr, needle->s, needle->ptr);
+  debug_printf_indent("  Inside = %.*W (%d chars)\n",
+				  haystack->ptr, haystack->s, haystack->ptr);
   }
 switch (mt)
   {
@@ -1028,9 +1030,10 @@ expand_header(gstring * value, const gstring * header)
 {
 uschar *s, *r, *t;
 uschar *errmsg;
+const uschar * cs;
 
 value->ptr = 0;
-value->s = (uschar*)0;
+value->s = NULL;
 
 t = r = s = expand_string(string_sprintf("$rheader_%s", quote(header)));
 if (!t) return;
@@ -1043,7 +1046,10 @@ while (*r)
 
 while (t>s && (*(t-1) == ' ' || *(t-1) == '\t')) --t;
 *t = '\0';
-value->s = rfc2047_decode(s, check_rfc2047_length, US"utf-8", '\0', &value->ptr, &errmsg);
+cs = rfc2047_decode(s, check_rfc2047_length, US"utf-8", '\0', &value->ptr, &errmsg);
+
+/* possible embedded NUL, so not string_copyn() */
+memcpy((value->s = store_get(value->ptr, cs)), cs, (size_t)value->ptr);
 }
 
 

@@ -25,7 +25,7 @@ typedef struct pcre_list {
 } pcre_list;
 
 extern FILE *mime_stream;
-extern uschar *mime_current_boundary;
+extern const uschar *mime_current_boundary;
 
 
 static pcre_list *

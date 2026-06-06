@@ -44,7 +44,7 @@ ABI is changed in a non backward compatible way. The minor number is increased
 each time a new feature is added (in a way that doesn't break backward
 compatibility). */
 
-#define LOCAL_SCAN_ABI_VERSION_MAJOR 8
+#define LOCAL_SCAN_ABI_VERSION_MAJOR 9
 #define LOCAL_SCAN_ABI_VERSION_MINOR 0
 #define LOCAL_SCAN_ABI_VERSION \
   LOCAL_SCAN_ABI_VERSION_MAJOR.LOCAL_SCAN_ABI_VERSION_MINOR
@@ -221,7 +221,7 @@ extern int     lss_match_address(uschar *, uschar *, BOOL);
 extern int     lss_match_host(uschar *, uschar *, uschar *);
 extern void    receive_add_recipient(const uschar *, int, int, const uschar *);
 extern BOOL    receive_remove_recipient(const uschar *);
-extern uschar *rfc2047_decode(uschar *, BOOL, const uschar *, int, int *,
+extern const uschar *rfc2047_decode(const uschar *, BOOL, const uschar *, int, int *,
 			      uschar **);
 extern int     smtp_fflush(BOOL);
 extern void    smtp_printf(const char *, BOOL, ...) PRINTF_FUNCTION(1,3);

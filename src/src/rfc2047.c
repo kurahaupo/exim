@@ -43,31 +43,31 @@ Returns:      the length of the decoded string, or -1 on failure
 */
 
 static int
-rfc2047_qpdecode(uschar *string, uschar **ptrptr)
+rfc2047_qpdecode(const uschar * string, uschar ** ptrptr)
 {
-int len = 0;
-uschar *ptr;
+int len, ch;
+uschar * ptr;
 
 ptr = *ptrptr = store_get(Ustrlen(string) + 1, string);  /* No longer than this */
 
-while (*string != 0)
+for (len = 0; ch = *string++; len++)
   {
-  int ch = *string++;
-
-  if (ch == '_') *ptr++ = ' ';
+  if (ch == '_')
+    *ptr++ = ' ';
   else if (ch == '=')
     {
-    int a = *string;
-    int b = (a == 0)? 0 : string[1];
-    if (!isxdigit(a) || !isxdigit(b)) return -1;  /* Bad QP string */
+    int a = *string, b = a == 0 ? 0 : string[1];
+
+    if (!isxdigit(a) || !isxdigit(b))
+      return -1;  /* Bad QP string */
     *ptr++ = ((Ustrchr(hex_digits, tolower(a)) - hex_digits) << 4) +
                Ustrchr(hex_digits, tolower(b)) - hex_digits;
     string += 2;
     }
-  else if (ch == ' ' || ch == '\t') return -1;    /* Whitespace is illegal */
-  else *ptr++ = ch;
-
-  len++;
+  else if (ch == ' ' || ch == '\t')
+    return -1;    /* Whitespace is illegal */
+  else
+    *ptr++ = ch;
   }
 
 *ptr = 0;
@@ -95,20 +95,23 @@ Arguments:
 Returns:     address of =? or NULL if not present
 */
 
-static uschar *
-decode_mimeword(uschar *string, BOOL lencheck, uschar **q1ptr, uschar **q2ptr,
-  uschar **endptr, size_t *dlenptr, uschar **dptrptr)
+static const uschar *
+decode_mimeword(const uschar * string, BOOL lencheck,
+  const uschar ** q1ptr, const uschar ** q2ptr,
+  const uschar ** endptr, size_t * dlenptr, uschar ** dptrptr)
 {
-uschar *mimeword;
+const uschar * mimeword;
 for (;; string = mimeword + 2)
   {
-  int encoding;
-  int dlen = -1;
+  int dlen = -1, encoding;
+  const uschar * s;
 
-  if ((mimeword = Ustrstr(string, "=?"))  == NULL ||
-      (*q1ptr = Ustrchr(mimeword+2, '?')) == NULL ||
-      (*q2ptr = Ustrchr(*q1ptr+1, '?')) == NULL ||
-      (*endptr = Ustrstr(*q2ptr+1, "?=")) == NULL) return NULL;
+  if (  (mimeword = Ustrstr(string, "=?"))  == NULL
+     || (*q1ptr = Ustrchr(mimeword+2, '?')) == NULL
+     || (*q2ptr = Ustrchr(*q1ptr+1, '?')) == NULL
+     || (*endptr = Ustrstr(*q2ptr+1, "?=")) == NULL
+     )
+    return NULL;
 
   /* We have found =?xxx?xxx?xxx?= in the string. Optionally check the
   length, and that the second field is just one character long. If not,
@@ -120,12 +123,12 @@ for (;; string = mimeword + 2)
   /* Get the encoding letter, and decode the data string. */
 
   encoding = toupper((*q1ptr)[1]);
-  **endptr = 0;
+  s = *q2ptr+1;
+  s = string_copyn(s, *endptr - s);		/* decode fns need nul-term */
   if (encoding == 'B')
-    dlen = b64decode(*q2ptr+1, dptrptr, *q2ptr+1);
+    dlen = b64decode(s, dptrptr, s);
   else if (encoding == 'Q')
-    dlen = rfc2047_qpdecode(*q2ptr+1, dptrptr);
-  **endptr = '?';   /* restore */
+    dlen = rfc2047_qpdecode(s, dptrptr);
 
   /* If the decoding succeeded, we are done. Set the length of the decoded
   string, and pass back the initial pointer. Otherwise, the loop continues. */
@@ -186,15 +189,15 @@ Returns:         the decoded, converted string, or NULL on error; if there are
                    no MIME words in the string, the original string is returned
 */
 
-uschar *
-rfc2047_decode2(uschar *string, BOOL lencheck, const uschar *target,
-  int zeroval, int *lenptr, int *sizeptr, uschar **error)
+const uschar *
+rfc2047_decode2(const uschar * string, BOOL lencheck, const uschar * target,
+  int zeroval, int * lenptr, int * sizeptr, uschar ** error)
 {
 int size = Ustrlen(string);
 size_t dlen;
 uschar * dptr;
 gstring * yield;
-uschar * mimeword, * q1, * q2, * endword;
+const uschar * mimeword, * q1, * q2, * endword;
 
 *error = NULL;
 mimeword = decode_mimeword(string, lencheck, &q1, &q2, &endword, &dlen, &dptr);
@@ -221,7 +224,6 @@ while (mimeword)
 
   if (mimeword != string)
     yield = string_catn(yield, string, mimeword - string);
-/*XXX that might have to convert an untainted string to a tainted one */
 
   /* Do a charset translation if required. This is supported only on hosts
   that have the iconv() function. Translation errors set error, but carry on,
@@ -231,13 +233,17 @@ while (mimeword)
   robust. */
 
 #if HAVE_ICONV
-  *q1 = 0;
-  if (target && strcmpic(target, mimeword+2) != 0)
-    if ((icd = iconv_open(CS target, CS(mimeword+2))) == (iconv_t)-1)
+  if (target)
+    {
+    const uschar * src_chset = mimeword + 2;
+    src_chset = string_copyn(src_chset, q1 - src_chset); /* need nul-term str */
+
+    if (  strcmpic(target, src_chset) != 0
+       && (icd = iconv_open(CCS target, CCS src_chset)) == (iconv_t)-1)
       *error = string_sprintf("iconv_open(%q, %q) failed: %s%s",
-        target, mimeword+2, strerror(errno),
-        (errno == EINVAL)? " (maybe unsupported conversion)" : "");
-  *q1 = '?';
+	target, src_chset, strerror(errno),
+	errno == EINVAL ? " (maybe unsupported conversion)" : "");
+    }
 #endif
 
   while (dlen > 0)
@@ -313,7 +319,7 @@ while (mimeword)
   mimeword = decode_mimeword(string, lencheck, &q1, &q2, &endword, &dlen, &dptr);
   if (mimeword)
     {
-    uschar * s = string;
+    const uschar * s = string;
     Uskip_whitespace(&s);
     if (s == mimeword) string = s;
     }
@@ -333,9 +339,9 @@ return string_from_gstring(yield);
 /* This is the stub that provides the original interface without the sizeptr
 argument. */
 
-uschar *
-rfc2047_decode(uschar *string, BOOL lencheck, const uschar *target, int zeroval,
-  int *lenptr, uschar **error)
+const uschar *
+rfc2047_decode(const uschar *string, BOOL lencheck, const uschar *target,
+  int zeroval, int *lenptr, uschar **error)
 {
 return rfc2047_decode2(string, lencheck, target, zeroval, lenptr, NULL, error);
 }

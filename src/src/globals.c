@@ -1072,17 +1072,17 @@ const uschar *message_reference= NULL;
 /* MIME ACL expandables */
 #ifdef WITH_CONTENT_SCAN
 int     mime_anomaly_level     = 0;
-const uschar *mime_anomaly_text      = NULL;
-uschar *mime_boundary          = NULL;
-uschar *mime_charset           = NULL;
-uschar *mime_content_description = NULL;
-uschar *mime_content_disposition = NULL;
-uschar *mime_content_id        = NULL;
+const uschar *mime_anomaly_text= NULL;
+const uschar *mime_boundary    = NULL;
+const uschar *mime_charset     = NULL;
+const uschar *mime_content_description = NULL;
+const uschar *mime_content_disposition = NULL;
+const uschar *mime_content_id          = NULL;
 unsigned int mime_content_size = 0;
-uschar *mime_content_transfer_encoding = NULL;
-uschar *mime_content_type      = NULL;
+const uschar *mime_content_transfer_encoding = NULL;
+const uschar *mime_content_type= NULL;
 uschar *mime_decoded_filename  = NULL;
-uschar *mime_filename          = NULL;
+const uschar *mime_filename    = NULL;
 int     mime_is_multipart      = 0;
 int     mime_is_coverletter    = 0;
 int     mime_is_rfc822         = 0;

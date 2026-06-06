@@ -20,21 +20,21 @@
 struct mime_boundary_context
 {
   struct mime_boundary_context *parent;
-  unsigned char *boundary;
-  int context;
+  const uschar *		boundary;
+  int				context;
 };
 
 typedef struct mime_header {
-  uschar *  name;
-  int       namelen;
-  uschar ** value;
+  const uschar *	name;
+  int			namelen;
+  const uschar **	value;
 } mime_header;
 
 
 typedef struct mime_parameter {
-  uschar *  name;
-  int       namelen;
-  uschar ** value;
+  const uschar *	name;
+  int			namelen;
+  const uschar **	value;
 } mime_parameter;
 
 /* MIME Anomaly list */

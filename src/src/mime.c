@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 
 FILE *mime_stream = NULL;
-uschar *mime_current_boundary = NULL;
+const uschar *mime_current_boundary = NULL;
 
 static mime_header mime_header_list[] = {
   /*	name			namelen		value */
@@ -424,9 +424,9 @@ Return:
  Allocated string with parameter value
 */
 static uschar *
-mime_param_val(uschar ** sp)
+mime_param_val(const uschar ** sp)
 {
-uschar * s = *sp;
+const uschar * s = *sp;
 gstring * val = NULL;
 
 /* debug_printf_indent("   considering paramval '%s'\n", s); */
@@ -445,8 +445,8 @@ while (*s && *s != ';')		/* ; terminates */
 return string_from_gstring(val);
 }
 
-static uschar *
-mime_next_semicolon(uschar * s)
+static const uschar *
+mime_next_semicolon(const uschar * s)
 {
 while (*s && *s != ';')		/* ; terminates */
   if (*s == '"')
@@ -565,7 +565,7 @@ while(1)
 	 mh < mime_header_list + mime_header_list_size;
 	 mh++) if (strncmpic(mh->name, header, mh->namelen) == 0)
       {
-      uschar * p = header + mh->namelen, * p1;
+      const uschar * p = header + mh->namelen, * p1;
 
       /* grab the value (normalize to lower case)
       and copy to its corresponding expansion variable */
@@ -603,13 +603,14 @@ while(1)
 	      if (*p == '*') p++;		/* step over sep chset mark */
 	      if (*p == '=')
 		{
-		uschar * p2;
+		const uschar * p2;
 		p++;				/* step over = */
 		p2 = mime_param_val(&p);	/* p now trailing ; or NUL */
 
 		if (p2 && *p2)			/* p2 is the dequoted value */
 		  {
-		  uschar * err_msg, * fname = p2;
+		  uschar * err_msg;
+		  const uschar * fname = p2;
 		  int slen;
 
 		  /* build up an un-decoded filename over successive
@@ -621,7 +622,7 @@ while(1)
 		    {
 		    if (!mime_filename_charset)
 		      {			/* try for RFC 2231 chset/lang */
-		      uschar * s = p2;
+		      const uschar * s = p2;
 
 		      /* look for a ' in the raw paramval */
 		      while(*s != '\'' && *s) s++;	/* s is 1st ' or NUL */

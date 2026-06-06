@@ -1730,8 +1730,8 @@ charset translation fails. If decoding fails, it returns NULL. */
 
 else
   {
-  uschar * error, * decoded = rfc2047_decode2(rawhdr,
-    check_rfc2047_length, charset, '?', NULL, newsize, &error);
+  uschar * error, * decoded = string_copy(rfc2047_decode2(rawhdr,
+		      check_rfc2047_length, charset, '?', NULL, newsize, &error));
   if (error)
     DEBUG(any) debug_printf("*** error in RFC 2047 decoding: %s\n"
       "    input was: %s\n", error, rawhdr);
