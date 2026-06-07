@@ -570,7 +570,7 @@ return *smtp_inptr++;
 
 /* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
 
-uschar *
+const uschar *
 smtp_getbuf(const in_processing * inp, unsigned * len)
 {
 unsigned size;
@@ -805,7 +805,7 @@ for(;;)
   if (!f.smtp_in_pipelining_advertised && !check_sync(WBR_DATA_ONLY))
     {
     unsigned nchars = 32;
-    uschar * buf = receive_getbuf(&nchars);		/* destructive read */
+    const uschar * buf = receive_getbuf(&nchars);	/* destructive read */
 
     incomplete_transaction_log(US"sync failure");
     if (buf)
@@ -927,10 +927,10 @@ chunking_data_left++;
 return inp_ungetc(inp->lower, ch);
 }
 
-uschar *
+const uschar *
 bdat_getbuf(const in_processing * inp, unsigned * len)
 {
-uschar * buf;
+const uschar * buf;
 
 if (chunking_data_left == 0)
   { *len = 0; return NULL; }
@@ -2934,7 +2934,7 @@ else						/* not already sent */
 #endif
       {
       unsigned nchars = 128;
-      uschar * buf = receive_getbuf(&nchars);		/* destructive read */
+      const uschar * buf = receive_getbuf(&nchars);	/* destructive read */
 
       if (buf)
 	log_write(LOG_MAIN|LOG_REJECT, "SMTP protocol "
@@ -6014,12 +6014,12 @@ while (done <= 0)
     SYNC_FAILURE:
       {
 	unsigned nchars = 150;
-	uschar * buf = receive_getbuf(&nchars);		/* destructive read */
+	const uschar * buf = receive_getbuf(&nchars);	/* destructive read */
 
 	incomplete_transaction_log(US"sync failure");
 	if (buf)
 	  {
-	  buf[nchars] = '\0';
+	  buf = string_copyn(buf, nchars);
 	  log_write(LOG_MAIN|LOG_REJECT,
 	    "SMTP protocol synchronization error "
 	    "(next input sent too soon: pipelining was%s advertised): "

@@ -98,11 +98,11 @@ return stdin_inptr < stdin_inend;
 
 /* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
 
-uschar *
+const uschar *
 stdin_getbuf(const in_processing * inp, unsigned * len)
 {
 unsigned size;
-uschar * buf;
+const uschar * buf;
 
 if (!stdin_hasc(inp) && !stdin_refill(inp, *len))
   { *len = 0; return NULL; }

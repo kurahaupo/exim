@@ -1065,7 +1065,7 @@ typedef struct in_processing {
   BOOL	(*hasc)(const struct in_processing *);	
 
   /* get many bytes, with refill; arg req/ret byte cnt */
-  uschar * (*getbuf)(const struct in_processing *, unsigned *);
+  const uschar * (*getbuf)(const struct in_processing *, unsigned *);
 
   /* get up to the given number of bytes from any cached data, and feed to dkim. */
   void	(*getcache)(const struct in_processing *, unsigned);

@@ -4657,11 +4657,11 @@ tls_hasc(const const in_processing * inp)
 return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 }
 
-uschar *
+const uschar *
 tls_getbuf(const in_processing * inp, unsigned * len)
 {
 unsigned size;
-uschar * buf;
+const uschar * buf;
 
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(*len))

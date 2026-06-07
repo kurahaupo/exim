@@ -557,7 +557,7 @@ extern int     spool_open_temp(uschar *);
 extern int     spool_read_header(uschar *, BOOL, BOOL);
 extern uschar *spool_sender_from_msgid(const uschar *);
 extern int     spool_write_header(const uschar *, int, uschar **);
-extern uschar *stdin_getbuf(const in_processing *, unsigned *);
+extern const uschar *stdin_getbuf(const in_processing *, unsigned *);
 extern int     stdin_getc(const in_processing *, unsigned);
 extern int     stdin_feof(const in_processing *);
 extern int     stdin_ferror(const in_processing *);
@@ -1571,7 +1571,7 @@ return qrunners && (qrunners->interval > 0 || qrunners->next);
 static inline int
 inp_getc(const in_processing * inp, unsigned maxbuf)
 { return inp->getc(inp, maxbuf); }
-static inline uschar *
+static inline const uschar *
 inp_getbuf(const in_processing * inp, unsigned * len)
 { return inp->getbuf(inp, len); }
 static inline BOOL
@@ -1592,7 +1592,7 @@ inp_ferror(const in_processing * inp)
 
 static inline int
 receive_getc(unsigned maxbuf) { return inp_getc(rx_prc, maxbuf); }
-static inline uschar *
+static inline const uschar *
 receive_getbuf(unsigned * len) { return inp_getbuf(rx_prc, len); }
 static inline BOOL
 receive_hasc(void) { return inp_hasc(rx_prc); }

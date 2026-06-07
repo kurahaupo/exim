@@ -4038,12 +4038,12 @@ const exim_gnutls_state_st * state = &state_server;
 return state->xfer_buffer_lwm < state->xfer_buffer_hwm;
 }
 
-uschar *
+const uschar *
 tls_getbuf(const in_processing * inp, unsigned * len)
 {
 exim_gnutls_state_st * state = &state_server;
 unsigned size;
-uschar * buf;
+const uschar * buf;
 
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(*len))
