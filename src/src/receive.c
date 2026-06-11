@@ -137,13 +137,13 @@ return ferror(stdin);
 }
 
 in_processing stdin_template = {
-  .layer_name =	US"stdin",
-  .getc =	stdin_getc,
-  .hasc =	stdin_hasc,
-  .getbuf =	stdin_getbuf,
-  .ungetc =	stdin_ungetc,
-  .feof =	stdin_feof,
-  .ferror =	stdin_ferror
+  .in_layer_name =	US"stdin",
+  .in_getc =	stdin_getc,
+  .in_hasc =	stdin_hasc,
+  .in_getbuf =	stdin_getbuf,
+  .in_ungetc =	stdin_ungetc,
+  .in_feof =	stdin_feof,
+  .in_ferror =	stdin_ferror
 };
 
 

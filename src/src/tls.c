@@ -593,24 +593,24 @@ const in_processing *
 tls_push_receive_functions(const in_processing * inp)
 {
 static in_processing tls_proc = {
-  .layer_name =	US"tls",
-  .getc =	tls_getc,
-  .getbuf =	tls_getbuf,
-  .getcache =	tls_get_cache,
-  .hasc =	tls_hasc,
-  .ungetc =	tls_ungetc,
-  .feof =	tls_feof,
-  .ferror =	tls_ferror
+  .in_layer_name =	US"tls",
+  .in_getc =	tls_getc,
+  .in_getbuf =	tls_getbuf,
+  .in_getcache =tls_get_cache,
+  .in_hasc =	tls_hasc,
+  .in_ungetc =	tls_ungetc,
+  .in_feof =	tls_feof,
+  .in_ferror =	tls_ferror
 };
 
 /* Only legitimate over smtp layer. */
 
 if (ANY_DEBUG || f.running_in_test_harness)
-  if (Ustrcmp(inp->layer_name, "smtp") != 0)
+  if (Ustrcmp(inp->in_layer_name, "smtp") != 0)
     log_write(LOG_PANIC_DIE,
-	      "%s: bad substrate %s", __FUNCTION__, inp->layer_name);
+	      "%s: bad substrate %s", __FUNCTION__, inp->in_layer_name);
 
-tls_proc.lower = inp;
+tls_proc.in_lower = inp;
 return &tls_proc;
 }
 
@@ -619,16 +619,16 @@ return &tls_proc;
 const in_processing *
 tls_pop_receive_functions(const in_processing * inp)
 {
-const in_processing * lwr = inp->lower;
+const in_processing * lwr = inp->in_lower;
 
 if (ANY_DEBUG || f.running_in_test_harness)
   {
-  if (Ustrcmp(inp->layer_name, "tls") != 0)
+  if (Ustrcmp(inp->in_layer_name, "tls") != 0)
     log_write(LOG_PANIC_DIE,
-	      "%s: bad current layer %s", __FUNCTION__, inp->layer_name);
-  if (Ustrcmp(lwr->layer_name, "smtp") != 0)
+	      "%s: bad current layer %s", __FUNCTION__, inp->in_layer_name);
+  if (Ustrcmp(lwr->in_layer_name, "smtp") != 0)
     log_write(LOG_PANIC_DIE,
-	      "%s: bad substrate %s", __FUNCTION__, lwr->layer_name);
+	      "%s: bad substrate %s", __FUNCTION__, lwr->in_layer_name);
   }
 
 return lwr;

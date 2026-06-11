@@ -1059,28 +1059,28 @@ typedef enum {
 /* Input processing layer */
 typedef struct in_processing {
   /* get byte, refill if needed w/ byte count limit */
-  int	(*getc)(const struct in_processing *, unsigned);
+  int	(*in_getc)(const struct in_processing *, unsigned);
 
   /* predicate: byte avail for reading (without refill) */
-  BOOL	(*hasc)(const struct in_processing *);	
+  BOOL	(*in_hasc)(const struct in_processing *);	
 
   /* get many bytes, with refill; arg req/ret byte cnt */
-  const uschar * (*getbuf)(const struct in_processing *, unsigned *);
+  const uschar * (*in_getbuf)(const struct in_processing *, unsigned *);
 
   /* get up to the given number of bytes from any cached data, and feed to dkim. */
-  void	(*getcache)(const struct in_processing *, unsigned);
+  void	(*in_getcache)(const struct in_processing *, unsigned);
 
   /* push one byte back into buffer */
-  int	(*ungetc)(const struct in_processing *, int);
+  int	(*in_ungetc)(const struct in_processing *, int);
 
   /* predicate: EOF status */
-  int	(*feof)(const struct in_processing *);
+  int	(*in_feof)(const struct in_processing *);
 
   /* predicate: error status */
-  int	(*ferror)(const struct in_processing *);
+  int	(*in_ferror)(const struct in_processing *);
 
-  const struct in_processing * lower;		/* underlying layer, or NULL */
-  const uschar * layer_name;
+  const struct in_processing * in_lower;	/* underlying layer, or NULL */
+  const uschar * in_layer_name;
 } in_processing;
 
 #endif	/* whole file */

@@ -1570,25 +1570,25 @@ return qrunners && (qrunners->interval > 0 || qrunners->next);
 
 static inline int
 inp_getc(const in_processing * inp, unsigned maxbuf)
-{ return inp->getc(inp, maxbuf); }
+{ return inp->in_getc(inp, maxbuf); }
 static inline const uschar *
 inp_getbuf(const in_processing * inp, unsigned * len)
-{ return inp->getbuf(inp, len); }
+{ return inp->in_getbuf(inp, len); }
 static inline BOOL
 inp_hasc(const in_processing * inp)
-{ return inp->hasc(inp); }
+{ return inp->in_hasc(inp); }
 static inline void
 inp_get_cache(const in_processing * inp, unsigned lim)
-{ inp->getcache(inp, lim); }
+{ inp->in_getcache(inp, lim); }
 static inline int
 inp_ungetc(const in_processing * inp, int ch)
-{ return inp->ungetc(inp, ch); }
+{ return inp->in_ungetc(inp, ch); }
 static inline int
 inp_feof(const in_processing * inp)
-{ return inp->feof(inp); }
+{ return inp->in_feof(inp); }
 static inline int
 inp_ferror(const in_processing * inp)
-{ return inp->ferror(inp); }
+{ return inp->in_ferror(inp); }
 
 static inline int
 receive_getc(unsigned maxbuf) { return inp_getc(rx_prc, maxbuf); }

@@ -654,14 +654,14 @@ return smtp_had_error;
 }
 
 in_processing smtp_template = {
-  .layer_name =	US"smtp",
-  .getc =	smtp_getc,
-  .getbuf =	smtp_getbuf,
-  .getcache =	smtp_get_cache,
-  .hasc =	smtp_hasc,
-  .ungetc =	smtp_ungetc,
-  .feof =	smtp_feof,
-  .ferror =	smtp_ferror
+  .in_layer_name =	US"smtp",
+  .in_getc =	smtp_getc,
+  .in_getbuf =	smtp_getbuf,
+  .in_getcache =smtp_get_cache,
+  .in_hasc =	smtp_hasc,
+  .in_ungetc =	smtp_ungetc,
+  .in_feof =	smtp_feof,
+  .in_ferror =	smtp_ferror
 };
 
 
@@ -792,7 +792,7 @@ for(;;)
   {
 
   if (chunking_data_left > 0)
-    return inp_getc(inp->lower, chunking_data_left--);
+    return inp_getc(inp->in_lower, chunking_data_left--);
 
   bdat_pop_receive_functions();
 #ifndef DISABLE_DKIM
@@ -916,7 +916,7 @@ BOOL
 bdat_hasc(const in_processing * inp)
 {
 if (chunking_data_left > 0)
-  return inp_hasc(inp->lower);
+  return inp_hasc(inp->in_lower);
 return TRUE;
 }
 
@@ -924,7 +924,7 @@ int
 bdat_ungetc(const in_processing * inp, int ch)
 {
 chunking_data_left++;
-return inp_ungetc(inp->lower, ch);
+return inp_ungetc(inp->in_lower, ch);
 }
 
 const uschar *
@@ -936,7 +936,7 @@ if (chunking_data_left == 0)
   { *len = 0; return NULL; }
 
 if (*len > chunking_data_left) *len = chunking_data_left;
-buf = inp_getbuf(inp->lower, len);	/* Either smtp_getbuf or tls_getbuf */
+buf = inp_getbuf(inp->in_lower, len);	/* Either smtp_getbuf or tls_getbuf */
 chunking_data_left -= *len;
 return buf;
 }
@@ -944,12 +944,12 @@ return buf;
 void
 bdat_get_cache(const in_processing * inp, unsigned lim)
 {
-inp_get_cache(inp->lower, lim);
+inp_get_cache(inp->in_lower, lim);
 }
 int
 bdat_feof(const in_processing * inp)
 {
-return inp_feof(inp->lower);
+return inp_feof(inp->in_lower);
 }
 
 void
@@ -968,13 +968,13 @@ DEBUG(receive)
 }
 
 static in_processing bdat_template = {
-  .layer_name =	US"bdat",
-  .getc =	bdat_getc,
-  .getbuf =	bdat_getbuf,
-  .getcache =	bdat_get_cache,
-  .hasc =	bdat_hasc,
-  .ungetc =	bdat_ungetc,
-  .feof =	bdat_feof,
+  .in_layer_name =	US"bdat",
+  .in_getc =	bdat_getc,
+  .in_getbuf =	bdat_getbuf,
+  .in_getcache =bdat_get_cache,
+  .in_hasc =	bdat_hasc,
+  .in_ungetc =	bdat_ungetc,
+  .in_feof =	bdat_feof,
 };
 
 /* We're only expecting one bdat layer at a time, but we do bounce it in and
@@ -987,17 +987,17 @@ bdat_push_receive_functions(void)
 /* Only legitimate over smtp or tls layer. */
 
 if (ANY_DEBUG || f.running_in_test_harness)
-  if (  Ustrcmp(rx_prc->layer_name, "smtp") != 0
-     && Ustrcmp(rx_prc->layer_name, "tls") != 0)
+  if (  Ustrcmp(rx_prc->in_layer_name, "smtp") != 0
+     && Ustrcmp(rx_prc->in_layer_name, "tls") != 0)
     log_write(LOG_PANIC_DIE,
-	      "%s: bad substrate %s", __FUNCTION__, rx_prc->layer_name);
+	      "%s: bad substrate %s", __FUNCTION__, rx_prc->in_layer_name);
 
 /* Push the current receive_* function on the "stack", and
 replace them by bdat_getc(), which in turn will use the next lower layer
 functions to do the dirty work. */
 
 bdat_proc = bdat_template;
-bdat_proc.lower = rx_prc;
+bdat_proc.in_lower = rx_prc;
 rx_prc = &bdat_proc;
 
 DEBUG(receive) debug_print_processing_stack();
@@ -1006,20 +1006,20 @@ DEBUG(receive) debug_print_processing_stack();
 static inline void
 bdat_pop_receive_functions(void)
 {
-const in_processing * lwr = rx_prc->lower;
+const in_processing * lwr = rx_prc->in_lower;
 
 if (!lwr)
   log_write(LOG_PANIC_DIE, "%s: bad substrate <none>", __FUNCTION__);
 
 if (ANY_DEBUG || f.running_in_test_harness)
   {
-  if (Ustrcmp(rx_prc->layer_name, "bdat") != 0)
+  if (Ustrcmp(rx_prc->in_layer_name, "bdat") != 0)
     log_write(LOG_PANIC_DIE,
-	      "%s: bad current layer %s", __FUNCTION__, rx_prc->layer_name);
-  if (  Ustrcmp(lwr->layer_name, "smtp") != 0
-     && Ustrcmp(lwr->layer_name, "tls") != 0)
+	      "%s: bad current layer %s", __FUNCTION__, rx_prc->in_layer_name);
+  if (  Ustrcmp(lwr->in_layer_name, "smtp") != 0
+     && Ustrcmp(lwr->in_layer_name, "tls") != 0)
     log_write(LOG_PANIC_DIE,
-	      "%s: bad substrate %s", __FUNCTION__, lwr->layer_name);
+	      "%s: bad substrate %s", __FUNCTION__, lwr->in_layer_name);
   }
 
 rx_prc = lwr;

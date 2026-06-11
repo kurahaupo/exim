@@ -4024,7 +4024,7 @@ exim_gnutls_state_st * state = &state_server;
 if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(lim))
     return state->xfer_error || message_id[0]
-      ? EOF : inp_getc(inp->lower, lim);
+      ? EOF : inp_getc(inp->in_lower, lim);
 
 /* Something in the buffer; return next uschar */
 
@@ -4049,7 +4049,7 @@ if (state->xfer_buffer_lwm >= state->xfer_buffer_hwm)
   if (!tls_refill(*len))
     {
     if (!state->xfer_error && !message_id[0])
-      return inp_getbuf(inp->lower, len);
+      return inp_getbuf(inp->in_lower, len);
     *len = 0;
     return NULL;
     }
