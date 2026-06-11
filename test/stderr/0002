@@ -358,17 +358,17 @@ admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
- ╭considering: escape:░${escape:B7␷F2��}
+ ╭considering: escape:░${escape:B7�F2�}
  ├───────text: escape:░
- ├considering: ${escape:B7␷F2��}
-  ╭considering: B7␷F2��}
-  ├───────text: B7␷F2��
+ ├considering: ${escape:B7�F2�}
+  ╭considering: B7�F2�}
+  ├───────text: B7�F2�
   ├considering: }
-  ├───expanded: B7␷F2��
-  ╰─────result: B7␷F2��
+  ├───expanded: B7�F2�
+  ╰─────result: B7�F2�
  ├─────op-res: B7�F2�
- ├───expanded: escape:░${escape:B7␷F2��}
- ╰─────result: escape:░B7␷F2��
+ ├───expanded: escape:░${escape:B7�F2�}
+ ╰─────result: escape:░B7�F2�
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
 environment after trimming:

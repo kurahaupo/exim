@@ -1747,10 +1747,10 @@ while (*fp)
 	      if (precision >= 0) precision += 3;
 	      break;
 	    default:
-	      if (*s <= ' ')
+	      if (* US s <= ' ')
 		{	/* base of UTF8 symbols for ASCII control chars */
 		uschar ctrl_symbol[3] = {[0]=0xe2, [1]=0x90, [2]=0x80};
-		ctrl_symbol[2] |= *s;
+		ctrl_symbol[2] |= * US s;
 		zg = string_catn(zg, ctrl_symbol, 3);
 		if (precision >= 0) precision += 2;
 		}
