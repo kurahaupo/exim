@@ -792,7 +792,7 @@ else if (!*t)
 
 else
   {
-  t += Ustrlen((const uschar *)t);
+  t += Ustrlen(t);
   *t++ = *s++;
   *domain = t - yield;
   s = read_domain(s, t, TRUE, errorptr);
@@ -806,7 +806,6 @@ move it back past white space if necessary. */
 
 PARSE_SUCCEEDED:
 if (*s)
-  {
   if (f.parse_found_group && *s == ';')
     {
     f.parse_found_group = FALSE;
@@ -818,7 +817,7 @@ if (*s)
       s, (int)(s - US mailbox), mailbox);
     goto PARSE_FAILED;
     }
-  }
+
 *start = startptr - US mailbox;      /* Return offsets */
 while (isspace(endptr[-1])) endptr--;
 *end = endptr - US mailbox;

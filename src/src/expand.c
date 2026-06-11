@@ -7328,6 +7328,8 @@ while (*s)	/* known to be untainted */
 					    &start, &end, &domain, FALSE);
 	  uschar * ss;
 
+	  DEBUG(expand) if (expand_string_message)
+			  debug_printf_indent("%s\n", expand_string_message);
 	  if (!t)
 	    goto EXPAND_FAILED;
 
@@ -7899,6 +7901,7 @@ NOT_ITEM: ;
 	int start, end, domain;
 	const uschar * t = parse_extract_address(sub, &error, &start, &end,
 						&domain, FALSE);
+	DEBUG(expand) if (error) debug_printf_indent("%s\n", error);
 	if (t)
 	  if (c != EOP_DOMAIN)
 	    yield = c == EOP_LOCAL_PART && domain > 0
@@ -7933,6 +7936,7 @@ NOT_ITEM: ;
 	  *p = '\0';
 	  address = parse_extract_address(sub, &error, &start, &end, &domain,
 	    FALSE);
+	  DEBUG(expand) if (error) debug_printf_indent("%s\n", error);
 	  *p = saveend;
 
 	  /* Add the address to the output list that we are building. This is
