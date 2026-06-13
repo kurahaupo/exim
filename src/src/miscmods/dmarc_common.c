@@ -285,24 +285,20 @@ expand_level++;
 res = NULL;
 if (!(li = search_findtype_partial(US"regdom", &partial, &affix, &affixlen,
 				  &starflags, &opts)))
-  {
-  DEBUG(receive) debug_printf_indent("DMARC: missing regdom lookup\n");
-  goto out;
-  }
+  { DEBUG(receive) debug_printf_indent("DMARC: missing regdom lookup\n"); }
 
-if (!(handle = search_open(dmarc_tld_file, li, 0, NULL, NULL)))
-  goto out;
-
+else if (  (handle = search_open(dmarc_tld_file, li, 0, NULL, NULL))
+	&& (res = search_find(handle, dmarc_tld_file, dom, partial, affix,
+			      affixlen, starflags, &expand_setup, opts))
+	)
 /*XXX should we handle a defer return?  cf. f.search_find_defer */
-
-res = search_find(handle, dmarc_tld_file, dom, partial, affix,
-		  affixlen, starflags, &expand_setup, opts);
-
-out:
+  {
   cached_key = string_copy_perm(dom, FALSE);
   cached_res = string_copy_perm(res, FALSE);
-  expand_level--;
-  return res;
+  }
+
+expand_level--;
+return res;
 }
 
 const uschar *

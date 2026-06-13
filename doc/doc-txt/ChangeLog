@@ -163,6 +163,8 @@ JH/41 DKIM: harden the authresults expansion against malicious senders.
 JH/42 TLS: a session-close while handling a mail reception is now treated
       the same as a TCP connection close.
 
+JH/43 DMARC: fix handling of a null return from regdom lookup.
+
 
 Exim version 4.99.4
 -------------------
