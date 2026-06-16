@@ -1029,7 +1029,12 @@ while ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) >= 0)
 	}
       if (ch == '\n')			/* Bare LF at end of line */
 	if (strict_crlf)
+	  {
 	  ch = ' ';			/* replace LF with space */
+#ifndef DISABLE_DKIM
+	  f.dkim_disable_verify = TRUE;	/* This could be a DKIM-bypass attack */
+#endif
+	  }
 	else
 	  {				/* treat as line ending */
 	  ch_state = s_linestart;
@@ -1061,7 +1066,12 @@ while ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) >= 0)
     case s_had_nl_dot:			/* After [CR] LF . */
       if (ch == '\n')			/* [CR] LF . LF */
 	if (strict_crlf)
+	  {
 	  ch = ' ';			/* replace LF with space */
+#ifndef DISABLE_DKIM
+	  f.dkim_disable_verify = TRUE;	/* This could be a DKIM-bypass attack */
+#endif
+	  }
 	else
 	  return END_DOT;
       else if (ch == '\r')		/* [CR] LF . CR */

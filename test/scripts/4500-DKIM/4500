@@ -35,6 +35,8 @@ Message-ID: <qwerty1234@disco-zombie.net>
 Subject: simple test
 
 This is a simple test.
+>>> .\n
+potential extra text
 .
 ??? 250
 QUIT
