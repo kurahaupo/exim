@@ -163,9 +163,13 @@ Returns:    nothing
 void
 debug_print_ids(uschar * s)
 {
-debug_printf("%s uid=%ld gid=%ld euid=%ld egid=%ld\n", s,
+debug_printf("%s uid=%ld gid=%ld euid=%ld egid=%ld", s,
   (long int)getuid(), (long int)getgid(), (long int)geteuid(),
   (long int)getegid());
+if (config_lineno)
+  debug_printf(" (%s %d)\n", config_filename, config_lineno);
+else
+  debug_printf("\n", config_filename, config_lineno);
 }
 
 /************************************************/

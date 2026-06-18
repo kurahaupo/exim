@@ -1,4 +1,4 @@
-01:01:01 p1237  debug enabled: uid=EXIM_UID gid=EXIM_GID euid=EXIM_UID egid=EXIM_GID
+01:01:01 p1237  debug enabled: uid=EXIM_UID gid=EXIM_GID euid=EXIM_UID egid=EXIM_GID (TESTSUITE/test-config 24)
 01:01:01 p1237  warn: condition test succeeded in ACL chk_data
 01:01:01 p1237  processing ACL chk_data "accept" (TESTSUITE/test-config 28)
 01:01:01 p1237  accept: condition test succeeded in ACL chk_data
@@ -117,7 +117,7 @@
 01:01:01 p1238  search_tidyup called
 01:01:01 p1238  search_tidyup called
 01:01:01 p1238  >>>>>>>>>>>>>>>> Exim pid=p1238 (daemon-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-01:01:01 p1239  debug enabled: uid=EXIM_UID gid=EXIM_GID euid=EXIM_UID egid=EXIM_GID
+01:01:01 p1239  debug enabled: uid=EXIM_UID gid=EXIM_GID euid=EXIM_UID egid=EXIM_GID (TESTSUITE/test-config 24)
 01:01:01 p1239  check control = queue_only
 01:01:01 p1239  warn: condition test succeeded in ACL chk_data
 01:01:01 p1239  processing ACL chk_data "accept" (TESTSUITE/test-config 28)

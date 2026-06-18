@@ -1,4 +1,4 @@
-debug enabled: uid=EXIM_UID gid=EXIM_GID euid=EXIM_UID egid=EXIM_GID
+debug enabled: uid=EXIM_UID gid=EXIM_GID euid=EXIM_UID egid=EXIM_GID (TESTSUITE/test-config 17)
 accept: condition test succeeded in ACL chk_mail
 end of ACL chk_mail: ACCEPT
 SMTP>> 250 OK
