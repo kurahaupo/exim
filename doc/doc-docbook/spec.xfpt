@@ -32559,7 +32559,7 @@ the operation and configuration of DKIM, see section &<<SECDKIM>>&.
 .cindex DMARC "disable verify"
 .cindex DMARC controls
 .cindex DMARC "forensic mails"
-These control affect DMARC processing.  For details on
+These controls affect DMARC processing.  For details on
 the operation and configuration of DMARC, see section &<<SECDMARC>>&.
 
 The &"disable"& turns off DMARC verification processing entirely.
