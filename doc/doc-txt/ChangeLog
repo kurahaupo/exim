@@ -165,6 +165,9 @@ JH/42 TLS: a session-close while handling a mail reception is now treated
 
 JH/43 DMARC: fix handling of a null return from regdom lookup.
 
+JH/44 Perl: harden DNS lookups. Previously a NOMATCH return could result in
+      an uninitialsed pointer access.
+
 
 Exim version 4.99.4
 -------------------
