@@ -112,12 +112,24 @@ if (expand_nmax == 0) 	/* skip if rxd data */
 if (ob->server_param2)
   {
   uschar * s = expand_string(ob->server_param2);
+  if (!s)
+    {
+    log_write(LOG_MAIN|LOG_PANIC, "failed to expand auth param2 %q: %s",
+          ob->server_param2, expand_string_message);
+    return DEFER;
+    }
   auth_vars[expand_nmax = 1] = s;
   expand_nstring[++expand_nmax] = s;
   expand_nlength[expand_nmax] = Ustrlen(s);
+
   if (ob->server_param3)
     {
-    s = expand_string(ob->server_param3);
+    if (!(s = expand_string(ob->server_param3)))
+      {
+      log_write(LOG_MAIN|LOG_PANIC, "failed to expand auth param3 %q: %s",
+	    ob->server_param3, expand_string_message);
+      return DEFER;
+      }
     auth_vars[expand_nmax] = s;
     expand_nstring[++expand_nmax] = s;
     expand_nlength[expand_nmax] = Ustrlen(s);
@@ -125,6 +137,8 @@ if (ob->server_param2)
   }
 
 return auth_check_serv_cond(ablock);
+
+expfail:
 }
 
 

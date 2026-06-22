@@ -170,6 +170,8 @@ JH/44 Perl: harden DNS lookups. Previously a NOMATCH return could result in
 
 JH/45 PROXY protocol: harden agains early-close from client proxy.
 
+JH/46 Extern authenticator: harden againt failing option expansions.
+
 
 Exim version 4.99.4
 -------------------
