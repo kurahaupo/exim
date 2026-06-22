@@ -99,7 +99,7 @@ while (capacity > 0)
     { ret = read(fd, to, 1); }
   while (ret == -1 && errno == EINTR && !had_command_timeout);
 
-  if (ret == -1)
+  if (ret <= 0)
     return -1;
   have++;
   if (last)
@@ -226,7 +226,7 @@ do
   ret = read(smtp_in_fd, &hdr, PROXY_INITIAL_READ);
   } while (ret == -1 && errno == EINTR && !had_command_timeout);
 
-if (ret == -1)
+if (ret <= 0)
   goto proxyfail;
 DEBUG(receive) proxy_debug(US &hdr, 0, ret);
 
@@ -243,7 +243,7 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
     {
     retmore = read(smtp_in_fd, US &hdr + ret, PROXY_V2_HEADER_SIZE - PROXY_INITIAL_READ);
     } while (retmore == -1 && errno == EINTR && !had_command_timeout);
-  if (retmore == -1)
+  if (retmore <= 0)
     goto proxyfail;
   DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
 
@@ -282,7 +282,7 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
       {
       retmore = read(smtp_in_fd, US &hdr + ret, size-ret);
       } while (retmore == -1 && errno == EINTR && !had_command_timeout);
-    if (retmore == -1)
+    if (retmore <= 0)
       goto proxyfail;
     DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
     ret += retmore;
