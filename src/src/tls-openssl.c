@@ -4640,7 +4640,7 @@ Only used by the server-side TLS.
 */
 
 int
-tls_getc(const const in_processing * inp, unsigned lim)
+tls_getc(const in_processing * inp, unsigned lim)
 {
 if (ssl_xfer_buffer_lwm >= ssl_xfer_buffer_hwm)
   if (!tls_refill(lim))
@@ -4652,7 +4652,7 @@ return ssl_xfer_buffer[ssl_xfer_buffer_lwm++];
 }
 
 BOOL
-tls_hasc(const const in_processing * inp)
+tls_hasc(const in_processing * inp)
 {
 return ssl_xfer_buffer_lwm < ssl_xfer_buffer_hwm;
 }

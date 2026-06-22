@@ -137,8 +137,6 @@ if (ob->server_param2)
   }
 
 return auth_check_serv_cond(ablock);
-
-expfail:
 }
 
 
