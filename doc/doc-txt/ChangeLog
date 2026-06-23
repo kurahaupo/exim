@@ -2,6 +2,15 @@ This document describes *changes* to previous versions, that might
 affect Exim's operation, with an unchanged configuration file.  For new
 options, and new features, see the NewStuff file next to this ChangeLog.
 
+Exim version 4.99.5
+-------------------
+
+This is a security release.
+
+JH/01 Restrict named-queue names.  Previously, files could be corrupted by
+      poor choices of name. (GCVE-25-2026-07-45-1)
+
+
 Exim version 4.99.4
 -------------------
 

@@ -80,7 +80,7 @@ string_format_trc(uschar * buf, int len, const uschar * func, unsigned line,
 
 struct global_flags	f;
 unsigned int		log_selector[1];
-uschar *		queue_name;
+const uschar *		queue_name;
 BOOL			split_spool_directory;
 
 

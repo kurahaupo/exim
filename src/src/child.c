@@ -68,14 +68,14 @@ Returns:         if CEE_RETURN_ARGV is given, returns a pointer to argv;
                  otherwise, does not return
 */
 
-uschar **
+const uschar **
 child_exec_exim(int exec_type, BOOL kill_v, int *pcount, BOOL minimal,
   int acount, ...)
 {
 int first_special = -1;
 int n = 0;
 int extra = pcount ? *pcount : 0;
-uschar **argv;
+const uschar ** argv;
 
 argv = store_get((extra + acount + MAX_CLMACROS + 24) * sizeof(char *), GET_UNTAINTED);
 

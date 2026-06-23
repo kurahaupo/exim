@@ -146,7 +146,7 @@ extern void    cancel_cutthrough_connection(BOOL, const uschar *);
 extern gstring *cat_file(FILE *, gstring *, const uschar *);
 extern gstring *cat_file_tls(void *, gstring *, const uschar *);
 extern int     check_host(void *, const uschar *, const uschar **, uschar **);
-extern uschar **child_exec_exim(int, BOOL, int *, BOOL, int, ...);
+extern const uschar **child_exec_exim(int, BOOL, int *, BOOL, int, ...);
 extern pid_t   child_open_exim_function(int *, const uschar *);
 extern pid_t   child_open_exim2_function(int *, uschar *, uschar *,
 		 const uschar *);

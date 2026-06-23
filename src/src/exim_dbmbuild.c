@@ -75,7 +75,7 @@ log_write(unsigned int selector, int flags, const char *format, ...)
 
 struct global_flags	f;
 unsigned int		log_selector[1];
-uschar *		queue_name;
+const uschar *		queue_name;
 BOOL			split_spool_directory;
 
 
