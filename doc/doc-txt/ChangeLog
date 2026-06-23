@@ -10,6 +10,9 @@ This is a security release.
 JH/01 Restrict named-queue names.  Previously, files could be corrupted by
       poor choices of name. (GCVE-25-2026-07-45-1)
 
+JH/02 Do not expand a local_part gotten from a .forward file, under
+      force_command in a pipe transport. (GCVE-25-2026-07-45-3)
+
 
 Exim version 4.99.4
 -------------------
