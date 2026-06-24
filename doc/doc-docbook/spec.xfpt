@@ -22210,13 +22210,17 @@ If this option is true, the &':fail:'& item can be used in a redirection list,
 and the &%fail%& command may be used in an Exim filter file.
 
 
-.option allow_filter redirect boolean false
+.option allow_filter redirect boolean&!! false
 .cindex "filter" "enabling use of"
 .cindex "Sieve filter" "enabling use of"
-Setting this option allows Exim to interpret redirection data that starts with
-&"#Exim filter"& or &"#Sieve filter"& as a set of filtering instructions. There
-are some features of Exim filter files that some administrators may wish to
-lock out; see the &%forbid_filter_%&&'xxx'& options below.
+A &"true"& value for this option
+allows Exim to interpret redirection data that starts with
+&"#Exim filter"& or &"#Sieve filter"& as a set of filtering instructions.
+There are some features of Exim filter files that some administrators may wish 
+to lock out; see the &%forbid_filter_%&&'xxx'& options below
+.new
+and note also that the option is expanded before use.
+.wen
 
 It is also possible to lock out Exim filters or Sieve filters while allowing
 the other type; see &%forbid_exim_filter%& and &%forbid_sieve_filter%&.
@@ -22345,14 +22349,14 @@ relative path. If this option is set false, this action does not happen. The
 relative path is then passed to the transport unmodified.
 
 
-.option forbid_blackhole redirect boolean false
+.option forbid_blackhole redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, the &':blackhole:'& item may not appear in a
 redirection list.
 
 
-.option forbid_exim_filter redirect boolean false
+.option forbid_exim_filter redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is set true, only Sieve filters are permitted when
@@ -22361,7 +22365,7 @@ If this option is set true, only Sieve filters are permitted when
 
 
 
-.option forbid_file redirect boolean false
+.option forbid_file redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "delivery" "to file; forbidding"
 .cindex "filter" "locking out certain features"
@@ -22374,21 +22378,21 @@ set. It applies to Sieve filters as well as to Exim filters, but if true, it
 locks out the Sieve's &"keep"& facility.
 
 
-.option forbid_filter_dlfunc redirect boolean false
+.option forbid_filter_dlfunc redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, string expansions in Exim filters are not allowed to
 make use of the &%dlfunc%& expansion facility to run dynamically loaded
 functions.
 
-.option forbid_filter_existstest redirect boolean false
+.option forbid_filter_existstest redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 .cindex "expansion" "statting a file"
 If this option is true, string expansions in Exim filters are not allowed to
 make use of the &%exists%& condition or the &%stat%& expansion item.
 
-.option forbid_filter_logwrite redirect boolean false
+.option forbid_filter_logwrite redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, use of the logging facility in Exim filters is not
@@ -22397,14 +22401,14 @@ under some unprivileged uid (which is normally the case for ordinary users'
 &_.forward_& files).
 
 
-.option forbid_filter_lookup redirect boolean false
+.option forbid_filter_lookup redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, string expansions in Exim filter files are not allowed
 to make use of &%lookup%& items.
 
 
-.option forbid_filter_perl redirect boolean false
+.option forbid_filter_perl redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 This option has an effect only if Exim is built with embedded Perl support. If
@@ -22412,21 +22416,21 @@ it is true, string expansions in Exim filter files are not allowed to make use
 of the embedded Perl support.
 
 
-.option forbid_filter_readfile redirect boolean false
+.option forbid_filter_readfile redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, string expansions in Exim filter files are not allowed
 to make use of &%readfile%& items.
 
 
-.option forbid_filter_readsocket redirect boolean false
+.option forbid_filter_readsocket redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, string expansions in Exim filter files are not allowed
 to make use of &%readsocket%& items.
 
 
-.option forbid_filter_reply redirect boolean false
+.option forbid_filter_reply redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, this router may not generate an automatic reply
@@ -22435,14 +22439,14 @@ files, not from traditional forward files. This option is forced to be true if
 &%one_time%& is set.
 
 
-.option forbid_filter_run redirect boolean false
+.option forbid_filter_run redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, string expansions in Exim filter files are not allowed
 to make use of &%run%& items.
 
 
-.option forbid_include redirect boolean false
+.option forbid_include redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is true, items of the form
@@ -22452,7 +22456,7 @@ If this option is true, items of the form
 are not permitted in non-filter redirection lists.
 
 
-.option forbid_pipe redirect boolean false
+.option forbid_pipe redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 .cindex "delivery" "to pipe; forbidding"
@@ -22461,7 +22465,7 @@ specifies delivery to a pipe, either from an Exim filter or from a conventional
 forward file. This option is forced to be true if &%one_time%& is set.
 
 
-.option forbid_sieve_filter redirect boolean false
+.option forbid_sieve_filter redirect boolean&!! false
 .cindex "restricting access to features"
 .cindex "filter" "locking out certain features"
 If this option is set true, only Exim filters are permitted when
@@ -22469,7 +22473,7 @@ If this option is set true, only Exim filters are permitted when
 
 
 .cindex "SMTP" "error codes"
-.option forbid_smtp_code redirect boolean false
+.option forbid_smtp_code redirect boolean&!! false
 If this option is set true, any SMTP error codes that are present at the start
 of messages specified for &`:defer:`& or &`:fail:`& are quietly ignored, and
 the default codes (451 and 550, respectively) are always used.

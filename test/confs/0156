@@ -18,7 +18,7 @@ alias:
   data = ${lookup{$local_part}lsearch{DIR/aux-fixed/TESTNUM.alias}}
   file_transport = appendfile
   forbid_blackhole
-  forbid_file
+  forbid_file = ${if eq {A}{A} {true}{false}}
   forbid_include
   forbid_pipe
   retry_use_local_part

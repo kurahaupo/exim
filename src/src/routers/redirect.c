@@ -20,57 +20,73 @@
 #define LOFF(field) OPT_OFF(redirect_router_options_block, field)
 
 optionlist redirect_router_options[] = {
-  { "allow_defer",        opt_bit | (RDON_DEFER << 16),
-      LOFF(bit_options) },
-  { "allow_fail",         opt_bit | (RDON_FAIL << 16),
-      LOFF(bit_options) },
-  { "allow_filter",       opt_bit | (RDON_FILTER << 16),
-      LOFF(bit_options) },
-  { "allow_freeze",       opt_bit | (RDON_FREEZE << 16),
-      LOFF(bit_options) },
+  { "*expand_allow_filter",		opt_stringptr,
+      LOFF(expand_allow_filter) },
+  { "*expand_forbid_blackhole",		opt_stringptr,
+      LOFF(expand_forbid_blackhole) },
+  { "*expand_forbid_exim_filter",	opt_stringptr,
+      LOFF(expand_forbid_exim_filter)},
+  { "*expand_forbid_file",		opt_stringptr,
+      LOFF(expand_forbid_file) },
+  { "*expand_forbid_filter_dlfunc",	opt_stringptr,
+      LOFF(expand_forbid_filter_dlfunc)},
+  { "*expand_forbid_filter_existstest",	opt_stringptr,
+      LOFF(expand_forbid_filter_existstest) },
+  { "*expand_forbid_filter_logwrite",	opt_stringptr,
+      LOFF(expand_forbid_filter_logwrite) },
+  { "*expand_forbid_filter_lookup",	opt_stringptr,
+      LOFF(expand_forbid_filter_lookup) },
+  { "*expand_forbid_filter_perl",	opt_stringptr,
+      LOFF(expand_forbid_filter_perl) },
+  { "*expand_forbid_filter_readfile",	opt_stringptr,
+      LOFF(expand_forbid_filter_readfile) },
+  { "*expand_forbid_filter_readsocket",	opt_stringptr,
+      LOFF(expand_forbid_filter_readsocket) },
+  { "*expand_forbid_filter_reply",	opt_stringptr,
+      LOFF(expand_forbid_filter_reply) },
+  { "*expand_forbid_filter_run",	opt_stringptr,
+      LOFF(expand_forbid_filter_run) },
+  { "*expand_forbid_include",		opt_stringptr,
+      LOFF(expand_forbid_include) },
+  { "*expand_forbid_pipe",        	opt_stringptr,
+      LOFF(expand_forbid_pipe) },
+  { "*expand_forbid_sieve_filter",	opt_stringptr,
+      LOFF(expand_forbid_sieve_filter) },
+  { "*expand_forbid_smtp_code",     	opt_stringptr,
+      LOFF(expand_forbid_smtp_code) },
+
+  { "allow_defer",        opt_bit | (RDON_DEFER << 16),	LOFF(bit_options) },
+  { "allow_fail",         opt_bit | (RDON_FAIL << 16),	LOFF(bit_options) },
+  { "allow_filter",       opt_expand_bool,	LOFF(allow_filter) },
+  { "allow_freeze",       opt_bit | (RDON_FREEZE << 16), LOFF(bit_options) },
   { "check_ancestor",     opt_bool,		LOFF(check_ancestor) },
   { "check_group",        opt_bool,		LOFF(check_group) },
   { "check_owner",        opt_bool,		LOFF(check_owner) },
   { "data",               opt_stringptr,	LOFF(data) },
-  { "directory_transport",opt_stringptr,	LOFF(directory_transport_name) },
+  { "directory_transport",opt_stringptr,	LOFF(directory_transport_name)},
   { "file",               opt_stringptr,	LOFF(file) },
   { "file_transport",     opt_stringptr,	LOFF(file_transport_name) },
 
   { "filter_prepend_home",opt_bit | (RDON_PREPEND_HOME << 16),
       LOFF(bit_options) },
-  { "forbid_blackhole",   opt_bit | (RDON_BLACKHOLE << 16),
-      LOFF(bit_options) },
-  { "forbid_exim_filter", opt_bit | (RDON_EXIM_FILTER << 16),
-      LOFF(bit_options) },
-  { "forbid_file",        opt_bool,
-      LOFF(forbid_file) },
-  { "forbid_filter_dlfunc", opt_bit | (RDON_DLFUNC << 16),
-      LOFF(bit_options) },
-  { "forbid_filter_existstest",  opt_bit | (RDON_EXISTS << 16),
-      LOFF(bit_options) },
-  { "forbid_filter_logwrite",opt_bit | (RDON_LOG << 16),
-      LOFF(bit_options) },
-  { "forbid_filter_lookup", opt_bit | (RDON_LOOKUP << 16),
-      LOFF(bit_options) },
-  { "forbid_filter_perl", opt_bit | (RDON_PERL << 16),
-      LOFF(bit_options) },
-  { "forbid_filter_readfile", opt_bit | (RDON_READFILE << 16),
-      LOFF(bit_options) },
-  { "forbid_filter_readsocket", opt_bit | (RDON_READSOCK << 16),
-      LOFF(bit_options) },
-  { "forbid_filter_reply",opt_bool,
-      LOFF(forbid_filter_reply) },
-  { "forbid_filter_run",  opt_bit | (RDON_RUN << 16),
-      LOFF(bit_options) },
-  { "forbid_include",     opt_bit | (RDON_INCLUDE << 16),
-      LOFF(bit_options) },
-  { "forbid_pipe",        opt_bool,
-      LOFF(forbid_pipe) },
-  { "forbid_sieve_filter",opt_bit | (RDON_SIEVE_FILTER << 16),
-      LOFF(bit_options) },
-  { "forbid_smtp_code",     opt_bool,
-      LOFF(forbid_smtp_code) },
-  { "hide_child_in_errmsg", opt_bool,
+  { "forbid_blackhole",		opt_expand_bool, LOFF(forbid_blackhole) },
+  { "forbid_exim_filter",	opt_expand_bool, LOFF(forbid_exim_filter)},
+  { "forbid_file",		opt_expand_bool, LOFF(forbid_file) },
+  { "forbid_filter_dlfunc",	opt_expand_bool, LOFF(forbid_filter_dlfunc)},
+  { "forbid_filter_existstest",	opt_expand_bool, LOFF(forbid_filter_existstest) },
+  { "forbid_filter_logwrite",	opt_expand_bool, LOFF(forbid_filter_logwrite) },
+  { "forbid_filter_lookup",	opt_expand_bool, LOFF(forbid_filter_lookup) },
+  { "forbid_filter_perl",	opt_expand_bool, LOFF(forbid_filter_perl) },
+  { "forbid_filter_readfile",	opt_expand_bool, LOFF(forbid_filter_readfile) },
+  { "forbid_filter_readsocket",	opt_expand_bool, LOFF(forbid_filter_readsocket) },
+  { "forbid_filter_reply",	opt_expand_bool, LOFF(forbid_filter_reply) },
+  { "forbid_filter_run",	opt_expand_bool, LOFF(forbid_filter_run) },
+  { "forbid_include",		opt_expand_bool, LOFF(forbid_include) },
+  { "forbid_pipe",        	opt_expand_bool, LOFF(forbid_pipe) },
+  { "forbid_sieve_filter",	opt_expand_bool, LOFF(forbid_sieve_filter) },
+  { "forbid_smtp_code",     	opt_expand_bool, LOFF(forbid_smtp_code) },
+
+  { "hide_child_in_errmsg", 	opt_bool,
       LOFF( hide_child_in_errmsg) },
   { "ignore_eacces",      opt_bit | (RDON_EACCES << 16),
       LOFF(bit_options) },
@@ -190,16 +206,6 @@ if (ob->check_group == TRUE_UNSET)
 if (ob->qualify_domain && ob->qualify_preserve_domain)
   log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
     "only one of \"qualify_domain\" or \"qualify_preserve_domain\" must be set",
-    r->name);
-
-/* If allow_filter is set, either user or check_local_user must be set. */
-
-if (!rblock->check_local_user &&
-    !rblock->uid_set &&
-    rblock->expand_uid == NULL &&
-    (ob->bit_options & RDO_FILTER) != 0)
-  log_write_die(LOG_CONFIG_FOR, "%s router:\n  "
-    "\"user\" or \"check_local_user\" must be set with \"allow_filter\"",
     r->name);
 }
 
@@ -441,6 +447,33 @@ while (generated)
   }
 }
 
+static int
+rr_expanded_bool_bit(router_instance * r, int options,
+  BOOL b, const uschar * s, unsigned bitnum, const uschar * optname)
+{
+if (b)		/* a static would be expanded to bool in readconf */
+  options |= BIT(bitnum);
+else if (s)		/* expansion needed */
+  {
+  const uschar * ss = string_sprintf("%q in router", optname);
+  DEBUG(expand) debug_printf_indent("try option '%s'\n", optname);
+  if (expand_check_condition(s, ss, r->drinst.name))
+    options |= BIT(bitnum);
+  }
+return options;
+}
+
+static void
+rr_expanded_bool(router_instance * r,
+  BOOL * bp, const uschar * s, const uschar * optname)
+{
+if (s)				/* expansion needed */
+  {
+  const uschar * ss = string_sprintf("%q in router", optname);
+  DEBUG(expand) debug_printf_indent("try option '%s'\n", optname);
+  *bp = expand_check_condition(s, ss, r->drinst.name);
+  }
+}
 
 /*************************************************
 *              Main entry point                  *
@@ -536,6 +569,57 @@ if (!ugid.gid_set && pw)
   ugid.gid_set = TRUE;
   }
 
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->allow_filter, ob->expand_allow_filter,
+	      RDON_FILTER,	US"allow_filter");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_blackhole, ob->expand_forbid_blackhole,
+	      RDON_BLACKHOLE,	US"forbid_blackhole");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_exim_filter, ob->expand_forbid_exim_filter,
+	      RDON_EXIM_FILTER,	US"forbid_exim__filter");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_dlfunc, ob->expand_forbid_filter_dlfunc,
+	      RDON_DLFUNC,	US"forbid_filter_dlfunc");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_existstest, ob->expand_forbid_filter_existstest,
+	      RDON_EXISTS,	US"forbid_filter_existstest");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_logwrite, ob->expand_forbid_filter_logwrite,
+	      RDON_LOG,		US"forbid_filter_logwrite");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_lookup, ob->expand_forbid_filter_lookup,
+	      RDON_LOOKUP,	US"forbid_filter_lookup");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_perl, ob->expand_forbid_filter_perl,
+	      RDON_PERL,	US"forbid_filter_perl");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_readfile, ob->expand_forbid_filter_readfile,
+	      RDON_READFILE,	US"forbid_filter_readfile");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_readsocket, ob->expand_forbid_filter_readsocket,
+	      RDON_READSOCK,	US"forbid_filter_readsocket");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_filter_run, ob->expand_forbid_filter_run,
+	      RDON_RUN,		US"forbid_filter_run");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_include, ob->expand_forbid_include,
+	      RDON_INCLUDE,	US"forbid_include");
+options = rr_expanded_bool_bit(rblock, options,
+	      ob->forbid_sieve_filter, ob->expand_forbid_sieve_filter,
+	      RDON_SIEVE_FILTER,	US"forbid_sieve_filter");
+
+rr_expanded_bool(rblock, &ob->forbid_file,
+		ob->expand_forbid_file,		US"forbid_file");
+rr_expanded_bool(rblock, &ob->forbid_filter_reply,
+		ob->expand_forbid_filter_reply,	US"forbid_filter_reply");
+rr_expanded_bool(rblock, &ob->forbid_pipe,
+		ob->expand_forbid_pipe,		US"forbid_pipe");
+rr_expanded_bool(rblock, &ob->forbid_smtp_code,
+		ob->expand_forbid_smtp_code,	US"forbid_smtp_code");
+
+ 
+
 /* Call the function that interprets redirection data, either inline or from a
 file. This is a separate function so that the system filter can use it. It will
 run the function in a subprocess if necessary. If qualify_preserve_domain is
@@ -550,7 +634,7 @@ else
   GET_OPTION("qualify_domain");
   if (ob->qualify_domain)
     {
-    uschar *new_qdr = rf_expand_data(addr, ob->qualify_domain, &xrc);
+    uschar * new_qdr = rf_expand_data(addr, ob->qualify_domain, &xrc);
     if (!new_qdr) return xrc;
     qualify_domain_recipient = new_qdr;
     }

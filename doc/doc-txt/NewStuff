@@ -33,6 +33,9 @@ Since Version 4.99
 
 11. Main config option "queue_run_order", obsoleting "queue_run_in_order".
 
+12. The redirection router options "forbid_*" and "allow_filter" are now
+    expanded before use.
+
 
 Version 4.99
 ------------

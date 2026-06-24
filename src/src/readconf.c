@@ -1831,7 +1831,7 @@ if (!(ol = find_option(name + offset, oltop, last)))
   log_write_die(LOG_CONFIG_IN, CS unknown_txt, name);
   }
 
-if ((ol->type & opt_set)  && !(ol->type & (opt_rep_con | opt_rep_str)))
+if (ol->type & opt_set  &&  !ol->type & (opt_rep_con | opt_rep_str))
   log_write_die(LOG_CONFIG_IN,
     "%q option set for the second time", name);
 
@@ -2258,7 +2258,7 @@ switch (type)
 
     if (type == opt_bit)
       {
-      int bit = 1 << ((ol->type >> 16) & 31);
+      int bit = BIT((ol->type >> 16) & 31);
       int * ptr = data_block
 	? (int *)(US data_block + ol->v.offset)
 	: (int *)ol->v.value;
