@@ -973,11 +973,13 @@ while ((n = fgetc(fp)) != EOF)
   uschar flag[4];
   int i;
 
+  where = US"headers/hsize";
   if (!isdigit(n)) goto SPOOL_FORMAT_ERROR;
   if(ungetc(n, fp) == EOF  ||  fscanf(fp, "%d%c ", &n, flag) == EOF)
     goto SPOOL_READ_ERROR;
   if (flag[0] != '*') message_size += n;  /* Omit non-transmitted headers */
 
+  where = US"headers/hsize";
   if (read_headers)
     {
     h = store_get(sizeof(header_line), GET_UNTAINTED);

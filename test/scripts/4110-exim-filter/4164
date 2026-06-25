@@ -4,7 +4,7 @@ exim -odi exim-filter@test.ex
 exim -DFORBID=forbid_sieve_filter -odi exim-filter@test.ex
 ****
 # Check expansion of option that becodes a bit
-exim -d+all -DFORBID='forbid_exim_filter = ${if eq{A}{A} {yes}fail}' -odi exim-filter@test.ex
+exim -DFORBID='forbid_exim_filter = ${if eq{A}{A} {yes}fail}' -odi exim-filter@test.ex
 ****
 exim -DALLOW= -odi exim-filter@test.ex
 ****
