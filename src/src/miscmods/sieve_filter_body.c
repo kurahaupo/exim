@@ -167,10 +167,10 @@ for (const gstring * subkey = key; ; g = string_catn(g, US"|", 1))
 	    g = string_catn(g, s, 1);
 	    break;
 	  }
-	g = string_catn(g, US"$", 1);		/* end-anchor */
-      mdone:
-	g = string_catn(g, US")", 1);		/* end subkey */
-	break;
+      g = string_catn(g, US"$", 1);		/* end-anchor */
+    mdone:
+      g = string_catn(g, US")", 1);		/* end subkey */
+      break;
       }
     }
   if (!(++subkey)->s)
@@ -666,6 +666,7 @@ FDEBUG
 For not-multipart:
   Regex for the content match; run it until match or eof. Done, with match status.
 */
+#if defined(HAVE_ICONV) && defined(WITH_CONTENT_SCAN)
 if (Ustrncmp(ct_hdr, "multipart", 9) == 0)
   {
   const pcre2_code * boundary_re;
@@ -761,7 +762,9 @@ if (Ustrncmp(ct_hdr, "multipart", 9) == 0)
   DEBUG(sieve) debug_printf_indent("done with suffix area\n");
   if (receive_ferror()) goto ferror;
   }
-else if (Ustrcmp(ct_hdr, "message/rfc822") == 0)
+else
+#endif	/* HAVE_ICONV && WITH_CONTENT_SCAN */
+    if (Ustrcmp(ct_hdr, "message/rfc822") == 0)
   {
   /* RFC 5173:
   "If the :content specification matches a message/rfc822 MIME part,
@@ -951,7 +954,7 @@ if (filter_test == FTEST_NONE)
   if ((fd = spool_open_datafile(message_id)) < 0)
     { filter->errmsg = US"failed to open data file"; return FALSE; }
 
-  stdin = fdopen(fd, "r");
+  stdin = fdopen(fd, "r");	/*XXX compile dislikes this on Solaris */
 
   if (fseek(stdin, spool_data_start_offset(message_id), SEEK_SET) < 0)
     { filter->errmsg = US"seek error in data file"; return FALSE; }
