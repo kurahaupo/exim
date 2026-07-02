@@ -35,6 +35,7 @@ Since Version 4.99
 
 12. The redirection router options "forbid_*" and "allow_filter" are now
     expanded before use.
+12. Sieve filtering now supports the "body" extension (RFC 5173).
 
 
 Version 4.99

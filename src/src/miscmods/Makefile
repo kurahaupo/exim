@@ -48,7 +48,8 @@ pam.o   	pam.so:		$(HDRS) pam.c
 perl.o		perl.so:       	$(HDRS) perl.c
 proxy.o		proxy.so:	$(HDRS) proxy_api.h proxy.c
 radius.o	radius.so:	$(HDRS) radius.c
-sieve_filter.o	sieve_filter.so: $(HDRS) sieve_filter.c
+sieve_filter.o	sieve_filter.so: $(HDRS) sieve_filter.h sieve_filter.c \
+				sieve_filter_body.c sieve_filter_input.c
 socks.o		socks.so:	$(HDRS) socks_api.h ../transports/smtp.h socks.c
 spf.o   	spf.so:		$(HDRS) spf.h spf.c
 spf_perl.o	spf_perl.so:	$(HDRS) spf.h spf_perl.c
@@ -103,6 +104,24 @@ dmarc.so dmarc_native.so:
 	$(FE)$(CC) -DDYNLOOKUP $(CFLAGS_DYNAMIC) $(CFLAGS) \
 		$(SUPPORT_$*_INCLUDE) $(INCLUDE) $(TLS_INCLUDE) $(DLFLAGS) \
 		$*.c dmarc_common.c $(SUPPORT_$*_LIBS) -o dmarc.so
+
+# sieve_filter
+sieve_filter.o:
+	@echo "$(CC) sieve_filter.c sieve_filter_body.c sieve_filter_input.c"
+	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) sieve_filter.c
+	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) sieve_filter_body.c
+	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) sieve_filter_input.c
+	$(FE)mv sieve_filter.o sieve_filter_tmp.o
+	$(FE)ld -r -o sieve_filter.o $(LDFLAGS_PARTIAL) \
+		sieve_filter_tmp.o sieve_filter_body.o sieve_filter_input.o
+
+sieve_filter.so:
+	@echo "$(CC) -shared sieve_filter.c sieve_filter_body.c"
+	$(FE)$(CC) -DDYNLOOKUP $(CFLAGS_DYNAMIC) $(CFLAGS) \
+		$(SUPPORT_$*_INCLUDE) $(INCLUDE) $(TLS_INCLUDE) $(DLFLAGS) \
+		sieve_filter.c sieve_filter_body.c sieve_filter_input.c \
+		$(SUPPORT_$*_LIBS)  \
+		-o $@
 
 # Compile instructions for static perl.o for when EXIM_PERL is set
 # Dynamic is managed all via scripts/Configure-Makefile

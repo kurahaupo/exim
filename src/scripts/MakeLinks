@@ -108,7 +108,8 @@ for f in dummy.c \
 	perl.c perl_api.h \
 	proxy.c proxy_api.h \
 	radius.c radius_api.h \
-	sieve_filter.c sieve_filter_api.h \
+	sieve_filter.c sieve_filter_body.c sieve_filter_input.c \
+	sieve_filter.h sieve_filter_api.h \
 	socks.c socks_api.h \
 	spf.c spf_perl.c spf.h spf_api.h \
 	xclient.c xclient_api.h

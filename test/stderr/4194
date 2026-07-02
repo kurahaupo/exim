@@ -1,0 +1,436 @@
+### Body transform: missing reqire
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'if'
+  identified: test type 'body'
+   missing previous require "body";
+  missing previous require "body";
+ fileinto `inbox'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: (unspecified; should default to text)
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+   comparator:casemap, matchtype:is, xform:text
+   key globlist  "<HTML>"
+  content-transfer-encoding "" not handled
+  charset: "Windows-1251"
+  inp: /iconv/stdin
+  inp: /stdin
+  if false
+   identified: command 'discard'
+ fileinto `inbox'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: raw, no metachars, nomatch
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':raw'
+   comparator:casemap, matchtype:is, xform:raw
+   key globlist  "<HTML>"
+  if false
+   identified: command 'discard'
+ fileinto `inbox'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: raw, metachars, match
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':raw'
+  identified: match type ':matches'
+   comparator:casemap, matchtype:matches, xform:raw
+   key globlist  "<HTML>*"
+   match
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: raw, metachars, match casefolded
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':raw'
+  identified: match type ':matches'
+   comparator:casemap, matchtype:matches, xform:raw
+   key globlist  "*<h\TmL>??*"
+   compiling RE '(?isn)((<hTmL>..))'
+   match
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: text (explicit request)
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':text'
+   comparator:casemap, matchtype:is, xform:text
+   key globlist  "<HTML>"
+  content-transfer-encoding "" not handled
+  charset: "Windows-1251"
+  inp: /iconv/stdin
+  inp: /stdin
+  if false
+   identified: command 'discard'
+ fileinto `inbox'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: text, transfer-encoding header present/bad
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':text'
+   comparator:casemap, matchtype:is, xform:text
+   key globlist  "<HTML>"
+  content-transfer-encoding "foo" not handled
+  inp: /stdin
+  inp: /stdin
+  if false
+   identified: command 'discard'
+ fileinto `inbox'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: text, transfer-encoding header: qp
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':text'
+  identified: match type ':contains'
+   comparator:casemap, matchtype:contains, xform:text
+   key globlist  "<HTML>"
+  charset: "us-ascii"
+  inp: /qp/stdin
+   match
+  inp: /stdin
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: text, transfer-encoding header: qp (bad decode)
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':text'
+  identified: match type ':contains'
+   comparator:casemap, matchtype:contains, xform:text
+   key globlist  "<HTML>"
+  inp: /qp/stdin
+   ╎qp: decode error
+  inp: /stdin
+   read or decode error in data file
+  read or decode error in data file
+ fileinto `inbox'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1242 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: text, transfer-encoding header: qp (uncompleted decode)
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':text'
+  identified: match type ':contains'
+   comparator:casemap, matchtype:contains, xform:text
+   key globlist  "<HTML>"
+  inp: /qp/stdin
+   ╎qp: incomplete input
+  inp: /stdin
+   read or decode error in data file
+  read or decode error in data file
+ fileinto `inbox'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: text, transfer-encoding header: qp + iconv
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':text'
+  identified: match type ':contains'
+   comparator:casemap, matchtype:contains, xform:text
+   key globlist  "<HTML>"
+  charset: "Windows-1251"
+  inp: /iconv/qp/stdin
+   match
+  inp: /stdin
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1244 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: text, transfer-encoding header: b64
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':text'
+  identified: match type ':matches'
+   comparator:casemap, matchtype:matches, xform:text
+   key globlist  "*brown*fox"
+  charset: "us-ascii"
+  inp: /b64/stdin
+   match
+  inp: /stdin
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1245 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: content
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':content'
+  content_matchtypes:  multipart
+   comparator:casemap, matchtype:contains, xform:content
+   key globlist  "target" "trailer"
+  sieve_body_content: content-types: multipart
+   content_match: depth 0 ct_hdr "multipart/alternative;\n boundary=foobarfence"
+   content_match: mimetype "multipart/alternative" is of interest
+   inp: /mime/stdin
+   scan prefix area
+   ╎scan_mime_part entry
+   ╎ content-transfer-encoding "7bit" not handled
+   ╎ inp: /mime/stdin
+   ╎ inp: /mime/stdin
+   ╎scan_mime_part done
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "text/html;\n\tcharset=utf-8"
+   ╎content_match: mimetype "text/html" not interesting
+   ╎skip text-like part
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "text/plain; charset=\"UTF-8\""
+   ╎content_match: mimetype "text/plain" not interesting
+   ╎skip text-like part
+   scan suffix area
+   ╎scan_mime_part entry
+   ╎ content-transfer-encoding "7bit" not handled
+   ╎ inp: /mime/stdin
+   ╎  match
+   ╎ inp: /mime/stdin
+   ╎scan_mime_part done
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1246 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: content, nested
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':content'
+  content_matchtypes:  text/html
+   comparator:casemap, matchtype:contains, xform:content
+   key globlist  "style type="text/css">"
+  sieve_body_content: content-types: text/html
+   content_match: depth 0 ct_hdr "multipart/alternative;\n boundary=outer"
+   content_match: mimetype "multipart/alternative" not interesting
+   inp: /mime/stdin
+   skip prefix area
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "text/plain;"
+   ╎content_match: mimetype "text/plain" not interesting
+   ╎skip text-like part
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "message/rfc822"
+   ╎content_match: mimetype "message/rfc822" not interesting
+   ╎skip 822 headers
+   ╎inspect 822 body
+   ╎ content_match: depth 2 ct_hdr "text/enhanced"
+   ╎ content_match: mimetype "text/enhanced" not interesting
+   ╎ skip text-like part
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "multipart/alternative; boundary=foobarfence"
+   ╎content_match: mimetype "multipart/alternative" not interesting
+   ╎inp: /mime/mime/stdin
+   ╎skip prefix area
+   ╎real mimepart
+   ╎ content_match: depth 2 ct_hdr "text/html;\n\tcharset=utf-8"
+   ╎ content_match: mimetype "text/html" is of interest
+   ╎ scan text-like part
+   ╎  scan_mime_part entry
+   ╎   charset: "utf-8"
+   ╎   inp: /qp/mime/mime/stdin
+   ╎   inp: /mime/mime/stdin
+   ╎  scan_mime_part done
+   ╎real mimepart
+   ╎ content_match: depth 2 ct_hdr "text/html; charset=\"Windows-1251\""
+   ╎ content_match: mimetype "text/html" is of interest
+   ╎ scan text-like part
+   ╎  scan_mime_part entry
+   ╎   charset: "Windows-1251"
+   ╎   inp: /iconv/qp/mime/mime/stdin
+   ╎   ╎match
+   ╎   inp: /mime/mime/stdin
+   ╎  scan_mime_part done
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1247 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: content, mime-part presence
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':content'
+  content_matchtypes:  message/rfc822
+   comparator:casemap, matchtype:contains, xform:content
+   key globlist  ""
+  sieve_body_content: content-types: message/rfc822
+   content_match: depth 0 ct_hdr "multipart/alternative;\n boundary=outer"
+   content_match: mimetype "multipart/alternative" not interesting
+   inp: /mime/stdin
+   skip prefix area
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "text/plain;"
+   ╎content_match: mimetype "text/plain" not interesting
+   ╎skip text-like part
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "message/rfc822"
+   ╎content_match: mimetype "message/rfc822" is of interest
+   ╎scan 822 headers
+   ╎ match
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1248 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: content, included-message header
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':content'
+  content_matchtypes:  message/rfc822
+   comparator:casemap, matchtype:contains, xform:content
+   key globlist  "Subject: hello request"
+  sieve_body_content: content-types: message/rfc822
+   content_match: depth 0 ct_hdr "multipart/alternative;\n boundary=outer"
+   content_match: mimetype "multipart/alternative" not interesting
+   inp: /mime/stdin
+   skip prefix area
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "text/plain;"
+   ╎content_match: mimetype "text/plain" not interesting
+   ╎skip text-like part
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "message/rfc822"
+   ╎content_match: mimetype "message/rfc822" is of interest
+   ╎scan 822 headers
+   ╎ match
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1249 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### Body transform: content, included-message body
+Exim version x.yz ....
+admin user
+filter_runtest()
+Sieve: start of processing
+ identified: command 'require'
+ identified: command 'if'
+  identified: test type 'body'
+  identified: transform type ':content'
+  content_matchtypes:  text/enhanced
+   comparator:casemap, matchtype:contains, xform:content
+   key globlist  "pretty" "please"
+  sieve_body_content: content-types: text/enhanced
+   content_match: depth 0 ct_hdr "multipart/alternative;\n boundary=outer"
+   content_match: mimetype "multipart/alternative" not interesting
+   inp: /mime/stdin
+   skip prefix area
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "text/plain;"
+   ╎content_match: mimetype "text/plain" not interesting
+   ╎skip text-like part
+   real mimepart
+   ╎content_match: depth 1 ct_hdr "message/rfc822"
+   ╎content_match: mimetype "message/rfc822" not interesting
+   ╎skip 822 headers
+   ╎inspect 822 body
+   ╎ content_match: depth 2 ct_hdr "text/enhanced"
+   ╎ content_match: mimetype "text/enhanced" is of interest
+   ╎ scan text-like part
+   ╎  scan_mime_part entry
+   ╎   inp: /mime/stdin
+   ╎   ╎match
+   ╎   inp: /mime/stdin
+   ╎  scan_mime_part done
+  if true
+   identified: command 'discard'
+Sieve: end of processing
+>>>>>>>>>>>>>>>> Exim pid=p1250 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+
+******** SERVER ********
+### Body transform: missing reqire
+### Body transform: (unspecified; should default to text)
+### Body transform: raw, no metachars, nomatch
+### Body transform: raw, metachars, match
+### Body transform: raw, metachars, match casefolded
+### Body transform: text (explicit request)
+### Body transform: text, transfer-encoding header present/bad
+### Body transform: text, transfer-encoding header: qp
+### Body transform: text, transfer-encoding header: qp (bad decode)
+### Body transform: text, transfer-encoding header: qp (uncompleted decode)
+### Body transform: text, transfer-encoding header: qp + iconv
+### Body transform: text, transfer-encoding header: b64
+### Body transform: content
+### Body transform: content, nested
+### Body transform: content, mime-part presence
+### Body transform: content, included-message header
+### Body transform: content, included-message body

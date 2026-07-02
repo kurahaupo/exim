@@ -1057,12 +1057,26 @@ typedef enum {
 
 
 /* Input processing layer */
+typedef struct in_buf {
+  uschar * buf;           /* start of data area */
+  uschar * ptr;           /* start of readable data */
+  uschar * end;           /* write point */
+} in_buf;
+
 typedef struct in_processing {
+  const uschar *	in_layer_name;
+  in_buf *		in_bufp;		/* data */
+  void *		in_private;		/* per-layer admin data */
+  const struct in_processing * in_lower;	/* underlying layer, or NULL */
+
   /* get byte, refill if needed w/ byte count limit */
   int	(*in_getc)(const struct in_processing *, unsigned);
 
   /* predicate: byte avail for reading (without refill) */
   BOOL	(*in_hasc)(const struct in_processing *);	
+
+  /* push one byte back into buffer */
+  int	(*in_ungetc)(const struct in_processing *, int);
 
   /* get many bytes, with refill; arg req/ret byte cnt */
   const uschar * (*in_getbuf)(const struct in_processing *, unsigned *);
@@ -1070,8 +1084,11 @@ typedef struct in_processing {
   /* get up to the given number of bytes from any cached data, and feed to dkim. */
   void	(*in_getcache)(const struct in_processing *, unsigned);
 
-  /* push one byte back into buffer */
-  int	(*in_ungetc)(const struct in_processing *, int);
+  /* like getbuf, not consuming */
+  const uschar * (*in_getbuf_nr)(const struct in_processing *, unsigned *);
+
+  /* consume getbuf_nr'd bytes */
+  void	(*in_releasebuf)(const struct in_processing *, unsigned);
 
   /* predicate: EOF status */
   int	(*in_feof)(const struct in_processing *);
@@ -1079,9 +1096,18 @@ typedef struct in_processing {
   /* predicate: error status */
   int	(*in_ferror)(const struct in_processing *);
 
-  const struct in_processing * in_lower;	/* underlying layer, or NULL */
-  const uschar * in_layer_name;
+  /* (optional): shutdown & pop layer */
+  const struct in_processing *	(*in_pop)(const struct in_processing *);
 } in_processing;
+
+
+# ifdef WITH_CONTENT_SCAN
+typedef struct mime_parameter {
+  const uschar *	name;
+  int			namelen;
+  const uschar **	value;
+} mime_parameter;
+# endif
 
 #endif	/* whole file */
 /* End of structs.h */

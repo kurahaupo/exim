@@ -351,6 +351,8 @@ extern int     mime_acl_check(uschar *, FILE *, struct mime_boundary_context *,
 		uschar **, uschar **, unsigned);
 extern int     mime_decode(const uschar **);
 extern ssize_t mime_decode_base64(FILE *, FILE *, const uschar *);
+extern void    mime_hdr_value_decode(const uschar *,
+		mime_parameter *, unsigned, const uschar *);
 extern int     mime_regex(const uschar **, BOOL);
 extern void    mime_set_anomaly(int);
 #endif
@@ -1092,6 +1094,12 @@ gstring_release_unused_trc(gstring * g, const char * file, unsigned line)
 if (g) store_release_above_3(g->s + (g->size = g->ptr + 1), file, line);
 }
 
+static inline uschar *
+gstring_chr(const gstring * g, uschar c)
+{
+return memchr(g->s, c, (size_t)g->ptr);
+}
+
 
 /* plain string append to a growable-string */
 
@@ -1566,44 +1574,56 @@ return qrunners && (qrunners->interval > 0 || qrunners->next);
 }
 
 /******************************************************************************/
-/* Recieve input processing */
+/* Receive input processing */
 
-static inline int
-inp_getc(const in_processing * inp, unsigned maxbuf)
-{ return inp->in_getc(inp, maxbuf); }
-static inline const uschar *
-inp_getbuf(const in_processing * inp, unsigned * len)
-{ return inp->in_getbuf(inp, len); }
-static inline BOOL
-inp_hasc(const in_processing * inp)
-{ return inp->in_hasc(inp); }
-static inline void
-inp_get_cache(const in_processing * inp, unsigned lim)
-{ inp->in_getcache(inp, lim); }
-static inline int
-inp_ungetc(const in_processing * inp, int ch)
-{ return inp->in_ungetc(inp, ch); }
-static inline int
-inp_feof(const in_processing * inp)
-{ return inp->in_feof(inp); }
-static inline int
-inp_ferror(const in_processing * inp)
-{ return inp->in_ferror(inp); }
+static inline int	inp_getc(const in_processing * inp, unsigned maxbuf)
+			{ return inp->in_getc(inp, maxbuf); }
+static inline BOOL	inp_hasc(const in_processing * inp)
+			{ return inp->in_hasc(inp); }
+static inline int	inp_ungetc(const in_processing * inp, int ch)
+			{ return inp->in_ungetc(inp, ch); }
 
-static inline int
-receive_getc(unsigned maxbuf) { return inp_getc(rx_prc, maxbuf); }
-static inline const uschar *
-receive_getbuf(unsigned * len) { return inp_getbuf(rx_prc, len); }
-static inline BOOL
-receive_hasc(void) { return inp_hasc(rx_prc); }
-static inline void
-receive_get_cache(unsigned lim) { inp_get_cache(rx_prc, lim); }
-static inline int
-receive_ungetc(int ch) { return inp_ungetc(rx_prc, ch); }
-static inline int
-receive_feof(void) { return inp_feof(rx_prc); }
-static inline int
-receive_ferror(void) { return inp_ferror(rx_prc); }
+static inline const uschar * inp_getbuf(const in_processing * inp, unsigned * len)
+			{ return inp->in_getbuf(inp, len); }
+static inline void	inp_get_cache(const in_processing * inp, unsigned lim)
+			{ inp->in_getcache(inp, lim); }
+
+static inline const uschar * inp_getbuf_nr(const in_processing * inp, unsigned * len)
+			{ return inp->in_getbuf_nr(inp, len); }
+static inline void	inp_releasebuf(const in_processing * inp, unsigned n)
+			{ inp->in_releasebuf(inp, n); }
+
+static inline int	inp_feof(const in_processing * inp)
+			{ return inp->in_feof(inp); }
+static inline int	inp_ferror(const in_processing * inp)
+			{ return inp->in_ferror(inp); }
+static inline const in_processing * inp_pop(const in_processing * inp)
+			{ return inp->in_pop ? inp->in_pop(inp) : inp->in_lower; }
+
+
+static inline int	receive_getc(unsigned maxbuf)
+			{ return inp_getc(rx_prc, maxbuf); }
+static inline BOOL	receive_hasc(void)
+			{ return inp_hasc(rx_prc); }
+static inline int	receive_ungetc(int ch)
+			{ return inp_ungetc(rx_prc, ch); }
+
+static inline const uschar * receive_getbuf(unsigned * len)
+			{ return inp_getbuf(rx_prc, len); }
+static inline void	receive_get_cache(unsigned lim)
+			{ inp_get_cache(rx_prc, lim); }
+
+static inline const uschar * receive_getbuf_nr(unsigned * len)
+			{ return inp_getbuf_nr(rx_prc, len); }
+static inline void	receive_releasebuf(unsigned n)
+			{ inp_releasebuf(rx_prc, n); }
+
+static inline int	receive_feof(void)
+			{ return inp_feof(rx_prc); }
+static inline int	receive_ferror(void)
+			{ return inp_ferror(rx_prc); }
+static inline void	receive_pop(void)
+			{ rx_prc = inp_pop(rx_prc); }
 
 
 # endif	/* !COMPILE_UTILITY */

@@ -361,14 +361,12 @@ expanded string. */
 
 tt = ss = store_get(olen + nonprintcount * 3 + 1, s);
 
-/* Copy everything, escaping non printers. */
+/* Copy everything, escaping non printers (and the escaper /). */
 
 for (t = s; *t && (len < 0 || len-- > 0); )
   {
   int c = *t;
 
-  /*XXX does \ go through unchanged here?  Since we use it for escaping,
-  surely it should be doubled? */
   if (  mac_isprint(c)
      && (!(flags & SP_TAB) || c != '\t')
      && (!(flags & SP_SPACE) || c != ' ')
@@ -392,7 +390,7 @@ for (t = s; *t && (len < 0 || len-- > 0); )
     t++;
     }
   }
-*tt = 0;
+*tt = '\0';
 return ss;
 }
 
@@ -803,11 +801,12 @@ Returns:    < 0, = 0, or > 0, according to the comparison
 int
 strcmpic(const uschar * s, const uschar * t)
 {
+int c;
 while (*s)
-  {
-  int c = tolower(*s++) - tolower(*t++);
-  if (c != 0) return c;
-  }
+  if (!*t)
+    return *s;
+  else if ((c = tolower(*s++) - tolower(*t++)) != 0)
+    return c;
 return *t;
 }
 
@@ -1437,7 +1436,7 @@ string_datestamp_length = 0;	/* Datestamp not inserted */
 string_datestamp_type = 0;	/* Datestamp not inserted */
 
 /* Ensure we have a string, to save on checking later */
-if (!g) g = string_get(16);
+if (!g) g = string_get(Ustrlen(format) + 16);
 
 if (!(flags & SVFMT_TAINT_NOCHK) && is_incompatible(g->s, format))
   {
@@ -1485,7 +1484,7 @@ while (*fp)
   item_start = fp;
   width = precision = -1;
 
-  while (strchr("-+ #0", *++fp) != NULL)
+  while (strchr("-+ #0", *++fp) != NULL)	/* flags: we only handle #- */
     {
     if (*fp == '#') null = "";
     else if (*fp == '-') l_align = TRUE;

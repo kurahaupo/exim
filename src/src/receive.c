@@ -40,20 +40,36 @@ unsigned had_local_scan_timeout;
 *      Non-SMTP character reading functions      *
 *************************************************/
 
+#define STDIN_LAYER_DEBUG		if (FALSE)
+
 /* These are the default functions that are set up in the variables such as
 receive_getc initially. They just call the standard functions, passing stdin as
 the file. (When SMTP input is occurring, different functions are used by
 changing the pointer variables.) */
 
-uschar stdin_buf[4096];
-uschar * stdin_inptr = stdin_buf;
-uschar * stdin_inend = stdin_buf;
+#define STDIN_BUFSIZE 4096
 
 BOOL
 stdin_refill(const in_processing * inp, unsigned lim)
 {
-size_t rc = fread(stdin_buf, 1, MIN(sizeof(stdin_buf), lim), stdin);
-if (rc == 0)
+in_buf * bp = inp->in_bufp;
+unsigned space;
+size_t rc;
+
+/* If there is no unconsumed data, reset pointers to the base of buffer and fill
+from there.  Otherwise, fill only in space above the data. */
+
+if (bp->ptr == bp->end)
+  bp->ptr = bp->end = bp->buf;
+
+space = bp->buf + STDIN_BUFSIZE - bp->end;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d: lim %u  space %u\n", __FUNCTION__, __LINE__,
+		      lim, space);
+
+if (  (rc = fread(bp->end, 1, MIN(space, lim), stdin)) == 0
+   && bp->end == bp->ptr)
   {
   if (had_data_timeout)
     {
@@ -73,55 +89,158 @@ if (rc == 0)
       }
     receive_bomb_out(US"signal-exit", NULL);    /* Does not return */
     }
+
+  STDIN_LAYER_DEBUG
+    debug_printf_indent("%s %d: EOF\n", __FUNCTION__, __LINE__);
   return FALSE;
   }
-stdin_inend = stdin_buf + rc;
-stdin_inptr = stdin_buf;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d: %d bytes old, %d new\n", __FUNCTION__, __LINE__,
+	      (int)(bp->end - bp->ptr), (int)rc);
+bp->end += rc;
 return TRUE;
 }
 
 int
 stdin_getc(const in_processing * inp, unsigned lim)
 {
-if (stdin_inptr >= stdin_inend)
+in_buf * bp = inp->in_bufp;
+if (bp->ptr >= bp->end)
   if (!stdin_refill(inp, lim))
       return EOF;
-return *stdin_inptr++;
+return *bp->ptr++;
 }
-
 
 BOOL
 stdin_hasc(const in_processing * inp)
 {
-return stdin_inptr < stdin_inend;
-}
-
-/* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror. */
-
-const uschar *
-stdin_getbuf(const in_processing * inp, unsigned * len)
-{
-unsigned size;
-const uschar * buf;
-
-if (!stdin_hasc(inp) && !stdin_refill(inp, *len))
-  { *len = 0; return NULL; }
-
-if ((size = stdin_inend - stdin_inptr) > *len) size = *len;
-buf = stdin_inptr;
-stdin_inptr += size;
-*len = size;
-return buf;
+return inp->in_bufp->ptr < inp->in_bufp->end;
 }
 
 int
 stdin_ungetc(const in_processing * inp, int c)
 {
-if (stdin_inptr <= stdin_buf)
+in_buf * bp = inp->in_bufp;
+if (bp->ptr <= bp->buf)
   log_write_die(LOG_MAIN, "buffer underflow in stdin_ungetc");
 
-*--stdin_inptr = c;
+*--bp->ptr = c;
 return c;
+}
+
+
+/* Get many bytes, refilling buffer if needed. Can return NULL on EOF/errror.
+The gotten bytes are released from the buffer, by bumping the read pointer.
+*/
+
+const uschar *
+stdin_getbuf(const in_processing * inp, unsigned * len)
+{
+unsigned size;
+in_buf * bp = inp->in_bufp;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d: req len %u\n", __FUNCTION__, __LINE__, *len);
+STDIN_LAYER_DEBUG
+  debug_printf_indent(" - inptr +%d  inend +%d\n",
+    (int)(bp->ptr - bp->buf), (int)(bp->end - bp->buf));
+
+if (!stdin_hasc(inp) && !stdin_refill(inp, *len))
+  { *len = 0; return NULL; }
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d\n", __FUNCTION__, __LINE__);
+
+if ((size = bp->end - bp->ptr) > *len) size = *len;
+bp->ptr += size;
+*len = size;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d: got %u\n", __FUNCTION__, __LINE__, size);
+
+return bp->buf;
+}
+
+
+/* Variant getbuf op which returns a ref to data but does not consume.
+So that a layer stacked above can call for data to work on but efficiently
+not use all of it, we also implement a consume op and require it be
+called before the next call here.  It will take an arg for how many bytes were
+actually consumed, and copy the remainder down to the start of buffer space.
+Then the refill op, which we must always call, will only fill unused space.
+
+Called only by sieve filter processing. Calls will be mixed with the plain
+getbuf op, so the implementation must be compatible.
+*/
+
+const uschar *
+stdin_getbuf_nr(const in_processing * inp, unsigned * len)
+{
+unsigned size;
+in_buf * bp = inp->in_bufp;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d: req len %u\n", __FUNCTION__, __LINE__, *len);
+STDIN_LAYER_DEBUG
+  debug_printf_indent(" - inptr +%d  inend +%d, %u buffered\n",
+    (int)(bp->ptr - bp->buf), (int)(bp->end - bp->buf),
+    (unsigned)(bp->end - bp->ptr));
+
+/* If the buffer has no outstanding data, or data is at the base of the buffer,
+top up with more data. If none available, indicate EOF. */
+
+if (!stdin_hasc(inp) || bp->ptr == bp->buf)
+  if (!stdin_refill(inp, *len))
+    { *len = 0; return NULL; }
+
+if ((size = bp->end - bp->ptr) > *len) size = *len;
+*len = size;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d: got %u %.*q\n", __FUNCTION__, __LINE__,
+    size, (int)size, bp->ptr);
+STDIN_LAYER_DEBUG
+  debug_printf_indent(" - inptr +%d  inend +%d, %u buffered\n",
+    (int)(bp->ptr - bp->buf), (int)(bp->end - bp->buf),
+    (unsigned)(bp->end - bp->ptr));
+
+return bp->ptr;
+}
+
+/* Consume (some of) the data indicated by getbuf_nr. Copy any remaining down
+to the base of the buffer. */
+
+void
+stdin_releasebuf(const in_processing * inp, unsigned consumed)
+{
+in_buf * bp = inp->in_bufp;
+uschar * s = bp->ptr + consumed;
+unsigned ncopy;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent("%s %d: notify %u\n", __FUNCTION__, __LINE__, consumed);
+STDIN_LAYER_DEBUG
+  debug_printf_indent(" - was inptr +%d  inend +%d, %u buffered: %.*q\n",
+    (int)(bp->ptr - bp->buf), (int)(bp->end - bp->buf),
+    (unsigned)(bp->end - bp->ptr),
+    (int)(bp->end - bp->ptr), bp->ptr
+    );
+
+if (s > bp->end)
+  log_write(LOG_PANIC_DIE, "%s: overlarge consumed count %u", __FUNCTION__, consumed);
+
+if ((ncopy = bp->end - s) > 0)
+  memmove(bp->buf, s, (size_t)ncopy);
+bp->ptr = bp->buf;
+bp->end = bp->buf + ncopy;
+
+STDIN_LAYER_DEBUG
+  debug_printf_indent(" - now inptr +%d  inend +%d, %u buffered: %.*q\n",
+    (int)(bp->ptr - bp->buf), (int)(bp->end - bp->buf),
+    (unsigned)(bp->end - bp->ptr),
+    (int)(bp->end - bp->ptr), bp->ptr
+    );
 }
 
 int
@@ -136,14 +255,22 @@ stdin_ferror(const in_processing * inp)
 return ferror(stdin);
 }
 
+static uschar stdin__buf[STDIN_BUFSIZE];
+static in_buf stdin_buf = {
+  .buf = stdin__buf, .ptr = stdin__buf, .end = stdin__buf
+  };
+
 in_processing stdin_template = {
   .in_layer_name =	US"stdin",
-  .in_getc =	stdin_getc,
-  .in_hasc =	stdin_hasc,
-  .in_getbuf =	stdin_getbuf,
-  .in_ungetc =	stdin_ungetc,
-  .in_feof =	stdin_feof,
-  .in_ferror =	stdin_ferror
+  .in_bufp =		&stdin_buf,
+  .in_getc =		stdin_getc,
+  .in_hasc =		stdin_hasc,
+  .in_getbuf =		stdin_getbuf,
+  .in_getbuf_nr =	stdin_getbuf_nr,
+  .in_releasebuf =	stdin_releasebuf,
+  .in_ungetc =		stdin_ungetc,
+  .in_feof =		stdin_feof,
+  .in_ferror =		stdin_ferror
 };
 
 
@@ -2049,7 +2176,6 @@ for (;;)
   This implements the dot-doubling rule, though header lines starting with
   dots aren't exactly common. They are legal in RFC 822, though. If the
   following is CRLF or LF, this is the line that that terminates the
-
   entire message. We set message_ended to indicate this has happened (to
   prevent further reading), and break out of the loop, having freed the
   empty header, and set next = NULL to indicate no data line. */
@@ -3235,6 +3361,7 @@ ended with a dot. */
 
 if (filter_test != FTEST_NONE)
   {
+//debug_printf("%s %d\n", __FUNCTION__, __LINE__);
   process_info[process_info_len] = 0;
   return message_ended == END_DOT;
   }

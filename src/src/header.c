@@ -378,7 +378,8 @@ const pcre2_code *re = NULL;
 /* If the pattern is a regex, compile it. Bomb out if compiling fails; these
 patterns are all constructed internally and should be valid. */
 
-if (*pattern == '^') re = regex_must_compile(pattern, MCS_CASELESS, FALSE);
+if (*pattern == '^')
+  re = regex_must_compile(pattern, MCS_CASELESS | MCS_CACHEABLE, FALSE);
 
 /* Scan for the required header(s) and scan each one */
 

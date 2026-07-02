@@ -4519,6 +4519,7 @@ re-expanding the fields being compared, so need a custom routine.
 
 Arguments:
  cond_type		Comparison operator code
+ alpha_cond		True iff an alphabetic compare op
  leftarg, rightarg	Arguments for comparison
 
 Return true iff (leftarg compare rightarg)
@@ -4528,11 +4529,10 @@ static BOOL
 sortsbefore(int cond_type, BOOL alpha_cond,
   const uschar * leftarg, const uschar * rightarg)
 {
-int_eximarith_t l_num, r_num;
-
 if (!alpha_cond)
   {
-  l_num = expanded_string_integer(leftarg, FALSE);
+  int_eximarith_t l_num = expanded_string_integer(leftarg, FALSE), r_num;
+
   if (expand_string_message) return FALSE;
   r_num = expanded_string_integer(rightarg, FALSE);
   if (expand_string_message) return FALSE;
@@ -7097,7 +7097,7 @@ while (*s)	/* known to be untainted */
 
 	  /* String-comparator names start with a letter; numeric names do not */
 
-	  if (sortsbefore(cond_type, isalpha(opname[0]),
+	  if (sortsbefore(cond_type, !!isalpha(opname[0]),
 	      srcfield, dstfield))
 	    {
 	    /* New-item sorts before this dst-item.  Append new-item,

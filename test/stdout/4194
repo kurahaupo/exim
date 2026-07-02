@@ -1,0 +1,134 @@
+### Body transform: missing reqire
+==========
+# Sieve filter
+if body "<HTML>"
+        { discard; }
+==========
+Sieve error: missing previous require "body"; in line 2:
+ if body "<HTML>"
+       ^^
+### Body transform: (unspecified; should default to text)
+==========
+# Sieve filter
+require "body";
+if body "<HTML>"
+        { discard; }
+==========
+Implicit keep
+### Body transform: raw, no metachars, nomatch
+==========
+# Sieve filter
+require "body";
+if body :raw "<HTML>"
+        { discard; }
+==========
+Implicit keep
+### Body transform: raw, metachars, match
+==========
+# Sieve filter
+require "body";
+if body :raw :matches "<HTML>*"
+        { discard; }
+==========
+No implicit keep
+### Body transform: raw, metachars, match casefolded
+==========
+# Sieve filter
+require "body";
+if body :raw :matches "*<h\\TmL>??*"
+        { discard; }
+==========
+No implicit keep
+### Body transform: text (explicit request)
+==========
+# Sieve filter
+require "body";
+if body :text "<HTML>"
+        { discard; }
+==========
+Implicit keep
+### Body transform: text, transfer-encoding header present/bad
+Implicit keep
+### Body transform: text, transfer-encoding header: qp
+==========
+# Sieve filter
+require "body";
+if body :text :contains "<HTML>"
+        { discard; }
+==========
+No implicit keep
+### Body transform: text, transfer-encoding header: qp (bad decode)
+Sieve error: read or decode error in data file in line 3:
+ if body :text :contains "<HTML>"
+                                ^^
+### Body transform: text, transfer-encoding header: qp (uncompleted decode)
+Sieve error: read or decode error in data file in line 3:
+ if body :text :contains "<HTML>"
+                                ^^
+### Body transform: text, transfer-encoding header: qp + iconv
+No implicit keep
+### Body transform: text, transfer-encoding header: b64
+==========
+# Sieve filter
+require "body";
+if body :text :matches "*brown*fox"
+        { discard; }
+==========
+No implicit keep
+### Body transform: content
+==========
+# Sieve filter
+require "body";
+
+if body :content "multipart" ["target", "trailer"]
+        { discard; }
+==========
+No implicit keep
+### Body transform: content, nested
+==========
+# Sieve filter
+require "body";
+if body :content "text/html" "style type=\"text/css\">"
+        { discard; }
+==========
+No implicit keep
+### Body transform: content, mime-part presence
+==========
+# Sieve filter
+require "body";
+if body :content "message/rfc822" "" { discard; }
+==========
+No implicit keep
+### Body transform: content, included-message header
+==========
+# Sieve filter
+require "body";
+if body :content "message/rfc822" "Subject: hello request" { discard; }
+==========
+No implicit keep
+### Body transform: content, included-message body
+==========
+# Sieve filter
+require "body";
+if body :content "text/enhanced" ["pretty", "please"] { discard; }
+==========
+No implicit keep
+
+******** SERVER ********
+### Body transform: missing reqire
+### Body transform: (unspecified; should default to text)
+### Body transform: raw, no metachars, nomatch
+### Body transform: raw, metachars, match
+### Body transform: raw, metachars, match casefolded
+### Body transform: text (explicit request)
+### Body transform: text, transfer-encoding header present/bad
+### Body transform: text, transfer-encoding header: qp
+### Body transform: text, transfer-encoding header: qp (bad decode)
+### Body transform: text, transfer-encoding header: qp (uncompleted decode)
+### Body transform: text, transfer-encoding header: qp + iconv
+### Body transform: text, transfer-encoding header: b64
+### Body transform: content
+### Body transform: content, nested
+### Body transform: content, mime-part presence
+### Body transform: content, included-message header
+### Body transform: content, included-message body

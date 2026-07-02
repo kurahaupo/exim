@@ -40,6 +40,7 @@ register int ch;
 int body_len, body_end_len, header_size;
 uschar *s;
 
+debug_printf("%s()\n", __FUNCTION__);
 message_body = store_malloc(message_body_visible + 1);
 message_body_end = store_malloc(message_body_visible + 1);
 s = message_body_end;
@@ -47,11 +48,11 @@ body_len = 0;
 body_linecount = 0;
 header_size = message_size;
 
-if (!dot_ended && !stdin_feof(NULL))
+if (!dot_ended && !receive_feof())
   {
   if (!f.dot_ends)
     {
-    while ((ch = stdin_getc(NULL, GETC_BUFFER_UNLIMITED)) != EOF)
+    while ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) != EOF)
       {
       if (ch == 0) body_zerocount++;
       if (ch == '\n') body_linecount++;
@@ -64,7 +65,7 @@ if (!dot_ended && !stdin_feof(NULL))
   else
     {
     int ch_state = 1;
-    while ((ch = stdin_getc(NULL, GETC_BUFFER_UNLIMITED)) != EOF)
+    while ((ch = receive_getc(GETC_BUFFER_UNLIMITED)) != EOF)
       {
       if (ch == 0) body_zerocount++;
       switch (ch_state)
@@ -197,6 +198,7 @@ uschar *error, *filebuf;
 
 /* Read the filter file into store as will be done by the router in a real
 case. */
+debug_printf("filter_runtest()\n");
 
 if (fstat(fd, &statbuf) != 0)
   {
@@ -274,9 +276,11 @@ if (filter_type == FILTER_FORWARD)
   }
 
 /* For a filter, set up the message_body variables and the message size if this
-is the first time this function has been called. */
+is the first time this function has been called.  Except, for a Sieve filter
+leave it to read (all) the body only if needed. */
 
-if (!message_body) read_message_body(dot_ended);
+if (!message_body && filter_type != FILTER_SIEVE)
+  read_message_body(dot_ended);
 
 /* Now pass the filter file to the function that interprets it. Because
 filter_test is not FILTER_NONE, the interpreter will output comments about what

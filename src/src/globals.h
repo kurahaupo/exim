@@ -982,6 +982,9 @@ extern int     smtp_rlr_base;          /* Base interval for RCPT rate limit */
 extern double  smtp_rlr_factor;        /* Factor for RCPT rate limit */
 extern int     smtp_rlr_limit;         /* Max delay */
 extern int     smtp_rlr_threshold;     /* Threshold for RCPT rate limit */
+#ifndef MACRO_PREDEF
+extern in_processing smtp_template;    /* Input processing functions */
+#endif
 extern unsigned smtp_peer_options;     /* Global flags for passed connections */
 extern unsigned smtp_peer_options_wrap; /* stacked version hidden by TLS */
 #ifdef SUPPORT_I18N

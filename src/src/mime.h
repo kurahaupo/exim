@@ -31,12 +31,6 @@ typedef struct mime_header {
 } mime_header;
 
 
-typedef struct mime_parameter {
-  const uschar *	name;
-  int			namelen;
-  const uschar **	value;
-} mime_parameter;
-
 /* MIME Anomaly list */
 #define MIME_ANOMALY_BROKEN_BASE64    1
 #define MIME_ANOMALY_BROKEN_QP        0

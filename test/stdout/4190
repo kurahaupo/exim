@@ -313,22 +313,30 @@ exim: error in forward file: missing or malformed local part (expected word or "
 # Sieve filter
 if test keep; }
 ==========
-Sieve error: missing test in line 2
+Sieve error: missing test in line 2:
+ if test keep; }
+   ^^
 ==========
 # Sieve filter
 if test { keep;
 ==========
-Sieve error: missing test in line 2
+Sieve error: missing test in line 2:
+ if test { keep;
+   ^^
 ==========
 # Sieve filter
 if true { unknownaction; }
 ==========
-Sieve error: expecting command or closing brace in line 2
+Sieve error: expecting command or closing brace in line 2:
+ if true { unknownaction; }
+          ^^
 ==========
 # Sieve filter
 if true { fileinto abcdefgh; }
 ==========
-Sieve error: missing previous require "fileinto"; in line 2
+Sieve error: missing previous require "fileinto"; in line 2:
+ if true { fileinto abcdefgh; }
+                  ^^
 ==========
 # Sieve filter
 require "fileinto";
@@ -344,37 +352,51 @@ No implicit keep
 # Sieve filter
 if header "to" [ "egal", "achnee" { keep; }
 ==========
-Sieve error: missing closing bracket in line 2
+Sieve error: missing closing bracket, in key in line 2:
+ if header "to" [ "egal", "achnee" { keep; }
+                                  ^^
 ==========
 # Sieve filter
 if header "to","from"] "egal" { keep; }
 ==========
-Sieve error: key string list expected in line 2
+Sieve error: key string list expected in line 2:
+ if header "to","from"] "egal" { keep; }
+              ^^
 ==========
 # Sieve filter
 if header ["to","from" "egal" { keep; }
 ==========
-Sieve error: missing closing bracket in line 2
+Sieve error: missing closing bracket, in header in line 2:
+ if header ["to","from" "egal" { keep; }
+                       ^^
 ==========
 # Sieve filter
 if header ["to",,"from"] "egal" { keep; }
 ==========
-Sieve error: ô in line 2
+Sieve error: missing string, in header in line 2:
+ if header ["to",,"from"] "egal" { keep; }
+                ^^
 ==========
 # Sieve filter
 if header ["to",] "egal" { keep; }
 ==========
-Sieve error: ô in line 2
+Sieve error: missing string, in header in line 2:
+ if header ["to",] "egal" { keep; }
+                ^^
 ==========
 # Sieve filter
 if header [,"to"] "egal" { keep; }
 ==========
-Sieve error: missing closing bracket in line 2
+Sieve error: missing closing bracket, in header in line 2:
+ if header [,"to"] "egal" { keep; }
+           ^^
 ==========
 # Sieve filter
 if unknowntest { keep; }
 ==========
-Sieve error: missing test in line 2
+Sieve error: missing test in line 2:
+ if unknowntest { keep; }
+   ^^
 ==========
 # Sieve filter
 if header :matches "to" "egal" { keep; }
@@ -384,7 +406,9 @@ Implicit keep
 # Sieve filter
 if header :unknown "to" "egal" { keep; }
 ==========
-Sieve error: header string list expected in line 2
+Sieve error: header string list expected in line 2:
+ if header :unknown "to" "egal" { keep; }
+          ^^
 ==========
 # Sieve filter
 #

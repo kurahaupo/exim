@@ -1,0 +1,226 @@
+# Sieve body test
+rmfiltertest
+#
+### Body transform: missing reqire
+catwrite test-data
+# Sieve filter
+if body "<HTML>"
+        { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.message
+****
+#
+### Body transform: (unspecified; should default to text)
+catwrite test-data
+# Sieve filter
+require "body";
+if body "<HTML>"
+        { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.message
+****
+#
+### Body transform: raw, no metachars, nomatch
+catwrite test-data
+# Sieve filter
+require "body";
+if body :raw "<HTML>"
+        { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.message
+****
+#
+### Body transform: raw, metachars, match
+catwrite test-data
+# Sieve filter
+require "body";
+if body :raw :matches "<HTML>*"
+        { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.message
+****
+#
+### Body transform: raw, metachars, match casefolded
+catwrite test-data
+# Sieve filter
+require "body";
+if body :raw :matches "*<h\\TmL>??*"
+        { discard; }
+****
+exim -d-all+filter+regex -bf test-data <aux-fixed/TESTNUM.message
+****
+#
+#
+#
+#
+#
+#
+#
+#
+### Body transform: text (explicit request)
+catwrite test-data
+# Sieve filter
+require "body";
+if body :text "<HTML>"
+        { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.message
+****
+#
+#
+### Body transform: text, transfer-encoding header present/bad
+exim -d-all+filter -bf test-data
+Subject: this is a test
+Content-Transfer-Encoding: foo
+
+body data.
+****
+#
+#
+### Body transform: text, transfer-encoding header: qp
+catwrite test-data
+# Sieve filter
+require "body";
+if body :text :contains "<HTML>"
+        { discard; }
+****
+exim -d-all+filter -bf test-data
+Subject: this is a test
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+
+body data.
+<H=54ML>
+foo=
+bar
+****
+#
+#
+### Body transform: text, transfer-encoding header: qp (bad decode)
+exim -d-all+filter -bf test-data
+Subject: this is a test
+Content-Transfer-Encoding: quoted-printable
+
+body data.
+==
+more body data.
+****
+#
+#
+### Body transform: text, transfer-encoding header: qp (uncompleted decode)
+exim -d-all+filter -bf test-data
+Subject: this is a test
+Content-Transfer-Encoding: quoted-printable
+
+Trailing incomplete decode:
+:noeol:=9
+****
+#
+#
+### Body transform: text, transfer-encoding header: qp + iconv
+exim -d-all+filter -bf test-data
+From offerqn@bpk.example.com Wed Feb 05 10:47:05 2003
+To: marian@abcdefgh.example
+Subject: =?iso-8859-1?q?abcdef?=
+	=?iso-8859-1?q?ghi?=
+X-Priority: 3
+Content-Type: text/html; charset="Windows-1251"
+Content-Transfer-Encoding: quoted-printable
+
+<HTML>
+<HEAD><TITLE></TITLE><STYLE type=3D"text/css"><!--
+
+****
+#
+#
+### Body transform: text, transfer-encoding header: b64
+catwrite test-data
+# Sieve filter
+require "body";
+if body :text :matches "*brown*fox"
+        { discard; }
+****
+exim -d-all+filter -bf test-data
+Subject: this is a test
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii";
+
+VGhlIHF1aWNrIGJyb3duIAogZm94
+****
+#
+#
+#
+#
+#
+### Body transform: content
+catwrite test-data
+# Sieve filter
+require "body";
+
+if body :content "multipart" ["target", "trailer"]
+        { discard; }
+****
+exim -d-all+filter -bf test-data
+Subject: this is a test
+Content-Type: multipart/alternative;
+ boundary=foobarfence
+Content-Transfer-Encoding: 7bit
+
+commentary leader
+
+--foobarfence
+Content-Type: text/html;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+part 1
+
+--foobarfence
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+part 2
+the target text
+
+--foobarfence--
+
+commentary trailer
+****
+#
+### Body transform: content, nested
+catwrite test-data
+# Sieve filter
+require "body";
+if body :content "text/html" "style type=\"text/css\">"
+        { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.multipart
+****
+#
+### Body transform: content, mime-part presence
+catwrite test-data
+# Sieve filter
+require "body";
+if body :content "message/rfc822" "" { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.multipart
+****
+#
+### Body transform: content, included-message header
+catwrite test-data
+# Sieve filter
+require "body";
+if body :content "message/rfc822" "Subject: hello request" { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.multipart
+****
+#
+### Body transform: content, included-message body
+catwrite test-data
+# Sieve filter
+require "body";
+if body :content "text/enhanced" ["pretty", "please"] { discard; }
+****
+exim -d-all+filter -bf test-data <aux-fixed/TESTNUM.multipart
+****
+#
