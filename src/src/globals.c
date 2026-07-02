@@ -646,7 +646,8 @@ uschar *dccifd_options         = US"header";
 int     debug_fd               = -1;
 FILE   *debug_file             = NULL;
 
-/* List of names for debug channels.  Must be in alphabetical order. */
+/* List of names for debug channels.
+Must be in alphabetical order, preferably on consecutive lines. */
 
 #define DEBUG_CHAN(chan) {.name = US #chan, .logchan_bit = __LINE__ - D_iota}
 
@@ -680,7 +681,8 @@ bit_table debug_channels[] = {
   DEBUG_CHAN(retry),
   DEBUG_CHAN(rewrite),
   DEBUG_CHAN(route),
-  DEBUG_CHAN(start),		/* 32 */
+  DEBUG_CHAN(sieve),		/* 32 */	/* not documented for users */
+  DEBUG_CHAN(start),
   DEBUG_CHAN(timestamp),
   DEBUG_CHAN(tls),
   DEBUG_CHAN(transport),

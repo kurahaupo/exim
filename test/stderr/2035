@@ -14,7 +14,6 @@ cmd buf flush ddd bytes
    SMTP>> STARTTLS
 cmd buf flush ddd bytes
    SMTP<< 220 TLS go ahead
- 127.0.0.1 in tls_verify_cert_hostnames? no (end of list)
    SMTP>> EHLO myhost.test.ex
 cmd buf flush ddd bytes
    SMTP<< 250-myhost.test.ex Hello localhost [127.0.0.1]

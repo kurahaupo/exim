@@ -61,7 +61,7 @@ Process p1239 is ready for new message
 p1236 child p1239 ended: status=0x0
 p1236   normal exit, 0
 p1236 1 SMTP accept process now running
-p1244 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1244 -d=0x80080000e
+p1244 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1244 -d=0x100080000e
 p1244 trusted user
 p1244 admin user
 p1244 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
@@ -102,7 +102,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1244 (daemon-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-p1248 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1248 -d=0x80080000e
+p1248 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1248 -d=0x100080000e
 p1248 trusted user
 p1248 admin user
 LOG: MAIN
@@ -178,7 +178,7 @@ Process p1251 is ready for new message
 p1237 child p1251 ended: status=0x0
 p1237   normal exit, 0
 p1237 1 SMTP accept process now running
-p1256 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1256 -d=0x80080000e
+p1256 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1256 -d=0x100080000e
 p1256 trusted user
 p1256 admin user
 p1256 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
@@ -219,7 +219,7 @@ LOG: MAIN
 LOG: MAIN
   Completed
 >>>>>>>>>>>>>>>> Exim pid=p1256 (daemon-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
-p1260 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1260 -d=0x80080000e
+p1260 Exim version x.yz uid=EXIM_UID gid=EXIM_GID pid=p1260 -d=0x100080000e
 p1260 trusted user
 p1260 admin user
 LOG: MAIN

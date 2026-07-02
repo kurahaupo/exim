@@ -51,7 +51,7 @@ LOG: MAIN
 created log directory TESTSUITE/spool/log
 receive_msg: tidyup
 search_tidyup called
-exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test-config -d=0xfffffffde70973ff -MCd local-accept-delivery -odi -Mc 10HmaX-000000005vi-0000
+exec TESTSUITE/eximdir/exim -DEXIM_PATH=TESTSUITE/eximdir/exim -C TESTSUITE/test-config -d=0xfffffffbe70973ff -MCd local-accept-delivery -odi -Mc 10HmaX-000000005vi-0000
 Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective

@@ -344,7 +344,7 @@ No implicit keep
 # Sieve filter
 if header "to" [ "egal", "achnee" { keep; }
 ==========
-Sieve error: missing string list in line 2
+Sieve error: missing closing bracket in line 2
 ==========
 # Sieve filter
 if header "to","from"] "egal" { keep; }
@@ -354,22 +354,22 @@ Sieve error: key string list expected in line 2
 # Sieve filter
 if header ["to","from" "egal" { keep; }
 ==========
-Sieve error: missing string list in line 2
+Sieve error: missing closing bracket in line 2
 ==========
 # Sieve filter
 if header ["to",,"from"] "egal" { keep; }
 ==========
-Sieve error: missing string list in line 2
+Sieve error: ô in line 2
 ==========
 # Sieve filter
 if header ["to",] "egal" { keep; }
 ==========
-Sieve error: missing string list in line 2
+Sieve error: ô in line 2
 ==========
 # Sieve filter
 if header [,"to"] "egal" { keep; }
 ==========
-Sieve error: missing string list in line 2
+Sieve error: missing closing bracket in line 2
 ==========
 # Sieve filter
 if unknowntest { keep; }

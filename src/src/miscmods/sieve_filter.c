@@ -22,6 +22,9 @@ SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "../exim.h"
 
+#define FDEBUG		DEBUG(sieve|filter)
+#define IS_FDEBUG	IS_DEBUG(sieve|filter)
+
 #if HAVE_ICONV
 # include <iconv.h>
 #endif
@@ -300,7 +303,7 @@ if (address->ptr > 0)
 else
   filter->errmsg = CUS "empty address";
 
-DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+FDEBUG debug_printf_indent("%s\n", filter->errmsg);
 return -1;
 }
 
@@ -338,7 +341,7 @@ for (t = s = str->s, e = s + str->ptr; s < e; )
       }
     else
       {
-      DEBUG(filter) debug_printf_indent("uri decode: bad encoding\n");
+      FDEBUG debug_printf_indent("uri decode: bad encoding\n");
       return FALSE;
       }
     }
@@ -498,7 +501,7 @@ if (*uri)
 return 1;
 
 bad:
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
   return -1;
 }
 #endif
@@ -656,7 +659,7 @@ while (n < nend)
         ++npart;
         if (npart == nend)
 	  {
-	  DEBUG(filter) debug_printf_indent("glob pattern error\n");
+	  FDEBUG debug_printf_indent("glob pattern error\n");
 	  return -1;
 	  }
         /* FALLTHROUGH */
@@ -781,7 +784,7 @@ compare(struct Sieve * filter, const gstring * needle, const gstring * haystack,
 {
 int r = 0;
 
-if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
   {
   debug_printf_indent("String comparison (match ");
   switch (mt)
@@ -869,7 +872,7 @@ switch (mt)
       }
     break;
   }
-if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
   debug_printf_indent("  Result %s\n", r?"true":"false");
 return r;
 }
@@ -985,14 +988,14 @@ for (new_addr = *generated; new_addr; new_addr = new_addr->next)
 	)
      )
     {
-    if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+    if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
       debug_printf_indent("Repeated %s `%s' ignored.\n",
 			  file ? "fileinto" : "redirect", addr);
 
     return;
     }
 
-if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
   debug_printf_indent("%s `%s'\n", file ? "fileinto" : "redirect", addr);
 
 new_addr = deliver_make_addr(addr, TRUE);
@@ -1090,8 +1093,8 @@ while (*filter->pc)
     }
   else ++filter->pc;
   }
-filter->errmsg = CUS "missing end of comment";
-DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+filter->errmsg = US"missing end of comment";
+FDEBUG debug_printf_indent("%s\n", filter->errmsg);
 return -1;
 }
 
@@ -1124,8 +1127,8 @@ while (*filter->pc)
   else
     ++filter->pc;
 
-filter->errmsg = CUS "missing end of comment";
-DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+filter->errmsg = US"missing end of comment";
+FDEBUG debug_printf_indent("%s\n", filter->errmsg);
 return -1;
 }
 
@@ -1220,7 +1223,7 @@ do
     while (*src == ' ' || *src == '\t' || *src == '\n') ++src;
   else
     {
-    DEBUG(filter) debug_printf_indent("hex decode: bad syntax\n");
+    FDEBUG debug_printf_indent("hex decode: bad syntax\n");
     return -1;
     }
   }
@@ -1274,12 +1277,12 @@ do
        c = (c<<4)|(n>= '0' && n<= '9' ? n-'0' : 10+(n-'a')), ++d, ++src) ;
   if (src == hex_seq)
     {
-    DEBUG(filter) debug_printf_indent("unicode decode: bad syntax\n");
+    FDEBUG debug_printf_indent("unicode decode: bad syntax\n");
     return -1;
     }
   if (d == 7 || (!((c >= 0 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0x10ffff))))
     {
-    DEBUG(filter) debug_printf_indent("unicode decode: char not in range\n");
+    FDEBUG debug_printf_indent("unicode decode: char not in range\n");
     return -2;
     }
   if (c<128)
@@ -1569,7 +1572,7 @@ else if (Ustrncmp(filter->pc, CUS "text:", 5) == 0) /* multiline string */
 else return 0;
 
 bad:
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
   return -1;
 }
 
@@ -1599,7 +1602,14 @@ if (strncmpic(US filter->pc, US id, idlen) == 0)
   {
   uschar next = filter->pc[idlen];
 
-  if ((next>= 'A' && next<= 'Z') || (next>= 'a' && next<= 'z') || next == '_' || (next>= '0' && next<= '9')) return 0;
+  if (  next >= 'A' && next <= 'Z'
+     || next >= 'a' && next <= 'z'
+     || next == '_'
+     || next >= '0' && next <= '9'
+     ) return 0;
+
+  FDEBUG
+    debug_printf_indent("identified: '%.*s'\n", (int)idlen, filter->pc);
   filter->pc += idlen;
   return 1;
   }
@@ -1657,7 +1667,7 @@ if (*filter->pc>= '0' && *filter->pc<= '9')
 filter->errmsg = CUS "missing number";
 
 bad:
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
   return -1;
 }
 
@@ -1708,12 +1718,8 @@ if (*filter->pc == '[') /* string list */
     if (m == 0)
       {
       if (dataLength == 0) break;
-      else
-        {
-        filter->errmsg = CUS "missing string";
-	DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
-        goto error;
-        }
+      FDEBUG debug_printf_indent("%s\n", filter->errmsg);
+      goto error;
       }
     else if (m == -1) goto error;
     else ++dataLength;
@@ -1731,10 +1737,14 @@ if (*filter->pc == '[') /* string list */
     }
   else
     {
-    filter->errmsg = CUS "missing closing bracket";
-    DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+    filter->errmsg = US"missing closing bracket";
+    FDEBUG debug_printf_indent("%s\n", filter->errmsg);
     goto error;
     }
+ error:
+  expand_level--;
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
+  return -1;
   }
 else /* single string */
   {
@@ -1757,7 +1767,7 @@ else /* single string */
     return 1;
     }
   }
-error:
+
 filter->errmsg = CUS "missing string list";
 DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
 return -1;
@@ -1826,7 +1836,7 @@ else if (parse_identifier(filter, CUS ":all") == 1)
 else return 0;
 
 bad:
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
   return -1;
 }
 
@@ -1962,8 +1972,8 @@ if (*filter->pc == '(')
     switch (parse_test(filter, &cond, exec))
       {
       case -1: return -1;
-      case 0: filter->errmsg = CUS "missing test";
-	      DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+      case 0: filter->errmsg = US"missing test";
+	      FDEBUG debug_printf_indent("%s\n", filter->errmsg);
 	      return -1;
       default: ++*n; if (cond) ++*num_true; break;
       }
@@ -1978,8 +1988,8 @@ if (*filter->pc == '(')
     }
   else
     {
-    filter->errmsg = CUS "missing closing paren";
-    DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+    filter->errmsg = US"missing closing paren";
+    FDEBUG debug_printf_indent("%s\n", filter->errmsg);
     return -1;
     }
   }
@@ -2613,7 +2623,7 @@ else if (parse_identifier(filter, CUS "notify_method_capability"))
 else return 0;
 
 bad:
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  FDEBUG debug_printf_indent(" %s\n", filter->errmsg);
   return -1;
 }
 
@@ -2650,8 +2660,9 @@ if (*filter->pc == '{')
     ++filter->pc;
     return 1;
     }
-  filter->errmsg = CUS "expecting command or closing brace";
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  filter->errmsg = US"expecting command or closing brace";
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
+  expand_level--;
   return -1;
   }
 return 0;
@@ -2680,8 +2691,8 @@ if (*filter->pc == ';')
   ++filter->pc;
   return 1;
   }
-filter->errmsg = CUS "missing semicolon";
-DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+filter->errmsg = US"missing semicolon";
+FDEBUG debug_printf_indent("%s\n", filter->errmsg);
 return -1;
 }
 
@@ -2725,7 +2736,7 @@ while (*filter->pc)
       filter->errmsg = CUS "missing test";
       goto bad;
       }
-    if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+    if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
       {
       if (exec) debug_printf_indent("if %s\n", cond?"true":"false");
       }
@@ -3103,16 +3114,16 @@ while (*filter->pc)
               (void)child_close(pid, 0);
               }
             }
-	  if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
-            debug_printf_indent("Notification to `%s': '%s'.\n", method.s, message.ptr != -1 ? message.s : CUS "");
+	  if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
+            debug_printf_indent("Notification to `%s': '%s'.\n", method.s, message.ptr != -1 ? message.s : US"");
 #endif
           }
         else
-	  if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+	  if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
             debug_printf_indent("Repeated notification to `%s' ignored.\n", method.s);
         }
       else
-	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
           debug_printf_indent("Ignoring notification, triggering message contains Auto-submitted: field.\n");
       }
     }
@@ -3305,7 +3316,7 @@ while (*filter->pc)
         for (int i = 0; i < 16; i++)
 	  sprintf(CS (hexdigest+2*i), "%02X", digest[i]);
 
-	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
           debug_printf_indent("Sieve: mail was personal, vacation file basename: %s\n", hexdigest);
 
         if (filter_test == FTEST_NONE)
@@ -3384,7 +3395,7 @@ while (*filter->pc)
             }
           }
         }
-	else if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_DEBUG(filter))
+	else if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
           debug_printf_indent("Sieve: mail was not personal, vacation would ignore it\n");
       }
     }
@@ -3394,7 +3405,7 @@ while (*filter->pc)
 return 1;
 
 bad:
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
   return -1;
 }
 
@@ -3546,7 +3557,7 @@ while (parse_identifier(filter, CUS "require"))
   return 1;
 
 bad:
-  DEBUG(filter) debug_printf_indent("%s\n", filter->errmsg);
+  FDEBUG debug_printf_indent("%s\n", filter->errmsg);
   return -1;
 }
 
@@ -3585,7 +3596,7 @@ struct Sieve sieve;
 int r;
 uschar * msg;
 
-DEBUG(route) debug_printf_indent("Sieve: start of processing\n");
+FDEBUG debug_printf_indent("Sieve: start of processing\n");
 expand_level++;
 sieve.filter = filter;
 
@@ -3660,7 +3671,7 @@ if (filter_test != FTEST_NONE) printf("%s\n", (const char*) msg);
 #endif
 
 expand_level--;
-DEBUG(route) debug_printf_indent("Sieve: end of processing\n");
+FDEBUG debug_printf_indent("Sieve: end of processing\n");
 return r;
 }
 
