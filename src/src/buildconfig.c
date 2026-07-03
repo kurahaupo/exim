@@ -915,7 +915,7 @@ if (have_auth)
 /* Check poll() for timer functionality.
 Some OS' have released with it broken. */
 
-  {
+ {
   struct timeval before, after;
   size_t us;
 
@@ -928,7 +928,7 @@ Some OS' have released with it broken. */
 
   if (us < 400000)
     fprintf(new, "#define NO_POLL_H\n");
-  }
+ }
 
 /* End off */
 

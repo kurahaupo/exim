@@ -635,13 +635,13 @@ return done;
 }
 
 static int
-set_trust_anchor(const X509_STORE_CTX *ctx, ssl_dane *dane, X509 *cert)
+set_trust_anchor(X509_STORE_CTX * ctx, ssl_dane * dane, X509 * cert)
 {
 int matched = 0;
 int depth = 0;
-EVP_PKEY *takey;
-X509 *ca;
-STACK_OF(X509) *in = X509_STORE_CTX_get0_untrusted(ctx);
+EVP_PKEY * takey;
+X509 * ca;
+STACK_OF(X509) * in = X509_STORE_CTX_get0_untrusted(ctx);
 
 if (!grow_chain(dane, UNTRUSTED, 0))
   return -1;

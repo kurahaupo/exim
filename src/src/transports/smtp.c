@@ -5486,7 +5486,7 @@ smtp_transport_entry(
 smtp_transport_options_block * ob = tblock->drinst.options_block;
 const uschar * trname = tblock->drinst.name;
 int defport;
-int hosts_defer = 0, hosts_fail  = 0, hosts_looked_up = 0;
+int hosts_defer = 0, hosts_fail  = 0;
 int hosts_retry = 0, hosts_serial = 0, hosts_total = 0, total_hosts_tried = 0;
 BOOL expired = TRUE;
 uschar * expanded_hosts = NULL, * pistring;
@@ -5799,10 +5799,6 @@ retry_non_continued:
       strip it from the name. Just remember it for now. */
 
       new_port = host_item_get_port(host);
-
-      /* Count hosts looked up */
-
-      hosts_looked_up++;
 
       /* Find by name if so configured, or if it's an IP address. We don't
       just copy the IP address, because we need the test-for-local to happen. */

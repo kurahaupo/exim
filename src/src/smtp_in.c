@@ -1075,19 +1075,19 @@ This function is exposed to the local_scan API; do not change the signature.
 
 Arguments:
   format      format string
-  more	      further data expected
+  more	      further data expected	(int due to varargs/promotions rules)
   ...         optional arguments
 
 Returns:      nothing
 */
 
 void
-smtp_printf(const char *format, BOOL more, ...)
+smtp_printf(const char *format, int more, ...)
 {
 va_list ap;
 
 va_start(ap, more);
-smtp_vprintf(format, more, ap);
+smtp_vprintf(format, (BOOL) more, ap);
 va_end(ap);
 }
 

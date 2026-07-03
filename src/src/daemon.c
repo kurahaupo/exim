@@ -609,7 +609,8 @@ if (pid == 0)
     the next message is received. */
 
     #ifndef SIG_IGN_WORKS
-    while (waitpid(-1, NULL, WNOHANG) > 0);
+    while (waitpid(-1, NULL, WNOHANG) > 0)
+      ;
     #endif
 
     /* Reclaim up the store used in accepting this message */
@@ -2568,7 +2569,7 @@ else if (f.daemon_listen)
     }
 
   p = big_buffer;
-  for (int j = 0, i; j < 2; j++)
+  for (int j = 0, i, bsize = big_buffer_size; j < 2; j++)
     {
     /* First time round, look for SMTP ports; second time round, look for
     SMTPS ports. For the first one of each, insert leading text. */
@@ -2576,22 +2577,26 @@ else if (f.daemon_listen)
     if (j == 0)
       {
       if (smtp_ports > 0)
-	p += sprintf(CS p, "SMTP on");
+	p += snprintf(CS p, (size_t)bsize, "SMTP on");
       }
     else
       if (smtps_ports > 0)
-	p += sprintf(CS p, "%sSMTPS on",
+	p += snprintf(CS p, (size_t)bsize, "%sSMTPS on",
 	  smtp_ports == 0 ? "" : " and for ");
+    bsize -= p - big_buffer;
 
     /* Now the information about the port (and sometimes interface) */
 
     for (i = 0, ipa = addresses; i < 10 && ipa; i++, ipa = ipa->next)
       if (host_is_tls_on_connect_port(ipa->port) == (j > 0))
 	if (ipa->log)
-	  p += sprintf(CS p, "%s",  ipa->log);
+	  {
+	  int l = snprintf(CS p, (size_t)bsize, "%s",  ipa->log);
+	  p += l; bsize -= l;
+	  }
 
     if (ipa)
-      p += sprintf(CS p, " ...");
+      { p += snprintf(CS p, (size_t)bsize, " ..."); bsize -= 4; }
     }
 
   log_write(LOG_MAIN,

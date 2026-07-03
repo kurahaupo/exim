@@ -793,7 +793,7 @@ while (p != NULL)
     text_showf(queue_widget, "%c%2d%c %s %s %-8s ",
       (p->frozen)? '*' : ' ',
       t, u,
-      string_format_size(p->size, big_buffer),
+      string_format_size(p->size, big_buffer, big_buffer_size),
       p->name,
       (p->sender == NULL)? US"       " :
         (p->sender[0] == 0)? US"<>     " : anon(p->sender));

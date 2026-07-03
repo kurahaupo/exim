@@ -286,7 +286,7 @@ if (!(d = exim_dbopen(temp_dbmname, dirname, O_RDWR|O_CREAT|O_EXCL, 0644)))
 assume .dir & .pag */
 
 #if !defined(USE_DB) && !defined(USE_TDB) && !defined(USE_GDBM) && !defined(USE_SQLITE)
-sprintf(CS real_dbmname, "%s.db", temp_dbmname);
+snprintf(CS real_dbmname, sizeof(real_dbmname), "%s.db", temp_dbmname);
 is_db = Ustat(real_dbmname, &statbuf) == 0;
 #endif
 

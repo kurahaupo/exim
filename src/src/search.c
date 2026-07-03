@@ -424,7 +424,7 @@ pass back the tree block as the handle. The key for the tree node is the search
 type plus '0' concatenated with the file name. There may be entries in the tree
 with closed files if a lot of files have been opened. */
 
-sprintf(CS keybuffer, "%c%.254s", li->acq_num+ '0',
+snprintf(CS keybuffer, sizeof(keybuffer), "%c%.254s", li->acq_num+ '0',
   filename ? filename : US"");
 
 if ((t = tree_search(search_tree, keybuffer)))

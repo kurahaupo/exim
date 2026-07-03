@@ -470,9 +470,11 @@ tzset();
 /*************************************************
 *        Many functions are package-specific     *
 *************************************************/
+#ifndef DISABLE_TLS_RESUME
 /* Forward decl. */
 static void tls_client_resmption_key(tls_support *, const smtp_connect_args *,
   const smtp_transport_options_block *);
+#endif
 
 
 #ifdef USE_GNUTLS
@@ -895,11 +897,11 @@ return status == 0;
 
 
 
+#ifndef DISABLE_TLS_RESUME
 static void
 tls_client_resmption_key(tls_support * tlsp,
   const smtp_connect_args * conn_args, const smtp_transport_options_block * ob)
 {
-#ifndef DISABLE_TLS_RESUME
 hctx * h = &tlsp->resume_hctx;
 blob b;
 
@@ -928,8 +930,8 @@ exim_sha_update_string(h, ob->tls_alpn);
 exim_sha_finish(h, &b);
 tlsp->resume_index = string_sprintf("%.*H", (int)b.len, b.data);
 DEBUG(tls) debug_printf("TLS: resume session index %s\n", tlsp->resume_index);
-#endif
 }
+#endif
 
 
 

@@ -362,8 +362,10 @@ features_acl(void)
 for (condition_def * c = conditions; c < conditions + nelem(conditions); c++)
   {
   uschar buf[64], * p, * s;
-  int n = sprintf(CS buf, "_ACL_%s_", c->flags & ACD_MOD ? "MOD" : "COND");
-  for (p = buf + n, s = c->name; *s; s++) *p++ = toupper(*s);
+  int n = snprintf(CS buf, sizeof(buf)-1,
+		  "_ACL_%s_", c->flags & ACD_MOD ? "MOD" : "COND");
+  for (p = buf + n, s = c->name; *s && p < buf + sizeof(buf)-1; s++)
+    *p++ = toupper(*s);
   *p = '\0';
   builtin_macro_create(buf);
   }

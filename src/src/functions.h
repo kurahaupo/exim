@@ -588,7 +588,7 @@ extern int     string_compare_by_pointer(const void *, const void *);
 extern uschar *string_copy_dnsdomain(const uschar *);
 extern uschar *string_copy_malloc(const uschar *);
 extern uschar *string_dequote(const uschar **);
-extern uschar *string_format_size(int, uschar *);
+extern uschar *string_format_size(int, uschar *, size_t);
 extern int     string_interpret_escape(const uschar **);
 extern int     string_is_ip_address(const uschar *, int *);
 extern int     string_is_ip_addressX(const uschar *, int *, const uschar **);

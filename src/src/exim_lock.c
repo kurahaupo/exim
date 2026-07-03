@@ -281,8 +281,7 @@ if (*filename == '~')
     exit(EXIT_FAILURE);
     }
 
-  strcpy(buffer, pw->pw_dir);
-  strcat(buffer, filename);
+  snprintf(buffer, sizeof(buffer), "%s%s", pw->pw_dir, filename);
   filename = buffer;
   }
 
@@ -291,6 +290,7 @@ the hitching post name. */
 
 if (use_lockfile)
   {
+  int hlen;
   if (uname(&s) < 0)
     {
     printf("exim_lock: failed to find host name using uname()\n");
@@ -299,14 +299,18 @@ if (use_lockfile)
   primary_hostname = s.nodename;
 
   len = (int)strlen(filename);
-  if (  !(lockname = malloc(len + 8))
-     || !(hitchname = malloc(len + 32 + (int)strlen(primary_hostname))))
+  hlen = len + 32 + (int)strlen(primary_hostname);
+  len += 8;
+
+  if (  !(lockname = malloc(len))
+     || !(hitchname = malloc(hlen)))
     { perror("malloc"); exit(EXIT_FAILURE); }
 
-  sprintf(lockname, "%s.lock", filename);
+  snprintf(lockname, (size_t)len, "%s.lock", filename);
 
   /* Presumably, this must match appendfile.c */
-  sprintf(hitchname, "%s.%s.%08x.%08x", lockname, primary_hostname,
+  snprintf(hitchname, (size_t)hlen, "%s.%s.%08x.%08lx",
+    lockname, primary_hostname,
     (unsigned int)now, (unsigned long)getpid());
 
   if (verbose)

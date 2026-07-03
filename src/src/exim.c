@@ -359,7 +359,8 @@ to disrupt whatever is going on outside the signal handler. */
 
 if (fd < 0) return;
 
-if (write(fd, process_info, process_info_len) != 0) ;
+if (write(fd, process_info, process_info_len) != 0)
+  ;					/* stupid, stupid compilers */
 (void)close(fd);
 }
 
@@ -4271,7 +4272,7 @@ If any of these options is set, we suppress warnings about configuration
 issues (currently about tls_advertise_hosts and keep_environment not being
 defined) */
 
-  {
+ {
   int old_pool = store_pool;
 #ifdef MEASURE_TIMING
   struct timeval t0;
@@ -4285,7 +4286,7 @@ defined) */
 #ifdef MEASURE_TIMING
   report_time_since(&t0, US"readconf_main (delta)");
 #endif
-  }
+ }
 
 /* Now in directory "/" */
 
@@ -4579,7 +4580,8 @@ privilege by now. Before the chdir, we try to ensure that the directory exists.
 if (Uchdir(spool_directory) != 0)
   {
   (void) directory_make(spool_directory, US"", SPOOL_DIRECTORY_MODE, FALSE);
-  if (Uchdir(spool_directory) < 0) ;
+  if (Uchdir(spool_directory) < 0)
+    ;
   }
 
 /* Handle calls with the -bi option. This is a sendmail option to rebuild *the*

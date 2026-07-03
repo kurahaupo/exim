@@ -332,11 +332,11 @@ while (generated)
   If so, we must take care to re-instate it when we copy in the propagated
   data so that it overrides any errors_to setting on the router. */
 
-    {
+   {
     BOOL ignore_error = next->prop.ignore_error;
     next->prop = *addr_prop;
     next->prop.ignore_error = ignore_error || addr->prop.ignore_error;
-    }
+   }
   if (errors_address) next->prop.errors_address = errors_address;
 
   /* For pipes, files, and autoreplies, record this router as handling them,

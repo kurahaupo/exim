@@ -6650,7 +6650,7 @@ if (addr_senddsn)
     DEBUG(deliver)
       debug_printf("sending success-dsn to: %s\n", sender_address);
 
-    /* build unique id for MIME boundary */
+    /* build unique-ish id for MIME boundary */
     bound = string_sprintf(TIME_T_FMT "-eximdsn-%d", time(NULL), rand());
     DEBUG(deliver) debug_printf("DSN: MIME boundary: %s\n", bound);
 
@@ -6887,7 +6887,7 @@ store, and also the list of recipients and the tree of non-recipients and
 assorted flags. It updates message_size. If there is a reading or format error,
 give up; if the message has been around for sufficiently long, remove it. */
 
-  {
+ {
   uschar * spoolname = string_sprintf("%s-H", id);
   if ((rc = spool_read_header(spoolname, TRUE, TRUE)) != spool_read_OK)
     {
@@ -6933,7 +6933,7 @@ give up; if the message has been around for sufficiently long, remove it. */
     deliver_datafile = -1;
     return continue_closedown();   /* yields DELIVER_NOT_ATTEMPTED */
     }
-  }
+ }
 
 /* The spool header file has been read. Look to see if there is an existing
 journal file for this message. If there is, it means that a previous delivery

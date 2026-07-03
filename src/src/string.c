@@ -184,24 +184,25 @@ a string of spaces to be returned.
 Arguments:
   size        the message size in bytes
   buffer      where to put the answer
+  bsize	      size of buffer
 
 Returns:      pointer to the buffer
               a string of exactly 5 characters is normally returned
 */
 
 uschar *
-string_format_size(int size, uschar *buffer)
+string_format_size(int size, uschar * buffer, size_t bsize)
 {
 if (size == 0) Ustrcpy(buffer, US"     ");
-else if (size < 1024) sprintf(CS buffer, "%5d", size);
+else if (size < 1024) snprintf(CS buffer, bsize, "%5d", size);
 else if (size < 10*1024)
-  sprintf(CS buffer, "%4.1fK", (double)size / 1024.0);
+  snprintf(CS buffer, bsize, "%4.1fK", (double)size / 1024.0);
 else if (size < 1024*1024)
-  sprintf(CS buffer, "%4dK", (size + 512)/1024);
+  snprintf(CS buffer, bsize, "%4dK", (size + 512)/1024);
 else if (size < 10*1024*1024)
-  sprintf(CS buffer, "%4.1fM", (double)size / (1024.0 * 1024.0));
+  snprintf(CS buffer, bsize, "%4.1fM", (double)size / (1024.0 * 1024.0));
 else
-  sprintf(CS buffer, "%4dM", (size + 512 * 1024)/(1024*1024));
+  snprintf(CS buffer, bsize, "%4dM", (size + 512 * 1024)/(1024*1024));
 return buffer;
 }
 
@@ -385,7 +386,7 @@ for (t = s; *t && (len < 0 || len-- > 0); )
       case '\f': *tt++ = 'f'; break;
       case '\t': *tt++ = 't'; break;
       case '"':  *tt++ = '"'; break;
-      default: sprintf(CS tt, "%03o", *t); tt += 3; break;
+      default: snprintf(CS tt, (size_t)4, "%03o", *t); tt += 3; break;
       }
     t++;
     }

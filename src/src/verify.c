@@ -3520,7 +3520,8 @@ if ((rc = verify_address(&vaddr, -1, vopt_is_recipient | vopt_quota,
   }
 
 DEBUG(verify) debug_printf_indent("verify_quota: len %d\n", len);
-if (write(1, msg, len) != 0) ;
+if (write(1, msg, len) != 0)
+  ;
 return;
 }
 

@@ -714,7 +714,7 @@ OpenSSL >= 1.1.0: we do not set anything, the libray does autoselection
 */
 
 static uschar *
-init_ecdh_auto(const SSL_CTX * sctx)
+init_ecdh_auto(SSL_CTX * sctx)
 {
 #if OPENSSL_VERSION_NUMBER < 0x10002000L
 DEBUG(tls) debug_printf(

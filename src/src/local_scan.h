@@ -45,7 +45,7 @@ each time a new feature is added (in a way that doesn't break backward
 compatibility). */
 
 #define LOCAL_SCAN_ABI_VERSION_MAJOR 9
-#define LOCAL_SCAN_ABI_VERSION_MINOR 0
+#define LOCAL_SCAN_ABI_VERSION_MINOR 1
 #define LOCAL_SCAN_ABI_VERSION \
   LOCAL_SCAN_ABI_VERSION_MAJOR.LOCAL_SCAN_ABI_VERSION_MINOR
 
@@ -224,7 +224,7 @@ extern BOOL    receive_remove_recipient(const uschar *);
 extern const uschar *rfc2047_decode(const uschar *, BOOL, const uschar *, int, int *,
 			      uschar **);
 extern int     smtp_fflush(BOOL);
-extern void    smtp_printf(const char *, BOOL, ...) PRINTF_FUNCTION(1,3);
+extern void    smtp_printf(const char *, int, ...) PRINTF_FUNCTION(1,3);
 extern void    smtp_vprintf(const char *, BOOL, va_list);
 
 #define string_sprintf(fmt, ...) \

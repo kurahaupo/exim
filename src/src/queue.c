@@ -1144,7 +1144,7 @@ else for (;
     }
 
   fprintf(stdout, "%s %.*s",
-    string_format_size(size, big_buffer),
+    string_format_size(size, big_buffer, big_buffer_size),
     is_old_message_id(qf->text) ? MESSAGE_ID_LENGTH_OLD : MESSAGE_ID_LENGTH,
     qf->text);
 
