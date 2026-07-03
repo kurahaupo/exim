@@ -464,7 +464,7 @@ return cmn_push_receive_functions(inp, &b64_template, __FUNCTION__);
 }
 
 /******************************************************************************/
-#ifdef HAVE_ICONV
+#if HAVE_ICONV
 /* Charset transform */
 
 /*XXX will we ever need to be running multiple iconv' in parallel?

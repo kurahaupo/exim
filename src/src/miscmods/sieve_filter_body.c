@@ -39,7 +39,7 @@ static const uschar * s_xform_names[] = {
 };
 /******************************************************************************/
 
-#if defined(HAVE_ICONV) && defined(WITH_CONTENT_SCAN)
+#if HAVE_ICONV && defined(WITH_CONTENT_SCAN)
 static int
 consume_mime_boundary(void)
 {
@@ -335,7 +335,7 @@ if (ce_hdr)						/* encoding */
   else FDEBUG
     debug_printf_indent("content-transfer-encoding %q not handled\n", ce_hdr);
 
-#if defined(HAVE_ICONV) && defined(WITH_CONTENT_SCAN)
+#if HAVE_ICONV && defined(WITH_CONTENT_SCAN)
 /* charset */
 
 if ((ct_hdr = Ustrchr(ct_hdr, ';')))	/* skip (eg.) text/plain */
@@ -389,7 +389,7 @@ if (!(ce_hdr = expand_string(US"$h_content-transfer-encoding")))
   return FALSE;
   }
 
-#if defined(HAVE_ICONV) && defined(WITH_CONTENT_SCAN)
+#if HAVE_ICONV && defined(WITH_CONTENT_SCAN)
 if (!(ct_hdr = expand_string(US"$h_content-type")))
   {
   filter->errmsg = US"internal expansion failure for content-type\n";
@@ -669,7 +669,7 @@ FDEBUG
 For not-multipart:
   Regex for the content match; run it until match or eof. Done, with match status.
 */
-#if defined(HAVE_ICONV) && defined(WITH_CONTENT_SCAN)
+#if HAVE_ICONV && defined(WITH_CONTENT_SCAN)
 if (Ustrncmp(ct_hdr, "multipart", 9) == 0)
   {
   const pcre2_code * boundary_re;

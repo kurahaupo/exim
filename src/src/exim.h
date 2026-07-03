@@ -588,7 +588,7 @@ config.h, mytypes.h, and store.h, so we don't need to mention them explicitly.
 /* The following stuff must follow the inclusion of config.h because it
 requires various things that are set therein. */
 
-#ifdef HAVE_ICONV			/* Not all OS have this */
+#if HAVE_ICONV			/* Not all OS have this */
 # include <iconv.h>
 #endif
 
