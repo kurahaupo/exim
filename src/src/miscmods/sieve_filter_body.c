@@ -723,7 +723,7 @@ if (Ustrncmp(ct_hdr, "multipart", 9) == 0)
     if (!scan_mime_part(filter, cond, ct_hdr, ce_hdr, content_re, content_md))
       goto bad;
     if (*cond)
-      goto match;
+      goto done;
     }
   DEBUG(sieve) debug_printf_indent("done with prefix area\n");
   if (receive_ferror()) goto ferror;
@@ -741,7 +741,7 @@ if (Ustrncmp(ct_hdr, "multipart", 9) == 0)
     if (!consume_headers(filter, &inner_ct, &inner_ce, NULL, NULL))
       goto bad;
     if (!inner_ct)
-      goto nomatch;
+      goto done;
 
     /* The match for a "real" mimepart does it's own evaluation of
     interestingness on the content-type of that mimepart. */
@@ -749,7 +749,7 @@ if (Ustrncmp(ct_hdr, "multipart", 9) == 0)
     if (!content_match(filter, content_re, cond, inner_ct, inner_ce, depth+1))
       goto bad;
     if (*cond)
-      goto match;
+      goto done;
     DEBUG(sieve) debug_printf_indent("done real-mimepart\n");
     }
   if (rc < 0)
@@ -797,7 +797,7 @@ else
   if (bad_msg_hdrs)
     goto bad;
   if (*cond)
-    goto match;
+    goto done;
   DEBUG(sieve) debug_printf_indent("done 822 headers\n");
 
   if (!inner_ct)
@@ -809,7 +809,7 @@ else
   if (!content_match(filter, content_re, cond, inner_ct, inner_ce, depth+1))
     goto bad;
   if (*cond)
-    goto match;
+    goto done;
   DEBUG(sieve) debug_printf_indent("done 822 body\n");
   }
 else
@@ -831,8 +831,7 @@ else
   if (receive_ferror()) goto ferror;
   }
 
-match:
-nomatch:
+done:
   expand_level--;
   return TRUE;
 

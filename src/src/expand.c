@@ -3381,8 +3381,10 @@ switch(cond_type = identify_operator(&s, &opname))
           }
 	}
       iterate_item = save_iterate_item;
+      break;
       }
 
+    default:	tempcond = FALSE;	/* compiler quietening */
     }   /* Switch for comparison conditions */
 
   *yield = tempcond == testfor;
