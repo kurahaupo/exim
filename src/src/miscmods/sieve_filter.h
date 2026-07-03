@@ -3,7 +3,7 @@
 *************************************************/
 
 /*
-Copyright (c) The Exim Maintainers 2016 - 2025
+Copyright (c) The Exim Maintainers 2016 - 2026
 Copyright (c) Michael Haardt 2003 - 2015
 See the file NOTICE for conditions of use and distribution.
 SPDX-License-Identifier: GPL-2.0-or-later
@@ -17,8 +17,10 @@ SPDX-License-Identifier: GPL-2.0-or-later
 /* Undefine it for UNIX-style \n end-of-line terminators (default). */
 #undef RFC_EOL
 
-/* Define this for development of the Sieve extension "body". */
-#define BODY
+/* Define this for the Sieve extension "body". */
+#if HAVE_ICONV && defined(WITH_CONTENT_SCAN)
+# define BODY
+#endif
 
 /* Define this for development of the Sieve extension "encoded-character". */
 #define ENCODED_CHARACTER
