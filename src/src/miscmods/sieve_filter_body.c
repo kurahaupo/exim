@@ -39,6 +39,7 @@ static const uschar * s_xform_names[] = {
 };
 /******************************************************************************/
 
+#if defined(HAVE_ICONV) && defined(WITH_CONTENT_SCAN)
 static int
 consume_mime_boundary(void)
 {
@@ -48,6 +49,19 @@ rc = mime_clear_boundary(rx_prc);
 expand_level--;
 return rc;
 }
+
+
+static const pcre2_code *
+boundary_to_re(sieve_t * filter, const uschar * s)
+{
+gstring * rg = string_fmt_append(NULL, "(?sn)(\\n|^)--%s(--)?[ \\t]*\\n", s);
+
+DEBUG(sieve) debug_printf_indent("%s: re %Y\n", __FUNCTION__, rg);
+return regex_compile(string_from_gstring(rg), 0,
+		    USS &filter->errmsg, pcre_gen_cmp_ctx);
+}
+
+#endif
 
 /* Convert matchtype+comparator and key to a compiled regex.
 Note that key is an array of gstrings.
@@ -396,17 +410,6 @@ return yield;
 }
 
 /******************************************************************************/
-
-static const pcre2_code *
-boundary_to_re(sieve_t * filter, const uschar * s)
-{
-gstring * rg = string_fmt_append(NULL, "(?sn)(\\n|^)--%s(--)?[ \\t]*\\n", s);
-
-DEBUG(sieve) debug_printf_indent("%s: re %Y\n", __FUNCTION__, rg);
-return regex_compile(string_from_gstring(rg), 0,
-		    USS &filter->errmsg, pcre_gen_cmp_ctx);
-}
-
 
 static void
 skip_mime_part(void)
@@ -986,7 +989,7 @@ switch (xa)
   }
 
 if (filter_test == FTEST_NONE)
-  { fclose(stdin); stdin = NULL; }
+  fclose(stdin);
 
 return res;
 }

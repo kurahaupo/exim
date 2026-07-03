@@ -290,7 +290,8 @@ Exim did not support message delivery notifications (MDNs) when Sieve handling
 was introduced, so &*reject*& (which needs them) could not be supported.
 
 .new
-Additionally, the implementation supports the &*body*& extension
+Additionally, if Exim is built with WITH_CONTENT_SCAN defined,
+the implementation supports the &*body*& extension
 defined by RFC 5173.
 .wen
 

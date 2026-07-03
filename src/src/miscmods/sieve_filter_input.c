@@ -819,7 +819,6 @@ unsigned consumed = 0;
 in_buf * bp = inp->in_bufp;
 mime_ctx_t * mc = inp->in_private;
 const uschar * s;
-uschar c;
 int yield;
 
 DECODE_LAYER_DEBUG debug_printf_indent("%s: consume boundary\n", __FUNCTION__);
@@ -840,6 +839,7 @@ if (s == mc->lwr_end)
   yield = SIEVE_MIME_BOUNDARY_EOD;
 else
   {
+  uschar c = '\0';
   /* Scan back from the end looking for the "--" that a last-boundary has */
 
   while (--s > bp->ptr +1 && ((c = *s) == '\n' || c == ' ' || c == '\t'))
