@@ -34,21 +34,20 @@
 . Additional xfpt markup used by this document, over and above the default
 . provided in the xfpt library.
 
-. Override the &$ flag to automatically insert a $ with the variable name
-
-.flag &$  $&   "<varname>$"  "</varname>"
+.include ./local_markup
 
 . A macro for the common 2-column tables
 
 .macro table2 100pt 300pt
 .itable none 0 0 2 $1 left $2 left
 .endmacro
+
 . ===========================================================================
 
 . Copyright year.  Update this (only) when changing content.
 
 .macro copyyear
-2024
+2026
 .endmacro
 
 . ===========================================================================
@@ -104,7 +103,7 @@ to be a set of rules rather than just a list of addresses, in effect providing
 
 Exim supports two different kinds of filter file. An &'Exim filter'& contains
 instructions in a format that is unique to Exim. A &'Sieve filter'& contains
-instructions in the Sieve format that is defined by RFC 3028. As this is a
+instructions in the Sieve format that is defined by &rfc(3028). As this is a
 standard format, Sieve filter files may already be familiar to some users.
 Sieve files should also be portable between different environments. However,
 the Exim filtering facility contains more features (such as variable
@@ -267,7 +266,7 @@ be left in all Exim filter files. (This does not apply to Sieve files.)
 
 .section "Details of filtering commands" "SEC04"
 The filtering commands for Sieve and Exim filters are completely different in
-syntax and semantics. The Sieve mechanism is defined in RFC 3028; in the next
+syntax and semantics. The Sieve mechanism is defined in &rfc(3028); in the next
 chapter we describe how it is integrated into Exim. The subsequent chapter
 covers Exim filtering commands in detail.
 
@@ -280,9 +279,9 @@ Sieve is an extensible language, it is important to understand &"Sieve"& in
 this context as &"the specific implementation of Sieve for Exim"&.
 
 This chapter does not contain a description of Sieve, since that can be found
-in RFC 3028, which should be read in conjunction with these notes.
+in &rfc(3028), which should be read in conjunction with these notes.
 
-The Exim Sieve implementation offers the core as defined by RFC 3028,
+The Exim Sieve implementation offers the core as defined by the RFC,
 comparison tests, the subaddress parameter, the &*copy*&, &*envelope*&,
 &*fileinto*&, &*notify*&, and &*vacation*& extensions, but not the &*reject*&
 extension.
@@ -292,7 +291,7 @@ was introduced, so &*reject*& (which needs them) could not be supported.
 .new
 Additionally, if Exim is built with iconv() supoprt and
 WITH_CONTENT_SCAN defined,
-the implementation supports the &*body*& extension defined by RFC 5173.
+the implementation supports the &*body*& extension defined by &rfc(5173).
 .wen
 
 In order for Sieve to work properly in Exim, the system administrator needs to
@@ -319,7 +318,7 @@ relative to &$home$&, and &_inbox_& goes to the standard mailbox location.
 
 
 .section "Strings containing header names" "SEC07"
-RFC 3028 does not specify what happens if a string denoting a header field does
+&rfc(3028) does not specify what happens if a string denoting a header field does
 not contain a valid header name, for example, it contains a colon. This
 implementation generates an error instead of ignoring the header field in order
 to ease script debugging, which fits in with the common picture of Sieve.
@@ -327,7 +326,7 @@ to ease script debugging, which fits in with the common picture of Sieve.
 
 
 .section "Exists test with empty list of headers" "SEC08"
-The &*exists*& test succeeds only if all the specified headers exist. RFC 3028
+The &*exists*& test succeeds only if all the specified headers exist. &rfc(3028)
 does not explicitly specify what happens on an empty list of headers. This
 implementation evaluates that condition as true, interpreting the RFC in a
 strict sense.
@@ -336,22 +335,22 @@ strict sense.
 
 .section "Header test with invalid MIME encoding in header" "SEC09"
 Some MUAs process invalid base64 encoded data, generating junk. Others ignore
-junk after seeing an equal sign in base64 encoded data. RFC 2047 does not
+junk after seeing an equal sign in base64 encoded data. &rfc(2047) does not
 specify how to react in this case, other than stating that a client must not
-forbid to process a message for that reason. RFC 2045 specifies that invalid
+forbid to process a message for that reason. &rfc(2045) specifies that invalid
 data should be ignored (apparently looking at end of line characters). It also
 specifies that invalid data may lead to rejecting messages containing them (and
 there it appears to talk about true encoding violations), which is a clear
 contradiction to ignoring them.
 
-RFC 3028 does not specify how to process incorrect MIME words. This
+&rfc(3028) does not specify how to process incorrect MIME words. This
 implementation treats them literally, as it does if the word is correct but its
 character set cannot be converted to UTF-8.
 
 
 
 .section "Address test for multiple addresses per header" "SEC10"
-A header may contain multiple addresses. RFC 3028 does not explicitly specify
+A header may contain multiple addresses. &rfc(3028) does not explicitly specify
 how to deal with them, but since the address test checks if anything matches
 anything else, matching one address suffices to satisfy the condition. That
 makes it impossible to test if a header contains a certain set of addresses and
@@ -373,7 +372,7 @@ implicit keep flag; there is no command to set it once it has been reset.
 
 
 .section "Semantics of fileinto" "SEC12"
-RFC 3028 does not specify whether &(fileinto)& should try to create a mail
+&rfc(3028) does not specify whether &(fileinto)& should try to create a mail
 folder if it does not exist. This implementation allows the sysadmin to
 configure that aspect using the &(appendfile)& transport options
 &%create_directory%&, &%create_file%&, and &%file_must_exist%&. See the
@@ -393,16 +392,16 @@ it to be.
 .section "String arguments" "SEC14"
 There has been confusion if the string arguments to &(require)& are to be
 matched case-sensitively or not. This implementation matches them with the
-match type &(:is)& (default, see section 2.7.1 of the RFC) and the comparator
+match type &(:is)& (default, see section 2.7.1 of &rfc(3028)) and the comparator
 &(i;ascii-casemap)& (default, see section 2.7.3 of the RFC). The RFC defines
-the command defaults clearly, so any different implementations violate RFC
-3028. The same is valid for comparator names, also specified as strings.
+the command defaults clearly, so any different implementations are in violation.
+The same is valid for comparator names, also specified as strings.
 
 
 
 .section "Number units" "SEC15"
-There is a mistake in RFC 3028: the suffix G denotes gibi-, not tebibyte.
-The mistake is obvious, because RFC 3028 specifies G to denote 2^30
+There is a mistake in &rfc(3028): the suffix G denotes gibi-, not tebibyte.
+The mistake is obvious, because the RFC specifies G to denote 2^30
 (which is gibi, not tebi), and that is what this implementation uses as
 the scaling factor for the suffix G.
 
@@ -416,14 +415,15 @@ Exim requires the first line of a Sieve filter to be
 Of course the RFC does not specify that line. Do not expect examples to work
 without adding it, though.
 
-RFC 3028 requires the use of CRLF to terminate a line. The rationale was that
+&rfc(3028) requires the use of CRLF to terminate a line. The rationale was that
 CRLF is universally used in network protocols to mark the end of the line. This
 implementation does not embed Sieve in a network protocol, but uses Sieve
 scripts as part of the Exim MTA. Since all parts of Exim use LF as the newline
 character, this implementation does, too, by default, though the system
 administrator may choose (at Exim compile time) to use CRLF instead.
 
-Exim violates RFC 2822, section 3.6.8, by accepting 8-bit header names, so this
+Exim violates &rfc(2822), section 3.6.8,
+by accepting 8-bit header names, so this
 implementation repeats this violation to stay consistent with Exim. This is in
 preparation for UTF-8 data.
 
@@ -431,7 +431,7 @@ Sieve scripts cannot contain NUL characters in strings, but mail headers could
 contain MIME encoded NUL characters, which could never be matched by Sieve
 scripts using exact comparisons. For that reason, this implementation extends
 the Sieve quoted string syntax with \0 to describe a NUL character, violating
-\0 being the same as 0 in RFC 3028. Even without using \0, the following tests
+\0 being the same as 0 in &rfc(3028). Even without using \0, the following tests
 are all true in this implementation. Implementations that use C-style strings
 will only evaluate the first test as true.
 .code
@@ -441,21 +441,21 @@ header :contains "Subject" ["abc"]
 header :contains "Subject" ["def"]
 header :matches "Subject" ["abc?def"]
 .endd
-Note that by considering Sieve to be an MUA, RFC 2047 can be interpreted in a
+Note that by considering Sieve to be an MUA, &rfc(2047) can be interpreted in a
 way that NUL characters truncating strings is allowed for Sieve
 implementations, although not recommended. It is further allowed to use encoded
 NUL characters in headers, but that's not recommended either. The above example
 shows why.
 
-RFC 3028 states that if an implementation fails to convert a character set to
+&rfc(3028) states that if an implementation fails to convert a character set to
 UTF-8, two strings cannot be equal if one contains octets greater than 127.
 Assuming that all unknown character sets are one-byte character sets with the
 lower 128 octets being US-ASCII is not sound, so this implementation violates
-RFC 3028 and treats such MIME words literally. That way at least something
+&rfc(3028) and treats such MIME words literally. That way at least something
 could be matched.
 
 The folder specified by &(fileinto)& must not contain the character sequence
-&".."& to avoid security problems. RFC 3028 does not specify the syntax of
+&".."& to avoid security problems. &rfc(3028) does not specify the syntax of
 folders apart from &(keep)& being equivalent to
 .code
 fileinto "INBOX";
@@ -463,7 +463,7 @@ fileinto "INBOX";
 This implementation uses &_inbox_& instead.
 
 Sieve script errors currently cause messages to be silently filed into
-&_inbox_&.  RFC 3028 requires that the user is notified of that condition.
+&_inbox_&.  &rfc(3028) requires that the user is notified of that condition.
 This may be implemented in the future by adding a header line to mails that
 are filed into &_inbox_& due to an error in the filter.
 
@@ -670,7 +670,7 @@ is inserted between each set of data. For all other header lines, just a
 newline is used.
 
 Leading and trailing white space is removed from header line data, and if there
-are any MIME &"words"& that are encoded as defined by RFC 2047 (because they
+are any MIME &"words"& that are encoded as defined by &rfc(2047) (because they
 contain non-ASCII characters), they are decoded and translated, if possible, to
 a local character set. Translation is attempted only on operating systems that
 have the &[iconv()]& function. This makes the header line look the same as it
@@ -689,7 +689,7 @@ zero character, it is replaced by a question mark.
 
 The capitalization of the name following &$header_$& is not significant.
 Because any printing character except colon may appear in the name of a
-message's header (this is a requirement of RFC 2822, the document that
+message's header (this is a requirement of &rfc(2822), the document that
 describes the format of a mail message) curly brackets must &'not'& be used in
 this case, as they will be taken as part of the header name. Two shortcuts are
 allowed in naming header variables:
@@ -995,7 +995,8 @@ message addressed to &'pat-suf2@domain.example'& may cause the filter for user
 Exim specially for this feature to be available.
 
 If you run a command that is a shell script, be very careful in your use of
-data from the incoming message in the commands in your script. RFC 2822 is very
+data from the incoming message in the commands in your script. &rfc(2822)
+is very
 generous in the characters that are permitted to appear in mail addresses, and
 in particular, an address may begin with a vertical bar or a slash. For this
 reason you should always use quotes round any arguments that involve data from
@@ -1111,7 +1112,7 @@ forward file, Exim normally adds a &'Sender:'& header to the message, though it
 can be configured not to do this.
 
 The &%extra_headers%& keyword allows you to add custom header lines to the
-message. The text supplied must be one or more syntactically valid RFC 2822
+message. The text supplied must be one or more syntactically valid &rfc(2822)
 header lines. You can use &"\n"& within quoted text to specify newlines between
 headers, and also to define continued header lines. For example:
 .code
@@ -1462,7 +1463,7 @@ condition to each of them. It takes the form
 .display
 &`foranyaddress `&<&'string'&>&` (`&<&'condition'&>&`)`&
 .endd
-where <&'string'&> is interpreted as a list of RFC 2822 addresses, as in a
+where <&'string'&> is interpreted as a list of &rfc(2822) addresses, as in a
 typical header line, and <&'condition'&> is any valid filter condition or
 combination of conditions. The &"group"& syntax that is defined for certain
 header lines that contain addresses is supported.

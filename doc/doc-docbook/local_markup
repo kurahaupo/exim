@@ -1,0 +1,20 @@
+. Markup common to the main Exim doc and the Exim filters doc
+
+. --- Override the &$ flag to automatically insert a $ with the variable name.
+
+.flag &$  $&   "<varname>$"  "</varname>"
+
+
+. --- A standard way of referencing RFCs
+. --- Takes one arg with just the number. Inline call: &rfc(2821)
+. --- and optionally a second one for a tag to be appended to the URL:
+. --- &rfc(7671,section-2.1)
+.macro rfc
+.arg 2
+&url(https://datatracker.ietf.org/doc/html/rfc$1#$2,"RFC $1")
+.endarg
+.arg -2
+&url(https://datatracker.ietf.org/doc/html/rfc$1,"RFC $1")
+.endarg
+.endmacro
+
