@@ -914,6 +914,17 @@ return content_match(filter, content_re, cond, ct, ce, 0);
 }
 
 /******************************************************************************/
+
+/* On Solaris and FreeBSD stdin cannot be used as an lvalue (FreeBSD, at least,
+has it as a macro with a leading cast) so cannot be directly assigned to.
+Use this cirumlocution to get the job done. */
+
+static void
+set_stdin(FILE ** fpp, FILE * fp)
+{
+*fpp = fp;
+}
+
 /* Return FALSE iff error, otherwise condition result via cond. */
 
 BOOL
@@ -957,7 +968,7 @@ if (filter_test == FTEST_NONE)
   if ((fd = spool_open_datafile(message_id)) < 0)
     { filter->errmsg = US"failed to open data file"; return FALSE; }
 
-  stdin = fdopen(fd, "r");	/*XXX compile dislikes this on Solaris */
+  set_stdin(&stdin, fdopen(fd, "r"));
 
   if (fseek(stdin, spool_data_start_offset(message_id), SEEK_SET) < 0)
     { filter->errmsg = US"seek error in data file"; return FALSE; }
@@ -989,7 +1000,7 @@ switch (xa)
   }
 
 if (filter_test == FTEST_NONE)
-  fclose(stdin);
+  { fclose(stdin); set_stdin(&stdin, NULL); }
 
 return res;
 }
