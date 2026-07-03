@@ -1382,6 +1382,7 @@ uschar *spool_directory        = US SPOOL_DIRECTORY
 #ifdef SUPPORT_SRS
 uschar *srs_recipient          = NULL;
 #endif
+FILE *	stdin_copy;			/* Need something we can assign to */
 int     string_datestamp_offset= -1;
 int     string_datestamp_length= 0;
 int     string_datestamp_type  = -1;

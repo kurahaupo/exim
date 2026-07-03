@@ -68,7 +68,7 @@ STDIN_LAYER_DEBUG
   debug_printf_indent("%s %d: lim %u  space %u\n", __FUNCTION__, __LINE__,
 		      lim, space);
 
-if (  (rc = fread(bp->end, 1, MIN(space, lim), stdin)) == 0
+if (  (rc = fread(bp->end, 1, MIN(space, lim), stdin_copy)) == 0
    && bp->end == bp->ptr)
   {
   if (had_data_timeout)
@@ -246,13 +246,13 @@ STDIN_LAYER_DEBUG
 int
 stdin_feof(const in_processing * inp)
 {
-return stdin_hasc(inp) ? FALSE : feof(stdin);
+return stdin_hasc(inp) ? FALSE : feof(stdin_copy);
 }
 
 int
 stdin_ferror(const in_processing * inp)
 {
-return ferror(stdin);
+return ferror(stdin_copy);
 }
 
 static uschar stdin__buf[STDIN_BUFSIZE];

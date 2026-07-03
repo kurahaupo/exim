@@ -1902,6 +1902,7 @@ extern char ** environ;
 
 store_init();	/* Initialise the memory allocation susbsystem */
 pcre_init();	/* Set up memory handling for pcre */
+stdin_copy = stdin;
 
 /* If the Exim user and/or group and/or the configuration file owner/group were
 defined by ref:name at build time, we must now find the actual uid/gid values.
