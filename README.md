@@ -58,4 +58,16 @@ In any case you can always ask on the
 Exim Users mailing list [https://lists.exim.org/mailman3/postorius/lists/exim-users.lists.exim.org/](https://lists.exim.org/mailman3/postorius/lists/exim-users.lists.exim.org/)
 for further information.
 
+## Contributing to Exim
+
+As a mature project we do not expect major changes in the current codebase. Most changes are likely to be limited to security/bug fixes, refactoring for code consistency and very occasionally new capabilities to accomodate new standards.
+
+Any sizeable contribution will be considered not only in respect to its conformity with current project standards but also in terms of whether the project developers consider the ongoing maintenance burden to be acceptable.
+
+With this in mind we would ask you follow the following steps to contribute.
+
+ * Start by checking and discussing via the exim-user mailing list whether we would consider the feature.
+ * If we approve an suitable ticket will be created to track the specifics.
+ * We do not accept LLM generated content in any form whatsoever.
+
 \[End\]

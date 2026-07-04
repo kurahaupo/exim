@@ -22,6 +22,19 @@ encrypting particularly sensitive information.
 This also links to our documentation and the chapter on security
 considerations.
 
+Before submitting any security report please bear in mind the following
+
+ * We only accept reports against the latest release.
+ * Reports should be limited to succinct descriptions of the problem, with minimal code inclusion.
+ * Reports where EXPERIMENTAL builds flags are used must be filed as ordinary bugs and are not considered security issues.
+ * Reports against isolated source files builds are not accepted. Only reports against the full binary are considered.
+ * Do not include Proof of Concepts
+ * Do not include suggested patches.
+ * Do not include extended diatribes about code flow.
+ * Reports we believe are LLM generated will either be rejected outright or if thought to be plausible will be credited to the unnamed and uncredited authors whose works were ingested as the training corpus.
+ * Reports that do not meet the criteria for security issues but are merely bugs will be turned into normal public issues.
+ * If we do determine there is a security issue then we will release an update on the relevant branch as soon as there is a tested fix. Each issue  will be allocated a GCVE  identifier against our GNA ID, we will no longer be using legacy CVE IDs.
+
 Our security release process is at
 <https://code.exim.org/exim/exim/wiki/SecurityReleaseProcess>.
 This covers what we do in handling vulnerability reports.
