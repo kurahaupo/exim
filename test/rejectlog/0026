@@ -35,40 +35,54 @@ P Received: from CALLER (helo=test)
 F From: <x@y>, @
 I Message-Id: <E10HmaZ-000000005vi-0000@myhost.test.ex>
   Date: Tue, 2 Mar 1999 09:44:33 +0000
-1999-03-02 09:44:33 10HmbA-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line
-Envelope-from: <>
-Envelope-to: <x@y>
-P Received: from CALLER (helo=test)
-	by myhost.test.ex with local-smtp (Exim x.yz)
-	id 10HmbA-000000005vi-0000
-	for x@y;
-	Tue, 2 Mar 1999 09:44:33 +0000
-F From: <x@y>
-I Message-Id: <E10HmbA-000000005vi-0000@myhost.test.ex>
-  Date: Tue, 2 Mar 1999 09:44:33 +0000
-  X-warning: this is a test warning
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: body contains trigger
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: malformed address: <me@real.dom.ain>\n may not follow unquoted_addr@bogus.net : failing address in "From:" header is: unquoted_addr@bogus.net <me@real.dom.ain>
 Envelope-from: <x@y>
 Envelope-to: <x@y>
 P Received: from CALLER (helo=test)
 	by myhost.test.ex with local-smtp (Exim x.yz)
 	(envelope-from <x@y>)
+	id 10HmbA-000000005vi-0000
+	for x@y;
+	Tue, 2 Mar 1999 09:44:33 +0000
+T To: <dummy@gmail.com>
+  Subject: bad display name
+F From: unquoted_addr@bogus.net <me@real.dom.ain>
+I Message-Id: <E10HmbA-000000005vi-0000@myhost.test.ex>
+  Date: Tue, 2 Mar 1999 09:44:33 +0000
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line
+Envelope-from: <>
+Envelope-to: <x@y>
+P Received: from CALLER (helo=test)
+	by myhost.test.ex with local-smtp (Exim x.yz)
 	id 10HmbB-000000005vi-0000
 	for x@y;
 	Tue, 2 Mar 1999 09:44:33 +0000
+F From: <x@y>
 I Message-Id: <E10HmbB-000000005vi-0000@myhost.test.ex>
+  Date: Tue, 2 Mar 1999 09:44:33 +0000
+  X-warning: this is a test warning
+1999-03-02 09:44:33 10HmbC-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: body contains trigger
+Envelope-from: <x@y>
+Envelope-to: <x@y>
+P Received: from CALLER (helo=test)
+	by myhost.test.ex with local-smtp (Exim x.yz)
+	(envelope-from <x@y>)
+	id 10HmbC-000000005vi-0000
+	for x@y;
+	Tue, 2 Mar 1999 09:44:33 +0000
+I Message-Id: <E10HmbC-000000005vi-0000@myhost.test.ex>
 F From: x@y
   Date: Tue, 2 Mar 1999 09:44:33 +0000
-1999-03-02 09:44:33 10HmbC-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line
 Envelope-from: <>
 Envelope-to: <userx@test.ex>
 P Received: from CALLER (helo=test)
 	by myhost.test.ex with local-smtp (Exim x.yz)
-	id 10HmbC-000000005vi-0000
+	id 10HmbD-000000005vi-0000
 	for userx@test.ex;
 	Tue, 2 Mar 1999 09:44:33 +0000
 T to: group name: x@y, p@q;
 R reply-to: group name:;
-I Message-Id: <E10HmbC-000000005vi-0000@myhost.test.ex>
+I Message-Id: <E10HmbD-000000005vi-0000@myhost.test.ex>
   Date: Tue, 2 Mar 1999 09:44:33 +0000
   X-warning: this is a test warning

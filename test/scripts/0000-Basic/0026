@@ -48,6 +48,34 @@ Message 3
 .
 quit
 ****
+# Syntax error (version 3) in header => should fail
+exim -odq -bs
+helo test
+mail from:<x@y>
+rcpt to:<x@y>
+data
+To: <dummy@gmail.com>
+Subject: bad display name
+From: unquoted_addr@bogus.net <me@real.dom.ain>
+
+Message 2b
+.
+quit
+****
+# Syntax error (version 4) in header => should fail
+exim -odq -bs
+helo test
+mail from:<x@y>
+rcpt to:<x@y>
+data
+To: <dummy@gmail.com>
+Subject: bad RFC2047 coding
+From: =?iso-2022-jp?B?GyRCLWolMCVzJTUlcxsoQg==?=░ <me@real.dom.ain>
+
+Message 2c
+.
+quit
+****
 # Null sender, invalid sender in header => fail
 exim -odq -bs
 helo test

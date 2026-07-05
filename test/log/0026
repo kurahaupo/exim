@@ -1,31 +1,48 @@
-1999-03-02 09:44:33 10HmbD-000000005vi-0000 $h_from: 'x@y'
-1999-03-02 09:44:33 10HmbD-000000005vi-0000 <= x@y U=CALLER P=local-smtp S=sss
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 $h_from: 'x@y'
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 ${address:$h_from:}  'x@y'
+1999-03-02 09:44:33 10HmbE-000000005vi-0000 <= x@y U=CALLER P=local-smtp S=sss
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 qualify/rewrite: domain missing or malformed
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 $h_from: '@'
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 ${address:$h_from:}  ''
 1999-03-02 09:44:33 10HmaX-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: domain missing or malformed: failing address in "From:" header is: @
 1999-03-02 09:44:33 10HmaY-000000005vi-0000 qualify/rewrite: '>' missing at end of address
 1999-03-02 09:44:33 10HmaY-000000005vi-0000 qualify/rewrite: '>' missing at end of address
 1999-03-02 09:44:33 10HmaY-000000005vi-0000 $h_from: '<forged@sender.com'
+1999-03-02 09:44:33 10HmaY-000000005vi-0000 ${address:$h_from:}  ''
 1999-03-02 09:44:33 10HmaY-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: '>' missing at end of address: failing address in "To:" header is: <dummy@gmail.com
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 qualify/rewrite: domain missing or malformed
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 $h_from: '<x@y>, @'
+1999-03-02 09:44:33 10HmaZ-000000005vi-0000 ${address:$h_from:}  ''
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 U=CALLER F=<> rejected after DATA: domain missing or malformed: failing address in "From:" header is: @
-1999-03-02 09:44:33 10HmbA-000000005vi-0000 $h_from: '<x@y>'
-1999-03-02 09:44:33 10HmbA-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line
-1999-03-02 09:44:33 10HmbE-000000005vi-0000 $h_from: '<postmaster@test.ex>'
-1999-03-02 09:44:33 10HmbE-000000005vi-0000 <= <> U=CALLER P=local-smtp S=sss
-1999-03-02 09:44:33 10HmbB-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: body contains trigger
-1999-03-02 09:44:33 10HmbF-000000005vi-0000 $h_from: 'x@y'
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 qualify/rewrite: malformed address: <me@real.dom.ain> may not follow unquoted_addr@bogus.net 
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 $h_from: 'unquoted_addr@bogus.net <me@real.dom.ain>'
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 ${address:$h_from:}  ''
+1999-03-02 09:44:33 10HmbA-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: malformed address: <me@real.dom.ain>\n may not follow unquoted_addr@bogus.net : failing address in "From:" header is: unquoted_addr@bogus.net <me@real.dom.ain>
+1999-03-02 09:44:33 10HmbF-000000005vi-0000 $h_from: '"-j%0%s%5%s\033(B"\342\226\221 <me@real.dom.ain>'
+1999-03-02 09:44:33 10HmbF-000000005vi-0000 ${address:$h_from:}  'me@real.dom.ain'
 1999-03-02 09:44:33 10HmbF-000000005vi-0000 <= x@y U=CALLER P=local-smtp S=sss
-1999-03-02 09:44:33 10HmbF-000000005vi-0000 => userx <userx@test.ex> R=r2 T=local_delivery
-1999-03-02 09:44:33 10HmbF-000000005vi-0000 Completed
-1999-03-02 09:44:33 10HmbG-000000005vi-0000 $h_from: 'x@y'
-1999-03-02 09:44:33 10HmbG-000000005vi-0000 <= x@y U=CALLER P=local-smtp S=sss
-1999-03-02 09:44:33 10HmbG-000000005vi-0000 => userx <userx@test.ex> R=r2 T=local_delivery
-1999-03-02 09:44:33 10HmbG-000000005vi-0000 Completed
-1999-03-02 09:44:33 10HmbH-000000005vi-0000 $h_from: 'userx@test.ex'
-1999-03-02 09:44:33 10HmbH-000000005vi-0000 <= <> U=CALLER P=local-smtp S=sss
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 $h_from: '<x@y>'
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 ${address:$h_from:}  'x@y'
+1999-03-02 09:44:33 10HmbB-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line
+1999-03-02 09:44:33 10HmbG-000000005vi-0000 $h_from: '<postmaster@test.ex>'
+1999-03-02 09:44:33 10HmbG-000000005vi-0000 ${address:$h_from:}  'postmaster@test.ex'
+1999-03-02 09:44:33 10HmbG-000000005vi-0000 <= <> U=CALLER P=local-smtp S=sss
+1999-03-02 09:44:33 10HmbC-000000005vi-0000 U=CALLER F=<x@y> rejected after DATA: body contains trigger
+1999-03-02 09:44:33 10HmbH-000000005vi-0000 $h_from: 'x@y'
+1999-03-02 09:44:33 10HmbH-000000005vi-0000 ${address:$h_from:}  'x@y'
+1999-03-02 09:44:33 10HmbH-000000005vi-0000 <= x@y U=CALLER P=local-smtp S=sss
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 => userx <userx@test.ex> R=r2 T=local_delivery
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 Completed
-1999-03-02 09:44:33 10HmbC-000000005vi-0000 $h_from: ''
-1999-03-02 09:44:33 10HmbC-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line
+1999-03-02 09:44:33 10HmbI-000000005vi-0000 $h_from: 'x@y'
+1999-03-02 09:44:33 10HmbI-000000005vi-0000 ${address:$h_from:}  'x@y'
+1999-03-02 09:44:33 10HmbI-000000005vi-0000 <= x@y U=CALLER P=local-smtp S=sss
+1999-03-02 09:44:33 10HmbI-000000005vi-0000 => userx <userx@test.ex> R=r2 T=local_delivery
+1999-03-02 09:44:33 10HmbI-000000005vi-0000 Completed
+1999-03-02 09:44:33 10HmbJ-000000005vi-0000 $h_from: 'userx@test.ex'
+1999-03-02 09:44:33 10HmbJ-000000005vi-0000 ${address:$h_from:}  'userx@test.ex'
+1999-03-02 09:44:33 10HmbJ-000000005vi-0000 <= <> U=CALLER P=local-smtp S=sss
+1999-03-02 09:44:33 10HmbJ-000000005vi-0000 => userx <userx@test.ex> R=r2 T=local_delivery
+1999-03-02 09:44:33 10HmbJ-000000005vi-0000 Completed
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 $h_from: ''
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 ${address:$h_from:}  ''
+1999-03-02 09:44:33 10HmbD-000000005vi-0000 U=CALLER F=<> rejected after DATA: there is no valid sender in any header line

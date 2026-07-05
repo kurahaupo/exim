@@ -248,7 +248,7 @@ while (mimeword)
 
   while (dlen > 0)
     {
-    uschar *tptr = NULL;   /* Stops compiler warning */
+    uschar * tptr = NULL;   /* Stops compiler warning */
     int tlen = -1;
 
 #if HAVE_ICONV
@@ -279,16 +279,16 @@ while (mimeword)
         }
       else
         {
-        DEBUG(any) debug_printf("iconv error translating \"%.*s\" to %s: "
-        "%s\n", (int)(endword + 2 - mimeword), mimeword, target, strerror(errno));
+	*error = US strerror(errno);
+        DEBUG(any) debug_printf("iconv error translating \"%.*s\" to %s: %s\n",
+		      (int)(endword + 2 - mimeword), mimeword, target, *error);
         }
       }
-
 #endif
 
     /* No charset translation is happening or there was a translation error;
-    just set up the original as the string to be added, and mark it all used.
-    */
+    just set up the decode result as the string to be added, and mark it all
+    used.  */
 
     if (tlen == -1)
       {
@@ -305,7 +305,9 @@ while (mimeword)
 
     /* Add the new string onto the result */
 
-    yield = string_catn(yield, tptr, tlen);
+    yield = *error
+      ? string_fmt_append(yield, "\"%.*s\"", tlen, tptr)
+      : string_catn(yield, tptr, tlen);
     }
 
 #if HAVE_ICONV
