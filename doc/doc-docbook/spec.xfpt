@@ -19003,7 +19003,7 @@ prior to the 4.80 release, as Debian used to patch Exim to raise the minimum
 acceptable bound from 1024 to 2048.
 
 
-.option tls_early_banner_hosts main host list&!! unset
+.option tls_early_banner_hosts main "host list&!!" unset
 .cindex banner "for TLS-on-connect"
 .cindex TLS "early banner"
 This option, after expansion, lists hosts for which
@@ -19016,7 +19016,7 @@ and when verification of the client certificate is not needed.
 When it is possible it saves one whole roundtrip time.
 The feature may usefully be combined with TCP Fast Open.
 
-.option tls_eccurve main string list&!! &`auto`&
+.option tls_eccurve main "string list&!!" &`auto`&
 .cindex TLS "EC cryptography"
 This option selects EC curves for use by Exim when used with OpenSSL.
 It has no effect when Exim is used with GnuTLS
@@ -20725,7 +20725,7 @@ differently to other domains. The way in which Exim decides whether a host is
 the local host is described in section &<<SECTreclocipadd>>&.
 
 
-.option check_srv dnslookup string list&!! unset
+.option check_srv dnslookup "string list&!!" unset
 .cindex "SRV record" "enabling use of"
 The &(dnslookup)& router supports the use of SRV records
 (see &rfc(2782))
