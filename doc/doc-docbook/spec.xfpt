@@ -18370,6 +18370,7 @@ causes immediate rejection of the command, before any other tests are done.
 example of a protocol error is receiving RCPT before MAIL. If there are
 too many syntax or protocol errors in one SMTP session, the connection is
 dropped. The limit is set by this option.
+A value of zero will result in a drop on the first error.
 
 .cindex "PIPELINING" "expected errors"
 When the PIPELINING extension to SMTP is in use, some protocol errors are
