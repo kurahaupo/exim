@@ -9,7 +9,7 @@ Testprint: to = >a@b,\nc@d<
 Testprint: raw to = >    a@b\n    c@d\n<
 Testprint: rX-8: > (=?iso-8859-8?b?7eXs+SDv4SDp7Oj08A==?=)\n<
 Testprint: bX-8: >(\355\345\354\371 \357\341 \351\354\350\364\360)<
-Testprint:  X-8: >("\355\345\354\371 \357\341 \351\354\350\364\360")<
+Testprint:  X-8: >(=?iso-8859-8?b?7eXs+SDv4SDp7Oj08A==?=)<
 Testprint: rX-9: > =?ISO-8859-1?Q?Patrik_F=E4ltstr=F6m?= <xxx>\n<
 Testprint: bX-9: >Patrik F\344ltstr\366m <xxx><
 Testprint:  X-9: >Patrik F\344ltstr\366m <xxx><

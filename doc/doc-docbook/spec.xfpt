@@ -10309,8 +10309,9 @@ what Exim does for binary zeros that are actually received in header lines.
 .next
 &%header%& tries to translate the string as decoded by &%bheader%& to a
 standard character set. This is an attempt to produce the same string as would
-be displayed on a user's MUA. If translation fails, the &%bheader%& string is
-returned. Translation is attempted only on operating systems that support the
+be displayed on a user's MUA.
+If translation fails, the &%rheader%& string is returned.
+Translation is attempted only on operating systems that support the
 &[iconv()]& function. This is indicated by the compile-time macro HAVE_ICONV in
 a system Makefile or in &_Local/Makefile_&.
 .endlist ilist

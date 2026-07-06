@@ -263,14 +263,14 @@ while (mimeword)
       (void)iconv(icd, (ICONV_ARG2_TYPE)(&dptr), &dlen, CSS &outptr, &outleft);
 
       /* If outptr has been adjusted, there is some output. Set up to add it to
-      the output buffer. The function will have adjusted dptr and dlen. If
-      iconv() stopped because of an error, we'll pick it up next time when
-      there's no output.
+      the output buffer. The function will have adjusted (the input) dptr and
+      dlen. If iconv() stopped because of an error, we'll pick it up next time
+      when there's no output.
 
       If there is no output, we expect there to have been a translation
-      error, because we know there was at least one input byte. We leave the
-      value of tlen as -1, which causes the rest of the input to be copied
-      verbatim. */
+      error, because we know there was at least one input byte.  We mark the
+      input as all consumed, and add the input mimeword to the result without
+      checking for zeroes (being a C string, it cannot have any embedded). */
 
       if (outptr > tbuffer)
         {
@@ -279,16 +279,20 @@ while (mimeword)
         }
       else
         {
+	tlen = (int)(endword + 2 - mimeword);
+
 	*error = US strerror(errno);
         DEBUG(any) debug_printf("iconv error translating \"%.*s\" to %s: %s\n",
-		      (int)(endword + 2 - mimeword), mimeword, target, *error);
+		      tlen, mimeword, target, *error);
+	dlen = 0;
+
+	yield = string_catn(yield, mimeword, tlen);
+	tlen = 0;
         }
       }
 #endif
-
-    /* No charset translation is happening or there was a translation error;
-    just set up the decode result as the string to be added, and mark it all
-    used.  */
+    /* No charset translation is happening; just set up the original as the
+    string to be added, and mark it all used. */
 
     if (tlen == -1)
       {
@@ -297,17 +301,18 @@ while (mimeword)
       dlen = 0;
       }
 
-    /* Deal with zero values; convert them if requested. */
+    if (tlen > 0)		/* normal case: no charset translation error */
+      {
+      /* Deal with zero values; convert them if requested. */
 
-    if (zeroval != 0)
-      for (int i = 0; i < tlen; i++)
-        if (tptr[i] == 0) tptr[i] = zeroval;
+      if (zeroval != 0)
+	for (int i = 0; i < tlen; i++)
+	  if (tptr[i] == 0) tptr[i] = zeroval;
 
-    /* Add the new string onto the result */
+      /* Add the new string onto the result */
 
-    yield = *error
-      ? string_fmt_append(yield, "\"%.*s\"", tlen, tptr)
-      : string_catn(yield, tptr, tlen);
+      yield = string_catn(yield, tptr, tlen);
+      }
     }
 
 #if HAVE_ICONV

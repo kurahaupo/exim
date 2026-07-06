@@ -172,6 +172,15 @@ JH/45 PROXY protocol: harden agains early-close from client proxy.
 
 JH/46 Extern authenticator: harden againt failing option expansions.
 
+JH/47 Bug 3232: Fix RFC2047 decoding. Given miscoded input, the automatic
+      decode for address-bearing headers (eg. $h_from:) and the explicit
+      decode of the ${rfc2047d:} operator would return the interim result
+      of the transfer-encoding decode when the charset-conversion failed.
+      In the problem use-case, that value was given to the ${address:}
+      operator, which failed.
+      Change both to return the MIME-word input text.  Note that this is a
+      change in the documented behaviour for the $h_ headers.
+
 
 Exim version 4.99.4
 -------------------
