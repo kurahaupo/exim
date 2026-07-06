@@ -326,6 +326,7 @@ search_tidyup called
 01:01:01 p1235  try option 'acl_smtp_rcpt'
 01:01:01 p1235  using ACL "check_recipient"
 01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 26)
+01:01:01 p1235  check set acl_m0 = ok:    ${lookup mysql                    {select name from them where id = '${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╭considering: ok:░░░░${lookup░mysql░░░░░░░░░░░░░░░░░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ├───────text: ok:░░░░
 01:01:01 p1235   ├considering: ${lookup░mysql░░░░░░░░░░░░░░░░░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
@@ -363,8 +364,8 @@ search_tidyup called
 01:01:01 p1235   ├───item-res: 
 01:01:01 p1235   ├───expanded: ok:░░░░${lookup░mysql░░░░░░░░░░░░░░░░░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╰─────result: ok:░░░░
-01:01:01 p1235  check set acl_m0 = ok:    ${lookup mysql                    {select name from them where id = '${quote_mysql:$local_part}'}}
 01:01:01 p1235                   = ok:    
+01:01:01 p1235  check set acl_m0 = FAIL1: ${lookup mysql,no_rd              {select name from them where id = '$local_part'}}
 01:01:01 p1235   ╭considering: FAIL1:░${lookup░mysql,no_rd░░░░░░░░░░░░░░{select░name░from░them░where░id░=░'$local_part'}}
 01:01:01 p1235   ├───────text: FAIL1:░
 01:01:01 p1235   ├considering: ${lookup░mysql,no_rd░░░░░░░░░░░░░░{select░name░from░them░where░id░=░'$local_part'}}
@@ -399,10 +400,10 @@ search_tidyup called
 01:01:01 p1235   ├───item-res: 
 01:01:01 p1235   ├───expanded: FAIL1:░${lookup░mysql,no_rd░░░░░░░░░░░░░░{select░name░from░them░where░id░=░'$local_part'}}
 01:01:01 p1235   ╰─────result: FAIL1:░
-01:01:01 p1235  check set acl_m0 = FAIL1: ${lookup mysql,no_rd              {select name from them where id = '$local_part'}}
 01:01:01 p1235                   = FAIL1: 
 01:01:01 p1235  warn: condition test succeeded in ACL check_recipient
 01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 31)
+01:01:01 p1235  check set acl_m0 = ok:    ${lookup mysql,servers=127.0.0.1::PORT_N/test/root/pass      {select name from them where id = '${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╭considering: ok:░░░░${lookup░mysql,servers=127.0.0.1::PORT_N/test/root/pass░░░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ├───────text: ok:░░░░
 01:01:01 p1235   ├considering: ${lookup░mysql,servers=127.0.0.1::PORT_N/test/root/pass░░░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
@@ -440,8 +441,8 @@ search_tidyup called
 01:01:01 p1235   ├───item-res: 
 01:01:01 p1235   ├───expanded: ok:░░░░${lookup░mysql,servers=127.0.0.1::PORT_N/test/root/pass░░░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╰─────result: ok:░░░░
-01:01:01 p1235  check set acl_m0 = ok:    ${lookup mysql,servers=127.0.0.1::PORT_N/test/root/pass      {select name from them where id = '${quote_mysql:$local_part}'}}
 01:01:01 p1235                   = ok:    
+01:01:01 p1235  check set acl_m0 = ok:    ${lookup mysql,servers=127.0.0.1::PORT_N    {select name from them where id = '${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╭considering: ok:░░░░${lookup░mysql,servers=127.0.0.1::PORT_N░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ├───────text: ok:░░░░
 01:01:01 p1235   ├considering: ${lookup░mysql,servers=127.0.0.1::PORT_N░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
@@ -479,8 +480,8 @@ search_tidyup called
 01:01:01 p1235   ├───item-res: 
 01:01:01 p1235   ├───expanded: ok:░░░░${lookup░mysql,servers=127.0.0.1::PORT_N░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╰─────result: ok:░░░░
-01:01:01 p1235  check set acl_m0 = ok:    ${lookup mysql,servers=127.0.0.1::PORT_N    {select name from them where id = '${quote_mysql:$local_part}'}}
 01:01:01 p1235                   = ok:    
+01:01:01 p1235  check set acl_m0 = FAIL2: ${lookup mysql     {servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = '${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╭considering: FAIL2:░${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ├───────text: FAIL2:░
 01:01:01 p1235   ├considering: ${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
@@ -521,6 +522,7 @@ search_tidyup called
 01:01:01 p1235  LOG: MAIN
 01:01:01 p1235    H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 31 of TESTSUITE/test-config): condition test deferred: MySQL server "127.0.0.1:PORT_N/test" is tainted
 01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 39)
+01:01:01 p1235  check set acl_m0 = FAIL3: ${lookup mysql     {servers=127.0.0.1::PORT_N; select name from them where id = '$local_part'}}
 01:01:01 p1235   ╭considering: FAIL3:░${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'}}
 01:01:01 p1235   ├───────text: FAIL3:░
 01:01:01 p1235   ├considering: ${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'}}
@@ -558,7 +560,6 @@ search_tidyup called
 01:01:01 p1235   ├───item-res: 
 01:01:01 p1235   ├───expanded: FAIL3:░${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'}}
 01:01:01 p1235   ╰─────result: FAIL3:░
-01:01:01 p1235  check set acl_m0 = FAIL3: ${lookup mysql     {servers=127.0.0.1::PORT_N; select name from them where id = '$local_part'}}
 01:01:01 p1235                   = FAIL3: 
 01:01:01 p1235  warn: condition test succeeded in ACL check_recipient
 01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 42)

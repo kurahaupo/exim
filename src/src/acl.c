@@ -107,6 +107,7 @@ enum { ACLC_ACL,
        ACLC_SENDER_DOMAINS,
        ACLC_SENDERS,
        ACLC_SET,
+       ACLC_SET_TAINTED,
 #ifdef WITH_CONTENT_SCAN
        ACLC_SPAM,
 #endif
@@ -311,6 +312,8 @@ static condition_def conditions[] = {
   },
 
   [ACLC_SET] =			{ US"set",		ACD_EXP | ACD_MOD,
+				  FORBIDDEN(0) },
+  [ACLC_SET_TAINTED] =		{ US"set_tainted",	ACD_EXP | ACD_MOD,
 				  FORBIDDEN(0) },
 
 #ifdef WITH_CONTENT_SCAN
@@ -839,7 +842,7 @@ return TRUE;
 
 static BOOL
 acl_data_to_cond(const uschar * s, acl_condition_block * cond,
-  const uschar * name, BOOL taint, uschar ** error)
+  const uschar * name, uschar ** error)
 {
 if (*s++ != '=')
   {
@@ -848,7 +851,7 @@ if (*s++ != '=')
   return FALSE;
   }
 Uskip_whitespace(&s);
-cond->arg = taint ? string_copy_taint(s, GET_TAINTED) : string_copy(s);
+cond->arg = string_copy(s);
 return TRUE;
 }
 
@@ -1038,7 +1041,7 @@ while ((s = (*func)()))
   "endpass" has no data */
 
   if (c != ACLC_ENDPASS)
-    if (!acl_data_to_cond(s, cond, name, FALSE, error)) return NULL;
+    if (!acl_data_to_cond(s, cond, name, error)) return NULL;
   }
 
 return yield;
@@ -3326,53 +3329,56 @@ for (; cb; cb = cb->next)
       *epp = TRUE;		continue;
     }
 
-  /* For other conditions and modifiers, the argument is expanded now for some
-  of them, but not for all, because expansion happens down in some lower level
-  checking functions in some cases. */
-
-  if (!(conditions[cb->type].flags & ACD_EXP))
-    arg = cb->arg;
-
-  else if (!(arg = expand_string_2(cb->arg, &textonly)))
-    {
-    if (f.expand_string_forcedfail) continue;
-    *log_msgptr = string_sprintf("failed to expand ACL string %q: %s",
-      cb->arg, expand_string_message);
-    return f.search_find_defer ? DEFER : ERROR;
-    }
-
-  /* Show condition, and expanded condition if it's different */
-
-  HDEBUG(acl)
-    {
+  /* Show condition, before expansion */
+   {
     int lhswidth = 0;
-    debug_printf_indent("check %s%s %n",
-      (!(conditions[cb->type].flags & ACD_MOD) && cb->u.negated) ? "!":"",
-      conditions[cb->type].name, &lhswidth);
 
-    if (cb->type == ACLC_SET)
+    HDEBUG(acl|expand)
       {
+      debug_printf_indent("check %s%s %n",
+	(!(conditions[cb->type].flags & ACD_MOD) && cb->u.negated) ? "!":"",
+	conditions[cb->type].name, &lhswidth);
+
+      if (cb->type == ACLC_SET || cb->type == ACLC_SET_TAINTED)
+	{
 #ifndef DISABLE_DKIM
-      if (  Ustrcmp(cb->u.varname, "dkim_verify_status") == 0
-	 || Ustrcmp(cb->u.varname, "dkim_verify_reason") == 0)
-	{
-	debug_printf("%s ", cb->u.varname);
-	lhswidth += 19;
-	}
-      else
+	if (  Ustrcmp(cb->u.varname, "dkim_verify_status") == 0
+	   || Ustrcmp(cb->u.varname, "dkim_verify_reason") == 0)
+	  {
+	  debug_printf("%s ", cb->u.varname);
+	  lhswidth += 19;
+	  }
+	else
 #endif
-	{
-	debug_printf("acl_%s ", cb->u.varname);
-	lhswidth += 5 + Ustrlen(cb->u.varname);
+	  {
+	  debug_printf("acl_%s ", cb->u.varname);
+	  lhswidth += 5 + Ustrlen(cb->u.varname);
+	  }
 	}
+
+      debug_printf("= %s\n", cb->arg);
       }
 
-    debug_printf("= %s\n", cb->arg);
+    /* For other conditions and modifiers, the argument is expanded now for some
+    of them, but not for all, because expansion happens down in some lower level
+    checking functions in some cases. */
 
-    if (arg != cb->arg)
-      debug_printf("%.*s= %s\n", lhswidth,
-      US"                             ", CS arg);
-    }
+    if (!(conditions[cb->type].flags & ACD_EXP))
+      arg = cb->arg;
+
+    else if (!(arg = expand_string_2(cb->arg, &textonly)))
+      {
+      if (f.expand_string_forcedfail) continue;
+      *log_msgptr = string_sprintf("failed to expand ACL string %q: %s",
+	cb->arg, expand_string_message);
+      return f.search_find_defer ? DEFER : ERROR;
+      }
+
+    /* Show expanded condition if it's different */
+
+    HDEBUG(acl|expand) if (arg != cb->arg)
+	debug_printf("%*s %s\n", lhswidth+1, "=", CS arg);
+   }
 
   /* Check that this condition makes sense at this time */
 
@@ -4118,14 +4124,19 @@ for (; cb; cb = cb->next)
     /* Connection variables must persist forever; message variables not */
 
     case ACLC_SET:
+    case ACLC_SET_TAINTED:
       {
       int old_pool = store_pool;
+      uschar * s;
       if (  cb->u.varname[0] != 'm'
 #ifndef DISABLE_EVENT
 	 || event_name		/* An event is being delivered */
 #endif
 	 )
         store_pool = POOL_PERM;
+
+      s = cb->type == ACLC_SET_TAINTED
+	      ? string_copy_taint(arg, GET_TAINTED) : string_copy(arg);
 
 #ifndef DISABLE_DKIM	/* Overwriteable dkim result variables */
       if (  Ustrcmp(cb->u.varname, "dkim_verify_status") == 0
@@ -4136,12 +4147,11 @@ for (; cb; cb = cb->next)
 	  typedef void (*fn_t)(const uschar *, void *);
 	  
 	  if (mi)
-	    (((fn_t *) mi->functions)[DKIM_SETVAR])
-					(cb->u.varname, string_copy(arg));
+	    (((fn_t *) mi->functions)[DKIM_SETVAR]) (cb->u.varname, s);
 	  }
       else
 #endif
-	acl_var_create(cb->u.varname)->data.ptr = string_copy(arg);
+	acl_var_create(cb->u.varname)->data.ptr = s;
       store_pool = old_pool;
       break;
       }
@@ -5123,9 +5133,9 @@ BOOL endpass_seen = FALSE;
 int e;
 
 cond->next = NULL;
-cond->type = ACLC_SET;
+cond->type = taint ? ACLC_SET_TAINTED : ACLC_SET;
 if (!acl_varname_to_cond(&s, cond, &errstr)) return errstr;
-if (!acl_data_to_cond(s, cond, US"'-be'", taint, &errstr)) return errstr;
+if (!acl_data_to_cond(s, cond, US"'-be'", &errstr)) return errstr;
 
 if (acl_check_condition(ACL_WARN, cond, ACL_WHERE_UNKNOWN,
 			    NULL, 0, &endpass_seen, &errstr, &log_msg, &e) != OK)

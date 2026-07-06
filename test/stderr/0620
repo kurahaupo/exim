@@ -25,6 +25,8 @@ try option 'smtp_banner'
 try option 'acl_smtp_helo'
 try option 'acl_smtp_mail'
 try option 'acl_smtp_rcpt'
+check domains = notthis : lsearch;TESTSUITE/aux-fixed/0620.lsearch : nothiseither
+check logwrite = domain $domain
  ╭considering: domain░$domain
  ├───────text: domain░
  ├considering: $domain
@@ -33,17 +35,21 @@ try option 'acl_smtp_rcpt'
  ├───expanded: domain░$domain
  ╰─────result: domain░trythiskey.ex
             ╰──(tainted)
+               = domain trythiskey.ex
 LOG: MAIN
   domain trythiskey.ex
 created log directory TESTSUITE/spool/log
+check logwrite = value  $domain_data
  ╭considering: value░░$domain_data
  ├───────text: value░░
  ├considering: $domain_data
  ├──────value: has░this░data
  ├───expanded: value░░$domain_data
  ╰─────result: value░░has░this░data
+               = value  has this data
 LOG: MAIN
   value  has this data
+check logwrite = \$0 '$0'  \$1 '$1'
  ╭considering: \$0░'$0'░░\$1░'$1'
  ├backslashed: '\$'
  ├considering: 0░'$0'░░\$1░'$1'
@@ -63,6 +69,7 @@ LOG: MAIN
  ├───expanded: \$0░'$0'░░\$1░'$1'
  ╰─────result: $0░'trythiskey.ex'░░$1░''
             ╰──(tainted)
+               = $0 'trythiskey.ex'  $1 ''
 LOG: MAIN
   $0 'trythiskey.ex'  $1 ''
 try option 'acl_smtp_quit'
@@ -94,6 +101,8 @@ try option 'smtp_banner'
 try option 'acl_smtp_helo'
 try option 'acl_smtp_mail'
 try option 'acl_smtp_rcpt'
+check domains = notthis : lsearch,ret=key;TESTSUITE/aux-fixed/0620.lsearch : nothiseither
+check logwrite = domain $domain
  ╭considering: domain░$domain
  ├───────text: domain░
  ├considering: $domain
@@ -102,16 +111,20 @@ try option 'acl_smtp_rcpt'
  ├───expanded: domain░$domain
  ╰─────result: domain░trythiskey.ex
             ╰──(tainted)
+               = domain trythiskey.ex
 LOG: MAIN
   domain trythiskey.ex
+check logwrite = value  $domain_data
  ╭considering: value░░$domain_data
  ├───────text: value░░
  ├considering: $domain_data
  ├──────value: trythiskey.ex
  ├───expanded: value░░$domain_data
  ╰─────result: value░░trythiskey.ex
+               = value  trythiskey.ex
 LOG: MAIN
   value  trythiskey.ex
+check logwrite = \$0 '$0'  \$1 '$1'
  ╭considering: \$0░'$0'░░\$1░'$1'
  ├backslashed: '\$'
  ├considering: 0░'$0'░░\$1░'$1'
@@ -131,6 +144,7 @@ LOG: MAIN
  ├───expanded: \$0░'$0'░░\$1░'$1'
  ╰─────result: $0░'trythiskey.ex'░░$1░''
             ╰──(tainted)
+               = $0 'trythiskey.ex'  $1 ''
 LOG: MAIN
   $0 'trythiskey.ex'  $1 ''
 try option 'acl_smtp_quit'

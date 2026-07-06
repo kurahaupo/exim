@@ -183,6 +183,11 @@ JH/47 Bug 3232: Fix RFC2047 decoding. Given miscoded input, the automatic
 
 JH/48 DKIM: disable verification of input having a bare linefeed.
 
+JH/49 Bug 3224: Fix expansion test ("-be").  When trying to set a variable
+      with a tainted value including a backslash-protected "$" character, the
+      taint check was applied too early.  Instead, expand the text first and
+      apply taint to the result.
+
 
 Exim version 4.99.4
 -------------------

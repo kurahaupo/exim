@@ -49,6 +49,7 @@ p1235 Process p1235 is ready for new message
 p1235 try option 'acl_smtp_helo'
 p1235 try option 'acl_smtp_mail'
 p1235 try option 'acl_smtp_rcpt'
+p1235 check domains = ^nomatch_list
 p1235 compiled caseless RE '^nomatch_list' not found in local cache
 p1235 compiled RE '^nomatch_list' saved in local cache
 p1235 sending RE '^nomatch_list' to daemon
@@ -59,6 +60,7 @@ p1235  ├considering: /exim_daemon_notify
 p1235  ├───────text: /exim_daemon_notify
 p1235  ├───expanded: $spool_directory/exim_daemon_notify
 p1235  ╰─────result: TESTSUITE/spool/exim_daemon_notify
+p1235 check condition = ${if match {a_random_string} {static_RE}}
 p1235  ╭considering: ${if░match░{a_random_string}░{static_RE}}
 p1235   cond: match
 p1235    ╭considering: a_random_string}░{static_RE}}
@@ -87,6 +89,8 @@ p1235  ├──condition: match░{a_random_string}░{static_RE}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{static_RE}}
 p1235  ╰─────result: e̪m̪p̪t̪y̪
+p1235                 = 
+p1235 check condition = ${if match {a_random_string} {tricky_static_RE\$}}
 p1235  ╭considering: ${if░match░{a_random_string}░{tricky_static_RE\$}}
 p1235   cond: match
 p1235    ╭considering: a_random_string}░{tricky_static_RE\$}}
@@ -117,6 +121,8 @@ p1235  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{tricky_static_RE\$}}
 p1235  ╰─────result: e̪m̪p̪t̪y̪
+p1235                 = 
+p1235 check condition = ${if match {a_random_string} {pid=${pid} uncacheable_RE}}
 p1235  ╭considering: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
 p1235   cond: match
 p1235    ╭considering: a_random_string}░{pid=${pid}░uncacheable_RE}}
@@ -138,6 +144,7 @@ p1235  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable
 p1235  ├─────result: false
 p1235  ├───expanded: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
 p1235  ╰─────result: e̪m̪p̪t̪y̪
+p1235                 = 
 p1235 try option 'acl_smtp_predata'
 p1235 search_tidyup called
 p1235 search_tidyup called
@@ -545,7 +552,9 @@ p1236 Process p1236 is ready for new message
 p1236 try option 'acl_smtp_helo'
 p1236 try option 'acl_smtp_mail'
 p1236 try option 'acl_smtp_rcpt'
+p1236 check domains = ^nomatch_list
 p1236 compiled caseless RE '^nomatch_list' found in local cache
+p1236 check condition = ${if match {a_random_string} {static_RE}}
 p1236  ╭considering: ${if░match░{a_random_string}░{static_RE}}
 p1236   cond: match
 p1236    ╭considering: a_random_string}░{static_RE}}
@@ -564,6 +573,8 @@ p1236  ├──condition: match░{a_random_string}░{static_RE}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{static_RE}}
 p1236  ╰─────result: e̪m̪p̪t̪y̪
+p1236                 = 
+p1236 check condition = ${if match {a_random_string} {tricky_static_RE\$}}
 p1236  ╭considering: ${if░match░{a_random_string}░{tricky_static_RE\$}}
 p1236   cond: match
 p1236    ╭considering: a_random_string}░{tricky_static_RE\$}}
@@ -584,6 +595,8 @@ p1236  ├──condition: match░{a_random_string}░{tricky_static_RE\$}
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{tricky_static_RE\$}}
 p1236  ╰─────result: e̪m̪p̪t̪y̪
+p1236                 = 
+p1236 check condition = ${if match {a_random_string} {pid=${pid} uncacheable_RE}}
 p1236  ╭considering: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
 p1236   cond: match
 p1236    ╭considering: a_random_string}░{pid=${pid}░uncacheable_RE}}
@@ -605,6 +618,7 @@ p1236  ├──condition: match░{a_random_string}░{pid=${pid}░uncacheable
 p1236  ├─────result: false
 p1236  ├───expanded: ${if░match░{a_random_string}░{pid=${pid}░uncacheable_RE}}
 p1236  ╰─────result: e̪m̪p̪t̪y̪
+p1236                 = 
 p1236 try option 'acl_smtp_predata'
 p1236 search_tidyup called
 p1236 search_tidyup called

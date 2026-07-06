@@ -474,6 +474,7 @@ try option 'smtp_banner'
  ├───expanded: $smtp_active_hostname░ESMTP░Exim░$version_number░$tod_full
  ╰─────result: the.local.host.name░ESMTP░Exim░x.yz░Tue,░2░Mar░1999░09:44:33░+0000
 try option 'acl_smtp_helo'
+check condition = ${if match_domain {$sender_helo_name}{+dlist}}
  ╭considering: ${if░match_domain░{$sender_helo_name}{+dlist}}
   cond: match_domain
    ╭considering: $sender_helo_name}{+dlist}}
@@ -499,11 +500,13 @@ try option 'acl_smtp_helo'
  ├─────result: true
  ├───expanded: ${if░match_domain░{$sender_helo_name}{+dlist}}
  ╰─────result: true
+                = true
 try option 'acl_smtp_atrn'
 try option 'acl_smtp_etrn'
 try option 'acl_smtp_vrfy'
 try option 'acl_smtp_expn'
 try option 'acl_smtp_mail'
+check hosts = domain=$domain/sender_domain=$sender_address_domain
  ╭considering: domain=$domain/sender_domain=$sender_address_domain
  ├───────text: domain=
  ├considering: $domain/sender_domain=$sender_address_domain
@@ -517,6 +520,7 @@ try option 'acl_smtp_mail'
  ╰─────result: domain=/sender_domain=sender.domain
             ╰──(tainted)
 try option 'acl_smtp_rcpt'
+check domains = domain=$domain/sender_domain=$sender_address_domain
  ╭considering: domain=$domain/sender_domain=$sender_address_domain
  ├───────text: domain=
  ├considering: $domain/sender_domain=$sender_address_domain
@@ -530,6 +534,7 @@ try option 'acl_smtp_rcpt'
  ├───expanded: domain=$domain/sender_domain=$sender_address_domain
  ╰─────result: domain=recipient.domain/sender_domain=sender.domain
             ╰──(tainted)
+check sender_domains = domain=$domain/sender_domain=$sender_address_domain
  ╭considering: domain=$domain/sender_domain=$sender_address_domain
  ├───────text: domain=
  ├considering: $domain/sender_domain=$sender_address_domain

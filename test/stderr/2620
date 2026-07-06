@@ -294,6 +294,7 @@ SMTP>> 250 OK
 SMTP<< rcpt to:<c@d>
 using ACL "check_recipient"
 processing ACL check_recipient "warn" (TESTSUITE/test-config 27)
+check set acl_m0 = ok:   ${lookup pgsql                    {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -307,8 +308,8 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 27)
  PGSQL: no data found
  creating new cache entry
  lookup failed
-check set acl_m0 = ok:   ${lookup pgsql                    {select name from them where id = '${quote_pgsql:$local_part}'}}
                  = ok:   
+check set acl_m0 = FAIL: ${lookup pgsql,cache=no_rd        {select name from them where id = '$local_part'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts="cache=no_rd"
@@ -326,10 +327,10 @@ LOG: MAIN PANIC
  PGSQL: no data found
  replacing old cache entry
  lookup failed
-check set acl_m0 = FAIL: ${lookup pgsql,cache=no_rd        {select name from them where id = '$local_part'}}
                  = FAIL: 
 warn: condition test succeeded in ACL check_recipient
 processing ACL check_recipient "warn" (TESTSUITE/test-config 32)
+check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/      {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts="servers=localhost::PORT_N/test/CALLER/"
@@ -343,8 +344,8 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 32)
  PGSQL: no data found
  replacing old cache entry
  lookup failed
-check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/      {select name from them where id = '${quote_pgsql:$local_part}'}}
                  = ok:   
+check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N    {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts="servers=localhost::PORT_N"
@@ -358,8 +359,8 @@ check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/  
  PGSQL: no data found
  replacing old cache entry
  lookup failed
-check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N    {select name from them where id = '${quote_pgsql:$local_part}'}}
                  = ok:   
+check set acl_m0 = FAIL: ${lookup pgsql     {servers=localhost::PORT_N/test/CALLER/; select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -484,6 +485,7 @@ LOG: MAIN REJECT
 SMTP<< rcpt to:<c@d>
 using ACL "check_recipient"
 processing ACL check_recipient "warn" (TESTSUITE/test-config 27)
+check set acl_m0 = ok:   ${lookup pgsql                    {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -497,8 +499,8 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 27)
  PGSQL: no data found
  replacing old cache entry
  lookup failed
-check set acl_m0 = ok:   ${lookup pgsql                    {select name from them where id = '${quote_pgsql:$local_part}'}}
                  = ok:   
+check set acl_m0 = FAIL: ${lookup pgsql,cache=no_rd        {select name from them where id = '$local_part'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts="cache=no_rd"
@@ -516,10 +518,10 @@ LOG: MAIN PANIC
  PGSQL: no data found
  replacing old cache entry
  lookup failed
-check set acl_m0 = FAIL: ${lookup pgsql,cache=no_rd        {select name from them where id = '$local_part'}}
                  = FAIL: 
 warn: condition test succeeded in ACL check_recipient
 processing ACL check_recipient "warn" (TESTSUITE/test-config 32)
+check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/      {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts="servers=localhost::PORT_N/test/CALLER/"
@@ -533,8 +535,8 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 32)
  PGSQL: no data found
  replacing old cache entry
  lookup failed
-check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/      {select name from them where id = '${quote_pgsql:$local_part}'}}
                  = ok:   
+check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N    {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts="servers=localhost::PORT_N"
@@ -548,8 +550,8 @@ check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/  
  PGSQL: no data found
  replacing old cache entry
  lookup failed
-check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N    {select name from them where id = '${quote_pgsql:$local_part}'}}
                  = ok:   
+check set acl_m0 = FAIL: ${lookup pgsql     {servers=localhost::PORT_N/test/CALLER/; select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
