@@ -181,6 +181,8 @@ JH/47 Bug 3232: Fix RFC2047 decoding. Given miscoded input, the automatic
       Change both to return the MIME-word input text.  Note that this is a
       change in the documented behaviour for the $h_ headers.
 
+JH/48 DKIM: disable verification of input having a bare linefeed.
+
 
 Exim version 4.99.4
 -------------------

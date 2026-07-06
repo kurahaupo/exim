@@ -801,6 +801,11 @@ for (ngroups = 0;
     ngroups++;
 
 /* Translate to NIDs */
+/*XXX SSL_CTX_set1_groups_list() exists since (at least) - takes name
+so would avoid doing the NID loookups, and is recommended for having
+extra features.  Unsure if we can use those, though - would have to
+redefine semantics for tls_eccurves option.
+*/
 
 curves_list = exp_curve;
 for (ngroups = 0; curve = string_nextinlist(&curves_list, &sep, NULL, 0);

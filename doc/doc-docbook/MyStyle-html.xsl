@@ -76,17 +76,32 @@ div[class=changed] div.literallayout {
 
 <xsl:template match="*[@revisionflag]">
   <xsl:choose>
-    <xsl:when test="local-name(.) = 'para' or local-name(.) = 'simpara'                     or local-name(.) = 'formalpara'                     or local-name(.) = 'section'                     or local-name(.) = 'sect1'                     or local-name(.) = 'sect2'                     or local-name(.) = 'sect3'                     or local-name(.) = 'sect4'                     or local-name(.) = 'sect5'                     or local-name(.) = 'chapter'                     or local-name(.) = 'preface'                     or local-name(.) = 'itemizedlist'                     or local-name(.) = 'varlistentry'                     or local-name(.) = 'glossary'                     or local-name(.) = 'bibliography'                     or local-name(.) = 'index'                     or local-name(.) = 'appendix'">
+    <xsl:when test="local-name(.) = 'para'
+    	or local-name(.) = 'simpara'	or local-name(.) = 'formalpara'
+	or local-name(.) = 'section'	or local-name(.) = 'sect1'
+	or local-name(.) = 'sect2'	or local-name(.) = 'sect3'
+	or local-name(.) = 'sect4'	or local-name(.) = 'sect5'
+	or local-name(.) = 'chapter'	or local-name(.) = 'preface'
+	or local-name(.) = 'itemizedlist' or local-name(.) = 'varlistentry'
+	or local-name(.) = 'glossary'	or local-name(.) = 'bibliography'
+	or local-name(.) = 'index'	or local-name(.) = 'appendix'">
       <div class="{@revisionflag}">
         <xsl:apply-imports/>
       </div>
     </xsl:when>
-    <xsl:when test="local-name(.) = 'phrase' or local-name(.) = 'ulink'                     or local-name(.) = 'link'                     or local-name(.) = 'filename'                     or local-name(.) = 'literal'                     or local-name(.) = 'member'                     or local-name(.) = 'glossterm'                     or local-name(.) = 'sgmltag'                     or local-name(.) = 'quote'                     or local-name(.) = 'emphasis'                     or local-name(.) = 'command'                     or local-name(.) = 'xref'">
+    <xsl:when test="local-name(.) = 'phrase'
+	or local-name(.) = 'ulink'	or local-name(.) = 'link'
+	or local-name(.) = 'filename'	or local-name(.) = 'literal'
+	or local-name(.) = 'member'	or local-name(.) = 'glossterm'
+	or local-name(.) = 'sgmltag'	or local-name(.) = 'quote'
+	or local-name(.) = 'emphasis'	or local-name(.) = 'command'
+	or local-name(.) = 'xref'">
       <span class="{@revisionflag}">
         <xsl:apply-imports/>
       </span>
     </xsl:when>
-    <xsl:when test="local-name(.) = 'listitem' or local-name(.) = 'entry'                     or local-name(.) = 'title'">
+    <xsl:when test="local-name(.) = 'listitem' or local-name(.) = 'entry'
+	or local-name(.) = 'title'">
       <!-- nop; these are handled directly in the stylesheet -->
       <xsl:apply-imports/>
     </xsl:when>
