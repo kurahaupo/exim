@@ -17487,7 +17487,7 @@ not count as protocol errors (see &%smtp_max_synprot_errors%&).
 .cindex "ESMTP extensions" PIPECONNECT
 If Exim is built without the DISABLE_PIPE_CONNECT build option
 this option controls which hosts the facility is advertised to
-and from which pipeline early-connection (before MAIL) SMTP
+and from which pipelined early-connection (before MAIL) SMTP
 commands are acceptable.
 When used, the pipelining saves on roundtrip times.
 
@@ -17495,14 +17495,14 @@ See also the &%hosts_pipe_connect%& smtp transport option.
 
 The SMTP service extension keyword advertised is &"PIPECONNECT"&;
 it permits the client to pipeline
-TCP connection and hello command (cleatext phase),
+TCP connection and hello command (cleartext phase),
 or TLS-establishment and hello command (encrypted phase),
 on later connections to the same host.
 
 This saves a roundtrip time for the initial banner, and
 (if STARTTLS is being used) one each for the STARTTLS and
 the subsequent banner.
-If AUTH is used the another is saved for that.
+If AUTH is used, another roundtrip is saved for that.
 
 
 .option prdr_enable main boolean false

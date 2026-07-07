@@ -1470,6 +1470,26 @@ struct pollfd p = {.fd = fd, .events = pollbits};
 return poll(&p, 1, tmo_millisec);
 }
 
+static inline int
+cork_fd(int fd)
+{
+#ifdef EXIM_TCP_CORK
+return setsockopt(fd, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
+#else
+return 0;
+#endif
+}
+
+static inline int
+uncork_fd(int fd)
+{
+#ifdef EXIM_TCP_CORK
+return setsockopt(fd, IPPROTO_TCP, EXIM_TCP_CORK, US &off, sizeof(off));
+#else
+return 0;
+#endif
+}
+
 /******************************************************************************/
 /* Client-side smtp log string, for debug */
 

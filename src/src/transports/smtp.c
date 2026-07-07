@@ -3972,10 +3972,10 @@ do
       {
       p[1].fd = -1;
 
-# ifdef EXIM_TCP_CORK  /* Use _CORK to get TLS Close Notify in FIN segment */
-      (void) setsockopt(tls_out.active.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
-# endif
+      /* Use _CORK to get TLS Close Notify in FIN segment */
+      cork_fd(tls_out.active.sock);
       tls_shutdown_wr(tls_ctx);
+
       send_tls_shutdown = FALSE;
       shutdown(tls_out.active.sock, SHUT_WR);
       }
@@ -4483,9 +4483,7 @@ else
 #ifndef DISABLE_TLS
       if (sx->cctx.tls_ctx && sx->send_tlsclose)	/* need to send TLS Close Notify */
 	{
-# ifdef EXIM_TCP_CORK		/* Use _CORK to get Close Notify in FIN segment */
-	(void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
-# endif
+	cork_fd(sx->cctx.sock);		/* get Close Notify in FIN segment */
 	tls_shutdown_wr(sx->cctx.tls_ctx);
 	sx->send_tlsclose = FALSE;	/* avoid later repeat */
 	}
@@ -5192,9 +5190,7 @@ if (sx->send_quit)
 
   if (sx->cctx.tls_ctx && sx->send_tlsclose)
     {
-# ifdef EXIM_TCP_CORK	/* Use _CORK to get TLS Close Notify in FIN segment */
-    (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
-# endif
+    cork_fd(sx->cctx.sock);		/* get TLS Close Notify in FIN seg */
     tls_shutdown_wr(sx->cctx.tls_ctx);
     sx->send_tlsclose = FALSE;
     }
@@ -5247,9 +5243,7 @@ if (sx->send_quit || tcw_done && !tcw)
 
     if (sx->send_tlsclose)
       {
-# ifdef EXIM_TCP_CORK
-      (void) setsockopt(sx->cctx.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
-# endif
+      cork_fd(sx->cctx.sock);
       tls_close(sx->cctx.tls_ctx, TLS_SHUTDOWN_WAIT);
       }
     else

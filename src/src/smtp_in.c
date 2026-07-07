@@ -667,28 +667,22 @@ in_processing smtp_template = {
 
 
 /* Check if a getc will block or not */
-/*XXX should convert from select() to poll() */
 
 static BOOL
 smtp_could_getc(BOOL eof_ok)
 {
 int rc;
-fd_set fds;
-struct timeval tzero = {.tv_sec = 0, .tv_usec = 0};
 
 if (smtp_inptr < smtp_inend)
-  return TRUE;		/* Previously buffered data available */
+  return TRUE;				/* Previously buffered data available */
 
-FD_ZERO(&fds);
-FD_SET(smtp_in_fd, &fds);
-rc = select(smtp_in_fd + 1, (SELECT_ARG2_TYPE *)&fds, NULL, NULL, &tzero);
-
-if (rc <= 0) return FALSE;	/* Not ready to read */
-if (eof_ok) return TRUE;	/* A read will not block */
+if (poll_one_fd(smtp_in_fd, POLLIN, 0) == 0) return FALSE; /* Not read-ready */
+if (eof_ok) return TRUE;		/* A read will not block even if EOF */
 
 /* Check for actual data */
+
 rc = smtp_getc(rx_prc, GETC_BUFFER_UNLIMITED);
-if (rc < 0) return FALSE;      /* End of file or error */
+if (rc < 0) return FALSE;		/* End of file or error */
 
 smtp_ungetc(rx_prc, rc);
 return TRUE;
@@ -1231,12 +1225,8 @@ else
       smtp_write_error = -1;
     smtp_resp_ptr = 0;
     }
-#ifdef EXIM_TCP_CORK
-  if (  uncork 
-     && setsockopt(smtp_out_fd, IPPROTO_TCP, EXIM_TCP_CORK,
-					  &off, sizeof(off)) != 0)
+  if (uncork && uncork_fd(smtp_out_fd) != 0)
     smtp_write_error = -1;
-#endif
   }
 
 return smtp_write_error;
@@ -3798,11 +3788,8 @@ if (  acl_smtp_quit
     log_write(LOG_MAIN|LOG_PANIC, "ACL for QUIT returned ERROR: %s",
       *log_msgp);
 
-#ifdef EXIM_TCP_CORK
 if (smtp_out_fd >= 0)
-  (void) setsockopt(smtp_out_fd, IPPROTO_TCP, EXIM_TCP_CORK,
-		    US &on, sizeof(on));
-#endif
+  cork_fd(smtp_out_fd);
 
 if (*user_msgp)
   smtp_respond(US"221", 3, SR_FINAL, *user_msgp);

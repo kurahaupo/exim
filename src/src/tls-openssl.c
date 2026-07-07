@@ -4939,9 +4939,7 @@ if (do_shutdown > TLS_NO_SHUTDOWN)
      && do_shutdown > TLS_SHUTDOWN_NOWAIT
      )
     {
-#ifdef EXIM_TCP_CORK
-    (void) setsockopt(*fdp, IPPROTO_TCP, EXIM_TCP_CORK, US &off, sizeof(off));
-#endif
+    uncork_fd(*fdp);
     ALARM(2);
     rc = SSL_shutdown(*sslp);			/* wait for response */
     ALARM_CLR(0);

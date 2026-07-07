@@ -3966,10 +3966,8 @@ if (do_shutdown)
   Assume this works at least from the introduction of gnutls_record_cork(). */
 
 #ifndef SUPPORT_CORK
-# ifdef EXIM_TCP_CORK
   if (do_shutdown == TLS_SHUTDOWN_WAIT)
-    (void) setsockopt(tlsp->active.sock, IPPROTO_TCP, EXIM_TCP_CORK, US &off, sizeof(off));
-# endif
+    uncork_fd(tlsp->active.sock);
 #endif
 
   /* The library seems to have no way to only wait for a peer's
