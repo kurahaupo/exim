@@ -3823,25 +3823,19 @@ tls_close(NULL, TLS_SHUTDOWN_WAIT);
 
 log_close_event(US"by QUIT");
 
-# ifdef EXIM_TCP_CORK
-/* If we corked and there is no pending input, trigger transmit of the
+/* If there is no pending input, trigger transmit of the
 ack-of-QUIT since that could be the peer's wakeup to close the TCP connection.
 */
 
 if (  smtp_out_fd > 0 && tls_in.active.sock < 0
    && wouldblock_reading(WBR_DATA_OR_EOF))
-  {
   smtp_fflush(SFF_UNCORK);
-  (void) poll_one_fd(smtp_in_fd, POLLIN, 200);
-  }
-# else
 
 /* Pause, hoping client will FIN first so that they get the TIME_WAIT.
 The socket should become readble (though with no data) */
 
 (void) poll_one_fd(smtp_in_fd, POLLIN, 200);
 
-# endif	/*!EXIM_TCP_CORK*/
 #endif	/*!SERVERSIDE_CLOSE_NOWAIT*/
 }
 
