@@ -1002,6 +1002,9 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/(TLS error on connection from .* \(SSL_\w+\): error:)(.*)/$1 <<detail omitted>>/;
   next if /SSL verify error: depth=0 error=certificate not trusted/;
 
+  ## OpenSSL 3.3
+  s/TLS error on.*\KUnknown curve name in tls_eccurve "bogus"$/Unable to set EC group list "bogus"/;
+
   ## OpenSSL 3.2.1
   ## OpenSSL 3.0.0
   #s/TLS\ error\ \(D-H\ param\ setting\ .*\ error:\K

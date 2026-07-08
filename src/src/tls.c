@@ -104,6 +104,7 @@ Arguments:
   s         the string to expand; if NULL just return TRUE
   name      name of string being expanded (for error)
   result    where to put the result
+  errstr    where to put an error string
 
 Returns:    TRUE if OK; result may still be NULL after forced failure
 */
@@ -117,7 +118,7 @@ if (!s)
   f.expand_string_forcedfail = FALSE;
   *result = NULL;
   }
-else if (  !(*result = expand_string(US s)) /* need to clean up const more */
+else if (  !(*result = expand_string(US s)) /*XXX need to clean up const more */
 	&& !f.expand_string_forcedfail
 	)
   {

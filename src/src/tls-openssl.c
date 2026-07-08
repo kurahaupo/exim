@@ -92,6 +92,9 @@ change this guard and punt the issue for a while longer. */
 # if OPENSSL_VERSION_NUMBER <  0x030200020L
 #  define EXIM_OPENSSL_BOGUS_SERVER_ALPN	/*XXX when was this fixed? */
 # endif
+# if OPENSSL_VERSION_NUMBER >= 0x030300000L
+#  define EXIM_HAVE_OPENSSL_GROUP_TUPLES
+# endif
 #endif
 
 #if LIBRESSL_VERSION_NUMBER >= 0x3040000fL
@@ -739,42 +742,33 @@ return NULL;
 #endif
 }
 
-/* Load parameters for ECDH encryption.  Server only.
-
-For now, we stick to NIST P-256 because: it's simple and easy to configure;
-it avoids any patent issues that might bite redistributors; despite events in
-the news and concerns over curve choices, we're not cryptographers, we're not
-pretending to be, and this is "good enough" to be better than no support,
-protecting against most adversaries.  Given another year or two, there might
-be sufficient clarity about a "right" way forward to let us make an informed
-decision, instead of a knee-jerk reaction.
-
-Longer-term, we should look at supporting both various named curves and
-external files generated with "openssl ecparam", much as we do for init_dh().
-We should also support "none" as a value, to explicitly avoid initialisation.
-
-Patches welcome.
+/* Load parameters for ECDH encryption.  Server and client.
 
 Arguments:
   sctx      The current SSL CTX (inbound or outbound)
+  curvelist The curves/groups to set
   errstr    error string pointer
 
 Returns:    TRUE if OK (nothing to set up, or setup worked)
 */
 
 static BOOL
-init_ecdh(SSL_CTX * sctx, uschar ** errstr)
+init_ecdh(SSL_CTX * ctx, const uschar * curvelist, uschar ** errstr)
 {
 uschar * exp_curve;
-int ngroups, rc, sep;
-const uschar * curves_list,  * curve;
-#  ifdef EXIM_HAVE_OPENSSL_SET1_GROUPS
-int nids[16];
-#  else
-int nids[1];
-#  endif
+int ngroups, sep;
+const uschar * curve;
 
-if (!expand_check(tls_eccurve, US"tls_eccurve", &exp_curve, errstr))
+#ifndef EXIM_HAVE_OPENSSL_GROUP_TUPLES
+int rc;
+# ifdef EXIM_HAVE_OPENSSL_SET1_GROUPS
+int nids[16];
+# else
+int nids[1];
+# endif
+#endif
+
+if (!expand_check(curvelist, US"tls_eccurve", &exp_curve, errstr))
   return FALSE;
 
 /* Is the option deliberately empty? */
@@ -784,53 +778,61 @@ if (!exp_curve || !*exp_curve)
 
 /* Limit the list to hardwired array size. Drop out if any element is "suto". */
 
-curves_list = exp_curve;
-sep = 0;
-for (ngroups = 0;
-       ngroups < nelem(nids)
-    && (curve = string_nextinlist(&curves_list, &sep, NULL, 0));
+for (curvelist = exp_curve, sep = 0, ngroups = 0;
+#ifndef EXIM_HAVE_OPENSSL_GROUP_TUPLES
+    ngroups < nelem(nids) &&
+#endif
+    (curve = string_nextinlist(&curvelist, &sep, NULL, 0));
+    ngroups++
     )
   if (Ustrcmp(curve, "auto") == 0)
     {
     DEBUG(tls) if (ngroups > 0)
       debug_printf(" tls_eccurve 'auto' item takes precedence\n");
-    if ((exp_curve = init_ecdh_auto(sctx))) break; /* have a curve name to set */
-    return TRUE;				   /* all done */
+    if ((exp_curve = init_ecdh_auto(ctx)))
+      break;					/* have a curve name to set */
+    return TRUE;				/* nothing to do */
     }
-  else
-    ngroups++;
 
-/* Translate to NIDs */
-/*XXX SSL_CTX_set1_groups_list() exists since (at least) - takes name
-so would avoid doing the NID loookups, and is recommended for having
-extra features.  Unsure if we can use those, though - would have to
-redefine semantics for tls_eccurves option.
-*/
+#ifdef EXIM_HAVE_OPENSSL_GROUP_TUPLES
 
-curves_list = exp_curve;
-for (ngroups = 0; curve = string_nextinlist(&curves_list, &sep, NULL, 0);
+if (SSL_CTX_set1_groups_list(ctx, CCS exp_curve))
+  return TRUE;
+
+ {
+  uschar * s = string_sprintf("Unable to set EC group list %q", exp_curve);
+  DEBUG(tls) debug_printf("TLS error: %s\n", s);
+  if (errstr) *errstr = s;
+ }
+return FALSE;
+
+#else
+/* Translate to NIDs first */
+
+for (curvelist = exp_curve, ngroups = 0;
+     curve = string_nextinlist(&curvelist, &sep, NULL, 0);
      ngroups++)
   if (  (nids[ngroups] = OBJ_sn2nid       (CCS curve)) == NID_undef
-#  ifdef EXIM_HAVE_OPENSSL_EC_NIST2NID
+# ifdef EXIM_HAVE_OPENSSL_EC_NIST2NID
      && (nids[ngroups] = EC_curve_nist2nid(CCS curve)) == NID_undef
-#  endif
+# endif
      )
     {
-    uschar * s = string_sprintf("Unknown curve name in tls_eccurve '%s'", curve);
+    uschar * s = string_sprintf("Unknown curve name in tls_eccurve %q", curve);
     DEBUG(tls) debug_printf("TLS error: %s\n", s);
     if (errstr) *errstr = s;
     return FALSE;
     }
 
-#  ifdef EXIM_HAVE_OPENSSL_SET1_GROUPS
+# ifdef EXIM_HAVE_OPENSSL_SET1_GROUPS
 /* Set the groups */
 
-if ((rc = SSL_CTX_set1_groups(sctx, nids, ngroups)) == 0)
+if ((rc = SSL_CTX_set1_groups(ctx, nids, ngroups)) == 0)
   tls_error(string_sprintf("Error enabling '%s' group(s)", exp_curve), NULL, NULL, errstr);
 else
   DEBUG(tls) debug_printf(" ECDH: enabled '%s' group(s)\n", exp_curve);
 
-#  else		/* Cannot handle a list; only 1 element nids array */
+# else		/* Cannot handle a list; only 1 element nids array */
  {
   EC_KEY * ecdh;
   if (!(ecdh = EC_KEY_new_by_curve_name(nids[0])))
@@ -842,15 +844,16 @@ else
   /* The "tmp" in the name here refers to setting a temporary key
   not to the stability of the interface. */
 
-  if ((rc = SSL_CTX_set_tmp_ecdh(sctx, ecdh)) == 0)
+  if ((rc = SSL_CTX_set_tmp_ecdh(ctx, ecdh)) == 0)
     tls_error(string_sprintf("Error enabling '%s' curve", exp_curve), NULL, NULL, errstr);
   else
     DEBUG(tls) debug_printf(" ECDH: enabled '%s' curve\n", exp_curve);
   EC_KEY_free(ecdh);
  }
-#  endif	/*!EXIM_HAVE_OPENSSL_SET1_GROUPS*/
+# endif	/*!EXIM_HAVE_OPENSSL_SET1_GROUPS*/
 
 return !!rc;
+#endif	/*!EXIM_HAVE_OPENSSL_GROUP_TUPLES*/
 }
 
 
@@ -1787,7 +1790,7 @@ else
 if (opt_unset_or_noexpand(tls_eccurve))
   {
   DEBUG(tls) debug_printf("TLS: preloading ECDH curve '%s' for server\n", tls_eccurve);
-  if (init_ecdh(ctx, &dummy_errstr))
+  if (init_ecdh(ctx, tls_eccurve, &dummy_errstr))
     state_server.lib_state.ecdh = TRUE;
   }
 else
@@ -1919,7 +1922,7 @@ if (  opt_set_and_noexpand(ob->tls_certificate)
     uschar * pkey = ob->tls_privatekey;
 
     DEBUG(tls)
-      debug_printf("TLS: preloading client certs for transport '%s'\n", trname);
+      debug_printf("TLS: preloading client certs for transport %q\n", trname);
 
     if (  tls_add_certfile(ctx, &tpt_dummy_state, ob->tls_certificate,
 				    &dummy_errstr) == 0
@@ -1932,7 +1935,7 @@ if (  opt_set_and_noexpand(ob->tls_certificate)
   }
 else
   DEBUG(tls)
-    debug_printf("TLS: not preloading client certs, for transport '%s'\n", trname);
+    debug_printf("TLS: not preloading client certs, for transport %q\n", trname);
 
 
 if (  opt_set_and_noexpand(ob->tls_verify_certificates)
@@ -1946,7 +1949,7 @@ if (  opt_set_and_noexpand(ob->tls_verify_certificates)
     {
     uschar * v_certs = ob->tls_verify_certificates;
     DEBUG(tls)
-      debug_printf("TLS: preloading CA bundle for transport '%s'\n", trname);
+      debug_printf("TLS: preloading CA bundle for transport %q\n", trname);
 
     if (setup_certs(ctx, &v_certs,
 	  ob->tls_crl, dummy_host, &dummy_errstr) == OK)
@@ -1955,7 +1958,19 @@ if (  opt_set_and_noexpand(ob->tls_verify_certificates)
   }
 else
   DEBUG(tls)
-    debug_printf("TLS: not preloading CA bundle, for transport '%s'\n", trname);
+    debug_printf("TLS: not preloading CA bundle, for transport %q\n", trname);
+
+
+if (opt_set_and_noexpand(ob->tls_eccurve))
+  {
+  DEBUG(tls) debug_printf("TLS: preloading ECDH curve %q for transport %q\n",
+			  tls_eccurve, trname);
+  if (init_ecdh(ctx, ob->tls_eccurve, &dummy_errstr))
+    tpt_dummy_state.lib_state.ecdh = TRUE;
+  }
+else
+  DEBUG(tls)
+    debug_printf("TLS: not preloading ECDH curve for transport %q\n", trname);
 
 #endif /*EXIM_HAVE_INOTIFY*/
 }
@@ -2278,7 +2293,7 @@ already exists.  Might even need this selfsame callback, for reneg? */
  }
 
 if (  !init_dh(server_sni, state->dhparam, &errstr)
-   || !init_ecdh(server_sni, &errstr)
+   || !init_ecdh(server_sni, tls_eccurve, &errstr)
    )
   goto bad;
 
@@ -2961,18 +2976,17 @@ will never be used because we use a new context every time. */
 /* Initialize with DH parameters if supplied */
 /* Initialize ECDH temp key parameter selection */
 
-if (!host)
-  {
+if (!host)					/* server */
   if (state->lib_state.dh)
     { DEBUG(tls) debug_printf("TLS: DH params were preloaded\n"); }
   else
     if (!init_dh(ctx, state->dhparam, errstr)) return DEFER;
 
-  if (state->lib_state.ecdh)
-    { DEBUG(tls) debug_printf("TLS: ECDH curve was preloaded\n"); }
-  else
-    if (!init_ecdh(ctx, errstr)) return DEFER;
-  }
+if (state->lib_state.ecdh)
+  { DEBUG(tls) debug_printf("TLS: ECDH curve was preloaded\n"); }
+else
+  if (!init_ecdh(ctx, host ? ob->tls_eccurve : tls_eccurve, errstr))
+    return DEFER;
 
 /* Set up certificate and key (and perhaps OCSP info) */
 

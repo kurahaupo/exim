@@ -137,6 +137,7 @@ optionlist smtp_transport_options[] = {
   { "tls_certificate",      opt_stringptr, LOFF(tls_certificate) },
   { "tls_crl",              opt_stringptr, LOFF(tls_crl) },
   { "tls_dh_min_bits",      opt_int,	   LOFF(tls_dh_min_bits) },
+  { "tls_eccurve",          opt_stringptr, LOFF(tls_eccurve) },
   { "tls_privatekey",       opt_stringptr, LOFF(tls_privatekey) },
   { "tls_require_ciphers",  opt_stringptr, LOFF(tls_require_ciphers) },
 # ifndef DISABLE_TLS_RESUME

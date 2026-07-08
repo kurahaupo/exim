@@ -107,6 +107,7 @@ typedef struct {
   uschar	*tls_alpn;
   uschar	*tls_certificate;
   uschar	*tls_crl;
+  uschar	*tls_eccurve;
   uschar	*tls_privatekey;
   uschar	*tls_require_ciphers;
 # ifndef DISABLE_TLS_RESUME

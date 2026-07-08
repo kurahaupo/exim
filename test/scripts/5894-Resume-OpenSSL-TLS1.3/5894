@@ -1,7 +1,7 @@
 # TLSv1.3 session resumption
 #
 ### TLS1.3
-exim -DSERVER=server -DOPTION=+no_tlsv1_3 -bd -oX PORT_D:PORT_D2
+exim -DSERVER=server -bd -oX PORT_D:PORT_D2
 ****
 exim -DVALUE=resume -odf getticket@test.ex
 Test message. Contains FF: ÿ

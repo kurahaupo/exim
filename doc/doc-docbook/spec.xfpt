@@ -19019,19 +19019,26 @@ The feature may usefully be combined with TCP Fast Open.
 
 .option tls_eccurve main "string list&!!" &`auto`&
 .cindex TLS "EC cryptography"
+.cindex TLS "EC groups/curves"
 This option selects EC curves for use by Exim when used with OpenSSL.
 It has no effect when Exim is used with GnuTLS
 (the equivalent can be done using a priority string for the
 &%tls_require_ciphers%& option).
 
 After expansion it must contain
-one or (only for OpenSSL versiona 1.1.1 onwards) more
+one or (only for OpenSSL versions 1.1.1 onwards) more
 EC curve names, such as &`prime256v1`&, &`secp384r1`&, or &`P-521`&.
 Consult your OpenSSL manual for valid curve names.
 
 For OpenSSL versions before (and not including) 1.0.2, the string
 &`auto`& selects &`prime256v1`&. For more recent OpenSSL versions
 &`auto`& tells the library to choose.
+
+.new
+For OpenSSL versions 3.3 onwards the string may be a full group tuple list
+as described in the
+&url(https://docs.openssl.org/master/man3/SSL_CTX_set1_curves/#name,"documentation for SSL_CTX_set1_groups_list()").
+.wen
 
 If the option expands to an empty string, the effect is undefined.
 
@@ -26702,6 +26709,20 @@ will fail.
 
 Only supported when using GnuTLS.
 
+.new
+.option tls_eccurve smtp "string list&!!" unset
+.cindex TLS "EC cryptography"
+.cindex TLS "EC groups/curves"
+For OpenSSL versions 3.3 and later this option may be used to
+control the encryption groups negotiated with the server.
+If unset, or empty after expansion, the library defaults are used.
+
+The string may be a full group tuple list
+as described in the
+&url(https://docs.openssl.org/master/man3/SSL_CTX_set1_curves/#name,"documentation for SSL_CTX_set1_groups_list()").
+
+This option is ignored when using GnuTLS.
+.wen
 
 .option tls_privatekey smtp string&!! unset
 .cindex "TLS" "client private key, location of"

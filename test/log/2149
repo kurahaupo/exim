@@ -41,7 +41,7 @@
 1999-03-02 09:44:33 10HmbE-000000005vi-0000 => :blackhole: <secp384r1@test.ex> R=server
 1999-03-02 09:44:33 10HmbE-000000005vi-0000 Completed
 1999-03-02 09:44:33 exim x.yz daemon started: pid=p1238, no queue runs, listening for SMTP on port PORT_D
-1999-03-02 09:44:33 TLS error on connection from localhost (myhost.test.ex) [127.0.0.1] Unknown curve name in tls_eccurve 'bogus'
+1999-03-02 09:44:33 TLS error on connection from localhost (myhost.test.ex) [127.0.0.1] Unable to set EC group list "bogus"
 1999-03-02 09:44:33 exim x.yz daemon started: pid=p1239, no queue runs, listening for SMTP on port PORT_D
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 <= <> H=localhost (myhost.test.ex) [127.0.0.1] P=esmtps X=TLS1.x:ke-RSA-AES256-SHAnnn:xxx S=sss id=E10HmbG-000000005vi-0000@myhost.test.ex
 1999-03-02 09:44:33 10HmbH-000000005vi-0000 => :blackhole: <user_list2@test.ex> R=server
