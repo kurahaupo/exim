@@ -10,9 +10,11 @@ try option 'message_id_header_domain'
 try option 'message_id_header_text'
 read_message_body()
  ╭considering: $h_from:
- ├──────value: Keith░Moore░<xxx@the.local.host.name>
+*** error in RFC 2047 decoding: charset conversion needed but not available
+    input was: =?US-ASCII?Q?Keith_Moore?= <xxx@the.local.host.name>
+ ├──────value: =?US-ASCII?Q?Keith_Moore?=░<xxx@the.local.host.name>
             ╰──(tainted)
  ├───expanded: $h_from:
- ╰─────result: Keith░Moore░<xxx@the.local.host.name>
+ ╰─────result: =?US-ASCII?Q?Keith_Moore?=░<xxx@the.local.host.name>
             ╰──(tainted)
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

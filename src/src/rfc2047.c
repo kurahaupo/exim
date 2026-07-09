@@ -227,24 +227,26 @@ while (mimeword)
 
   /* Do a charset translation if required. This is supported only on hosts
   that have the iconv() function. Translation errors set error, but carry on,
-  using the untranslated data. If there is more than one error, the message
-  passed back refers to the final one. We use a loop to cater for the case
-  of long strings - the RFC puts limits on the length, but it's best to be
-  robust. */
+  using the untranslated data. The $h_* spots this and reverts to the predecode
+  data.  If there is more than one error, the message passed back refers to the
+  final one. We use a loop to cater for the case of long strings - the RFC puts
+  limits on the length, but it's best to be robust. */
 
-#if HAVE_ICONV
-  if (target)
+  if (target)					/* charset wanted */
     {
     const uschar * src_chset = mimeword + 2;
     src_chset = string_copyn(src_chset, q1 - src_chset); /* need nul-term str */
 
-    if (  strcmpic(target, src_chset) != 0
-       && (icd = iconv_open(CCS target, CCS src_chset)) == (iconv_t)-1)
-      *error = string_sprintf("iconv_open(%q, %q) failed: %s%s",
-	target, src_chset, strerror(errno),
-	errno == EINVAL ? " (maybe unsupported conversion)" : "");
-    }
+    if (strcmpic(target, src_chset) != 0)
+#if HAVE_ICONV
+      if ((icd = iconv_open(CCS target, CCS src_chset)) == (iconv_t)-1)
+	*error = string_sprintf("iconv_open(%q, %q) failed: %s%s",
+	  target, src_chset, strerror(errno),
+	  errno == EINVAL ? " (maybe unsupported conversion)" : "");
+#else
+      *error = US"charset conversion needed but not available";
 #endif
+    }
 
   while (dlen > 0)
     {

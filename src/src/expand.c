@@ -1735,7 +1735,7 @@ else
   if (error)
     DEBUG(any) debug_printf("*** error in RFC 2047 decoding: %s\n"
       "    input was: %s\n", error, rawhdr);
-  return decoded ? decoded : rawhdr;
+  return decoded && !error ? decoded : rawhdr;
   }
 }
 
