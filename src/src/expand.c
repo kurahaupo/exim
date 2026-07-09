@@ -2670,7 +2670,7 @@ Returns:   a pointer to the first character after the condition, or
 static const uschar *
 eval_condition(const uschar * s, BOOL * resetok, BOOL * yield)
 {
-BOOL testfor = TRUE, tempcond, combined_cond;
+BOOL testfor = TRUE, tempcond = FALSE, combined_cond;
 BOOL * subcondptr;
 BOOL sub2_honour_dollar = TRUE, is_forany, is_json, is_jsons;
 int rc, cond_type;
@@ -3423,8 +3423,8 @@ switch(cond_type = identify_operator(&s, &opname))
 
   case ECOND_AND:
   case ECOND_OR:
-  subcondptr = (yield == NULL) ? NULL : &tempcond;
-  combined_cond = (cond_type == ECOND_AND);
+  subcondptr = yield ? &tempcond : NULL;
+  combined_cond = cond_type == ECOND_AND;
 
   Uskip_whitespace(&s);
   if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
@@ -3470,7 +3470,7 @@ switch(cond_type = identify_operator(&s, &opname))
         }                                       /* evaluate any more */
     }
 
-  if (yield) *yield = (combined_cond == testfor);
+  if (yield) *yield = combined_cond == testfor;
   next = ++s; goto out;
 
 
