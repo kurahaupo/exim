@@ -1,0 +1,2 @@
+support iconv()
+support Exim_filter

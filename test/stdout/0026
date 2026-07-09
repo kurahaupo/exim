@@ -31,7 +31,7 @@
 250 OK
 250 Accepted
 354 Enter message, ending with "." on a line by itself
-250 OK id=10HmbG-000000005vi-0000
+550 Administrative prohibition
 221 myhost.test.ex closing connection
 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 250 myhost.test.ex Hello CALLER at test
@@ -39,6 +39,20 @@
 250 Accepted
 354 Enter message, ending with "." on a line by itself
 550 Administrative prohibition
+221 myhost.test.ex closing connection
+220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250 myhost.test.ex Hello CALLER at test
+250 OK
+250 Accepted
+354 Enter message, ending with "." on a line by itself
+550 Administrative prohibition
+221 myhost.test.ex closing connection
+220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250 myhost.test.ex Hello CALLER at test
+250 OK
+250 Accepted
+354 Enter message, ending with "." on a line by itself
+250 OK id=10HmbG-000000005vi-0000
 221 myhost.test.ex closing connection
 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 250 myhost.test.ex Hello CALLER at test
@@ -54,8 +68,25 @@
 354 Enter message, ending with "." on a line by itself
 250 OK id=10HmbH-000000005vi-0000
 221 myhost.test.ex closing connection
+
+**** SMTP testing session as if from host 10.0.0.0
+**** but without any ident (RFC 1413) callback.
+**** This is not for real!
+
 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
-250 myhost.test.ex Hello CALLER at test
+250 myhost.test.ex Hello test [10.0.0.0]
+250 OK
+250 Accepted
+354 Enter message, ending with "." on a line by itself
+550 Administrative prohibition
+221 myhost.test.ex closing connection
+
+**** SMTP testing session as if from host 10.0.0.0
+**** but without any ident (RFC 1413) callback.
+**** This is not for real!
+
+220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250 myhost.test.ex Hello test [10.0.0.0]
 250 OK
 250 Accepted
 354 Enter message, ending with "." on a line by itself
@@ -73,52 +104,7 @@
 250 OK
 250 Accepted
 354 Enter message, ending with "." on a line by itself
-550 Administrative prohibition
-221 myhost.test.ex closing connection
-220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
-250 myhost.test.ex Hello CALLER at test
-250 OK
-250 Accepted
-354 Enter message, ending with "." on a line by itself
 250 OK id=10HmbJ-000000005vi-0000
-221 myhost.test.ex closing connection
-
-**** SMTP testing session as if from host 10.0.0.0
-**** but without any ident (RFC 1413) callback.
-**** This is not for real!
-
-220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
-250 myhost.test.ex Hello test [10.0.0.0]
-250 OK
-250 Accepted
-354 Enter message, ending with "." on a line by itself
-550 Administrative prohibition
-221 myhost.test.ex closing connection
-
-**** SMTP testing session as if from host 10.0.0.0
-**** but without any ident (RFC 1413) callback.
-**** This is not for real!
-
-220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
-250 myhost.test.ex Hello test [10.0.0.0]
-250 OK
-250 Accepted
-354 Enter message, ending with "." on a line by itself
-550 Administrative prohibition
-221 myhost.test.ex closing connection
-220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
-250 myhost.test.ex Hello CALLER at test
-250 OK
-250 Accepted
-354 Enter message, ending with "." on a line by itself
-250 OK id=10HmbK-000000005vi-0000
-221 myhost.test.ex closing connection
-220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
-250 myhost.test.ex Hello CALLER at test
-250 OK
-250 Accepted
-354 Enter message, ending with "." on a line by itself
-250 OK id=10HmbL-000000005vi-0000
 221 myhost.test.ex closing connection
 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 250 myhost.test.ex Hello CALLER at test

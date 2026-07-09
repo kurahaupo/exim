@@ -763,7 +763,6 @@ newline	tab\134backslash ~tilde\177DEL\200\201.
 > <:ab cd:> <:ab cd:>
 > Long:      here we go: a string that is going to be encoded: it will go over the 75-char limit
 > Long:      here we go: a string that is going to be encoded: it will go over the 75-char limit by a long way; in fact this one will go over the 150 character limit
-> Failed: Invalid or incomplete multibyte or wide character
 > 
 > # UTF-8
 > 

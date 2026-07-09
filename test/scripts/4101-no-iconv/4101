@@ -1,0 +1,10 @@
+# $h_ needing chset translate, lacking iconv
+#
+exim -bP config
+****
+write DIR/testdata
+From: =?US-ASCII?Q?Keith_Moore?= <xxx>
+****
+#
+exim -d-all+expand -bem DIR/testdata '$h_from:'
+****

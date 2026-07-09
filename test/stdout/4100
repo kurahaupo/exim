@@ -1,26 +1,12 @@
-Return-path copied from sender
-Sender      = CALLER@test.ex
-Recipient   = CALLER@test.ex
-Testing Exim filter file "TESTSUITE/aux-fixed/4100.f"
-
-Testprint: subject = >lots of leading and trailing space<
-Testprint: raw subject = >       lots of leading and trailing space         \n<
-Testprint: to = >a@b,\nc@d<
-Testprint: raw to = >    a@b\n    c@d\n<
-Testprint: rX-8: > (=?iso-8859-8?b?7eXs+SDv4SDp7Oj08A==?=)\n<
-Testprint: bX-8: >(\355\345\354\371 \357\341 \351\354\350\364\360)<
-Testprint:  X-8: >(=?iso-8859-8?b?7eXs+SDv4SDp7Oj08A==?=)<
-Testprint: rX-9: > =?ISO-8859-1?Q?Patrik_F=E4ltstr=F6m?= <xxx>\n<
-Testprint: bX-9: >Patrik F\344ltstr\366m <xxx><
-Testprint:  X-9: >Patrik F\344ltstr\366m <xxx><
-Testprint: rX-10: > =?US-ASCII?Q?Keith_Moore?= <xxx>\n<
-Testprint: bX-10: >Keith Moore <xxx><
-Testprint:  X-10: >Keith Moore <xxx><
-Headers charset "UTF-8"
-Testprint:  X-8: >(\327\235\327\225\327\234\327\251 \327\237\327\221 \327\231\327\234\327\230\327\244\327\240)<
-Testprint:  X-9: >Patrik F\303\244ltstr\303\266m <xxx><
-Testprint:  X-10: >Keith Moore <xxx><
-Headers charset "ISO-8859-1//IGNORE"
-Testprint:  X-8: >(  )<
-Filtering did not set up a significant delivery.
-Normal delivery will occur.
+> 
+> # RFC 2047 decode: fail in iconv
+> 
+> Failed: Invalid or incomplete multibyte or wide character
+> 
+220 the.local.host.name ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250 the.local.host.name Hello CALLER at test
+250 OK
+250 Accepted
+354 Enter message, ending with "." on a line by itself
+250 OK id=10HmaX-000000005vi-0000
+221 the.local.host.name closing connection

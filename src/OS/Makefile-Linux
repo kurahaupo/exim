@@ -6,7 +6,7 @@
 # used is ?= which is actually portable to other maintained Make variants,
 # just is not POSIX.
 
-HAVE_ICONV=yes
+#HAVE_ICONV=yes
 
 BASENAME_COMMAND=look_for_it
 CHOWN_COMMAND=look_for_it

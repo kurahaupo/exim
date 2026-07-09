@@ -1,11 +1,12 @@
 # Exim test configuration 4100
-
 .include DIR/aux-var/std_conf_prefix
 
+acl_smtp_rcpt = accept
+acl_smtp_data = acl_data
 
-# ----- Main settings -----
-
-primary_hostname = mail.test.ex
-qualify_domain = test.ex
-
+begin acl
+acl_data:
+  warn	   logwrite = \$h_from: '$h_from:'
+	   logwrite = \${address:\$h_from:}  '${address:$h_from:}'
+  accept
 # End

@@ -1,9 +1,24 @@
-# $h_ $bh_ and $rh_ expansions
-exim -bf DIR/aux-fixed/TESTNUM.f
-subject:       lots of leading and trailing space         
-To:    a@b
-To:    c@d
-X-8: (=?iso-8859-8?b?7eXs+SDv4SDp7Oj08A==?=)
-X-9: =?ISO-8859-1?Q?Patrik_F=E4ltstr=F6m?= <xxx>
-X-10: =?US-ASCII?Q?Keith_Moore?= <xxx>
+# iconv bad input
+#
+exim -be
+
+# RFC 2047 decode: fail in iconv
+
+${rfc2047d:fail:     =?iso-2022-jp?B?GyRCLWolMCVzJTUlcxsoQg==?= <somebody@gol.com>}
 ****
+#
+#
+#
+# Syntax error (version 4) in header => should fail
+exim -odq -bs
+helo test
+mail from:<x@y>
+rcpt to:<x@y>
+data
+To: <dummy@gmail.com>
+Subject: bad RFC2047 coding
+From: =?iso-2022-jp?B?GyRCLWolMCVzJTUlcxsoQg==?=░ <me@real.dom.ain>
+.
+quit
+****
+no_msglog_check

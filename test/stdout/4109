@@ -1,7 +1,7 @@
 Return-path copied from sender
 Sender      = CALLER@test.ex
 Recipient   = CALLER@test.ex
-Testing Exim filter file "TESTSUITE/aux-fixed/4156.f"
+Testing Exim filter file "TESTSUITE/aux-fixed/4109.f"
 
 Testprint: subject = >lots of leading and trailing space<
 Testprint: raw subject = >       lots of leading and trailing space         \n<

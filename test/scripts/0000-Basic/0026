@@ -50,20 +50,6 @@ Message 2b
 .
 quit
 ****
-# Syntax error (version 4) in header => should fail
-exim -odq -bs
-helo test
-mail from:<x@y>
-rcpt to:<x@y>
-data
-To: <dummy@gmail.com>
-Subject: bad RFC2047 coding
-From: =?iso-2022-jp?B?GyRCLWolMCVzJTUlcxsoQg==?=░ <me@real.dom.ain>
-
-Message 2c
-.
-quit
-****
 # Syntax error in header => should fail even with null sender
 exim -odq -bs
 helo test
@@ -87,20 +73,6 @@ Subject: bad display name
 From: unquoted_addr@bogus.net <me@real.dom.ain>
 
 Message 2b
-.
-quit
-****
-# Syntax error (version 4) in header => should fail
-exim -odq -bs
-helo test
-mail from:<x@y>
-rcpt to:<x@y>
-data
-To: <dummy@gmail.com>
-Subject: bad RFC2047 coding
-From: =?iso-2022-jp?B?GyRCLWolMCVzJTUlcxsoQg==?=░ <me@real.dom.ain>
-
-Message 2c
 .
 quit
 ****

@@ -14,7 +14,7 @@
 >>> accept: condition test succeeded in inline ACL
 >>> end of inline ACL: ACCEPT
 >>> host in ignore_fromline_hosts? no (option unset)
-LOG: 10HmbM-000000005vi-0000 qualify/rewrite: domain missing or malformed
+LOG: 10HmbK-000000005vi-0000 qualify/rewrite: domain missing or malformed
 >>> using ACL "acl_data"
 >>> processing ACL acl_data "deny" (TESTSUITE/test-config 21)
 >>> l_message: body contains trigger
@@ -24,16 +24,16 @@ LOG: 10HmbM-000000005vi-0000 qualify/rewrite: domain missing or malformed
 >>> processing ACL acl_data "warn" (TESTSUITE/test-config 23)
 >>> check logwrite = \$h_from: '$h_from:'
 >>>                = $h_from: '@'
-LOG: 10HmbM-000000005vi-0000 $h_from: '@'
+LOG: 10HmbK-000000005vi-0000 $h_from: '@'
 >>> check logwrite = \${address:\$h_from:}  '${address:$h_from:}'
 >>>                = ${address:$h_from:}  ''
-LOG: 10HmbM-000000005vi-0000 ${address:$h_from:}  ''
+LOG: 10HmbK-000000005vi-0000 ${address:$h_from:}  ''
 >>> warn: condition test succeeded in ACL acl_data
 >>> processing ACL acl_data "require" (TESTSUITE/test-config 25)
 >>> check verify = header_syntax
 >>> require: condition test failed in ACL acl_data
 >>> end of ACL acl_data: not OK
-LOG: 10HmbM-000000005vi-0000 H=(test) [10.0.0.0] F=<x@y> rejected after DATA: domain missing or malformed: failing address in "From:" header is: @
+LOG: 10HmbK-000000005vi-0000 H=(test) [10.0.0.0] F=<x@y> rejected after DATA: domain missing or malformed: failing address in "From:" header is: @
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
@@ -57,4 +57,4 @@ LOG: 10HmbM-000000005vi-0000 H=(test) [10.0.0.0] F=<x@y> rejected after DATA: do
 >>>                 = yes
 >>> deny: condition test succeeded in ACL acl_data
 >>> end of ACL acl_data: DENY
-LOG: 10HmbN-000000005vi-0000 H=(test) [10.0.0.0] F=<x@y> rejected after DATA: body contains trigger
+LOG: 10HmbL-000000005vi-0000 H=(test) [10.0.0.0] F=<x@y> rejected after DATA: body contains trigger
