@@ -188,6 +188,10 @@ JH/49 Bug 3224: Fix expansion test ("-be").  When trying to set a variable
       taint check was applied too early.  Instead, expand the text first and
       apply taint to the result.
 
+JH/50 Fix expansion conditions "inlist"/"inlisti".  In 4.99 the second argument
+      (the list) was being expanded twice; if the result of the initial
+      expansion contained either a '$' or '\' this gave an incorrect value.
+
 
 Exim version 4.99.4
 -------------------

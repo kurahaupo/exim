@@ -2969,6 +2969,69 @@ switch(cond_type = identify_operator(&s, &opname))
 #endif /* CYRUS_SASLAUTHD_SOCKET */
 
 
+  /* This pair get custom parsing, in contrast to other conditions, as the
+  do/don't expand 2nd arg can't do what we need: the split sep/list expansion */
+
+  case ECOND_INLIST:
+  case ECOND_INLISTI:
+    {
+    esi_flags flags = yield ? ESI_BRACE_ENDS | ESI_HONOR_DOLLAR
+			  : ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | ESI_SKIPPING;
+    BOOL textonly;
+    const uschar * list;
+    int sep;
+    uschar * save_iterate_item = iterate_item;
+    int (*compare)(const uschar *, const uschar *);
+
+    /* First argumnt */
+
+    if (Uskip_whitespace(&s) != '{')
+      goto COND_FAILED_CURLY_START;
+    if (!yield) flags |= ESI_SKIPPING;
+    if (!(sub[0] = expand_string_internal(s+1, flags, &s, resetok, &textonly)))
+      goto failout;
+    if (textonly) sub_textonly |= BIT(0);
+    if (*s++ != '}') goto COND_FAILED_CURLY_END;
+    DEBUG(expand)
+      debug_printf_indent("condition: %s  item: %s\n", opname, sub[0]);
+
+    /* Second argument: grab any listsep spec, then expand the list */
+
+    if (Uskip_whitespace(&s) != '{')
+      {
+      expand_string_message = string_sprintf("missing 2nd string in {} "
+	"after %q", opname);
+      goto failout;
+      }
+    list = ++s;
+    sep = matchlist_parse_sep(&list);
+    if (!(list = expand_string_internal(list, flags, &s, resetok, &textonly)))
+      goto failout;
+    if (textonly) sub_textonly |= BIT(1);
+    if (*s++ != '}') goto COND_FAILED_CURLY_END;
+
+    if (yield)
+      {
+      tempcond = FALSE;
+      compare = cond_type == ECOND_INLISTI
+	? strcmpic : (int (*)(const uschar *, const uschar *)) strcmp;
+
+      while ((iterate_item = string_nextinlist(&list, &sep, NULL, 0)))
+	{
+	DEBUG(expand) debug_printf_indent(" compare %q vs. %q\n", iterate_item, sub[0]);
+	if (compare(sub[0], iterate_item) == 0)
+	  {
+	  tempcond = TRUE;
+	  lookup_value = string_copy_pool(iterate_item, FALSE, POOL_SEARCH);
+	  break;
+	  }
+	}
+      iterate_item = save_iterate_item;
+      *yield = tempcond == testfor;
+      }
+    next = s; goto out;
+    }
+
   /* symbolic operators for numeric and string comparison, and a number of
   other operators, all requiring two arguments.
 
@@ -2991,8 +3054,6 @@ switch(cond_type = identify_operator(&s, &opname))
     /* FALLTHROUGH */
 
   case ECOND_CRYPTEQ:
-  case ECOND_INLIST:
-  case ECOND_INLISTI:
   case ECOND_MATCH:
 
   case ECOND_NUM_L:     /* Numerical comparisons */
@@ -3036,6 +3097,7 @@ switch(cond_type = identify_operator(&s, &opname))
     if (!(sub[i] = expand_string_internal(s+1, flags, &s, resetok, &textonly)))
       goto failout;
     if (textonly) sub_textonly |= BIT(i);
+
     DEBUG(expand) if (i == 1 && !sub2_honour_dollar && Ustrchr(sub[1], '$'))
       debug_printf_indent("WARNING: the second arg is NOT expanded,"
 			" for security reasons\n");
@@ -3349,40 +3411,6 @@ switch(cond_type = identify_operator(&s, &opname))
 	}
       break;
     #endif  /* SUPPORT_CRYPTEQ */
-
-    case ECOND_INLIST:
-    case ECOND_INLISTI:
-      {
-      const uschar * list = sub[1];
-      int sep;
-      uschar * save_iterate_item = iterate_item;
-      int (*compare)(const uschar *, const uschar *);
-
-      DEBUG(expand) debug_printf_indent("condition: %s  item: %s\n", opname, sub[0]);
-
-      /* grab any listsep spec, then expand the list */
-
-      sep = matchlist_parse_sep(&list);
-      if (!(list = expand_string(list)))
-	goto failout;
-
-      tempcond = FALSE;
-      compare = cond_type == ECOND_INLISTI
-        ? strcmpic : (int (*)(const uschar *, const uschar *)) strcmp;
-
-      while ((iterate_item = string_nextinlist(&list, &sep, NULL, 0)))
-	{
-	DEBUG(expand) debug_printf_indent(" compare %s\n", iterate_item);
-        if (compare(sub[0], iterate_item) == 0)
-          {
-          tempcond = TRUE;
-	  lookup_value = string_copy_pool(iterate_item, FALSE, POOL_SEARCH);
-          break;
-          }
-	}
-      iterate_item = save_iterate_item;
-      break;
-      }
 
     default:	tempcond = FALSE;	/* compiler quietening */
     }   /* Switch for comparison conditions */
@@ -8784,6 +8812,15 @@ if (Ustrpbrk(string, "$\\") != NULL)
   store_pool = old_pool;
   return s;
   }
+
+/* It might be thought reasonable to check for taint here, to catch the case
+of a source string which is unchanged by expansion.  Unfortunately there are
+cases where double-expansion happens.  Known ones are
+- an inline ACL in option acl_smtp_*
+- transport tls_sni, for a verify callout using DANE
+So don't check, at least for now.
+*/
+
 if (textonly_p) *textonly_p = TRUE;
 return string;
 }

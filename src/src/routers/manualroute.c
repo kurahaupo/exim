@@ -294,7 +294,7 @@ else
   if (!hostlist[0]) return DECLINE;
   }
 
-/* Expand the hostlist item. It may then pointing to an empty string, or to a
+/* Expand the hostlist item. It may then be pointing to an empty string, or to a
 single host or a list of hosts; options is pointing to the rest of the
 routelist item, which is either empty or contains various option words. */
 
