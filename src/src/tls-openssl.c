@@ -3651,7 +3651,7 @@ if (  tls_in.on_connect			/* Not usable for STARTTLS */
 	{
 	if (!errno)
 	  {
-	  *errstr = US"SSL_read_early_data: TCP connection closed by peer";
+	  *errstr = US"TLS: TCP connection closed by peer";
 #ifndef DISABLE_EVENT
 	  (void) event_raise(event_action, US"tls:fail:connect", *errstr, NULL);
 #endif
