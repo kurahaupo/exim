@@ -69,6 +69,7 @@ change this guard and punt the issue for a while longer. */
 #  define EXIM_HAVE_OPENSSL_TRACE
 #  define EXIM_HAVE_OPENSSL_GET0_SERIAL
 #  define EXIM_HAVE_OPENSSL_OCSP_RESP_GET0_CERTS
+#  define EXIM_HAVE_OPENSSL_SET_GROUP_LIST
 #  define EXIM_HAVE_SSL_GET0_VERIFIED_CHAIN
 #  ifndef DISABLE_OCSP
 #   define EXIM_HAVE_OCSP
@@ -91,9 +92,6 @@ change this guard and punt the issue for a while longer. */
 # endif
 # if OPENSSL_VERSION_NUMBER <  0x030200020L
 #  define EXIM_OPENSSL_BOGUS_SERVER_ALPN	/*XXX when was this fixed? */
-# endif
-# if OPENSSL_VERSION_NUMBER >= 0x030300000L
-#  define EXIM_HAVE_OPENSSL_GROUP_TUPLES
 # endif
 #endif
 
@@ -759,7 +757,7 @@ uschar * exp_curve;
 int ngroups, sep;
 const uschar * curve;
 
-#ifndef EXIM_HAVE_OPENSSL_GROUP_TUPLES
+#ifndef EXIM_HAVE_OPENSSL_SET_GROUPS_LIST
 int rc;
 # ifdef EXIM_HAVE_OPENSSL_SET1_GROUPS
 int nids[16];
@@ -779,7 +777,7 @@ if (!exp_curve || !*exp_curve)
 /* Limit the list to hardwired array size. Drop out if any element is "suto". */
 
 for (curvelist = exp_curve, sep = 0, ngroups = 0;
-#ifndef EXIM_HAVE_OPENSSL_GROUP_TUPLES
+#ifndef EXIM_HAVE_OPENSSL_SET_GROUPS_LIST
     ngroups < nelem(nids) &&
 #endif
     (curve = string_nextinlist(&curvelist, &sep, NULL, 0));
@@ -794,7 +792,7 @@ for (curvelist = exp_curve, sep = 0, ngroups = 0;
     return TRUE;				/* nothing to do */
     }
 
-#ifdef EXIM_HAVE_OPENSSL_GROUP_TUPLES
+#ifdef EXIM_HAVE_OPENSSL_SET_GROUPS_LIST
 
 if (SSL_CTX_set1_groups_list(ctx, CCS exp_curve))
   return TRUE;
@@ -853,7 +851,7 @@ else
 # endif	/*!EXIM_HAVE_OPENSSL_SET1_GROUPS*/
 
 return !!rc;
-#endif	/*!EXIM_HAVE_OPENSSL_GROUP_TUPLES*/
+#endif	/*!EXIM_HAVE_OPENSSL_SET_GROUPS_LIST*/
 }
 
 

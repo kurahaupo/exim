@@ -19035,7 +19035,7 @@ For OpenSSL versions before (and not including) 1.0.2, the string
 &`auto`& tells the library to choose.
 
 .new
-For OpenSSL versions 3.3 onwards the string may be a full group tuple list
+For OpenSSL versions 3.5 onwards the string may be a full group tuple list
 as described in the
 &url(https://docs.openssl.org/master/man3/SSL_CTX_set1_curves/#name,"documentation for SSL_CTX_set1_groups_list()").
 .wen
