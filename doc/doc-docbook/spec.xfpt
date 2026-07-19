@@ -8528,6 +8528,7 @@ type of match and is given below as the &*value*& information.
 .cindex "expansion" "of lists"
 Each list, after any leading change-of-separator specification
 (see &<<SECTlistsepchange>>&) is expanded as a single string,
+See &<<CHAPexpand>>& for details of string expansion.
 .cindex "tainted data" tracking
 &*Note*&: As a result, if any component was tainted then the
 entire expansion result string becomes tainted.
