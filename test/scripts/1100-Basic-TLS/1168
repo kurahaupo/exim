@@ -1,0 +1,9 @@
+# TLS client: protocol option expansion
+gnutls
+exim -DSERVER=server -bd
+****
+exim -odf manualroute@test.ex
+****
+exim -odf CALLER@srv27.test.ex
+****
+killdaemon

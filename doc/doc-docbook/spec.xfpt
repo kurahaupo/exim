@@ -20787,7 +20787,7 @@ However, it will result in any message with mistyped domains
 also being queued.
 
 
-.option ipv4_only "string&!!" unset
+.option ipv4_only dnslookup "string&!!" unset
 .cindex IPv6 disabling
 .cindex DNS "IPv6 disabling"
 The string is expanded, and if the result is anything but a forced failure,
@@ -20795,7 +20795,7 @@ or an empty string, or one of the strings “0” or “no” or “false”
 (checked without regard to the case of the letters),
 only A records are used.
 
-.option ipv4_prefer "string&!!" unset
+.option ipv4_prefer dnslookup "string&!!" unset
 .cindex IPv4 preference
 .cindex DNS "IPv4 preference"
 The string is expanded, and if the result is anything but a forced failure,
@@ -26543,11 +26543,21 @@ this option is regarded as being false.
 .cindex "port" "sending TCP/IP"
 .cindex submissions "port, outbound"
 .cindex "TCP/IP" "setting outgoing port"
-This option specifies the TCP/IP port on the server to which Exim connects.
+This option specifies a TCP/IP port on the server to which Exim connects.
 &*Note:*& Do not confuse this with the port that was used when a message was
 received, which is in &$received_port$&, formerly known as &$interface_port$&.
-The name was changed to minimize confusion with the outgoing port. There is no
-variable that contains an outgoing port.
+That variable name was changed to minimize confusion with the outgoing port.
+
+The value given by this option can be overidden by one associated with the
+host being connected to.
+This could be as specified by
+a &%hosts%& option,
+a &(manualroute)& router
+or a SRV lookup done by a &(dnslookup)& router.
+.new
+During delivery the &$host_port$& veriable will be set to the destination
+port number used.
+.wen
 
 If the value of this option begins with a digit it is taken as a port number;
 otherwise it is looked up using &[getservbyname()]&. The default value is
@@ -26563,7 +26573,7 @@ resulting is such deferrals.
 
 
 
-.option protocol smtp string unset
+.option protocol smtp string&!! unset
 .cindex "LMTP" "over TCP/IP"
 .cindex "ssmtp protocol" "outbound"
 .cindex "TLS" "SSL-on-connect outbound"
@@ -26591,6 +26601,15 @@ The Internet standards bodies used to strongly discourage use of this mode,
 but as of &rfc(8314) it is preferred
 over STARTTLS for message submission
 (as distinct from MTA-MTA communication).
+
+.new
+The option is expanded before use.
+It is permissible for it to depend on &$host_port$& or &$host$&.
+However, the defaults mentioned above for the %&port%& option will
+not depend on the value after expansion
+(as that would be circular).
+Only the values mentioned above are valid.
+.wen
 
 
 .option retry_include_ip_address smtp boolean&!! true

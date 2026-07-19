@@ -2240,6 +2240,14 @@ else
   {
   GET_OPTION("protocol");
   if (ob->protocol)
+    {
+    if (!(ob->protocol = expand_string(ob->protocol)))
+      {
+      log_write(LOG_MAIN|LOG_PANIC,
+	"<%s>: failed to expand transport's protocol value: %s",
+	sx->addrlist->address, expand_string_message);
+      return ERROR;
+      }
     if ((sx->smtps = strcmpic(ob->protocol, US"smtps") == 0
 		  || strcmpic(ob->protocol, US"submissions") == 0))
       {
@@ -2257,6 +2265,7 @@ else
 	"bad protocol option in transport: '%s'\n", ob->protocol);
       return ERROR;
       }
+    }
   }
 #ifdef EXPERIMENTAL_SRV_SMTPS
 if (sx->smtps) sx->require_tls = TRUE;

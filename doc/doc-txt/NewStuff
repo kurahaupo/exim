@@ -41,6 +41,8 @@ Since Version 4.99
 14. Main config option "tls_eccurve" now accepts a groups tuple list. Also,
     new smtp transport option "tls_eccurve".
 
+15. Smtp transport option "protocol" is now expanded.
+
 
 Version 4.99
 ------------

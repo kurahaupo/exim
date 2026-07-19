@@ -135,7 +135,7 @@ if (isdigit(*pstring))
 
 else
   {
-  struct servent *smtp_service = getservbyname(CCS pstring, "tcp");
+  struct servent * smtp_service = getservbyname(CCS pstring, "tcp");
   if (!smtp_service)
     {
     addr->message = string_sprintf("TCP port %q is not defined for %s",

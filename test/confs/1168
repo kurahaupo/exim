@@ -1,0 +1,67 @@
+# Exim test configuration 1168
+SERVER=
+
+.include aux-var/tls_conf_prefix
+
+# ----- Main settings -----
+
+primary_hostname = testhost.test.ex
+daemon_smtp_ports = PORT_D : PORT_D2 : PORT_S
+
+tls_certificate = DIR/aux-fixed/cert1
+tls_on_connect_ports = PORT_D2
+tls_advertise_hosts = ${if == {$received_port}{PORT_D} {:}{*}}
+
+acl_smtp_rcpt = chk_rcpt
+queue_only
+
+log_selector = +received_recipients +outgoing_port +incoming_interface -outgoing_interface
+no_message_logs
+
+# ----- ACL -----
+
+begin acl
+
+chk_rcpt:
+  accept	condition =	${if and {{def:tls_cipher} {!= {PORT_D}{$received_port}}}}
+  deny
+
+# ----- Routers -----
+
+begin routers
+
+m:
+  driver =	manualroute
+  local_parts =	manualroute
+  route_list =	* 127.0.0.1::PORT_D2
+  self =	send
+  transport =	remote_smtp
+
+d:
+  driver =	dnslookup
+  check_srv =	smtp
+  ipv4_only =	yes
+  self =	send
+  transport =	remote_smtp
+
+# ----- Transports -----
+
+begin transports
+
+remote_smtp:
+  driver =	smtp
+  port =	PORT_D
+  protocol =	${if eq {PORT_D2}{$host_port} {smtps} \
+		  {${if eq {PORT_S}{$host_port} {smtp}}} \
+		 }
+  hosts_try_fastopen =	:
+  hosts_require_tls =	*
+  tls_verify_certificates = DIR/aux-fixed/cert1
+  tls_verify_cert_hostnames =
+  allow_localhost
+
+# ----- Retry -----
+
+begin retry
+* * F,30m,5m;
+# End
