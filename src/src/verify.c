@@ -368,6 +368,7 @@ if (addr->transport == cutthrough.addr.transport)
       host_af = Ustrchr(host->address, ':') ? AF_INET6 : AF_INET;
 
       GET_OPTION("interface");
+      GET_OPTION("port");
       if (  !smtp_get_interface(tf->interface, host_af, addr, &interface,
 	      US"callout")
 	 || (port = smtp_get_port(tf->port, addr, US"callout")) < 0

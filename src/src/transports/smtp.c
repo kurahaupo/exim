@@ -5677,6 +5677,7 @@ else if (hostlist->mx == MX_NONE && !continue_hostname)
 
 /* Sort out the default port (used when the host item has none).  */
 
+GET_OPTION("port");
 if ((defport = smtp_get_port(ob->port, addrlist, tid)) < 0) return FALSE;
 
 /* For each host-plus-IP-address on the list:

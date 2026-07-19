@@ -866,6 +866,49 @@ RESET_AFTER_EXTRA_LINE_READ:
   next if /^local_scan\(\) returned 0 NULL$/;
 
   # ======== Port numbers ========
+      # fixed port numbers in logs - sub these before doing ephem ports
+      {
+      my $re = "listening for SMTP on [^:]+:.*";
+      s/$re\K$parm_port_n/PORT_N/;
+      s/$re\K$parm_port_s/PORT_S/;
+      s/$re\K$parm_port_d/PORT_D/;
+      s/$re\K$parm_port_d2/PORT_D2/;
+      s/$re\K$parm_port_d3/PORT_D3/;
+      s/$re\K$parm_port_d4/PORT_D4/;
+
+      $re = "(listening|and) for .*? port ";
+      s/$re\K$parm_port_d/PORT_D/ng;
+      s/$re\K$parm_port_d2/PORT_D2/ng;
+      s/$re\K$parm_port_d3/PORT_D3/ng;
+      s/$re\K$parm_port_d4/PORT_D4/ng;
+      s/$re\K$parm_port_s/PORT_S/ng;
+      s/$re\K$parm_port_n/PORT_N/ng;
+
+      $re = " (I=)?\\[$re_ip\\]:";
+      s/$re\K$parm_port_n/PORT_N/n;
+      s/$re\K$parm_port_s/PORT_S/n;
+      s/$re\K$parm_port_d/PORT_D/n;
+      s/$re\K$parm_port_d2/PORT_D2/n;
+      s/$re\K$parm_port_d3/PORT_D3/n;
+      s/$re\K$parm_port_d4/PORT_D4/n;
+
+      $re = "(=>|->|==) .* (PRX=)?\\[$re_ip\\]:";
+      s/$re\K$parm_port_d/PORT_D/n;
+      s/$re\K$parm_port_d2/PORT_D2/n;
+      s/$re\K$parm_port_d3/PORT_D3/n;
+      s/$re\K$parm_port_d4/PORT_D4/n;
+
+      $re = ".*\\]:";
+      s/$re\K$parm_port_s/PORT_S/g;
+      $re = "port <";
+      s/$re\K$parm_port_s/PORT_S/g;
+      $re = "plp ";
+      s/$re\K$parm_port_d/PORT_D/g;
+
+      $re = "Expansion of .*received_port\\}\\{";
+      s/$re\K$parm_port_d4/PORT_D4/g;
+      }
+
   # Incoming port numbers may vary, but not in daemon startup line.
 
   s/^Port: (\d+)/"Port: " . new_value($1, "%s", \$next_port)/e;
@@ -1901,57 +1944,6 @@ RESET_AFTER_EXTRA_LINE_READ:
 
   elsif ($is_log)
     {
-      # port numbers
-      {
-      my $re = "listening for SMTP on [^:]+:.*";
-      s/$re\K$parm_port_n/PORT_N/;
-      s/$re\K$parm_port_s/PORT_S/;
-      s/$re\K$parm_port_d/PORT_D/;
-      s/$re\K$parm_port_d2/PORT_D2/;
-      s/$re\K$parm_port_d3/PORT_D3/;
-      s/$re\K$parm_port_d4/PORT_D4/;
-
-      $re = "(listening|and) for .*? port ";
-      s/$re\K$parm_port_d/PORT_D/ng;
-      s/$re\K$parm_port_d2/PORT_D2/ng;
-      s/$re\K$parm_port_d3/PORT_D3/ng;
-      s/$re\K$parm_port_d4/PORT_D4/ng;
-      s/$re\K$parm_port_s/PORT_S/ng;
-      s/$re\K$parm_port_n/PORT_N/ng;
-
-      $re = " I=\\[[^\\]]+\\]:";
-      s/$re\K$parm_port_d/PORT_D/n;
-      s/$re\K$parm_port_d2/PORT_D2/n;
-
-      $re = "Received from .* I=\\[[^\\]]+\\]:";
-      s/$re\K$parm_port_d/PORT_D/n;
-
-      $re = " \\[(127\\.0\\.0\\.1|(ip4\\.){3}ip4)\\]:";
-      my $trail = "(?= Connection refused)";
-      s/$re\K$parm_port_n$trail/PORT_N/n;
-      s/$re\K$parm_port_s$trail/PORT_S/n;
-      s/$re\K$parm_port_d$trail/PORT_D/n;
-      s/$re\K$parm_port_d2$trail/PORT_D2/n;
-      s/$re\K$parm_port_d3$trail/PORT_D3/n;
-      s/$re\K$parm_port_d4$trail/PORT_D4/n;
-
-      $re = "(=>|->|==) .* (PRX=)?\\[[^\\]]+\\]:";
-      s/$re\K$parm_port_d/PORT_D/n;
-      s/$re\K$parm_port_d2/PORT_D2/n;
-      s/$re\K$parm_port_d3/PORT_D3/n;
-      s/$re\K$parm_port_d4/PORT_D4/n;
-
-      $re = ".*\\]:";
-      s/$re\K$parm_port_s/PORT_S/g;
-      $re = "port <";
-      s/$re\K$parm_port_s/PORT_S/g;
-      $re = "plp ";
-      s/$re\K$parm_port_d/PORT_D/g;
-
-      $re = "Expansion of .*received_port\\}\\{";
-      s/$re\K$parm_port_d4/PORT_D4/g;
-      }
-
     # ephem port numbers
     s/I=\[[^\]]*\]:\K\d+/new_value($0, "%s", \$next_port)/e;
 

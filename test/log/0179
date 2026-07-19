@@ -8,7 +8,7 @@
 1999-03-02 09:44:33 End queue run: pid=p1234 -qqf
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 <= CALLER@myhost.test.ex U=CALLER P=local S=sss for userz@domain.com
 1999-03-02 09:44:33 Start queue run: pid=p1235 -qqf
-1999-03-02 09:44:33 10HmaZ-000000005vi-0000 H=127.0.0.1 [127.0.0.1]:10002: SMTP error from remote mail server after MAIL FROM:<>: 450 not right now, sorry
+1999-03-02 09:44:33 10HmaZ-000000005vi-0000 H=127.0.0.1 [127.0.0.1]:PORT_S: SMTP error from remote mail server after MAIL FROM:<>: 450 not right now, sorry
 1999-03-02 09:44:33 10HmaZ-000000005vi-0000 == userz@domain.com R=all T=smtp defer H=127.0.0.1 [127.0.0.1]:PORT_S I=[127.0.0.1]:10001: SMTP error from remote mail server after MAIL FROM:<>: 450 not right now, sorry
 1999-03-02 09:44:33 End queue run: pid=p1235 -qqf
 1999-03-02 09:44:33 Start queue run: pid=p1236 -qqf

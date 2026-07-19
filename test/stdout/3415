@@ -161,7 +161,7 @@ ddddddddd 0
 -host_address [127.0.0.1]:9999
 -host_auth au1
 -host_auth_pubname PLAIN
--interface_address [127.0.0.1]:10002
+-interface_address [127.0.0.1]:PORT_D
 -received_protocol esmtpa
 -body_linecount 0
 -max_received_linelength 0
@@ -191,7 +191,7 @@ ddddddddd 0
 -host_address [127.0.0.1]:9999
 -host_auth au1
 -host_auth_pubname PLAIN
--interface_address [127.0.0.1]:10002
+-interface_address [127.0.0.1]:PORT_D
 -received_protocol esmtpa
 -body_linecount 0
 -max_received_linelength 0
@@ -219,7 +219,7 @@ ddddddddd 0
 -host_address [127.0.0.1]:9999
 -host_auth au1
 -host_auth_pubname PLAIN
--interface_address [127.0.0.1]:10002
+-interface_address [127.0.0.1]:PORT_D
 -received_protocol esmtpa
 -body_linecount 0
 -max_received_linelength 0
@@ -247,7 +247,7 @@ ddddddddd 0
 -host_address [127.0.0.1]:9999
 -host_auth au1
 -host_auth_pubname PLAIN
--interface_address [127.0.0.1]:10002
+-interface_address [127.0.0.1]:PORT_D
 -received_protocol esmtpa
 -body_linecount 0
 -max_received_linelength 0
@@ -275,7 +275,7 @@ ddddddddd 0
 -host_address [127.0.0.1]:9999
 -host_auth au1
 -host_auth_pubname PLAIN
--interface_address [127.0.0.1]:10002
+-interface_address [127.0.0.1]:PORT_D
 -received_protocol esmtpa
 -body_linecount 0
 -max_received_linelength 15

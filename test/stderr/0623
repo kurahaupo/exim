@@ -12,7 +12,7 @@ send_to_server transport entered
 using the transport's hosts: 127.0.0.1
 getting address for 127.0.0.1
 checking retry status of 127.0.0.1
-127.0.0.1 [127.0.0.1]:10001 retry-status = usable
+127.0.0.1 [127.0.0.1]:PORT_D retry-status = usable
 delivering 10HmaZ-000000005vi-0000 to 127.0.0.1 [127.0.0.1] (tempreject@test.ex)
 Connecting to 127.0.0.1 [127.0.0.1]:PORT_D ...
 connected
@@ -77,7 +77,7 @@ getting address for 127.0.0.1
 checking retry status of 127.0.0.1
  no host retry record
  no message retry record
-127.0.0.1 [127.0.0.1]:10001 retry-status = usable
+127.0.0.1 [127.0.0.1]:PORT_D retry-status = usable
 delivering 10HmbA-000000005vi-0000 to 127.0.0.1 [127.0.0.1] (permreject@test.ex)
 Connecting to 127.0.0.1 [127.0.0.1]:PORT_D ...
 connected
@@ -142,7 +142,7 @@ getting address for 127.0.0.1
 checking retry status of 127.0.0.1
  no host retry record
  no message retry record
-127.0.0.1 [127.0.0.1]:10001 retry-status = usable
+127.0.0.1 [127.0.0.1]:PORT_D retry-status = usable
 delivering 10HmbB-000000005vi-0000 to 127.0.0.1 [127.0.0.1] (permreject@test.ex)
 Connecting to 127.0.0.1 [127.0.0.1]:PORT_D ...
 connected

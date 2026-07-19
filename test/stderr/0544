@@ -384,6 +384,7 @@ try option multi_domain
 try option 'max_parallel'
 try option 'return_path'
 try option hosts_randomize
+try option 'port'
  ╭considering: $domain
  ├──────value: domain1.ex
             ╰──(tainted)

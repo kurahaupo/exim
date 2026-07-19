@@ -70,9 +70,9 @@ p1247 t1 transport entered
 p1247   userd@test.ex
 p1247 hostlist:
 p1247   '127.0.0.1' IP 127.0.0.1 port PORT_D
-p1247 already connected to 127.0.0.1 [127.0.0.1]:10003 (on fd 0)
+p1247 already connected to 127.0.0.1 [127.0.0.1]:PORT_D (on fd 0)
 p1247 checking retry status of 127.0.0.1
-p1247 127.0.0.1 [127.0.0.1]:10003 retry-status = usable
+p1247 127.0.0.1 [127.0.0.1]:PORT_D retry-status = usable
 p1247 delivering 10HmaX-000000005vi-0000 to 127.0.0.1 [127.0.0.1] (userd@test.ex)
 p1247 continued connection, proxied TLS
 p1247   SMTP>> DATA
@@ -132,7 +132,7 @@ pid written to TESTSUITE/spool/exim-daemon.pid
 LOG: MAIN
   exim x.yz daemon started: pid=p1237, no queue runs, listening for SMTP on port PORT_D port PORT_S
 daemon running with uid=EXIM_UID gid=EXIM_GID euid=EXIM_UID egid=EXIM_GID
-Connection request from ip4.ip4.ip4.ip4 port 10004
+Connection request from ip4.ip4.ip4.ip4 port 10003
 p1251 Process p1251 is handling incoming connection from [ip4.ip4.ip4.ip4]
 p1251 Process p1251 is ready for new message
 p1251  Connecting to 127.0.0.1 [127.0.0.1]:PORT_D ...
@@ -187,9 +187,9 @@ p1259 t1 transport entered
 p1259   userf@test.ex
 p1259 hostlist:
 p1259   '127.0.0.1' IP 127.0.0.1 port PORT_D
-p1259 already connected to 127.0.0.1 [127.0.0.1]:10003 (on fd 0)
+p1259 already connected to 127.0.0.1 [127.0.0.1]:PORT_D (on fd 0)
 p1259 checking retry status of 127.0.0.1
-p1259 127.0.0.1 [127.0.0.1]:10003 retry-status = usable
+p1259 127.0.0.1 [127.0.0.1]:PORT_D retry-status = usable
 p1259 delivering 10HmaZ-000000005vi-0000 to 127.0.0.1 [127.0.0.1] (userf@test.ex)
 p1259 continued connection, proxied TLS
 p1259   SMTP>> DATA
