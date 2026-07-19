@@ -116,10 +116,9 @@ int port;
 
 if (!pstring)
   {
-  addr->transport_return = PANIC;
   addr->message = string_sprintf("failed to expand %q (\"port\" option) "
     "for %s: %s", rstring, msg, expand_string_message);
-  return FALSE;
+  goto bad;
   }
 
 if (isdigit(*pstring))
@@ -128,10 +127,9 @@ if (isdigit(*pstring))
   port = Ustrtol(pstring, &end, 0);
   if (end != pstring + Ustrlen(pstring))
     {
-    addr->transport_return = PANIC;
     addr->message = string_sprintf("invalid port number for %s: %s", msg,
       pstring);
-    return -1;
+    goto bad;
     }
   }
 
@@ -140,15 +138,18 @@ else
   struct servent *smtp_service = getservbyname(CCS pstring, "tcp");
   if (!smtp_service)
     {
-    addr->transport_return = PANIC;
     addr->message = string_sprintf("TCP port %q is not defined for %s",
       pstring, msg);
-    return -1;
+    goto bad;
     }
   port = ntohs(smtp_service->s_port);
   }
 
 return port;
+
+bad:
+  addr->transport_return = PANIC;
+  return -1;
 }
 
 
