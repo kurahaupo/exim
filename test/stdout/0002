@@ -996,7 +996,7 @@ xyz
 > 
 > -be Sender host name and address etc, all set except host name.
 > -oMa  sender_host_address = V4NET.0.0.1
->       sender_host_port = 1234
+>       sender_host_port = PORT_S
 > -oMaa sender_host_authenticated = AAA
 > -oMai authenticated_id = philip
 > -oMas authenticated_sender = xx@yy.zz
@@ -1007,7 +1007,7 @@ xyz
 > 
 > -be Sender host name explicitly set
 > -oMa  sender_host_address = V4NET.0.0.1
->       sender_host_port = 1234
+>       sender_host_port = PORT_S
 > -oMs  sender_host_name = my.host.name
 > 
 > be Sender host name lookup fails (V4NET.11.12.13 is not reverse registered)
@@ -1020,7 +1020,7 @@ xyz
 > 
 > -be Sender host name and address etc, all set except host name
 > -oMa  sender_host_address = V4NET.0.0.1
->       sender_host_port = 1234
+>       sender_host_port = PORT_S
 > -oMaa sender_host_authenticated = AAA
 > -oMai authenticated_id = philip
 > -oMas authenticated_sender = xx@yy.zz

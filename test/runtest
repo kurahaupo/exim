@@ -530,10 +530,6 @@ RESET_AFTER_EXTRA_LINE_READ:
   s/^macro 'SERVERS'.*PGSQL\.\K$parm_port_n/PORT_N/;
 
 
-  # port numbers in stderr
-  s/^set_process_info: .*\]:\K$parm_port_d /PORT_D /;
-  s/^set_process_info: .*\]:\K$parm_port_s /PORT_S /;
-
 
   # ======== Dates and times ========
 
@@ -866,48 +862,106 @@ RESET_AFTER_EXTRA_LINE_READ:
   next if /^local_scan\(\) returned 0 NULL$/;
 
   # ======== Port numbers ========
-      # fixed port numbers in logs - sub these before doing ephem ports
+  # substitute testrun-fixed port numbers before doing ephem ports
+  {
+    my $re = "("
+      ."\[[^\]]*\]:"
+      ."|"
+      ."V4NET\\.0\\.0\\.0:"
+      ."|"
+      ."localhost::?"
+      ."|"
+      ."${re_ip}[.:]:?"
+      ."|"
+      ."port[= ]([^:]+:)?"
+      ."|"
+      ."listening for SMTP on [^:]+:.*"
+      ."|"
+      ."listening for SMTP on .* port "
+      ."|"
+      ."(listening|and) for .*? port "
+      ."|"
+      ."<[:;].* "
+      ."|"
+      ."Connecting to .*]:"
+      ."|"
+      ." (I=)?\\[$re_ip\\]:"
+      ."|"
+      ."=[>=] .*\\[[^\\]]+\\]:"
+      ."|"
+      ."(=>|->|==) .* (PRX=)?\\[$re_ip\\]:"
+      ."|"
+      ."T:.*:$re_ip:"
+      ."|"
+      ."^\\s*port = "
+      .")";
+    s/$re\K$parm_port_d/PORT_D/ng;
+    s/$re\K$parm_port_d2/PORT_D2/ng;
+    s/$re\K$parm_port_d3/PORT_D3/ng;
+    s/$re\K$parm_port_d4/PORT_D4/ng;
+    s/$re\K$parm_port_s/PORT_S/ng;
+    s/$re\K$parm_port_n/PORT_N/ng;
+
+    $re = ".*\\]:";
+    s/$re\K$parm_port_s/PORT_S/g;
+    $re = "port <";
+    s/$re\K$parm_port_s/PORT_S/g;
+    $re = "sender_host_port( |...)=( |...)";
+    s/$re\K$parm_port_s/PORT_S/g;
+    $re = "plp ";
+    s/$re\K$parm_port_d/PORT_D/g;
+
+    $re = "Expansion of .*received_port\\}\\{";
+	s/$re\K$parm_port_d4/PORT_D4/g;
+
+    $re = "lookup of .*127.0.0.1::";
+    s/$re\K$parm_port_n/PORT_N/;
+    $re = "postgres .* \"";
+    s/$re\K$parm_port_n/PORT_N/;
+
+    # port number in misc dumpdb output, for early-pipe
+    $re = "^$date [^:]+:";
+    s/$re\K$parm_port_d/PORT_D/;
+
+    if ($is_mail)
       {
-      my $re = "listening for SMTP on [^:]+:.*";
+      $re = "(interface|received)-port:\\s+";
       s/$re\K$parm_port_n/PORT_N/;
       s/$re\K$parm_port_s/PORT_S/;
       s/$re\K$parm_port_d/PORT_D/;
       s/$re\K$parm_port_d2/PORT_D2/;
       s/$re\K$parm_port_d3/PORT_D3/;
       s/$re\K$parm_port_d4/PORT_D4/;
+      }
 
-      $re = "(listening|and) for .*? port ";
+    if ($is_stderr)
+      {
+      my $re = "${re_ip}\\.";
       s/$re\K$parm_port_d/PORT_D/ng;
-      s/$re\K$parm_port_d2/PORT_D2/ng;
-      s/$re\K$parm_port_d3/PORT_D3/ng;
-      s/$re\K$parm_port_d4/PORT_D4/ng;
-      s/$re\K$parm_port_s/PORT_S/ng;
+      s/$re\K$parm_port_d2/PORT_D2/n;
+
+      $re = "("
+	."key=.*servers=.*PGSQL\\."
+	."|"
+	."(database lookup required for |(?:My|Postgre)SQL query: .*)servers=.*\\."
+	."|"
+	."(using cached connection for|close (MY|PG)SQL connection:) .*\\."
+	."|"
+	."(using cached connection for|close (MY|PG)SQL connection:) .*\\."
+	."|"
+	."(PGSQL new connection|PostgreSQL query): .*PGSQL\\."
+	."|"
+	."(DEFER:|list match deferred for).*:"
+	."|"
+	."POSTGRES .*\""
+	.")";
       s/$re\K$parm_port_n/PORT_N/ng;
 
-      $re = " (I=)?\\[$re_ip\\]:";
-      s/$re\K$parm_port_n/PORT_N/n;
-      s/$re\K$parm_port_s/PORT_S/n;
-      s/$re\K$parm_port_d/PORT_D/n;
-      s/$re\K$parm_port_d2/PORT_D2/n;
-      s/$re\K$parm_port_d3/PORT_D3/n;
-      s/$re\K$parm_port_d4/PORT_D4/n;
-
-      $re = "(=>|->|==) .* (PRX=)?\\[$re_ip\\]:";
-      s/$re\K$parm_port_d/PORT_D/n;
-      s/$re\K$parm_port_d2/PORT_D2/n;
-      s/$re\K$parm_port_d3/PORT_D3/n;
-      s/$re\K$parm_port_d4/PORT_D4/n;
-
-      $re = ".*\\]:";
-      s/$re\K$parm_port_s/PORT_S/g;
-      $re = "port <";
-      s/$re\K$parm_port_s/PORT_S/g;
-      $re = "plp ";
-      s/$re\K$parm_port_d/PORT_D/g;
-
-      $re = "Expansion of .*received_port\\}\\{";
-      s/$re\K$parm_port_d4/PORT_D4/g;
+      $re = "^set_process_info: .*\\]:";
+      s/$re\K$parm_port_d /PORT_D /;
+      s/$re\K$parm_port_s /PORT_S /;
       }
+  }
 
   # Incoming port numbers may vary, but not in daemon startup line.
 
@@ -1150,42 +1204,6 @@ RESET_AFTER_EXTRA_LINE_READ:
         }
       }
 
-    # port numbers
-    {
-    my $re = "(?:(?:Listening on|Connecting to (?:127\\.0\\.0\\.1|(?:ip4\\.){3}ip4|(?:ip6:){7}ip6)) port |host host .+ port=)";
-    s/$re\K$parm_port_n/PORT_N/n;
-    s/$re\K$parm_port_s/PORT_S/n;
-    s/$re\K$parm_port_d/PORT_D/n;
-    s/$re\K$parm_port_d2/PORT_D2/n;
-    s/$re\K$parm_port_d3/PORT_D3/n;
-    s/$re\K$parm_port_d4/PORT_D4/n;
-
-    $re = "T:.*:(127\\.0\\.0\\.1|.::1.):";
-    s/$re\K$parm_port_n/PORT_N/n;
-    s/$re\K$parm_port_s/PORT_S/n;
-    s/$re\K$parm_port_d/PORT_D/n;
-    s/$re\K$parm_port_d2/PORT_D2/n;
-    s/$re\K$parm_port_d3/PORT_D3/n;
-    s/$re\K$parm_port_d4/PORT_D4/n;
-
-    $re = "^\\s*port = ";
-    s/$re\K$parm_port_n/PORT_N/;
-    s/$re\K$parm_port_s/PORT_S/;
-    s/$re\K$parm_port_d/PORT_D/;
-    s/$re\K$parm_port_d2/PORT_D2/;
-    s/$re\K$parm_port_d3/PORT_D3/;
-    s/$re\K$parm_port_d4/PORT_D4/;
-
-    $re = "lookup of .*127.0.0.1::";
-    s/$re\K$parm_port_n/PORT_N/;
-    $re = "postgres .* \"";
-    s/$re\K$parm_port_n/PORT_N/;
-
-    # port number in misc dumpdb output, for early-pipe
-    $re = "^$date [^:]+:";
-    s/$re\K$parm_port_d/PORT_D/;
-    }
-
     # remote IPv6 addrs vary
     s/^(Connection request from) \[.*:.*:.*\]$/$1 \[ipv6\]/;
 
@@ -1293,6 +1311,7 @@ RESET_AFTER_EXTRA_LINE_READ:
       goto RESET_AFTER_EXTRA_LINE_READ;
       }
     }
+  # $is_stdout
 
   # ======== stderr ========
 
@@ -1373,68 +1392,6 @@ RESET_AFTER_EXTRA_LINE_READ:
 
     # we don't care what TZ enviroment the testhost was running
     next if /^Reset TZ to/;
-
-    # port numbers
-      {
-      my $re = "(?:\[[^\]]*\]:|V4NET\.0\.0\.0:|localhost::?|127\.0\.0\.1[.:]:?|port[= ](?:[^:]+:)?)";
-      s/$re\K$parm_port_d/PORT_D/;
-      s/$re\K$parm_port_d2/PORT_D2/;
-      s/$re\K$parm_port_d3/PORT_D3/;
-      s/$re\K$parm_port_d4/PORT_D4/;
-      s/$re\K$parm_port_s/PORT_S/;
-      s/$re\K$parm_port_n/PORT_N/;
-
-      $re = "listening for SMTP on [^:]+:.*";
-      s/$re\K$parm_port_d/PORT_D/;
-      s/$re\K$parm_port_d2/PORT_D2/;
-      s/$re\K$parm_port_d3/PORT_D3/;
-      s/$re\K$parm_port_d4/PORT_D4/;
-
-      $re = "listening for SMTP on .* port ";
-      s/$re\K$parm_port_d/PORT_D/g;
-      s/$re\K$parm_port_d2/PORT_D2/g;
-      s/$re\K$parm_port_d3/PORT_D3/g;
-      s/$re\K$parm_port_d4/PORT_D4/g;
-
-      # $re = "<[:;].* ";
-      if (/<[:;] /)
-	{
-	s/(?<!p)$parm_port_d/PORT_D/g;
-	s/(?<!p)$parm_port_d2/PORT_D2/g;
-	s/(?<!p)$parm_port_d3/PORT_D3/g;
-	s/(?<!p)$parm_port_d4/PORT_D4/g;
-	s/(?<!p)$parm_port_s/PORT_S/g;
-	s/(?<!p)$parm_port_n/PORT_N/g;
-	}
-
-      $re = "Connecting to .*]:";
-      s/$re\K$parm_port_d/PORT_D/;
-      s/$re\K$parm_port_d2/PORT_D2/;
-      s/$re\K$parm_port_d3/PORT_D3/;
-      s/$re\K$parm_port_d4/PORT_D4/;
-      s/$re\K$parm_port_s/PORT_S/;
-      s/$re\K$parm_port_n/PORT_N/;
-
-      $re = "=[>=] .*\\[[^\\]]+\\]:";
-      s/$re\K$parm_port_s/PORT_S/;
-      s/$re\K$parm_port_d/PORT_D/g;
-      s/$re\K$parm_port_d2/PORT_D2/g;
-      s/$re\K$parm_port_d3/PORT_D3/g;
-      s/$re\K$parm_port_d4/PORT_D4/g;
-
-      $re = "key=.*servers=.*\.";
-      s/$re\K$parm_port_n/PORT_N/;
-      $re = "(?:database lookup required for |(?:My|Postgre)SQL query: .*)servers=.*\.";
-      s/$re\K$parm_port_n/PORT_N/;
-      $re = "(?:using cached connection for|close (?:MY|PG)SQL connection:) .*\.";
-      s/$re\K$parm_port_n/PORT_N/;
-      $re = "(?:PGSQL new connection|PostgreSQL query): .*PGSQL\.";
-      s/$re\K$parm_port_n/PORT_N/;
-      $re = "(?:DEFER:|list match deferred for).*:";
-      s/$re\K$parm_port_n/PORT_N/;
-      $re = "POSTGRES .*\"";
-      s/$re\K$parm_port_n/PORT_N/;
-      }
 
     # ========= Exim lookups ==================
     # Lookups have a char which depends on the number of lookup types compiled in,
@@ -2015,22 +1972,12 @@ RESET_AFTER_EXTRA_LINE_READ:
     # - we generally run with limits disabled, via aux-va-src/tls_conf_prefix
 #    s/event smtp:ehlo data\\n.*\K250-LIMITS MAILMAX=1000 RCPTMAX=50000\n(?=250)//;
     }
+  # $is_log
 
   # ======== mail ========
 
   elsif ($is_mail)
     {
-    # port numbers
-      {
-      my $re = "(interface|received)-port:\\s+";
-      s/$re\K$parm_port_n/PORT_N/;
-      s/$re\K$parm_port_s/PORT_S/;
-      s/$re\K$parm_port_d/PORT_D/;
-      s/$re\K$parm_port_d2/PORT_D2/;
-      s/$re\K$parm_port_d3/PORT_D3/;
-      s/$re\K$parm_port_d4/PORT_D4/;
-      }
-
     # DKIM timestamps, and signatures depending thereon
     if ( /^(\s+)t=([0-9]*); x=([0-9]*); b=[A-Za-z0-9+\/]+$/ )
       {

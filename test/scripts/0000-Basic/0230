@@ -51,7 +51,7 @@ quit
 ??? 221
 ****
 killdaemon
-sudo exim -bs -oMa V4NET.9.8.7.1234
+sudo exim -bs -oMa V4NET.9.8.7.PORT_S
 helo test
 mail from:<x@y.x>
 rcpt to:<x@test.ex>
@@ -72,7 +72,7 @@ quit
 #
 exim -DSERVER=server -bd -oX PORT_D
 ****
-sudo exim -DOPT -bs -oMa V4NET.9.8.7.1225
+sudo exim -DOPT -bs -oMa V4NET.9.8.7.PORT_D
 helo test
 mail from:<x@y.x>
 rcpt to:<x@test.ex>

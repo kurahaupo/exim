@@ -1039,7 +1039,7 @@ exim -be
 -oMt  sender_ident = $sender_ident
 ****
 # Sender host name and address etc, all set except host name.
-exim -d-all+expand -be -oMa V4NET.0.0.1.1234 -oMaa AAA -oMai philip -oMas xx@yy.zz -oMi 1.1.1.1.99 -oMr special -oMt me
+exim -d-all+expand -be -oMa V4NET.0.0.1.PORT_S -oMaa AAA -oMai philip -oMas xx@yy.zz -oMi 1.1.1.1.99 -oMr special -oMt me
 -be Sender host name and address etc, all set except host name.
 -oMa  sender_host_address = $sender_host_address
       sender_host_port = $sender_host_port
@@ -1052,7 +1052,7 @@ exim -d-all+expand -be -oMa V4NET.0.0.1.1234 -oMaa AAA -oMai philip -oMas xx@yy.
 -oMt  sender_ident = $sender_ident
 ****
 # Sender host name explicitly set
-exim -be -oMa V4NET.0.0.1.1234 -oMs my.host.name
+exim -be -oMa V4NET.0.0.1.PORT_S -oMs my.host.name
 -be Sender host name explicitly set
 -oMa  sender_host_address = $sender_host_address
       sender_host_port = $sender_host_port
@@ -1074,7 +1074,7 @@ exim -be -pspecial:host.name
 # which should therefore be looked up from the address, but not if
 # we are skipping. The debug output for this test will show when
 # the lookup occurs.
-exim -d-all+host_lookup+expand -be -oMa V4NET.0.0.1.1234 -oMaa AAA -oMai philip -oMas xx@yy.zz -oMi 1.1.1.1.99 -oMr special -oMt me
+exim -d-all+host_lookup+expand -be -oMa V4NET.0.0.1.PORT_S -oMaa AAA -oMai philip -oMas xx@yy.zz -oMi 1.1.1.1.99 -oMr special -oMt me
 -be Sender host name and address etc, all set except host name
 -oMa  sender_host_address = $sender_host_address
       sender_host_port = $sender_host_port
