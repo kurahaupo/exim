@@ -9389,8 +9389,7 @@ accept hosts = 10.9.8.7
 .endd
 If the first &%accept%& fails, Exim goes on to try the second one. See chapter
 &<<CHAPACL>>& for details of ACLs. Alternatively, you can use
-&`+ignore_unknown`&, which was discussed in depth in the first example in
-this section.
+&`+ignore_unknown`&, which was discussed in depth in &<<SECTbehipnot>>&.
 .endlist
 
 
@@ -9402,8 +9401,9 @@ this section.
 A temporary DNS lookup failure normally causes a defer action (except when
 &%dns_again_means_nonexist%& converts it into a permanent error). However,
 host lists can include &`+ignore_defer`& and &`+include_defer`&, analogous to
-&`+ignore_unknown`& and &`+include_unknown`&, as described in the previous
-section. These options should be used with care, probably only in non-critical
+&`+ignore_unknown`& and &`+include_unknown`&,
+as described in &<<SECTbehipnot>>&.
+These options should be used with care, probably only in non-critical
 host lists such as whitelists.
 
 
