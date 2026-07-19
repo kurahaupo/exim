@@ -26605,7 +26605,7 @@ over STARTTLS for message submission
 .new
 The option is expanded before use.
 It is permissible for it to depend on &$host_port$& or &$host$&.
-However, the defaults mentioned above for the %&port%& option will
+However, the defaults mentioned above for the &%port%& option will
 not depend on the value after expansion
 (as that would be circular).
 Only the values mentioned above are valid.
