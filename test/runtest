@@ -960,6 +960,8 @@ RESET_AFTER_EXTRA_LINE_READ:
       $re = "^set_process_info: .*\\]:";
       s/$re\K$parm_port_d /PORT_D /;
       s/$re\K$parm_port_s /PORT_S /;
+      
+      s/value: \K$parm_port_s$/PORT_S/;
       }
   }
 

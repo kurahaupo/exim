@@ -386,7 +386,7 @@ try option 'unknown_login'
  ╭considering: ░░░░░░sender_host_port░=░$sender_host_port
  ├───────text: ░░░░░░sender_host_port░=░
  ├considering: $sender_host_port
- ├──────value: 1224
+ ├──────value: PORT_S
  ├───expanded: ░░░░░░sender_host_port░=░$sender_host_port
  ╰─────result: ░░░░░░sender_host_port░=░PORT_S
  ╭considering: -oMaa░sender_host_authenticated░=░$sender_host_authenticated
@@ -463,7 +463,7 @@ try option 'unknown_login'
  ╭considering: ░░░░░░sender_host_port░=░$sender_host_port
  ├───────text: ░░░░░░sender_host_port░=░
  ├considering: $sender_host_port
- ├──────value: 1224
+ ├──────value: PORT_S
  ├───expanded: ░░░░░░sender_host_port░=░$sender_host_port
  ╰─────result: ░░░░░░sender_host_port░=░PORT_S
  ╭considering: -oMaa░sender_host_authenticated░=░$sender_host_authenticated
