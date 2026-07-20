@@ -7645,6 +7645,28 @@ specified.
 ${lookup dnsdb{>:,; soa=a.b.example.com}}
 .endd
 
+
+.subsection "Multiple dnsdb lookups" SECTdnsdb_mul
+In the previous sections, &(dnsdb)& lookups for a single domain are described.
+However, you can specify a list of domains or IP addresses in a single
+&(dnsdb)& lookup. The list is specified in the normal Exim way, with colon as
+the default separator, but with the ability to change this. For example:
+.code
+${lookup dnsdb{one.domain.com:two.domain.com}}
+${lookup dnsdb{a=one.host.com:two.host.com}}
+${lookup dnsdb{ptr = <; 1.2.3.4 ; 4.5.6.8}}
+.endd
+In order to retain backwards compatibility, there is one special case: if
+the lookup type is PTR and no change of separator is specified, Exim looks
+to see if the rest of the string is precisely one IPv6 address. In this
+case, it does not treat it as a list.
+
+The data from each lookup is concatenated, with newline separators by default,
+in the same way that multiple DNS records for a single item are handled. A
+different separator can be specified, as described above.
+
+
+
 .subsection "Dnsdb lookup modifiers" SECTdnsdb_mod
 .cindex "dnsdb modifiers"
 .cindex "modifiers" "dnsdb"
@@ -7757,27 +7779,6 @@ and then an A lookup.  All results are returned; defer processing
 .code
 ${lookup dnsdb {>; a+=$sender_helo_name}}
 .endd
-
-
-.subsection "Multiple dnsdb lookups" SECID67
-In the previous sections, &(dnsdb)& lookups for a single domain are described.
-However, you can specify a list of domains or IP addresses in a single
-&(dnsdb)& lookup. The list is specified in the normal Exim way, with colon as
-the default separator, but with the ability to change this. For example:
-.code
-${lookup dnsdb{one.domain.com:two.domain.com}}
-${lookup dnsdb{a=one.host.com:two.host.com}}
-${lookup dnsdb{ptr = <; 1.2.3.4 ; 4.5.6.8}}
-.endd
-In order to retain backwards compatibility, there is one special case: if
-the lookup type is PTR and no change of separator is specified, Exim looks
-to see if the rest of the string is precisely one IPv6 address. In this
-case, it does not treat it as a list.
-
-The data from each lookup is concatenated, with newline separators by default,
-in the same way that multiple DNS records for a single item are handled. A
-different separator can be specified, as described above.
-
 
 
 
