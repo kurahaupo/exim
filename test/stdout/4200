@@ -77,6 +77,10 @@
 > conversion  xn--strae-oqa.de
 > golden:     xn--strae-oqa.de
 > 
+> # This original has a space-class utf-8 character; not legit for a domain
+> original:   ex ample.org
+> Failed: error converting utf8 (ex\342\200\200ample.org) to alabel: string contains a disallowed character
+> 
 > a-label domain to utf-8:
 > 
 > conversion: arab.ل.com

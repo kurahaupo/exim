@@ -73,7 +73,8 @@ any mixed-case annotation.  This does not really matter for a domain. */
     break;
     }
   }
-if ((rc = idn2_lookup_u8((const uint8_t *) cs, &t, IDN2_NFC_INPUT)) != IDN2_OK)
+if (  (rc = idn2_to_ascii_8z(CS cs, CSS &t, IDN2_NFC_INPUT | IDN2_NO_TR46))
+   != IDN2_OK)
   {
   if (err) *err = US idn2_strerror(rc);
   return NULL;

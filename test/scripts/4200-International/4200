@@ -103,6 +103,10 @@ original    straße.de
 conversion  ${utf8_domain_to_alabel:straße.de}
 golden:     xn--strae-oqa.de
 
+# This original has a space-class utf-8 character; not legit for a domain
+original:   ex\xe2\x80\x80ample.org
+conversion: ${utf8_domain_to_alabel:ex\xe2\x80\x80ample.org}
+
 a-label domain to utf-8:
 
 conversion: ${utf8_domain_from_alabel:arab.xn--ghb.com}
