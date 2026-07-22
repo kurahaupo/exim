@@ -1824,6 +1824,20 @@ debug_modify_channel(US"+v");
 set_debug_stream();
 }
 
+
+#define MAX_QNAME 32
+static const uschar *
+validate_queue_name(const uschar * offered_qn)
+{
+const uschar * s = US strchrnul(CS offered_qn, '/');
+if (*s || s - offered_qn > MAX_QNAME
+   || Ustrcmp(offered_qn, "input") == 0 || Ustrcmp(offered_qn, "db") == 0
+   || Ustrcmp(offered_qn, "msglog") == 0 || Ustrcmp(offered_qn, "scan") == 0
+   )
+  log_write_die(LOG_PANIC_DIE, "Bad qname arg: %q", offered_qn);
+return offered_qn;
+}
+
 /*************************************************
 *          Entry point and high-level code       *
 *************************************************/
@@ -1857,6 +1871,7 @@ int  arg_receive_timeout = -1, arg_smtp_receive_timeout = -1,
 int  perl_start_option = 0;
 #endif
 gid_t original_egid;
+BOOL admin_only_arg = FALSE;
 BOOL arg_queue_only = FALSE, bi_option = FALSE, checking = FALSE,
 	count_queue = FALSE, extract_recipients = FALSE, flag_G = FALSE,
 	flag_n = FALSE, forced_delivery = FALSE, f_end_dot = FALSE,
@@ -3000,6 +3015,8 @@ on the second character (the one after '-'), to save some effort. */
       union sockaddr_46 tmp_sock;
       EXIM_SOCKLEN_T size = sizeof(tmp_sock);
 
+      admin_only_arg = TRUE;
+
       if (argc != i + 7)
         exim_fail("too many or too few arguments after -MC");
 
@@ -3051,6 +3068,7 @@ on the second character (the one after '-'), to save some effort. */
 
     else if (*argrest == 'C' && argrest[1] && !argrest[2])
       {
+      admin_only_arg = TRUE;		/* All -MCx are restricted */
       switch(argrest[1])
 	{
     /* -MCA: set the smtp_authenticated flag; this is useful only when it
@@ -3077,9 +3095,10 @@ on the second character (the one after '-'), to save some effort. */
        from the commandline should be tainted - but we will need an untainted
        value for the spoolfile when doing a -odi delivery process. */
 
-	case 'G': if (++i < argc) queue_name = string_copy_taint(
+	case 'G': if (++i < argc)
+		    queue_name = validate_queue_name(string_copy_taint(
 		      exim_str_fail_toolong(argv[i], EXIM_DRIVERNAME_MAX, "-MCG"),
-		      GET_UNTAINTED);
+		      GET_UNTAINTED));
 		  else badarg = TRUE;
 		  break;
 
@@ -3755,7 +3774,7 @@ on the second character (the one after '-'), to save some effort. */
 	int i;
 	for (argrest++, i = 0; argrest[i] && argrest[i] != '/'; ) i++;
 	exim_len_fail_toolong(i, EXIM_DRIVERNAME_MAX, "-q*G<name>");
-	queue_name = string_copyn(argrest, i);
+	queue_name = validate_queue_name(string_copyn(argrest, i));
 	argrest += i;
 	if (*argrest == '/') argrest++;
 	}
@@ -4340,7 +4359,10 @@ else
 /* At this point, we know if the user is privileged and some command-line
 options become possibly impermissible, depending upon the configuration file. */
 
-if (checking && commandline_checks_require_admin && !f.admin_user)
+if (  !f.admin_user
+   && (  checking && commandline_checks_require_admin
+      || admin_only_arg
+   )  )
   exim_fail("those command-line flags are set to require admin");
 
 /* Handle the decoding of logging options. */

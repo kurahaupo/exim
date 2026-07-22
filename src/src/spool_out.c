@@ -532,7 +532,7 @@ BOOL
 spool_move_message(const uschar * id, const uschar * subdir,
   const uschar * from, const uschar * to)
 {
-uschar * dest_qname = queue_name_dest ? queue_name_dest : queue_name;
+const uschar * dest_qname = queue_name_dest ? queue_name_dest : queue_name;
 
 /* Since we are working within the spool, de-taint the dest queue name */
 dest_qname = string_copy_taint(dest_qname, GET_UNTAINTED);

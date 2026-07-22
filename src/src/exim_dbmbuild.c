@@ -78,7 +78,7 @@ const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
 
 struct global_flags	f;
 bitmask_word_t		log_selector[1];
-uschar *		queue_name;
+const uschar *		queue_name;
 BOOL			split_spool_directory;
 
 

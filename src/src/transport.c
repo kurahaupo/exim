@@ -2329,13 +2329,13 @@ if (flags & TSUC_EXPAND_ARGS)
 
       /* Handle special case of $address_pipe when af_force_command is set */
 
-    else if (addr && testflag(addr,af_force_command) &&
-        (Ustrcmp(argv[i], "$address_pipe") == 0 ||
-         Ustrcmp(argv[i], "${address_pipe}") == 0))
+    else if (addr && testflag(addr,af_force_command)
+	    && (  Ustrcmp(argv[i], "$address_pipe") == 0
+	       || Ustrcmp(argv[i], "${address_pipe}") == 0
+	    )  )
       {
-      int address_pipe_argcount = 0;
-      int address_pipe_max_args;
-      uschar **address_pipe_argv;
+      int address_pipe_argcount = 0, address_pipe_max_args;
+      uschar ** address_pipe_argv;
 
       /* We can never have more then the argv we will be loading into */
       address_pipe_max_args = max_args - argcount + 1;
@@ -2346,15 +2346,25 @@ if (flags & TSUC_EXPAND_ARGS)
       /* We allocate an additional for (uschar *)0 */
       address_pipe_argv = store_get((address_pipe_max_args+1)*sizeof(uschar *), GET_UNTAINTED);
 
-      /* +1 because addr->local_part[0] == '|' since af_force_command is set */
-      s = expand_string(addr->local_part + 1);
+      /* +1 because addr->local_part[0] == '|' since af_force_command is set.
 
-      if (!s || !*s)
+      We used to expand local_part here, under force_command.  This was done
+      since the intro of that feature.  However, it potentially was supplied
+      by a (local) user, and expansion could cause undesired file alterations
+      if this transport is configured to run as some other user. We could
+      possibly taint everything from that .forward (but at present that breaks
+      in the testsuite [0115] ).  And it would break user-owned Exim filters
+      (which can contain general expansions, ouch).  Possibly we could permit
+      expansion if the .forward file had a trusted owner - but implementation
+      would be convoluted, needing to transfer that knowlege from the code
+      reading the file to here.  So not right now. */
+
+      s = addr->local_part + 1;
+      if (!*s)
         {
         addr->transport_return = FAIL;
-        addr->message = string_sprintf("Expansion of %q "
-           "from command %q in %s failed: %s",
-           (addr->local_part + 1), cmd, etext, expand_string_message);
+        addr->message = string_sprintf("bad local_part from command %q in %s",
+           cmd, etext);
         return FALSE;
         }
 

@@ -183,7 +183,7 @@ uid_t   originator_uid;
 
 uschar *primary_hostname       = NULL;
 
-uschar *queue_name             = US"";
+const uschar *queue_name       = US"";
 
 int     received_count         = 0;
 uschar *received_protocol      = NULL;

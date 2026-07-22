@@ -284,6 +284,9 @@ if (statbuf.st_size > MAX_FILTER_SIZE)
   }
 
 /* Read the file in one go in order to minimize the time we have it open. */
+/*XXX it is far from obvious that not having this data tainted is wise.
+A local-user can supply expansions here. Unfortunately, testcase 0115 (at least)
+fails when taint is applied. */
 
 filebuf = store_get(statbuf.st_size + 1, filename);
 

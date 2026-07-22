@@ -140,7 +140,7 @@ extern unsigned chan_name_to_num(const uschar *, unsigned,
 
 extern void    check_deliver_addrs_not_freed(void (*)(const uschar*, const uschar*, void*), void *);
 extern int     check_host(void *, const uschar *, const uschar **, uschar **);
-extern uschar **child_exec_exim(int, BOOL, int *, BOOL, int, ...);
+extern const uschar **child_exec_exim(int, BOOL, int *, BOOL, int, ...);
 extern pid_t   child_open_exim_function(int *, const uschar *);
 extern pid_t   child_open_exim2_function(int *, uschar *, uschar *,
 		 const uschar *);
