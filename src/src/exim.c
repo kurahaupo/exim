@@ -4023,6 +4023,8 @@ if (	 (smtp_input || extract_recipients || recipients_arg < argc)
       && (sender_address || filter_test != FTEST_NONE || extract_recipients)
    || deliver_selectstring && !qrunners
    || msg_action == MSG_LOAD && (!f.expansion_test || expansion_test_message)
+   ||    f.expansion_test && !expansion_test_message
+      && (extract_recipients || !f.dot_ends)
    ||	 atrn_mode
       && (  f.daemon_listen || f.expansion_test || filter_test != FTEST_NONE
 	 || checking /* || bi_option || info_stdout || receiving_message
