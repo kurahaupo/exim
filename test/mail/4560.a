@@ -20,6 +20,7 @@ ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=test.ex;
 ARC-Authentication-Results: i=1; test.ex; arc=none
 Authentication-Results: test.ex; arc=none
 From: mrgus@text.ex
+frombogus: nasty@example.com
 To: bakawolf@yahoo.com
 Date: Tue, 2 Mar 1999 09:44:33 +0000
 Message-ID: <qwerty1234@disco-zombie.net>

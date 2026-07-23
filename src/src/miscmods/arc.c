@@ -684,8 +684,10 @@ for (r = headers_rlist; r; r = r->prev)
   r->used = FALSE;
 while ((hn = string_nextinlist(&headernames, &sep, NULL, 0)))
   for (r = headers_rlist; r; r = r->prev)
+    {
+    int nlen = Ustrlen(hn);
     if (  !r->used
-       && strncasecmp(CCS (s = r->h->text), CCS hn, Ustrlen(hn)) == 0
+       && strncmpic((s = r->h->text), hn, nlen) == 0 && s[nlen] == ':'
        )
       {
       if (relaxed) s = arc_relax_header_n(s, r->h->slen, TRUE);
@@ -695,6 +697,7 @@ while ((hn = string_nextinlist(&headernames, &sep, NULL, 0)))
       r->used = TRUE;
       break;
       }
+    }
 
 /* Finally add in the signature header (with the b= tag stripped); no CRLF */
 

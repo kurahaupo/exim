@@ -192,9 +192,14 @@ JH/50 Fix expansion conditions "inlist"/"inlisti".  In 4.99 the second argument
       (the list) was being expanded twice; if the result of the initial
       expansion contained either a '$' or '\' this gave an incorrect value.
 
-JH/51 Bug 3226: fix conversion of domains from utf8. Previously a space-class
+JH/51 Bug 3226: fix conversion of domains from utf8.  Previously a space-class
       character was translated to a space; not legitimate in a domain. The
       converting expansion now returns a failure.
+
+JH/52 Bug 3222: fix ARC verification.  Previously a header name which was a
+      prefix of a later header, when included in the list of signed headers,
+      would not be recognised and verify would fail.  The reported pair were
+      List-Unsubscribe, List-Unsubscribe-Post.
 
 
 Exim version 4.99.5
