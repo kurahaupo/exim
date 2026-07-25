@@ -1697,7 +1697,13 @@ RESET_AFTER_EXTRA_LINE_READ:
     next if / in wellknown_advertise_hosts\?/;
 
     # SUPPORT_PROXY
-    next if /host in hosts_proxy\?/;
+    next if /try option 'hosts_proxy'$/;
+    if (/host in hosts_proxy\?/)
+      {
+      $_ = <IN>;
+      while ( /^(>>>)?\s*list element:/ ) { $_ = <IN>; }
+      goto RESET_AFTER_EXTRA_LINE_READ;
+      }
 
     # PIPE_CONNECT
     next if /^macros_expand: matched '_HAVE_PIPE_CONNECT/;

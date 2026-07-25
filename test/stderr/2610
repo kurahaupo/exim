@@ -278,7 +278,6 @@ search_tidyup called
 01:01:01 p1235  sender_fullhost = [10.0.0.0]
 01:01:01 p1235  sender_rcvhost = [10.0.0.0]
 01:01:01 p1235  host in hosts_connection_nolog? no (option unset)
-01:01:01 p1235  try option 'message_size_limit'
 01:01:01 p1235  host in host_lookup? no (option unset)
 01:01:01 p1235  set_process_info: pppp handling incoming connection from [10.0.0.0]
 01:01:01 p1235  host in host_reject_connection? no (option unset)
@@ -287,6 +286,7 @@ search_tidyup called
 01:01:01 p1235  host in helo_verify_hosts? no (option unset)
 01:01:01 p1235  host in helo_try_verify_hosts? no (option unset)
 01:01:01 p1235  host in helo_accept_junk_hosts? no (option unset)
+01:01:01 p1235  try option 'message_size_limit'
 01:01:01 p1235  try option 'acl_smtp_connect'
 01:01:01 p1235  try option 'smtp_banner'
 01:01:01 p1235   ╭considering: $smtp_active_hostname░ESMTP░Exim░$version_number░$tod_full

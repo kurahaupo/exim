@@ -69,7 +69,6 @@ try option 'smtp_active_hostname'
 sender_fullhost = [V4NET.0.0.1]
 sender_rcvhost = [V4NET.0.0.1]
 host in hosts_connection_nolog? no (option unset)
-try option 'message_size_limit'
 host in host_lookup? no (option unset)
 set_process_info: pppp handling incoming connection from [V4NET.0.0.1]
  ╭considering: ${if░eq░{V4NET.0.0.1}░{$sender_host_address}░{2}░{30}}s
@@ -109,6 +108,7 @@ host in recipient_unqualified_hosts? no (option unset)
 host in helo_verify_hosts? no (option unset)
 host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
+try option 'message_size_limit'
 try option 'acl_smtp_connect'
 try option 'smtp_banner'
  ╭considering: $smtp_active_hostname░ESMTP░Exim░$version_number░$tod_full

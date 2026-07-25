@@ -129,7 +129,7 @@ debug_printf("PROXY<<%3.*H\n", (int)(end - start), buf + start);
 *************************************************/
 /* The function configures the connection based on a header from the
 inbound host to use Proxy Protocol. The specification is very exact
-so exit with an error if do not find the exact required pieces. This
+so exit with an error if we do not find the exact required pieces. This
 includes an incorrect number of spaces separating args.
 
 Arguments: none

@@ -13,7 +13,7 @@ body non-prox
 QUIT
 ****
 ### protocol v1 receive
-exim -bh HOSTIPV4
+exim -DHOSTS=* -d-all+dns -bh HOSTIPV4
 :eval:PROXY TCP4 127.0.0.2 127.42.42.42 64000 25\r\n
 HELO clientname
 MAIL FROM: <a@test.ex>

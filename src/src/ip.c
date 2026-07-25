@@ -568,13 +568,11 @@ Returns:     nothing
 */
 
 void
-ip_keepalive(int sock, const uschar *address, BOOL torf)
+ip_keepalive(int sock, const uschar * address, BOOL torf)
 {
-int fodder = 1;
-if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE,
-    US (&fodder), sizeof(fodder)) != 0)
+if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, US (&on), sizeof(on)) != 0)
   log_write(LOG_MAIN, "setsockopt(SO_KEEPALIVE) on connection %s %s "
-    "failed: %s", torf? "to":"from", address, strerror(errno));
+    "failed: %s", torf ? "to":"from", address, strerror(errno));
 }
 
 

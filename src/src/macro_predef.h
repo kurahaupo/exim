@@ -12,7 +12,7 @@
 extern void spf(uschar *, int, const uschar *, ...);
 extern void builtin_macro_create(const uschar *);
 extern void builtin_macro_create_var(const uschar *, const uschar *);
-extern void options_from_list(optionlist *, unsigned, const uschar *, uschar *);
+extern void options_from_list(const optionlist *, unsigned, const uschar *, uschar *);
 
 extern void features_acl(void);
 extern void features_malware(void);

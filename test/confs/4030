@@ -1,10 +1,18 @@
 # Exim test configuration 4030
 # Proxy Protocol
 
+HOSTS=
+
 .include DIR/aux-var/std_conf_prefix
 
 primary_hostname = myhost.test.ex
 hosts_proxy = HOSTIPV4
+
+# do not log the raw connection
+hosts_connection_nolog = *
+# should lookup the proxied remote, not the proxy. Check in stderr output.
+host_lookup = HOSTS
+
 # default timeout is 3s, speed up the timeout test here
 proxy_protocol_timeout = 1s
 queue_only

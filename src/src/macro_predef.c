@@ -76,7 +76,7 @@ va_end(ap);
 }
 
 void
-options_from_list(optionlist * opts, unsigned nopt,
+options_from_list(const optionlist * opts, unsigned nopt,
   const uschar * section, uschar * group)
 {
 const uschar * s;

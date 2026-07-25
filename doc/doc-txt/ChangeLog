@@ -201,6 +201,15 @@ JH/52 Bug 3222: fix ARC verification.  Previously a header name which was a
       would not be recognised and verify would fail.  The reported pair were
       List-Unsubscribe, List-Unsubscribe-Post.
 
+JH/53 Bug 3221: fix Proxy-protocol.  For a proxied connection the options
+      host_lookup, smtp_receive_timeout, host_reject_connection,
+      smtp_reserve_hosts, sender_unqualified_hosts, recipient_unqualified_hosts,
+      helo_verify_hosts, helo_verify_hosts, helo_accept_junk_hosts and
+      message_size_limit used the address (or name) of the proxy rather than
+      the client system connecting via the proxy.  Fix by re-ordering the
+      connection processing sequence.
+
+
 
 Exim version 4.99.5
 -------------------

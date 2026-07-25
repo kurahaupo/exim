@@ -2531,22 +2531,6 @@ if (atrn_mode && tls_in.active.sock >= 0)
   }
 #endif
 
-/* Set up the message size limit; this may be host-specific */
-
-GET_OPTION("message_size_limit");
-thismessage_size_limit = expand_string_integer(message_size_limit, TRUE);
-if (expand_string_message)
-  {
-  if (thismessage_size_limit == -1)
-    log_write(LOG_MAIN|LOG_PANIC, "unable to expand message_size_limit: "
-      "%s", expand_string_message);
-  else
-    log_write(LOG_MAIN|LOG_PANIC, "invalid message_size_limit: "
-      "%s", expand_string_message);
-  smtp_closedown(US"Temporary local problem - please try later");
-  return FALSE;
-  }
-
 /* When a message is input locally via the -bs or -bS options, sender_host_
 unknown is set unless -oMa was used to force an IP address, in which case it
 is checked like a real remote connection. When -bs is used from inetd, this
@@ -2643,6 +2627,33 @@ if (!f.sender_host_unknown)
   if (smtp_accept_keepalive && !f.sender_host_notsocket && smtp_out_fd >= 0)
     ip_keepalive(smtp_out_fd, sender_host_address, FALSE);
 
+
+#if defined(SUPPORT_PROXY) || defined(SUPPORT_SOCKS) || defined(EXPERIMENTAL_XCLIENT)
+  proxy_session = FALSE;
+#endif
+
+#ifdef SUPPORT_PROXY
+/* If valid Proxy Protocol source is connecting, set up session.
+Failure will not allow any SMTP function other than QUIT. */
+
+  f.quit_cmd_only = FALSE;
+  if (!smtp_batched_input)
+    if (hosts_proxy)
+      {
+      misc_module_info * mi;
+      typedef BOOL (*fn_t) (void);
+
+      if (!(mi = misc_mod_find(US"proxy", NULL)))
+	{
+	smtp_closedown(US"Temporary local problem - please try later");
+	return FALSE;
+	}
+      if (!((fn_t *) mi->functions)[PROXY_PROTO_START] ())
+	f.quit_cmd_only = TRUE;
+      }
+    else GET_OPTION("hosts_proxy");
+#endif
+
   /* If the current host matches host_lookup, set the name by doing a
   reverse lookup. On failure, sender_host_name will be NULL and
   host_lookup_failed will be TRUE. This may or may not be serious - optional
@@ -2689,8 +2700,8 @@ if (!f.sender_host_unknown)
   /* Check for reserved slots. The value of smtp_accept_count has already been
   incremented to include this process. */
 
-  if (smtp_accept_max > 0 &&
-      smtp_accept_count > smtp_accept_max - smtp_accept_reserve)
+  if (  smtp_accept_max > 0
+     && smtp_accept_count > smtp_accept_max - smtp_accept_reserve)
     {
     if ((rc = verify_check_host(&smtp_reserve_hosts)) != OK)
       {
@@ -2713,10 +2724,8 @@ if (!f.sender_host_unknown)
   save a fork. In all cases, the load average will already be available
   in a global variable at this point. */
 
-  if (smtp_load_reserve >= 0 &&
-       load_average > smtp_load_reserve &&
-       !reserved_host &&
-       verify_check_host(&smtp_reserve_hosts) != OK)
+  if (  smtp_load_reserve >= 0 && load_average > smtp_load_reserve
+     && !reserved_host && verify_check_host(&smtp_reserve_hosts) != OK)
     {
     if (LOGGING(connection_reject))
       log_write(LOG_MAIN,
@@ -2758,33 +2767,26 @@ if (!f.sender_host_unknown)
   const uschar * rme = expand_string(recipients_max);
   recipients_max_expanded = atoi(CCS rme);
  }
+
+/* Set up the message size limit; this may be host-specific */
+
+GET_OPTION("message_size_limit");
+thismessage_size_limit = expand_string_integer(message_size_limit, TRUE);
+if (expand_string_message)
+  {
+  if (thismessage_size_limit == -1)
+    log_write(LOG_MAIN|LOG_PANIC, "unable to expand message_size_limit: "
+      "%s", expand_string_message);
+  else
+    log_write(LOG_MAIN|LOG_PANIC, "invalid message_size_limit: "
+      "%s", expand_string_message);
+  smtp_closedown(US"Temporary local problem - please try later");
+  return FALSE;
+  }
+
 /* For batch SMTP input we are now done. */
 
 if (smtp_batched_input) return TRUE;
-
-#if defined(SUPPORT_PROXY) || defined(SUPPORT_SOCKS) || defined(EXPERIMENTAL_XCLIENT)
-proxy_session = FALSE;
-#endif
-
-#ifdef SUPPORT_PROXY
-/* If valid Proxy Protocol source is connecting, set up session.
-Failure will not allow any SMTP function other than QUIT. */
-
-f.quit_cmd_only = FALSE;
-if (hosts_proxy)
-  {
-  misc_module_info * mi;
-  typedef BOOL (*fn_t) (void);
-
-  if (!(mi = misc_mod_find(US"proxy", NULL)))
-    {
-    smtp_closedown(US"Temporary local problem - please try later");
-    return FALSE;
-    }
-  if (!((fn_t *) mi->functions)[PROXY_PROTO_START] ())
-    f.quit_cmd_only = TRUE;
-  }
-#endif
 
 /* Run the connect ACL if it exists */
 

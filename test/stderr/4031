@@ -1,19 +1,21 @@
 ### non-prox plain receive
->>> host in hosts_connection_nolog? no (option unset)
->>> host in host_lookup? no (option unset)
+>>> host in hosts_connection_nolog?
+>>>  list element: *
+>>>  host in hosts_connection_nolog? yes (matched "*")
+>>> host in host_lookup?
+>>> host in host_lookup? no (end of list)
 >>> host in host_reject_connection? no (option unset)
 >>> host in sender_unqualified_hosts? no (option unset)
 >>> host in recipient_unqualified_hosts? no (option unset)
 >>> host in helo_verify_hosts? no (option unset)
 >>> host in helo_try_verify_hosts? no (option unset)
 >>> host in helo_accept_junk_hosts? no (option unset)
->>>  list element: ip4.ip4.ip4.ip4
 >>> clientname in helo_lookup_domains?
 >>>  list element: @
 >>>  list element: @[]
 >>> clientname in helo_lookup_domains? no (end of list)
 >>> using ACL "r_acl"
->>> processing ACL r_acl "accept" (TESTSUITE/test-config 22)
+>>> processing ACL r_acl "accept" (TESTSUITE/test-config 30)
 >>> check logwrite = proxy session: $proxy_session
 >>>                = proxy session: no
 LOG: proxy session: no
@@ -34,60 +36,85 @@ LOG: remote         [127.0.0.2]:10001
 >>> host in ignore_fromline_hosts? no (option unset)
 LOG: 10HmaX-000000005vi-0000 <= a@test.ex H=(clientname) [127.0.0.2] P=smtp S=sss
 ### protocol v1 receive
->>> host in hosts_connection_nolog? no (option unset)
->>> host in host_lookup? no (option unset)
->>> host in host_reject_connection? no (option unset)
->>> host in sender_unqualified_hosts? no (option unset)
->>> host in recipient_unqualified_hosts? no (option unset)
->>> host in helo_verify_hosts? no (option unset)
->>> host in helo_try_verify_hosts? no (option unset)
->>> host in helo_accept_junk_hosts? no (option unset)
->>>  list element: ip4.ip4.ip4.ip4
->>> looking up host name for 127.0.0.2
-LOG: no host name found for IP address 127.0.0.2
->>> clientname in helo_lookup_domains?
->>>  list element: @
->>>  list element: @[]
->>> clientname in helo_lookup_domains? no (end of list)
->>> using ACL "r_acl"
->>> processing ACL r_acl "accept" (TESTSUITE/test-config 22)
->>> check logwrite = proxy session: $proxy_session
->>>                = proxy session: yes
-LOG: proxy session: yes
->>> check logwrite = local          [$received_ip_address]:$received_port
->>>                = local          []:-1
-LOG: local          []:-1
->>> check logwrite = proxy internal [$proxy_local_address]:$proxy_local_port
->>>                = proxy internal [ip4.ip4.ip4.ip4]:10001
-LOG: proxy internal [ip4.ip4.ip4.ip4]:10001
->>> check logwrite = proxy external [$proxy_external_address]:$proxy_external_port
->>>                = proxy external [127.42.42.42]:10002
-LOG: proxy external [127.42.42.42]:10002
->>> check logwrite = remote         [$sender_host_address]:$sender_host_port
->>>                = remote         [127.0.0.2]:10003
-LOG: remote         [127.0.0.2]:10003
->>> accept: condition test succeeded in ACL r_acl
->>> end of ACL r_acl: ACCEPT
->>> host in ignore_fromline_hosts? no (option unset)
-LOG: 10HmaY-000000005vi-0000 <= a@test.ex H=(clientname) [127.0.0.2]:10003 P=smtp PRX=ip4.ip4.ip4.ip4 S=sss
+Exim version x.yz ....
+admin user
+host in hosts_connection_nolog?
+ list element: *
+  host in hosts_connection_nolog? yes (matched "*")
+looking up host name for 127.0.0.2
+ DNS lookup of 2.0.0.127.in-addr.arpa (PTR) using fakens
+ DNS lookup of 2.0.0.127.in-addr.arpa (PTR) gave HOST_NOT_FOUND
+ returning DNS_NOMATCH
+ DNS: couldn't fake dnsa len
+ DNS: no SOA record found for neg-TTL
+  writing neg-cache entry for 2.0.0.127.in-addr.arpa-PTR-xxxx, ttl -1
+LOG: MAIN
+  no host name found for IP address 127.0.0.2
+host in host_lookup?
+ list element: *
+  host in host_lookup? yes (matched "*")
+looking up host name for 127.0.0.2
+ DNS lookup of 2.0.0.127.in-addr.arpa (PTR): using cached value DNS_NOMATCH
+LOG: MAIN
+  no host name found for IP address 127.0.0.2
+host in host_reject_connection? no (option unset)
+host in sender_unqualified_hosts? no (option unset)
+host in recipient_unqualified_hosts? no (option unset)
+host in helo_verify_hosts? no (option unset)
+host in helo_try_verify_hosts? no (option unset)
+host in helo_accept_junk_hosts? no (option unset)
+clientname in helo_lookup_domains?
+ list element: @
+ list element: @[]
+clientname in helo_lookup_domains? no (end of list)
+using ACL "r_acl"
+processing ACL r_acl "accept" (TESTSUITE/test-config 30)
+check logwrite = proxy session: $proxy_session
+               = proxy session: yes
+LOG: MAIN
+  proxy session: yes
+check logwrite = local          [$received_ip_address]:$received_port
+               = local          []:-1
+LOG: MAIN
+  local          []:-1
+check logwrite = proxy internal [$proxy_local_address]:$proxy_local_port
+               = proxy internal [ip4.ip4.ip4.ip4]:10001
+LOG: MAIN
+  proxy internal [ip4.ip4.ip4.ip4]:10001
+check logwrite = proxy external [$proxy_external_address]:$proxy_external_port
+               = proxy external [127.42.42.42]:10002
+LOG: MAIN
+  proxy external [127.42.42.42]:10002
+check logwrite = remote         [$sender_host_address]:$sender_host_port
+               = remote         [127.0.0.2]:10003
+LOG: MAIN
+  remote         [127.0.0.2]:10003
+accept: condition test succeeded in ACL r_acl
+end of ACL r_acl: ACCEPT
+host in ignore_fromline_hosts? no (option unset)
+LOG: MAIN
+  <= a@test.ex H=(clientname) [127.0.0.2]:10003 P=smtp PRX=ip4.ip4.ip4.ip4 S=sss
+>>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### protocol v2 receive
->>> host in hosts_connection_nolog? no (option unset)
->>> host in host_lookup? no (option unset)
+>>> host in hosts_connection_nolog?
+>>>  list element: *
+>>>  host in hosts_connection_nolog? yes (matched "*")
+>>> looking up host name for 127.0.0.2
+LOG: no host name found for IP address 127.0.0.2
+>>> host in host_lookup?
+>>> host in host_lookup? no (end of list)
 >>> host in host_reject_connection? no (option unset)
 >>> host in sender_unqualified_hosts? no (option unset)
 >>> host in recipient_unqualified_hosts? no (option unset)
 >>> host in helo_verify_hosts? no (option unset)
 >>> host in helo_try_verify_hosts? no (option unset)
 >>> host in helo_accept_junk_hosts? no (option unset)
->>>  list element: ip4.ip4.ip4.ip4
->>> looking up host name for 127.0.0.2
-LOG: no host name found for IP address 127.0.0.2
 >>> clientname in helo_lookup_domains?
 >>>  list element: @
 >>>  list element: @[]
 >>> clientname in helo_lookup_domains? no (end of list)
 >>> using ACL "r_acl"
->>> processing ACL r_acl "accept" (TESTSUITE/test-config 22)
+>>> processing ACL r_acl "accept" (TESTSUITE/test-config 30)
 >>> check logwrite = proxy session: $proxy_session
 >>>                = proxy session: yes
 LOG: proxy session: yes
@@ -108,15 +135,17 @@ LOG: remote         [127.0.0.2]:10005
 >>> host in ignore_fromline_hosts? no (option unset)
 LOG: 10HmaZ-000000005vi-0000 <= a@test.ex H=(clientname) [127.0.0.2]:10005 P=smtp PRX=ip4.ip4.ip4.ip4 S=sss
 ### proxy timeout
->>> host in hosts_connection_nolog? no (option unset)
->>> host in host_lookup? no (option unset)
+>>> host in hosts_connection_nolog?
+>>>  list element: *
+>>>  host in hosts_connection_nolog? yes (matched "*")
+>>> host in host_lookup?
+>>> host in host_lookup? no (end of list)
 >>> host in host_reject_connection? no (option unset)
 >>> host in sender_unqualified_hosts? no (option unset)
 >>> host in recipient_unqualified_hosts? no (option unset)
 >>> host in helo_verify_hosts? no (option unset)
 >>> host in helo_try_verify_hosts? no (option unset)
 >>> host in helo_accept_junk_hosts? no (option unset)
->>>  list element: ip4.ip4.ip4.ip4
 
 ******** SERVER ********
 ### non-prox plain receive
