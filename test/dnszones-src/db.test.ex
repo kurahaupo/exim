@@ -110,7 +110,7 @@ empty        A       V4NET.255.255.255
 
 eximtesthost.ipv6 AAAA   HOSTIPV6
 test2.ipv6   AAAA    V6NET:2101:12:1:a00:20ff:fe86:a062
-test3.ipv6   AAAA    V6NET:1234:5:6:7:8:abc:0d
+test3.ipv6   AAAA    V6NET:f234:5:6:7:8:abc:0d
 
 ; A case of forward and backward pointers disagreeing
 

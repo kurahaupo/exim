@@ -525,9 +525,9 @@ RESET_AFTER_EXTRA_LINE_READ:
   # and exinext
   s/Transport: (?:[a-z0-9.]+|\[[^\]]+]) (?:[0-9.]+|\[[^\]]+]):\K$parm_port_s /PORT_S /;
   # maybe -bh ?
-  s/^macro .*(?:127\.0\.0\.1|localhost)::\K$parm_port_n/PORT_N/;
-  s/^macro .*(?:127\.0\.0\.1|localhost)::\K$parm_port_n/PORT_N/;
-  s/^macro 'SERVERS'.*PGSQL\.\K$parm_port_n/PORT_N/;
+  s/^macro .*(?:127\.0\.0\.1|localhost)::\K$parm_port_n(?!\d)/PORT_N/;
+  s/^macro .*(?:127\.0\.0\.1|localhost)::\K$parm_port_n(?!\d)/PORT_N/;
+  s/^macro 'SERVERS'.*PGSQL\.\K$parm_port_n(?!\d)/PORT_N/;
 
 
 
@@ -895,50 +895,50 @@ RESET_AFTER_EXTRA_LINE_READ:
       ."|"
       ."^\\s*port = "
       .")";
-    s/$re\K$parm_port_d/PORT_D/ng;
-    s/$re\K$parm_port_d2/PORT_D2/ng;
-    s/$re\K$parm_port_d3/PORT_D3/ng;
-    s/$re\K$parm_port_d4/PORT_D4/ng;
-    s/$re\K$parm_port_s/PORT_S/ng;
-    s/$re\K$parm_port_n/PORT_N/ng;
+    s/$re\K$parm_port_d(?!\d)/PORT_D/ng;
+    s/$re\K$parm_port_d2(?!\d)/PORT_D2/ng;
+    s/$re\K$parm_port_d3(?!\d)/PORT_D3/ng;
+    s/$re\K$parm_port_d4(?!\d)/PORT_D4/ng;
+    s/$re\K$parm_port_s(?!\d)/PORT_S/ng;
+    s/$re\K$parm_port_n(?!\d)/PORT_N/ng;
 
     $re = ".*\\]:";
-    s/$re\K$parm_port_s/PORT_S/g;
+    s/$re\K$parm_port_s(?!\d)/PORT_S/g;
     $re = "port <";
-    s/$re\K$parm_port_s/PORT_S/g;
+    s/$re\K$parm_port_s(?!\d)/PORT_S/g;
     $re = "sender_host_port( |...)=( |...)";
-    s/$re\K$parm_port_s/PORT_S/g;
+    s/$re\K$parm_port_s(?!\d)/PORT_S/g;
     $re = "plp ";
-    s/$re\K$parm_port_d/PORT_D/g;
+    s/$re\K$parm_port_d(?!\d)/PORT_D/g;
 
     $re = "Expansion of .*received_port\\}\\{";
-	s/$re\K$parm_port_d4/PORT_D4/g;
+	s/$re\K$parm_port_d4(?!\d)/PORT_D4/g;
 
     $re = "lookup of .*127.0.0.1::";
-    s/$re\K$parm_port_n/PORT_N/;
+    s/$re\K$parm_port_n(?!\d)/PORT_N/;
     $re = "postgres .* \"";
-    s/$re\K$parm_port_n/PORT_N/;
+    s/$re\K$parm_port_n(?!\d)/PORT_N/;
 
     # port number in misc dumpdb output, for early-pipe
     $re = "^$date [^:]+:";
-    s/$re\K$parm_port_d/PORT_D/;
+    s/$re\K$parm_port_d(?!\d)/PORT_D/;
 
     if ($is_mail)
       {
       $re = "(interface|received)-port:\\s+";
-      s/$re\K$parm_port_n/PORT_N/;
-      s/$re\K$parm_port_s/PORT_S/;
-      s/$re\K$parm_port_d/PORT_D/;
-      s/$re\K$parm_port_d2/PORT_D2/;
-      s/$re\K$parm_port_d3/PORT_D3/;
-      s/$re\K$parm_port_d4/PORT_D4/;
+      s/$re\K$parm_port_n(?!\d)/PORT_N/;
+      s/$re\K$parm_port_s(?!\d)/PORT_S/;
+      s/$re\K$parm_port_d(?!\d)/PORT_D/;
+      s/$re\K$parm_port_d2(?!\d)/PORT_D2/;
+      s/$re\K$parm_port_d3(?!\d)/PORT_D3/;
+      s/$re\K$parm_port_d4(?!\d)/PORT_D4/;
       }
 
     if ($is_stderr)
       {
       my $re = "${re_ip}\\.";
-      s/$re\K$parm_port_d/PORT_D/ng;
-      s/$re\K$parm_port_d2/PORT_D2/n;
+      s/$re\K$parm_port_d(?!\d)/PORT_D/ng;
+      s/$re\K$parm_port_d2(?!\d)/PORT_D2/n;
 
       $re = "("
 	."key=.*servers=.*PGSQL\\."
@@ -955,7 +955,7 @@ RESET_AFTER_EXTRA_LINE_READ:
 	."|"
 	."POSTGRES .*\""
 	.")";
-      s/$re\K$parm_port_n/PORT_N/ng;
+      s/$re\K$parm_port_n(?!\d)/PORT_N/ng;
 
       $re = "^set_process_info: .*\\]:";
       s/$re\K$parm_port_d /PORT_D /;
@@ -2783,8 +2783,8 @@ if (/^dump\s+(\S+)/)
     {
     # the sort key is the first part of the retry db dump line, but for
     # sorting we (temporarly) replace the own hosts ipv4 with a munged
-    # version, which matches the munging that is done later
-    # Why? We must ensure sure, that 127.0.0.1 always sorts first
+    # version, which matches the munging that is done later.
+    # Why? We must ensure that 127.0.0.1 always sorts first.
     # map-sort-map: Schwartz's transformation
     # test 0099
     my @temp = map  { $_->[1] }
@@ -2792,7 +2792,7 @@ if (/^dump\s+(\S+)/)
                #map  { [ (split)[0] =~ s/\Q$parm_ipv4/ip4.ip4.ip4.ip4/gr, $_ ] }  # this is too modern for 5.10.1
                map  {
                 (my $k = (split)[0]) =~ s/\Q$parm_ipv4\E/ip4.ip4.ip4.ip4/g;
-		$k =~ s/$parm_port_n/PORT_N/;
+		$k =~ s/$parm_port_n(?!\d)/PORT_N/;
                 [ $k, $_ ]
                }
                do { local $/ = "\n  "; <$in> };

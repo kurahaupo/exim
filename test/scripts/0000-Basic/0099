@@ -1,7 +1,7 @@
 # retry data
 #
 #
-# This should add an entry for "thishost.test.ex"
+### This should add an entry for "thishost.test.ex"
 exim -odi userx@simple
 Test message
 ****
@@ -14,39 +14,39 @@ sleep 3
 exim -odi -q
 ****
 #
-# This should add two entries for "thisloop.test.ex" (ip4, 127.0.0.1)
+### This should add two entries for "thisloop.test.ex" (ip4, 127.0.0.1)
 exim -odi usery@complex
 Test message 2
 ****
 dump retry
 #
-# and one for thishost without its IP
+### and one for thishost without its IP
 exim -odi -DRETRY=retry_include_ip_address=no userz@simple
 Test message
 ****
 dump retry
 #
-# expanded option, giving true, should leave the localhost pair unchanged
+### expanded option, giving true, should leave the localhost pair unchanged
 exim -odi -DRETRY='retry_include_ip_address=${if eq{with}{$local_part} {yes}{no}}' with@complex
 Test message
 ****
 dump retry
 #
-# expanded option, giving false, should add another 'thisloop.test.ex' entry, without IP
+### expanded option, giving false, should add another 'thisloop.test.ex' entry, without IP
 exim -odi -DRETRY='retry_include_ip_address=${if eq{with}{$local_part} {yes}{no}}' without@complex
 Test message
 ****
 dump retry
 #
-# a lookup-failure (in manualroute)
+### a lookup-failure (in manualroute)
 exim -odi userx@nonexist
 Test message
 ****
-# a lookup-failure (good MX, missing A) in dnslookup, deferred
+### a lookup-failure (good MX, missing A) in dnslookup, deferred
 exim -odi userx@mxt2.test.ex
 Test message
 ****
-# a lookup-failure (missing MX) in dnslookup, deferred
+### a lookup-failure (missing MX) in dnslookup, deferred
 exim -odi userx@mxnonexist.test.ex
 Test message
 ****
@@ -88,3 +88,4 @@ exim -brt x@nonexist.test.ex lookup
 #
 #
 no_msglog_check
+no_stderr_check

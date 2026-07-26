@@ -1,9 +1,11 @@
+### This should add an entry for "thishost.test.ex"
 +++++++++++++++++++++++++++
   T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
 +++++++++++++++++++++++++++
   T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
+### This should add two entries for "thisloop.test.ex" (ip4, 127.0.0.1)
 +++++++++++++++++++++++++++
   T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
@@ -11,6 +13,7 @@ first failed = time last try = time2 next try = time2 + 1200
 first failed = time last try = time2 next try = time2 + 1200
   T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
+### and one for thishost without its IP
 +++++++++++++++++++++++++++
   T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
@@ -20,6 +23,7 @@ first failed = time last try = time2 next try = time2 + 1200
 first failed = time last try = time2 next try = time2 + 1200
   T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
+### expanded option, giving true, should leave the localhost pair unchanged
 +++++++++++++++++++++++++++
   T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
@@ -29,6 +33,7 @@ first failed = time last try = time2 next try = time2 + 1200
 first failed = time last try = time2 next try = time2 + 1200
   T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
+### expanded option, giving false, should add another 'thisloop.test.ex' entry, without IP
 +++++++++++++++++++++++++++
   T:thishost.test.ex:127.0.0.1:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
@@ -40,6 +45,9 @@ first failed = time last try = time2 next try = time2 + 1200
 first failed = time last try = time2 next try = time2 + 1200
   T:thisloop.test.ex:ip4.ip4.ip4.ip4:PORT_N EEE 65 Connection refused
 first failed = time last try = time2 next try = time2 + 1200
+### a lookup-failure (in manualroute)
+### a lookup-failure (good MX, missing A) in dnslookup, deferred
+### a lookup-failure (missing MX) in dnslookup, deferred
 +++++++++++++++++++++++++++
   R:mxnonexist.test.ex -55 0 missing MX, or all MXs point to missing A records, and defer requested
 first failed = time last try = time2 next try = time2 + 1200
@@ -73,3 +81,13 @@ Retry rule: *  *  G,1d,1m,1.5;
 Retry rule: *  *  G,2d,2m,1.5; 
 Retry rule: *  *  F,1w5d,2h30m; 
 Retry rule: *  *  F,1w3d,30m; 
+
+******** SERVER ********
+### This should add an entry for "thishost.test.ex"
+### This should add two entries for "thisloop.test.ex" (ip4, 127.0.0.1)
+### and one for thishost without its IP
+### expanded option, giving true, should leave the localhost pair unchanged
+### expanded option, giving false, should add another 'thisloop.test.ex' entry, without IP
+### a lookup-failure (in manualroute)
+### a lookup-failure (good MX, missing A) in dnslookup, deferred
+### a lookup-failure (missing MX) in dnslookup, deferred

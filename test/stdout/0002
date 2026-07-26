@@ -783,16 +783,16 @@ newline	tab\134backslash ~tilde\177DEL\200\201.
 > 
 > Failed: Not enough arguments for 'readfile' (min is 1)
 > abcde
-12345
+912345
 
 xyz
 
-> abcde12345xyz
-> abcde:12345::xyz:
-> abcde - 12345 -  - xyz - 
+> abcde912345xyz
+> abcde:912345::xyz:
+> abcde - 912345 -  - xyz - 
 > Failed: failed to open /non/exist/file: No such file or directory
 > non-exist
-> >abcde!12345!!xyz!<
+> >abcde!912345!!xyz!<
 > 
 > # Calling a command
 > 
