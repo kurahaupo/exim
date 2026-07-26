@@ -2122,7 +2122,7 @@ code, possibly extended, at the start of an error message. Note that the
 terminating whitespace character is included. */
 
 regex_smtp_code =
-  regex_must_compile(US"^\\d\\d\\d\\s(?:\\d\\.\\d\\d?\\d?\\.\\d\\d?\\d?\\s)?",
+  regex_must_compile(US"^\\d{3}\\s(\\d\\.\\d{1,3}\\.\\d{1,3}\\s)?",
     MCS_NOFLAGS, TRUE);
 
 #ifdef WHITELIST_D_MACROS

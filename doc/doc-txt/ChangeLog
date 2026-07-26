@@ -209,6 +209,11 @@ JH/53 Bug 3221: fix Proxy-protocol.  For a proxied connection the options
       the client system connecting via the proxy.  Fix by re-ordering the
       connection processing sequence.
 
+JH/54 When an ACL "message" modifier supplies an SMTP response including an
+      enhanced status code (RFC 3463) the initial component is now checked for
+      matching the ACL verb.  Previously only the main status code was checked.
+
+
 
 
 Exim version 4.99.5

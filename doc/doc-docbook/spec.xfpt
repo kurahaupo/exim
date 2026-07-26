@@ -32331,10 +32331,14 @@ of the form &'n.n.n'&, each code being followed by a space. For example:
 deny  message = 599 1.2.3 Host not welcome
       hosts = 192.168.34.0/24
 .endd
-The first digit of the supplied response code must be the same as would be sent
+The first digit of a supplied response code must be the same as would be sent
 by default. A panic occurs if it is not. Exim uses a 550 code when it denies
 access, but for the predata ACL, note that the default success code is 354, not
 2&'xx'&.
+.new
+Likewise, the first component of an &"extended response code"&
+must match the default.
+.wen
 
 Notwithstanding the previous paragraph, for the QUIT ACL, unlike the others,
 the message modifier cannot override the 221 response code.

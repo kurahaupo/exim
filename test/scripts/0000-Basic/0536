@@ -6,6 +6,7 @@ rcpt to:<user1@test.ex>
 rcpt to:<user2@test.ex>
 rcpt to:<user3@test.ex>
 rcpt to:<user4@test.ex>
+rcpt to:<user4a@test.ex>
 rcpt to:<user5@test.ex>
 rcpt to:<user6@test.ex>
 rcpt to:<user7@test.ex>

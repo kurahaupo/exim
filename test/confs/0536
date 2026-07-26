@@ -27,6 +27,8 @@ rcpt:
        message     = 599 Main code\non two lines
   deny local_parts = user4
        message     = 599 5.2.3 Main and extended code
+  deny local_parts = user4a
+        message     = 599 3.12.343 Main with wrong extended code
   deny local_parts = user5
        message     = 599 5.12.3 Main and extended code\non two lines
   deny local_parts = user6
@@ -38,7 +40,7 @@ rcpt:
   defer local_parts = user8
         message     = 499 4.12.343 Main and extended code\non two lines
   defer local_parts = user9
-        message     = 499 4.1234.343 Main and extended code\non two lines
+        message     = 499 4.9234.343 Main with bogus extended code\non two lines
   defer local_parts = user10
         message     = 399 Wrong code
 

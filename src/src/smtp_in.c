@@ -3141,8 +3141,8 @@ Returns:        nothing
 */
 
 void
-smtp_message_code(uschar **code, int *codelen, uschar **msg, uschar **log_msg,
-  BOOL check_valid)
+smtp_message_code(uschar ** code, int * codelen, uschar ** msg,
+  uschar ** log_msg, BOOL check_valid)
 {
 uschar * match;
 int len;
@@ -3151,7 +3151,10 @@ if (!msg || !*msg || !regex_match(regex_smtp_code, *msg, -1, &match))
   return;
 
 len = Ustrlen(match);
-if (check_valid && (*msg)[0] != (*code)[0])
+if (  check_valid
+   && (  (*msg)[0] != (*code)[0]
+      || len >= 5 && (*msg)[4] != (*code)[0]
+   )  )
   {
   log_write(LOG_MAIN|LOG_PANIC, "configured error code starts with "
     "incorrect digit (expected %c) in %q", (*code)[0], *msg);
