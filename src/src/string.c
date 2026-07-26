@@ -1424,6 +1424,7 @@ string_vformat_trc(gstring * g, const uschar * func, unsigned line,
 {
 enum ltypes { L_NORMAL=1, L_SHORT=2, L_LONG=3, L_LONGLONG=4, L_LONGDOUBLE=5, L_SIZE=6 };
 
+BOOL taint_checked = FALSE;
 int width, precision, initial_off, lim, need;
 const char * fp = format;	/* Deliberately not unsigned */
 
@@ -1479,8 +1480,16 @@ while (*fp)
     continue;
     }
 
-  /* Deal with % characters. Pick off the width and precision, for checking
-  strings, skipping over the flag and modifier characters. */
+  /* Deal with % characters. Reject a tainted one.
+  Pick off the width and precision, for checking strings, skipping over the
+  flag and modifier characters. */
+
+  if (!taint_checked)
+    {
+    if (is_tainted(format))
+      die_tainted(US"string_vformat", func, line);
+    taint_checked = TRUE;
+    }
 
   item_start = fp;
   width = precision = -1;
