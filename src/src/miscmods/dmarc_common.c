@@ -26,7 +26,7 @@ const misc_module_info * dmarc_arc_mod_info;
 /* Working data */
 BOOL		dmarc_abort;
 uschar *	dmarc_pass_fail;	/* for authres */
-uschar *	dmarc_header_from_sender;
+const uschar *	dmarc_header_from_sender;
 
 /* results */
 int		dmarc_spf_ares_result;

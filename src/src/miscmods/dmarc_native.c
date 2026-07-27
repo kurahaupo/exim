@@ -332,17 +332,19 @@ else
   {
 /* RFC 7489 6.6.1 :- extract the domain from the 5322.From */
   const uschar * end_addr, * s;
-  uschar * errormsg;
+  uschar * errmsg = US"failed to extract or decode";
   int dummy, domain;
 
   f.parse_allow_group = TRUE;
   end_addr = parse_find_address_end(header_from, FALSE);
   s = *end_addr
-      ? string_copyn(header_from, end_addr - header_from)
-      : header_from;
-  if ((dmarc_header_from_sender = parse_extract_address(s, &errormsg,
+      ? string_copyn(header_from, end_addr - header_from) : header_from;
+  if (!(s = parse_extract_address(s, &errmsg,
 			      &dummy, &dummy, &domain, FALSE)))
-    dmarc_header_from_sender += domain;
+    dmarc_header_from_sender = NULL;
+  else if (!(dmarc_header_from_sender =
+	      string_domain_utf8_to_alabel(s + domain, &errmsg)))
+    DEBUG(receive) debug_printf_indent("DMARC: 5322.From domain: %s\n", errmsg);
 
   /* Only use the domain if not empty.  Otherwise, skip out of DMARC. */
 

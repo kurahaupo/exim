@@ -188,7 +188,8 @@ else if (!dmarc_abort)
     dmarc_abort = TRUE;
   libdm_status = dmarc_abort
     ? DMARC_PARSE_OKAY
-    : opendmarc_policy_store_from_domain(dmarc_pctx, dmarc_header_from_sender);
+    : opendmarc_policy_store_from_domain(dmarc_pctx,
+					string_copy(dmarc_header_from_sender));
   if (libdm_status != DMARC_PARSE_OKAY)
     {
     log_write(LOG_MAIN|LOG_PANIC,
@@ -311,7 +312,8 @@ The EDITME provides a DMARC_API variable */
   diversion. */
 
   libdm_status = (rr = dmarc_dns_lookup(dmarc_header_from_sender))
-    ? opendmarc_policy_store_dmarc(dmarc_pctx, rr, dmarc_header_from_sender, NULL)
+    ? opendmarc_policy_store_dmarc(dmarc_pctx, rr,
+				  string_copy(dmarc_header_from_sender), NULL)
     : DMARC_DNS_ERROR_NO_RECORD;
   switch (libdm_status)
     {
