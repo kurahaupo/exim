@@ -385,12 +385,16 @@ try option 'max_parallel'
 try option 'return_path'
 try option hosts_randomize
 try option 'port'
+expand list text
   ╭considering: $domain
   ├──────value: domain1.ex
              ╰──(tainted)
   ├───expanded: $domain
   ╰─────result: domain1.ex
              ╰──(tainted)
+domain1.ex in queue_smtp_domains?
+ list element: domain1.ex
+ domain1.ex in queue_smtp_domains? yes (matched "domain1.ex")
 >>>>>>>>>>>>>>>> Exim pid=p1236 (transport) terminating with rc=0 >>>>>>>>>>>>>>>>
 LOG: MAIN
   == userx@domain1.ex R=smarthost T=smtp defer: first-pass only routing due to -odqs, queue_smtp_domains or control=queue
@@ -486,11 +490,12 @@ check condition = ${if match_domain {$sender_helo_name}{+dlist}}
    ├───expanded: $sender_helo_name
    ╰─────result: ehlo.domain
               ╰──(tainted)
-   ╭considering: +dlist}}
+   ╭───scanning: +dlist}}
    ├───────text: +dlist
-   ├considering: }}
+   ├───scanning: }}
    ├───expanded: +dlist
-   ╰─────result: +dlist
+   ├─────result:  ◀skipped▶
+   ╰───skipping: result is not used
   ehlo.domain in "+dlist"?
    list element: +dlist
     start sublist dlist
@@ -579,3 +584,128 @@ sender.domain in "domain=recipient.domain/sender_domain=sender.domain"?
 sender.domain in "domain=recipient.domain/sender_domain=sender.domain"? no (end of list)
 try option 'acl_smtp_quit'
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+Exim version x.yz ....
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
+admin user
+try option 'gecos_pattern'
+try option 'gecos_name'
+try option 'unknown_login'
+try option 'smtp_active_hostname'
+ in hosts_connection_nolog? no (option unset)
+try option 'message_size_limit'
+try option 'acl_smtp_connect'
+try option 'smtp_banner'
+ ╭considering: $smtp_active_hostname░ESMTP░Exim░$version_number░$tod_full
+ ├──────value: the.local.host.name
+ ├considering: ░ESMTP░Exim░$version_number░$tod_full
+ ├───────text: ░ESMTP░Exim░
+ ├considering: $version_number░$tod_full
+ ├──────value: x.yz
+ ├considering: ░$tod_full
+ ├───────text: ░
+ ├considering: $tod_full
+ ├──────value: Tue,░2░Mar░1999░09:44:33░+0000
+ ├───expanded: $smtp_active_hostname░ESMTP░Exim░$version_number░$tod_full
+ ╰─────result: the.local.host.name░ESMTP░Exim░x.yz░Tue,░2░Mar░1999░09:44:33░+0000
+try option 'acl_smtp_helo'
+check condition = ${if match_domain {$sender_helo_name}{$domain}}
+ ╭considering: ${if░match_domain░{$sender_helo_name}{$domain}}
+  cond: match_domain
+   ╭considering: $sender_helo_name}{$domain}}
+   ├──────value: ehlo.domain
+              ╰──(tainted)
+   ├considering: }{$domain}}
+   ├───expanded: $sender_helo_name
+   ╰─────result: ehlo.domain
+              ╰──(tainted)
+   ╭───scanning: $domain}}
+   ├───────text: $domain
+   ├───scanning: }}
+   ├───expanded: $domain
+   ├─────result:  ◀skipped▶
+   ╰───skipping: result is not used
+  expand list text
+   ╎╭considering: $domain
+   ╎├──────value: ehlo.domain
+   ╎           ╰──(tainted)
+   ╎├───expanded: $domain
+   ╎╰─────result: ehlo.domain
+   ╎           ╰──(tainted)
+  ehlo.domain in "ehlo.domain"?
+   list element: ehlo.domain
+   ehlo.domain in "ehlo.domain"? yes (matched "ehlo.domain")
+  cond "match_domain" res: T
+ ├──condition: match_domain░{$sender_helo_name}{$domain}
+ ├─────result: true
+ ├───expanded: ${if░match_domain░{$sender_helo_name}{$domain}}
+ ╰─────result: true
+                = true
+ in dsn_advertise_hosts? no (option unset)
+try option 'acl_smtp_atrn'
+try option 'acl_smtp_etrn'
+try option 'acl_smtp_vrfy'
+try option 'acl_smtp_expn'
+ in pipelining_advertise_hosts?
+ list element: *
+  in pipelining_advertise_hosts? yes (matched "*")
+ in chunking_advertise_hosts?
+ in chunking_advertise_hosts? no (end of list)
+try option 'acl_smtp_mail'
+check hosts = domain=$domain/sender_domain=$sender_address_domain
+expand list text
+  ╭considering: domain=$domain/sender_domain=$sender_address_domain
+  ├───────text: domain=
+  ├considering: $domain/sender_domain=$sender_address_domain
+  ├──────value: e̪m̪p̪t̪y̪
+  ├considering: /sender_domain=$sender_address_domain
+  ├───────text: /sender_domain=
+  ├considering: $sender_address_domain
+  ├──────value: sender.domain
+             ╰──(tainted)
+  ├───expanded: domain=$domain/sender_domain=$sender_address_domain
+  ╰─────result: domain=/sender_domain=sender.domain
+             ╰──(tainted)
+ in "domain=/sender_domain=sender.domain"?
+ list element: domain=/sender_domain=sender.domain
+ in "domain=/sender_domain=sender.domain"? no (end of list)
+try option 'acl_smtp_rcpt'
+check domains = domain=$domain/sender_domain=$sender_address_domain
+expand list text
+  ╭considering: domain=$domain/sender_domain=$sender_address_domain
+  ├───────text: domain=
+  ├considering: $domain/sender_domain=$sender_address_domain
+  ├──────value: recipient.domain
+             ╰──(tainted)
+  ├considering: /sender_domain=$sender_address_domain
+  ├───────text: /sender_domain=
+  ├considering: $sender_address_domain
+  ├──────value: sender.domain
+             ╰──(tainted)
+  ├───expanded: domain=$domain/sender_domain=$sender_address_domain
+  ╰─────result: domain=recipient.domain/sender_domain=sender.domain
+             ╰──(tainted)
+recipient.domain in "domain=recipient.domain/sender_domain=sender.domain"?
+ list element: domain=recipient.domain/sender_domain=sender.domain
+recipient.domain in "domain=recipient.domain/sender_domain=sender.domain"? no (end of list)
+check sender_domains = domain=$domain/sender_domain=$sender_address_domain
+expand list text
+  ╭considering: domain=$domain/sender_domain=$sender_address_domain
+  ├───────text: domain=
+  ├considering: $domain/sender_domain=$sender_address_domain
+  ├──────value: recipient.domain
+             ╰──(tainted)
+  ├considering: /sender_domain=$sender_address_domain
+  ├───────text: /sender_domain=
+  ├considering: $sender_address_domain
+  ├──────value: sender.domain
+             ╰──(tainted)
+  ├───expanded: domain=$domain/sender_domain=$sender_address_domain
+  ╰─────result: domain=recipient.domain/sender_domain=sender.domain
+             ╰──(tainted)
+sender.domain in "domain=recipient.domain/sender_domain=sender.domain"?
+ list element: domain=recipient.domain/sender_domain=sender.domain
+sender.domain in "domain=recipient.domain/sender_domain=sender.domain"? no (end of list)
+try option 'acl_smtp_quit'
+>>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

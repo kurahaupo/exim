@@ -2672,7 +2672,7 @@ eval_condition(const uschar * s, BOOL * resetok, BOOL * yield)
 {
 BOOL testfor = TRUE, tempcond = FALSE, combined_cond;
 BOOL * subcondptr;
-BOOL sub2_honour_dollar = TRUE, is_forany, is_json, is_jsons;
+BOOL is_forany, is_json, is_jsons;
 int rc, cond_type;
 int_eximarith_t num[2];
 struct stat statbuf;
@@ -2743,15 +2743,14 @@ switch(cond_type = identify_operator(&s, &opname))
   /* first_delivery tests for first delivery attempt */
 
   case ECOND_FIRST_DELIVERY:
-  if (yield) *yield = f.deliver_firsttime == testfor;
-  next = s; goto out;
-
+    if (yield) *yield = f.deliver_firsttime == testfor;
+    next = s; goto out;
 
   /* queue_running tests for any process started by a queue runner */
 
   case ECOND_QUEUE_RUNNING:
-  if (yield) *yield = (queue_run_pid != (pid_t)0) == testfor;
-  next = s; goto out;
+    if (yield) *yield = (queue_run_pid != (pid_t)0) == testfor;
+    next = s; goto out;
 
 
   /* exists:  tests for file existence
@@ -2772,108 +2771,143 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_RADIUS:
   case ECOND_LDAPAUTH:
 
-  if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START; /* }-for-text-editors */
+    if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START; /* }-for-text-editors */
 
-   {
-    BOOL textonly;
-    sub[0] = expand_string_internal(s+1,
-      ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | (yield ? ESI_NOFLAGS : ESI_SKIPPING),
-      &s, resetok, &textonly);
-    if (!sub[0]) goto failout;
-    if (textonly) sub_textonly |= BIT(0);
-   }
-  /* {-for-text-editors */
-  if (*s++ != '}') goto COND_FAILED_CURLY_END;
+     {
+      BOOL textonly;
+      sub[0] = expand_string_internal(s+1,
+	ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | (yield ? ESI_NOFLAGS : ESI_SKIPPING),
+	&s, resetok, &textonly);
+      if (!sub[0]) goto failout;
+      if (textonly) sub_textonly |= BIT(0);
+     }
+    /* {-for-text-editors */
+    if (*s++ != '}') goto COND_FAILED_CURLY_END;
 
-  if (!yield) { next = s; goto out; }  /* No need to run the test if skipping */
+    if (!yield) { next = s; goto out; }  /* No need to run the test if skipping */
 
-  switch(cond_type)
-    {
-    case ECOND_EXISTS:
-    if ((expand_forbid & RDO_EXISTS) != 0)
+    switch(cond_type)
       {
-      expand_string_message = US"File existence tests are not permitted";
-      goto failout;
+      case ECOND_EXISTS:
+      if ((expand_forbid & RDO_EXISTS) != 0)
+	{
+	expand_string_message = US"File existence tests are not permitted";
+	goto failout;
+	}
+      *yield = (Ustat(sub[0], &statbuf) == 0) == testfor;
+      break;
+
+      case ECOND_ISIP:
+      case ECOND_ISIP4:
+      case ECOND_ISIP6:
+      {
+	const uschar *errp;
+	const uschar **errpp;
+	DEBUG(expand) errpp = &errp; else errpp = 0;
+	if (0 == (rc = string_is_ip_addressX(sub[0], NULL, errpp)))
+	  DEBUG(expand) debug_printf("failed: %s\n", errp);
+
+	*yield = ( cond_type == ECOND_ISIP  ? rc != 0 :
+		   cond_type == ECOND_ISIP4 ? rc == 4 : rc == 6) == testfor;
       }
-    *yield = (Ustat(sub[0], &statbuf) == 0) == testfor;
-    break;
 
-    case ECOND_ISIP:
-    case ECOND_ISIP4:
-    case ECOND_ISIP6:
-    {
-      const uschar *errp;
-      const uschar **errpp;
-      DEBUG(expand) errpp = &errp; else errpp = 0;
-      if (0 == (rc = string_is_ip_addressX(sub[0], NULL, errpp)))
-        DEBUG(expand) debug_printf("failed: %s\n", errp);
+      break;
 
-      *yield = ( cond_type == ECOND_ISIP  ? rc != 0 :
-                 cond_type == ECOND_ISIP4 ? rc == 4 : rc == 6) == testfor;
-    }
+      /* Various authentication tests - all optionally compiled */
 
-    break;
-
-    /* Various authentication tests - all optionally compiled */
-
-    case ECOND_PAM:
+      case ECOND_PAM:
 #ifdef SUPPORT_PAM
-      {
-      const misc_module_info * mi = misc_mod_find(US"pam", NULL);
-      typedef int (*fn_t)(const uschar *, uschar **);
-      if (!mi)
-	goto COND_FAILED_NOT_COMPILED;
-      rc = (((fn_t *) mi->functions)[PAM_AUTH_CALL])
-					  (sub[0], &expand_string_message);
-      goto END_AUTH;
-      }
+	{
+	const misc_module_info * mi = misc_mod_find(US"pam", NULL);
+	typedef int (*fn_t)(const uschar *, uschar **);
+	if (!mi)
+	  goto COND_FAILED_NOT_COMPILED;
+	rc = (((fn_t *) mi->functions)[PAM_AUTH_CALL])
+					    (sub[0], &expand_string_message);
+	goto END_AUTH;
+	}
 #else
-      goto COND_FAILED_NOT_COMPILED;
+	goto COND_FAILED_NOT_COMPILED;
 #endif  /* SUPPORT_PAM */
 
-    case ECOND_RADIUS:
+      case ECOND_RADIUS:
 #ifdef RADIUS_CONFIG_FILE
-      {
-      uschar * dummy_errstr;
-      const misc_module_info * mi = misc_mod_find(US"radius", &dummy_errstr);
-      typedef int (*fn_t)(const uschar *, uschar **);
-      if (!mi)
-	goto COND_FAILED_NOT_COMPILED;
-      rc = (((fn_t *) mi->functions)[RADIUS_AUTH_CALL])
-					  (sub[0], &expand_string_message);
-      goto END_AUTH;
-      }
+	{
+	uschar * dummy_errstr;
+	const misc_module_info * mi = misc_mod_find(US"radius", &dummy_errstr);
+	typedef int (*fn_t)(const uschar *, uschar **);
+	if (!mi)
+	  goto COND_FAILED_NOT_COMPILED;
+	rc = (((fn_t *) mi->functions)[RADIUS_AUTH_CALL])
+					    (sub[0], &expand_string_message);
+	goto END_AUTH;
+	}
 #else
-      goto COND_FAILED_NOT_COMPILED;
+	goto COND_FAILED_NOT_COMPILED;
 #endif  /* RADIUS_CONFIG_FILE */
 
-    case ECOND_LDAPAUTH:
-    #ifdef LOOKUP_LDAP
-      {
-      int expand_setup = -1;
-      const lookup_info * li = search_findtype(US"ldapauth", 8);
-      void * handle;
+      case ECOND_LDAPAUTH:
+#ifdef LOOKUP_LDAP
+	{
+	int expand_setup = -1;
+	const lookup_info * li = search_findtype(US"ldapauth", 8);
+	void * handle;
 
-      if (li && (handle = search_open(NULL, li, 0, NULL, NULL)))
-	rc = search_find(handle, NULL, sub[0],
-			-1, NULL, 0, 0, &expand_setup, NULL)
-	  ? OK : f.search_find_defer ? DEFER : FAIL;
-      else
-	{ expand_string_message = search_error_message; rc = FAIL; }
+	if (li && (handle = search_open(NULL, li, 0, NULL, NULL)))
+	  rc = search_find(handle, NULL, sub[0],
+			  -1, NULL, 0, 0, &expand_setup, NULL)
+	    ? OK : f.search_find_defer ? DEFER : FAIL;
+	else
+	  { expand_string_message = search_error_message; rc = FAIL; }
+	}
+      goto END_AUTH;
+#else
+      goto COND_FAILED_NOT_COMPILED;
+#endif  /* LOOKUP_LDAP */
+
+#if defined(SUPPORT_PAM) || defined(RADIUS_CONFIG_FILE) || defined(LOOKUP_LDAP)
+      END_AUTH:
+      if (rc == ERROR || rc == DEFER) goto failout;
+      *yield = (rc == OK) == testfor;
+#endif
       }
-    goto END_AUTH;
-    #else
-    goto COND_FAILED_NOT_COMPILED;
-    #endif  /* LOOKUP_LDAP */
+    next = s; goto out;
 
-    #if defined(SUPPORT_PAM) || defined(RADIUS_CONFIG_FILE) || \
-        defined(LOOKUP_LDAP)
-    END_AUTH:
-    if (rc == ERROR || rc == DEFER) goto failout;
-    *yield = (rc == OK) == testfor;
-    #endif
+
+  /* saslauthd: does Cyrus saslauthd authentication. Four parameters are used:
+
+     ${if saslauthd {{username}{password}{service}{realm}}  {yes}{no}}
+
+  However, the last two are optional. That is why the whole set is enclosed
+  in their own set of braces. */
+
+  case ECOND_SASLAUTHD:
+#ifndef CYRUS_SASLAUTHD_SOCKET
+    goto COND_FAILED_NOT_COMPILED;
+#else
+    {
+    const uschar * sub[4];
+    Uskip_whitespace(&s);
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    switch(read_subs(sub, nelem(sub), 2, &s,
+	yield ? ESI_NOFLAGS : ESI_SKIPPING, TRUE, name, resetok, NULL))
+      {
+      case 1: expand_string_message = US"too few arguments or bracketing "
+	"error for saslauthd";
+      case 2:
+      case 3: goto failout;
+      }
+    if (!sub[2]) sub[3] = NULL;  /* realm if no service */
+    if (yield)
+      {
+      int rc = auth_call_saslauthd(sub[0], sub[1], sub[2], sub[3],
+	&expand_string_message);
+      if (rc == ERROR || rc == DEFER) goto failout;
+      *yield = (rc == OK) == testfor;
+      }
+    next = s; goto out;
     }
-  next = s; goto out;
+#endif /* CYRUS_SASLAUTHD_SOCKET */
 
 
   /* call ACL (in a conditional context).  Accept true, deny false.
@@ -2933,102 +2967,128 @@ switch(cond_type = identify_operator(&s, &opname))
     }
 
 
-  /* saslauthd: does Cyrus saslauthd authentication. Four parameters are used:
-
-     ${if saslauthd {{username}{password}{service}{realm}}  {yes}{no}}
-
-  However, the last two are optional. That is why the whole set is enclosed
-  in their own set of braces. */
-
-  case ECOND_SASLAUTHD:
-#ifndef CYRUS_SASLAUTHD_SOCKET
-    goto COND_FAILED_NOT_COMPILED;
-#else
-    {
-    const uschar * sub[4];
-    Uskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
-    switch(read_subs(sub, nelem(sub), 2, &s,
-	yield ? ESI_NOFLAGS : ESI_SKIPPING, TRUE, name, resetok, NULL))
-      {
-      case 1: expand_string_message = US"too few arguments or bracketing "
-	"error for saslauthd";
-      case 2:
-      case 3: goto failout;
-      }
-    if (!sub[2]) sub[3] = NULL;  /* realm if no service */
-    if (yield)
-      {
-      int rc = auth_call_saslauthd(sub[0], sub[1], sub[2], sub[3],
-	&expand_string_message);
-      if (rc == ERROR || rc == DEFER) goto failout;
-      *yield = (rc == OK) == testfor;
-      }
-    next = s; goto out;
-    }
-#endif /* CYRUS_SASLAUTHD_SOCKET */
-
-
-  /* This pair get custom parsing, in contrast to other conditions, as the
-  do/don't expand 2nd arg can't do what we need: the split sep/list expansion */
-
+  /* List matches.  We expand the first arg the usual way but grab the second
+  raw; the list-matching support facilities do that expansion.
+  match_address:     matches in an address list
+  match_domain:      matches in a domain list
+  match_ip:          matches a host list that is restricted to IP addresses
+  match_local_part:  matches in a local part list
+  inlist/inlisti:    checks if first argument is in the list of the second
+  */
+  case ECOND_MATCH_ADDRESS:
+  case ECOND_MATCH_DOMAIN:
+  case ECOND_MATCH_IP:
+  case ECOND_MATCH_LOCAL_PART:
   case ECOND_INLIST:
   case ECOND_INLISTI:
     {
-    esi_flags flags = yield ? ESI_BRACE_ENDS | ESI_HONOR_DOLLAR
-			  : ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | ESI_SKIPPING;
     BOOL textonly;
-    const uschar * list;
-    int sep;
-    uschar * save_iterate_item = iterate_item;
-    int (*compare)(const uschar *, const uschar *);
+    esi_flags flags;
+    const uschar * t;
 
-    /* First argumnt */
-
+    /* arg 1 */
     if (Uskip_whitespace(&s) != '{')
       goto COND_FAILED_CURLY_START;
-    if (!yield) flags |= ESI_SKIPPING;
+    flags = yield ? ESI_BRACE_ENDS | ESI_HONOR_DOLLAR
+		  : ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | ESI_SKIPPING;
     if (!(sub[0] = expand_string_internal(s+1, flags, &s, resetok, &textonly)))
       goto failout;
     if (textonly) sub_textonly |= BIT(0);
     if (*s++ != '}') goto COND_FAILED_CURLY_END;
-    DEBUG(expand)
-      debug_printf_indent("condition: %s  item: %s\n", opname, sub[0]);
 
-    /* Second argument: grab any listsep spec, then expand the list */
-
+    /* arg 2 */
     if (Uskip_whitespace(&s) != '{')
       {
-      expand_string_message = string_sprintf("missing 2nd string in {} "
-	"after %q", opname);
+      expand_string_message =
+	string_sprintf("missing 2nd string in {} after %q", opname);
       goto failout;
       }
-    list = ++s;
-    sep = matchlist_parse_sep(&list);
-    if (!(list = expand_string_internal(list, flags, &s, resetok, &textonly)))
+    flags = ESI_BRACE_ENDS | ESI_SKIPPING;
+    if (!expand_string_internal(++s, flags, &t, resetok, &textonly))
       goto failout;
     if (textonly) sub_textonly |= BIT(1);
+    sub[1] = string_copyn(s, t-s);
+    s = t;
     if (*s++ != '}') goto COND_FAILED_CURLY_END;
 
-    if (yield)
-      {
-      tempcond = FALSE;
-      compare = cond_type == ECOND_INLISTI
-	? strcmpic : (int (*)(const uschar *, const uschar *)) strcmp;
+    if (!yield) { next = s; goto out; }		/* Result not required */
 
-      while ((iterate_item = string_nextinlist(&list, &sep, NULL, 0)))
+    switch(cond_type)
+      {
+      case ECOND_MATCH_ADDRESS:  /* Match in an address list */
+	rc = match_address_list(sub[0], TRUE,
+				TRUE, &sub[1], NULL, -1, 0, CUSS &lookup_value);
+	break;
+
+      case ECOND_MATCH_DOMAIN:   /* Match in a domain list */
+	rc = match_isinlist(sub[0], &sub[1], 0, &domainlist_anchor, NULL,
+			    MCL_DOMAIN, TRUE, CUSS &lookup_value);
+	break;
+
+      case ECOND_MATCH_LOCAL_PART:
+	rc = match_isinlist(sub[0], &sub[1], 0, &localpartlist_anchor, NULL,
+			    MCL_LOCALPART, TRUE, CUSS &lookup_value);
+	break;
+
+      case ECOND_MATCH_IP:       /* Match IP address in a host list */
 	{
-	DEBUG(expand) debug_printf_indent(" compare %q vs. %q\n", iterate_item, sub[0]);
-	if (compare(sub[0], iterate_item) == 0)
+	unsigned int * nullcache = NULL;
+	check_host_block cb;
+
+	if (**sub && string_is_ip_address(sub[0], NULL) == 0)
 	  {
-	  tempcond = TRUE;
-	  lookup_value = string_copy_pool(iterate_item, FALSE, POOL_SEARCH);
-	  break;
+	  expand_string_message = string_sprintf("%q is not an IP address",
+	    sub[0]);
+	  goto failout;
 	  }
+
+	cb.host_name = US"";
+	cb.host_address = sub[0];
+
+	/* If the host address starts off ::ffff: it is an IPv6 address in
+	IPv4-compatible mode. Find the IPv4 part for checking against IPv4
+	addresses. */
+
+	cb.host_ipv4 = (Ustrncmp(cb.host_address, "::ffff:", 7) == 0)?
+	  cb.host_address + 7 : cb.host_address;
+
+	rc = match_check_list(
+		&sub[1],		/* the list */
+		0,			/* separator character */
+		&hostlist_anchor,	/* anchor pointer */
+		&nullcache,		/* cache pointer */
+		check_host,		/* function for testing */
+		&cb,			/* argument for function */
+		MCL_HOST,
+		sub[0],			/* text for debugging */
+		CUSS &lookup_value);	/* where to pass back data */
 	}
-      iterate_item = save_iterate_item;
-      *yield = tempcond == testfor;
+	break;
+
+      case ECOND_INLIST:
+	rc = match_isinlist(sub[0], &sub[1], 0, NULL, NULL,
+			    MCL_STRING, FALSE, CUSS &lookup_value);
+	break;
+      case ECOND_INLISTI:
+	rc = match_isinlist(sub[0], &sub[1], 0, NULL, NULL,
+			    MCL_STRING, TRUE, CUSS &lookup_value);
+	break;
+
+      default:	/* impossible; compiler silencing */
+	rc = DEFER;
+	break;
       }
+    switch(rc)
+      {
+      case OK:   tempcond = TRUE;  break;
+      case FAIL: tempcond = FALSE; break;
+
+      case DEFER:
+	expand_string_message = string_sprintf("unable to complete match "
+	  "against %q: %s", sub[1], search_error_message);
+	goto failout;
+      }
+    *yield = tempcond == testfor;
     next = s; goto out;
     }
 
@@ -3037,21 +3097,9 @@ switch(cond_type = identify_operator(&s, &opname))
 
   crypteq:           encrypts plaintext and compares against an encrypted text,
                        using crypt(), crypt16(), MD5 or SHA-1
-  inlist/inlisti:    checks if first argument is in the list of the second
   match:             does a regular expression match and sets up the numerical
                        variables if it succeeds
-  match_address:     matches in an address list
-  match_domain:      matches in a domain list
-  match_ip:          matches a host list that is restricted to IP addresses
-  match_local_part:  matches in a local part list
   */
-
-  case ECOND_MATCH_ADDRESS:
-  case ECOND_MATCH_DOMAIN:
-  case ECOND_MATCH_IP:
-  case ECOND_MATCH_LOCAL_PART:
-    sub2_honour_dollar = FALSE;
-    /* FALLTHROUGH */
 
   case ECOND_CRYPTEQ:
   case ECOND_MATCH:
@@ -3074,404 +3122,305 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_STR_GE:
   case ECOND_STR_GEI:
 
-  for (int i = 0; i < 2; i++)
-    {
-    BOOL textonly;
-    /* Sometimes, we don't expand substrings; too many insecure configurations
-    created using match_address{}{} and friends, where the second param
-    includes information from untrustworthy sources. */
-    /*XXX is this moot given taint-tracking? */
-
-    esi_flags flags = ESI_BRACE_ENDS;
-
-    if (!(i > 0 && !sub2_honour_dollar)) flags |= ESI_HONOR_DOLLAR;
-    if (!yield) flags |= ESI_SKIPPING;
-
-    if (Uskip_whitespace(&s) != '{')
+    for (int i = 0; i < 2; i++)
       {
-      if (i == 0) goto COND_FAILED_CURLY_START;
-      expand_string_message = string_sprintf("missing 2nd string in {} "
-        "after %q", opname);
-      goto failout;
-      }
-    if (!(sub[i] = expand_string_internal(s+1, flags, &s, resetok, &textonly)))
-      goto failout;
-    if (textonly) sub_textonly |= BIT(i);
+      BOOL textonly;
+      esi_flags flags = yield ? ESI_BRACE_ENDS | ESI_HONOR_DOLLAR
+			    : ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | ESI_SKIPPING;
 
-    DEBUG(expand) if (i == 1 && !sub2_honour_dollar && Ustrchr(sub[1], '$'))
-      debug_printf_indent("WARNING: the second arg is NOT expanded,"
-			" for security reasons\n");
-    if (*s++ != '}') goto COND_FAILED_CURLY_END;
-
-    /* Convert to numerical if required; we know that the names of all the
-    conditions that compare numbers do not start with a letter. This just saves
-    checking for them individually. */
-
-    if (!isalpha(opname[0]) && yield)
-      if (sub[i][0] == 0)
-        {
-        num[i] = 0;
-        DEBUG(expand)
-          debug_printf_indent("empty string cast to zero for numerical comparison\n");
-        }
-      else
-        {
-        num[i] = expanded_string_integer(sub[i], FALSE);
-        if (expand_string_message) goto failout;
-        }
-    }
-
-  /* Result not required */
-
-  if (!yield) { next = s; goto out; }
-
-  /* Do an appropriate comparison */
-
-  switch(cond_type)
-    {
-    case ECOND_NUM_E:
-    case ECOND_NUM_EE:
-      tempcond = (num[0] == num[1]); break;
-
-    case ECOND_NUM_G:
-      tempcond = (num[0] > num[1]); break;
-
-    case ECOND_NUM_GE:
-      tempcond = (num[0] >= num[1]); break;
-
-    case ECOND_NUM_L:
-      tempcond = (num[0] < num[1]); break;
-
-    case ECOND_NUM_LE:
-      tempcond = (num[0] <= num[1]); break;
-
-    case ECOND_STR_LT:
-      tempcond = (Ustrcmp(sub[0], sub[1]) < 0); break;
-
-    case ECOND_STR_LTI:
-      tempcond = (strcmpic(sub[0], sub[1]) < 0); break;
-
-    case ECOND_STR_LE:
-      tempcond = (Ustrcmp(sub[0], sub[1]) <= 0); break;
-
-    case ECOND_STR_LEI:
-      tempcond = (strcmpic(sub[0], sub[1]) <= 0); break;
-
-    case ECOND_STR_EQ:
-      tempcond = (Ustrcmp(sub[0], sub[1]) == 0); break;
-
-    case ECOND_STR_EQI:
-      tempcond = (strcmpic(sub[0], sub[1]) == 0); break;
-
-    case ECOND_STR_GT:
-      tempcond = (Ustrcmp(sub[0], sub[1]) > 0); break;
-
-    case ECOND_STR_GTI:
-      tempcond = (strcmpic(sub[0], sub[1]) > 0); break;
-
-    case ECOND_STR_GE:
-      tempcond = (Ustrcmp(sub[0], sub[1]) >= 0); break;
-
-    case ECOND_STR_GEI:
-      tempcond = (strcmpic(sub[0], sub[1]) >= 0); break;
-
-    case ECOND_MATCH:   /* Regular expression match */
-      {
-      const pcre2_code * re = regex_compile(sub[1],
-		  sub_textonly & BIT(1) ? MCS_CACHEABLE : MCS_NOFLAGS,
-		  &expand_string_message, pcre_gen_cmp_ctx);
-      if (!re)
-	goto failout;
-
-      tempcond = regex_match_and_setup(re, sub[0], 0, -1);
-      break;
-      }
-
-    case ECOND_MATCH_ADDRESS:  /* Match in an address list */
-      rc = match_address_list(sub[0], TRUE,
-#ifdef EXPAND_LISTMATCH_RHS
-			      TRUE,
-#else
-			      FALSE,
-#endif
-			      &(sub[1]), NULL, -1, 0,
-			      CUSS &lookup_value);
-      goto MATCHED_SOMETHING;
-
-    case ECOND_MATCH_DOMAIN:   /* Match in a domain list */
-      rc = match_isinlist(sub[0], &(sub[1]), 0, &domainlist_anchor, NULL,
-#ifdef EXPAND_LISTMATCH_RHS
-			  MCL_DOMAIN,
-#else
-			  MCL_DOMAIN + MCL_NOEXPAND,
-#endif
-			  TRUE, CUSS &lookup_value);
-      goto MATCHED_SOMETHING;
-
-    case ECOND_MATCH_IP:       /* Match IP address in a host list */
-      if (sub[0][0] != 0 && string_is_ip_address(sub[0], NULL) == 0)
+      if (Uskip_whitespace(&s) != '{')
 	{
-	expand_string_message = string_sprintf("%q is not an IP address",
-	  sub[0]);
+	if (i == 0) goto COND_FAILED_CURLY_START;
+	expand_string_message = string_sprintf("missing 2nd string in {} "
+	  "after %q", opname);
 	goto failout;
 	}
-      else
-	{
-	unsigned int *nullcache = NULL;
-	check_host_block cb;
+      if (!(sub[i] = expand_string_internal(s+1, flags, &s, resetok, &textonly)))
+	goto failout;
+      if (textonly) sub_textonly |= BIT(i);
 
-	cb.host_name = US"";
-	cb.host_address = sub[0];
+      if (*s++ != '}') goto COND_FAILED_CURLY_END;
 
-	/* If the host address starts off ::ffff: it is an IPv6 address in
-	IPv4-compatible mode. Find the IPv4 part for checking against IPv4
-	addresses. */
+      /* Convert to numerical if required; we know that the names of all the
+      conditions that compare numbers do not start with a letter. This just saves
+      checking for them individually. */
 
-	cb.host_ipv4 = (Ustrncmp(cb.host_address, "::ffff:", 7) == 0)?
-	  cb.host_address + 7 : cb.host_address;
-
-	rc = match_check_list(
-		&sub[1],		/* the list */
-		0,			/* separator character */
-		&hostlist_anchor,	/* anchor pointer */
-		&nullcache,		/* cache pointer */
-		check_host,		/* function for testing */
-		&cb,			/* argument for function */
-#ifdef EXPAND_LISTMATCH_RHS
-		MCL_HOST,
-#else
-		MCL_HOST + MCL_NOEXPAND,/* type of check */
-#endif
-		sub[0],			/* text for debugging */
-		CUSS &lookup_value);	/* where to pass back data */
-	}
-      goto MATCHED_SOMETHING;
-
-    case ECOND_MATCH_LOCAL_PART:
-      rc = match_isinlist(sub[0], &(sub[1]), 0, &localpartlist_anchor, NULL,
-#ifdef EXPAND_LISTMATCH_RHS
-			  MCL_LOCALPART,
-#else
-			  MCL_LOCALPART+ MCL_NOEXPAND,
-#endif
-			  TRUE, CUSS &lookup_value);
-      /* Fall through */
-      /* VVVVVVVVVVVV */
-      MATCHED_SOMETHING:
-      switch(rc)
-	{
-	case OK:   tempcond = TRUE;  break;
-	case FAIL: tempcond = FALSE; break;
-
-	case DEFER:
-	  expand_string_message = string_sprintf("unable to complete match "
-	    "against %q: %s", sub[1], search_error_message);
-	  goto failout;
-	}
-
-      break;
-
-    /* Various "encrypted" comparisons. If the second string starts with
-    "{" then an encryption type is given. Default to crypt() or crypt16()
-    (build-time choice). */
-    /* }-for-text-editors */
-
-    case ECOND_CRYPTEQ:
-    #ifndef SUPPORT_CRYPTEQ
-      goto COND_FAILED_NOT_COMPILED;
-    #else
-      if (strncmpic(sub[1], US"{md5}", 5) == 0)
-	{
-	int sublen = Ustrlen(sub[1]+5);
-	md5 base;
-	uschar digest[16];
-
-	md5_start(&base);
-	md5_end(&base, sub[0], Ustrlen(sub[0]), digest);
-
-	/* If the length that we are comparing against is 24, the MD5 digest
-	is expressed as a base64 string. This is the way LDAP does it. However,
-	some other software uses a straightforward hex representation. We assume
-	this if the length is 32. Other lengths fail. */
-
-	if (sublen == 24)
+      if (!isalpha(opname[0]) && yield)
+	if (!sub[i][0])
 	  {
-	  uschar *coded = b64encode(CUS digest, 16);
-	  DEBUG(auth) debug_printf("crypteq: using MD5+B64 hashing\n"
-	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
-	  tempcond = (Ustrcmp(coded, sub[1]+5) == 0);
-	  }
-	else if (sublen == 32)
-	  {
-	  uschar coded[36];
-	  for (int i = 0; i < 16; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
-	  coded[32] = 0;
-	  DEBUG(auth) debug_printf("crypteq: using MD5+hex hashing\n"
-	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
-	  tempcond = (strcmpic(coded, sub[1]+5) == 0);
+	  num[i] = 0;
+	  DEBUG(expand)
+	    debug_printf_indent("empty string cast to zero for numerical comparison\n");
 	  }
 	else
 	  {
-	  DEBUG(auth) debug_printf("crypteq: length for MD5 not 24 or 32: "
-	    "fail\n  crypted=%s\n", sub[1]+5);
-	  tempcond = FALSE;
+	  num[i] = expanded_string_integer(sub[i], FALSE);
+	  if (expand_string_message) goto failout;
 	  }
-	}
+      }
 
-      else if (strncmpic(sub[1], US"{sha1}", 6) == 0)
+    if (!yield) { next = s; goto out; }		/* Result not required */
+
+    /* Do an appropriate comparison */
+
+    switch(cond_type)
+      {
+      case ECOND_NUM_E:
+      case ECOND_NUM_EE:
+	tempcond = (num[0] == num[1]); break;
+
+      case ECOND_NUM_G:
+	tempcond = (num[0] > num[1]); break;
+
+      case ECOND_NUM_GE:
+	tempcond = (num[0] >= num[1]); break;
+
+      case ECOND_NUM_L:
+	tempcond = (num[0] < num[1]); break;
+
+      case ECOND_NUM_LE:
+	tempcond = (num[0] <= num[1]); break;
+
+      case ECOND_STR_LT:
+	tempcond = (Ustrcmp(sub[0], sub[1]) < 0); break;
+
+      case ECOND_STR_LTI:
+	tempcond = (strcmpic(sub[0], sub[1]) < 0); break;
+
+      case ECOND_STR_LE:
+	tempcond = (Ustrcmp(sub[0], sub[1]) <= 0); break;
+
+      case ECOND_STR_LEI:
+	tempcond = (strcmpic(sub[0], sub[1]) <= 0); break;
+
+      case ECOND_STR_EQ:
+	tempcond = (Ustrcmp(sub[0], sub[1]) == 0); break;
+
+      case ECOND_STR_EQI:
+	tempcond = (strcmpic(sub[0], sub[1]) == 0); break;
+
+      case ECOND_STR_GT:
+	tempcond = (Ustrcmp(sub[0], sub[1]) > 0); break;
+
+      case ECOND_STR_GTI:
+	tempcond = (strcmpic(sub[0], sub[1]) > 0); break;
+
+      case ECOND_STR_GE:
+	tempcond = (Ustrcmp(sub[0], sub[1]) >= 0); break;
+
+      case ECOND_STR_GEI:
+	tempcond = (strcmpic(sub[0], sub[1]) >= 0); break;
+
+      case ECOND_MATCH:   /* Regular expression match */
 	{
-	int sublen = Ustrlen(sub[1]+6);
-	hctx h;
-	uschar digest[20];
+	const pcre2_code * re = regex_compile(sub[1],
+		    sub_textonly & BIT(1) ? MCS_CACHEABLE : MCS_NOFLAGS,
+		    &expand_string_message, pcre_gen_cmp_ctx);
+	if (!re)
+	  goto failout;
 
-	sha1_start(&h);
-	sha1_end(&h, sub[0], Ustrlen(sub[0]), digest);
-
-	/* If the length that we are comparing against is 28, assume the SHA1
-	digest is expressed as a base64 string. If the length is 40, assume a
-	straightforward hex representation. Other lengths fail. */
-
-	if (sublen == 28)
-	  {
-	  uschar *coded = b64encode(CUS digest, 20);
-	  DEBUG(auth) debug_printf("crypteq: using SHA1+B64 hashing\n"
-	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
-	  tempcond = (Ustrcmp(coded, sub[1]+6) == 0);
-	  }
-	else if (sublen == 40)
-	  {
-	  uschar coded[44];
-	  for (int i = 0; i < 20; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
-	  coded[40] = 0;
-	  DEBUG(auth) debug_printf("crypteq: using SHA1+hex hashing\n"
-	    "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
-	  tempcond = (strcmpic(coded, sub[1]+6) == 0);
-	  }
-	else
-	  {
-	  DEBUG(auth) debug_printf("crypteq: length for SHA-1 not 28 or 40: "
-	    "fail\n  crypted=%s\n", sub[1]+6);
-	  tempcond = FALSE;
-	  }
+	tempcond = regex_match_and_setup(re, sub[0], 0, -1);
+	break;
 	}
 
-      else   /* {crypt} or {crypt16} and non-{ at start */
-	     /* }-for-text-editors */
-	{
-	int which = 0;
-	uschar *coded;
+      /* Various "encrypted" comparisons. If the second string starts with
+      "{" then an encryption type is given. Default to crypt() or crypt16()
+      (build-time choice). */
+      /* }-for-text-editors */
 
-	if (strncmpic(sub[1], US"{crypt}", 7) == 0)
+      case ECOND_CRYPTEQ:
+  #ifndef SUPPORT_CRYPTEQ
+	goto COND_FAILED_NOT_COMPILED;
+  #else
+	if (strncmpic(sub[1], US"{md5}", 5) == 0)
 	  {
-	  sub[1] += 7;
-	  which = 1;
+	  int sublen = Ustrlen(sub[1]+5);
+	  md5 base;
+	  uschar digest[16];
+
+	  md5_start(&base);
+	  md5_end(&base, sub[0], Ustrlen(sub[0]), digest);
+
+	  /* If the length that we are comparing against is 24, the MD5 digest
+	  is expressed as a base64 string. This is the way LDAP does it. However,
+	  some other software uses a straightforward hex representation. We assume
+	  this if the length is 32. Other lengths fail. */
+
+	  if (sublen == 24)
+	    {
+	    uschar *coded = b64encode(CUS digest, 16);
+	    DEBUG(auth) debug_printf("crypteq: using MD5+B64 hashing\n"
+	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
+	    tempcond = (Ustrcmp(coded, sub[1]+5) == 0);
+	    }
+	  else if (sublen == 32)
+	    {
+	    uschar coded[36];
+	    for (int i = 0; i < 16; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
+	    coded[32] = 0;
+	    DEBUG(auth) debug_printf("crypteq: using MD5+hex hashing\n"
+	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
+	    tempcond = (strcmpic(coded, sub[1]+5) == 0);
+	    }
+	  else
+	    {
+	    DEBUG(auth) debug_printf("crypteq: length for MD5 not 24 or 32: "
+	      "fail\n  crypted=%s\n", sub[1]+5);
+	    tempcond = FALSE;
+	    }
 	  }
-	else if (strncmpic(sub[1], US"{crypt16}", 9) == 0)
+
+	else if (strncmpic(sub[1], US"{sha1}", 6) == 0)
 	  {
-	  sub[1] += 9;
-	  which = 2;
+	  int sublen = Ustrlen(sub[1]+6);
+	  hctx h;
+	  uschar digest[20];
+
+	  sha1_start(&h);
+	  sha1_end(&h, sub[0], Ustrlen(sub[0]), digest);
+
+	  /* If the length that we are comparing against is 28, assume the SHA1
+	  digest is expressed as a base64 string. If the length is 40, assume a
+	  straightforward hex representation. Other lengths fail. */
+
+	  if (sublen == 28)
+	    {
+	    uschar *coded = b64encode(CUS digest, 20);
+	    DEBUG(auth) debug_printf("crypteq: using SHA1+B64 hashing\n"
+	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
+	    tempcond = (Ustrcmp(coded, sub[1]+6) == 0);
+	    }
+	  else if (sublen == 40)
+	    {
+	    uschar coded[44];
+	    for (int i = 0; i < 20; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
+	    coded[40] = 0;
+	    DEBUG(auth) debug_printf("crypteq: using SHA1+hex hashing\n"
+	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
+	    tempcond = (strcmpic(coded, sub[1]+6) == 0);
+	    }
+	  else
+	    {
+	    DEBUG(auth) debug_printf("crypteq: length for SHA-1 not 28 or 40: "
+	      "fail\n  crypted=%s\n", sub[1]+6);
+	    tempcond = FALSE;
+	    }
 	  }
-	else if (sub[1][0] == '{')		/* }-for-text-editors */
+
+	else   /* {crypt} or {crypt16} and non-{ at start */
+	       /* }-for-text-editors */
 	  {
-	  expand_string_message = string_sprintf("unknown encryption mechanism "
-	    "in %q", sub[1]);
-	  goto failout;
+	  int which = 0;
+	  uschar *coded;
+
+	  if (strncmpic(sub[1], US"{crypt}", 7) == 0)
+	    {
+	    sub[1] += 7;
+	    which = 1;
+	    }
+	  else if (strncmpic(sub[1], US"{crypt16}", 9) == 0)
+	    {
+	    sub[1] += 9;
+	    which = 2;
+	    }
+	  else if (sub[1][0] == '{')		/* }-for-text-editors */
+	    {
+	    expand_string_message = string_sprintf("unknown encryption mechanism "
+	      "in %q", sub[1]);
+	    goto failout;
+	    }
+
+	  switch(which)
+	    {
+	    case 0:  coded = US DEFAULT_CRYPT(CS sub[0], CS sub[1]);	break;
+	    case 1:  coded = US crypt(CS sub[0], CS sub[1]);		break;
+	    default: coded = US crypt16(CS sub[0], CS sub[1]);		break;
+	    }
+
+	  DEBUG(auth) debug_printf("crypteq: using %s()\n"
+	    "  subject=%s\n  crypted=%s\n",
+	    which == 0 ? mac_expanded_string(DEFAULT_CRYPT)
+	    : which == 1 ? "crypt" : "crypt16",
+	    coded, sub[1]);
+
+	  /* If the encrypted string contains fewer than two characters (for the
+	  salt), force failure. Otherwise we get false positives: with an empty
+	  string the yield of crypt() is an empty string! */
+
+	  if (coded)
+	    tempcond = Ustrlen(sub[1]) < 2 ? FALSE : Ustrcmp(coded, sub[1]) == 0;
+	  else if (errno == EINVAL)
+	    tempcond = FALSE;
+	  else
+	    {
+	    expand_string_message = string_sprintf("crypt error: %s\n",
+	      US strerror(errno));
+	    goto failout;
+	    }
 	  }
+	break;
+  #endif  /* SUPPORT_CRYPTEQ */
 
-	switch(which)
-	  {
-	  case 0:  coded = US DEFAULT_CRYPT(CS sub[0], CS sub[1]); break;
-	  case 1:  coded = US crypt(CS sub[0], CS sub[1]); break;
-	  default: coded = US crypt16(CS sub[0], CS sub[1]); break;
-	  }
+      default:	tempcond = FALSE;	/* compiler quietening */
+      }   /* Switch for comparison conditions */
 
-	#define STR(s) # s
-	#define XSTR(s) STR(s)
-	DEBUG(auth) debug_printf("crypteq: using %s()\n"
-	  "  subject=%s\n  crypted=%s\n",
-	  which == 0 ? XSTR(DEFAULT_CRYPT) : which == 1 ? "crypt" : "crypt16",
-	  coded, sub[1]);
-	#undef STR
-	#undef XSTR
-
-	/* If the encrypted string contains fewer than two characters (for the
-	salt), force failure. Otherwise we get false positives: with an empty
-	string the yield of crypt() is an empty string! */
-
-	if (coded)
-	  tempcond = Ustrlen(sub[1]) < 2 ? FALSE : Ustrcmp(coded, sub[1]) == 0;
-	else if (errno == EINVAL)
-	  tempcond = FALSE;
-	else
-	  {
-	  expand_string_message = string_sprintf("crypt error: %s\n",
-	    US strerror(errno));
-	  goto failout;
-	  }
-	}
-      break;
-    #endif  /* SUPPORT_CRYPTEQ */
-
-    default:	tempcond = FALSE;	/* compiler quietening */
-    }   /* Switch for comparison conditions */
-
-  *yield = tempcond == testfor;
-  next = s; goto out;    /* End of comparison conditions */
+    *yield = tempcond == testfor;
+    next = s; goto out;    /* End of comparison conditions */
 
 
   /* and/or: computes logical and/or of several conditions */
 
   case ECOND_AND:
   case ECOND_OR:
-  subcondptr = yield ? &tempcond : NULL;
-  combined_cond = cond_type == ECOND_AND;
+    subcondptr = yield ? &tempcond : NULL;
+    combined_cond = cond_type == ECOND_AND;
 
-  Uskip_whitespace(&s);
-  if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
-
-  for (;;)
-    {
-    /* {-for-text-editors */
-    if (Uskip_whitespace(&s) == '}') break;
-    if (*s != '{')					/* }-for-text-editors */
-      {
-      expand_string_message = string_sprintf("each subcondition "
-        "inside an \"%s{...}\" condition must be in its own {}", opname);
-      goto failout;
-      }
-
-    if (!(s = eval_condition(s+1, resetok, subcondptr)))
-      {
-      expand_string_message = string_sprintf("%s inside \"%s{...}\" condition",
-        expand_string_message, opname);
-      goto failout;
-      }
     Uskip_whitespace(&s);
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
 
-    /* {-for-text-editors */
-    if (*s++ != '}')
+    for (;;)
       {
       /* {-for-text-editors */
-      expand_string_message = string_sprintf("missing } at end of condition "
-        "inside %q group", opname);
-      goto failout;
+      if (Uskip_whitespace(&s) == '}') break;
+      if (*s != '{')					/* }-for-text-editors */
+	{
+	expand_string_message = string_sprintf("each subcondition "
+	  "inside an \"%s{...}\" condition must be in its own {}", opname);
+	goto failout;
+	}
+
+      if (!(s = eval_condition(s+1, resetok, subcondptr)))
+	{
+	expand_string_message = string_sprintf("%s inside \"%s{...}\" condition",
+	  expand_string_message, opname);
+	goto failout;
+	}
+      Uskip_whitespace(&s);
+
+      /* {-for-text-editors */
+      if (*s++ != '}')
+	{
+	/* {-for-text-editors */
+	expand_string_message = string_sprintf("missing } at end of condition "
+	  "inside %q group", opname);
+	goto failout;
+	}
+
+      if (yield)
+	if (cond_type == ECOND_AND)
+	  {
+	  combined_cond &= tempcond;
+	  if (!combined_cond) subcondptr = NULL;  /* once false, don't */
+	  }                                       /* evaluate any more */
+	else
+	  {
+	  combined_cond |= tempcond;
+	  if (combined_cond) subcondptr = NULL;   /* once true, don't */
+	  }                                       /* evaluate any more */
       }
 
-    if (yield)
-      if (cond_type == ECOND_AND)
-        {
-        combined_cond &= tempcond;
-        if (!combined_cond) subcondptr = NULL;  /* once false, don't */
-        }                                       /* evaluate any more */
-      else
-        {
-        combined_cond |= tempcond;
-        if (combined_cond) subcondptr = NULL;   /* once true, don't */
-        }                                       /* evaluate any more */
-    }
-
-  if (yield) *yield = combined_cond == testfor;
-  next = ++s; goto out;
+    if (yield) *yield = combined_cond == testfor;
+    next = ++s; goto out;
 
 
   /* forall/forany: iterates a condition with different values */

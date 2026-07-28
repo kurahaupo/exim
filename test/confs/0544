@@ -19,8 +19,7 @@ qualify_domain = test.ex
 begin acl
 
 check_helo:
-  warn
-  condition = ${if match_domain {$sender_helo_name}{+dlist}}
+  warn	condition = ${if match_domain {$sender_helo_name}{LIST}}
   accept
 
 

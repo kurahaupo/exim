@@ -518,7 +518,7 @@ else
   expand_level++;
   if (type == MCL_DOMAIN && !deliver_domain)
     {
-    check_string_block *cb = (check_string_block *)arg;
+    check_string_block * cb = (check_string_block *)arg;
     deliver_domain = string_copy(cb->subject);
     list = expand_string_2(list, &textonly_re);
     deliver_domain = NULL;

@@ -120,11 +120,12 @@ try option 'unknown_login'
    ├considering: }{a.b.c}{yes}{no}}
    ├───expanded: a.b.c
    ╰─────result: a.b.c
-   ╭considering: a.b.c}{yes}{no}}
+   ╭───scanning: a.b.c}{yes}{no}}
    ├───────text: a.b.c
-   ├considering: }{yes}{no}}
+   ├───scanning: }{yes}{no}}
    ├───expanded: a.b.c
-   ╰─────result: a.b.c
+   ├─────result:  ◀skipped▶
+   ╰───skipping: result is not used
 LOG: MAIN PANIC
   no @ found in the subject of an address list match: subject="a.b.c" pattern="a.b.c"
   cond "match_address" res: F
@@ -309,11 +310,12 @@ try option 'unknown_login'
    |considering: }{a.b.c}{yes}{no}}
    |---expanded: a.b.c
    \_____result: a.b.c
-   /considering: a.b.c}{yes}{no}}
+   /---scanning: a.b.c}{yes}{no}}
    |-------text: a.b.c
-   |considering: }{yes}{no}}
+   |---scanning: }{yes}{no}}
    |---expanded: a.b.c
-   \_____result: a.b.c
+   |-----result:  <skipped>
+   \___skipping: result is not used
 LOG: MAIN PANIC
   no @ found in the subject of an address list match: subject="a.b.c" pattern="a.b.c"
   cond "match_address" res: F
@@ -868,9 +870,10 @@ set_process_info: pppp expansion-test
    1.2.3.4 in "1.2.3.4/abc"?
    ╎list element: 1.2.3.4/abc
    ╎1.2.3.4 in "1.2.3.4/abc"? no (malformed IPv4 address or address mask: 1.2.3.4)
-   ╎::1 in "<; aaaa:bbbb"?
+   ╎list separator: ';'
+   ╎::1 in " aaaa:bbbb"?
    ╎ list element: aaaa:bbbb
-   ╎ ::1 in "<; aaaa:bbbb"? no (malformed IPv6 address or address mask: aaaa:bbbb)
+   ╎ ::1 in " aaaa:bbbb"? no (malformed IPv6 address or address mask: aaaa:bbbb)
    search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....

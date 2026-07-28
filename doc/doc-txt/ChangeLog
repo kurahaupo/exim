@@ -2,6 +2,15 @@ This document describes *changes* to previous versions, that might
 affect Exim's operation, with an unchanged configuration file.  For new
 options, and new features, see the NewStuff file next to this ChangeLog.
 
+4.next
+------
+
+JH/01 The restriction on expanding the second (list) argument of list-matching
+      expansion conditions has been removed. It was introduced in 4.77 on
+      security grounds; the need is now served by the more-tightly targeted
+      taint-tracking mechanism.
+
+
 Exim version 4.100
 ------------------
 
