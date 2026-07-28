@@ -287,7 +287,7 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
     DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
     ret += retmore;
     DEBUG(receive) debug_printf("PROXYv2: have %d/%d required octets\n", ret, size);
-    } while (ret < size);
+    } while (ret < size && !had_command_timeout);
 
   } /* end scope for getting rest of data for v2 */
 
