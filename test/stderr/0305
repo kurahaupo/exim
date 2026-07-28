@@ -16,6 +16,7 @@
 >>> ten-1.test.ex in "+ok_domains"?
 >>>  list element: +ok_domains
 >>>   start sublist ok_domains
+>>>    expand list text
 >>>    ten-1.test.ex in "ten-1.test.ex"?
 >>>    ╎list element: ten-1.test.ex
 >>>    ╎ten-1.test.ex in "ten-1.test.ex"? yes (matched "ten-1.test.ex")
@@ -29,6 +30,7 @@
 >>> junk.junk in "+ok_domains"?
 >>>  list element: +ok_domains
 >>>   start sublist ok_domains
+>>>    expand list text
 >>>    junk.junk in ""?
 >>>    junk.junk in ""? no (end of list)
 >>>   end sublist ok_domains

@@ -194,6 +194,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "sqlite,file=TESTSUITE/aux-fixed/sqlitedb; select * from them where id='10.0.0.0'"?
    ╎list element: sqlite,file=TESTSUITE/aux-fixed/sqlitedb;░select░*░from░them░where░id='10.0.0.0'
    ╎search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
@@ -236,6 +237,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "sqlite,file=TESTSUITE/aux-fixed/sqlitedb; select * from them where id='10.0.0.0'"?
    ╎list element: sqlite,file=TESTSUITE/aux-fixed/sqlitedb;░select░*░from░them░where░id='10.0.0.0'
    ╎search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
@@ -327,6 +329,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "sqlite;TESTSUITE/aux-fixed/sqlitedb select * from them where id='10.0.0.0'"?
    ╎list element: sqlite;TESTSUITE/aux-fixed/sqlitedb░select░*░from░them░where░id='10.0.0.0'
    ╎search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
@@ -369,6 +372,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "sqlite;TESTSUITE/aux-fixed/sqlitedb select * from them where id='10.0.0.0'"?
    ╎list element: sqlite;TESTSUITE/aux-fixed/sqlitedb░select░*░from░them░where░id='10.0.0.0'
    ╎search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
@@ -460,6 +464,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "sqlite;TESTSUITE/aux-fixed/sqlitedb select * from them where id='10.10.10.10'"?
    ╎list element: sqlite;TESTSUITE/aux-fixed/sqlitedb░select░*░from░them░where░id='10.10.10.10'
    ╎search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
@@ -496,6 +501,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "sqlite;TESTSUITE/aux-fixed/sqlitedb select * from them where id='10.10.10.10'"?
    ╎list element: sqlite;TESTSUITE/aux-fixed/sqlitedb░select░*░from░them░where░id='10.10.10.10'
    ╎search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"

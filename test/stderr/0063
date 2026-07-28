@@ -53,6 +53,7 @@
 >>> host in "+relay_hosts"?
 >>>  list element: +relay_hosts
 >>>   start sublist relay_hosts
+>>>    expand list text
 >>>    host in "^[^\d]+2"?
 >>>    ╎list element: ^[^\d]+2
 >>>    ╎sender host name required, to match against ^[^\d]+2
@@ -129,6 +130,7 @@ LOG: 10HmaX-000000005vi-0000 <= userx@somehost.example.com H=ten-1.test.ex (test
 >>> host in "+relay_hosts"?
 >>>  list element: +relay_hosts
 >>>   start sublist relay_hosts
+>>>    expand list text
 >>>    host in "^[^\d]+2"?
 >>>    ╎list element: ^[^\d]+2
 >>>    ╎sender host name required, to match against ^[^\d]+2

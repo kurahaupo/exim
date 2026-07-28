@@ -380,6 +380,7 @@ LOG: MAIN
 processing ACL check_recipient "warn" (TESTSUITE/test-config 41)
 check set acl_m0 = ok:   hostlist
 check hosts = net-pgsql;select * from them where id='${quote_pgsql:$local_part}'
+expand list text
 host in "net-pgsql;select * from them where id='c'"?
  list element: net-pgsql;select░*░from░them░where░id='c'
  search_open: pgsql "NULL"
@@ -401,6 +402,7 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 44)
 check set acl_m0 = FAIL: hostlist
 check hosts = <& net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
 list separator: '&'
+expand list text
 host in " net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"?
  list element: net-pgsql;servers=localhost::PORT_N/test/CALLER/;░select░*░from░them░where░id='c'
  search_open: pgsql "NULL"
@@ -424,6 +426,7 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 49)
 check set acl_m0 = FAIL: hostlist
 check hosts = <& net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
 list separator: '&'
+expand list text
 host in " net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"?
  list element: net-pgsql,servers=localhost::PORT_N/test/CALLER/;░select░*░from░them░where░id='c'
  search_open: pgsql "NULL"
@@ -456,6 +459,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "net-pgsql;select * from them where id='10.0.0.0'"?
    ╎list element: net-pgsql;select░*░from░them░where░id='10.0.0.0'
    ╎search_open: pgsql "NULL"
@@ -571,6 +575,7 @@ LOG: MAIN
 processing ACL check_recipient "warn" (TESTSUITE/test-config 41)
 check set acl_m0 = ok:   hostlist
 check hosts = net-pgsql;select * from them where id='${quote_pgsql:$local_part}'
+expand list text
 host in "net-pgsql;select * from them where id='c'"?
  list element: net-pgsql;select░*░from░them░where░id='c'
  search_open: pgsql "NULL"
@@ -587,6 +592,7 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 44)
 check set acl_m0 = FAIL: hostlist
 check hosts = <& net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
 list separator: '&'
+expand list text
 host in " net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"?
  list element: net-pgsql;servers=localhost::PORT_N/test/CALLER/;░select░*░from░them░where░id='c'
  search_open: pgsql "NULL"
@@ -610,6 +616,7 @@ processing ACL check_recipient "warn" (TESTSUITE/test-config 49)
 check set acl_m0 = FAIL: hostlist
 check hosts = <& net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
 list separator: '&'
+expand list text
 host in " net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"?
  list element: net-pgsql,servers=localhost::PORT_N/test/CALLER/;░select░*░from░them░where░id='c'
  search_open: pgsql "NULL"
@@ -642,6 +649,7 @@ check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
   start sublist relay_hosts
+   expand list text
   host in "net-pgsql;select * from them where id='10.0.0.0'"?
    ╎list element: net-pgsql;select░*░from░them░where░id='10.0.0.0'
    ╎search_open: pgsql "NULL"

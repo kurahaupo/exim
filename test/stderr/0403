@@ -90,18 +90,19 @@ routing userx@test.ex
 --------> r1 router <--------
  local_part=userx domain=test.ex
  checking domains
-   search_open: lsearch "TESTSUITE/aux-fixed/0403.accountfile"
-   search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
-     key="userx@test.ex" partial=-1 affix=NULL starflags=0 opts="ret=key"
-   LRU list:
-     0TESTSUITE/aux-fixed/0403.accountfile
-    End
-   internal_search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
-     type=lsearch key="userx@test.ex" opts=NULL
-   file lookup required for userx@test.ex
-     in TESTSUITE/aux-fixed/0403.accountfile
-   creating new cache entry
-   lookup failed
+ expand list text
+   ╎search_open: lsearch "TESTSUITE/aux-fixed/0403.accountfile"
+   ╎search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
+   ╎  key="userx@test.ex" partial=-1 affix=NULL starflags=0 opts="ret=key"
+   ╎LRU list:
+   ╎  =TESTSUITE/aux-fixed/0403.accountfile
+   ╎ End
+   ╎internal_search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
+   ╎  type=lsearch key="userx@test.ex" opts=NULL
+   ╎file lookup required for userx@test.ex
+   ╎  in TESTSUITE/aux-fixed/0403.accountfile
+   ╎creating new cache entry
+   ╎lookup failed
  test.ex in domains?
  test.ex in domains? no (end of list)
  r1 router skipped: domains mismatch
@@ -325,36 +326,38 @@ routing charlie@dom1.ain
 --------> r1 router <--------
  local_part=charlie domain=dom1.ain
  checking domains
-   search_open: lsearch "TESTSUITE/aux-fixed/0403.accountfile"
-   search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
-     key="charlie@dom1.ain" partial=-1 affix=NULL starflags=0 opts="ret=key"
-   LRU list:
-     0TESTSUITE/aux-fixed/0403.accountfile
-    End
-   internal_search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
-     type=lsearch key="charlie@dom1.ain" opts=NULL
-   file lookup required for charlie@dom1.ain
-     in TESTSUITE/aux-fixed/0403.accountfile
-   creating new cache entry
-   lookup yielded: e̪m̪p̪t̪y̪
-   lookup yield replace by key: charlie@dom1.ain
+ expand list text
+   ╎search_open: lsearch "TESTSUITE/aux-fixed/0403.accountfile"
+   ╎search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
+   ╎  key="charlie@dom1.ain" partial=-1 affix=NULL starflags=0 opts="ret=key"
+   ╎LRU list:
+   ╎  =TESTSUITE/aux-fixed/0403.accountfile
+   ╎ End
+   ╎internal_search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
+   ╎  type=lsearch key="charlie@dom1.ain" opts=NULL
+   ╎file lookup required for charlie@dom1.ain
+   ╎  in TESTSUITE/aux-fixed/0403.accountfile
+   ╎creating new cache entry
+   ╎lookup yielded: e̪m̪p̪t̪y̪
+   ╎lookup yield replace by key: charlie@dom1.ain
  dom1.ain in domains?
   list element: dom1.ain
   dom1.ain in domains? yes (matched "dom1.ain")
  checking local_parts
-   search_open: lsearch "TESTSUITE/aux-fixed/0403.accountfile"
-     cached open
-   search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
-     key="charlie@dom1.ain" partial=-1 affix=NULL starflags=0 opts="ret=key"
-   LRU list:
-     0TESTSUITE/aux-fixed/0403.accountfile
-    End
-   internal_search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
-     type=lsearch key="charlie@dom1.ain" opts=NULL
-   cached data used for lookup of charlie@dom1.ain
-     in TESTSUITE/aux-fixed/0403.accountfile
-   lookup yielded: e̪m̪p̪t̪y̪
-   lookup yield replace by key: charlie@dom1.ain
+ expand list text
+   ╎search_open: lsearch "TESTSUITE/aux-fixed/0403.accountfile"
+   ╎  cached open
+   ╎search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
+   ╎  key="charlie@dom1.ain" partial=-1 affix=NULL starflags=0 opts="ret=key"
+   ╎LRU list:
+   ╎  =TESTSUITE/aux-fixed/0403.accountfile
+   ╎ End
+   ╎internal_search_find: file="TESTSUITE/aux-fixed/0403.accountfile"
+   ╎  type=lsearch key="charlie@dom1.ain" opts=NULL
+   ╎cached data used for lookup of charlie@dom1.ain
+   ╎  in TESTSUITE/aux-fixed/0403.accountfile
+   ╎lookup yielded: e̪m̪p̪t̪y̪
+   ╎lookup yield replace by key: charlie@dom1.ain
  charlie in local_parts?
   list element: charlie
   charlie in local_parts? yes (matched "charlie")

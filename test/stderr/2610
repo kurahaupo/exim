@@ -565,23 +565,24 @@ search_tidyup called
 01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 42)
 01:01:01 p1235  check set acl_m0 = ok:    hostlist
 01:01:01 p1235  check hosts = net-mysql;select * from them where id='${quote_mysql:$local_part}'
-01:01:01 p1235   ╭considering: net-mysql;select░*░from░them░where░id='${quote_mysql:$local_part}'
-01:01:01 p1235   ├───────text: net-mysql;select░*░from░them░where░id='
-01:01:01 p1235   ├considering: ${quote_mysql:$local_part}'
-01:01:01 p1235    ╭considering: $local_part}'
-01:01:01 p1235    ├──────value: c
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235    ├considering: }'
-01:01:01 p1235    ├───expanded: $local_part
-01:01:01 p1235    ╰─────result: c
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235   ├─────op-res: c
-01:01:01 p1235              ╰──(tainted, quoted:mysql)
-01:01:01 p1235   ├considering: '
-01:01:01 p1235   ├───────text: '
-01:01:01 p1235   ├───expanded: net-mysql;select░*░from░them░where░id='${quote_mysql:$local_part}'
-01:01:01 p1235   ╰─────result: net-mysql;select░*░from░them░where░id='c'
-01:01:01 p1235              ╰──(tainted, quoted:mysql)
+01:01:01 p1235  expand list text
+01:01:01 p1235    ╭considering: net-mysql;select░*░from░them░where░id='${quote_mysql:$local_part}'
+01:01:01 p1235    ├───────text: net-mysql;select░*░from░them░where░id='
+01:01:01 p1235    ├considering: ${quote_mysql:$local_part}'
+01:01:01 p1235     ╭considering: $local_part}'
+01:01:01 p1235     ├──────value: c
+01:01:01 p1235                ╰──(tainted)
+01:01:01 p1235     ├considering: }'
+01:01:01 p1235     ├───expanded: $local_part
+01:01:01 p1235     ╰─────result: c
+01:01:01 p1235                ╰──(tainted)
+01:01:01 p1235    ├─────op-res: c
+01:01:01 p1235               ╰──(tainted, quoted:mysql)
+01:01:01 p1235    ├considering: '
+01:01:01 p1235    ├───────text: '
+01:01:01 p1235    ├───expanded: net-mysql;select░*░from░them░where░id='${quote_mysql:$local_part}'
+01:01:01 p1235    ╰─────result: net-mysql;select░*░from░them░where░id='c'
+01:01:01 p1235               ╰──(tainted, quoted:mysql)
 01:01:01 p1235  host in "net-mysql;select * from them where id='c'"?
 01:01:01 p1235   list element: net-mysql;select░*░from░them░where░id='c'
 01:01:01 p1235   search_open: mysql "NULL"
@@ -603,23 +604,24 @@ search_tidyup called
 01:01:01 p1235  check set acl_m0 = FAIL4: hostlist
 01:01:01 p1235  check hosts = <& net-mysql;servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='${quote_mysql:$local_part}'
 01:01:01 p1235  list separator: '&'
-01:01:01 p1235   ╭considering: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
-01:01:01 p1235   ├───────text: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='
-01:01:01 p1235   ├considering: ${quote_mysql:$local_part}'
-01:01:01 p1235    ╭considering: $local_part}'
-01:01:01 p1235    ├──────value: c
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235    ├considering: }'
-01:01:01 p1235    ├───expanded: $local_part
-01:01:01 p1235    ╰─────result: c
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235   ├─────op-res: c
-01:01:01 p1235              ╰──(tainted, quoted:mysql)
-01:01:01 p1235   ├considering: '
-01:01:01 p1235   ├───────text: '
-01:01:01 p1235   ├───expanded: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
-01:01:01 p1235   ╰─────result: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='c'
-01:01:01 p1235              ╰──(tainted, quoted:mysql)
+01:01:01 p1235  expand list text
+01:01:01 p1235    ╭considering: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
+01:01:01 p1235    ├───────text: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='
+01:01:01 p1235    ├considering: ${quote_mysql:$local_part}'
+01:01:01 p1235     ╭considering: $local_part}'
+01:01:01 p1235     ├──────value: c
+01:01:01 p1235                ╰──(tainted)
+01:01:01 p1235     ├considering: }'
+01:01:01 p1235     ├───expanded: $local_part
+01:01:01 p1235     ╰─────result: c
+01:01:01 p1235                ╰──(tainted)
+01:01:01 p1235    ├─────op-res: c
+01:01:01 p1235               ╰──(tainted, quoted:mysql)
+01:01:01 p1235    ├considering: '
+01:01:01 p1235    ├───────text: '
+01:01:01 p1235    ├───expanded: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
+01:01:01 p1235    ╰─────result: ░net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='c'
+01:01:01 p1235               ╰──(tainted, quoted:mysql)
 01:01:01 p1235  host in " net-mysql;servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'"?
 01:01:01 p1235   list element: net-mysql;servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='c'
 01:01:01 p1235   search_open: mysql "NULL"
@@ -643,23 +645,24 @@ search_tidyup called
 01:01:01 p1235  check set acl_m0 = FAIL5: hostlist
 01:01:01 p1235  check hosts = <& net-mysql,servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='${quote_mysql:$local_part}'
 01:01:01 p1235  list separator: '&'
-01:01:01 p1235   ╭considering: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
-01:01:01 p1235   ├───────text: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='
-01:01:01 p1235   ├considering: ${quote_mysql:$local_part}'
-01:01:01 p1235    ╭considering: $local_part}'
-01:01:01 p1235    ├──────value: c
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235    ├considering: }'
-01:01:01 p1235    ├───expanded: $local_part
-01:01:01 p1235    ╰─────result: c
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235   ├─────op-res: c
-01:01:01 p1235              ╰──(tainted, quoted:mysql)
-01:01:01 p1235   ├considering: '
-01:01:01 p1235   ├───────text: '
-01:01:01 p1235   ├───expanded: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
-01:01:01 p1235   ╰─────result: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='c'
-01:01:01 p1235              ╰──(tainted, quoted:mysql)
+01:01:01 p1235  expand list text
+01:01:01 p1235    ╭considering: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
+01:01:01 p1235    ├───────text: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='
+01:01:01 p1235    ├considering: ${quote_mysql:$local_part}'
+01:01:01 p1235     ╭considering: $local_part}'
+01:01:01 p1235     ├──────value: c
+01:01:01 p1235                ╰──(tainted)
+01:01:01 p1235     ├considering: }'
+01:01:01 p1235     ├───expanded: $local_part
+01:01:01 p1235     ╰─────result: c
+01:01:01 p1235                ╰──(tainted)
+01:01:01 p1235    ├─────op-res: c
+01:01:01 p1235               ╰──(tainted, quoted:mysql)
+01:01:01 p1235    ├considering: '
+01:01:01 p1235    ├───────text: '
+01:01:01 p1235    ├───expanded: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='${quote_mysql:$local_part}'
+01:01:01 p1235    ╰─────result: ░net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='c'
+01:01:01 p1235               ╰──(tainted, quoted:mysql)
 01:01:01 p1235  host in " net-mysql,servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'"?
 01:01:01 p1235   list element: net-mysql,servers=127.0.0.1::PORT_N/test/root/pass;░select░*░from░them░where░id='c'
 01:01:01 p1235   search_open: mysql "NULL"
@@ -692,14 +695,15 @@ search_tidyup called
 01:01:01 p1235  host in "+relay_hosts"?
 01:01:01 p1235   list element: +relay_hosts
 01:01:01 p1235    start sublist relay_hosts
-01:01:01 p1235     ╎╭considering: net-mysql;select░*░from░them░where░id='$sender_host_address'
-01:01:01 p1235     ╎├───────text: net-mysql;select░*░from░them░where░id='
-01:01:01 p1235     ╎├considering: $sender_host_address'
-01:01:01 p1235     ╎├──────value: 10.0.0.0
-01:01:01 p1235     ╎├considering: '
-01:01:01 p1235     ╎├───────text: '
-01:01:01 p1235     ╎├───expanded: net-mysql;select░*░from░them░where░id='$sender_host_address'
-01:01:01 p1235     ╎╰─────result: net-mysql;select░*░from░them░where░id='10.0.0.0'
+01:01:01 p1235     expand list text
+01:01:01 p1235     ╎ ╭considering: net-mysql;select░*░from░them░where░id='$sender_host_address'
+01:01:01 p1235     ╎ ├───────text: net-mysql;select░*░from░them░where░id='
+01:01:01 p1235     ╎ ├considering: $sender_host_address'
+01:01:01 p1235     ╎ ├──────value: 10.0.0.0
+01:01:01 p1235     ╎ ├considering: '
+01:01:01 p1235     ╎ ├───────text: '
+01:01:01 p1235     ╎ ├───expanded: net-mysql;select░*░from░them░where░id='$sender_host_address'
+01:01:01 p1235     ╎ ╰─────result: net-mysql;select░*░from░them░where░id='10.0.0.0'
 01:01:01 p1235     host in "net-mysql;select * from them where id='10.0.0.0'"?
 01:01:01 p1235     ╎list element: net-mysql;select░*░from░them░where░id='10.0.0.0'
 01:01:01 p1235     ╎search_open: mysql "NULL"

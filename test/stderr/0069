@@ -1,6 +1,7 @@
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -27,6 +28,7 @@
 >>> accept: condition test failed in ACL check_recipientx
 >>> processing ACL check_recipientx "deny" (TESTSUITE/test-config 25)
 >>> check hosts = +include_unknown : ^ten-1\\.test\\.ex
+>>> expand list text
 >>> host in "+include_unknown : ^ten-1\.test\.ex"?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -37,6 +39,7 @@ LOG: H=ten-1.test.ex (test) [V4NET.0.0.1] F=<x@y> rejected RCPT <x@test.ex>
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -62,6 +65,7 @@ LOG: failed to find host name for V4NET.0.0.13: accepted by +include_unknown
 >>>  accept: condition test failed in ACL check_recipientx
 >>>  processing ACL check_recipientx "deny" (TESTSUITE/test-config 25)
 >>>  check hosts = +include_unknown : ^ten-1\\.test\\.ex
+>>>  expand list text
 >>>  host in "+include_unknown : ^ten-1\.test\.ex"?
 >>>   list element: +include_unknown
 >>>   list element: ^ten-1\.test\.ex
@@ -74,6 +78,7 @@ LOG: H=(test) [V4NET.0.0.13] F=<userx@myhost.test.ex> rejected RCPT <x@test.ex>
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -107,6 +112,7 @@ LOG: H=(test) [V4NET.0.0.13] F=<userx@test.ex> rejected RCPT <y@test.ex>: "Denie
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -139,6 +145,7 @@ LOG: no IP address found for host not-exist.test.ex (during SMTP connection from
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -173,6 +180,7 @@ LOG: H=(test) [V4NET.0.0.13] F=<userx@test.ex> rejected RCPT <y@test.ex>: "Denie
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -211,6 +219,7 @@ LOG: H=(test) [V4NET.0.0.13] F=<userx@myhost.test.ex> rejected RCPT <a@test.ex>
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex
@@ -241,6 +250,7 @@ LOG: H=(test) [V4NET.0.0.13] F=<userx@test.ex> temporarily rejected RCPT <b@test
 >>> host in hosts_connection_nolog? no (option unset)
 >>> host in host_lookup? no (option unset)
 >>> host in host_reject_connection? no (option unset)
+>>> expand list text
 >>> host in sender_unqualified_hosts?
 >>>  list element: +include_unknown
 >>>  list element: ^ten-1\.test\.ex

@@ -512,6 +512,10 @@ else
   /* If we are searching a domain list, and $domain is not set, set it to the
   subject that is being sought for the duration of the expansion. */
 
+  HDEBUG(lists)
+    if (Ustrpbrk(list, "$\\")) debug_printf_indent("expand list text\n");
+
+  expand_level++;
   if (type == MCL_DOMAIN && !deliver_domain)
     {
     check_string_block *cb = (check_string_block *)arg;
@@ -521,6 +525,7 @@ else
     }
   else
     list = expand_string_2(list, &textonly_re);
+  expand_level--;
 
   if (!list)
     {

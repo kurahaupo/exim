@@ -353,6 +353,7 @@ LOG: H=(test) [5.6.7.8] F=<x@y> rejected RCPT <x@y>
 >>>  list element: lsearch;TESTSUITE/aux-fixed/0023.doms
 >>>  test.ex in "lsearch;TESTSUITE/aux-fixed/0023.doms"? yes (matched "lsearch;TESTSUITE/aux-fixed/0023.doms")
 >>> check local_parts = $domain_data
+>>> expand list text
 >>> x in "userx : spqr"?
 >>>  list element: userx
 >>>  list element: spqr
@@ -367,6 +368,7 @@ LOG: H=(test) [5.6.7.8] F=<x@y> rejected RCPT <x@test.ex>
 >>>  list element: lsearch;TESTSUITE/aux-fixed/0023.doms
 >>>  test.ex in "lsearch;TESTSUITE/aux-fixed/0023.doms"? yes (matched "lsearch;TESTSUITE/aux-fixed/0023.doms")
 >>> check local_parts = $domain_data
+>>> expand list text
 >>> userx in "userx : spqr"?
 >>>  list element: userx
 >>>  userx in "userx : spqr"? yes (matched "userx")
@@ -379,6 +381,7 @@ LOG: H=(test) [5.6.7.8] F=<x@y> rejected RCPT <x@test.ex>
 >>>  list element: lsearch;TESTSUITE/aux-fixed/0023.doms
 >>>  test.ex in "lsearch;TESTSUITE/aux-fixed/0023.doms"? yes (matched "lsearch;TESTSUITE/aux-fixed/0023.doms")
 >>> check local_parts = $domain_data
+>>> expand list text
 >>> spqr in "userx : spqr"?
 >>>  list element: userx
 >>>  list element: spqr
@@ -1488,6 +1491,7 @@ LOG: H=(test) [26.26.26.26] F=<> rejected RCPT <z@y>: bounce messages can have o
 >>> using ACL "acl_27_27_27"
 >>> processing ACL acl_27_27_27 "deny" (TESTSUITE/test-config 147)
 >>> check hosts = ${if eq {1}{0}{}fail}
+>>> expand list text
 >>> expansion of "${if eq {1}{0}{}fail}" forced failure: assume not in this list
 >>> deny: condition test failed in ACL acl_27_27_27
 >>> processing ACL acl_27_27_27 "accept" (TESTSUITE/test-config 148)

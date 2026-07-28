@@ -596,6 +596,7 @@ processing ACL connect1 "deny" (TESTSUITE/test-config 45)
 check hosts = <\n partial-lsearch;TESTSUITE/aux-fixed/0002.lsearch \n 1.2.3.4
 list separator: '↩
 '
+expand list text
 host in " partial-lsearch;TESTSUITE/aux-fixed/0002.lsearch 
  1.2.3.4"?
  list element: partial-lsearch;TESTSUITE/aux-fixed/0002.lsearch

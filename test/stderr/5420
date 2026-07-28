@@ -154,69 +154,71 @@ cmd buf flush ddd bytes
          250 HELP
  ├───expanded: ${if░and░{{match{$host}{.outlook.com\$}}░{match{$item}{\N^250-([\w.]+)\s\N}}}░{$1}}
  ╰─────result: e̪m̪p̪t̪y̪
- ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
-  cond: eq
-   ╭considering: $address_data}{usery}{*}{:}}
-   ├──────value: userx
-              ╰──(tainted)
-   ├considering: }{usery}{*}{:}}
-   ├───expanded: $address_data
-   ╰─────result: userx
-              ╰──(tainted)
-   ╭considering: usery}{*}{:}}
-   ├───────text: usery
-   ├considering: }{*}{:}}
-   ├───expanded: usery
-   ╰─────result: usery
-  cond "eq" res: F
- ├──condition: eq░{$address_data}{usery}
- ├─────result: false
-  ╭───scanning: *}{:}}
-  ├───────text: *
-  ├───scanning: }{:}}
-  ├───expanded: *
-  ├─────result:  ◀skipped▶
-  ╰───skipping: result is not used
-  ╭considering: :}}
-  ├───────text: :
-  ├considering: }}
-  ├───expanded: :
+expand list text
+  ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
+   cond: eq
+   ╎╭considering: $address_data}{usery}{*}{:}}
+   ╎├──────value: userx
+   ╎           ╰──(tainted)
+   ╎├considering: }{usery}{*}{:}}
+   ╎├───expanded: $address_data
+   ╎╰─────result: userx
+   ╎           ╰──(tainted)
+   ╎╭considering: usery}{*}{:}}
+   ╎├───────text: usery
+   ╎├considering: }{*}{:}}
+   ╎├───expanded: usery
+   ╎╰─────result: usery
+   cond "eq" res: F
+  ├──condition: eq░{$address_data}{usery}
+  ├─────result: false
+   ╭───scanning: *}{:}}
+   ├───────text: *
+   ├───scanning: }{:}}
+   ├───expanded: *
+   ├─────result:  ◀skipped▶
+   ╰───skipping: result is not used
+   ╭considering: :}}
+   ├───────text: :
+   ├considering: }}
+   ├───expanded: :
+   ╰─────result: :
+  ├───expanded: ${if░eq░{$address_data}{usery}{*}{:}}
   ╰─────result: :
- ├───expanded: ${if░eq░{$address_data}{usery}{*}{:}}
- ╰─────result: :
 127.0.0.1 in hosts_avoid_tls?
  list element: e̪m̪p̪t̪y̪
 127.0.0.1 in hosts_avoid_tls? no (end of list)
- ╭considering: ${if░eq░{$address_data}{userz}{*}{:}}
-  cond: eq
-   ╭considering: $address_data}{userz}{*}{:}}
-   ├──────value: userx
-              ╰──(tainted)
-   ├considering: }{userz}{*}{:}}
-   ├───expanded: $address_data
-   ╰─────result: userx
-              ╰──(tainted)
-   ╭considering: userz}{*}{:}}
-   ├───────text: userz
-   ├considering: }{*}{:}}
-   ├───expanded: userz
-   ╰─────result: userz
-  cond "eq" res: F
- ├──condition: eq░{$address_data}{userz}
- ├─────result: false
-  ╭───scanning: *}{:}}
-  ├───────text: *
-  ├───scanning: }{:}}
-  ├───expanded: *
-  ├─────result:  ◀skipped▶
-  ╰───skipping: result is not used
-  ╭considering: :}}
-  ├───────text: :
-  ├considering: }}
-  ├───expanded: :
+expand list text
+  ╭considering: ${if░eq░{$address_data}{userz}{*}{:}}
+   cond: eq
+   ╎╭considering: $address_data}{userz}{*}{:}}
+   ╎├──────value: userx
+   ╎           ╰──(tainted)
+   ╎├considering: }{userz}{*}{:}}
+   ╎├───expanded: $address_data
+   ╎╰─────result: userx
+   ╎           ╰──(tainted)
+   ╎╭considering: userz}{*}{:}}
+   ╎├───────text: userz
+   ╎├considering: }{*}{:}}
+   ╎├───expanded: userz
+   ╎╰─────result: userz
+   cond "eq" res: F
+  ├──condition: eq░{$address_data}{userz}
+  ├─────result: false
+   ╭───scanning: *}{:}}
+   ├───────text: *
+   ├───scanning: }{:}}
+   ├───expanded: *
+   ├─────result:  ◀skipped▶
+   ╰───skipping: result is not used
+   ╭considering: :}}
+   ├───────text: :
+   ├considering: }}
+   ├───expanded: :
+   ╰─────result: :
+  ├───expanded: ${if░eq░{$address_data}{userz}{*}{:}}
   ╰─────result: :
- ├───expanded: ${if░eq░{$address_data}{userz}{*}{:}}
- ╰─────result: :
 127.0.0.1 in hosts_verify_avoid_tls?
  list element: e̪m̪p̪t̪y̪
 127.0.0.1 in hosts_verify_avoid_tls? no (end of list)
@@ -792,36 +794,37 @@ cmd buf flush ddd bytes
          250 HELP
  ├───expanded: ${if░and░{{match{$host}{.outlook.com\$}}░{match{$item}{\N^250-([\w.]+)\s\N}}}░{$1}}
  ╰─────result: e̪m̪p̪t̪y̪
- ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
-  cond: eq
-   ╭considering: $address_data}{usery}{*}{:}}
-   ├──────value: usery
-              ╰──(tainted)
-   ├considering: }{usery}{*}{:}}
-   ├───expanded: $address_data
-   ╰─────result: usery
-              ╰──(tainted)
-   ╭considering: usery}{*}{:}}
-   ├───────text: usery
-   ├considering: }{*}{:}}
-   ├───expanded: usery
-   ╰─────result: usery
-  cond "eq" res: T
- ├──condition: eq░{$address_data}{usery}
- ├─────result: true
-  ╭considering: *}{:}}
-  ├───────text: *
-  ├considering: }{:}}
-  ├───expanded: *
+expand list text
+  ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
+   cond: eq
+   ╎╭considering: $address_data}{usery}{*}{:}}
+   ╎├──────value: usery
+   ╎           ╰──(tainted)
+   ╎├considering: }{usery}{*}{:}}
+   ╎├───expanded: $address_data
+   ╎╰─────result: usery
+   ╎           ╰──(tainted)
+   ╎╭considering: usery}{*}{:}}
+   ╎├───────text: usery
+   ╎├considering: }{*}{:}}
+   ╎├───expanded: usery
+   ╎╰─────result: usery
+   cond "eq" res: T
+  ├──condition: eq░{$address_data}{usery}
+  ├─────result: true
+   ╭considering: *}{:}}
+   ├───────text: *
+   ├considering: }{:}}
+   ├───expanded: *
+   ╰─────result: *
+   ╭───scanning: :}}
+   ├───────text: :
+   ├───scanning: }}
+   ├───expanded: :
+   ├─────result:  ◀skipped▶
+   ╰───skipping: result is not used
+  ├───expanded: ${if░eq░{$address_data}{usery}{*}{:}}
   ╰─────result: *
-  ╭───scanning: :}}
-  ├───────text: :
-  ├───scanning: }}
-  ├───expanded: :
-  ├─────result:  ◀skipped▶
-  ╰───skipping: result is not used
- ├───expanded: ${if░eq░{$address_data}{usery}{*}{:}}
- ╰─────result: *
 127.0.0.1 in hosts_avoid_tls?
  list element: *
  127.0.0.1 in hosts_avoid_tls? yes (matched "*")
@@ -1379,36 +1382,37 @@ cmd buf flush ddd bytes
          250 HELP
  ├───expanded: ${if░and░{{match{$host}{.outlook.com\$}}░{match{$item}{\N^250-([\w.]+)\s\N}}}░{$1}}
  ╰─────result: e̪m̪p̪t̪y̪
- ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
-  cond: eq
-   ╭considering: $address_data}{usery}{*}{:}}
-   ├──────value: usery
-              ╰──(tainted)
-   ├considering: }{usery}{*}{:}}
-   ├───expanded: $address_data
-   ╰─────result: usery
-              ╰──(tainted)
-   ╭considering: usery}{*}{:}}
-   ├───────text: usery
-   ├considering: }{*}{:}}
-   ├───expanded: usery
-   ╰─────result: usery
-  cond "eq" res: T
- ├──condition: eq░{$address_data}{usery}
- ├─────result: true
-  ╭considering: *}{:}}
-  ├───────text: *
-  ├considering: }{:}}
-  ├───expanded: *
+expand list text
+  ╭considering: ${if░eq░{$address_data}{usery}{*}{:}}
+   cond: eq
+   ╎╭considering: $address_data}{usery}{*}{:}}
+   ╎├──────value: usery
+   ╎           ╰──(tainted)
+   ╎├considering: }{usery}{*}{:}}
+   ╎├───expanded: $address_data
+   ╎╰─────result: usery
+   ╎           ╰──(tainted)
+   ╎╭considering: usery}{*}{:}}
+   ╎├───────text: usery
+   ╎├considering: }{*}{:}}
+   ╎├───expanded: usery
+   ╎╰─────result: usery
+   cond "eq" res: T
+  ├──condition: eq░{$address_data}{usery}
+  ├─────result: true
+   ╭considering: *}{:}}
+   ├───────text: *
+   ├considering: }{:}}
+   ├───expanded: *
+   ╰─────result: *
+   ╭───scanning: :}}
+   ├───────text: :
+   ├───scanning: }}
+   ├───expanded: :
+   ├─────result:  ◀skipped▶
+   ╰───skipping: result is not used
+  ├───expanded: ${if░eq░{$address_data}{usery}{*}{:}}
   ╰─────result: *
-  ╭───scanning: :}}
-  ├───────text: :
-  ├───scanning: }}
-  ├───expanded: :
-  ├─────result:  ◀skipped▶
-  ╰───skipping: result is not used
- ├───expanded: ${if░eq░{$address_data}{usery}{*}{:}}
- ╰─────result: *
 127.0.0.1 in hosts_avoid_tls?
  list element: *
  127.0.0.1 in hosts_avoid_tls? yes (matched "*")

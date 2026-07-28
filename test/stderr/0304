@@ -14,6 +14,7 @@
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> b1@x in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -82,6 +83,7 @@ LOG: H=(test) [1.2.3.4] F=<> rejected RCPT <b1@x>: failed 7
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> b2@x in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -144,6 +146,7 @@ LOG: H=(test) [1.2.3.4] F=<> rejected RCPT <b1@x>: failed 7
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>>  in "^$"?
 >>>  list element: ^$
 >>>   in "^$"? yes (matched "^$")
@@ -161,6 +164,7 @@ LOG: H=(test) [1.2.3.4] F=<> rejected RCPT <b2@x>: failed 8
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> b9@x in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -223,6 +227,7 @@ LOG: H=(test) [1.2.3.4] F=<> rejected RCPT <b2@x>: failed 8
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>>  in "^$"?
 >>>  list element: ^$
 >>>   in "^$"? yes (matched "^$")
@@ -262,6 +267,7 @@ LOG: H=(test) [1.2.3.4] F=<> rejected RCPT <b2@x>: failed 8
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abc@w.x.y.z in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  abc@w.x.y.z in "^abc.*@.*\.x\.y\.z : a@b"? yes (matched "^abc.*@.*\.x\.y\.z")
@@ -272,6 +278,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abc@w.x.y.z>: failed 1
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abcdef@q.x.y.z in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  abcdef@q.x.y.z in "^abc.*@.*\.x\.y\.z : a@b"? yes (matched "^abc.*@.*\.x\.y\.z")
@@ -282,6 +289,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abcdef@q.x.y.z>: failed 1
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> a@b in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -296,6 +304,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <a@b>: failed 1
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> ok@ok in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -356,6 +365,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <a@b>: failed 1
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -391,6 +401,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <a@b>: failed 1
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> x@a.b.c in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -409,6 +420,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <x@a.b.c>: failed 2
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abc@d.e.f in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -427,6 +439,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abc@d.e.f>: failed 2
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> x@d.e.f in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -487,6 +500,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abc@d.e.f>: failed 2
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -522,6 +536,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abc@d.e.f>: failed 2
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abc@at.1 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -547,6 +562,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abc@at.1>: failed 3
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> xyz@at.1 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -572,6 +588,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@at.1>: failed 3
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abcxyz@at.1 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -597,6 +614,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abcxyz@at.1>: failed 3
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> ok@at.1 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -657,6 +675,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abcxyz@at.1>: failed 3
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -692,6 +711,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abcxyz@at.1>: failed 3
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> x@domain.only in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -727,6 +747,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <x@domain.only>: failed 4
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> x@abc.domain2.only in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -766,6 +787,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <x@abc.domain2.only>: failed 4
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> x@domain2.only in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -826,6 +848,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <x@abc.domain2.only>: failed 4
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -861,6 +884,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <x@abc.domain2.only>: failed 4
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abc@domain3 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -910,6 +934,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <abc@domain3>: failed 5
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> xyz@x.domain4 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -960,6 +985,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@x.domain4>: failed 5
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abc@x.domain4 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1023,6 +1049,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@x.domain4>: failed 5
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -1058,6 +1085,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@x.domain4>: failed 5
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> xyz@domain3 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1121,6 +1149,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@x.domain4>: failed 5
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -1159,6 +1188,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@x.domain4>: failed 5
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> pqr@myhost.test.ex in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1216,6 +1246,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <pqr@myhost.test.ex>: failed 6
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> xxx@myhost.test.ex in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1276,6 +1307,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <pqr@myhost.test.ex>: failed 6
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -1311,6 +1343,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <pqr@myhost.test.ex>: failed 6
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> a@domain5 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1374,6 +1407,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <pqr@myhost.test.ex>: failed 6
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -1394,6 +1428,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <a@domain5>: failed 9
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> xyz@domain6 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1457,6 +1492,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <a@domain5>: failed 9
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -1487,6 +1523,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@domain6>: failed 10
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> abc@domain6 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1550,6 +1587,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@domain6>: failed 10
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)
@@ -1585,6 +1623,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@domain6>: failed 10
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 16)
 >>>   message: failed 1
 >>> check recipients = \N^abc.*@.*\.x\.y\.z\N : a@b
+>>> expand list text
 >>> x@domain7 in "^abc.*@.*\.x\.y\.z : a@b"?
 >>>  list element: ^abc.*@.*\.x\.y\.z
 >>>  list element: a@b
@@ -1645,6 +1684,7 @@ LOG: H=(test) [1.2.3.4] F=<x@y> rejected RCPT <xyz@domain6>: failed 10
 >>> processing ACL acl1 "deny" (TESTSUITE/test-config 38)
 >>>   message: failed 8
 >>> check senders = ^\$
+>>> expand list text
 >>> x@y in "^$"?
 >>>  list element: ^$
 >>> x@y in "^$"? no (end of list)

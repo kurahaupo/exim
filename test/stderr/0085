@@ -58,34 +58,36 @@ routing x@smart.domain
   list element: smart.domain
   smart.domain in domains? yes (matched "smart.domain")
  checking local_parts
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="smart.domain" opts=NULL
-  file lookup required for smart.domain
-    in TESTSUITE/aux-fixed/0085.data
-  creating new cache entry
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="smart.domain" opts=NULL
+   file lookup required for smart.domain
+     in TESTSUITE/aux-fixed/0085.data
+   creating new cache entry
+   lookup yielded: x░:░y░:░abc@d.e.f
  x in local_parts?
   list element: x
   x in local_parts? yes (matched "x")
  checking senders
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-    cached open
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="smart.domain" opts=NULL
-  cached data used for lookup of smart.domain
-    in TESTSUITE/aux-fixed/0085.data
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+     cached open
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="smart.domain" opts=NULL
+   cached data used for lookup of smart.domain
+     in TESTSUITE/aux-fixed/0085.data
+   lookup yielded: x░:░y░:░abc@d.e.f
  abc@d.e.f in senders?
   list element: x
   address match test: subject=abc@d.e.f pattern=x
@@ -152,35 +154,37 @@ routing x@test.ex
   list element: test.ex
   test.ex in domains? yes (matched "test.ex")
  checking local_parts
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-    cached open
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="test.ex" opts=NULL
-  file lookup required for test.ex
-    in TESTSUITE/aux-fixed/0085.data
-  creating new cache entry
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+     cached open
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="test.ex" opts=NULL
+   file lookup required for test.ex
+     in TESTSUITE/aux-fixed/0085.data
+   creating new cache entry
+   lookup yielded: x░:░y░:░abc@d.e.f
  x in local_parts?
   list element: x
   x in local_parts? yes (matched "x")
  checking senders
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-    cached open
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="test.ex" opts=NULL
-  cached data used for lookup of test.ex
-    in TESTSUITE/aux-fixed/0085.data
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+     cached open
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="test.ex" opts=NULL
+   cached data used for lookup of test.ex
+     in TESTSUITE/aux-fixed/0085.data
+   lookup yielded: x░:░y░:░abc@d.e.f
  abc@d.e.f in senders?
   list element: x
   address match test: subject=abc@d.e.f pattern=x
@@ -323,34 +327,36 @@ routing x@smart.domain
   list element: smart.domain
   smart.domain in domains? yes (matched "smart.domain")
  checking local_parts
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="smart.domain" opts=NULL
-  file lookup required for smart.domain
-    in TESTSUITE/aux-fixed/0085.data
-  creating new cache entry
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="smart.domain" opts=NULL
+   file lookup required for smart.domain
+     in TESTSUITE/aux-fixed/0085.data
+   creating new cache entry
+   lookup yielded: x░:░y░:░abc@d.e.f
  x in local_parts?
   list element: x
   x in local_parts? yes (matched "x")
  checking senders
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-    cached open
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="smart.domain" opts=NULL
-  cached data used for lookup of smart.domain
-    in TESTSUITE/aux-fixed/0085.data
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+     cached open
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="smart.domain" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="smart.domain" opts=NULL
+   cached data used for lookup of smart.domain
+     in TESTSUITE/aux-fixed/0085.data
+   lookup yielded: x░:░y░:░abc@d.e.f
  CALLER@myhost.test.ex in senders?
   list element: x
   address match test: subject=CALLER@myhost.test.ex pattern=x
@@ -418,35 +424,37 @@ routing x@test.ex
   list element: test.ex
   test.ex in domains? yes (matched "test.ex")
  checking local_parts
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-    cached open
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="test.ex" opts=NULL
-  file lookup required for test.ex
-    in TESTSUITE/aux-fixed/0085.data
-  creating new cache entry
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+     cached open
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="test.ex" opts=NULL
+   file lookup required for test.ex
+     in TESTSUITE/aux-fixed/0085.data
+   creating new cache entry
+   lookup yielded: x░:░y░:░abc@d.e.f
  x in local_parts?
   list element: x
   x in local_parts? yes (matched "x")
  checking senders
-  search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
-    cached open
-  search_find: file="TESTSUITE/aux-fixed/0085.data"
-    key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
-  LRU list:
-    0TESTSUITE/aux-fixed/0085.data
-   End
-  internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
-    type=lsearch key="test.ex" opts=NULL
-  cached data used for lookup of test.ex
-    in TESTSUITE/aux-fixed/0085.data
-  lookup yielded: x░:░y░:░abc@d.e.f
+ expand list text
+   search_open: lsearch "TESTSUITE/aux-fixed/0085.data"
+     cached open
+   search_find: file="TESTSUITE/aux-fixed/0085.data"
+     key="test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+   LRU list:
+     0TESTSUITE/aux-fixed/0085.data
+    End
+   internal_search_find: file="TESTSUITE/aux-fixed/0085.data"
+     type=lsearch key="test.ex" opts=NULL
+   cached data used for lookup of test.ex
+     in TESTSUITE/aux-fixed/0085.data
+   lookup yielded: x░:░y░:░abc@d.e.f
  CALLER@myhost.test.ex in senders?
   list element: x
   address match test: subject=CALLER@myhost.test.ex pattern=x

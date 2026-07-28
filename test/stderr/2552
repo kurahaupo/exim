@@ -45,26 +45,27 @@ host in "+ignore_unknown : +goodhosts"?
  list element: +ignore_unknown
  list element: +goodhosts
   start sublist goodhosts
-   ╎search_open: dnsdb "NULL"
-   ╎search_find: file="NULL"
-   ╎  key=">:defer_never,mxh=cioce.test.again.dns" partial=-1 affix=NULL starflags=0 opts=NULL
-   ╎LRU list:
-   ╎internal_search_find: file=<NULL>
-   ╎  type=dnsdb key=">:defer_never,mxh=cioce.test.again.dns" opts=NULL
-   ╎database lookup required for >:defer_never,mxh=cioce.test.again.dns
-   ╎                             (tainted)
-   ╎dnsdb key: cioce.test.again.dns
-   ╎DNS lookup of cioce.test.again.dns (MX) using fakens
-   ╎DNS lookup of cioce.test.again.dns (MX) gave TRY_AGAIN
-   ╎cioce.test.again.dns in dns_again_means_nonexist?
-   ╎ list element: *
-   ╎ cioce.test.again.dns in dns_again_means_nonexist? yes (matched "*")
-   ╎cioce.test.again.dns is in dns_again_means_nonexist: returning DNS_NOMATCH
-   ╎DNS: couldn't fake dnsa len
-   ╎DNS: no SOA record found for neg-TTL
-   ╎ writing neg-cache entry for cioce.test.again.dns-MX-xxxx, ttl -1
-   ╎creating new cache entry
-   ╎lookup failed
+   expand list text
+   ╎ search_open: dnsdb "NULL"
+   ╎ search_find: file="NULL"
+   ╎   key=">:defer_never,mxh=cioce.test.again.dns" partial=-1 affix=NULL starflags=0 opts=NULL
+   ╎ LRU list:
+   ╎ internal_search_find: file=<NULL>
+   ╎   type=dnsdb key=">:defer_never,mxh=cioce.test.again.dns" opts=NULL
+   ╎ database lookup required for >:defer_never,mxh=cioce.test.again.dns
+   ╎                              (tainted)
+   ╎ dnsdb key: cioce.test.again.dns
+   ╎ DNS lookup of cioce.test.again.dns (MX) using fakens
+   ╎ DNS lookup of cioce.test.again.dns (MX) gave TRY_AGAIN
+   ╎ cioce.test.again.dns in dns_again_means_nonexist?
+   ╎  list element: *
+   ╎  cioce.test.again.dns in dns_again_means_nonexist? yes (matched "*")
+   ╎ cioce.test.again.dns is in dns_again_means_nonexist: returning DNS_NOMATCH
+   ╎ DNS: couldn't fake dnsa len
+   ╎ DNS: no SOA record found for neg-TTL
+   ╎  writing neg-cache entry for cioce.test.again.dns-MX-xxxx, ttl -1
+   ╎ creating new cache entry
+   ╎ lookup failed
   host in "*.cioce.test.again.dns : cioce.test.again.dns : "?
    ╎list element: *.cioce.test.again.dns
    ╎sender host name required, to match against *.cioce.test.again.dns

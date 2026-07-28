@@ -26,6 +26,7 @@ check domains = +fail
 y in "+fail"?
  list element: +fail
   start sublist fail
+   expand list text
    expansion of "${if eq {x}{y}{}fail}" forced failure: assume not in this list
   end sublist fail
 y in "+fail"? no (end of list)

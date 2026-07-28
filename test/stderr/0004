@@ -19,6 +19,7 @@
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> a@b.c in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -38,6 +39,7 @@ LOG: H=(test) [1.1.1.1] F=<a@b.c> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> a@B.C in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -60,6 +62,7 @@ LOG: H=(test) [1.1.1.1] F=<a@B.C> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> A@b.c in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -92,6 +95,7 @@ LOG: H=(test) [1.1.1.1] F=<a@B.C> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> A@B.C in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -124,6 +128,7 @@ LOG: H=(test) [1.1.1.1] F=<a@B.C> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> x@y.z in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -156,6 +161,7 @@ LOG: H=(test) [1.1.1.1] F=<a@B.C> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> x@Y.Z in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -188,6 +194,7 @@ LOG: H=(test) [1.1.1.1] F=<a@B.C> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> X@y.z in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -223,6 +230,7 @@ LOG: H=(test) [1.1.1.1] F=<a@B.C> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> X@Y.Z in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -258,6 +266,7 @@ LOG: H=(test) [1.1.1.1] F=<a@B.C> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> ax@e.f in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -276,6 +285,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@e.f> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> ay@g.h in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -308,6 +318,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@e.f> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> bX@E.F in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -340,6 +351,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@e.f> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> bY@G.H in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -372,6 +384,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@e.f> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> 1@e.f in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -404,6 +417,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@e.f> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> bz@e.f in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -436,6 +450,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@e.f> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> q@aa.com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -456,6 +471,7 @@ LOG: H=(test) [1.1.1.1] F=<q@aa.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> q@AA.COM in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -476,6 +492,7 @@ LOG: H=(test) [1.1.1.1] F=<q@AA.COM> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> Q@bb.com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -496,6 +513,7 @@ LOG: H=(test) [1.1.1.1] F=<Q@bb.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> Q@BB.Com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -516,6 +534,7 @@ LOG: H=(test) [1.1.1.1] F=<Q@BB.Com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> cc@dd.com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -536,6 +555,7 @@ LOG: H=(test) [1.1.1.1] F=<cc@dd.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> CC@DD.COM in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -556,6 +576,7 @@ LOG: H=(test) [1.1.1.1] F=<CC@DD.COM> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> q@Dd.Com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -588,6 +609,7 @@ LOG: H=(test) [1.1.1.1] F=<CC@DD.COM> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> q@nn.com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -608,6 +630,7 @@ LOG: H=(test) [1.1.1.1] F=<q@nn.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> Q@NN.COM in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -628,6 +651,7 @@ LOG: H=(test) [1.1.1.1] F=<Q@NN.COM> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> q@MM.com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -648,6 +672,7 @@ LOG: H=(test) [1.1.1.1] F=<q@MM.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> q@mm.com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -668,6 +693,7 @@ LOG: H=(test) [1.1.1.1] F=<q@mm.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> Pp@Qq.com in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -688,6 +714,7 @@ LOG: H=(test) [1.1.1.1] F=<Pp@Qq.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> abcd@aa.bb in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -720,6 +747,7 @@ LOG: H=(test) [1.1.1.1] F=<Pp@Qq.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> ABCD@aa.bb in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -752,6 +780,7 @@ LOG: H=(test) [1.1.1.1] F=<Pp@Qq.com> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> AbCd@aa.bb in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -773,6 +802,7 @@ LOG: H=(test) [1.1.1.1] F=<AbCd@aa.bb> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> ax@aa.bb in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -794,6 +824,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@aa.bb> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> bX@aa.bb in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -826,6 +857,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@aa.bb> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> Ay@aa.bb in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -858,6 +890,7 @@ LOG: H=(test) [1.1.1.1] F=<ax@aa.bb> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> BY@aa.bb in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -879,6 +912,7 @@ LOG: H=(test) [1.1.1.1] F=<BY@aa.bb> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> blocked@xy.zz in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -911,6 +945,7 @@ LOG: H=(test) [1.1.1.1] F=<BY@aa.bb> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> BLOCKED@zz.xy in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c
@@ -943,6 +978,7 @@ LOG: H=(test) [1.1.1.1] F=<BY@aa.bb> rejected RCPT <x@test.ex>
 >>> accept: condition test failed in ACL check_recipient
 >>> processing ACL check_recipient "deny" (TESTSUITE/test-config 19)
 >>> check senders = +caseful: a@b.c : X@Y.Z : ^\\Dx@e\\.f : ^\\DY@G\\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain
+>>> expand list text
 >>> BlOcKeD@zz.xy in "+caseful: a@b.c : X@Y.Z : ^\Dx@e\.f : ^\DY@G\.H :lsearch*@;TESTSUITE/aux-fixed/0003.rej.lsearch :@@lsearch*;TESTSUITE/aux-fixed/0003.rej.bydomain"?
 >>>  list element: +caseful
 >>>  list element: a@b.c

@@ -51,6 +51,7 @@
 >>>    SMTP>> STARTTLS
 >>>  cmd buf flush 10 bytes
 >>>    SMTP<< 220 TLS go ahead
+>>>  expand list text
 >>>    SMTP>> EHLO myhost.test.ex
 >>>  cmd buf flush 21 bytes
 >>>    SMTP<< 250-myhost.test.ex Hello the.local.host.name [ip4.ip4.ip4.ip4]

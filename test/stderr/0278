@@ -433,6 +433,7 @@ routing unknown@test.ex
   cached lookup data = NULL
   list element: +expanded
    start sublist expanded
+   ╎expand list text
    ╎unknown in "test.ex"?
    ╎ list element: test.ex
    ╎unknown in "test.ex"? no (end of list)
@@ -455,6 +456,7 @@ routing unknown@test.ex
   cached lookup data = NULL
   list element: +expanded
    start sublist expanded
+   ╎expand list text
    ╎unknown in "test.ex"?
    ╎ list element: test.ex
    ╎unknown in "test.ex"? no (end of list)

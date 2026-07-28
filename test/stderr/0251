@@ -19,6 +19,7 @@
 >>>   listr.test.ex in domains?
 >>>    list element: listr.test.ex
 >>>    listr.test.ex in domains? yes (matched "listr.test.ex")
+>>>   expand list text
 >>>   ok@sender in senders?
 >>>    list element: TESTSUITE/aux-fixed/0251.restrict.oklist
 >>>    sender in "sender"?
@@ -32,6 +33,7 @@
 >>>   listr.test.ex in domains?
 >>>    list element: listr.test.ex
 >>>    listr.test.ex in domains? yes (matched "listr.test.ex")
+>>>   expand list text
 >>>   ok@sender in senders?
 >>>    list element: zzzz
 >>>    sender in "zzzz"?
@@ -68,6 +70,7 @@
 >>>   listr.test.ex in domains?
 >>>    list element: listr.test.ex
 >>>    listr.test.ex in domains? yes (matched "listr.test.ex")
+>>>   expand list text
 >>>   bad@sender in senders?
 >>>    list element: TESTSUITE/aux-fixed/0251.restrict.oklist
 >>>   bad@sender in senders? no (end of list)

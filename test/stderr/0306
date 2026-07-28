@@ -46,6 +46,7 @@
 >>>   lists.test.ex in domains?
 >>>    list element: lists.test.ex
 >>>    lists.test.ex in domains? yes (matched "lists.test.ex")
+>>>   expand list text
 >>>   sub1@test.ex in senders?
 >>>    list element: lsearch;TESTSUITE/aux-fixed/0306/list1
 >>>    sub1@test.ex in senders? yes (matched "lsearch;TESTSUITE/aux-fixed/0306/list1")
@@ -65,6 +66,7 @@
 >>>   lists.test.ex in domains?
 >>>    list element: lists.test.ex
 >>>    lists.test.ex in domains? yes (matched "lists.test.ex")
+>>>   expand list text
 >>>   anyone@anywhere in senders?
 >>>    list element: lsearch;TESTSUITE/aux-fixed/0306/list1
 >>>   anyone@anywhere in senders? no (end of list)
@@ -85,6 +87,7 @@ LOG: H=(test) [1.2.3.4] F=<anyone@anywhere> rejected RCPT <list1@lists.test.ex>:
 >>>   lists.test.ex in domains?
 >>>    list element: lists.test.ex
 >>>    lists.test.ex in domains? yes (matched "lists.test.ex")
+>>>   expand list text
 >>>   anyone@anywhere in senders?
 >>>    list element: *
 >>>    anywhere in "*"?

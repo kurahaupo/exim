@@ -34,6 +34,7 @@ routing test.ex@test.ex
 --------> r1 router <--------
  local_part=test.ex domain=test.ex
  checking domains
+ expand list text
  test.ex in domains?
   list element: dnsdb;test.ex
   search_open: dnsdb "NULL"
@@ -51,6 +52,7 @@ routing test.ex@test.ex
   lookup yielded: A░TXT░record░for░test.ex.
   test.ex in domains? yes (matched "dnsdb;test.ex")
  checking local_parts
+ expand list text
  test.ex in local_parts?
   list element: dnsdb;test.ex
   search_open: dnsdb "NULL"
@@ -90,6 +92,7 @@ routing unknown@test.ex
 --------> r1 router <--------
  local_part=unknown domain=test.ex
  checking domains
+ expand list text
  test.ex in domains?
   list element: dnsdb;test.ex
   search_open: dnsdb "NULL"
@@ -102,6 +105,7 @@ routing unknown@test.ex
   lookup yielded: A░TXT░record░for░test.ex.
   test.ex in domains? yes (matched "dnsdb;test.ex")
  checking local_parts
+ expand list text
  unknown in local_parts?
   list element: dnsdb;unknown
   search_open: dnsdb "NULL"
@@ -125,6 +129,7 @@ routing unknown@test.ex
 --------> r2 router <--------
  local_part=unknown domain=test.ex
  checking domains
+ expand list text
  test.ex in domains?
   list element: dnsdb;test.ex
   search_open: dnsdb "NULL"
@@ -137,6 +142,7 @@ routing unknown@test.ex
   lookup yielded: A░TXT░record░for░test.ex.
   test.ex in domains? yes (matched "dnsdb;test.ex")
  checking senders
+ expand list text
  CALLER@myhost.test.ex in senders?
   list element: dnsdb;A=myhost.test.ex
   address match test: subject=CALLER@myhost.test.ex pattern=dnsdb;A=myhost.test.ex

@@ -39,6 +39,7 @@ routing userx@test.ex
  test.ex in domains?
   list element: +nocache
    start sublist nocache
+   ╎expand list text
    ╎test.ex in "userx"?
    ╎ list element: userx
    ╎test.ex in "userx"? no (end of list)
@@ -51,6 +52,7 @@ routing userx@test.ex
  test.ex in domains?
   list element: +nocache
    start sublist nocache
+   ╎expand list text
    ╎test.ex in "userx"?
    ╎ list element: userx
    ╎test.ex in "userx"? no (end of list)
@@ -66,6 +68,7 @@ routing userx@test.ex
    ╎test.ex in "+nocache"?
    ╎ list element: +nocache
    ╎  start sublist nocache
+   ╎   expand list text
    ╎   test.ex in "userx"?
    ╎   ╎list element: userx
    ╎   test.ex in "userx"? no (end of list)
@@ -83,6 +86,7 @@ routing userx@test.ex
    ╎test.ex in "+nocache"?
    ╎ list element: +nocache
    ╎  start sublist nocache
+   ╎   expand list text
    ╎   test.ex in "userx"?
    ╎   ╎list element: userx
    ╎   test.ex in "userx"? no (end of list)
@@ -97,6 +101,7 @@ routing userx@test.ex
  test.ex in domains?
   list element: +forcecache
    start sublist forcecache
+   ╎expand list text
    ╎test.ex in "userx"?
    ╎ list element: userx
    ╎test.ex in "userx"? no (end of list)
@@ -310,6 +315,7 @@ routing userx@test.ex
  test.ex in domains?
   list element: +nocache
    start sublist nocache
+   ╎expand list text
    ╎test.ex in "userx"?
    ╎ list element: userx
    ╎test.ex in "userx"? no (end of list)
@@ -322,6 +328,7 @@ routing userx@test.ex
  test.ex in domains?
   list element: +nocache
    start sublist nocache
+   ╎expand list text
    ╎test.ex in "userx"?
    ╎ list element: userx
    ╎test.ex in "userx"? no (end of list)
@@ -337,6 +344,7 @@ routing userx@test.ex
    ╎test.ex in "+nocache"?
    ╎ list element: +nocache
    ╎  start sublist nocache
+   ╎   expand list text
    ╎   test.ex in "userx"?
    ╎   ╎list element: userx
    ╎   test.ex in "userx"? no (end of list)
@@ -354,6 +362,7 @@ routing userx@test.ex
    ╎test.ex in "+nocache"?
    ╎ list element: +nocache
    ╎  start sublist nocache
+   ╎   expand list text
    ╎   test.ex in "userx"?
    ╎   ╎list element: userx
    ╎   test.ex in "userx"? no (end of list)
@@ -368,6 +377,7 @@ routing userx@test.ex
  test.ex in domains?
   list element: +forcecache
    start sublist forcecache
+   ╎expand list text
    ╎test.ex in "userx"?
    ╎ list element: userx
    ╎test.ex in "userx"? no (end of list)
