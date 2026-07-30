@@ -1913,6 +1913,7 @@ local_scan_data = NULL;
 #ifdef WITH_CONTENT_SCAN
  regex_vars_clear();
  malware_name = NULL;
+ spam_action = spam_report = spam_bar = spam_score = spam_score_int = NULL;
 #endif
 #ifdef EXPERIMENTAL_DCC
  dcc_header = dcc_result = NULL;
