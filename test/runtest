@@ -1658,7 +1658,7 @@ RESET_AFTER_EXTRA_LINE_READ:
     # Different builds will have different lookup types included
     # and different numbers of lookup types result in different type-code letters,
     # so convert them all to "0"
-    s%(?<!lsearch)[^ ](?=TESTSUITE/aux-fixed/(?:0414.list[12]|0464.domains)$)%0%;
+    s%(?<!lsearch)[^ ](?=TESTSUITE/aux-fixed/(?:0403.accountfile|0414.list[12]|0464.domains)$)%0%;
 
     # Different builds will have different optional modules
     next if /^$time_pid?Module init: /;
