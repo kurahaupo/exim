@@ -44,7 +44,7 @@ if (!value)
 /* Quote the value if it is empty, contains white space, or starts with a quote
 character. */
 
-if (value[0] == 0 || Ustrpbrk(value, " \t\n\r") != NULL || value[0] == '\"')
+if (value[0] == 0 || Ustrpbrk(value, " \t\n\r") || value[0] == '\"')
   {
   result = string_catn(result, US"\"", 1);
   for (int j = 0; j < vlength; j++)

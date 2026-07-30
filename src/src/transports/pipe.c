@@ -1088,7 +1088,7 @@ if ((rc = child_close(pid, timeout)) != 0)
         {
         BOOL quote = FALSE;
         g = string_catn(g, US" ", 1);
-        if (Ustrpbrk(argv[i], " \t") != NULL)
+        if (Ustrpbrk(argv[i], " \t"))
           {
           quote = TRUE;
           g = string_catn(g, US"\"", 1);

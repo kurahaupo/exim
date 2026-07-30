@@ -1466,7 +1466,7 @@ g = string_catn(NULL, US"\"", 1);
 
 for (;;)
   {
-  uschar * nq = US Ustrpbrk(lpart, "\\\"");
+  const uschar * nq = Ustrpbrk(lpart, "\\\"");
   if (!nq)
     {
     g = string_cat(g, lpart);

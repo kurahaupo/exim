@@ -4600,7 +4600,7 @@ expand_listnamed(gstring * yield, const uschar * name, const uschar * listtype)
 tree_node *t = NULL;
 const uschar * list;
 int sep = 0;
-uschar * item;
+const uschar * item;
 BOOL needsep = FALSE;
 #define LISTNAMED_BUF_SIZE 256
 uschar b[LISTNAMED_BUF_SIZE];
@@ -4660,17 +4660,17 @@ while ((item = string_nextinlist(&list, &sep, buffer, LISTNAMED_BUF_SIZE)))
 
   else if (sep != ':')	/* item from non-colon-sep list, re-quote for colon list-separator */
     {
-    char tok[3];
+    uschar tok[3];
     tok[0] = sep; tok[1] = ':'; tok[2] = 0;
 
-    for(char * cp; cp = strpbrk(CCS item, tok); item = US cp)
+    for(const uschar * cp; cp = Ustrpbrk(item, tok); item = cp)
       {
-      yield = string_catn(yield, item, cp - CS item);
+      yield = string_catn(yield, item, cp - item);
       if (*cp++ == ':')	/* colon in a non-colon-sep list item, needs doubling */
 	yield = string_catn(yield, US"::", 2);
       else		/* sep in item; should already be doubled; emit once */
 	{
-	yield = string_catn(yield, US tok, 1);
+	yield = string_catn(yield, tok, 1);
 	if (*cp == sep) cp++;
 	}
       }
@@ -8802,7 +8802,7 @@ const uschar *
 expand_string_2(const uschar * string, BOOL * textonly_p)
 {
 f.expand_string_forcedfail = f.search_find_defer = malformed_header = FALSE;
-if (Ustrpbrk(string, "$\\") != NULL)
+if (Ustrpbrk(string, "$\\"))
   {
   int old_pool = store_pool;
   uschar * s;
