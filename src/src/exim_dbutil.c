@@ -94,7 +94,7 @@ sigalrm_seen = 1;
 static void
 usage(const uschar * name, const uschar * options)
 {
-uschar * s = store_get(Ustrlen(options), options), * t = s;
+uschar * s = store_get(Ustrlen(options)+1, options), * t = s;
 
 if (Ustrchr(options, 'L'))
   printf("Usage: exim_%s -L <database-path>\n\n", name);
