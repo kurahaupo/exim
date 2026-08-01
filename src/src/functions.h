@@ -725,10 +725,6 @@ static inline void
 bit_set(bitmask_word_t * tbl, unsigned bitnum)
 { tbl[BITWORD(bitnum)] |= BITMASK(bitnum); }
 
-static inline bitmask_word_t
-bit_test(bitmask_word_t * tbl, unsigned bitnum)
-{ return tbl[BITWORD(bitnum)] & BITMASK(bitnum); }
-
 /******************************************************************************/
 /* Predicate: if an address is in a tainted pool.
 By extension, a variable pointing to this address is tainted.

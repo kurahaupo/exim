@@ -341,8 +341,11 @@ use inlinable functions. */
 
 #define DEBUG_SELECTOR_SIZE		(BITWORD(debug_chan_count) + 1)
 
-static inline bitmask_word_t bit_test(bitmask_word_t *, unsigned);
 extern bitmask_word_t * debug_selector;   /* Debugging bits */
+
+static inline bitmask_word_t
+bit_test(bitmask_word_t * tbl, unsigned bitnum)
+{ return tbl[BITWORD(bitnum)] & BITMASK(bitnum); }
 #define DEBUG_BIT(n)	(debug_selector && bit_test(debug_selector, n))
 #define ANY_DEBUG	DEBUG_BIT(BIT_TABLE_IDX_NONZERO)
 
