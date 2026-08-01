@@ -308,11 +308,11 @@ static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
 { return US dp->data; }
 
-static void
+static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->data = s; }
 
-static unsigned
+static inline unsigned
 exim_datum_size_get(EXIM_DATUM * dp)
 { return dp->len; }
 
