@@ -88,21 +88,4 @@ typedef struct {
 
 } redirect_router_options_block;
 
-/* Data for reading the private options. */
-
-extern optionlist redirect_router_options[];
-extern int redirect_router_options_count;
-
-/* Block containing default values. */
-
-extern redirect_router_options_block redirect_router_option_defaults;
-
-/* The main and initialization entry points for the router */
-
-extern int redirect_router_entry(router_instance *, address_item *,
-  struct passwd *, int, address_item **, address_item **,
-  address_item **, address_item **);
-
-extern void redirect_router_init(driver_instance *);
-
 /* End of routers/redirect.h */
