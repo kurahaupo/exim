@@ -5599,6 +5599,14 @@ return DELIVER_NOT_ATTEMPTED;
 
 
 
+static inline BOOL
+drop_privs(const uschar * why, BOOL has_privs)
+{
+if (has_privs)
+  exim_setugid(exim_uid, exim_gid, FALSE, why);
+return FALSE;
+}
+
 
 /*************************************************
 *           Print address information            *
@@ -6621,11 +6629,7 @@ if (addr_senddsn)
   int fd;
   pid_t pid;
 
-  if (has_privs)
-    {
-    exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery DSN gen");
-    has_privs = FALSE;
-    }
+  has_privs = drop_privs(US"post-delivery DSN gen", has_privs);
 
   pid = child_open_exim(&fd, US"DSN");
 
@@ -6734,14 +6738,6 @@ if (addr_senddsn)
     }
   }
 return has_privs;
-}
-
-static inline BOOL
-drop_privs(const uschar * why, BOOL has_privs)
-{
-if (has_privs)
-  exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery warn gen");
-return FALSE;
 }
 
 /*************************************************
@@ -8522,10 +8518,7 @@ This arises because the reponse (presumably) is labelled with the
 reuid not (say) the euid - so we cannot use priv_drop_temp(). */
 
 if (addr_failed)		/* We will be generating a bounce */
-  {
-  exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery tidying");
-  has_privs = FALSE;
-  }
+  has_privs = drop_privs(US"post-delivery needbounce tidying", has_privs);
 
 set_process_info("tidying up after delivering %s", message_id);
 signal(SIGTERM, SIG_IGN);
@@ -9051,7 +9044,7 @@ report_time_since(&timestamp_startup, US"delivery end"); /* testcase 0005 */
 /* If the transport suggested another message to deliver, go round again. */
 
 if (final_yield == DELIVER_ATTEMPTED_NORMAL && *continue_next_id)
-  if (has_privs)
+  if (has_privs)				/* can loop in this func */
     {
     addr_defer = addr_failed = addr_succeed = NULL;
 
@@ -9068,7 +9061,7 @@ if (final_yield == DELIVER_ATTEMPTED_NORMAL && *continue_next_id)
     continue_next_id[0] = '\0';
     goto CONTINUED_ID;
     }
-  else
+  else						/* must re-exec */
     {
     cutthrough.peer_options = smtp_peer_options;
     cutthrough.is_tls = !!continue_proxy_cipher;
@@ -9089,8 +9082,7 @@ if (final_yield == DELIVER_ATTEMPTED_NORMAL && *continue_next_id)
 
 /* Root privilege is no longer needed */
 
-if (has_privs)
-  exim_setugid(exim_uid, exim_gid, FALSE, US"post-delivery tidying");
+has_privs = drop_privs(US"delivery complete", has_privs);
 
 /* It is unlikely that there will be any cached resources, since they are
 released after routing, and in the delivery subprocesses. However, it's

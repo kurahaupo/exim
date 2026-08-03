@@ -868,7 +868,7 @@ DSN: not sending DSN success message
 LOG: MAIN
   Completed
 end delivery of 10HmaX-000000005vi-0000
-changed uid/gid: post-delivery tidying
+changed uid/gid: delivery complete
    uid ROOT->EXIM_UID gid EXIM_GID->EXIM_GID pid=p1238
 search_tidyup called
 search_tidyup called
