@@ -22336,6 +22336,9 @@ must be an absolute path. The entire file is read and used as the redirection
 data. If the data is an empty string or a string that has no effect (consists
 entirely of comments), the router declines.
 
+The file operations will be done using the user and group as specified by the
+corresponding router options, or as discovered by the &%check_local_user%& option.
+
 .cindex "NFS" "checking for file existence"
 If the attempt to open the file fails with a &"does not exist"& error, Exim
 runs a check on the containing directory,
