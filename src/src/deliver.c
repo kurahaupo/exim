@@ -6786,7 +6786,9 @@ time_t now;
 address_item * addr_last;
 uschar * filter_message, * info;
 open_db dbblock, * dbm_file = NULL;
-BOOL has_privs = TRUE;
+BOOL has_privs = TRUE;	/*XXX ? false under deliver_drop_privilege? */
+BOOL has_continue = FALSE;
+pid_t tidy_pid = (pid_t)-1;
 rmark reset_point;
 
 #ifndef DISABLE_EVENT
@@ -8502,23 +8504,35 @@ if (addr_remote)
   }
 
 
-/* All deliveries are now complete. Ignore SIGTERM during this tidying up
-phase, to minimize cases of half-done things. */
+/* All deliveries for this message are now complete. Ignore SIGTERM during this
+tidying up phase, to minimize cases of half-done things. */
 
 DEBUG(deliver)
   debug_printf(">>>>>>>>>>>>>>>> deliveries are done >>>>>>>>>>>>>>>>\n");
 cancel_cutthrough_connection(TRUE, US"deliveries are done");
 
-/* We used to always drop privs here, from root to exim, but the introduction
-of handling a further transport-suggested message requires we retain root.
-On the other hand, we want bounce messages to be sent by the Exim user.  So, if
-there is need to send a response (bounce, warn or DSN) drop at that point and
-do a re-exec for the next chained message.
-This arises because the reponse (presumably) is labelled with the
-reuid not (say) the euid - so we cannot use priv_drop_temp(). */
+/* Drop privs to do all the post-delivery tidup work. The drop is to reduce
+the risk surface. If there is a further message suggested by the transport we
+will need privs for that, so do the drop and tidyup in a child process.
+Otherwise, do it in this one. */
 
-if (addr_failed)		/* We will be generating a bounce */
-  has_privs = drop_privs(US"post-delivery needbounce tidying", has_privs);
+has_continue = final_yield == DELIVER_ATTEMPTED_NORMAL && *continue_next_id;
+
+if (has_continue)
+  if (  (tidy_pid = exim_fork(US"post-delivery tidying")) == 0
+     || tidy_pid == (pid_t)-1)
+    has_privs = drop_privs(US"post-delivery tidying", has_privs);
+  else
+    {
+    int status;
+    pid_t endedpid = waitpid(tidy_pid, &status, 0);
+    if (endedpid != tidy_pid)
+      log_write_die(LOG_MAIN, "Unexpected error return "
+	"%d (errno = %d) from waitpid() for process %ld",
+	(int)endedpid, errno, (long)tidy_pid);
+    goto TIDYUP_DONE;
+    }
+
 
 set_process_info("tidying up after delivering %s", message_id);
 signal(SIGTERM, SIG_IGN);
@@ -9041,12 +9055,20 @@ DEBUG(deliver) debug_printf("end delivery of %s\n", id);
 report_time_since(&timestamp_startup, US"delivery end"); /* testcase 0005 */
 #endif
 
+
+/* If we forked to do the tidying, and are that child, exit to let the
+toplevel continue. */
+
+if (tidy_pid == 0) exim_exit(EXIT_SUCCESS);
+
 /* If the transport suggested another message to deliver, go round again. */
 
-if (final_yield == DELIVER_ATTEMPTED_NORMAL && *continue_next_id)
+TIDYUP_DONE:
+if (has_continue)
   if (has_privs)				/* can loop in this func */
     {
     addr_defer = addr_failed = addr_succeed = NULL;
+    addr_local = addr_remote = NULL;
 
     tree_duplicates = NULL;	/* discard dups info from old message */
     addr_duplicate = NULL;
