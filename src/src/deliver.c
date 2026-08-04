@@ -6790,7 +6790,7 @@ time_t now;
 address_item * addr_last;
 uschar * filter_message, * info;
 open_db dbblock, * dbm_file = NULL;
-BOOL has_privs = TRUE;
+BOOL has_privs = !deliver_drop_privilege;
 rmark reset_point;
 
 #ifndef DISABLE_EVENT
