@@ -6,14 +6,21 @@ routing yes@myhost.test.ex
  local_part=yes domain=myhost.test.ex
  checking require_files
  file check: ! TESTSUITE/aux-fixed/0084.$local_part
- expanded file: TESTSUITE/aux-fixed/0084.yes
+  expanded file: TESTSUITE/aux-fixed/0084.yes
  stat() yielded 0
  smart router skipped: file check
+--------> dirfail router <--------
+ local_part=yes domain=myhost.test.ex
+ checking require_files
+ file check: TESTSUITE/aux-fixed/0084.yes/bogusfile
+ stat() yielded -1
+errno = EEE
+ dirfail router skipped: file check
 --------> forward router <--------
  local_part=yes domain=myhost.test.ex
  checking require_files
  file check: TESTSUITE/aux-fixed/0084.$local_part
- expanded file: TESTSUITE/aux-fixed/0084.yes
+  expanded file: TESTSUITE/aux-fixed/0084.yes
  stat() yielded 0
  calling forward router
  rda_interpret (file): '${lookup {0084.$local_part} dsearch,ret=full {TESTSUITE/aux-fixed}}'
@@ -50,7 +57,7 @@ routing no@myhost.test.ex
  local_part=no domain=myhost.test.ex
  checking require_files
  file check: ! TESTSUITE/aux-fixed/0084.$local_part
- expanded file: TESTSUITE/aux-fixed/0084.no
+  expanded file: TESTSUITE/aux-fixed/0084.no
  stat() yielded -1
 errno = EEE
  calling smart router

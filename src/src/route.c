@@ -613,8 +613,8 @@ route_check_access(const uschar * path, uid_t uid, gid_t gid, int bits)
 struct stat statbuf;
 uschar * rp = US realpath(CCS path, CS big_buffer);
 
-DEBUG(route) debug_printf_indent("route_check_access(%s,%d,%d,%o)\n", path,
-  (int)uid, (int)gid, bits);
+DEBUG(route) debug_printf_indent("route_check_access(%s,%u,%u,%#o)\n", path,
+  (unsigned)uid, (unsigned)gid, bits);
 
 if (!rp) return FALSE;
 
@@ -624,12 +624,9 @@ for (uschar * sp = rp + 1, * slash; slash = Ustrchr(sp, '/'); sp = slash + 1)
   DEBUG(route) debug_printf_indent("stat %s\n", rp);
   if (Ustat(rp, &statbuf) < 0) return FALSE;
   if ((statbuf.st_mode &
-       (statbuf.st_uid == uid ? 0100 : statbuf.st_gid == gid ? 0010 : 001)
+       (statbuf.st_uid==uid ? S_IXUSR : statbuf.st_gid==gid ? S_IXGRP : S_IXOTH)
       ) == 0)
-    {
-    errno = EACCES;
-    return FALSE;
-    }
+    { errno = EACCES; return FALSE; }
   *slash = '/';
   }
 
@@ -639,14 +636,11 @@ DEBUG(route) debug_printf_indent("stat %s\n", rp);
 
 if (Ustat(rp, &statbuf) < 0) return FALSE;
 
-if (statbuf.st_uid == uid) bits = bits << 6;
-else if (statbuf.st_gid == gid) bits = bits << 3;
+if (statbuf.st_uid == uid) bits <<= 6;
+else if (statbuf.st_gid == gid) bits <<= 3;
 
 if ((statbuf.st_mode & bits) != bits)
-  {
-  errno = EACCES;
-  return FALSE;
-  }
+  { errno = EACCES; return FALSE; }
 
 DEBUG(route) debug_printf_indent("route_check_access() succeeded\n");
 return TRUE;
@@ -681,14 +675,14 @@ Returns:   OK if s == NULL or all tests are as required
 */
 
 static int
-check_files(const uschar *s, uschar **perror)
+check_files(const uschar * s, uschar ** perror)
 {
 int sep = 0;              /* List has default separators */
 uid_t uid = 0;            /* For picky compilers */
 gid_t gid = 0;            /* For picky compilers */
 BOOL ugid_set = FALSE;
-const uschar *listptr;
-uschar *check;
+const uschar * listptr;
+uschar * check;
 
 if (!s) return OK;
 
@@ -698,10 +692,9 @@ listptr = s;
 while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
   {
   int rc;
-  int eacces_code = 0;
-  BOOL invert = FALSE;
+  BOOL eacces_code, invert;
   struct stat statbuf;
-  uschar *ss = expand_string(check);
+  uschar * ss = expand_string(check);
 
   if (!ss)
     {
@@ -722,7 +715,7 @@ while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
     {
     BOOL ok;
     struct passwd *pw;
-    uschar *comma = Ustrchr(ss, ',');
+    uschar * comma = Ustrchr(ss, ',');
 
     /* If there's a comma, temporarily terminate the user name/number
     at that point. Then set the uid. */
@@ -766,17 +759,11 @@ while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
 
   /* Path, possibly preceded by + and ! */
 
-  if (*ss == '+')
-    {
-    eacces_code = 1;
+  if (eacces_code = *ss == '+')
     while (isspace(*++ss));
-    }
 
-  if (*ss == '!')
-    {
-    invert = TRUE;
+  if (invert = *ss == '!')
     while (isspace(*++ss));
-    }
 
   if (*ss != '/')
     {
@@ -792,7 +779,7 @@ while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
   DEBUG(route)
     {
     debug_printf_indent("file check: %s\n", check);
-    if (ss != check) debug_printf_indent("expanded file: %s\n", ss);
+    if (ss != check) debug_printf_indent(" expanded file: %s\n", ss);
     debug_printf_indent("stat() yielded %d\n", rc);
     }
 
@@ -838,7 +825,7 @@ while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
       {
       exim_setugid(uid, gid, TRUE,
         string_sprintf("require_files check, file=%s", ss));
-      if (route_check_access(ss, uid, gid, 4))
+      if (route_check_access(ss, uid, gid, 4))		/* has read perm */
 	exim_underbar_exit(EXIT_SUCCESS);
       DEBUG(route) debug_printf_indent("route_check_access() failed\n");
       exim_underbar_exit(EXIT_FAILURE);
@@ -872,7 +859,8 @@ while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
   /* Handle error returns from stat() or route_check_access(). The EACCES error
   is handled specially. At present, we can force it to be treated as
   non-existence. Write the code so that it will be easy to add forcing for
-  existence if required later. */
+  existence if required later. Treat hitting a non-dir when we expected one as
+  indicating that the full path does not exist. */
 
   HANDLE_ERROR:
   if (rc < 0)
@@ -880,13 +868,13 @@ while ((check = string_nextinlist(&listptr, &sep, NULL, 0)))
     DEBUG(route) debug_printf_indent("errno = %d\n", errno);
     if (errno == EACCES)
       {
-      if (eacces_code == 1)
+      if (eacces_code)
         {
         DEBUG(route) debug_printf_indent("EACCES => ENOENT\n");
         errno = ENOENT;   /* Treat as non-existent */
         }
       }
-    if (errno != ENOENT)
+    if (errno != ENOENT && errno != ENOTDIR)
       {
       *perror = string_sprintf("require_files: error for %s: %s", ss,
         strerror(errno));

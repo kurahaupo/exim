@@ -213,6 +213,10 @@ JH/54 When an ACL "message" modifier supplies an SMTP response including an
       enhanced status code (RFC 3463) the initial component is now checked for
       matching the ACL verb.  Previously only the main status code was checked.
 
+JH/55 Bug 581: For the router "require_files" option, a file existing where a
+      directory is required now means the test fails.  Previously it caused the
+      router to defer.
+
 
 
 
