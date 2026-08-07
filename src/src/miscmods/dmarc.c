@@ -3,7 +3,7 @@
 *************************************************/
 
 /* DMARC support.
-   Copyright (c) The Exim Maintainers 2019 - 2025
+   Copyright (c) The Exim Maintainers 2019 - 2026
    Copyright (c) Todd Lyons <tlyons@exim.org> 2012 - 2014
    License: GPL */
 /* SPDX-License-Identifier: GPL-2.0-or-later */

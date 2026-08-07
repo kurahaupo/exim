@@ -2,18 +2,19 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) Phil Pennock 2012, 2016
- * Copyright (c) The Exim Maintainers 2017 - 2021
- * But almost everything here is fixed published constants from RFCs, so also:
- * Copyright (C) The Internet Society (2003)
- * Copyright (C) The IETF Trust (2008)
- * SPDX-License-Identifier: GPL-2.0-or-later
- *
- * Most of the text in RFC referencing comments is copy/paste from RFC,
- * as is undoubtedly the intention.
- * The constants are generated from that text using util/gen_pkcs3.c invoked
- * with the -C option.
- */
+/*
+Copyright (c) The Exim Maintainers 2017 - 2026
+Copyright (c) Phil Pennock 2012, 2016
+But almost everything here is fixed published constants from RFCs, so also:
+Copyright (C) The Internet Society (2003)
+Copyright (C) The IETF Trust (2008)
+SPDX-License-Identifier: GPL-2.0-or-later
+
+Most of the text in RFC referencing comments is copy/paste from RFC,
+as is undoubtedly the intention.
+The constants are generated from that text using util/gen_pkcs3.c invoked
+with the -C option.
+*/
 
 /* See the file NOTICE for conditions of use and distribution. */
 

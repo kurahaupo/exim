@@ -2,11 +2,12 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) Tom Kistner <tom@duncanthrax.net> 2004, 2015
- * License: GPL
- * Copyright (c) The Exim Maintainers 2016
- * SPDX-License-Identifier: GPL-2.0-or-later
- */
+/*
+Copyright (c) The Exim Maintainers 2016 - 2026
+Copyright (c) Tom Kistner <tom@duncanthrax.net> 2004, 2015
+License: GPL
+SPDX-License-Identifier: GPL-2.0-or-later
+*/
 
 #ifdef WITH_CONTENT_SCAN
 
