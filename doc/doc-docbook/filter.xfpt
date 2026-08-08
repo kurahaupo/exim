@@ -1073,6 +1073,9 @@ mail to "Julius Caesar <jc@rome.example>, \
 Similarly, the texts supplied for &%from%& and &%reply_to%& are copied into
 their respective header lines.
 
+If no recipient is specified (by a to, cc or bcc) then the mail is sent
+to the sender of the message being filtered.
+
 As a convenience for use in one common case, there is also a command called
 &(vacation)&. It behaves in the same way as &(mail)&, except that the defaults
 for the &%subject%&, &%file%&, &%log%&, &%once%&, and &%once_repeat%& options
