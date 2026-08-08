@@ -636,7 +636,7 @@ while (*s)
     if (isdigit(*s)) c = c * 10 + *s++ - '0';
     *ss++ = c;
     }
-  else if (*++s)
+  else if (*s)
     *ss++ = *s++;
 
 *ss = 0;
