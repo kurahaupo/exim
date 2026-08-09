@@ -1649,7 +1649,7 @@ Returns:        NULL if the header does not exist, else a pointer to a new
                 store block
 */
 
-static uschar *
+static const uschar *
 find_header(const uschar * name, int * newsize, unsigned flags,
   const uschar * charset)
 {
@@ -1730,8 +1730,9 @@ charset translation fails. If decoding fails, it returns NULL. */
 
 else
   {
-  uschar * error, * decoded = string_copy(rfc2047_decode2(rawhdr,
-		      check_rfc2047_length, charset, '?', NULL, newsize, &error));
+  uschar * error;
+  const uschar * decoded = rfc2047_decode2(rawhdr, check_rfc2047_length,
+					  charset, '?', NULL, newsize, &error);
   if (error)
     DEBUG(any) debug_printf("*** error in RFC 2047 decoding: %s\n"
       "    input was: %s\n", error, rawhdr);
@@ -2109,26 +2110,33 @@ switch (vp->type)
     return tod_stamp(tod_log_datestamp_daily);
 
   case vtype_reply:                          /* Get reply address */
-    s = find_header(US"reply-to:", newsize,
+    {
+    uschar * t;
+    const uschar * ct, * cs = find_header(US"reply-to:", newsize,
 	    flags & ESI_EXISTS_ONLY ? FH_EXISTS_ONLY|FH_WANT_RAW : FH_WANT_RAW,
 	    headers_charset);
-    if (s) Uskip_whitespace(&s);
-    if (!s || !*s)
+    if (cs) Uskip_whitespace(&cs);
+    if (!cs || !*cs)
       {
-      if (newsize) *newsize = 0;		/* For the *s==0 case */
-      s = find_header(US"from:", newsize,
+      if (newsize) *newsize = 0;		/* For the *cs==0 case */
+      cs = find_header(US"from:", newsize,
 	    flags & ESI_EXISTS_ONLY ? FH_EXISTS_ONLY|FH_WANT_RAW : FH_WANT_RAW,
 	    headers_charset);
       }
-    if (s)
-      {
-      uschar *t;
-      Uskip_whitespace(&s);
+    if (!cs) return US"";
+    Uskip_whitespace(&cs);
+
+    for (ct = cs; *ct; ct++) if (*ct == '\n') goto trim;
+    if (isspace(ct[-1])) goto trim;
+    return cs;
+
+    trim:
+      s = string_copy(cs);
       for (t = s; *t; t++) if (*t == '\n') *t = ' ';
       while (t > s && isspace(t[-1])) t--;
-      *t = 0;
-      }
-    return s ? s : US"";
+      *t = '\0';
+      return s;
+    }
 
   case vtype_string_func:
     {
