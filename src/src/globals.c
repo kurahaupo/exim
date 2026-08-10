@@ -708,10 +708,13 @@ const uschar * debug_defaults =
       "-timestamp"
       "-resolver";
 
-/* List of debug channels that we exclude from "all" */
+/* Lists of debug channels that we exclude from "all" and "any" */
 
 const uschar * const debug_notall_names[] = {
   US"macro", US"memory", US"noutf8", US"regex", NULL
+};
+const uschar * const debug_notany_names[] = {
+  US"pid", US"noutf8", US"timestamp", NULL
 };
 
 uschar   debuglog_name[LOG_NAME_SIZE] = {0};

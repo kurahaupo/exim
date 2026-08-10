@@ -2842,7 +2842,8 @@ on the second character (the one after '-'), to save some effort. */
         argrest++;
         }
 
-      debug_set_default_bits(&selector);
+      if (*argrest != '=')
+	debug_set_default_bits(&selector);
       if (*argrest)
 	debug_decode_bits(&selector, argrest, 0);
 

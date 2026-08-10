@@ -468,6 +468,7 @@ extern uschar *dccifd_options;         /* options for the dccifd daemon */
 extern bit_table debug_channels[];     /* names + numbers */
 extern const uschar * debug_defaults;			/* chans for "-d" */
 extern const uschar * const debug_notall_names[];	/* chans not in "all" */
+extern const uschar * const debug_notany_names[];	/* chans not in "any" */
 extern bitmask_word_t * debug_selector;   /* Debugging bits */
 
 
