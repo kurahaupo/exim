@@ -120,7 +120,7 @@ if (db_create(&b, dbp, 0) == 0)
 	  )
     return dbp;
   else DEBUG(hints_lookup)
-    debug_printf_indent("bdb_open(flags 0x%x mode %04o) %s\n",
+    debug_printf_indent("bdb_open(flags %#x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
 
   b->close(b, 0);

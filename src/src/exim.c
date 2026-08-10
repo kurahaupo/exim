@@ -4375,7 +4375,7 @@ DEBUG(start)
   debug_printf("configuration file is %s\n", config_main_filename);
   debug_printf("log selectors =");
   for (int i = 0; i < log_selector_size; i++)
-    debug_printf(" 0x" PR_EXIM_BITMASK, log_selector[i]);
+    debug_printf(" " PR_EXIM_BITMASK, log_selector[i]);
   debug_printf("\n");
   }
 

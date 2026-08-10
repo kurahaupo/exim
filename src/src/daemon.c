@@ -889,7 +889,7 @@ while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
   {
   DEBUG(any)
     {
-    debug_printf("child %ld ended: status=0x%x\n", (long)pid, status);
+    debug_printf("child %ld ended: status=%#x\n", (long)pid, status);
 #ifdef WCOREDUMP
     if (WIFEXITED(status))
       debug_printf("  normal exit, %d\n", WEXITSTATUS(status));

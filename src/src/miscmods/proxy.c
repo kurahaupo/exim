@@ -370,7 +370,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
           goto done;
         default:
           DEBUG(receive)
-            debug_printf("Unsupported PROXYv2 connection type: 0x%02x\n",
+            debug_printf("Unsupported PROXYv2 connection type: %#02x\n",
                          hdr.v2.fam);
           goto proxyfail;
         }
@@ -382,7 +382,7 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
       break;
     default:
       DEBUG(receive)
-        debug_printf("Unsupported PROXYv2 command: 0x%x\n", cmd);
+        debug_printf("Unsupported PROXYv2 command: %#x\n", cmd);
       goto proxyfail;
     }
   }

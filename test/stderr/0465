@@ -94,7 +94,7 @@ check verify = header_syntax
 accept: condition test succeeded in ACL check_data
 end of ACL check_data: ACCEPT
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmaY-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <abc@domain> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <abc@domain> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmaY-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN

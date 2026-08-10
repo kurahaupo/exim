@@ -513,7 +513,7 @@ try option 'acl_smtp_quit'
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1235 (daemon-accept) terminating with rc=0 >>>>>>>>>>>>>>>>
 p1234 1 SMTP accept process running
-p1234 child p1235 ended: status=0x0
+p1234 child p1235 ended: status=0
 p1234   normal exit, 0
 p1234 0 SMTP accept processes now running
 p1234 daemon_notification (from unknown addr)

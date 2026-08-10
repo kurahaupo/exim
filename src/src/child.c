@@ -116,9 +116,9 @@ if (!minimal)
       if (!kill_v) argv[n++] = US"-v";
 
   if (debug_pretrigger_buf)
-    { argv[n++] = US"-dp"; argv[n++] = string_sprintf("0x%x", debug_pretrigger_bsize); }
+    { argv[n++] = US"-dp"; argv[n++] = string_sprintf("%#x", debug_pretrigger_bsize); }
   if (dtrigger_selector != 0)
-    argv[n++] = string_sprintf("-dt=0x%x", dtrigger_selector);
+    argv[n++] = string_sprintf("-dt=%#x", dtrigger_selector);
   DEBUG(any)
     {
     argv[n++] = US"-MCd";

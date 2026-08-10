@@ -64,7 +64,7 @@ if (dbp)
     return dbp;
 
   DEBUG(hints_lookup)
-    debug_printf_indent("gdbm_open(flags 0x%x mode %04o) %s\n",
+    debug_printf_indent("gdbm_open(flags %#x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
   free(dbp);
   }

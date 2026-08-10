@@ -63,7 +63,7 @@ else if ((res = dbm_open(CS name, flags, mode)))
 
 else
   DEBUG(hints_lookup)
-    debug_printf_indent("ndbm_open(flags 0x%x mode %04o) %s\n",
+    debug_printf_indent("ndbm_open(flags %#x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
 return NULL;
 }

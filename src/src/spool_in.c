@@ -940,7 +940,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     { DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - No additional fields\n"); }
 
   if (orcpt || dsn_flags)
-    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - address: <%s> orcpt: <%s> dsn_flags: 0x%x\n",
+    DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - address: <%s> orcpt: <%s> dsn_flags: %#x\n",
       big_buffer, orcpt, dsn_flags);
   if (errors_to)
     DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - address: <%s> errorsto: <%s>\n",

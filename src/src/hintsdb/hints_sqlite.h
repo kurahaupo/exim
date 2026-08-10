@@ -56,7 +56,7 @@ if ((ret = sqlite3_open_v2(CCS name, &dbp, sflags, NULL)) == SQLITE_OK)
   (void) sqlite3_exec(dbp, "DROP TABLE IF EXISTS tbl;", NULL, NULL, NULL);
   }
 else DEBUG(hints_lookup)
-  debug_printf_indent("sqlite_open(flags 0x%x mode %04o) %s\n",
+  debug_printf_indent("sqlite_open(flags %#x mode %04o) %s\n",
 		      flags, mode, sqlite3_errmsg(dbp));
 return ret == SQLITE_OK ? dbp : NULL;
 }

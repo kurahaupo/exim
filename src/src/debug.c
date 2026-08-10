@@ -581,9 +581,9 @@ bit_set(debug_selector, BIT_TABLE_IDX_NONZERO);
 gstring *
 debug_selector_dump(gstring * g)
 {
-g = string_fmt_append(g, "-d=0x" PR_EXIM_BITMASK, debug_selector[0]);
+g = string_fmt_append(g, "-d=" PR_EXIM_BITMASK, debug_selector[0]);
 for (int i = 1; i < DEBUG_SELECTOR_SIZE; i++)
-  g = string_fmt_append(g, ",0x" PR_EXIM_BITMASK, debug_selector[i]);
+  g = string_fmt_append(g, "," PR_EXIM_BITMASK, debug_selector[i]);
 return g;
 }
 

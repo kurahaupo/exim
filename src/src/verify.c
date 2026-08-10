@@ -3695,7 +3695,7 @@ else
   else
     {
     DEBUG(verify)
-      debug_printf_indent("verify call response: waitpid status 0x%04x\n", status);
+      debug_printf_indent("verify call response: waitpid status %#05x\n", status);
     }
   }
 

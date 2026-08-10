@@ -244,7 +244,8 @@ for EXIM_ARITH_MAX and _MIN in OS/oh.h-FOO */
 Change as above (but expect debugging to become odd). */
 #define bitmask_word_t		uint64_t
 #define EXIM_BITMAP_WORD_BITS	64
-#define PR_EXIM_BITMASK		"%" PRIx64
-#define SC_EXIM_BITMASK		"%" SCNx64
+#define EXIM_BITMAP_WORD_CHARS	18		/* 64/4 + 2 for the 0x */
+#define PR_EXIM_BITMASK	"%#0" mac_expanded_string(EXIM_BITMAP_WORD_CHARS) PRIx64
+#define SC_EXIM_BITMASK	"%" SCNx64
 
 /* End of config.h.defaults */

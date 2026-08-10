@@ -232,9 +232,9 @@ tree_walk(acl_var_m, &acl_var_write, fp);
 
 if (*debuglog_name)
   {
-  fprintf(fp, "-debug_selector 0x" PR_EXIM_BITMASK, debug_selector[0]);
+  fprintf(fp, "-debug_selector " PR_EXIM_BITMASK, debug_selector[0]);
   for (int i = 1; i < DEBUG_SELECTOR_SIZE; i++)
-    fprintf(fp, ",0x" PR_EXIM_BITMASK, debug_selector[i]);
+    fprintf(fp, "," PR_EXIM_BITMASK, debug_selector[i]);
   fprintf(fp, "\n-debuglog_name %s\n", debuglog_name);
   }
 
@@ -321,7 +321,7 @@ for (int i = 0; i < recipients_count; i++)
   recipient_item *r = recipients_list + i;
   const uschar *address = zap_newlines(r->address);
 
-  /* DEBUG(deliver) debug_printf("DSN: Flags: 0x%x\n", r->dsn_flags); */
+  /* DEBUG(deliver) debug_printf("DSN: Flags: %#x\n", r->dsn_flags); */
 
   if (r->pno < 0 && !r->errors_to && r->dsn_flags == 0)
     fprintf(fp, "%s\n", address);
@@ -337,7 +337,7 @@ for (int i = 0; i < recipients_count; i++)
     }
 
     DEBUG(deliver) debug_printf("DSN: **** SPOOL_OUT - "
-      "address: <%s> errorsto: <%s> orcpt: <%s> dsn_flags: 0x%x\n",
+      "address: <%s> errorsto: <%s> orcpt: <%s> dsn_flags: %#x\n",
       r->address, r->errors_to, r->orcpt, r->dsn_flags);
   }
 

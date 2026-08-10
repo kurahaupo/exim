@@ -888,7 +888,7 @@ do {
 
 DEBUG(tls)
   debug_printf("tls_validate_require_cipher child " PID_T_FMT
-      " ended: status=0x%x\n", pid, status);
+      " ended: status=%#x\n", pid, status);
 
 signal(SIGCHLD, oldsignal);
 

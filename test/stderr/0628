@@ -7,7 +7,7 @@
 01:01:01 p1237   ├───expanded: ${tod_full}
 01:01:01 p1237   ╰─────result: Tue,░2░Mar░1999░09:44:33░+0000
 01:01:01 p1237  Writing spool header file: TESTSUITE/spool//input//hdr.10HmaX-000000005vi-0000
-01:01:01 p1237  DSN: **** SPOOL_OUT - address: <dest@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+01:01:01 p1237  DSN: **** SPOOL_OUT - address: <dest@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 01:01:01 p1237  Renaming spool header file: TESTSUITE/spool//input//10HmaX-000000005vi-0000-H
 01:01:01 p1237  Size of headers = sss
 01:01:01 p1237  LOG: MAIN
@@ -59,7 +59,7 @@
 01:01:01 p1238  recipients_count=1
 01:01:01 p1238  **** SPOOL_IN - No additional fields
 01:01:01 p1238  body_linecount=1 message_linecount=7
-01:01:01 p1238  DSN: set orcpt:   flags: 0x0
+01:01:01 p1238  DSN: set orcpt:   flags: 0
 01:01:01 p1238  Delivery address list:
 01:01:01 p1238    dest@test.ex 
 01:01:01 p1238  no retry data available
@@ -104,7 +104,7 @@
 01:01:01 p1238  DSN: processing router : r1
 01:01:01 p1238  DSN: processing successful delivery address: dest@test.ex
 01:01:01 p1238  DSN: Sender_address: tester@test.ex
-01:01:01 p1238  DSN: orcpt: NULL  flags: 0x0
+01:01:01 p1238  DSN: orcpt: NULL  flags: 0
 01:01:01 p1238  DSN: envid: NULL  ret: 0
 01:01:01 p1238  DSN: Final recipient: dest@test.ex
 01:01:01 p1238  DSN: Remote SMTP server supports DSN: UNKNOWN
@@ -127,7 +127,7 @@
 01:01:01 p1239   ├───expanded: ${tod_full}
 01:01:01 p1239   ╰─────result: Tue,░2░Mar░1999░09:44:33░+0000
 01:01:01 p1239  Writing spool header file: TESTSUITE/spool//input//hdr.10HmaY-000000005vi-0000
-01:01:01 p1239  DSN: **** SPOOL_OUT - address: <dest2@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+01:01:01 p1239  DSN: **** SPOOL_OUT - address: <dest2@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 01:01:01 p1239  Renaming spool header file: TESTSUITE/spool//input//10HmaY-000000005vi-0000-H
 01:01:01 p1239  Size of headers = sss
 01:01:01 p1239  LOG: MAIN
@@ -163,7 +163,7 @@
 01:01:01 p1240  recipients_count=1
 01:01:01 p1240  **** SPOOL_IN - No additional fields
 01:01:01 p1240  body_linecount=1 message_linecount=7
-01:01:01 p1240  DSN: set orcpt:   flags: 0x0
+01:01:01 p1240  DSN: set orcpt:   flags: 0
 01:01:01 p1240  Delivery address list:
 01:01:01 p1240    dest2@test.ex 
 01:01:01 p1240  no retry data available
@@ -208,7 +208,7 @@
 01:01:01 p1240  DSN: processing router : r1
 01:01:01 p1240  DSN: processing successful delivery address: dest2@test.ex
 01:01:01 p1240  DSN: Sender_address: tester2@test.ex
-01:01:01 p1240  DSN: orcpt: NULL  flags: 0x0
+01:01:01 p1240  DSN: orcpt: NULL  flags: 0
 01:01:01 p1240  DSN: envid: NULL  ret: 0
 01:01:01 p1240  DSN: Final recipient: dest2@test.ex
 01:01:01 p1240  DSN: Remote SMTP server supports DSN: UNKNOWN

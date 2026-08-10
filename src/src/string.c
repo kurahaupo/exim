@@ -1408,6 +1408,7 @@ The return value can be NULL to signify overflow.
 
 Alternate-form:		#: s/Y/b are silent about a null string
 			   H uppercase result
+			   x/X prefix "0x" on result
 Left-alignment:		-: only for s D H M S T Y V W Z b
 Field width:		decimal digits, or *
 Precision:		dot, followed by decimal digits or *
@@ -1550,6 +1551,8 @@ while (*fp)
     case 'x':
     case 'X':
       width = length > L_LONG ? 24 : 12;
+      if (!*null)	/* a # flag was present */
+	width += 2;	/* for a "0x" */
       if ((need = g->ptr + width) > lim)
 	{
 	if (!(flags & SVFMT_EXTEND) || need >= size_limit) return NULL;

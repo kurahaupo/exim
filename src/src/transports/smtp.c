@@ -1035,14 +1035,14 @@ else
 # ifndef DISABLE_ESMTP_LIMITS
       if (er->data.limit_mail || er->data.limit_rcpt || er->data.limit_rcptdom)
 	debug_printf("EHLO response bits from cache:"
-	  " cleartext 0x%04x/0x%04x crypted 0x%04x/0x%04x lim %05d/%05d/%05d\n",
+	  " cleartext %#06x/%#06x crypted %#06x/%#06x lim %05d/%05d/%05d\n",
 	  er->data.cleartext_features, er->data.cleartext_auths,
 	  er->data.crypted_features, er->data.crypted_auths,
 	  er->data.limit_mail, er->data.limit_rcpt, er->data.limit_rcptdom);
       else
 # endif
 	debug_printf("EHLO response bits from cache:"
-	  " cleartext 0x%04x/0x%04x crypted 0x%04x/0x%04x\n",
+	  " cleartext %#06x/%#06x crypted %#06x/%#06x\n",
 	  er->data.cleartext_features, er->data.cleartext_auths,
 	  er->data.crypted_features, er->data.crypted_auths);
 
@@ -1086,7 +1086,7 @@ for (au = auths, authnum = 0; au; au = au->drinst.next, authnum++)
     }
 
 DEBUG(transport)
-  debug_printf("server offers %s AUTH, methods '%s', usable-bitmap 0x%04x\n",
+  debug_printf("server offers %s AUTH, methods '%s', usable-bitmap %#06x\n",
     tls_out.active.sock >= 0 ? "crypted" : "plaintext", names, authbits);
 
 if (tls_out.active.sock >= 0)
@@ -1182,7 +1182,7 @@ if (pending_EHLO)
      || (authbits = study_ehlo_auths(sx)) != *ap)
     {
     HDEBUG(transport)
-      debug_printf("EHLO %s extensions changed, 0x%04x/0x%04x -> 0x%04x/0x%04x\n",
+      debug_printf("EHLO %s extensions changed, %#06x/%#06x -> %#06x/%#06x\n",
 		    tls_out.active.sock < 0 ? "cleartext" : "crypted",
 		    sx->peer_offered, *ap, peer_offered, authbits);
     if (peer_offered & OPTION_EARLY_PIPE)
@@ -1973,7 +1973,7 @@ ehlo_response(uschar * buf, unsigned checks)
 PCRE2_SIZE bsize = Ustrlen(buf);
 pcre2_match_data * md = pcre2_match_data_create(1, pcre_gen_ctx);
 
-/* debug_printf("%s: check for 0x%04x\n", __FUNCTION__, checks); */
+/* debug_printf("%s: check for %#06x\n", __FUNCTION__, checks); */
 
 #ifndef DISABLE_TLS
 if (  checks & OPTION_TLS
@@ -2029,7 +2029,7 @@ if (  checks & OPTION_EARLY_PIPE
   checks &= ~OPTION_EARLY_PIPE;
 
 /* pcre2_match_data_free(md);	gen ctx needs no free */
-/* debug_printf("%s: found     0x%04x\n", __FUNCTION__, checks); */
+/* debug_printf("%s: found     %#06x\n", __FUNCTION__, checks); */
 return checks;
 }
 
@@ -5273,7 +5273,7 @@ if (sx->send_quit || tcw_done && !tcw)
       int m = MIN(n, 64);
       debug_printf_indent("  SMTP(drain %d bytes)<< %.*s\n", n, m, sx->inbuffer);
       for (m = 0; m < n; m++)
-	debug_printf("0x%02x\n", sx->inbuffer[m]);
+	debug_printf("%#02x\n", sx->inbuffer[m]);
       }
   }
 HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(close)>>\n");

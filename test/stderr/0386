@@ -279,7 +279,7 @@ P Received: from [V4NET.11.12.13] (helo=test ident=CALLER)
   X-Warning: This is a test blacklisting message
 >>
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmaX-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <2@b> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <2@b> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmaX-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN
@@ -317,7 +317,7 @@ Non-recipients:
 recipients_count=1
 **** SPOOL_IN - No additional fields
 body_linecount=1 message_linecount=8
-DSN: set orcpt:   flags: 0x0
+DSN: set orcpt:   flags: 0
 Delivery address list:
   2@b 
 no retry data available
@@ -396,7 +396,7 @@ end of retry processing
 DSN: processing router : r1
 DSN: processing successful delivery address: 2@b
 DSN: Sender_address: x@y
-DSN: orcpt: NULL  flags: 0x0
+DSN: orcpt: NULL  flags: 0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: 2@b
 DSN: Remote SMTP server supports DSN: UNKNOWN
@@ -474,7 +474,7 @@ P Received: from [V4NET.11.12.13] (helo=test ident=CALLER)
   X-Warning: This is a test blacklisting message
 >>
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmaY-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <2@b> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <2@b> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmaY-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN
@@ -512,7 +512,7 @@ Non-recipients:
 recipients_count=1
 **** SPOOL_IN - No additional fields
 body_linecount=1 message_linecount=8
-DSN: set orcpt:   flags: 0x0
+DSN: set orcpt:   flags: 0
 Delivery address list:
   2@b 
 no retry data available
@@ -591,7 +591,7 @@ end of retry processing
 DSN: processing router : r1
 DSN: processing successful delivery address: 2@b
 DSN: Sender_address: x@y
-DSN: orcpt: NULL  flags: 0x0
+DSN: orcpt: NULL  flags: 0
 DSN: envid: NULL  ret: 0
 DSN: Final recipient: 2@b
 DSN: Remote SMTP server supports DSN: UNKNOWN

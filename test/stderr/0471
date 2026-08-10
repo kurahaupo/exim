@@ -26389,7 +26389,7 @@ processing ACL check "accept" (TESTSUITE/test-config 17)
 accept: condition test succeeded in ACL check
 end of ACL check: ACCEPT
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmaX-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <r1@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <r1@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmaX-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN
@@ -26581,7 +26581,7 @@ processing ACL check "accept" (TESTSUITE/test-config 17)
 accept: condition test succeeded in ACL check
 end of ACL check: ACCEPT
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmaY-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <r2@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <r2@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmaY-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN
@@ -26772,7 +26772,7 @@ processing ACL check "accept" (TESTSUITE/test-config 17)
 accept: condition test succeeded in ACL check
 end of ACL check: ACCEPT
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmaZ-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <r3@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <r3@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmaZ-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN
@@ -26940,7 +26940,7 @@ processing ACL check "accept" (TESTSUITE/test-config 17)
 accept: condition test succeeded in ACL check
 end of ACL check: ACCEPT
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmbA-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <r4@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <r4@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmbA-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN
@@ -27103,7 +27103,7 @@ processing ACL check "accept" (TESTSUITE/test-config 17)
 accept: condition test succeeded in ACL check
 end of ACL check: ACCEPT
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmbB-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <r5@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <r5@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmbB-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN
@@ -27271,7 +27271,7 @@ processing ACL check "accept" (TESTSUITE/test-config 17)
 accept: condition test succeeded in ACL check
 end of ACL check: ACCEPT
 Writing spool header file: TESTSUITE/spool//input//hdr.10HmbC-000000005vi-0000
-DSN: **** SPOOL_OUT - address: <r6@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0x0
+DSN: **** SPOOL_OUT - address: <r6@test.ex> errorsto: <NULL> orcpt: <NULL> dsn_flags: 0
 Renaming spool header file: TESTSUITE/spool//input//10HmbC-000000005vi-0000-H
 Size of headers = sss
 LOG: MAIN

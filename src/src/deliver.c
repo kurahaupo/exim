@@ -2617,7 +2617,7 @@ if ((status & 0xffff) != 0)
   if (msb != 0 || (code != SIGTERM && code != SIGKILL && code != SIGQUIT))
     addr->special_action = SPECIAL_FREEZE;
   log_write(LOG_MAIN|LOG_PANIC, "%s transport process returned non-zero "
-    "status 0x%04x: %s %d",
+    "status %#06x: %s %d",
     addr->transport->drinst.driver_name,
     status,
     msb == 0 ? "terminated by signal" : "exit code",
@@ -4214,7 +4214,7 @@ if ((status & 0xffff) != 0)
   int lsb = status & 255;
   int code = (msb == 0)? (lsb & 0x7f) : msb;
 
-  msg = string_sprintf("%s transport process returned non-zero status 0x%04x: "
+  msg = string_sprintf("%s transport process returned non-zero status %#06x: "
     "%s %d",
     addrlist->transport->drinst.driver_name,
     status,
@@ -6593,7 +6593,7 @@ for (const address_item * a = addr_succeed; a; a = a->next)
   DEBUG(deliver) debug_printf("DSN: processing router : %s\n"
       "DSN: processing successful delivery address: %s\n"
       "DSN: Sender_address: %s\n"
-      "DSN: orcpt: %s  flags: 0x%x\n"
+      "DSN: orcpt: %s  flags: %#x\n"
       "DSN: envid: %s  ret: %d\n"
       "DSN: Final recipient: %s\n"
       "DSN: Remote SMTP server supports DSN: %s\n",
@@ -7451,7 +7451,7 @@ if (process_recipients != RECIP_IGNORE)
 
       new->dsn_flags = r->dsn_flags & rf_dsnflags;
       new->dsn_orcpt = r->orcpt;
-      DEBUG(deliver) debug_printf("DSN: set orcpt: %s  flags: 0x%x\n",
+      DEBUG(deliver) debug_printf("DSN: set orcpt: %s  flags: %#x\n",
 	new->dsn_orcpt ? new->dsn_orcpt : US"", new->dsn_flags);
 
       switch (process_recipients)

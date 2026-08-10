@@ -44,7 +44,7 @@ EXIM_DB * db = tdb_open(CS name, 0, TDB_DEFAULT, flags, mode);
 int e;
 
 DEBUG(hints_lookup) if (!db)
-  debug_printf_indent("tdb_open(flags 0x%x mode %04o) %s\n",
+  debug_printf_indent("tdb_open(flags %#x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
 if (!db || tdb_transaction_start(db) == 0) return db;
 e = errno;
@@ -61,7 +61,7 @@ exim_dbopen_multi__(const uschar * name, const uschar * dirname, int flags,
 {
 EXIM_DB * db = tdb_open(CS name, 0, TDB_DEFAULT, flags, mode);
 DEBUG(hints_lookup) if (!db)
-  debug_printf_indent("tdb_open(flags 0x%x mode %04o) %s\n",
+  debug_printf_indent("tdb_open(flags %#x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
 return db;
 }

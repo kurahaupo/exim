@@ -719,7 +719,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
 	if (wait->count > WAIT_NAME_MAX)
 	  {
 	  fprintf(stderr,
-	    "**** Data for %s corrupted\n  count=%d=0x%x max=%d\n",
+	    "**** Data for %s corrupted\n  count=%d=%#x max=%d\n",
 	    CS keybuffer, wait->count, wait->count, WAIT_NAME_MAX);
 	  wait->count = WAIT_NAME_MAX;
 	  yield = count_bad = 1;
@@ -1190,7 +1190,7 @@ for(; (reset_point = store_mark()); store_reset(reset_point))
 	printf("Sequence: %d\n", wait->sequence);
 	if (wait->count > WAIT_NAME_MAX)
 	  {
-	  printf("**** Data corrupted: count=%d=0x%x max=%d ****\n", wait->count,
+	  printf("**** Data corrupted: count=%d=%#x max=%d ****\n", wait->count,
 	    wait->count, WAIT_NAME_MAX);
 	  wait->count = WAIT_NAME_MAX;
 	  count_bad = 1;
@@ -1434,13 +1434,13 @@ for (; keychain && (reset_point = store_mark()); store_reset(reset_point))
       }
     if (wait->count > WAIT_NAME_MAX)
       {
-      printf("**** Data for '%s' corrupted\n  count=%d=0x%x max=%d\n",
+      printf("**** Data for '%s' corrupted\n  count=%d=%#x max=%d\n",
         key, wait->count, wait->count, WAIT_NAME_MAX);
       continue;
       }
     if (wait->sequence > WAIT_CONT_MAX)
       {
-      printf("**** Data for '%s' corrupted\n  sequence=%d=0x%x max=%d\n",
+      printf("**** Data for '%s' corrupted\n  sequence=%d=%#x max=%d\n",
         key, wait->sequence, wait->sequence, WAIT_CONT_MAX);
       continue;
       }
