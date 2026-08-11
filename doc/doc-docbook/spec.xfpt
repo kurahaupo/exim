@@ -10203,17 +10203,18 @@ For the &"jsons"& variant, which is intended for use with JSON strings, the
 leading and trailing quotes are removed from the returned value.
 
 
-.vitem &*${filter{*&<&'string'&>&*}{*&<&'condition'&>&*}}*&
+.vitem &*${filter{*&<&'list'&>&*}{*&<&'condition'&>&*}}*&
 .cindex "list" "selecting by condition"
 .cindex "expansion" "selecting from list by condition"
 .vindex "&$item$&"
-<&'string1'&> first has the part after any change-of-list-separator
+The first argument has the part after any change-of-list-separator
 (see &<<SECTlistsepchange>>&) expanded,
 then the whole is taken as a list.
 The default separator for the list is a colon.
 
 For each item in this list,
-its value is placed in &$item$&, and then the condition is evaluated.
+its value is placed in &$item$&, and then the second argument
+is evaluated as a condition.
 Any modification of &$value$& by this evaluation is discarded.
 If the condition is true, &$item$& is added to the output as an
 item in a new list; if the condition is false, the item is discarded. The
@@ -10222,7 +10223,8 @@ input, but a separator setting is not included in the output. For example:
 .code
 ${filter{a:b:c}{!eq{$item}{b}}}
 .endd
-yields &`a:c`&. At the end of the expansion, the value of &$item$& is restored
+yields &`a:c`&.
+At the end of the overall expansion, the value of &$item$& is restored
 to what it was before.
 See also the &%map%& and &%reduce%& expansion items.
 
