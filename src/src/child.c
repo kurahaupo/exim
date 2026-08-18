@@ -304,37 +304,14 @@ return (pid_t)(-1);
 *         Create a non-Exim child process        *
 *************************************************/
 
-/* This function creates a child process and runs the given command in it. It
-sets up pipes to the standard input and output of the new process, and returns
-them to the caller. The standard error is cloned to the output. If there are
-any file descriptors "in the way" in the new process, they are closed. A new
-umask is supplied for the process, and an optional new uid and gid are also
-available. These are used by the queryprogram router to set an unprivileged id.
-SIGUSR1 is always disabled in the new process, as it is not going to be running
-Exim (the function child_open_exim() is provided for that). This function
-returns the pid of the new process, or -1 if things go wrong.
-
-Arguments:
-  argv        the argv for exec in the new process
-  envp        the envp for exec in the new process
-  newumask    umask to set in the new process
-  newuid      point to uid for the new process or NULL for no change
-  newgid      point to gid for the new process or NULL for no change
-  infdptr     pointer to int into which the fd of the stdin of the new process
-                is placed
-  outfdptr    pointer to int into which the fd of the stdout/stderr of the new
-                process is placed
-  wd          if not NULL, a path to be handed to chdir() in the new process
-  make_leader if TRUE, make the new process a process group leader
-  purpose     for debug: reason for running the task
-
-Returns:      the pid of the created process or -1 if anything has gone wrong
+/* Implementation for child_open_uid() (below) with one additional argument:
+  keep_stderr	Do not clone stderr from stdout; leave unchanged.
 */
 
 pid_t
-child_open_uid(const uschar **argv, const uschar **envp, int newumask,
-  uid_t *newuid, gid_t *newgid, int *infdptr, int *outfdptr, uschar *wd,
-  BOOL make_leader, const uschar * purpose)
+child_open_uid_3(const uschar ** argv, const uschar ** envp, int newumask,
+  uid_t * newuid, gid_t * newgid, int * infdptr, int * outfdptr, uschar * wd,
+  BOOL make_leader, BOOL keep_stderr, const uschar * purpose)
 {
 int save_errno;
 int inpfd[2], outpfd[2];
@@ -414,8 +391,8 @@ if (pid == 0)
   (void)close(outpfd[pipe_read]);
   force_fd(outpfd[pipe_write], 1);
 
-  (void)close(2);
-  (void)dup2(1, 2);
+  if (!keep_stderr)
+    { (void)close(2); (void)dup2(1, 2); }
 
   /* Now do the exec */
 
@@ -455,6 +432,41 @@ return (pid_t)(-1);
 }
 
 
+/* This function creates a child process and runs the given command in it. It
+sets up pipes to the standard input and output of the new process, and returns
+them to the caller. The standard error is cloned to the output. If there are
+any file descriptors "in the way" in the new process, they are closed. A new
+umask is supplied for the process, and an optional new uid and gid are also
+available. These are used by the queryprogram router to set an unprivileged id.
+SIGUSR1 is always disabled in the new process, as it is not going to be running
+Exim (the function child_open_exim() is provided for that). This function
+returns the pid of the new process, or -1 if things go wrong.
+
+Arguments:
+  argv        the argv for exec in the new process
+  envp        the envp for exec in the new process
+  newumask    umask to set in the new process
+  newuid      point to uid for the new process or NULL for no change
+  newgid      point to gid for the new process or NULL for no change
+  infdptr     pointer to int into which the fd of the stdin of the new process
+                is placed
+  outfdptr    pointer to int into which the fd of the stdout/stderr of the new
+                process is placed
+  wd          if not NULL, a path to be handed to chdir() in the new process
+  make_leader if TRUE, make the new process a process group leader
+  purpose     for debug: reason for running the task
+
+Returns:      the pid of the created process or -1 if anything has gone wrong
+*/
+
+pid_t
+child_open_uid(const uschar ** argv, const uschar ** envp, int newumask,
+  uid_t * newuid, gid_t * newgid, int * infdptr, int * outfdptr, uschar * wd,
+  BOOL make_leader, const uschar * purpose)
+{
+return child_open_uid_3(argv, envp, newumask,
+  newuid, newgid, infdptr, outfdptr, wd, make_leader, FALSE, purpose);
+}
 
 
 /*************************************************

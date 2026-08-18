@@ -59,19 +59,21 @@ name = string_copyn(domain, len);
 if (stat(CS utilname, &statbuf) >= 0)
   {
   pid_t pid;
-  int infd, outfd, rc;
-  uschar *argv[5];
+  int infd, outfd, rc, i = 1;
+  uschar * argv[6];
 
   DEBUG(dns) debug_printf_indent("DNS lookup of %s (%s) using fakens\n",
 		name, dns_text_type(type));
 
   argv[0] = utilname;
-  argv[1] = config_main_directory;
-  argv[2] = name;
-  argv[3] = dns_text_type(type);
-  argv[4] = NULL;
+  DEBUG(dns) argv[i++] = US"-d";
+  argv[i++] = config_main_directory;
+  argv[i++] = name;
+  argv[i++] = dns_text_type(type);
+  argv[i++] = NULL;
 
-  pid = child_open(argv, NULL, 0000, &infd, &outfd, FALSE, US"fakens-search");
+  pid = child_open_uid_3(CUSS argv, NULL, 0000, NULL, NULL, &infd, &outfd,
+			NULL, FALSE, TRUE, US"fakens-search");
   if (pid < 0)
     log_write_die(LOG_MAIN, "failed to run fakens: %s",
       strerror(errno));

@@ -20,7 +20,9 @@ names, except for the name "dontqualify".
 
 The arguments to the program are:
 
-  the name of the Exim spool directory
+  options
+    -d  output debug to stderr
+  the path of the Exim testsuite directory
   the domain name that is being sought
   the DNS record type that is being sought
 
@@ -162,6 +164,8 @@ static tlist type_list[] = {
 };
 
 
+
+BOOL debug = FALSE;
 
 /*************************************************
 *           Get memory and sprintf into it       *
@@ -335,9 +339,9 @@ uschar RRdomain[256];
 
 
 /* Decode the required type */
-for (typeptr = type_list; typeptr->name != NULL; typeptr++)
+for (typeptr = type_list; typeptr->name; typeptr++)
   { if (Ustrcmp(typeptr->name, qtype) == 0) break; }
-if (typeptr->name == NULL)
+if (!typeptr->name)
   {
   fprintf(stderr, "fakens: unknown record type %s\n", qtype);
   return NO_RECOVERY;
@@ -678,15 +682,18 @@ BOOL aa = FALSE;
 
 signal(SIGALRM, alarmfn);
 
-if (argc != 4)
+argv++; argc--;     /* skip progname */
+if (argc > 0 && Ustrcmp(argv[0], "-d") == 0) { debug = TRUE; argv++; argc--; }
+
+if (argc != 3)
   {
-  fprintf(stderr, "fakens: expected 3 arguments, received %d\n", argc-1);
+  fprintf(stderr, "fakens: expected 3 arguments, received %d\n", argc);
   return NO_RECOVERY;
   }
 
 /* Find the zones */
 
-(void)sprintf(CS buffer, "%s/dnszones", argv[1]);
+(void)sprintf(CS buffer, "%s/dnszones", argv[0]);
 
 if (!(d = opendir(CCS buffer)))
   {
@@ -716,7 +723,7 @@ while ((de = readdir(d)))
 
 /* Get the RR type and upper case it, and check that we recognize it. */
 
-Ustrncpy(qtype, argv[3], sizeof(qtype));
+Ustrncpy(qtype, argv[2], sizeof(qtype));
 qtypelen = Ustrlen(qtype);
 for (p = qtype; *p != 0; p++) *p = toupper(*p);
 
@@ -725,9 +732,9 @@ check that it is in a zone that we handle,
 and set up the zone file name. The zone names in the table all start with a
 dot. */
 
-domlen = Ustrlen(argv[2]);
-if (argv[2][domlen-1] == '.') domlen--;
-Ustrncpy(domain, argv[2], domlen);
+domlen = Ustrlen(argv[1]);
+if (argv[1][domlen-1] == '.') domlen--;
+Ustrncpy(domain, argv[1], domlen);
 domain[domlen] = 0;
 for (i = 0; i < domlen; i++) domain[i] = tolower(domain[i]);
 
@@ -753,19 +760,17 @@ for (i = 0; i < zonecount; i++)
   zlen = Ustrlen(zone);
   if (Ustrcmp(domain, zone+1) == 0 || (domlen >= zlen &&
       Ustrcmp(domain + domlen - zlen, zone) == 0))
-    {
-    zonefile = zones[i].zonefile;
-    break;
-    }
+    { zonefile = zones[i].zonefile; break; }
   }
 
-if (zonefile == NULL)
+if (!zonefile)
   {
-  fprintf(stderr, "fakens: query not in faked zone: domain is: %s\n", domain);
+  if (debug)
+    fprintf(stderr, "fakens: query not in faked zone: domain is: %s\n", domain);
   return PASS_ON;
   }
 
-(void)sprintf(CS buffer, "%s/dnszones/%s", argv[1], zonefile);
+(void)sprintf(CS buffer, "%s/dnszones/%s", argv[0], zonefile);
 
 /* Initialize the start of the response packet. */
 

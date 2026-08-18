@@ -148,6 +148,9 @@ extern pid_t   child_open_function(uschar **, uschar **, int,
 		 int *, int *, BOOL, const uschar *);
 extern pid_t   child_open_uid(const uschar **, const uschar **, int,
 		 uid_t *, gid_t *, int *, int *, uschar *, BOOL, const uschar *);
+extern pid_t	child_open_uid_3(const uschar **, const uschar **, int,
+		  uid_t *, gid_t * newgid, int *, int *, uschar *,
+		  BOOL, BOOL, const uschar *);
 extern BOOL    cleanup_environment(void);
 extern void    cutthrough_data_puts(uschar *, int);
 extern void    cutthrough_data_put_nl(void);
