@@ -657,38 +657,39 @@ bit_table debug_channels[] = {
   DEBUG_CHAN(auth),
   DEBUG_CHAN(deliver),
   DEBUG_CHAN(dns),
-  DEBUG_CHAN(dnsbl),		/* 8 */
+  DEBUG_CHAN(dns_rr),		/* 8 */		/* not documented for users */
+  DEBUG_CHAN(dnsbl),
   DEBUG_CHAN(exec),
   DEBUG_CHAN(expand),
   DEBUG_CHAN(filter),
   DEBUG_CHAN(hints_lookup),
   DEBUG_CHAN(host_lookup),
   DEBUG_CHAN(ident),
-  DEBUG_CHAN(interface),
-  DEBUG_CHAN(lists),		/* 16 */
+  DEBUG_CHAN(interface),	/* 16 */
+  DEBUG_CHAN(lists),
   DEBUG_CHAN(load),
   DEBUG_CHAN(local_scan),
   DEBUG_CHAN(lookup),
   DEBUG_CHAN(macro),
   DEBUG_CHAN(memory),
   DEBUG_CHAN(noutf8),
-  DEBUG_CHAN(pid),
-  DEBUG_CHAN(process_info),	/* 24 */
+  DEBUG_CHAN(pid),		/* 24 */
+  DEBUG_CHAN(process_info),
   DEBUG_CHAN(queue_run),
   DEBUG_CHAN(receive),
   DEBUG_CHAN(regex),
   DEBUG_CHAN(resolver),
   DEBUG_CHAN(retry),
   DEBUG_CHAN(rewrite),
-  DEBUG_CHAN(route),
-  DEBUG_CHAN(sieve),		/* 32 */	/* not documented for users */
+  DEBUG_CHAN(route),		/* 32 */
+  DEBUG_CHAN(sieve),				/* not documented for users */
   DEBUG_CHAN(start),
   DEBUG_CHAN(timestamp),
   DEBUG_CHAN(tls),
   DEBUG_CHAN(transport),
   DEBUG_CHAN(uid),
   DEBUG_CHAN(v),
-  DEBUG_CHAN(verify),
+  DEBUG_CHAN(verify),		/* 40 */
 };
 #undef DEBUG_CHAN
 int      debug_chan_count	= nelem(debug_channels);
@@ -711,7 +712,7 @@ const uschar * debug_defaults =
 /* List of debug channels that we exclude from "all" */
 
 const uschar * const debug_notall_names[] = {
-  US"macro", US"memory", US"noutf8", US"regex", NULL
+  US"dns_rr", US"macro", US"memory", US"noutf8", US"regex", NULL
 };
 
 uschar   debuglog_name[LOG_NAME_SIZE] = {0};

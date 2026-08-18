@@ -357,38 +357,34 @@ dns_next_rr(const dns_answer * dnsa, dns_scan * dnss, int reset)
 const HEADER * h = (const HEADER *)dnsa->answer;
 const uschar * eom = dnsa->answer + dnsa->answerlen;
 int namelen;
-
-char * trace = NULL;
-#ifdef rr_trace
-# define TRACE DEBUG(dns)
-#else
-# define TRACE if (FALSE)
-#endif
+const uschar * trace = NULL;
 
 /* Reset the saved data when requested to, and skip to the first required RR */
 
 if (reset != RESET_NEXT)
   {
   dnss->rrcount = ntohs(h->qdcount);
-  TRACE debug_printf_indent("%s: reset (Q rrcount %d)\n", __FUNCTION__, dnss->rrcount);
+  DEBUG(dns_rr) debug_printf_indent("%s: reset (Q rrcount %d)\n",
+				    __FUNCTION__, dnss->rrcount);
   dnss->aptr = dnsa->answer + sizeof(HEADER);
 
   /* Skip over questions; failure to expand the name just gives up */
 
   while (dnss->rrcount-- > 0)
     {
-    TRACE trace = "Q-namelen";
+    trace = US"Q-namelen";
     if ((namelen = dns_rr_expand_taint(dnsa->answer, eom, dnss->aptr, dnss)) <0)
       goto null_return;
     /* skip name & type & class */
-    TRACE trace = "Q-skip";
+    trace = US"Q-skip";
     if (dnss_inc_aptr(dnsa, dnss, namelen+4)) goto null_return;
     }
 
   /* Get the number of answer records. */
 
   dnss->rrcount = ntohs(h->ancount);
-  TRACE debug_printf_indent("%s: reset (A rrcount %d)\n", __FUNCTION__, dnss->rrcount);
+  DEBUG(dns_rr) debug_printf_indent("%s: reset (A rrcount %d)\n",
+				    __FUNCTION__, dnss->rrcount);
 
   /* Skip over answers if we want to look at the authority section. Also skip
   the NS records (i.e. authority section) if wanting to look at the additional
@@ -396,42 +392,45 @@ if (reset != RESET_NEXT)
 
   if (reset == RESET_ADDITIONAL)
     {
-    TRACE debug_printf_indent("%s: additional\n", __FUNCTION__);
+    DEBUG(dns_rr) debug_printf_indent("%s: additional\n", __FUNCTION__);
     dnss->rrcount += ntohs(h->nscount);
-    TRACE debug_printf_indent("%s: reset (NS rrcount %d)\n", __FUNCTION__, dnss->rrcount);
+    DEBUG(dns_rr) debug_printf_indent("%s: reset (NS rrcount %d)\n",
+				      __FUNCTION__, dnss->rrcount);
     }
 
   if (reset == RESET_AUTHORITY || reset == RESET_ADDITIONAL)
     {
-    TRACE if (reset == RESET_AUTHORITY)
+    DEBUG(dns_rr) if (reset == RESET_AUTHORITY)
       debug_printf_indent("%s: authority\n", __FUNCTION__);
     while (dnss->rrcount-- > 0)
       {
-      TRACE trace = "A-namelen";
+      trace = US"A-namelen";
       if (  (namelen = dns_rr_expand_taint(dnsa->answer, eom, dnss->aptr, dnss))
 	  < 0)
 	goto null_return;
 
       /* skip name, type, class & TTL */
-      TRACE trace = "A-hdr";
+      trace = US"A-hdr";
       if (dnss_inc_aptr(dnsa, dnss, namelen+8)) goto null_return;
 
       if (dnsa_bad_ptr(dnsa, dnss->aptr + sizeof(uint16_t))) goto null_return;
       GETSHORT(dnss->srr.size, dnss->aptr); /* size of data portion */
 
       /* skip over it, checking for a bogus size */
-      TRACE trace = "A-skip";
+      trace = US"A-skip";
       if (dnss_inc_aptr(dnsa, dnss, dnss->srr.size)) goto null_return;
       }
     dnss->rrcount = reset == RESET_AUTHORITY
       ? ntohs(h->nscount) : ntohs(h->arcount);
-    TRACE debug_printf_indent("%s: reset (%s rrcount %d)\n", __FUNCTION__,
-      reset == RESET_AUTHORITY ? "NS" : "AR", dnss->rrcount);
+    DEBUG(dns_rr) debug_printf_indent("%s: reset (%s rrcount %d)\n",
+	  __FUNCTION__, reset == RESET_AUTHORITY ? "NS" : "AR", dnss->rrcount);
     }
-  TRACE debug_printf_indent("%s: %d RRs to read\n", __FUNCTION__, dnss->rrcount);
+  DEBUG(dns_rr) debug_printf_indent("%s: %d RRs to read\n",
+				    __FUNCTION__, dnss->rrcount);
   }
 else
-  TRACE debug_printf_indent("%s: next (%d left)\n", __FUNCTION__, dnss->rrcount);
+  DEBUG(dns_rr) debug_printf_indent("%s: next (%d left)\n",
+				    __FUNCTION__, dnss->rrcount);
 
 /* The variable dnss->aptr is now pointing at the next RR, and dnss->rrcount
 contains the number of RR records left. */
@@ -441,7 +440,7 @@ if (dnss->rrcount-- <= 0) return NULL;
 /* If expanding the RR domain name fails, behave as if no more records
 (something safe). */
 
-TRACE trace = "R-namelen";
+trace = US"R-namelen";
 if ((namelen = dns_rr_expand_taint(dnsa->answer, eom, dnss->aptr, dnss)) < 0)
   goto null_return;
 
@@ -450,7 +449,7 @@ from the following bytes.  We seem to be assuming here that the RR blob passed
 to us by the resolver library is the same as that defined for an RR by RFC 1035
 section 3.2.1 */
 
-TRACE trace = "R-name";
+trace = US"R-name";
 if (dnss_inc_aptr(dnsa, dnss, namelen)) goto null_return;
 
 /* Check space for type, class, TTL & data-size-word */
@@ -459,12 +458,12 @@ if (dnsa_bad_ptr(dnsa, dnss->aptr + 3 * sizeof(uint16_t) + sizeof(uint32_t)))
 
 GETSHORT(dnss->srr.type, dnss->aptr);			/* Record type */
 
-TRACE trace = "R-class";
+trace = US"R-class";
 (void) dnss_inc_aptr(dnsa, dnss, sizeof(uint16_t));	/* skip class */
 
 GETLONG(dnss->srr.ttl, dnss->aptr);			/* TTL */
-GETSHORT(dnss->srr.size, dnss->aptr);			/* Size of data portion */
-dnss->srr.data = dnss->aptr;				/* The record's data follows */
+GETSHORT(dnss->srr.size, dnss->aptr);		/* Size of data portion */
+dnss->srr.data = dnss->aptr;			/* The record's data follows */
 
 /* skip over it, checking for a bogus size */
 if (dnss_inc_aptr(dnsa, dnss, dnss->srr.size))
@@ -473,11 +472,13 @@ if (dnss_inc_aptr(dnsa, dnss, dnss->srr.size))
 /* Return a pointer to the dns_record structure within the dns_answer. This is
 for convenience so that the scans can use nice-looking for loops. */
 
-TRACE debug_printf_indent("%s: return %s\n", __FUNCTION__, dns_text_type(dnss->srr.type));
+DEBUG(dns_rr) debug_printf_indent("%s: return %d byte %s\n", __FUNCTION__,
+				dnss->srr.size, dns_text_type(dnss->srr.type));
 return &dnss->srr;
 
 null_return:
-  TRACE debug_printf_indent("%s: terminate (%d RRs left). Last op: %s; errno %d %s\n",
+  DEBUG(dns_rr) debug_printf_indent("%s: terminate (%d RRs left)."
+    " Last op: %s; errno %d %s\n",
     __FUNCTION__, dnss->rrcount, trace, errno, strerror(errno));
   dnss->rrcount = 0;
   return NULL;
