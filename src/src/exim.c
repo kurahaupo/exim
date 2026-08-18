@@ -4815,7 +4815,7 @@ if (  !unprivileged				/* originally had root AND */
 
 /* When we are retaining a privileged uid, we still change to the exim gid. */
 
-else
+else if (!removed_privilege)
   {
   int rv;
   DEBUG(start) debug_printf("dropping to exim gid; retaining priv uid\n");
@@ -4826,7 +4826,7 @@ else
   there's no security risk.  For me, it's { exim -bV } on a just-built binary,
   no need to complain then. */
   if (rv == -1)
-    if (!(unprivileged || removed_privilege))
+    if (!unprivileged)
       exim_fail("changing group failed: %s", strerror(errno));
     else
       DEBUG(any) debug_printf("changing group to %ld failed: %s\n",
