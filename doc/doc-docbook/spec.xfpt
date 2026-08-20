@@ -45,7 +45,7 @@
 . Update the Copyright year (only) when changing content.
 . /////////////////////////////////////////////////////////////////////////////
 
-.set previousversion "4.99"
+.set previousversion "4.100"
 .include ./local_params
 
 .set ACL "access control lists (ACLs)"
@@ -456,14 +456,12 @@ provided by GitHub, and is open to editing by anyone with a GitHub account.
 .cindex Bugzilla
 .cindex "wish list"
 .cindex "bug reporting"
-.new
 An issues tracking system exists at
 &url(https://code.exim.org/exim/exim/issues/)
 You can use
 this to report bugs, and also to add items to the wish list. Please search
 first to check that you are not duplicating a previous entry.
 Please do not ask for configuration help in this system.
-.wen
 
 
 .section "Mailing lists" "SECID3"
@@ -787,14 +785,12 @@ Tom Kistner. This includes code taken from the Samba project, which is released
 under the Gnu GPL.
 .next
 
-.new
 .cindex "Cyrus"
 .cindex "&'saslauthd'& daemon"
 Support for calling the Cyrus &'saslauthd'& daemon is provided
 by code taken from the Cyrus-SASL library and adapted by Alexander S.
 Sabourenkov. The permission notice appears below, in accordance with the
 conditions expressed therein.
-.wen
 
 .blockquote
 Copyright &copy; 2001 Carnegie Mellon University.  All rights reserved.
@@ -2077,9 +2073,7 @@ authentication drivers,
 all the transport drivers except smtp,
 both filter types (exim and sieve),
 SPF, DKIM, DMARC, ARC,  perl,
-.new
 DSCP, socks, xclient and proxy-protocol.
-.wen
 
 For building
 set &`LOOKUP_MODULE_DIR`& to the directory into which the modules will be
@@ -2111,10 +2105,8 @@ For building, as above but using
 &`AUTH_*`&, &`ROUTER_*`& and &`TRANSPORT_*`& instead of &`LOOKUP_*`&,
 
 Detail for each module type is given in the EDITME file.
-.new
 The &`-bI:modules`& command line option to exim will list the
 modules that are installed on a system.
-.wen
 
 
 .section "The building process" "SECID29"
@@ -3125,12 +3117,10 @@ If Exim was built with DSCP support
 this option causes Exim to emit an alphabetically sorted list of all
 recognised DSCP names.
 
-.new
 .cmdopt -bI:modules
 .cindex "dynamic modules" "list installed"
 This option causes Exim to emit a list of dynamic-load modules that
 are installed on the system.
-.wen
 
 .cmdopt -bI:sieve
 .cindex "Sieve filter" "capabilities"
@@ -3758,9 +3748,7 @@ are:
 .irow all            "almost all of the above (see below), and also &%-v%&"
 .endtable
 The &`all`& option excludes &`memory`&,
-.new
 &`macro`& and &`regex`&
-.wen
 when used as &`+all`&, but includes them
 for &`-all`&. The reason for this is that &`+all`& is something that people
 tend to use when generating debug output for Exim maintainers. If &`+memory`&
@@ -4248,7 +4236,6 @@ This is a debugging option which limits the maximum number of messages that can
 be delivered down one SMTP connection, overriding the value set in any &(smtp)&
 transport. If <&'n'&> is omitted, the limit is set to 1.
 
-.new
 .cmdopt -oDSN <&'option'&>
 .cindex "Delivery Status Notification" "commandline settings"
 .cindex DSN "commandline settings"
@@ -4270,7 +4257,6 @@ the equals must be followed by either "full" or "hdrs".
 Code letter V requests an ENVID parameter on the SMTP MAIL command;
 the equals should be followed by an "envelope identifier" value
 for the message.
-.wen
 
 .cmdopt -odb
 .cindex "background delivery"
@@ -6921,13 +6907,11 @@ you need to obtain a cdb distribution in order to do this.
 .cindex "binary zero" "in lookup key"
 Calls to DBM library functions are used to extract data from the given
 DBM file by looking up the record with the given key.
-.new
 DBM files can be generated using the &%exim_dbmbuild%& utility.
 Each entry in the database consists (only) of a key and some data.
 The underlying support for these lookups is that used for Exim's
 hints databases, so whichever DB mechanism chosen at build time for those
 is also used here.
-.wen
 
 A terminating binary
 zero is included in the key that is passed to the DBM library. See section
@@ -7009,9 +6993,7 @@ ${lookup {foo/bar} dsearch,key=path {/etc}}
 .endd
 If this option is used, a ".." component in the key is specifically disallowed.
 The default operation is that the key may only be a single path component.
-.new
 Lookups violating restrictions will behave as for no match.
-.wen
 
 An example of how this
 lookup can be used to support virtual domains is given in section
@@ -7211,7 +7193,6 @@ be followed by optional colons.
 &((n)wildlsearch)& can &'not'& be turned into a DBM or cdb file, because those
 lookup types support only literal keys.
 
-.new
 .subsection "Public Suffix List"
 .cindex "psl lookup type"
 .cindex lookup psl
@@ -7231,7 +7212,6 @@ or one could be regularly fetched from
 
 The result will have the same A-label/U-label state as the key,
 and will be untainted.
-.wen
 
 
 .subsection spf
@@ -11245,9 +11225,7 @@ These items supports simple arithmetic and bitwise logical operations in
 expansion strings. The string (after expansion) must be a conventional
 arithmetic expression, but it is limited to basic arithmetic operators, bitwise
 logical operators, and parentheses.
-.new
 It may not be tainted.
-.wen
 All operations are carried out using
 integer arithmetic. The operator priorities are as follows (the same as in the
 C programming language):
@@ -11365,10 +11343,8 @@ Whitespace at a chosen wrap point is removed.
 A line-wrap consists of a newline followed by a tab,
 and the tab is counted as 8 columns.
 
-.new
 &*Note*&: The defaults correspond to values defined in standards.
 Using larger values may result in problems in message delivery.
-.wen
 
 
 
@@ -12294,10 +12270,8 @@ See &*match_local_part*&.
 This condition matches an IP address to a list of IP address patterns. It must
 be followed by two argument strings. The first (after expansion) must be an IP
 address or an empty string.
-.new
 The second has any leading change-of-separator split off, then the remainder
 expanded to obtain a list.
-.wen
 The result is a restricted host
 list that can match only an IP address, not a host name. For example:
 .code
@@ -12365,10 +12339,8 @@ example is:
 ${if match_domain{a.b.c}{x.y.z:a.b.c:p.q.r}{yes}{no}}
 .endd
 The first argument is expanded before use.
-.new
 The second has any leading change-of-separator split off, then the remainder
 expanded to obtain a list.
-.wen
 
 In each case, the second argument may contain any of the allowable items for a
 list of the appropriate type. Also, because the second argument
@@ -12504,9 +12476,7 @@ The same caveats for the arguments apply as for PAM.
 .cindex "&%saslauthd%& expansion condition"
 This condition supports user authentication using the Cyrus &'saslauthd'&
 daemon.
-.new
 This replaces the older &'pwcheck'& daemon, which is no longer supported.
-.wen
 Using this daemon is one way of making it possible for passwords to be checked
 by a process that is not running as root.
 
@@ -15682,7 +15652,6 @@ just the command name, it is not a complete command line. If an argument is
 required, it must come from the &%-oA%& command line option.
 
 
-.new
 .option bounce_charset main string&!! us-ascii
 This aoption is expanded and used for the &"charset="& item
 in &"Content-type:"& headers in bounce and warning messages.
@@ -15692,7 +15661,6 @@ or &"UTF-8"&.
 
 &*Note*&: No validation of the message content is done,
 however this option is set.
-.wen
 
 .option bounce_message_file main string&!! unset
 .cindex "bounce message" "customizing"
@@ -15906,7 +15874,6 @@ This option, when true, enables extra checking in Exim's internal memory
 management.  For use when a memory corruption issue is being investigated,
 it should normally be left as default.
 
-.new
 .option daemon_modules_load main "string list" unset
 .cindex "dynamic modules" "preload in daemon"
 This option may be used to give a list of dynamic-load modules
@@ -15920,7 +15887,6 @@ It will have no effect for those where the initial parsing
 of the configuration can simply detect the need for a module
 (eg. auths, routers, transports, certain DB lookups, SPF, DKIM, DMARC)
 because those are always loaded.
-.wen
 
 .option daemon_smtp_ports main string &`smtp`&
 .cindex "port" "for daemon"
@@ -17725,7 +17691,6 @@ setting of &%queue_only%& or &%queue_only_file%& in the configuration file. If
 to override; they are accepted, but ignored.
 
 
-.new
 .option queue_run_order main string random
 .option queue_run_in_order main boolean false
 .cindex "queue runner" "processing messages in order"
@@ -17757,7 +17722,6 @@ with &%split_spool_directory%& may degrade performance
 when the queue is large, because of the extra work in setting up the single,
 large list.
 In most situations, &%queue_run_order%& should not be set.
-.wen
 
 
 
@@ -19039,11 +19003,9 @@ For OpenSSL versions before (and not including) 1.0.2, the string
 &`auto`& selects &`prime256v1`&. For more recent OpenSSL versions
 &`auto`& tells the library to choose.
 
-.new
 For OpenSSL versions 3.5 onwards the string may be a full group tuple list
 as described in the
 &url(https://docs.openssl.org/master/man3/SSL_CTX_set1_curves/#name,"documentation for SSL_CTX_set1_groups_list()").
-.wen
 
 If the option expands to an empty string, the effect is undefined.
 
@@ -19950,10 +19912,8 @@ used.
 Limited forms of wildcard are available; if the prefix begins with an
 asterisk, it matches the longest possible sequence of arbitrary characters at
 the start of the local part.
-.new
 If is begins with a tilde, it matches the shortest possible sequence.
 An asterisk or tilde
-.wen
 should therefore always be followed by
 some character that does not occur in normal local parts.
 .cindex "multiple mailboxes"
@@ -20019,9 +19979,7 @@ local part must end (rather than start) with the given string, the
 &%local_part_suffix_optional%& option determines whether the suffix is
 mandatory, and the wildcard
 *
-.new
 or ~
-.wen
 character, if present, must be the last
 character of the suffix. This option facility is commonly used to handle local
 parts of the form &%something-request%& and multiple user mailboxes of the form
@@ -22234,9 +22192,7 @@ allows Exim to interpret redirection data that starts with
 &"#Exim filter"& or &"#Sieve filter"& as a set of filtering instructions.
 There are some features of Exim filter files that some administrators may wish 
 to lock out; see the &%forbid_filter_%&&'xxx'& options below
-.new
 and note also that the option is expanded before use.
-.wen
 
 It is also possible to lock out Exim filters or Sieve filters while allowing
 the other type; see &%forbid_exim_filter%& and &%forbid_sieve_filter%&.
@@ -26026,9 +25982,7 @@ useful if the transport overrides or sets the host names. See the
 
 .option dscp smtp string&!! unset
 .cindex "DSCP" "outbound"
-.new
 If Exim is built with DSCP support,
-.wen
 this option causes the DSCP value associated with a socket to be set
 corresponsing to one
 of a number of fixed strings, or to a numeric value.
@@ -26561,10 +26515,8 @@ This could be as specified by
 a &%hosts%& option,
 a &(manualroute)& router
 or a SRV lookup done by a &(dnslookup)& router.
-.new
 During delivery the &$host_port$& veriable will be set to the destination
 port number used.
-.wen
 
 If the value of this option begins with a digit it is taken as a port number;
 otherwise it is looked up using &[getservbyname()]&. The default value is
@@ -26609,14 +26561,12 @@ but as of &rfc(8314) it is preferred
 over STARTTLS for message submission
 (as distinct from MTA-MTA communication).
 
-.new
 The option is expanded before use.
 It is permissible for it to depend on &$host_port$& or &$host$&.
 However, the defaults mentioned above for the &%port%& option will
 not depend on the value after expansion
 (as that would be circular).
 Only the values mentioned above are valid.
-.wen
 
 
 .option retry_include_ip_address smtp boolean&!! true
@@ -26736,7 +26686,6 @@ will fail.
 
 Only supported when using GnuTLS.
 
-.new
 .option tls_eccurve smtp "string list&!!" unset
 .cindex TLS "EC cryptography"
 .cindex TLS "EC groups/curves"
@@ -26749,7 +26698,6 @@ as described in the
 &url(https://docs.openssl.org/master/man3/SSL_CTX_set1_curves/#name,"documentation for SSL_CTX_set1_groups_list()").
 
 This option is ignored when using GnuTLS.
-.wen
 
 .option tls_privatekey smtp string&!! unset
 .cindex "TLS" "client private key, location of"
@@ -28752,11 +28700,9 @@ uninterpreted string.
 .subsection "Support for different kinds of authentication" "SECID174"
 A number of string expansion features are provided for the purpose of
 interfacing to different ways of user authentication.
-.new
 These include checking
 traditionally encrypted passwords from &_/etc/passwd_& (or equivalent), PAM,
 Radius, &%ldapauth%&, and &'saslauthd'&.
-.wen
 For details see section
 &<<SECTexpcond>>&.
 
@@ -30301,7 +30247,6 @@ Because it is often a long text string, it is not included in the log line or
 &%received_header_text%& to change the &'Received:'& header. When no
 certificate is supplied, &$tls_in_peerdn$& is empty.
 
-.new
 For the server to verify the client certificate,
 the server's TLS library might require that the certificate includes
 a Client Authentication extension.
@@ -30310,7 +30255,6 @@ certificate whether that is included.
 As of 2026, public CA's are apparently becoming less amenable to supporting
 such a need.
 Running a private CA is an alternative.
-.wen
 
 
 .subsection "Caching of static server configuration items" "SSECTserverTLScache"
@@ -32341,10 +32285,8 @@ The first digit of a supplied response code must be the same as would be sent
 by default. A panic occurs if it is not. Exim uses a 550 code when it denies
 access, but for the predata ACL, note that the default success code is 354, not
 2&'xx'&.
-.new
 Likewise, the first component of an &"extended response code"&
 must match the default.
-.wen
 
 Notwithstanding the previous paragraph, for the QUIT ACL, unlike the others,
 the message modifier cannot override the 221 response code.
@@ -32632,9 +32574,7 @@ The &"disable"& turns off DMARC verification processing entirely.
 .vitem &*control&~=&~dscp/*&<&'value'&>
 .cindex "&ACL;" "setting DSCP value"
 .cindex "DSCP" "inbound"
-.new
 If Exim is built with DSCP support,
-.wen
 this control causes the DSCP value associated with the socket for the inbound
 connection to be adjusted to a given value, given as one of a number of fixed
 strings or to numeric value.
@@ -36449,7 +36389,6 @@ that it runs is:
 The third argument may be NULL, in which case the &%-oMas%& option is omitted.
 
 
-.new
 .vitem &*void&~debug_enable_channel(const&~uschar&~*)*&
 This function turns on debug output from a given debug channel,
 given by name.
@@ -36465,20 +36404,17 @@ The &"local_scan"& channel is provided for use by &[local_scan()]&; it is set
 by the &`+local_scan`& debug selector.
 It is not included in the default set of debugging bits.
 .endlist ilist
-.wen
 
 .vitem &*void&~debug_printf(char&~*,&~...)*&
 This is Exim's debugging function, with arguments as for &'printf()'&. The
 output is written to the standard error stream. If no debugging is selected,
 calls to &'debug_printf()'& have no effect.
 Normally, you should make calls
-.new
 conditional on the &`local_scan`& debug selector by coding like this:
 .code
 if (is_debug(US"local_scan"))
   debug_printf("xxx", ...);
 .endd
-.wen
 
 .vitem &*uschar&~*expand_string(uschar&~*string)*&
 This is an interface to Exim's string expansion code. The return value is the
@@ -36542,10 +36478,8 @@ The text may contain bytes of any value, including zero. The result is passed
 back in dynamic memory that is obtained by calling &'store_get()'&. It is
 zero-terminated.
 
-.new
 .vitem &*BOOL&~is_debug(uschar&~*channel)*&
 This function tests whether a given debug channel is enabled, by name.
-.wen
 
 .vitem &*int&~lss_b64decode(uschar&~*codetext,&~uschar&~**cleartext)*&
 This function decodes a base64-encoded string. Its arguments are a
@@ -40141,7 +40075,6 @@ For acceptance this covers the reverse and forward lookups for host name verific
 It does not cover helo-name verification.
 For delivery this covers the SRV, MX, A and/or AAAA lookups.
 .next
-.new
 .cindex log "DSN extension"
 .cindex DSN logging
 &%dsn%&: When a DSN extension was used for a message, an item with
@@ -40152,7 +40085,6 @@ For a recipient reject, the RCPT exensions for that recipent are indicated;
 otherwise the aggregate of RCPT extensions received for the message is given.
 For a delivery (success or failure),
 the DSN status for the delivery connection is indicated.
-.wen
 .next
 .cindex "log" "ETRN commands"
 .cindex "ETRN" "logging"
@@ -41138,7 +41070,6 @@ may be seen. The data in these records is often out of date, because a message
 may be routed to several alternative hosts, and Exim makes no effort to keep
 cross-references.
 
-.new
 For non-hints DBM databases (as created by the &'exim_dbmbuild'& utility)
 a &'-L'& option signals that only a single argument follows, giving the
 file path:
@@ -41146,7 +41077,6 @@ file path:
 exim_dumpdb -L my_dbm_file
 .endd
 One line of output is given for each entry, with the key and the value.
-.wen
 
 
 
@@ -41226,7 +41156,6 @@ Both displayed and input times are in the local timezone by default.
 If an option &'-z'& is used on the command line, displayed times
 are in UTC.
 
-.new
 For non-hints DBM databases (as created by the &'exim_dbmbuild'& utility)
 a &'-L'& option signals that only a single argument follows, giving the
 file path:
@@ -41234,7 +41163,6 @@ file path:
 exim_fixdb -L my_dbm_file
 .endd
 Records have no timestamp, and only have field number zero.
-.wen
 
 
 
@@ -43154,9 +43082,7 @@ There was an error during processing of the SPF lookup
 You can prefix each string with an exclamation mark to  invert
 its meaning,  for example  "!fail" will  match all  results but
 "fail".
-.new
 An asterisk (&"*"&) will match any outcome.
-.wen
 The  string  list is  evaluated  left-to-right,  in a
 short-circuit fashion.
 
@@ -43535,10 +43461,8 @@ result is a list of colon-separated strings.
 
 Performing the check sets up information used by the
 &%authresults%& expansion item
-.new
 and several expansion variables.
 You should not use these variables before a check has been run.
-.wen
 
 The following
 expansion variables are available:
@@ -43990,9 +43914,7 @@ Events have names which correspond to the point in process at which they fire.
 The name is placed in the variable &$event_name$& and the event action
 expansion must check this, as it will be called for every possible event type.
 
-.new
 The current list of events is:
-.wen
 .itable all 0 0 4 25* left 10* center 15* center 50* left
 .row auth:fail		    after    both	"per driver per authentication attempt"
 .row dane:fail              after    transport  "per connection"
@@ -44089,11 +44011,9 @@ loaded locally.
 For dns:fail events from dnsdb lookups, a &"defer_never"& option does not
 affect the reporting of DNS_AGAIN.
 
-.new
 For proc:deliver events, will not be called for subsequent message delivery
 attempts resulting from retry database linkage.
 However, will be called for both phases of a 2-phase queue run.
-.wen
 
 . ////////////////////////////////////////////////////////////////////////////
 . ////////////////////////////////////////////////////////////////////////////

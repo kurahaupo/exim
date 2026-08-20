@@ -288,11 +288,9 @@ extension.
 Exim did not support message delivery notifications (MDNs) when Sieve handling
 was introduced, so &*reject*& (which needs them) could not be supported.
 
-.new
 Additionally, if Exim is built with iconv() supoprt and
 WITH_CONTENT_SCAN defined,
 the implementation supports the &*body*& extension defined by &rfc(5173).
-.wen
 
 In order for Sieve to work properly in Exim, the system administrator needs to
 make some adjustments to the Exim configuration. These are described in the
@@ -1229,10 +1227,8 @@ does nothing when mail is being delivered. However, when the filtering code is
 being tested by means of the &%-bf%& option (see section &<<SECTtesting>>&
 above), the value of the string is written to the standard output.
 
-.new
 Alternatively, if the &"filter"& debug channel is enabled (using the
 &%-v%& option) standard error is used.
-.wen
 
 
 .section "The fail command" "SECTfail"
