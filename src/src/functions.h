@@ -588,7 +588,20 @@ extern uschar *string_base62_32(unsigned long int);
 extern uschar *string_base62_64(unsigned long int);
 extern gstring *string_catn(gstring *, const uschar *, int) WARN_UNUSED_RESULT;
 extern int     string_compare_by_pointer(const void *, const void *);
+
 extern uschar *string_copy_dnsdomain(const uschar *);
+
+static inline const uschar *
+sdd_c(const uschar * s)
+{ return Ustrchr(s, '\\') ?string_copy_dnsdomain(s) : s; }
+static inline uschar *
+sdd_nc(uschar * s)
+{ return US sdd_c(s); }
+#define string_decode_dnsdomain(S) _Generic((S),     \
+	      uschar *:		sdd_nc, \
+	      const uschar *:	sdd_c \
+	      )(S)
+
 extern uschar *string_copy_malloc(const uschar *);
 extern uschar *string_dequote(const uschar **);
 extern uschar *string_format_size(int, uschar *, size_t);

@@ -1682,10 +1682,13 @@ while ((ordername = string_nextinlist(&list, &sep, NULL, 0)))
 	    "an empty name: treated as non-existent host name\n");
           continue;
           }
+	s = string_decode_dnsdomain(s);
 	if (Ustrspn(s, letter_digit_hyphen_dot) != slen)
           {
-          HDEBUG(host_lookup) debug_printf_indent("IP address lookup yielded "
-	    "an illegal name (bad char): treated as non-existent host name\n");
+          HDEBUG(host_lookup)
+	    debug_printf_indent("IP address lookup yielded "
+	      "an illegal name (bad char): %W\n"
+	      "- treated as non-existent host name\n", s);
           continue;
           }
         if (!sender_host_name) sender_host_name = s;

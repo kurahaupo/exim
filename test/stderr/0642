@@ -41,7 +41,8 @@ host in host_lookup?
  list element: 127.0.0.1
   host in host_lookup? yes (matched "127.0.0.1")
 looking up host name for 127.0.0.1
- IP address lookup yielded an illegal name (bad char): treated as non-existent host name
+ IP address lookup yielded an illegal name (bad char): l\157calhost
+ - treated as non-existent host name
 LOG: MAIN
   no host name found for IP address 127.0.0.1
 sender_fullhost = [127.0.0.1]
@@ -69,7 +70,8 @@ host in host_lookup?
  list element: 127.0.0.1
   host in host_lookup? yes (matched "127.0.0.1")
 looking up host name for 127.0.0.1
- IP address lookup yielded an illegal name (bad char): treated as non-existent host name
+ IP address lookup yielded an illegal name (bad char): lﬂcalhost
+ - treated as non-existent host name
 LOG: MAIN
   no host name found for IP address 127.0.0.1
 sender_fullhost = [127.0.0.1]
