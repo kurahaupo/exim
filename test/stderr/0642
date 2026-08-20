@@ -15,7 +15,9 @@
 01:01:01 p1234  originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 01:01:01 p1234  sender address = CALLER@the.local.host.name
 01:01:01 p1234  set_process_info: pppp expansion-test
-01:01:01 p1234   ╭considering: ${lookup░dnsdb{a=test.ex}}
+01:01:01 p1234   ╭considering: good░A░░░░${lookup░dnsdb{a=test.ex}}
+01:01:01 p1234   ├───────text: good░A░░░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{a=test.ex}}
 01:01:01 p1234    ╭considering: a=test.ex}}
 01:01:01 p1234    ├───────text: a=test.ex
 01:01:01 p1234    ├considering: }}
@@ -50,10 +52,14 @@ fakens: resp received: len 35
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
 01:01:01 p1234   lookup yielded: 127.0.0.1
-01:01:01 p1234   ├───expanded: ${lookup░dnsdb{a=test.ex}}
-01:01:01 p1234   ╰─────result: 127.0.0.1
+01:01:01 p1234   ├───item-res: 127.0.0.1
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: ${lookup░dnsdb{txt=test.ex}}
+01:01:01 p1234   ├───expanded: good░A░░░░${lookup░dnsdb{a=test.ex}}
+01:01:01 p1234   ╰─────result: good░A░░░░127.0.0.1
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: good░TXT░░${lookup░dnsdb{txt=test.ex}}
+01:01:01 p1234   ├───────text: good░TXT░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{txt=test.ex}}
 01:01:01 p1234    ╭considering: txt=test.ex}}
 01:01:01 p1234    ├───────text: txt=test.ex
 01:01:01 p1234    ├considering: }}
@@ -88,10 +94,14 @@ fakens: resp received: len 36
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
 01:01:01 p1234   lookup yielded: fred
-01:01:01 p1234   ├───expanded: ${lookup░dnsdb{txt=test.ex}}
-01:01:01 p1234   ╰─────result: fred
+01:01:01 p1234   ├───item-res: fred
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: ${lookup░dnsdb{ptr=8.8.8.8}}
+01:01:01 p1234   ├───expanded: good░TXT░░${lookup░dnsdb{txt=test.ex}}
+01:01:01 p1234   ╰─────result: good░TXT░░fred
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: good░PTR░░${lookup░dnsdb{ptr=8.8.8.8}}
+01:01:01 p1234   ├───────text: good░PTR░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{ptr=8.8.8.8}}
 01:01:01 p1234    ╭considering: ptr=8.8.8.8}}
 01:01:01 p1234    ├───────text: ptr=8.8.8.8
 01:01:01 p1234    ├considering: }}
@@ -126,10 +136,14 @@ fakens: resp received: len 56
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
 01:01:01 p1234   lookup yielded: dns.google
-01:01:01 p1234   ├───expanded: ${lookup░dnsdb{ptr=8.8.8.8}}
-01:01:01 p1234   ╰─────result: dns.google
+01:01:01 p1234   ├───item-res: dns.google
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: ${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1234   ├───expanded: good░PTR░░${lookup░dnsdb{ptr=8.8.8.8}}
+01:01:01 p1234   ╰─────result: good░PTR░░dns.google
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: good░MX░░░${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1234   ├───────text: good░MX░░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exim.org}}
 01:01:01 p1234    ╭considering: mx=exim.org}}
 01:01:01 p1234    ├───────text: mx=exim.org
 01:01:01 p1234    ├considering: }}
@@ -164,10 +178,14 @@ fakens: resp received: len 50
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
 01:01:01 p1234   lookup yielded: 10░cumin.exim.org
-01:01:01 p1234   ├───expanded: ${lookup░dnsdb{mx=exim.org}}
-01:01:01 p1234   ╰─────result: 10░cumin.exim.org
+01:01:01 p1234   ├───item-res: 10░cumin.exim.org
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: ${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1234   ├───expanded: good░MX░░░${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1234   ╰─────result: good░MX░░░10░cumin.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: backsl░MX░░${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1234   ├───────text: backsl░MX░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi1.org}}
 01:01:01 p1234    ╭considering: mx=exi1.org}}
 01:01:01 p1234    ├───────text: mx=exi1.org
 01:01:01 p1234    ├considering: }}
@@ -202,10 +220,14 @@ fakens: resp received: len 53
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
 01:01:01 p1234   lookup yielded: 10░cu\155in.exim.org
-01:01:01 p1234   ├───expanded: ${lookup░dnsdb{mx=exi1.org}}
-01:01:01 p1234   ╰─────result: 10░cu\155in.exim.org
+01:01:01 p1234   ├───item-res: 10░cu\155in.exim.org
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: ${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1234   ├───expanded: backsl░MX░░${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1234   ╰─────result: backsl░MX░░10░cu\155in.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: topbit░MX░${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1234   ├───────text: topbit░MX░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi2.org}}
 01:01:01 p1234    ╭considering: mx=exi2.org}}
 01:01:01 p1234    ├───────text: mx=exi2.org
 01:01:01 p1234    ├considering: }}
@@ -240,8 +262,136 @@ fakens: resp received: len 50
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
 01:01:01 p1234   lookup yielded: 10░c�min.exim.org
-01:01:01 p1234   ├───expanded: ${lookup░dnsdb{mx=exi2.org}}
-01:01:01 p1234   ╰─────result: 10░c�min.exim.org
+01:01:01 p1234   ├───item-res: 10░c�min.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: topbit░MX░${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1234   ╰─────result: topbit░MX░10░c�min.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: unused-d░░░${lookup░dnsdb{mx=exi3.org}}
+01:01:01 p1234   ├───────text: unused-d░░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi3.org}}
+01:01:01 p1234    ╭considering: mx=exi3.org}}
+01:01:01 p1234    ├───────text: mx=exi3.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=exi3.org
+01:01:01 p1234    ╰─────result: mx=exi3.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=exi3.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=exi3.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=exi3.org
+01:01:01 p1234   dnsdb key: exi3.org
+01:01:01 p1234   DNS lookup of exi3.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 52
+01:01:01 p1234   DNS lookup of exi3.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 18 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 18 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: 10░cumin.exim.org
+01:01:01 p1234   ├───item-res: 10░cumin.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: unused-d░░░${lookup░dnsdb{mx=exi3.org}}
+01:01:01 p1234   ╰─────result: unused-d░░░10░cumin.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: unused-d2░░${lookup░dnsdb{mx=exi4.org}}
+01:01:01 p1234   ├───────text: unused-d2░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi4.org}}
+01:01:01 p1234    ╭considering: mx=exi4.org}}
+01:01:01 p1234    ├───────text: mx=exi4.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=exi4.org
+01:01:01 p1234    ╰─────result: mx=exi4.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=exi4.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=exi4.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=exi4.org
+01:01:01 p1234   dnsdb key: exi4.org
+01:01:01 p1234   DNS lookup of exi4.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 52
+01:01:01 p1234   DNS lookup of exi4.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 19 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 19 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: 10░cumin.exim.org
+01:01:01 p1234   ├───item-res: 10░cumin.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: unused-d2░░${lookup░dnsdb{mx=exi4.org}}
+01:01:01 p1234   ╰─────result: unused-d2░░10░cumin.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: oversz░RR░░${lookup░dnsdb{mx=exi5.org}}
+01:01:01 p1234   ├───────text: oversz░RR░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi5.org}}
+01:01:01 p1234    ╭considering: mx=exi5.org}}
+01:01:01 p1234    ├───────text: mx=exi5.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=exi5.org
+01:01:01 p1234    ╰─────result: mx=exi5.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=exi5.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=exi5.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=exi5.org
+01:01:01 p1234   dnsdb key: exi5.org
+01:01:01 p1234   DNS lookup of exi5.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 50
+01:01:01 p1234   DNS lookup of exi5.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 17 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 17 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: 10░cumin.exim.org
+01:01:01 p1234   ├───item-res: 10░cumin.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: oversz░RR░░${lookup░dnsdb{mx=exi5.org}}
+01:01:01 p1234   ╰─────result: oversz░RR░░10░cumin.exim.org
 01:01:01 p1234              ╰──(tainted)
 01:01:01 p1234  search_tidyup called
 01:01:01 p1234  >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

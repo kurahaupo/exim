@@ -61,15 +61,47 @@ dns
   \x00\x12 						#	length	\
   \x00\x0a						# 10 \
   \x05c\xf5min\x04exim\x03org\x00	# cumin.exim.org (ish)
+# unused packet data after RR \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04exim\x03org\x00					# RR:	exim.org \
+  \x00\x0f						#	MX	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x12 						#	length	\
+  \x00\x0a						# 10 \
+  \x05cumin\x04exim\x03org\x00				# cumin.exim.org \
+  \xFF
+# unused RR data after name \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04exim\x03org\x00					# RR:	exim.org \
+  \x00\x0f						#	MX	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x13 						#	length	\
+  \x00\x0a						# 10 \
+  \x05cumin\x04exim\x03org\x00				# cumin.exim.org \
+  \xFF
+# RR size exceeds declared rrdata len \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04exim\x03org\x00					# RR:	exim.org \
+  \x00\x0f						#	MX	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x11 						#	length	\
+  \x00\x0a						# 10 \
+  \x05cumin\x04exim\x03org\x00				# cumin.exim.org
 ****
 #
 exim -d+all+dns_rr -be
-${lookup dnsdb{a=test.ex}}
-${lookup dnsdb{txt=test.ex}}
-${lookup dnsdb{ptr=8.8.8.8}}
-${lookup dnsdb{mx=exim.org}}
-${lookup dnsdb{mx=exi1.org}}
-${lookup dnsdb{mx=exi2.org}}
+good A    ${lookup dnsdb{a=test.ex}}
+good TXT  ${lookup dnsdb{txt=test.ex}}
+good PTR  ${lookup dnsdb{ptr=8.8.8.8}}
+good MX   ${lookup dnsdb{mx=exim.org}}
+backsl MX  ${lookup dnsdb{mx=exi1.org}}
+topbit MX ${lookup dnsdb{mx=exi2.org}}
+unused-d   ${lookup dnsdb{mx=exi3.org}}
+unused-d2  ${lookup dnsdb{mx=exi4.org}}
+oversz RR  ${lookup dnsdb{mx=exi5.org}}
 ****
 #
 #
