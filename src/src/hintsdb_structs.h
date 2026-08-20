@@ -27,7 +27,8 @@ typedef struct {
 
 /* Structures for records stored in exim database hints files. They all
 start with the same fields, described in the generic type.
-DBM databases are used for hints files.
+Hints may be stored in DBM, GDBM, NDBM, TDB or SQLITE3 database files,
+chosen at build time.
 */
 
 

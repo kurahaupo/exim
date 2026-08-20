@@ -31050,7 +31050,7 @@ default of requesting OCSP for all hosts is modified iff DANE is in use, to:
                          {*}{}}
 .endd
 
-The (new) variable &$tls_out_tlsa_usage$& is a bitfield with numbered bits set for TLSA record usage codes.
+The variable &$tls_out_tlsa_usage$& is a bitfield with numbered bits set for TLSA record usage codes.
 The zero above means DANE was not in use, the four means that only DANE-TA usage TLSA records were
 found. If the definition of &%hosts_request_ocsp%& includes the
 string "tls_out_tlsa_usage", they are re-expanded in time to
