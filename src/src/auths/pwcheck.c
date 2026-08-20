@@ -3,7 +3,7 @@
  * Tim Martin
  * $Id: checkpw.c,v 1.49 2002/03/07 19:14:04 ken3 Exp $
  */
-/* Copyright (c) The Exim Maintainers 2021 - 2022 */
+/* Copyright (c) The Exim Maintainers 2021 - 2026 */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 /*
  * Copyright (c) 2001 Carnegie Mellon University.  All rights reserved.

@@ -3,7 +3,7 @@
 *************************************************/
 
 /*
- * Copyright (c) The Exim Maintainers 2016 - 2025
+ * Copyright (c) The Exim Maintainers 2016 - 2026
  * Copyright (c) Tom Kistner <tom@duncanthrax.net> 2003 - 2015
  * License: GPL
  * SPDX-License-Identifier: GPL-2.0-or-later
@@ -15,8 +15,8 @@ sub directory of exim's spool directory. */
 #include "exim.h"
 #ifdef WITH_CONTENT_SCAN
 
-extern int malware_ok;
-extern int spam_ok;
+extern BOOL malware_ok;
+extern BOOL spam_ok;
 
 int spool_mbox_ok = 0;
 uschar spooled_message_id[MESSAGE_ID_LENGTH+1];
@@ -205,8 +205,7 @@ return yield;
 void
 unspool_mbox(void)
 {
-spam_ok = 0;
-malware_ok = 0;
+spam_ok = malware_ok = FALSE;
 
 if (spool_mbox_ok && !f.no_mbox_unspool)
   {

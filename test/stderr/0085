@@ -217,7 +217,7 @@ routing x@test.ex
   creating new cache entry
   lookup yielded: /etc/passwd
  file check: ${lookup{$domain.files}lsearch{TESTSUITE/aux-fixed/0085.data}{$value}}
- expanded file: /etc/passwd
+  expanded file: /etc/passwd
  stat() yielded 0
  calling smart2 router
  smart2 router called for x@test.ex

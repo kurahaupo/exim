@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -19,7 +19,7 @@
 /* Options specific to the redirect router. */
 #define LOFF(field) OPT_OFF(redirect_router_options_block, field)
 
-optionlist redirect_router_options[] = {
+static optionlist redirect_router_options[] = {
   { "*expand_allow_filter",		opt_stringptr,
       LOFF(expand_allow_filter) },
   { "*expand_forbid_blackhole",		opt_stringptr,
@@ -117,10 +117,9 @@ optionlist redirect_router_options[] = {
   { "syntax_errors_to",   opt_stringptr,	LOFF(syntax_errors_to) }
 };
 
-/* Size of the options list. An extern variable has to be used so that its
-address can appear in the tables drtables.c. */
+/* Size of the options list. */
 
-int redirect_router_options_count =
+static int redirect_router_options_count =
   sizeof(redirect_router_options)/sizeof(optionlist);
 
 
@@ -141,7 +140,7 @@ int redirect_router_entry(router_instance *rblock, address_item *addr,
 /* Default private options block for the redirect router.
 Unlisted elements are 0/NULL/FALSE */
 
-redirect_router_options_block redirect_router_option_defaults = {
+static redirect_router_options_block redirect_router_option_defaults = {
   .modemask = 022,
   .bit_options = RDO_REWRITE | RDO_PREPEND_HOME,
   .check_owner = TRUE_UNSET,
@@ -503,7 +502,8 @@ OK
   . new addresses added to addr_new
 */
 
-int redirect_router_entry(
+static int
+redirect_router_entry(
   router_instance *rblock,        /* data for this instantiation */
   address_item *addr,             /* address we are working on */
   struct passwd *pw,              /* passwd entry after check_local_user */

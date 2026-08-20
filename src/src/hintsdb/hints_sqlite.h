@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -308,11 +308,11 @@ static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
 { return US dp->data; }
 
-static void
+static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->data = s; }
 
-static unsigned
+static inline unsigned
 exim_datum_size_get(EXIM_DATUM * dp)
 { return dp->len; }
 

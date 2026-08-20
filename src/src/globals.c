@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -709,10 +709,13 @@ const uschar * debug_defaults =
       "-timestamp"
       "-resolver";
 
-/* List of debug channels that we exclude from "all" */
+/* Lists of debug channels that we exclude from "all" and "any" */
 
 const uschar * const debug_notall_names[] = {
   US"dns_rr", US"macro", US"memory", US"noutf8", US"regex", NULL
+};
+const uschar * const debug_notany_names[] = {
+  US"pid", US"noutf8", US"timestamp", NULL
 };
 
 uschar   debuglog_name[LOG_NAME_SIZE] = {0};

@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -287,7 +287,7 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
     DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
     ret += retmore;
     DEBUG(receive) debug_printf("PROXYv2: have %d/%d required octets\n", ret, size);
-    } while (ret < size);
+    } while (ret < size && !had_command_timeout);
 
   } /* end scope for getting rest of data for v2 */
 

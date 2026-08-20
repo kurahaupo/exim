@@ -3,7 +3,7 @@
 *************************************************/
 
 /* DSCP support for Exim
-   Copyright (c) The Exim Maintainers - 2025
+   Copyright (c) The Exim Maintainers - 2025 - 2026
    License: GPL
    SPDX-License-Identifier: GPL-2.0-or-later
 */

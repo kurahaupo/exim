@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -1466,7 +1466,7 @@ g = string_catn(NULL, US"\"", 1);
 
 for (;;)
   {
-  uschar * nq = US Ustrpbrk(lpart, "\\\"");
+  const uschar * nq = Ustrpbrk(lpart, "\\\"");
   if (!nq)
     {
     g = string_cat(g, lpart);
@@ -2842,7 +2842,8 @@ on the second character (the one after '-'), to save some effort. */
         argrest++;
         }
 
-      debug_set_default_bits(&selector);
+      if (*argrest != '=')
+	debug_set_default_bits(&selector);
       if (*argrest)
 	debug_decode_bits(&selector, argrest, 0);
 

@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -6786,7 +6786,7 @@ time_t now;
 address_item * addr_last;
 uschar * filter_message, * info;
 open_db dbblock, * dbm_file = NULL;
-BOOL has_privs = TRUE;	/*XXX ? false under deliver_drop_privilege? */
+BOOL has_privs = !deliver_drop_privilege;
 BOOL has_continue = FALSE;
 pid_t tidy_pid = (pid_t)-1;
 rmark reset_point;

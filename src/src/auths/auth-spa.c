@@ -9,7 +9,7 @@
  * All the original code used here was torn by Marc Prud'hommeaux out of the
  * Samba project (by Andrew Tridgell, Jeremy Allison, and others).
  *
- * Copyright (c) The Exim Maintainers 2021 - 2025
+ * Copyright (c) The Exim Maintainers 2021 - 2026
  * SPDX-License-Identifier: GPL-2.0-or-later
 
  * Tom Kistner provided additional code, adding spa_build_auth_challenge() to
@@ -125,8 +125,7 @@ return 0;
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+   along with this program; if not, see <https://www.gnu.org/licenses/>.
 */
 
 

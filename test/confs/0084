@@ -18,11 +18,17 @@ smart:
   retry_use_local_part
   verify_only
 
+dirfail:
+  driver = accept
+  require_files = DIR/aux-fixed/TESTNUM.yes/bogusfile
+  retry_use_local_part
+  verify_only
+
 forward:
   driver = redirect
+  require_files = DIR/aux-fixed/TESTNUM.$local_part
   file = ${lookup {TESTNUM.$local_part} dsearch,ret=full {DIR/aux-fixed}}
   redirect_router = localuser
-  require_files = DIR/aux-fixed/TESTNUM.$local_part
   retry_use_local_part
 
 localuser:

@@ -3,7 +3,7 @@
 *************************************************/
 
 /*
- * Copyright (c) The Exim Maintainers 2015 - 2025
+ * Copyright (c) The Exim Maintainers 2015 - 2026
  * Copyright (c) Wolfgang Breyha 2005 - 2019
  *  Vienna University Computer Center
  *  wbreyha@gmx.net

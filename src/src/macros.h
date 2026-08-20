@@ -341,8 +341,11 @@ use inlinable functions. */
 
 #define DEBUG_SELECTOR_SIZE		(BITWORD(debug_chan_count) + 1)
 
-static inline bitmask_word_t bit_test(bitmask_word_t *, unsigned);
 extern bitmask_word_t * debug_selector;   /* Debugging bits */
+
+static inline bitmask_word_t
+bit_test(bitmask_word_t * tbl, unsigned bitnum)
+{ return tbl[BITWORD(bitnum)] & BITMASK(bitnum); }
 #define DEBUG_BIT(n)	(debug_selector && bit_test(debug_selector, n))
 #define ANY_DEBUG	DEBUG_BIT(BIT_TABLE_IDX_NONZERO)
 
@@ -386,6 +389,10 @@ access. */
 #define BIT_TABLE_IDX_NONVERB	2	/* a bit apart from "v" is set */
 #define BIT_TABLE_IDX_IS_ANY	3	/* a bit apart from "v'-like ones is set */
 #define BIT_TABLE_IDX_USABLE	4	/* first named bit */
+
+#define BIT_TABLE_SUMMARY_MASK (BIT(BIT_TABLE_IDX_NONZERO) \
+				| BIT(BIT_TABLE_IDX_NONVERB) \
+				| BIT(BIT_TABLE_IDX_NONVERB))
 
 #define BITMASK_IDX_TO_BIT(idx) ((bitmask_word_t)1 << (idx))
 #define BIT_TABLE_BIT(class, name) \
@@ -836,9 +843,9 @@ local_scan.h */
 
 /* flags for decode_bits */
 
-#define DCB_LOG		0x0001
-#define DCB_DEBUG	0x0002
-#define DCB_FROM_CONFIG	0x0003
+#define DCB_LOG		BIT(0)
+#define DCB_DEBUG	BIT(1)
+#define DCB_FROM_CONFIG	BIT(2)
 
 /* SMTP command identifiers for the smtp_connection_had field that records the
 most recent SMTP commands. SCH_NONE is "empty".  The smtp_names array must have

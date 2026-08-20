@@ -5,7 +5,7 @@
 /*
  *  PDKIM - a RFC4871 (DKIM) implementation
  *
- *  Copyright (c) The Exim Maintainers 2021 - 2025
+ *  Copyright (c) The Exim Maintainers 2021 - 2026
  *  Copyright (C) 2016 - 2020  Jeremy Harris <jgh@exim.org>
  *  Copyright (C) 2009 - 2016  Tom Kistner <tom@duncanthrax.net>
  *  SPDX-License-Identifier: GPL-2.0-or-later
@@ -23,8 +23,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *  with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "../exim.h"

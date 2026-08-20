@@ -2,6 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
+/* Copyright (c) The Exim Maintainers 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -44,7 +45,7 @@ if (!value)
 /* Quote the value if it is empty, contains white space, or starts with a quote
 character. */
 
-if (value[0] == 0 || Ustrpbrk(value, " \t\n\r") != NULL || value[0] == '\"')
+if (value[0] == 0 || Ustrpbrk(value, " \t\n\r") || value[0] == '\"')
   {
   result = string_catn(result, US"\"", 1);
   for (int j = 0; j < vlength; j++)

@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -727,10 +727,6 @@ bit_clear(bitmask_word_t * tbl, unsigned bitnum)
 static inline void
 bit_set(bitmask_word_t * tbl, unsigned bitnum)
 { tbl[BITWORD(bitnum)] |= BITMASK(bitnum); }
-
-static inline bitmask_word_t
-bit_test(bitmask_word_t * tbl, unsigned bitnum)
-{ return tbl[BITWORD(bitnum)] & BITMASK(bitnum); }
 
 /******************************************************************************/
 /* Predicate: if an address is in a tainted pool.

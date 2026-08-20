@@ -339,7 +339,6 @@ ChangeLog and git, so are not in chronological order.
 Maintainers
 -----------
 Steve Campbell            eximstats maintainer.
-Mike Cardwell             Exim webmaster.
 Tony Finch                Unbreaks lots of things. Ratelimit code.
 Graeme Fowler
 Michael Haardt            Maintains Sieve support, works on DKIM.

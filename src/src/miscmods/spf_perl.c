@@ -3,7 +3,7 @@
 *************************************************/
 
 /* SPF support.
-   Copyright (c) The Exim Maintainers 2025
+   Copyright (c) The Exim Maintainers 2025 - 2026
    Copyright (c) Jeremy Harris 2025
    License: GPL
    SPDX-License-Identifier: GPL-2.0-or-later

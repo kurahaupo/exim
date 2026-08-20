@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -94,7 +94,7 @@ sigalrm_seen = 1;
 static void
 usage(const uschar * name, const uschar * options)
 {
-uschar * s = store_get(Ustrlen(options), options), * t = s;
+uschar * s = store_get(Ustrlen(options)+1, options), * t = s;
 
 if (Ustrchr(options, 'L'))
   printf("Usage: exim_%s -L <database-path>\n\n", name);

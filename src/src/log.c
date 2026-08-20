@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -1421,18 +1421,27 @@ if (*string == '=')
   {
   int n;
   const uschar * s = string + 1;
+  unsigned v_word = 0;
+  bitmask_word_t summary = 0, v_bit = 0;
 
   memset(selector, 0, sizeof(*selector)*selsize);
+  if (flags & DCB_DEBUG)
+    {
+    unsigned v_idx = chan_name_to_num(US"v", 1, options, count);
+    v_word = BITWORD(v_idx);
+    v_bit = BITMASK(v_idx);
+    }
 
-  for (unsigned idx = 0;
-       idx < selsize
-       && sscanf(CCS s, SC_EXIM_BITMASK "%n", selector+idx, &n) == 1;
-       idx++)
+  for (unsigned wordnum = 0;
+       wordnum < selsize
+       && *s
+       && sscanf(CCS s, SC_EXIM_BITMASK "%n", selector+wordnum, &n) == 1;
+       wordnum++)
     {
     s += n;
-    switch (*s)
+    switch (*s)				/* check the scanf result */
       {
-      case '\0':	return;		/* no more words; finished */
+      case '\0':	break;
       case ',':		s++; break;	/* next word */
       default:
 	errmsg = string_sprintf(
@@ -1440,6 +1449,31 @@ if (*string == '=')
 	  flags & DCB_LOG ? "log" : "debug", string, n, SC_EXIM_BITMASK);
 	goto ERROR_RETURN;
       }
+
+    if (flags & DCB_DEBUG && selector[wordnum])
+      {					/* gather summary info */
+      summary |= BIT(BIT_TABLE_IDX_NONZERO);
+      if (wordnum != v_word || selector[wordnum] & ~v_bit)
+	summary |= BIT(BIT_TABLE_IDX_NONVERB);
+      }
+    }
+
+  /* For the debug bit table, set the summary bits */
+
+  if (flags & DCB_DEBUG)
+    {
+    for (unsigned idx = BIT_TABLE_IDX_USABLE; idx < selsize * BITWORDSIZE; idx++)
+      if (bit_test(selector, idx))
+	{
+	const uschar * const * tp;
+	for (tp = debug_notany_names; *tp; tp++)
+	  if (chan_name_to_num(*tp, Ustrlen(*tp), options, count) == idx) break;
+	if (!*tp)
+	  { summary |= BIT(BIT_TABLE_IDX_IS_ANY); break; }
+	}
+
+    selector[0] &= ~BIT_TABLE_SUMMARY_MASK;
+    selector[0] |= summary;
     }
   }
 
@@ -1489,19 +1523,20 @@ else for(;;)
       {
       bit_set(selector, idx);
 
-      if (flags & DCB_DEBUG)
+      if (flags & DCB_DEBUG)			/* set summary bits */
 	{
-	bit_set(selector, BIT_TABLE_IDX_NONZERO);
-
 	if (Ustrncmp(s, "v", len) != 0)
 	  {
-	  bit_set(selector, BIT_TABLE_IDX_NONVERB);
+	  const uschar * const * tp;
+	  for (tp = debug_notany_names; *tp; tp++)
+	    if (Ustrncmp(s, *tp, len) == 0) break;
+	  if (!*tp)
+	    bit_set(selector, BIT_TABLE_IDX_IS_ANY);
 
-	  /*XXX this might be a table in globals.c */
-	  if (  Ustrncmp(s, "pid", len) != 0 && Ustrncmp(s, "noutf8", len)  != 0
-	     && Ustrncmp(s, "timestamp", len) != 0)
-	  bit_set(selector, BIT_TABLE_IDX_IS_ANY);
+	  bit_set(selector, BIT_TABLE_IDX_NONVERB);
 	  }
+
+	bit_set(selector, BIT_TABLE_IDX_NONZERO);
 	}
       }
     else
@@ -1509,8 +1544,7 @@ else for(;;)
     }
   }    /* Loop for selector names */
 
-/*NOTREACHED*/
-return;					/* stupid compiler */
+return;
 
 /* Handle disasters */
 

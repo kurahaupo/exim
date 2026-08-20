@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -1913,6 +1913,7 @@ local_scan_data = NULL;
 #ifdef WITH_CONTENT_SCAN
  regex_vars_clear();
  malware_name = NULL;
+ spam_action = spam_report = spam_bar = spam_score = spam_score_int = NULL;
 #endif
 #ifdef EXPERIMENTAL_DCC
  dcc_header = dcc_result = NULL;

@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim maintainers 2020 - 2025 */
+/* Copyright (c) The Exim maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -1088,7 +1088,7 @@ if ((rc = child_close(pid, timeout)) != 0)
         {
         BOOL quote = FALSE;
         g = string_catn(g, US" ", 1);
-        if (Ustrpbrk(argv[i], " \t") != NULL)
+        if (Ustrpbrk(argv[i], " \t"))
           {
           quote = TRUE;
           g = string_catn(g, US"\"", 1);

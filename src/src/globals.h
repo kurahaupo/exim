@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -468,6 +468,7 @@ extern uschar *dccifd_options;         /* options for the dccifd daemon */
 extern bit_table debug_channels[];     /* names + numbers */
 extern const uschar * debug_defaults;			/* chans for "-d" */
 extern const uschar * const debug_notall_names[];	/* chans not in "all" */
+extern const uschar * const debug_notany_names[];	/* chans not in "any" */
 extern bitmask_word_t * debug_selector;   /* Debugging bits */
 
 

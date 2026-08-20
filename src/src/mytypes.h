@@ -2,7 +2,7 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2025 */
+/* Copyright (c) The Exim Maintainers 2020 - 2026 */
 /* Copyright (c) University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
@@ -128,7 +128,7 @@ functions that are called quite often; for other calls to external libraries
 #define Ustrlen(s)         (int)strlen(CCS(s))
 #define Ustrncmp(s,t,n)    strncmp(CCS(s),CCS(t),n)
 #define Ustrncpy_nt(s,t,n) strncpy(CS s, CCS t, n)	/* no taint check */
-#define Ustrpbrk(s,t)      strpbrk(CCS(s),CCS(t))
+#define Ustrpbrk(s,t)      CUS strpbrk(CCS(s),CCS(t))
 #define Ustrrchr(s,n)      US strrchr(CCS(s),n)
 #define CUstrrchr(s,n)     CUS strrchr(CCS(s),n)
 #define Ustrspn(s,t)       strspn(CCS(s),CCS(t))
