@@ -762,8 +762,8 @@ uncompressed, but the data pointer is into the raw data. */
 typedef struct {
   uschar       *name;			/* domain name */
   int           type;			/* record type */
-  unsigned short ttl;			/* time-to-live, seconds */
-  int           size;			/* size of data */
+  ushort	ttl;			/* time-to-live, seconds */
+  ushort	size;			/* size of data */
   const uschar *data;			/* pointer to data */
 } dns_record;
 

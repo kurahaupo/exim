@@ -1,0 +1,56 @@
+### ${lookup dnsdb
+> 127.0.0.1
+> fred
+> dns.google
+> 10 cumin.exim.org
+> 10 cu\\155in.exim.org
+> 
+### -bh, host_lookup
+
+**** SMTP testing session as if from host 127.0.0.1
+**** but without any ident (RFC 1413) callback.
+**** This is not for real!
+
+220 the.local.host.name ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250 the.local.host.name Hello localhost [127.0.0.1]
+421 the.local.host.name lost input connection
+### host_lookup, backslash
+
+**** SMTP testing session as if from host 127.0.0.1
+**** but without any ident (RFC 1413) callback.
+**** This is not for real!
+
+220 the.local.host.name ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250 the.local.host.name Hello backslash [127.0.0.1]
+421 the.local.host.name lost input connection
+### host_lookup, topbit-set
+
+**** SMTP testing session as if from host 127.0.0.1
+**** but without any ident (RFC 1413) callback.
+**** This is not for real!
+
+220 the.local.host.name ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250 the.local.host.name Hello topbit [127.0.0.1]
+421 the.local.host.name lost input connection
+
+******** SERVER ********
+### ${lookup dnsdb
+<<< test.ex A
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x04test\x02ex\x00\x00\x01\x00\x01\x00\x00\x00\xff\x00\x04\x7f\x00\x00\x01
+<<< test.ex TXT
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x04test\x02ex\x00\x00\x10\x00\x01\x00\x00\x00\xfe\x00\x05\x04fred
+<<< 8.8.8.8.in-addr.arpa PTR
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x018\x018\x018\x018\x07in_addr\x04arpa\x00\x00\x0c\x00\x01\x00\x00\x00\xfd\x00\x0c\x03dns\x06google\x00
+<<< exim.org MX
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x04exim\x03org\x00\x00\x0f\x00\x01\x00\x00\x00\xfd\x00\x12\x00\x0a\x05cumin\x04exim\x03org\x00
+<<< exi1.org MX
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x04exim\x03org\x00\x00\x0f\x00\x01\x00\x00\x00\xfd\x00\x15\x00\x0a\x08cu\155in\x04exim\x03org\x00
+### -bh, host_lookup
+<<< 1.0.0.127.in-addr.arpa PTR
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x011\x010\x010\x03127\x07in_addr\x04arpa\x00\x00\x0c\x00\x01\x00\x00\x00\xfd\x00\x0b\x09localhost\x00
+### host_lookup, backslash
+<<< 1.0.0.127.in-addr.arpa PTR
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x011\x010\x010\x03127\x07in_addr\x04arpa\x00\x00\x0c\x00\x01\x00\x00\x00\xfd\x00\x0d\x0cl\157calhost\x00
+### host_lookup, topbit-set
+<<< 1.0.0.127.in-addr.arpa PTR
+>>> \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00\x011\x010\x010\x03127\x07in_addr\x04arpa\x00\x00\x0c\x00\x01\x00\x00\x00\xfd\x00\x0b\x09l\xdfcalhost\x00

@@ -2,7 +2,7 @@
 # We use env, because in some environments of our build farm
 # the Perl 5.010 interpreter is only reachable via $PATH
 
-# Copyright (c) The Exim Maintainers 2024
+# Copyright (c) The Exim Maintainers 2024 - 2026
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 ###############################################################################
@@ -3065,7 +3065,32 @@ if (/^server\s+(.*)$/)
   while (! stat("$pidfile") ) { select(undef, undef, undef, 0.3); }
   return 3;
   }
+ 
+# The "dns" command is like "server", but feeds script lines as DNS responses.
+# We run a helper program "scriptns", which runs a unix=socket for fakens
+# to use in preference to zone files.
+if (/^dns\b/)
+  {
+  $pidfile = "$parm_cwd/aux-var/server-daemon.pid";
+  $cmd = "./bin/scriptns $parm_cwd $pidfile >>test-stdout-server";
+  print ">> $cmd\n" if ($debug);
+  $server_pid = open SERVERCMD, "|$cmd" || tests_exit(-1, "Failed to run $cmd");
+  SERVERCMD->autoflush(1);
+  print ">> DNS server pid is $server_pid\n" if $debug;
+  while (<SCRIPT>)
+    {
+    $lineno++;
+    last if /^\*{4}\s*$/;
+    print SERVERCMD;
+    }
+  print SERVERCMD "++++\n"; # Send end to server; can't send EOF yet
+                            # because close() waits for the process.
 
+  # Interlock the server startup; otherwise the next
+  # process may not find it there when it expects it.
+  while (! stat("$pidfile") ) { select(undef, undef, undef, 0.3); }
+  return 3;
+  }
 
 # The "write" command is a way of creating files of specific sizes for
 # buffering tests, or containing specific data lines from within the script
@@ -3150,8 +3175,8 @@ if (/^(cat)?write\s+(\S+)(?:\s+(.*))?\s*$/)
 
 # The "client", "client-gnutls", and "client-ssl" commands run a script-driven
 # program that plays the part of an email client. We also have the availability
-# of running Perl for doing one-off special things. Note that all these
-# commands expect stdin data to be supplied.
+# of running Perl for doing one-off special things.
+# Note that all these commands expect stdin data to be supplied.
 
 if (/^client/ || /^(sudo\s+)?perl\b/)
   {

@@ -18,8 +18,10 @@ SRC = @srcdir@/src
 
 ##############################################################################
 
-BINARIES =	bin/cf bin/client $(CLIENT_OPENSSL) $(CLIENT_GNUTLS) $(CLIENT_ANYTLS) \
-                bin/checkaccess bin/fakens bin/fd bin/iefbr14 $(LOADED) \
+BINARIES =	bin/cf \
+		bin/client $(CLIENT_OPENSSL) $(CLIENT_GNUTLS) $(CLIENT_ANYTLS) \
+                bin/checkaccess bin/fakens bin/scriptns \
+		bin/fd bin/iefbr14 $(LOADED) \
                 bin/mtpscript bin/server bin/showids bin/locate \
 
 ##############################################################################
@@ -56,51 +58,57 @@ sysbinaries:	FORCE binaries
 # bin/iefbr14         a program that does nothing and returns 0
 # bin/loaded          a dynamically loaded test module
 # bin/mtpscript       an LMTP/SMTP "server" that works on stdin/stdout
+# bin/scriptns        feed scripted dns responses via fakens
 # bin/server          an SMTP (socket) script-driven server (no TLS support)
 # bin/showids         output current uid, gid, euid, egid
 
 bin/cf:         $(SRC)/cf.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) -o bin/cf $(SRC)/cf.c
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)/cf.c
 
 bin/client:     $(SRC)/client.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) -o bin/client $(SRC)/client.c $(LIBS)
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)/client.c $(LIBS)
 
 bin/client-gnutls: $(SRC)/client.c Makefile
-		$(CC) $(CFLAGS) -DHAVE_GNUTLS $(LDFLAGS) -o bin/client-gnutls $(SRC)/client.c -lgnutls $(LIBS)
+		$(CC) $(CFLAGS) -DHAVE_GNUTLS $(LDFLAGS) -o $@ $(SRC)/client.c -lgnutls $(LIBS)
 
 bin/client-ssl: $(SRC)/client.c Makefile
-		$(CC) $(CFLAGS) -DHAVE_OPENSSL $(LDFLAGS) -o bin/client-ssl $(SRC)/client.c -lssl -lcrypto $(LIBS)
+		$(CC) $(CFLAGS) -DHAVE_OPENSSL $(LDFLAGS) -o $@ $(SRC)/client.c -lssl -lcrypto $(LIBS)
 
 $(CLIENT_ANYTLS): $(CLIENT_GNUTLS) $(CLIENT_OPENSSL)
 		[ -n "$(CLIENT_GNUTLS)" ] && ln -sf `basename $(CLIENT_GNUTLS)` $@ || ln -sf `basename $(CLIENT_OPENSSL)` $@
 
 bin/checkaccess:$(SRC)/checkaccess.c Makefile
-		$(CC) $(CFLAGS) -DNO_TLS $(LDFLAGS) -o bin/checkaccess $(SRC)/checkaccess.c
+		$(CC) $(CFLAGS) -DNO_TLS $(LDFLAGS) -o $@ $(SRC)/checkaccess.c
 
-bin/fakens:     $(SRC)/fakens.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) -o bin/fakens $(SRC)/fakens.c $(LIBS)
+bin/fakens:     $(SRC)/fakens.c $(SRC)/scriptns_name.c Makefile
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ \
+			$(SRC)/fakens.c $(SRC)/scriptns_name.c $(LIBS)
 
 bin/fd:         $(SRC)/fd.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) -o bin/fd $(SRC)/fd.c
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)/fd.c
 
 bin/iefbr14:    $(SRC)/iefbr14.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) -o bin/iefbr14 $(SRC)/iefbr14.c
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)/iefbr14.c
 
 bin/loaded:     $(SRC)/loaded.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) $(LOADED_OPT) -o bin/loaded $(SRC)/loaded.c
+		$(CC) $(CFLAGS) $(LDFLAGS) $(LOADED_OPT) -o $@ $(SRC)/loaded.c
 
 bin/mtpscript:  $(SRC)/mtpscript.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) $(mtpscript_OPT) -o bin/mtpscript $(SRC)/mtpscript.c
+		$(CC) $(CFLAGS) $(LDFLAGS) $(mtpscript_OPT) -o $@ $(SRC)/mtpscript.c
+
+bin/scriptns:   $(SRC)/scriptns.c $(SRC)/scriptns_name.c Makefile
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ \
+			$(SRC)/scriptns.c $(SRC)/scriptns_name.c $(LIBS)
 
 bin/server:     $(SRC)/server.c Makefile
-		$(CC) -D_GNU_SOURCE $(CFLAGS) $(LDFLAGS) -o bin/server $(SRC)/server.c $(LIBS) $(SERVER_TLS_LIBS)
+		$(CC) -D_GNU_SOURCE $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)/server.c $(LIBS) $(SERVER_TLS_LIBS)
 
 bin/showids:    $(SRC)/showids.c Makefile
-		$(CC) $(CFLAGS) $(LDFLAGS) -o bin/showids $(SRC)/showids.c
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)/showids.c
 
 bin/locate:     $(SRC)/locate.sh Makefile
-		cp $(SRC)/locate.pl bin/locate
-		chmod 0755 bin/locate
+		cp $(SRC)/locate.pl $@
+		chmod 0755 $@
 
 clean:;         rm -rf $(BINARIES) bin.sys
 

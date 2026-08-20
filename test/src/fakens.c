@@ -2,14 +2,18 @@
 *       fakens - A Fake Nameserver Program       *
 *************************************************/
 
-/* This program exists to support the testing of DNS handling code in Exim. It
+/*
+Copyright (c) The Exim Maintainers 2026
+SPDX-License-Identifier: GPL-2.0-or-later
+
+This program exists to support the testing of DNS handling code in Exim. It
 avoids the need to install special zones in a real nameserver. When Exim is
 running in its (new) test harness, DNS lookups are first passed to this program
 instead of to the real resolver. (With a few exceptions - see the discussion in
 the test suite's README file.) The program is also passed the name of the Exim
 spool directory; it expects to find its "zone files" in dnszones relative to
-exim config_main_directory. Note that there is little checking in this program. The fake
-zone files are assumed to be syntactically valid.
+exim config_main_directory. Note that there is little checking in this program.
+The fake zone files are assumed to be syntactically valid.
 
 The zones that are handled are found by scanning the dnszones directory. A file
 whose name is of the form db.ip4.x is a zone file for .x.in-addr.arpa; a file
@@ -76,18 +80,21 @@ a number of seconds (followed by one space).
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <netdb.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <signal.h>
+#include <sys/types.h>
 #include <arpa/nameser.h>
 #include <arpa/inet.h>
-#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <dirent.h>
-#include <unistd.h>
 #ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+# include <sys/socket.h>
+# include <sys/un.h>
 #endif
 
 #define FALSE         0
@@ -164,8 +171,9 @@ static tlist type_list[] = {
 };
 
 
+extern const uschar * scriptns_sock_name(const uschar *);
 
-BOOL debug = FALSE;
+int debug = 0;
 
 /*************************************************
 *           Get memory and sprintf into it       *
@@ -210,18 +218,18 @@ Returns:       the updated value of pk
 */
 
 static uschar *
-packname(uschar *name, uschar *pk)
+packname(uschar * name, uschar * pk)
 {
-while (*name != 0)
+while (*name)
   {
-  uschar *p = name;
-  while (*p != 0 && *p != '.') p++;
+  uschar * p = name;
+  while (*p && *p != '.') p++;
   *pk++ = (p - name);
   memmove(pk, name, p - name);
   pk += p - name;
-  name = (*p == 0)? p : p + 1;
+  name = *p ? p + 1 : p;
   }
-*pk++ = 0;
+*pk++ = '\0';
 return pk;
 }
 
@@ -325,17 +333,14 @@ Returns:      0 on success, else HOST_NOT_FOUND or NO_DATA or NO_RECOVERY or
 */
 
 static int
-find_records(FILE *f, uschar *zone, uschar *domain, uschar *qtype,
-  int qtypelen, uschar **pkptr, int *countptr, BOOL * dnssec_p, BOOL * aa_p)
+find_records(FILE * f, uschar * zone, uschar * domain, uschar * qtype,
+  int qtypelen, uschar ** pkptr, int *countptr, BOOL * dnssec_p, BOOL * aa_p)
 {
-int yield = HOST_NOT_FOUND;
-int domainlen = Ustrlen(domain);
+int yield = HOST_NOT_FOUND, domainlen = Ustrlen(domain);
 BOOL pass_on_not_found = FALSE;
-tlist *typeptr;
-uschar *pk = *pkptr;
-uschar buffer[512];
-uschar rrdomain[256];
-uschar RRdomain[256];
+tlist * typeptr;
+uschar * pk = *pkptr;
+uschar buffer[512], rrdomain[256], RRdomain[256];
 
 
 /* Decode the required type */
@@ -654,42 +659,22 @@ return TRY_AGAIN;
 
 
 /*************************************************
-*           Entry point and main program         *
+*           Zone-file lookup                     *
 *************************************************/
 
-int
-main(int argc, char **argv)
+static int
+zonefile_mode(char ** argv)
 {
-FILE *f;
-DIR *d;
-int domlen, qtypelen;
-int yield, count;
-int i;
-int zonecount = 0;
-struct dirent *de;
+FILE * f;
+DIR * d;
+struct dirent * de;
+int domlen, qtypelen, yield, count, i, zonecount = 0;
 zoneitem zones[32];
-uschar *qualify = NULL;
-uschar *p, *zone;
-uschar *zonefile = NULL;
-uschar domain[256];
-uschar buffer[256];
-uschar qtype[12];
-uschar packet[2048 * 32 + 32];
-HEADER *header = (HEADER *)packet;
-uschar *pk = packet;
-BOOL dnssec = FALSE;
-BOOL aa = FALSE;
-
-signal(SIGALRM, alarmfn);
-
-argv++; argc--;     /* skip progname */
-if (argc > 0 && Ustrcmp(argv[0], "-d") == 0) { debug = TRUE; argv++; argc--; }
-
-if (argc != 3)
-  {
-  fprintf(stderr, "fakens: expected 3 arguments, received %d\n", argc);
-  return NO_RECOVERY;
-  }
+uschar * qualify = NULL, * zonefile = NULL, * p, * zone;
+uschar domain[256], buffer[256], qtype[12], packet[2048 * 32 + 32];
+HEADER * header = (HEADER *)packet;
+uschar * pk = packet;
+BOOL dnssec = FALSE, aa = FALSE;
 
 /* Find the zones */
 
@@ -825,6 +810,132 @@ END_OFF:
 (void)fclose(f);
 (void)fwrite(packet, 1, pk - packet, stdout);
 return yield;
+}
+
+/*************************************************
+*           Scripted mode                        *
+*************************************************/
+
+static BOOL
+scripted_mode(char ** argv)
+{
+const uschar * sockname = scriptns_sock_name(argv[0]);
+struct stat sbuf;
+int fd, rc;
+struct sockaddr_un sa_un = {.sun_family = AF_UNIX};
+uschar packet[2048 * 32 + 32];
+const uschar * where;
+
+/* See if the filesystem name for the socket exists */
+
+if (stat(CCS sockname, &sbuf) != 0)
+  {
+  if (errno == ENOENT)
+    return FALSE;
+
+  fprintf(stderr, "fakens: stat: %d %s\n", errno, strerror(errno));
+  exit(NO_RECOVERY);
+  }
+if ((sbuf.st_mode & S_IFMT) != S_IFSOCK)
+  {
+  fprintf(stderr, "fakens: '%s' not S_IFSOCK\n", sockname);
+  return FALSE;
+  }
+
+/* Connect to it */
+if (debug) fprintf(stderr, "fakens: scripted mode\n");
+
+where = US"socket";
+if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) < 0) goto err;
+where = US"fchmod";
+
+Ustrncpy(sa_un.sun_path, sockname, sizeof(sa_un.sun_path));
+sa_un.sun_path[sizeof(sa_un.sun_path)-1] = '\0';
+if (debug) fprintf(stderr, "fakens remote: %s\n", sa_un.sun_path);
+
+where = US"connect";
+if (connect(fd, (const struct sockaddr *)&sa_un, (socklen_t)sizeof(sa_un)) < 0)
+  goto err;
+
+snprintf(sa_un.sun_path, sizeof(sa_un.sun_path), "%s/tmp/fakens", argv[0]);
+sa_un.sun_path[sizeof(sa_un.sun_path)-1] = '\0';
+if (debug) fprintf(stderr, "fakens local: %s\n", sa_un.sun_path);
+
+where = US"bind";
+if (bind(fd, (const struct sockaddr *)&sa_un, (socklen_t)sizeof(sa_un)) < 0)
+  goto err;
+
+/* Send a packet with our cmdline args, read response */
+
+rc = snprintf(packet, sizeof(packet), "%s %s", argv[1], argv[2]);
+where = US"send";
+if (send(fd, packet, (size_t)rc, 0) != rc) goto bad;
+if (debug) fprintf(stderr, "fakens: req sent\n");
+
+where = US"recv";
+if ((rc = recv(fd, packet, sizeof(packet), 0)) < 0) goto bad;
+
+close(fd);
+unlink(sa_un.sun_path);
+
+if (debug) fprintf(stderr, "fakens: resp received: len %d\n", rc);
+
+/* Write the packet for our caller */
+
+(void)fwrite(packet, 1, rc, stdout);
+return TRUE;
+
+bad:
+  rc = errno;
+  unlink(sa_un.sun_path);
+  goto out;
+
+err:
+  rc = errno;
+out:
+  close(fd);
+  fprintf(stderr, "fakens: %s: %s\n", where, strerror(rc));
+  exit(NO_RECOVERY);
+}
+
+/*************************************************
+*           Entry point and main program         *
+*************************************************/
+
+int
+main(int argc, char ** argv)
+{
+FILE * f;
+DIR * d;
+struct dirent * de;
+int domlen, qtypelen, yield, count, i, zonecount = 0;
+zoneitem zones[32];
+uschar * qualify = NULL, * zonefile = NULL, * p, * zone;
+uschar domain[256], buffer[256], qtype[12], packet[2048 * 32 + 32];
+HEADER * header = (HEADER *)packet;
+uschar * pk = packet;
+BOOL dnssec = FALSE, aa = FALSE;
+
+signal(SIGALRM, alarmfn);
+
+argc--; argv++;   /* skip the progname */
+
+if (argc >= 1 && Ustrcmp(*argv, "-d") == 0)
+  { debug = 1; argc--; argv++; }
+
+if (argc != 3)
+  {
+  fprintf(stderr, "fakens: expected 3 arguments, received %d\n", argc-1);
+  return NO_RECOVERY;
+  }
+
+/* Check for a scriptns socket; if found run in scripted mode
+(ignoring our zone files) */
+
+if (scripted_mode(argv))
+  return 0;
+
+return zonefile_mode(argv);
 }
 
 /* vi: aw ai sw=2 sts=2 ts=8 et

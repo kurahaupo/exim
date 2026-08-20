@@ -977,6 +977,16 @@ additional option, -tls-on-connect, that causes the client to initiate TLS
 negotiation immediately on connection.
 
 
+  dns
+
+This command feeds its script as DNS response data to an exim unter test.
+Script lines are for responses only and are used one per DNS request.
+They may contain \xNN sequences, and plain characters. The line ending defines
+the result packet end (but is not included in the packet).
+Request content is not scripted for comparison, but is copied to the stdout
+stream.
+
+
   exim [<options>] [<arguments>]
 
 This command runs the testing version of Exim. Any occurrence of "$msg1" in the

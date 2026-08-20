@@ -1,0 +1,9 @@
+# Exim test configuration 0642
+
+.include DIR/aux-var/std_conf_prefix
+
+# ----- Main settings -----
+
+host_lookup = 127.0.0.1
+
+# End

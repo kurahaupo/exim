@@ -1,0 +1,114 @@
+# DNS bad packets
+#
+# We need a working dir for fakens that is both
+# user- and exim-writable.  spool is not user-w and DIR might not be exim-w.
+# The dirname is coded in fakens also.
+sudo rm -fr DIR/tmp
+mkdir DIR/tmp
+sudo chmod 777 DIR/tmp
+#
+#
+### ${lookup dnsdb
+dns
+# a good one, as a baseline \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x01						#	A	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x04 						#	length	\
+  \x7f\x00\x00\x01					#	127.0.0.1
+# a good TXT, as a baseline \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x10						#	TXT	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfe					#	ttl	\
+  \x00\x05 						#	length	\
+  \x04fred						#	single chunk
+# PTR, good \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x018\x018\x018\x018\x07in_addr\x04arpa\x00		# RR:	8.8.8.8 \
+  \x00\x0c						#	PTR	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x0c 						#	length	\
+  \x03dns\x06google\x00		# dns.google
+# MX, good \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04exim\x03org\x00					# RR:	exim.org \
+  \x00\x0f						#	MX	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x12 						#	length	\
+  \x00\x0a						# 10 \
+  \x05cumin\x04exim\x03org\x00				# cumin.exim.org
+# MX, oct-coded char \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04exim\x03org\x00					# RR:	exim.org \
+  \x00\x0f						#	MX	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x15 						#	length	\
+  \x00\x0a						# 10 \
+  \x08cu\\155in\x04exim\x03org\x00			# cumin.exim.org
+****
+#
+exim -be
+${lookup dnsdb{a=test.ex}}
+${lookup dnsdb{txt=test.ex}}
+${lookup dnsdb{ptr=8.8.8.8}}
+${lookup dnsdb{mx=exim.org}}
+${lookup dnsdb{mx=exi1.org}}
+****
+#
+#
+### -bh, host_lookup
+dns
+# PTR, good, from host_lookup \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x011\x010\x010\x03127\x07in_addr\x04arpa\x00		# RR:	127.0.0.1 \
+  \x00\x0c						#	PTR	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x0b 						#	length	\
+  \x09localhost\x00		# localhost
+****
+exim -d-all+host_lookup -bh 127.0.0.1
+helo myname
+****
+#
+#
+### host_lookup, backslash
+dns
+# PTR, backslash present, from host_lookup \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x011\x010\x010\x03127\x07in_addr\x04arpa\x00		# RR:	127.0.0.1 \
+  \x00\x0c						#	PTR	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x0d 						#	length	\
+  \x0cl\\157calhost\x00		# localhost (broken)
+****
+exim -d-all+host_lookup -bh 127.0.0.1
+helo backslash
+****
+#
+#
+#
+### host_lookup, topbit-set
+dns
+# PTR, topbit-set byte, from host_lookup \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x011\x010\x010\x03127\x07in_addr\x04arpa\x00		# RR:	127.0.0.1 \
+  \x00\x0c						#	PTR	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x0b 						#	length	\
+  \x09l\xDFcalhost\x00		# localhost (ish)
+****
+exim -d-all+host_lookup -bh 127.0.0.1
+helo topbit
+****
+#
+sudo rm -fr DIR/tmp
