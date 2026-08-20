@@ -1566,8 +1566,10 @@ for (rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
 
   (void)dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, p,
     (DN_EXPAND_ARG4_TYPE)target, TARGET_SIZE);
+  /*XXX should we do \ooo decode, cf. string_decode_dnsdomain() ? */
 
   DEBUG(acl) debug_printf_indent("CSA target is %s\n", target);
+
 
   break;
   }

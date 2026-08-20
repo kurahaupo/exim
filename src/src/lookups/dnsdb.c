@@ -340,11 +340,12 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
       {
       if (searchtype == T_ADDRESSES) searchtype = T_AAAA;
       else if (searchtype == T_AAAA) searchtype = T_A;
-      rc = dns_special_lookup(dnsa, domain, searchtype, CUSS &found);
+      rc = dns_special_lookup(dnsa, domain, searchtype, NULL);
       }
     else
 #endif
-      rc = dns_special_lookup(dnsa, domain, type, CUSS &found);
+      rc = dns_special_lookup(dnsa, domain, type,
+			      type == T_CSA ? CUSS &found : NULL);
 
     lookup_dnssec_authenticated = dnssec_mode==OK ? NULL
       : dns_is_secure(dnsa) ? US"yes" : US"no";
@@ -369,6 +370,8 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
     /* Search the returned records */
 
+    DEBUG(dns_rr) debug_printf_indent("%s: search for %s RR\n", __FUNCTION__,
+				      dns_text_type(searchtype));
     for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
          rr = dns_next_rr(dnsa, &dnss, RESET_NEXT)) if (rr->type == searchtype)
       {
@@ -513,7 +516,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
             "domain=%s", dns_text_type(type), domain);
           break;
           }
-        else yield = string_cat(yield, buf);
+	yield = string_cat(yield, string_decode_dnsdomain(buf));
 
 	if (type == T_SOA && outsep2 != NULL)
 	  {
@@ -530,7 +533,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	      "domain=%s", dns_text_type(type), domain);
 	    break;
 	    }
-	  else yield = string_cat(yield, buf);
+	  yield = string_cat(yield, string_decode_dnsdomain(buf));
 
 	  p += rc;
 	  if (!rr_bad_increment(rr, p, 5 * sizeof(uint32_t)))

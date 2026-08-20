@@ -359,6 +359,7 @@ const uschar * eom = dnsa->answer + dnsa->answerlen;
 int namelen;
 const uschar * trace = NULL;
 
+expand_level++;
 /* Reset the saved data when requested to, and skip to the first required RR */
 
 if (reset != RESET_NEXT)
@@ -435,7 +436,11 @@ else
 /* The variable dnss->aptr is now pointing at the next RR, and dnss->rrcount
 contains the number of RR records left. */
 
-if (dnss->rrcount-- <= 0) return NULL;
+if (dnss->rrcount-- <= 0)
+  {
+  expand_level--;
+  return NULL;
+  }
 
 /* If expanding the RR domain name fails, behave as if no more records
 (something safe). */
@@ -474,6 +479,7 @@ for convenience so that the scans can use nice-looking for loops. */
 
 DEBUG(dns_rr) debug_printf_indent("%s: return %d byte %s\n", __FUNCTION__,
 				dnss->srr.size, dns_text_type(dnss->srr.type));
+expand_level--;
 return &dnss->srr;
 
 null_return:
@@ -481,6 +487,7 @@ null_return:
     " Last op: %s; errno %d %s\n",
     __FUNCTION__, dnss->rrcount, trace, errno, strerror(errno));
   dnss->rrcount = 0;
+  expand_level--;
   return NULL;
 }
 
@@ -1075,6 +1082,7 @@ for (int i = 0; i <= dns_cname_loops; i++)
   contents of any rr blocks returned by dns_next_rr() as they use the same
   area in the dnsa block. */
 
+  DEBUG(dns_rr) debug_printf_indent("%s: scan for CNAME RR\n", __FUNCTION__);
   for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
        rr; rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
     if (rr->type == type)

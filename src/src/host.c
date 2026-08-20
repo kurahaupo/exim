@@ -2790,6 +2790,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   int precedence, weight, sort_key;
   int port = PORT_NONE;		/* MX lookups get PORT_NONE */
   const uschar * s = rr->data;	/* MUST be unsigned for GETSHORT */
+  const uschar * name;
   host_item * next;
 
   /* Properly, should be tainted. string_copy_dnsdomain() call below must be
@@ -2824,6 +2825,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, s,
       (DN_EXPAND_ARG4_TYPE)data, sizeof(data)) < 0)
     continue;
+  name = string_copy_dnsdomain(data);
 
   /* Check that we haven't already got this host on the chain; if we have,
   keep only the lower precedence. This situation shouldn't occur, but you
@@ -2835,7 +2837,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
     host_item * prev = NULL;
 
     for (h = host; h != last->next; prev = h, h = h->next)
-      if (strcmpic(h->name, data) == 0)
+      if (strcmpic(h->name, name) == 0)
         {
         DEBUG(host_lookup)
           debug_printf_indent("discarded duplicate host %s (MX=%d)\n", data,
@@ -2862,7 +2864,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   before the first block, copy the first block's data to a new second block. */
 
   next = last ? store_get(sizeof(host_item), GET_UNTAINTED) : host;
-  next->name = string_copy_dnsdomain(data);
+  next->name = name;
   next->address = NULL;
   next->port = port;
   next->mx = precedence;

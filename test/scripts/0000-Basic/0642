@@ -43,7 +43,7 @@ dns
   \x00\x12 						#	length	\
   \x00\x0a						# 10 \
   \x05cumin\x04exim\x03org\x00				# cumin.exim.org
-# MX, oct-coded char \
+# MX, backslash present \
 \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
   \x04exim\x03org\x00					# RR:	exim.org \
   \x00\x0f						#	MX	\
@@ -52,14 +52,24 @@ dns
   \x00\x15 						#	length	\
   \x00\x0a						# 10 \
   \x08cu\\155in\x04exim\x03org\x00			# cumin.exim.org
+# MX, topbit-set char \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04exim\x03org\x00					# RR:	exim.org \
+  \x00\x0f						#	MX	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x12 						#	length	\
+  \x00\x0a						# 10 \
+  \x05c\xf5min\x04exim\x03org\x00	# cumin.exim.org (ish)
 ****
 #
-exim -be
+exim -d+all+dns_rr -be
 ${lookup dnsdb{a=test.ex}}
 ${lookup dnsdb{txt=test.ex}}
 ${lookup dnsdb{ptr=8.8.8.8}}
 ${lookup dnsdb{mx=exim.org}}
 ${lookup dnsdb{mx=exi1.org}}
+${lookup dnsdb{mx=exi2.org}}
 ****
 #
 #

@@ -1,4 +1,250 @@
 ### ${lookup dnsdb
+01:01:01 p1234  Exim version x.yz uid=CALLER_UID gid=CALLER_GID pid=p1234 -d=0xffffffffef1fffff
+01:01:01 p1234  Hints DB:
+01:01:01 p1234  macros_trusted overridden to true by whitelisting
+01:01:01 p1234  changed uid/gid: -C, -D, -be or -bf forces real uid
+01:01:01 p1234     uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1234
+01:01:01 p1234  environment after trimming:
+01:01:01 p1234   PATH=<munged>
+01:01:01 p1234  adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
+01:01:01 p1234  configuration file is TESTSUITE/test-config
+01:01:01 p1234  admin user
+01:01:01 p1234  try option 'gecos_pattern'
+01:01:01 p1234  try option 'gecos_name'
+01:01:01 p1234  try option 'unknown_login'
+01:01:01 p1234  originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
+01:01:01 p1234  sender address = CALLER@the.local.host.name
+01:01:01 p1234  set_process_info: pppp expansion-test
+01:01:01 p1234   ╭considering: ${lookup░dnsdb{a=test.ex}}
+01:01:01 p1234    ╭considering: a=test.ex}}
+01:01:01 p1234    ├───────text: a=test.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: a=test.ex
+01:01:01 p1234    ╰─────result: a=test.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="a=test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="a=test.ex" opts=NULL
+01:01:01 p1234   database lookup required for a=test.ex
+01:01:01 p1234   dnsdb key: test.ex
+01:01:01 p1234   DNS lookup of test.ex (A) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 35
+01:01:01 p1234   DNS lookup of test.ex (A) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 4 byte A
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for A RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 4 byte A
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: 127.0.0.1
+01:01:01 p1234   ├───expanded: ${lookup░dnsdb{a=test.ex}}
+01:01:01 p1234   ╰─────result: 127.0.0.1
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: ${lookup░dnsdb{txt=test.ex}}
+01:01:01 p1234    ╭considering: txt=test.ex}}
+01:01:01 p1234    ├───────text: txt=test.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: txt=test.ex
+01:01:01 p1234    ╰─────result: txt=test.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="txt=test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="txt=test.ex" opts=NULL
+01:01:01 p1234   database lookup required for txt=test.ex
+01:01:01 p1234   dnsdb key: test.ex
+01:01:01 p1234   DNS lookup of test.ex (TXT) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 36
+01:01:01 p1234   DNS lookup of test.ex (TXT) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 5 byte TXT
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for TXT RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 5 byte TXT
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: fred
+01:01:01 p1234   ├───expanded: ${lookup░dnsdb{txt=test.ex}}
+01:01:01 p1234   ╰─────result: fred
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: ${lookup░dnsdb{ptr=8.8.8.8}}
+01:01:01 p1234    ╭considering: ptr=8.8.8.8}}
+01:01:01 p1234    ├───────text: ptr=8.8.8.8
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: ptr=8.8.8.8
+01:01:01 p1234    ╰─────result: ptr=8.8.8.8
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="ptr=8.8.8.8" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="ptr=8.8.8.8" opts=NULL
+01:01:01 p1234   database lookup required for ptr=8.8.8.8
+01:01:01 p1234   dnsdb key: 8.8.8.8.in-addr.arpa
+01:01:01 p1234   DNS lookup of 8.8.8.8.in-addr.arpa (PTR) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 56
+01:01:01 p1234   DNS lookup of 8.8.8.8.in-addr.arpa (PTR) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 12 byte PTR
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for PTR RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 12 byte PTR
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: dns.google
+01:01:01 p1234   ├───expanded: ${lookup░dnsdb{ptr=8.8.8.8}}
+01:01:01 p1234   ╰─────result: dns.google
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: ${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1234    ╭considering: mx=exim.org}}
+01:01:01 p1234    ├───────text: mx=exim.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=exim.org
+01:01:01 p1234    ╰─────result: mx=exim.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=exim.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=exim.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=exim.org
+01:01:01 p1234   dnsdb key: exim.org
+01:01:01 p1234   DNS lookup of exim.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 50
+01:01:01 p1234   DNS lookup of exim.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 18 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 18 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: 10░cumin.exim.org
+01:01:01 p1234   ├───expanded: ${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1234   ╰─────result: 10░cumin.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: ${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1234    ╭considering: mx=exi1.org}}
+01:01:01 p1234    ├───────text: mx=exi1.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=exi1.org
+01:01:01 p1234    ╰─────result: mx=exi1.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=exi1.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=exi1.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=exi1.org
+01:01:01 p1234   dnsdb key: exi1.org
+01:01:01 p1234   DNS lookup of exi1.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 53
+01:01:01 p1234   DNS lookup of exi1.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 21 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 21 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: 10░cu\155in.exim.org
+01:01:01 p1234   ├───expanded: ${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1234   ╰─────result: 10░cu\155in.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: ${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1234    ╭considering: mx=exi2.org}}
+01:01:01 p1234    ├───────text: mx=exi2.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=exi2.org
+01:01:01 p1234    ╰─────result: mx=exi2.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=exi2.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=exi2.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=exi2.org
+01:01:01 p1234   dnsdb key: exi2.org
+01:01:01 p1234   DNS lookup of exi2.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 50
+01:01:01 p1234   DNS lookup of exi2.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 18 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 18 byte MX
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: 10░c�min.exim.org
+01:01:01 p1234   ├───expanded: ${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1234   ╰─────result: 10░c�min.exim.org
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234  search_tidyup called
+01:01:01 p1234  >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### -bh, host_lookup
 Exim version x.yz ....
 admin user
@@ -30,7 +276,7 @@ host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
 sender_fullhost = localhost (myname) [127.0.0.1]
 sender_rcvhost = localhost ([127.0.0.1] helo=myname)
->>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### host_lookup, backslash
 Exim version x.yz ....
 admin user
@@ -59,7 +305,7 @@ backslash in helo_lookup_domains?
 backslash in helo_lookup_domains? no (end of list)
 sender_fullhost = (backslash) [127.0.0.1]
 sender_rcvhost = [127.0.0.1] (helo=backslash)
->>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### host_lookup, topbit-set
 Exim version x.yz ....
 admin user
@@ -88,7 +334,7 @@ topbit in helo_lookup_domains?
 topbit in helo_lookup_domains? no (end of list)
 sender_fullhost = (topbit) [127.0.0.1]
 sender_rcvhost = [127.0.0.1] (helo=topbit)
->>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 
 ******** SERVER ********
 ### ${lookup dnsdb
