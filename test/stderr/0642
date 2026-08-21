@@ -225,8 +225,84 @@ fakens: resp received: len 53
 01:01:01 p1234   ├───expanded: backsl░MX░░${lookup░dnsdb{mx=exi1.org}}
 01:01:01 p1234   ╰─────result: backsl░MX░░10░cu\155in.exim.org
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: topbit░MX░${lookup░dnsdb{mx=exi2.org}}
-01:01:01 p1234   ├───────text: topbit░MX░
+01:01:01 p1234   ╭considering: back░0░MX░░${lookup░dnsdb{mx=ex01.org}}
+01:01:01 p1234   ├───────text: back░0░MX░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=ex01.org}}
+01:01:01 p1234    ╭considering: mx=ex01.org}}
+01:01:01 p1234    ├───────text: mx=ex01.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=ex01.org
+01:01:01 p1234    ╰─────result: mx=ex01.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=ex01.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=ex01.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=ex01.org
+01:01:01 p1234   dnsdb key: ex01.org
+01:01:01 p1234   DNS lookup of ex01.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 52
+01:01:01 p1234   DNS lookup of ex01.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup failed
+01:01:01 p1234   ├───item-res: 
+01:01:01 p1234   ├───expanded: back░0░MX░░${lookup░dnsdb{mx=ex01.org}}
+01:01:01 p1234   ╰─────result: back░0░MX░░
+01:01:01 p1234   ╭considering: back░1░MX░░${lookup░dnsdb{mx=ex11.org}}
+01:01:01 p1234   ├───────text: back░1░MX░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=ex11.org}}
+01:01:01 p1234    ╭considering: mx=ex11.org}}
+01:01:01 p1234    ├───────text: mx=ex11.org
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: mx=ex11.org
+01:01:01 p1234    ╰─────result: mx=ex11.org
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="mx=ex11.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="mx=ex11.org" opts=NULL
+01:01:01 p1234   database lookup required for mx=ex11.org
+01:01:01 p1234   dnsdb key: ex11.org
+01:01:01 p1234   DNS lookup of ex11.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 50
+01:01:01 p1234   DNS lookup of ex11.org (MX) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1234   dnsdb_find: search for MX RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup failed
+01:01:01 p1234   ├───item-res: 
+01:01:01 p1234   ├───expanded: back░1░MX░░${lookup░dnsdb{mx=ex11.org}}
+01:01:01 p1234   ╰─────result: back░1░MX░░
+01:01:01 p1234   ╭considering: topbit░MX░░${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1234   ├───────text: topbit░MX░░
 01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi2.org}}
 01:01:01 p1234    ╭considering: mx=exi2.org}}
 01:01:01 p1234    ├───────text: mx=exi2.org
@@ -264,8 +340,8 @@ fakens: resp received: len 50
 01:01:01 p1234   lookup yielded: 10░c�min.exim.org
 01:01:01 p1234   ├───item-res: 10░c�min.exim.org
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ├───expanded: topbit░MX░${lookup░dnsdb{mx=exi2.org}}
-01:01:01 p1234   ╰─────result: topbit░MX░10░c�min.exim.org
+01:01:01 p1234   ├───expanded: topbit░MX░░${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1234   ╰─────result: topbit░MX░░10░c�min.exim.org
 01:01:01 p1234              ╰──(tainted)
 01:01:01 p1234   ╭considering: unused-d░░░${lookup░dnsdb{mx=exi3.org}}
 01:01:01 p1234   ├───────text: unused-d░░░

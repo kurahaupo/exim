@@ -163,8 +163,8 @@ continuation:
       case '\\':
         switch (cl = *++s)
           {
-do_cont:                                  /* cf. "Duff's Device" ! */
           case '\n':		/* continuation line */
+do_cont:			/* cf. "Duff's Device" ! */
             {
             line * extra;
             int i;
@@ -196,7 +196,7 @@ do_cont:                                  /* cf. "Duff's Device" ! */
         break;
       case '#': /* comment dumps to eol, but there could be a continuation */
         while ((cl = *++s))
-          if (cl == '\\') goto do_cont;
+          if (cl == '\\' && s[1] == '\n') goto do_cont;
           else if (cl == '\n') break;
         break;
       default:              /* normal char */
