@@ -385,14 +385,13 @@ fakens: resp received: len 50
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
 01:01:01 p1234    dns_next_rr: return 17 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234  LOG: MAIN
+01:01:01 p1234    dns name overruns RR size: type=MX for exim.org
 01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup yielded: 10░cumin.exim.org
-01:01:01 p1234   ├───item-res: 10░cumin.exim.org
-01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   lookup failed
+01:01:01 p1234   ├───item-res: 
 01:01:01 p1234   ├───expanded: oversz░RR░░${lookup░dnsdb{mx=exi5.org}}
-01:01:01 p1234   ╰─────result: oversz░RR░░10░cumin.exim.org
-01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╰─────result: oversz░RR░░
 01:01:01 p1234  search_tidyup called
 01:01:01 p1234  >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### -bh, host_lookup

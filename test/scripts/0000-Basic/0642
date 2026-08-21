@@ -11,7 +11,13 @@ sudo chmod 777 DIR/tmp
 ### ${lookup dnsdb
 dns
 # a good one, as a baseline \
-\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+							# header: 1 RR \
+\x00\x00	# query id \
+\x80\x00	# flags: qr (response) \
+\x00\x00	# qdcount (#questions) \
+\x00\x01	# ancount (#answers) \
+\x00\x00	# nscount (#authorities) \
+\x00\x00	# arcount ($resources) \
   \x04test\x02ex\x00					# RR:	name	\
   \x00\x01						#	A	\
   \x00\x01						#	IN	\
@@ -129,7 +135,7 @@ dns
   \x00\x0c						#	PTR	\
   \x00\x01						#	IN	\
   \x00\x00\x00\xfd					#	ttl	\
-  \x00\x0d 						#	length	\
+  \x00\x0e 						#	length	\
   \x0cl\\157calhost\x00		# localhost (broken)
 ****
 exim -d-all+host_lookup -bh 127.0.0.1

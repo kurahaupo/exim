@@ -1667,10 +1667,9 @@ while ((ordername = string_nextinlist(&list, &sep, NULL, 0)))
         /* If an overlong response was received, the data will have been
         truncated and dn_expand may fail. */
 
-        if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen,
-             US rr->data, (DN_EXPAND_ARG4_TYPE)(s), ssize) < 0)
+        if (exim_dn_expand(dnsa, rr, US rr->data, s, ssize) < 0)
           {
-          log_write(LOG_MAIN, "host name alias list truncated for %s",
+          log_write(LOG_MAIN, "bad host name alias list for %s",
             sender_host_address);
           break;
           }
@@ -2822,8 +2821,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
 
   /* Get the name of the host pointed to. */
 
-  if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, s,
-      (DN_EXPAND_ARG4_TYPE)data, sizeof(data)) < 0)
+  if (exim_dn_expand(dnsa, rr, s, data, sizeof(data)) < 0)
     continue;
   name = string_copy_dnsdomain(data);
 

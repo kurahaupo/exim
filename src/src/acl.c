@@ -1564,8 +1564,7 @@ for (rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
   client's IP address is listed as one of the SRV target addresses. Save the
   target hostname then break to scan the additional data for its addresses. */
 
-  (void)dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, p,
-    (DN_EXPAND_ARG4_TYPE)target, TARGET_SIZE);
+  (void) exim_dn_expand(dnsa, rr, p, target, TARGET_SIZE);
   /*XXX should we do \ooo decode, cf. string_decode_dnsdomain() ? */
 
   DEBUG(acl) debug_printf_indent("CSA target is %s\n", target);

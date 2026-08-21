@@ -141,8 +141,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
 	cannot use pool store. The use of malloc also for T_TXT implies so. */
 
 	uschar * buf = store_malloc(256);
-	if (dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, s,
-	    (DN_EXPAND_ARG4_TYPE)buf, 256) < 0)
+	if (exim_dn_expand(dnsa, rr, s, buf, 256) < 0)
 	  continue;
 	/*XXX should we do \ooo decode, cf. string_decode_dnsdomain() ? */
 	s = buf;

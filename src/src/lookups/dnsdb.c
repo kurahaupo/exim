@@ -504,18 +504,8 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
         /* GETSHORT() has advanced the pointer to the target domain. */
 
-        rc = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, p,
-          (DN_EXPAND_ARG4_TYPE)buf, LCL_BUF_SIZE);
-
-        /* If an overlong response was received, the data will have been
-        truncated and dn_expand may fail. */
-
-        if (rc < 0)
-          {
-          log_write(LOG_MAIN, "host name alias list truncated: type=%s "
-            "domain=%s", dns_text_type(type), domain);
-          break;
-          }
+	if ((rc = exim_dn_expand(dnsa, rr, p, buf, LCL_BUF_SIZE)) < 0)
+	  { gstring_reset(yield); break; }
 	yield = string_cat(yield, string_decode_dnsdomain(buf));
 
 	if (type == T_SOA && outsep2 != NULL)
@@ -525,14 +515,9 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	  p += rc;
 	  yield = string_catn(yield, outsep2, 1);
 
-	  rc = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, p,
-	    (DN_EXPAND_ARG4_TYPE)buf, LCL_BUF_SIZE);
+	  rc = exim_dn_expand(dnsa, rr, p, buf, LCL_BUF_SIZE);
 	  if (rc < 0)
-	    {
-	    log_write(LOG_MAIN, "responsible-mailbox truncated: type=%s "
-	      "domain=%s", dns_text_type(type), domain);
-	    break;
-	    }
+	    { gstring_reset(yield); break; }
 	  yield = string_cat(yield, string_decode_dnsdomain(buf));
 
 	  p += rc;

@@ -228,6 +228,9 @@ extern void    msg_event_raise(const uschar *, const address_item *);
 #endif
 
 extern int     exim_chown_failure(int, const uschar*, uid_t, gid_t);
+extern int     exim_dn_expand(const dns_answer *, const dns_record *,
+		const uschar *, uschar *, size_t blen);
+
 extern const uschar * exim_errstr(int);
 extern void    exim_exit(int) NORETURN;
 extern void    exim_gettime(struct timeval *);

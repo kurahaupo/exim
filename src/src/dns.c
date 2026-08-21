@@ -787,12 +787,10 @@ if (fake_dnsa_len_for_fail(dnsa, type))
 
     /* Skip the mname & rname strings */
 
-    if ((len = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen,
-	p, (DN_EXPAND_ARG4_TYPE)discard_buf, sizeof(discard_buf))) < 0)
+    if ((len = exim_dn_expand(dnsa, rr, p, discard_buf, sizeof(discard_buf))) < 0)
       break;
     p += len;
-    if ((len = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen,
-	p, (DN_EXPAND_ARG4_TYPE)discard_buf, sizeof(discard_buf))) < 0)
+    if ((len = exim_dn_expand(dnsa, rr, p, discard_buf, sizeof(discard_buf))) < 0)
       break;
     p += len;
 
@@ -1013,6 +1011,29 @@ return DNS_SUCCEED;
 
 
 
+int
+exim_dn_expand(const dns_answer * dnsa, const dns_record * rr, 
+  const uschar * cmp_dn, uschar * buf, size_t blen)
+{
+int rc;
+const uschar * s;
+
+for (s = cmp_dn; *s; ) s++;
+
+if (s >= rr->data + rr->size)
+  s = US"overruns RR size";
+else if ((rc = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, cmp_dn,
+		    (DN_EXPAND_ARG4_TYPE)buf, blen)) < 0)
+  s = US"truncated";
+else
+  return rc;
+
+log_write(LOG_MAIN,
+  "dns name %s: type=%s for %s", s, dns_text_type(rr->type), rr->name);
+return -1;
+}
+
+
 /************************************************
 *        Do a DNS lookup and handle CNAMES      *
 ************************************************/
@@ -1132,6 +1153,16 @@ for (int i = 0; i <= dns_cname_loops; i++)
     errstr = US"no_hit_yet_no_cname";
     goto not_good;
     }
+
+   {
+    const uschar * s;
+    for (s = cname_rr.data; *s; ) s++;
+    if (s >= cname_rr.data + cname_rr.size)
+      {
+      errstr = US"overruns RR size";
+      goto not_good;
+      }
+   }
 
   /* DNS data comes from the outside, hence tainted */
   data = store_get(256, GET_TAINTED);
