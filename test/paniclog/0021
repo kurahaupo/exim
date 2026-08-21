@@ -1,7 +1,8 @@
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 cannot test hosts condition in non-SMTP ACL
 1999-03-02 09:44:33 rcpt accepted C=MAIL,MAIL,RCPT
 1999-03-02 09:44:33 rcpt accepted C=MAIL,MAIL,RCPT,RCPT
 1999-03-02 09:44:33 ACL "warn" with "message" setting found in a non-message (EHLO or HELO) ACL: cannot specify header lines here: message ignored
 1999-03-02 09:44:33 rcpt accepted C=MAIL,RCPT
 1999-03-02 09:44:33 ACL "warn" with "message" setting found in a non-message (EHLO or HELO) ACL: cannot specify header lines here: message ignored
 1999-03-02 09:44:33 rcpt accepted C=EHLO,MAIL,RCPT
-1999-03-02 09:44:33 10HmaX-000000005vi-0000 no recipients found in headers
+1999-03-02 09:44:33 10HmaY-000000005vi-0000 no recipients found in headers

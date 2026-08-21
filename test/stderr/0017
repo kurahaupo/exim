@@ -53,6 +53,7 @@ LOG: ETRN some.domain received from [10.9.8.7]
 >>>  list element: 10.9.8.7
 >>>  host in "10.9.8.7"? yes (matched "10.9.8.7")
 >>> check sender_domains = some.domain
+LOG: cannot test sender_domains condition in ETRN ACL
 >>> deny: condition test error in ACL check_etrn
 LOG: H=[10.9.8.7] temporarily rejected ETRN some.domain: cannot test sender_domains condition in ETRN ACL
 >>> host in hosts_connection_nolog? no (option unset)
@@ -80,5 +81,6 @@ LOG: ETRN some.domain received from [10.9.8.8]
 >>>  list element: 10.9.8.8
 >>>  host in "10.9.8.8"? yes (matched "10.9.8.8")
 >>> check senders = x@y
+LOG: cannot test senders condition in ETRN ACL
 >>> deny: condition test error in ACL check_etrn
 LOG: H=[10.9.8.8] temporarily rejected ETRN some.domain: cannot test senders condition in ETRN ACL

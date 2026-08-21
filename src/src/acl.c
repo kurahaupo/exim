@@ -3388,6 +3388,7 @@ for (; cb; cb = cb->next)
     *log_msgptr = string_sprintf("cannot %s %s condition in %s ACL",
       conditions[cb->type].flags & ACD_MOD ? "use" : "test",
       conditions[cb->type].name, acl_wherenames[where]);
+    log_write(LOG_MAIN|LOG_PANIC, "%s", *log_msgptr);
     return ERROR;
     }
 

@@ -6,7 +6,7 @@ Received: from EXIMUSER by myhost.test.ex with local (Exim x.yz)
 Auto-Submitted: auto-replied
 From: Mail Delivery System <Mailer-Daemon@test.ex>
 To: CALLER@test.ex
-References: <E10HmaX-000000005vi-0000@myhost.test.ex>
+References: <E10HmaY-000000005vi-0000@myhost.test.ex>
 Subject: Mail failure - no recipient addresses
 Message-Id: <E10HmbM-000000005vi-0000@myhost.test.ex>
 Date: Tue, 2 Mar 1999 09:44:33 +0000
@@ -19,7 +19,7 @@ delivery could be attempted.
 From: userx@test1
 To:
 Subject: this should get a bounce, too
-Message-Id: <E10HmaX-000000005vi-0000@myhost.test.ex>
+Message-Id: <E10HmaY-000000005vi-0000@myhost.test.ex>
 Date: Tue, 2 Mar 1999 09:44:33 +0000
 
 

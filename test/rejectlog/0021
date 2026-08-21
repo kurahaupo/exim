@@ -1,23 +1,23 @@
-1999-03-02 09:44:33 10HmaY-000000005vi-0000 F=<userx@test1> rejected by non-SMTP ACL: don't like sender userx@test1
+1999-03-02 09:44:33 10HmaZ-000000005vi-0000 F=<userx@test1> rejected by non-SMTP ACL: don't like sender userx@test1
 Envelope-from: <userx@test1>
 Envelope-to: <userx@test.ex>
 P Received: from CALLER by myhost.test.ex with local (Exim x.yz)
 	(envelope-from <userx@test1>)
-	id 10HmaY-000000005vi-0000
-	for userx@test.ex;
-	Tue, 2 Mar 1999 09:44:33 +0000
-I Message-Id: <E10HmaY-000000005vi-0000@myhost.test.ex>
-F From: userx@test1
-  Date: Tue, 2 Mar 1999 09:44:33 +0000
-1999-03-02 09:44:33 10HmaZ-000000005vi-0000 F=<ok@test2> rejected by non-SMTP ACL: cannot test hosts condition in non-SMTP ACL
-Envelope-from: <ok@test2>
-Envelope-to: <userx@test.ex>
-P Received: from CALLER by myhost.test.ex with local (Exim x.yz)
-	(envelope-from <ok@test2>)
 	id 10HmaZ-000000005vi-0000
 	for userx@test.ex;
 	Tue, 2 Mar 1999 09:44:33 +0000
 I Message-Id: <E10HmaZ-000000005vi-0000@myhost.test.ex>
+F From: userx@test1
+  Date: Tue, 2 Mar 1999 09:44:33 +0000
+1999-03-02 09:44:33 10HmaX-000000005vi-0000 F=<ok@test2> rejected by non-SMTP ACL: cannot test hosts condition in non-SMTP ACL
+Envelope-from: <ok@test2>
+Envelope-to: <userx@test.ex>
+P Received: from CALLER by myhost.test.ex with local (Exim x.yz)
+	(envelope-from <ok@test2>)
+	id 10HmaX-000000005vi-0000
+	for userx@test.ex;
+	Tue, 2 Mar 1999 09:44:33 +0000
+I Message-Id: <E10HmaX-000000005vi-0000@myhost.test.ex>
 F From: ok@test2
   Date: Tue, 2 Mar 1999 09:44:33 +0000
 1999-03-02 09:44:33 10HmbA-000000005vi-0000 F=<ok@test4> rejected by non-SMTP ACL: no verified certificate

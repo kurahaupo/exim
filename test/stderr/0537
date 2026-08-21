@@ -184,3 +184,4 @@ LOG: +++ host is authenticated +++
 >>>  end of ACL auth: ACCEPT
 >>> accept: condition test succeeded in ACL mail
 >>> end of ACL mail: ACCEPT
+1999-03-02 09:44:33 cannot test authenticated condition in non-SMTP-start ACL
