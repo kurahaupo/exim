@@ -18,6 +18,14 @@ typedef unsigned char uschar;
 #define CCS  (const char *)
 #define Ustrlen(s)         (int)strlen(CCS(s))
 
+#ifndef PATH_MAX      /* Hurd */
+# ifdef MAX_PATH_LEN
+#  define PATH_MAX MAX_PATH_LEN
+# else
+#  define PATH_MAX 4096
+# endif
+#endif
+
 
 
 const uschar *
