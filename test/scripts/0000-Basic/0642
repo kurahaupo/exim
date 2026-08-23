@@ -164,10 +164,54 @@ dns
   \x00\x0a 						#	length	\
   \x00\x0a						# 10 \
   \x05cumin\xC0\x0c					# cumin.(exim.org)
+# MX, chained compression \
+\x00\x00\x80\x00\x00\x00\x00\x02\x00\x00\x00\x00 #	header: 2 RRs \
+  \x04exim\x03org\x00				# 0x0c	 RR:	exim.org \
+  \x00\x0f					# 0x16		MX	\
+  \x00\x01					# 0x18		IN	\
+  \x00\x00\x00\xfd				# 0x1a		ttl	\
+  \x00\x0a 					# 0x1e		length	\
+  \x00\x0a					# 0x20	 10 \
+  \x05cumin\xC0\x0c				# 0x22	 cumin.(exim.org) \
+  \xC0\x0c					# 0x2a	 RR:	(exim.org) \
+  \x00\x0f					# 0x2c		MX	\
+  \x00\x01					# 0x2e		IN	\
+  \x00\x00\x00\xfd				# 0x30		ttl	\
+  \x00\x04 					# 0x34		length	\
+  \x00\x14					# 0x36	 20 \
+  \xC0\x22					# 0x38	 (cumin.exim.org)
+# MX, forward reference \
+\x00\x00\x80\x00\x00\x00\x00\x02\x00\x00\x00\x00 #	header: 2 RRs \
+  \x04exim\x03org\x00				# 0x0c	 RR:	exim.org \
+  \x00\x0f					# 0x16		MX	\
+  \x00\x01					# 0x18		IN	\
+  \x00\x00\x00\xfd				# 0x1a		ttl	\
+  \x00\x04 					# 0x1e		length	\
+  \x00\x14					# 0x20	 20 \
+  \xC0\x32					# 0x22	 (cumin.exim.org) \
+  \xC0\x0c					# 0x24	 RR:	(exim.org) \
+  \x00\x0f					# 0x26		MX	\
+  \x00\x01					# 0x28		IN	\
+  \x00\x00\x00\xfd				# 0x2a		ttl	\
+  \x00\x0a 					# 0x2e		length	\
+  \x00\x0a					# 0x30	 10 \
+  \x05cumin\xC0\x0c				# 0x32	 cumin.(exim.org)
+# MX, compression loop \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00 # header: 1 RR \
+  \xC0\x1a					# 0x0c	RR:	(fwdref) \
+  \x00\x0f					# 0x0e		MX	\
+  \x00\x01					# 0x10		IN	\
+  \x00\x00\x00\xfd				# 0x12		ttl	\
+  \x00\x0a 					# 0x16		length	\
+  \x00\x0a					# 0x18	10 \
+  \xC0\x0c					# 0x1a	(backref)
 ****
 #
 exim -d+all+dns_rr -be
-compressed MX	${lookup dnsdb{mx=exim.org}}
+compressed MX	${lookup dnsdb{mx=exi6.org}}
+chainedcmp MX	${lookup dnsdb{mx=exi7.org}}
+fwdref     MX	${lookup dnsdb{mx=exi8.org}}
+loopref    MX	${lookup dnsdb{mx=exi9.org}}
 ****
 #
 #

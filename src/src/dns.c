@@ -308,7 +308,9 @@ Return TRUE iff bad.
 static BOOL
 dnsa_bad_ptr(const dns_answer * dnsa, const uschar * ptr)
 {
-return ptr > dnsa->answer + dnsa->answerlen;
+if (ptr <= dnsa->answer + dnsa->answerlen) return FALSE;
+errno = EFAULT;
+return TRUE;
 }
 
 /* Increment the aptr in dnss, checking against dnsa length.
@@ -458,12 +460,12 @@ trace = US"R-name";
 if (dnss_inc_aptr(dnsa, dnss, namelen)) goto null_return;
 
 /* Check space for type, class, TTL & data-size-word */
+trace = US"R-type/class/dsize";
 if (dnsa_bad_ptr(dnsa, dnss->aptr + 3 * sizeof(uint16_t) + sizeof(uint32_t)))
   goto null_return;
 
 GETSHORT(dnss->srr.type, dnss->aptr);			/* Record type */
 
-trace = US"R-class";
 (void) dnss_inc_aptr(dnsa, dnss, sizeof(uint16_t));	/* skip class */
 
 GETLONG(dnss->srr.ttl, dnss->aptr);			/* TTL */
@@ -471,6 +473,7 @@ GETSHORT(dnss->srr.size, dnss->aptr);		/* Size of data portion */
 dnss->srr.data = dnss->aptr;			/* The record's data follows */
 
 /* skip over it, checking for a bogus size */
+trace = US"R-data";
 if (dnss_inc_aptr(dnsa, dnss, dnss->srr.size))
   goto null_return;
 

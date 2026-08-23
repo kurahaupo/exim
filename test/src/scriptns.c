@@ -111,7 +111,7 @@ main(int argc, char ** argv)
 FILE * f;
 line * script = NULL;
 const uschar * sockname;
-uschar buffer[10240];
+uschar buffer[10240], * p;
 int fakens_fd, rc = EXIT_FAILURE;
 
 if (argc != 3)
@@ -137,83 +137,75 @@ fprintf(f, "scriptns: %ld\n", (long)getpid());
 fclose(f);
 f = NULL;
 
+
 /* Read in the controlling script, interpreting \xNN coded bytes, comments
 and continuation lines */
 
+if (debug) fprintf(stderr, "scriptns: reading script\n");
+
+/* Loop reading each physical line, appending in buffer */
+
+p = buffer;
 for (line * next, * last = NULL;
-     fgets(CS buffer, sizeof(buffer), stdin);
-     last = next)
+     fgets(CS p, sizeof(buffer) - (p - buffer), stdin); )
   {
-  uschar * s, * d;
-  int n = Ustrlen(buffer);
+  unsigned plen;
+  int continuation = 0, comment = 0;
+  uschar * s, * t, c;
 
-  buffer[n] = '\0';
-  if (strcmp(CS buffer, "++++\n") == 0) break;
-  next = malloc(sizeof(line) + n);
-  next->next = NULL;
-  d = next->line;
+  plen = Ustrlen(p);
+  if (p[plen-1] == '\n') p[--plen] = '\0';		/* trim NL */
 
-continuation:
-  for (s = buffer; isblank(*s); ) s++;  /* drop leading spaces */
-  for ( ; *s; s++)
+  if (strcmp(CS p, "++++") == 0) break;
+
+  for (s = p; isblank(*s); ) s++;
+  if (s > p)
     {
-    uschar cl = *s, ch;
-    switch (cl)
-      {
-      case '\\':
-        switch (cl = *++s)
-          {
-          case '\n':		/* continuation line */
-do_cont:			/* cf. "Duff's Device" ! */
-            {
-            line * extra;
-            int i;
-
-            while (d > next->line && isblank(d[-1])) d--;
-            i = d - next->line;
-            if (!fgets(CS buffer, sizeof(buffer), stdin)) break;
-            n = Ustrlen(buffer);
-            buffer[n] = '\0';
-            if (strcmp(CS buffer, "++++\n") == 0) break;
-            extra = malloc(sizeof(line) + i + n);
-            extra->next = NULL;
-            memcpy(extra->line, next->line, i);
-
-            d = extra->line + i;
-            next = extra;
-            goto continuation;
-            }
-
-          case 'x':		/* hex coded */
-            if ((ch = *++s - '0') > 9 && (ch -= 'A'-'9'-1) > 15) ch -= 'a'-'A';
-            if ((cl = *++s - '0') > 9 && (cl -= 'A'-'9'-1) > 15) cl -= 'a'-'A';
-            cl |= ch << 4;
-            break;
-	  default:		/* any other char is just accepted as normal */
-	    break;
-          }
-        *d++ = cl;
-        break;
-      case '#': /* comment dumps to eol, but there could be a continuation */
-        while ((cl = *++s))
-          if (cl == '\\' && s[1] == '\n') goto do_cont;
-          else if (cl == '\n') break;
-        break;
-      default:              /* normal char */
-        *d++ = cl;
-        break;
-      }
+    plen -= s - p;
+    memmove(p, s, plen+1);				/* drop leading WS */
     }
 
-  while (d > next->line && isblank(d[-1])) d--; /* trim NL & trailing spaces */
-  next->len = d - next->line;
-  if (debug) fprintf(stderr, "scriptns: len %d\n", next->len);
+  for (s = p, t = s - 1; c = *s; s++)			/* find last nonWS */
+    if (!isspace(c))
+      if (c == '#') comment = 1;			/* start of comment */
+      else if (c != '\\') { if (!comment) t = s; }	/* plain ch */
+      else if (!*++s) { continuation = 1; break; }	/* continuation */
+      else if (!comment) t = s;				/* escaped ch */
+  *++t = '\0';					/* drop trailing WS & comment */
 
+  if (continuation)
+    { p = t; continue; }			/* next physical line */
+
+  /* Allocate & link new script "line" struct */
+
+  next = malloc(sizeof(line) + (t - buffer));	/* res len always <= src */
   if (last)
     last->next = next;
   else
     script = next;
+  next->next = NULL;
+
+  /* Copy the logical line to the "line" struct, handling hexcoded bytes */
+
+  for (s = buffer, t = next->line; *s; s++, t++)
+    {
+    uschar cl = *s, ch;
+    if (cl == '\\' && (cl = *++s) == 'x')		/* hex coded */
+      {
+      if ((ch = *++s - '0') > 9 && (ch -= 'A'-'9'-1) > 15) ch -= 'a'-'A';
+      if ((cl = *++s - '0') > 9 && (cl -= 'A'-'9'-1) > 15) cl -= 'a'-'A';
+      cl |= ch << 4;
+      }
+    *t = cl;
+    }
+  next->len = t - next->line;
+
+  /* Set up for next logical line */
+
+  p = buffer;
+  last = next;
   }
+
 fclose(stdin);
 
 /* fakens does a one-time dns cmd/resp, on a new exec with cmdline.
@@ -227,7 +219,7 @@ it for observability of what the SUT exim asked.
 /* Walk the script lines, waiting for a request for each line then
 responding with the line data. */
 
-if (debug) fprintf(stderr, "scriptns: reading script\n");
+if (debug) fprintf(stderr, "scriptns: running script\n");
 for (; script; script = script->next)
   {
   struct sockaddr_un sa_un;
