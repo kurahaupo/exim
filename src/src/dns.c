@@ -1016,11 +1016,14 @@ exim_dn_expand(const dns_answer * dnsa, const dns_record * rr,
   const uschar * cmp_dn, uschar * buf, size_t blen)
 {
 int rc;
-const uschar * s;
+const uschar * t = rr->data + rr->size, * s;
 
-for (s = cmp_dn; *s; ) s++;
+for (s = cmp_dn; s < t; s++)
+  if (  s == t-1 && s > rr->data+1 && s[-1] >= 0xc0	/* compression */
+     || !*s)						/* plain */
+    { s = NULL;	break; }
 
-if (s >= rr->data + rr->size)
+if (s)
   s = US"overruns RR size";
 else if ((rc = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, cmp_dn,
 		    (DN_EXPAND_ARG4_TYPE)buf, blen)) < 0)
