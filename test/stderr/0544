@@ -621,7 +621,7 @@ check condition = ${if match_domain {$sender_helo_name}{$domain}}
    ╰─────result: ehlo.domain
               ╰──(tainted)
    ╭───scanning: $domain}}
-   ├───────text: $domain
+   ├────────var: domain
    ├───scanning: }}
    ├───expanded: $domain
    ├─────result:  ◀skipped▶

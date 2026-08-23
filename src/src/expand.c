@@ -3011,7 +3011,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	string_sprintf("missing 2nd string in {} after %q", opname);
       goto failout;
       }
-    flags = ESI_BRACE_ENDS | ESI_SKIPPING;
+    flags = ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | ESI_SKIPPING;
     if (!expand_string_internal(++s, flags, &t, resetok, &textonly))
       goto failout;
     if (textonly) sub_textonly |= BIT(1);

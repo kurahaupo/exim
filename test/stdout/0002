@@ -1099,8 +1099,9 @@ xyz
 > match_ip:        16 
 > match_ip:        17 
 > 
-> in list
-> in list
+> inlist{aa}{aa}			in list
+> !inlist{aa}{aa}			in list
+> inlist {X.aa.bb} {*.aa.bb : ^\Nxxx(.*)} in list
 > 
 > variable m0 set
 > '${listextract {2} {my:target:string:list}}'  =>   'target'

@@ -1152,8 +1152,9 @@ match_ip:        17 ${if match_ip{::1}{<; aaaa:bbbb}}
 ****
 # Operation of inlist and negated inlist
 exim -be
-${if inlist{aa}{aa} {in list}{not in list}}
-${if !inlist{aa}{aa} {not in list}{in list}}
+inlist{aa}{aa}			${if inlist{aa}{aa} {in list}{not in list}}
+!inlist{aa}{aa}			${if !inlist{aa}{aa} {not in list}{in list}}
+inlist {X.aa.bb} {${listnamed:dlist}} ${if inlist {X.aa.bb} {${listnamed:dlist}} {in list}{not in list}}
 ****
 # listextract from tainted list
 exim -d-all+expand -be
