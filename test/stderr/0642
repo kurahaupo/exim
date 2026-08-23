@@ -1,4 +1,4 @@
-### ${lookup dnsdb
+### baseline ${lookup dnsdb
 01:01:01 p1234  Exim version x.yz uid=CALLER_UID gid=CALLER_GID pid=p1234 -d=0xffffffffef1fffff
 01:01:01 p1234  Hints DB:
 01:01:01 p1234  macros_trusted overridden to true by whitelisting
@@ -183,293 +183,391 @@ fakens: resp received: len 50
 01:01:01 p1234   ├───expanded: good░MX░░░${lookup░dnsdb{mx=exim.org}}
 01:01:01 p1234   ╰─────result: good░MX░░░10░cumin.exim.org
 01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: backsl░MX░░${lookup░dnsdb{mx=exi1.org}}
-01:01:01 p1234   ├───────text: backsl░MX░░
-01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi1.org}}
-01:01:01 p1234    ╭considering: mx=exi1.org}}
-01:01:01 p1234    ├───────text: mx=exi1.org
-01:01:01 p1234    ├considering: }}
-01:01:01 p1234    ├───expanded: mx=exi1.org
-01:01:01 p1234    ╰─────result: mx=exi1.org
-01:01:01 p1234   search_open: dnsdb "NULL"
-01:01:01 p1234   search_find: file="NULL"
-01:01:01 p1234     key="mx=exi1.org" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1234   LRU list:
-01:01:01 p1234   internal_search_find: file=<NULL>
-01:01:01 p1234     type=dnsdb key="mx=exi1.org" opts=NULL
-01:01:01 p1234   database lookup required for mx=exi1.org
-01:01:01 p1234   dnsdb key: exi1.org
-01:01:01 p1234   DNS lookup of exi1.org (MX) using fakens
+01:01:01 p1234  search_tidyup called
+01:01:01 p1234  >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### backslash ${lookup dnsdb
+01:01:01 p1235  Exim version x.yz uid=CALLER_UID gid=CALLER_GID pid=p1235 -d=0xffffffffef1fffff
+01:01:01 p1235  Hints DB:
+01:01:01 p1235  macros_trusted overridden to true by whitelisting
+01:01:01 p1235  changed uid/gid: -C, -D, -be or -bf forces real uid
+01:01:01 p1235     uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1235
+01:01:01 p1235  environment after trimming:
+01:01:01 p1235   PATH=<munged>
+01:01:01 p1235  adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
+01:01:01 p1235  configuration file is TESTSUITE/test-config
+01:01:01 p1235  admin user
+01:01:01 p1235  try option 'gecos_pattern'
+01:01:01 p1235  try option 'gecos_name'
+01:01:01 p1235  try option 'unknown_login'
+01:01:01 p1235  originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
+01:01:01 p1235  sender address = CALLER@the.local.host.name
+01:01:01 p1235  set_process_info: pppp expansion-test
+01:01:01 p1235   ╭considering: backsl░MX░░${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1235   ├───────text: backsl░MX░░
+01:01:01 p1235   ├considering: ${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1235    ╭considering: mx=exi1.org}}
+01:01:01 p1235    ├───────text: mx=exi1.org
+01:01:01 p1235    ├considering: }}
+01:01:01 p1235    ├───expanded: mx=exi1.org
+01:01:01 p1235    ╰─────result: mx=exi1.org
+01:01:01 p1235   search_open: dnsdb "NULL"
+01:01:01 p1235   search_find: file="NULL"
+01:01:01 p1235     key="mx=exi1.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1235   LRU list:
+01:01:01 p1235   internal_search_find: file=<NULL>
+01:01:01 p1235     type=dnsdb key="mx=exi1.org" opts=NULL
+01:01:01 p1235   database lookup required for mx=exi1.org
+01:01:01 p1235   dnsdb key: exi1.org
+01:01:01 p1235   DNS lookup of exi1.org (MX) using fakens
 fakens: scripted mode
 fakens remote: TESTSUITE/aux-var/scriptns
 fakens local: TESTSUITE/tmp/fakens
 fakens: req sent
 fakens: resp received: len 53
-01:01:01 p1234   DNS lookup of exi1.org (MX) succeeded
-01:01:01 p1234   dns_lookup: scan for CNAME RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 21 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   dnsdb_find: search for MX RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 21 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup yielded: 10░cu\155in.exim.org
-01:01:01 p1234   ├───item-res: 10░cu\155in.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ├───expanded: backsl░MX░░${lookup░dnsdb{mx=exi1.org}}
-01:01:01 p1234   ╰─────result: backsl░MX░░10░cu\155in.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: back░0░MX░░${lookup░dnsdb{mx=ex01.org}}
-01:01:01 p1234   ├───────text: back░0░MX░░
-01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=ex01.org}}
-01:01:01 p1234    ╭considering: mx=ex01.org}}
-01:01:01 p1234    ├───────text: mx=ex01.org
-01:01:01 p1234    ├considering: }}
-01:01:01 p1234    ├───expanded: mx=ex01.org
-01:01:01 p1234    ╰─────result: mx=ex01.org
-01:01:01 p1234   search_open: dnsdb "NULL"
-01:01:01 p1234   search_find: file="NULL"
-01:01:01 p1234     key="mx=ex01.org" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1234   LRU list:
-01:01:01 p1234   internal_search_find: file=<NULL>
-01:01:01 p1234     type=dnsdb key="mx=ex01.org" opts=NULL
-01:01:01 p1234   database lookup required for mx=ex01.org
-01:01:01 p1234   dnsdb key: ex01.org
-01:01:01 p1234   DNS lookup of ex01.org (MX) using fakens
+01:01:01 p1235   DNS lookup of exi1.org (MX) succeeded
+01:01:01 p1235   dns_lookup: scan for CNAME RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: return 21 byte MX
+01:01:01 p1235    dns_next_rr: next (0 left)
+01:01:01 p1235   dnsdb_find: search for MX RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: return 21 byte MX
+01:01:01 p1235    dns_next_rr: next (0 left)
+01:01:01 p1235   creating new cache entry
+01:01:01 p1235   lookup yielded: 10░cu\155in.exim.org
+01:01:01 p1235   ├───item-res: 10░cu\155in.exim.org
+01:01:01 p1235              ╰──(tainted)
+01:01:01 p1235   ├───expanded: backsl░MX░░${lookup░dnsdb{mx=exi1.org}}
+01:01:01 p1235   ╰─────result: backsl░MX░░10░cu\155in.exim.org
+01:01:01 p1235              ╰──(tainted)
+01:01:01 p1235   ╭considering: back░0░MX░░${lookup░dnsdb{mx=ex01.org}}
+01:01:01 p1235   ├───────text: back░0░MX░░
+01:01:01 p1235   ├considering: ${lookup░dnsdb{mx=ex01.org}}
+01:01:01 p1235    ╭considering: mx=ex01.org}}
+01:01:01 p1235    ├───────text: mx=ex01.org
+01:01:01 p1235    ├considering: }}
+01:01:01 p1235    ├───expanded: mx=ex01.org
+01:01:01 p1235    ╰─────result: mx=ex01.org
+01:01:01 p1235   search_open: dnsdb "NULL"
+01:01:01 p1235   search_find: file="NULL"
+01:01:01 p1235     key="mx=ex01.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1235   LRU list:
+01:01:01 p1235   internal_search_find: file=<NULL>
+01:01:01 p1235     type=dnsdb key="mx=ex01.org" opts=NULL
+01:01:01 p1235   database lookup required for mx=ex01.org
+01:01:01 p1235   dnsdb key: ex01.org
+01:01:01 p1235   DNS lookup of ex01.org (MX) using fakens
 fakens: scripted mode
 fakens remote: TESTSUITE/aux-var/scriptns
 fakens local: TESTSUITE/tmp/fakens
 fakens: req sent
 fakens: resp received: len 52
-01:01:01 p1234   DNS lookup of ex01.org (MX) succeeded
-01:01:01 p1234   dns_lookup: scan for CNAME RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
-01:01:01 p1234   dnsdb_find: search for MX RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
-01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup failed
-01:01:01 p1234   ├───item-res: 
-01:01:01 p1234   ├───expanded: back░0░MX░░${lookup░dnsdb{mx=ex01.org}}
-01:01:01 p1234   ╰─────result: back░0░MX░░
-01:01:01 p1234   ╭considering: back░1░MX░░${lookup░dnsdb{mx=ex11.org}}
-01:01:01 p1234   ├───────text: back░1░MX░░
-01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=ex11.org}}
-01:01:01 p1234    ╭considering: mx=ex11.org}}
-01:01:01 p1234    ├───────text: mx=ex11.org
-01:01:01 p1234    ├considering: }}
-01:01:01 p1234    ├───expanded: mx=ex11.org
-01:01:01 p1234    ╰─────result: mx=ex11.org
-01:01:01 p1234   search_open: dnsdb "NULL"
-01:01:01 p1234   search_find: file="NULL"
-01:01:01 p1234     key="mx=ex11.org" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1234   LRU list:
-01:01:01 p1234   internal_search_find: file=<NULL>
-01:01:01 p1234     type=dnsdb key="mx=ex11.org" opts=NULL
-01:01:01 p1234   database lookup required for mx=ex11.org
-01:01:01 p1234   dnsdb key: ex11.org
-01:01:01 p1234   DNS lookup of ex11.org (MX) using fakens
+01:01:01 p1235   DNS lookup of ex01.org (MX) succeeded
+01:01:01 p1235   dns_lookup: scan for CNAME RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1235   dnsdb_find: search for MX RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1235   creating new cache entry
+01:01:01 p1235   lookup failed
+01:01:01 p1235   ├───item-res: 
+01:01:01 p1235   ├───expanded: back░0░MX░░${lookup░dnsdb{mx=ex01.org}}
+01:01:01 p1235   ╰─────result: back░0░MX░░
+01:01:01 p1235   ╭considering: back░1░MX░░${lookup░dnsdb{mx=ex11.org}}
+01:01:01 p1235   ├───────text: back░1░MX░░
+01:01:01 p1235   ├considering: ${lookup░dnsdb{mx=ex11.org}}
+01:01:01 p1235    ╭considering: mx=ex11.org}}
+01:01:01 p1235    ├───────text: mx=ex11.org
+01:01:01 p1235    ├considering: }}
+01:01:01 p1235    ├───expanded: mx=ex11.org
+01:01:01 p1235    ╰─────result: mx=ex11.org
+01:01:01 p1235   search_open: dnsdb "NULL"
+01:01:01 p1235   search_find: file="NULL"
+01:01:01 p1235     key="mx=ex11.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1235   LRU list:
+01:01:01 p1235   internal_search_find: file=<NULL>
+01:01:01 p1235     type=dnsdb key="mx=ex11.org" opts=NULL
+01:01:01 p1235   database lookup required for mx=ex11.org
+01:01:01 p1235   dnsdb key: ex11.org
+01:01:01 p1235   DNS lookup of ex11.org (MX) using fakens
 fakens: scripted mode
 fakens remote: TESTSUITE/aux-var/scriptns
 fakens local: TESTSUITE/tmp/fakens
 fakens: req sent
 fakens: resp received: len 50
-01:01:01 p1234   DNS lookup of ex11.org (MX) succeeded
-01:01:01 p1234   dns_lookup: scan for CNAME RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
-01:01:01 p1234   dnsdb_find: search for MX RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
-01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup failed
-01:01:01 p1234   ├───item-res: 
-01:01:01 p1234   ├───expanded: back░1░MX░░${lookup░dnsdb{mx=ex11.org}}
-01:01:01 p1234   ╰─────result: back░1░MX░░
-01:01:01 p1234   ╭considering: topbit░MX░░${lookup░dnsdb{mx=exi2.org}}
-01:01:01 p1234   ├───────text: topbit░MX░░
-01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi2.org}}
-01:01:01 p1234    ╭considering: mx=exi2.org}}
-01:01:01 p1234    ├───────text: mx=exi2.org
-01:01:01 p1234    ├considering: }}
-01:01:01 p1234    ├───expanded: mx=exi2.org
-01:01:01 p1234    ╰─────result: mx=exi2.org
-01:01:01 p1234   search_open: dnsdb "NULL"
-01:01:01 p1234   search_find: file="NULL"
-01:01:01 p1234     key="mx=exi2.org" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1234   LRU list:
-01:01:01 p1234   internal_search_find: file=<NULL>
-01:01:01 p1234     type=dnsdb key="mx=exi2.org" opts=NULL
-01:01:01 p1234   database lookup required for mx=exi2.org
-01:01:01 p1234   dnsdb key: exi2.org
-01:01:01 p1234   DNS lookup of exi2.org (MX) using fakens
+01:01:01 p1235   DNS lookup of ex11.org (MX) succeeded
+01:01:01 p1235   dns_lookup: scan for CNAME RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1235   dnsdb_find: search for MX RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-class; errno 0 Success
+01:01:01 p1235   creating new cache entry
+01:01:01 p1235   lookup failed
+01:01:01 p1235   ├───item-res: 
+01:01:01 p1235   ├───expanded: back░1░MX░░${lookup░dnsdb{mx=ex11.org}}
+01:01:01 p1235   ╰─────result: back░1░MX░░
+01:01:01 p1235   ╭considering: topbit░MX░░${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1235   ├───────text: topbit░MX░░
+01:01:01 p1235   ├considering: ${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1235    ╭considering: mx=exi2.org}}
+01:01:01 p1235    ├───────text: mx=exi2.org
+01:01:01 p1235    ├considering: }}
+01:01:01 p1235    ├───expanded: mx=exi2.org
+01:01:01 p1235    ╰─────result: mx=exi2.org
+01:01:01 p1235   search_open: dnsdb "NULL"
+01:01:01 p1235   search_find: file="NULL"
+01:01:01 p1235     key="mx=exi2.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1235   LRU list:
+01:01:01 p1235   internal_search_find: file=<NULL>
+01:01:01 p1235     type=dnsdb key="mx=exi2.org" opts=NULL
+01:01:01 p1235   database lookup required for mx=exi2.org
+01:01:01 p1235   dnsdb key: exi2.org
+01:01:01 p1235   DNS lookup of exi2.org (MX) using fakens
 fakens: scripted mode
 fakens remote: TESTSUITE/aux-var/scriptns
 fakens local: TESTSUITE/tmp/fakens
 fakens: req sent
 fakens: resp received: len 50
-01:01:01 p1234   DNS lookup of exi2.org (MX) succeeded
-01:01:01 p1234   dns_lookup: scan for CNAME RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 18 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   dnsdb_find: search for MX RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 18 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup yielded: 10░c�min.exim.org
-01:01:01 p1234   ├───item-res: 10░c�min.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ├───expanded: topbit░MX░░${lookup░dnsdb{mx=exi2.org}}
-01:01:01 p1234   ╰─────result: topbit░MX░░10░c�min.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: unused-d░░░${lookup░dnsdb{mx=exi3.org}}
-01:01:01 p1234   ├───────text: unused-d░░░
-01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi3.org}}
-01:01:01 p1234    ╭considering: mx=exi3.org}}
-01:01:01 p1234    ├───────text: mx=exi3.org
-01:01:01 p1234    ├considering: }}
-01:01:01 p1234    ├───expanded: mx=exi3.org
-01:01:01 p1234    ╰─────result: mx=exi3.org
-01:01:01 p1234   search_open: dnsdb "NULL"
-01:01:01 p1234   search_find: file="NULL"
-01:01:01 p1234     key="mx=exi3.org" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1234   LRU list:
-01:01:01 p1234   internal_search_find: file=<NULL>
-01:01:01 p1234     type=dnsdb key="mx=exi3.org" opts=NULL
-01:01:01 p1234   database lookup required for mx=exi3.org
-01:01:01 p1234   dnsdb key: exi3.org
-01:01:01 p1234   DNS lookup of exi3.org (MX) using fakens
+01:01:01 p1235   DNS lookup of exi2.org (MX) succeeded
+01:01:01 p1235   dns_lookup: scan for CNAME RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: return 18 byte MX
+01:01:01 p1235    dns_next_rr: next (0 left)
+01:01:01 p1235   dnsdb_find: search for MX RR
+01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_next_rr: return 18 byte MX
+01:01:01 p1235    dns_next_rr: next (0 left)
+01:01:01 p1235   creating new cache entry
+01:01:01 p1235   lookup yielded: 10░c�min.exim.org
+01:01:01 p1235   ├───item-res: 10░c�min.exim.org
+01:01:01 p1235              ╰──(tainted)
+01:01:01 p1235   ├───expanded: topbit░MX░░${lookup░dnsdb{mx=exi2.org}}
+01:01:01 p1235   ╰─────result: topbit░MX░░10░c�min.exim.org
+01:01:01 p1235              ╰──(tainted)
+01:01:01 p1235  search_tidyup called
+01:01:01 p1235  >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+### bad sizes ${lookup dnsdb
+01:01:01 p1236  Exim version x.yz uid=CALLER_UID gid=CALLER_GID pid=p1236 -d=0xffffffffef1fffff
+01:01:01 p1236  Hints DB:
+01:01:01 p1236  macros_trusted overridden to true by whitelisting
+01:01:01 p1236  changed uid/gid: -C, -D, -be or -bf forces real uid
+01:01:01 p1236     uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1236
+01:01:01 p1236  environment after trimming:
+01:01:01 p1236   PATH=<munged>
+01:01:01 p1236  adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
+01:01:01 p1236  configuration file is TESTSUITE/test-config
+01:01:01 p1236  admin user
+01:01:01 p1236  try option 'gecos_pattern'
+01:01:01 p1236  try option 'gecos_name'
+01:01:01 p1236  try option 'unknown_login'
+01:01:01 p1236  originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
+01:01:01 p1236  sender address = CALLER@the.local.host.name
+01:01:01 p1236  set_process_info: pppp expansion-test
+01:01:01 p1236   ╭considering: unused-d░░░${lookup░dnsdb{mx=exi3.org}}
+01:01:01 p1236   ├───────text: unused-d░░░
+01:01:01 p1236   ├considering: ${lookup░dnsdb{mx=exi3.org}}
+01:01:01 p1236    ╭considering: mx=exi3.org}}
+01:01:01 p1236    ├───────text: mx=exi3.org
+01:01:01 p1236    ├considering: }}
+01:01:01 p1236    ├───expanded: mx=exi3.org
+01:01:01 p1236    ╰─────result: mx=exi3.org
+01:01:01 p1236   search_open: dnsdb "NULL"
+01:01:01 p1236   search_find: file="NULL"
+01:01:01 p1236     key="mx=exi3.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1236   LRU list:
+01:01:01 p1236   internal_search_find: file=<NULL>
+01:01:01 p1236     type=dnsdb key="mx=exi3.org" opts=NULL
+01:01:01 p1236   database lookup required for mx=exi3.org
+01:01:01 p1236   dnsdb key: exi3.org
+01:01:01 p1236   DNS lookup of exi3.org (MX) using fakens
 fakens: scripted mode
 fakens remote: TESTSUITE/aux-var/scriptns
 fakens local: TESTSUITE/tmp/fakens
 fakens: req sent
 fakens: resp received: len 52
-01:01:01 p1234   DNS lookup of exi3.org (MX) succeeded
-01:01:01 p1234   dns_lookup: scan for CNAME RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 18 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   dnsdb_find: search for MX RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 18 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup yielded: 10░cumin.exim.org
-01:01:01 p1234   ├───item-res: 10░cumin.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ├───expanded: unused-d░░░${lookup░dnsdb{mx=exi3.org}}
-01:01:01 p1234   ╰─────result: unused-d░░░10░cumin.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: unused-d2░░${lookup░dnsdb{mx=exi4.org}}
-01:01:01 p1234   ├───────text: unused-d2░░
-01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi4.org}}
-01:01:01 p1234    ╭considering: mx=exi4.org}}
-01:01:01 p1234    ├───────text: mx=exi4.org
-01:01:01 p1234    ├considering: }}
-01:01:01 p1234    ├───expanded: mx=exi4.org
-01:01:01 p1234    ╰─────result: mx=exi4.org
-01:01:01 p1234   search_open: dnsdb "NULL"
-01:01:01 p1234   search_find: file="NULL"
-01:01:01 p1234     key="mx=exi4.org" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1234   LRU list:
-01:01:01 p1234   internal_search_find: file=<NULL>
-01:01:01 p1234     type=dnsdb key="mx=exi4.org" opts=NULL
-01:01:01 p1234   database lookup required for mx=exi4.org
-01:01:01 p1234   dnsdb key: exi4.org
-01:01:01 p1234   DNS lookup of exi4.org (MX) using fakens
+01:01:01 p1236   DNS lookup of exi3.org (MX) succeeded
+01:01:01 p1236   dns_lookup: scan for CNAME RR
+01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_next_rr: return 18 byte MX
+01:01:01 p1236    dns_next_rr: next (0 left)
+01:01:01 p1236   dnsdb_find: search for MX RR
+01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_next_rr: return 18 byte MX
+01:01:01 p1236    dns_next_rr: next (0 left)
+01:01:01 p1236   creating new cache entry
+01:01:01 p1236   lookup yielded: 10░cumin.exim.org
+01:01:01 p1236   ├───item-res: 10░cumin.exim.org
+01:01:01 p1236              ╰──(tainted)
+01:01:01 p1236   ├───expanded: unused-d░░░${lookup░dnsdb{mx=exi3.org}}
+01:01:01 p1236   ╰─────result: unused-d░░░10░cumin.exim.org
+01:01:01 p1236              ╰──(tainted)
+01:01:01 p1236   ╭considering: unused-d2░░${lookup░dnsdb{mx=exi4.org}}
+01:01:01 p1236   ├───────text: unused-d2░░
+01:01:01 p1236   ├considering: ${lookup░dnsdb{mx=exi4.org}}
+01:01:01 p1236    ╭considering: mx=exi4.org}}
+01:01:01 p1236    ├───────text: mx=exi4.org
+01:01:01 p1236    ├considering: }}
+01:01:01 p1236    ├───expanded: mx=exi4.org
+01:01:01 p1236    ╰─────result: mx=exi4.org
+01:01:01 p1236   search_open: dnsdb "NULL"
+01:01:01 p1236   search_find: file="NULL"
+01:01:01 p1236     key="mx=exi4.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1236   LRU list:
+01:01:01 p1236   internal_search_find: file=<NULL>
+01:01:01 p1236     type=dnsdb key="mx=exi4.org" opts=NULL
+01:01:01 p1236   database lookup required for mx=exi4.org
+01:01:01 p1236   dnsdb key: exi4.org
+01:01:01 p1236   DNS lookup of exi4.org (MX) using fakens
 fakens: scripted mode
 fakens remote: TESTSUITE/aux-var/scriptns
 fakens local: TESTSUITE/tmp/fakens
 fakens: req sent
 fakens: resp received: len 52
-01:01:01 p1234   DNS lookup of exi4.org (MX) succeeded
-01:01:01 p1234   dns_lookup: scan for CNAME RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 19 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   dnsdb_find: search for MX RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 19 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup yielded: 10░cumin.exim.org
-01:01:01 p1234   ├───item-res: 10░cumin.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ├───expanded: unused-d2░░${lookup░dnsdb{mx=exi4.org}}
-01:01:01 p1234   ╰─────result: unused-d2░░10░cumin.exim.org
-01:01:01 p1234              ╰──(tainted)
-01:01:01 p1234   ╭considering: oversz░RR░░${lookup░dnsdb{mx=exi5.org}}
-01:01:01 p1234   ├───────text: oversz░RR░░
-01:01:01 p1234   ├considering: ${lookup░dnsdb{mx=exi5.org}}
-01:01:01 p1234    ╭considering: mx=exi5.org}}
-01:01:01 p1234    ├───────text: mx=exi5.org
-01:01:01 p1234    ├considering: }}
-01:01:01 p1234    ├───expanded: mx=exi5.org
-01:01:01 p1234    ╰─────result: mx=exi5.org
-01:01:01 p1234   search_open: dnsdb "NULL"
-01:01:01 p1234   search_find: file="NULL"
-01:01:01 p1234     key="mx=exi5.org" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1234   LRU list:
-01:01:01 p1234   internal_search_find: file=<NULL>
-01:01:01 p1234     type=dnsdb key="mx=exi5.org" opts=NULL
-01:01:01 p1234   database lookup required for mx=exi5.org
-01:01:01 p1234   dnsdb key: exi5.org
-01:01:01 p1234   DNS lookup of exi5.org (MX) using fakens
+01:01:01 p1236   DNS lookup of exi4.org (MX) succeeded
+01:01:01 p1236   dns_lookup: scan for CNAME RR
+01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_next_rr: return 19 byte MX
+01:01:01 p1236    dns_next_rr: next (0 left)
+01:01:01 p1236   dnsdb_find: search for MX RR
+01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_next_rr: return 19 byte MX
+01:01:01 p1236    dns_next_rr: next (0 left)
+01:01:01 p1236   creating new cache entry
+01:01:01 p1236   lookup yielded: 10░cumin.exim.org
+01:01:01 p1236   ├───item-res: 10░cumin.exim.org
+01:01:01 p1236              ╰──(tainted)
+01:01:01 p1236   ├───expanded: unused-d2░░${lookup░dnsdb{mx=exi4.org}}
+01:01:01 p1236   ╰─────result: unused-d2░░10░cumin.exim.org
+01:01:01 p1236              ╰──(tainted)
+01:01:01 p1236   ╭considering: oversz░RR░░${lookup░dnsdb{mx=exi5.org}}
+01:01:01 p1236   ├───────text: oversz░RR░░
+01:01:01 p1236   ├considering: ${lookup░dnsdb{mx=exi5.org}}
+01:01:01 p1236    ╭considering: mx=exi5.org}}
+01:01:01 p1236    ├───────text: mx=exi5.org
+01:01:01 p1236    ├considering: }}
+01:01:01 p1236    ├───expanded: mx=exi5.org
+01:01:01 p1236    ╰─────result: mx=exi5.org
+01:01:01 p1236   search_open: dnsdb "NULL"
+01:01:01 p1236   search_find: file="NULL"
+01:01:01 p1236     key="mx=exi5.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1236   LRU list:
+01:01:01 p1236   internal_search_find: file=<NULL>
+01:01:01 p1236     type=dnsdb key="mx=exi5.org" opts=NULL
+01:01:01 p1236   database lookup required for mx=exi5.org
+01:01:01 p1236   dnsdb key: exi5.org
+01:01:01 p1236   DNS lookup of exi5.org (MX) using fakens
 fakens: scripted mode
 fakens remote: TESTSUITE/aux-var/scriptns
 fakens local: TESTSUITE/tmp/fakens
 fakens: req sent
 fakens: resp received: len 50
-01:01:01 p1234   DNS lookup of exi5.org (MX) succeeded
-01:01:01 p1234   dns_lookup: scan for CNAME RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 17 byte MX
-01:01:01 p1234    dns_next_rr: next (0 left)
-01:01:01 p1234   dnsdb_find: search for MX RR
-01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
-01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
-01:01:01 p1234    dns_next_rr: 1 RRs to read
-01:01:01 p1234    dns_next_rr: return 17 byte MX
-01:01:01 p1234  LOG: MAIN
-01:01:01 p1234    dns name overruns RR size: type=MX for exim.org
-01:01:01 p1234   creating new cache entry
-01:01:01 p1234   lookup failed
-01:01:01 p1234   ├───item-res: 
-01:01:01 p1234   ├───expanded: oversz░RR░░${lookup░dnsdb{mx=exi5.org}}
-01:01:01 p1234   ╰─────result: oversz░RR░░
-01:01:01 p1234  search_tidyup called
-01:01:01 p1234  >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+01:01:01 p1236   DNS lookup of exi5.org (MX) succeeded
+01:01:01 p1236   dns_lookup: scan for CNAME RR
+01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_next_rr: return 17 byte MX
+01:01:01 p1236    dns_next_rr: next (0 left)
+01:01:01 p1236   dnsdb_find: search for MX RR
+01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_next_rr: return 17 byte MX
+01:01:01 p1236  LOG: MAIN
+01:01:01 p1236    dns name overruns RR size: type=MX for exim.org
+01:01:01 p1236   creating new cache entry
+01:01:01 p1236   lookup failed
+01:01:01 p1236   ├───item-res: 
+01:01:01 p1236   ├───expanded: oversz░RR░░${lookup░dnsdb{mx=exi5.org}}
+01:01:01 p1236   ╰─────result: oversz░RR░░
+01:01:01 p1236  search_tidyup called
+01:01:01 p1236  >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+01:01:01 p1237  Exim version x.yz uid=CALLER_UID gid=CALLER_GID pid=p1237 -d=0xffffffffef1fffff
+01:01:01 p1237  Hints DB:
+01:01:01 p1237  macros_trusted overridden to true by whitelisting
+01:01:01 p1237  changed uid/gid: -C, -D, -be or -bf forces real uid
+01:01:01 p1237     uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1237
+01:01:01 p1237  environment after trimming:
+01:01:01 p1237   PATH=<munged>
+01:01:01 p1237  adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
+01:01:01 p1237  configuration file is TESTSUITE/test-config
+01:01:01 p1237  admin user
+01:01:01 p1237  try option 'gecos_pattern'
+01:01:01 p1237  try option 'gecos_name'
+01:01:01 p1237  try option 'unknown_login'
+01:01:01 p1237  originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
+01:01:01 p1237  sender address = CALLER@the.local.host.name
+01:01:01 p1237  set_process_info: pppp expansion-test
+01:01:01 p1237   ╭considering: compressed░MX␉${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1237   ├───────text: compressed░MX␉
+01:01:01 p1237   ├considering: ${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1237    ╭considering: mx=exim.org}}
+01:01:01 p1237    ├───────text: mx=exim.org
+01:01:01 p1237    ├considering: }}
+01:01:01 p1237    ├───expanded: mx=exim.org
+01:01:01 p1237    ╰─────result: mx=exim.org
+01:01:01 p1237   search_open: dnsdb "NULL"
+01:01:01 p1237   search_find: file="NULL"
+01:01:01 p1237     key="mx=exim.org" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1237   LRU list:
+01:01:01 p1237   internal_search_find: file=<NULL>
+01:01:01 p1237     type=dnsdb key="mx=exim.org" opts=NULL
+01:01:01 p1237   database lookup required for mx=exim.org
+01:01:01 p1237   dnsdb key: exim.org
+01:01:01 p1237   DNS lookup of exim.org (MX) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 42
+01:01:01 p1237   DNS lookup of exim.org (MX) succeeded
+01:01:01 p1237   dns_lookup: scan for CNAME RR
+01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1237    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1237    dns_next_rr: 1 RRs to read
+01:01:01 p1237    dns_next_rr: return 10 byte MX
+01:01:01 p1237    dns_next_rr: next (0 left)
+01:01:01 p1237   dnsdb_find: search for MX RR
+01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1237    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1237    dns_next_rr: 1 RRs to read
+01:01:01 p1237    dns_next_rr: return 10 byte MX
+01:01:01 p1237    dns_next_rr: next (0 left)
+01:01:01 p1237   creating new cache entry
+01:01:01 p1237   lookup yielded: 10░cumin.exim.org
+01:01:01 p1237   ├───item-res: 10░cumin.exim.org
+01:01:01 p1237              ╰──(tainted)
+01:01:01 p1237   ├───expanded: compressed░MX␉${lookup░dnsdb{mx=exim.org}}
+01:01:01 p1237   ╰─────result: compressed░MX␉10░cumin.exim.org
+01:01:01 p1237              ╰──(tainted)
+01:01:01 p1237  search_tidyup called
+01:01:01 p1237  >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### -bh, host_lookup
 Exim version x.yz ....
 sender_fullhost = [127.0.0.1]
@@ -500,7 +598,7 @@ host in helo_try_verify_hosts? no (option unset)
 host in helo_accept_junk_hosts? no (option unset)
 sender_fullhost = localhost (myname) [127.0.0.1]
 sender_rcvhost = localhost ([127.0.0.1] helo=myname)
->>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### host_lookup, backslash
 Exim version x.yz ....
 sender_fullhost = [127.0.0.1]
@@ -528,7 +626,7 @@ backslash in helo_lookup_domains?
 backslash in helo_lookup_domains? no (end of list)
 sender_fullhost = (backslash) [127.0.0.1]
 sender_rcvhost = [127.0.0.1] (helo=backslash)
->>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### host_lookup, topbit-set
 Exim version x.yz ....
 sender_fullhost = [127.0.0.1]
@@ -556,10 +654,12 @@ topbit in helo_lookup_domains?
 topbit in helo_lookup_domains? no (end of list)
 sender_fullhost = (topbit) [127.0.0.1]
 sender_rcvhost = [127.0.0.1] (helo=topbit)
->>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 
 ******** SERVER ********
-### ${lookup dnsdb
+### baseline ${lookup dnsdb
+### backslash ${lookup dnsdb
+### bad sizes ${lookup dnsdb
 ### -bh, host_lookup
 ### host_lookup, backslash
 ### host_lookup, topbit-set

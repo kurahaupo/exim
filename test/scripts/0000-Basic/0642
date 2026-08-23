@@ -8,7 +8,7 @@ mkdir DIR/tmp
 sudo chmod 777 DIR/tmp
 #
 #
-### ${lookup dnsdb
+### baseline ${lookup dnsdb
 dns
 # a good one, as a baseline \
 							# header: 1 RR \
@@ -49,6 +49,18 @@ dns
   \x00\x12 						#	length	\
   \x00\x0a						# 10 \
   \x05cumin\x04exim\x03org\x00				# cumin.exim.org
+****
+#
+exim -d+all+dns_rr -be
+good A    ${lookup dnsdb{a=test.ex}}
+good TXT  ${lookup dnsdb{txt=test.ex}}
+good PTR  ${lookup dnsdb{ptr=8.8.8.8}}
+good MX   ${lookup dnsdb{mx=exim.org}}
+****
+#
+#
+### backslash ${lookup dnsdb
+dns
 # MX, backslash present \
 # (verbatim in result str) \
 \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
@@ -89,6 +101,18 @@ dns
   \x00\x12 						#	length	\
   \x00\x0a						# 10 \
   \x05c\xf5min\x04exim\x03org\x00	# cumin.exim.org (ish)
+****
+#
+exim -d+all+dns_rr -be
+backsl MX  ${lookup dnsdb{mx=exi1.org}}
+back 0 MX  ${lookup dnsdb{mx=ex01.org}}
+back 1 MX  ${lookup dnsdb{mx=ex11.org}}
+topbit MX  ${lookup dnsdb{mx=exi2.org}}
+****
+#
+#
+### bad sizes ${lookup dnsdb
+dns
 # unused packet data after RR \
 # (ignored) \
 \x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
@@ -124,18 +148,28 @@ dns
 ****
 #
 exim -d+all+dns_rr -be
-good A    ${lookup dnsdb{a=test.ex}}
-good TXT  ${lookup dnsdb{txt=test.ex}}
-good PTR  ${lookup dnsdb{ptr=8.8.8.8}}
-good MX   ${lookup dnsdb{mx=exim.org}}
-backsl MX  ${lookup dnsdb{mx=exi1.org}}
-back 0 MX  ${lookup dnsdb{mx=ex01.org}}
-back 1 MX  ${lookup dnsdb{mx=ex11.org}}
-topbit MX  ${lookup dnsdb{mx=exi2.org}}
 unused-d   ${lookup dnsdb{mx=exi3.org}}
 unused-d2  ${lookup dnsdb{mx=exi4.org}}
 oversz RR  ${lookup dnsdb{mx=exi5.org}}
 ****
+#
+#
+dns
+# MX, compressed \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04exim\x03org\x00					# RR:	exim.org \
+  \x00\x0f						#	MX	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xfd					#	ttl	\
+  \x00\x0a 						#	length	\
+  \x00\x0a						# 10 \
+  \x05cumin\xC0\x0c					# cumin.(exim.org)
+****
+#
+exim -d+all+dns_rr -be
+compressed MX	${lookup dnsdb{mx=exim.org}}
+****
+#
 #
 #
 ### -bh, host_lookup
