@@ -1,6 +1,4 @@
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying r11@two.test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -27,8 +25,6 @@ LOG: MAIN REJECT
   U=CALLER F=<x11@two.test.ex> temporarily rejected RCPT r11@two.test.ex: Could not complete recipient verify callout: 127.0.0.1 [127.0.0.1] : SMTP timeout after RCPT TO:<r11@two.test.ex>
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying r11@two.test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

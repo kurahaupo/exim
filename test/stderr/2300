@@ -1,8 +1,5 @@
 Exim version x.yz ....
-environment after trimming:
- PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'

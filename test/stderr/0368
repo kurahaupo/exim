@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
   check dnssec require list
   check dnssec request list
   discarded duplicate host ten-1.test.ex (MX=8)

@@ -4,6 +4,9 @@ changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1236
 seeking password data for user "CALLER": cache not available
 getpwnam() succeeded uid=CALLER_UID gid=CALLER_GID
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -173,8 +176,6 @@ routed by r2 router
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 search_tidyup called
 search_tidyup called
 search_open: dnsdb "NULL"
@@ -215,8 +216,6 @@ search_tidyup called
 
 ******** SERVER ********
 Exim version x.yz ....
-trusted user
-admin user
 daemon_smtp_port overridden by -oX:
   <: PORT_D
 creating notifier socket

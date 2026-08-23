@@ -2,7 +2,6 @@
 WARNING: enabling "trust" authentication for local connections
 initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
 Exim version x.yz ....
-admin user
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -252,6 +251,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1236
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -682,6 +684,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1237
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -736,6 +741,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1238
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -876,7 +884,6 @@ search_tidyup called
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
  search_open: pgsql "NULL"
  search_find: file="NULL"
    key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL

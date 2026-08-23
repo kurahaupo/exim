@@ -1,7 +1,6 @@
 
 ******** SERVER ********
 Exim version x.yz ....
-admin user
 daemon_smtp_port overridden by -oX:
   <: PORT_D
 creating notifier socket

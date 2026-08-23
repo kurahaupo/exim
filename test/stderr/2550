@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
  search_open: dnsdb "NULL"
  search_find: file="NULL"
    key="a=localhost.test.ex" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -21,7 +20,6 @@ admin user
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 search_tidyup called
 search_tidyup called
   search_open: dnsdb "NULL"

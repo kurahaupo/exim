@@ -1,11 +1,8 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@test.ex U=CALLER P=local S=sss
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
-trusted user
-admin user
 running system filter
   Filtering did not set up a significant delivery.
   Normal delivery will occur.
@@ -13,13 +10,9 @@ system filter returned 1
 LOG: MAIN
   ** userx@test.ex R=r1 : forced fail
 Exim version x.yz ....
-trusted user
-admin user
 LOG: MAIN
   <= <> R=10HmaX-000000005vi-0000 U=EXIMUSER P=local S=sss
 Exim version x.yz ....
-trusted user
-admin user
 running system filter
   Filtering did not set up a significant delivery.
   Normal delivery will occur.
@@ -35,7 +28,6 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1236 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1234 -qf
 LOG: MAIN

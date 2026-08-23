@@ -1,7 +1,6 @@
 Exim version x.yz ....
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1234
-admin user
 changed uid/gid: privilege not needed
    uid ROOT->EXIM_UID gid CALLER_GID->EXIM_GID pid=p1234
 LOG: MAIN
@@ -10,8 +9,6 @@ created log directory TESTSUITE/spool/log
 Exim version x.yz ....
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1235
-trusted user
-admin user
 >>>>>>>>>>>>>>>> Local deliveries >>>>>>>>>>>>>>>>
 --------> |TESTSUITE/bin/iefbr14 <--------
 changed uid/gid: local delivery to |TESTSUITE/bin/iefbr14 <|TESTSUITE/bin/iefbr14> transport=t1

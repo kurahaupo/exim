@@ -2,6 +2,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: -C, -D, -be or -bf forces real uid
    uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1234
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME

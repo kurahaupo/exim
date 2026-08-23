@@ -37,7 +37,6 @@ LOG: remote         [127.0.0.2]:10001
 LOG: 10HmaX-000000005vi-0000 <= a@test.ex H=(clientname) [127.0.0.2] P=smtp S=sss
 ### protocol v1 receive
 Exim version x.yz ....
-admin user
 host in hosts_connection_nolog?
  list element: *
   host in hosts_connection_nolog? yes (matched "*")

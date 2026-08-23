@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   U=CALLER Warning: sender_data=SenderData recipient_data=RecipData
 created log directory TESTSUITE/spool/log

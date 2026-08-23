@@ -1,11 +1,8 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
-trusted user
-admin user
 no retry data available
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: defer@myhost.test.ex
@@ -129,7 +126,6 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1236 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1234 -qf
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

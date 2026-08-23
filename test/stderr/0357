@@ -1,11 +1,8 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@test.ex U=CALLER P=local S=sss
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
-trusted user
-admin user
 no retry data available
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: userx@test.ex
@@ -43,7 +40,6 @@ end of retry processing
 >>>>>>>>>>>>>>>> Exim pid=p1238 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1234
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -99,7 +95,6 @@ LOG: MAIN
   End queue run: pid=p1234
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1235
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -155,7 +150,6 @@ LOG: MAIN
   End queue run: pid=p1235
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1236
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

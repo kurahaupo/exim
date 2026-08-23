@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
   DNS lookup of mx46.test.ex (MX) using fakens
   DNS lookup of mx46.test.ex (MX) succeeded
   DNS lookup of 46.test.ex (AAAA) succeeded
@@ -21,7 +20,6 @@ admin user
    writing neg-cache entry for v6.test.ex-A-xxxx, ttl 3000
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
   DNS lookup of mx46.test.ex (MX) using fakens
   DNS lookup of mx46.test.ex (MX) succeeded
   DNS lookup of 46.test.ex (A) using fakens

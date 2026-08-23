@@ -1,11 +1,8 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@test.ex U=CALLER P=local S=sss
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>> Local deliveries >>>>>>>>>>>>>>>>
 --------> userx@test.ex <--------
 appendfile transport entered
@@ -38,12 +35,9 @@ LOG: MAIN
 >>>>>>>>>>>>>>>> Exim pid=p1235 (local-accept-delivery) terminating with rc=0 >>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@test.ex U=CALLER P=local S=sss
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>> Local deliveries >>>>>>>>>>>>>>>>
 --------> userx@test.ex <--------
 appendfile transport entered

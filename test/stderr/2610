@@ -4,7 +4,6 @@
 ### insert some data
 ### -be tests
 Exim version x.yz ....
-admin user
  search_open: mysql "NULL"
  search_find: file="NULL"
    key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -741,6 +740,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1236
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -801,6 +803,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1237
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 trusted user
 admin user

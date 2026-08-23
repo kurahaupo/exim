@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing xxx@mxt9.test.ex
 --------> lookuphost router <--------
@@ -20,7 +19,6 @@ routed by lookuphost router
   host ten-3.test.ex [V4NET.0.0.3] MX=7 dnssec=no
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing xxx@mxt9a.test.ex
 --------> lookuphost router <--------
@@ -41,7 +39,6 @@ routed by lookuphost router
   host ten-3.test.ex [V4NET.0.0.3] MX=7 dnssec=no
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing xxx@mxt9b.test.ex
 --------> lookuphost router <--------

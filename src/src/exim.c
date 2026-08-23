@@ -4083,7 +4083,7 @@ change some of these limits. */
 
 if (unprivileged)
   {
-  DEBUG(any) debug_print_ids(US"Exim has no root privilege:");
+  DEBUG(start) debug_print_ids(US"Exim has no root privilege:");
   }
 else
   {
@@ -4648,7 +4648,7 @@ if (bi_option)
 configuration file.  We leave these prints here to ensure that syslog setup,
 logfile setup, and so on has already happened. */
 
-DEBUG(any)
+DEBUG(start)
   {
   if (f.trusted_caller)	debug_printf("trusted user\n");
   if (f.admin_user)	debug_printf("admin user\n");

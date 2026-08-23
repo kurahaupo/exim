@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1234 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1242 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -89,7 +88,6 @@ LOG: MAIN
   End queue run: pid=p1234 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1235 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1255 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -179,7 +177,6 @@ LOG: MAIN
   End queue run: pid=p1235 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 LOG: MAIN
   Start queue run: pid=p1236 -qqf
 >>>>>>>>>>>>>>>> Exim pid=p1268 (transport ph1) terminating with rc=0 >>>>>>>>>>>>>>>>

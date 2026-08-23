@@ -472,7 +472,6 @@ fakens: resp received: len 50
 01:01:01 p1234  >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### -bh, host_lookup
 Exim version x.yz ....
-admin user
 sender_fullhost = [127.0.0.1]
 sender_rcvhost = [127.0.0.1]
 host in hosts_connection_nolog? no (option unset)
@@ -504,7 +503,6 @@ sender_rcvhost = localhost ([127.0.0.1] helo=myname)
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### host_lookup, backslash
 Exim version x.yz ....
-admin user
 sender_fullhost = [127.0.0.1]
 sender_rcvhost = [127.0.0.1]
 host in hosts_connection_nolog? no (option unset)
@@ -533,7 +531,6 @@ sender_rcvhost = [127.0.0.1] (helo=backslash)
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### host_lookup, topbit-set
 Exim version x.yz ....
-admin user
 sender_fullhost = [127.0.0.1]
 sender_rcvhost = [127.0.0.1]
 host in hosts_connection_nolog? no (option unset)

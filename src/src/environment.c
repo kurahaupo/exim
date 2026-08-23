@@ -75,7 +75,7 @@ else if (Ustrcmp(keep_environment, "*") != 0)
   if (dbg) debug_enable();
   store_reset(reset_point);
   }
-DEBUG(expand)
+DEBUG(start)
   {
   debug_printf("environment after trimming:\n");
   if (environ) for (uschar ** p = USS environ; *p; p++)
@@ -90,7 +90,7 @@ if (add_environment)
 
   for (const uschar * p; p = string_nextinlist(&envlist, &sep, NULL, 0); )
     {
-    DEBUG(expand) debug_printf("adding %s\n", p);
+    DEBUG(start|expand) debug_printf("adding %s\n", p);
     putenv(CS p);
     }
   store_pool = old_pool;

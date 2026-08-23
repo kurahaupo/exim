@@ -2,6 +2,7 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1234
+environment after trimming:
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed

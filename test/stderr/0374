@@ -1,11 +1,8 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
-trusted user
-admin user
 no retry data available
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: a1@myhost.test.ex
@@ -373,13 +370,9 @@ cmdlog: '220:EHLO:220:MAIL:250:RCPT:550:QUIT+:250'
 LOG: MAIN
   ** d3@myhost.test.ex R=ut4 T=ut4 H=127.0.0.1 [127.0.0.1] : SMTP error from remote mail server after RCPT TO:<d3@myhost.test.ex>: 550 hard error
 Exim version x.yz ....
-trusted user
-admin user
 LOG: MAIN
   <= <> R=10HmaX-000000005vi-0000 U=EXIMUSER P=local S=sss
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Considering: CALLER@myhost.test.ex
 unique = CALLER@myhost.test.ex

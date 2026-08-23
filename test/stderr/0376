@@ -1,6 +1,4 @@
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -27,8 +25,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for ok@localhost
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -39,8 +35,6 @@ Attempting full verification using callout
  callout cache: address record is positive
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -59,8 +53,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<ok@localhost> temporarily rejected RCPT <z@test.ex>: Could not complete sender verify callout
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying bad@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -91,8 +83,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<bad@localhost> rejected RCPT <z@test.ex>: (recipient): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying bad@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -107,8 +97,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<bad@localhost> rejected RCPT <z@test.ex>: (recipient): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -136,8 +124,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<ok@localhost> rejected RCPT <z@test.ex>: (mail): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@localhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -151,8 +137,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.1] U=root F=<ok@localhost> rejected RCPT <z@test.ex>: (mail): Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -190,8 +174,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.2] U=root F=<ok@otherhost> rejected RCPT <z@test.ex>: Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -205,8 +187,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.2] U=root F=<ok@otherhost> rejected RCPT <z@test.ex>: Sender verify failed
 >>>>>>>>>>>>>>>> Exim pid=p1242 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost2
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -240,8 +220,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:250:RSET:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for ok@otherhost2
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost2
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -253,8 +231,6 @@ Attempting full verification using callout
  callout cache: address record is positive
 >>>>>>>>>>>>>>>> Exim pid=p1244 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost3
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -282,8 +258,6 @@ LOG: MAIN
   (random)
 >>>>>>>>>>>>>>>> Exim pid=p1245 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying otherok@otherhost3
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -295,8 +269,6 @@ LOG: MAIN
   (random)
 >>>>>>>>>>>>>>>> Exim pid=p1246 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost4
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -324,8 +296,6 @@ LOG: MAIN
   (random)
 >>>>>>>>>>>>>>>> Exim pid=p1247 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost4
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -337,8 +307,6 @@ LOG: MAIN
   (random)
 >>>>>>>>>>>>>>>> Exim pid=p1248 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost41
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -378,8 +346,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:550:RSET:250:MAIL:250:RCPT:250:RSET:250:MAIL
  wrote positive callout cache address record for ok@otherhost41
 >>>>>>>>>>>>>>>> Exim pid=p1249 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost41
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -392,8 +358,6 @@ Attempting full verification using callout
  callout cache: address record is positive
 >>>>>>>>>>>>>>>> Exim pid=p1250 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost21
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -427,8 +391,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:250:RSET:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for ok@otherhost21
 >>>>>>>>>>>>>>>> Exim pid=p1251 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok2@otherhost21
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -456,8 +418,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for ok2@otherhost21
 >>>>>>>>>>>>>>>> Exim pid=p1252 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost31
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -490,8 +450,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:550:RSET:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for ok@otherhost31
 >>>>>>>>>>>>>>>> Exim pid=p1253 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okok@otherhost31
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -519,8 +477,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for okok@otherhost31
 >>>>>>>>>>>>>>>> Exim pid=p1254 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okokok@otherhost31
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -553,8 +509,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:550:RSET:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for okokok@otherhost31
 >>>>>>>>>>>>>>>> Exim pid=p1255 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okok@otherhost51
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -583,8 +537,6 @@ LOG: MAIN REJECT
   H=(test) [V4NET.0.0.5] U=root F=<okok@otherhost51> temporarily rejected RCPT <z@test.ex>: Could not complete sender verify callout
 >>>>>>>>>>>>>>>> Exim pid=p1256 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying okokok@otherhost52
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -618,8 +570,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:250:RSET:250:MAIL:250:RCPT:250:QUIT:250'
  wrote positive callout cache address record for okokok@otherhost52
 >>>>>>>>>>>>>>>> Exim pid=p1257 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 verifying Reply-To: header address abcd@x.y.z
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying abcd@x.y.z
@@ -649,8 +599,6 @@ LOG: MAIN
   <= ok7@otherhost53 H=(test) [V4NET.0.0.7] U=root P=smtp S=sss
 >>>>>>>>>>>>>>>> Exim pid=p1258 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 verifying Reply-To: header address abcd@x.y.z
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying abcd@x.y.z
@@ -678,8 +626,6 @@ LOG: MAIN
   <= ok7@otherhost53 H=(test) [V4NET.0.0.8] U=root P=smtp S=sss
 >>>>>>>>>>>>>>>> Exim pid=p1259 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying ok@otherhost9
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -715,8 +661,6 @@ cmdlog: '220:EHLO:250:MAIL:250:RCPT:250:RSET:250:MAIL:250:RCPT:550:RCPT:250:QUIT
  wrote positive callout cache address record for ok@otherhost9
 >>>>>>>>>>>>>>>> Exim pid=p1260 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Verifying z@test.ex
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

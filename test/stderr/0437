@@ -12,7 +12,6 @@ Expanding spool_directory option
    in TESTSUITE/aux-fixed/0437.ls
  creating new cache entry
  lookup yielded: spool
-admin user
 LOG: MAIN
   Start queue run: pid=p1234
 search_tidyup called

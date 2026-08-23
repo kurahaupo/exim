@@ -1,6 +1,4 @@
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing /a/b/c@myhost.test.ex
 --------> r1 router <--------
@@ -21,8 +19,6 @@ routed by r1 router
   transport:	<none>
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing /x/y/z@myhost.test.ex
 --------> r1 router <--------

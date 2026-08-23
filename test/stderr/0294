@@ -1,6 +1,4 @@
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
@@ -98,8 +96,6 @@ SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@myhost.test.ex
 host in hosts_connection_nolog? no (option unset)
@@ -155,8 +151,6 @@ SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = CALLER@myhost.test.ex
 host in hosts_connection_nolog? no (option unset)
@@ -213,8 +207,6 @@ SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
 sender address = NULL
 SMTP>> 220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000

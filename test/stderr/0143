@@ -1,11 +1,8 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@myhost.test.ex U=CALLER P=local S=sss
 created log directory TESTSUITE/spool/log
 Exim version x.yz ....
-trusted user
-admin user
 router_name <my_main_router>
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> userx@domain.com <--------

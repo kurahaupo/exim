@@ -1,10 +1,7 @@
 Exim version x.yz ....
-admin user
 LOG: MAIN
   <= CALLER@the.local.host.name U=CALLER P=local S=sss
 Exim version x.yz ....
-trusted user
-admin user
 >>>>>>>>>>>>>>>> Remote deliveries >>>>>>>>>>>>>>>>
 --------> extchange@test.ex <--------
 smtp transport entered

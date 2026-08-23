@@ -1,7 +1,6 @@
 LOG: MAIN
   remote host address is the local host: some.host (while routing <"ACCEPT hosts=localhost lookup=byname"@some.host>)
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing "DECLINE cannot route this one (DECLINE)"@some.host
 --------> b router <--------
@@ -20,7 +19,6 @@ command wrote: DECLINE cannot route this one (DECLINE)
 no more routers
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=2 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing "FAIL cannot route this one (FAIL)"@some.host
 --------> b router <--------
@@ -37,7 +35,6 @@ command wrote: FAIL cannot route this one (FAIL)
  q router forced address failure
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=2 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing "ERROR cannot route this one (ERROR)"@some.host
 --------> b router <--------
@@ -57,7 +54,6 @@ q router: defer for "ERROR cannot route this one (ERROR)"@some.host
   message: bad command yield: ERROR cannot route this one (ERROR)
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=1 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing "DEFER cannot route this one (DEFER)"@some.host
 --------> b router <--------
@@ -75,7 +71,6 @@ q router: defer for "DEFER cannot route this one (DEFER)"@some.host
   message: cannot route this one (DEFER)
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=1 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing "ACCEPT transport = other_smtp hosts=ten-1.test.ex"@some.host
 --------> b router <--------
@@ -101,7 +96,6 @@ routed by q router
   host ten-1.test.ex [V4NET.0.0.1]
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing PASS@some.host
 --------> b router <--------
@@ -139,7 +133,6 @@ routed by s router
   host 127.0.0.1 [127.0.0.1]
 >>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing "FREEZE cannot route this one (FREEZE)"@some.host
 --------> b router <--------
@@ -157,7 +150,6 @@ q router: defer for "FREEZE cannot route this one (FREEZE)"@some.host
   message: cannot route this one (FREEZE)
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=1 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 routing "REDIRECT postmaster@test.ex"@some.host
 --------> b router <--------
@@ -210,7 +202,6 @@ routed by pm router
   transport:	null
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 host in hosts_connection_nolog? no (option unset)
 host in host_lookup? no (option unset)
 host in host_reject_connection? no (option unset)

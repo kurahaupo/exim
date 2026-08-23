@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
  search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
  search_find: file="TESTSUITE/aux-fixed/sqlitedb"
    key="select name from them where id='userx';" partial=-1 affix=NULL starflags=0 opts="file=TESTSUITE/aux-fixed/sqlitedb"
@@ -137,6 +136,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1235
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -272,6 +274,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1236
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -407,6 +412,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1237
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -529,6 +537,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1238
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -583,6 +594,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid EXIM_GID->EXIM_GID pid=p1239
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 trusted user
 admin user
@@ -719,7 +733,6 @@ search_tidyup called
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
  search_open: sqlite "TESTSUITE/aux-fixed/sqlitedb"
  search_find: file="TESTSUITE/aux-fixed/sqlitedb"
    key="select name from them where id='userx';" partial=-1 affix=NULL starflags=0 opts=NULL
@@ -733,7 +746,6 @@ admin user
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
  search_open: sqlite "NULL"
  Using sqlite_dbfile: TESTSUITE/aux-fixed/sqlitedb
  search_find: file="NULL"
@@ -747,13 +759,11 @@ admin user
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1242 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
  search_open: sqlite "NULL"
  Using sqlite_dbfile: nonabsolute_filename
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
  search_open: sqlite "NULL"
  Using sqlite_dbfile: TESTSUITE/missingfile
  search_find: file="NULL"
@@ -768,10 +778,7 @@ admin user
 search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1244 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-environment after trimming:
- PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'

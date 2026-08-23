@@ -1,6 +1,4 @@
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="Phil Q. Hazel"
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -32,8 +30,6 @@ created log directory TESTSUITE/spool/log
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=John "Jack" Smith
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -64,8 +60,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=John "Jack" "Q." Smith
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -96,8 +90,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="John (Jack) Q. Smith"
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -128,8 +120,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=John ("Jack") "Q." Smith
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -160,8 +150,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="John (\"Jack\") Q. Smith"
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -192,8 +180,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="Phil \"Q Hazel"
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0
@@ -224,8 +210,6 @@ LOG: MAIN
 receive_msg: tidyup
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-trusted user
-admin user
 originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name="Phil \"Q" "X." Hazel
 sender address = CALLER@myhost.test.ex
 spool directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100 msg_size = 0

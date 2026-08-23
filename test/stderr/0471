@@ -2,6 +2,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1234
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -26402,6 +26405,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1235
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -26593,6 +26599,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1236
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -26784,6 +26793,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1237
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -26952,6 +26964,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1238
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -27115,6 +27130,9 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1239
+environment after trimming:
+ PATH=<munged>
+adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed

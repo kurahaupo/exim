@@ -1,7 +1,4 @@
 Exim version x.yz ....
-environment after trimming:
- USER=CALLER
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -197,9 +194,6 @@ LOG: MAIN PANIC
  ╰───error message: attempt to use tainted string 'sndr@dom' for hash
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-environment after trimming:
- USER=CALLER
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -352,9 +346,6 @@ LOG: MAIN PANIC
  \_____result: protected:  
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-environment after trimming:
- USER=CALLER
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -371,9 +362,6 @@ try option 'unknown_login'
  ╰─────result: escape:░B7�F2�
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-environment after trimming:
- USER=CALLER
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -448,9 +436,6 @@ try option 'unknown_login'
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 1999-03-02 09:44:33 no host name found for IP address V4NET.11.12.13
 Exim version x.yz ....
-environment after trimming:
- USER=CALLER
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -575,6 +560,8 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1239
+environment after trimming:
+ USER=CALLER
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -647,6 +634,8 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: forcing real = effective
    uid ROOT->ROOT gid CALLER_GID->CALLER_GID pid=p1240
+environment after trimming:
+ USER=CALLER
 configuration file is TESTSUITE/test-config
 admin user
 changed uid/gid: privilege not needed
@@ -857,6 +846,8 @@ Exim version x.yz ....
 Hints DB:
 changed uid/gid: -C, -D, -be or -bf forces real uid
    uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1241
+environment after trimming:
+ USER=CALLER
 configuration file is TESTSUITE/test-config
 admin user
 readconf_rest: acl
@@ -876,9 +867,6 @@ set_process_info: pppp expansion-test
    search_tidyup called
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-environment after trimming:
- USER=CALLER
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'

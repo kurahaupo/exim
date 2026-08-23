@@ -1,6 +1,4 @@
 Exim version x.yz ....
-trusted user
-admin user
  search_open: lsearch "TESTSUITE/aux-fixed/0387.1"
  search_find: file="TESTSUITE/aux-fixed/0387.1"
    key="a.b.c" partial=2 affix=*. starflags=0 opts=NULL

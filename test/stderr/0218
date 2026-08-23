@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
 Single queue run
 LOG: MAIN
   Start queue run: pid=p1234 -qq
@@ -71,7 +70,6 @@ LOG: MAIN
   End queue run: pid=p1234 -qq
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
 Single queue run
 LOG: MAIN
   Start queue run: pid=p1235 -qq
@@ -114,8 +112,6 @@ cmdlog: '220:EHLO:250-:MAIL|:RCPT|:DATA:550:503:503:QUIT+:250'
 LOG: MAIN
   ** a@test.ex F=<CALLER@test.ex> R=client T=send_to_server H=127.0.0.1 [127.0.0.1] : SMTP error from remote mail server after pipelined MAIL FROM:<CALLER@test.ex>: 550 NO
 Exim version x.yz ....
-trusted user
-admin user
 LOG: MAIN
   <= <> R=10HmaZ-000000005vi-0000 U=EXIMUSER P=local S=sss
 >>>>>>>>>>>>>>>> Exim pid=p1250 (bounce-message) terminating with rc=0 >>>>>>>>>>>>>>>>

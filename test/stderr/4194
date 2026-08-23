@@ -1,6 +1,5 @@
 ### Body transform: missing reqire
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'if'
@@ -12,7 +11,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: (unspecified; should default to text)
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -31,7 +29,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: raw, no metachars, nomatch
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -47,7 +44,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: raw, metachars, match
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -64,7 +60,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1237 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: raw, metachars, match casefolded
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -82,7 +77,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1238 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: text (explicit request)
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -102,7 +96,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1239 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: text, transfer-encoding header present/bad
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -121,7 +114,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1240 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: text, transfer-encoding header: qp
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -141,7 +133,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1241 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: text, transfer-encoding header: qp (bad decode)
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -161,7 +152,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1242 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: text, transfer-encoding header: qp (uncompleted decode)
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -181,7 +171,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1243 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: text, transfer-encoding header: qp + iconv
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -201,7 +190,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1244 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: text, transfer-encoding header: b64
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -221,7 +209,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1245 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: content
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -262,7 +249,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1246 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: content, nested
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -319,7 +305,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1247 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: content, mime-part presence
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -349,7 +334,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1248 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: content, included-message header
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'
@@ -379,7 +363,6 @@ Sieve: end of processing
 >>>>>>>>>>>>>>>> Exim pid=p1249 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 ### Body transform: content, included-message body
 Exim version x.yz ....
-admin user
 filter_runtest()
 Sieve: start of processing
  identified: command 'require'

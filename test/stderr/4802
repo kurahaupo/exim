@@ -1,5 +1,4 @@
 Exim version x.yz ....
-admin user
   DNS lookup of mx-sec-a-aa.test.ex (MX) using fakens
   DNS lookup of mx-sec-a-aa.test.ex (MX) succeeded
   DNS lookup of a-aa.test.ex (A) using fakens
@@ -7,7 +6,6 @@ admin user
   DNS lookup of a-aa.test.ex (A/AAAA) requested AD, but got AA
 >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-admin user
   DNS lookup of mx-aa-a-sec.test.ex (MX) using fakens
   DNS lookup of mx-aa-a-sec.test.ex (MX) succeeded
   DNS lookup of mx-aa-a-sec.test.ex (MX) requested AD, but got AA

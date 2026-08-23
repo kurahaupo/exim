@@ -1,8 +1,5 @@
 Exim version x.yz ....
-environment after trimming:
- PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -637,10 +634,7 @@ LOG: MAIN
 try option 'acl_smtp_quit'
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-environment after trimming:
- PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
@@ -1225,10 +1219,7 @@ LOG: MAIN
 try option 'acl_smtp_quit'
 >>>>>>>>>>>>>>>> Exim pid=p1236 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
 Exim version x.yz ....
-environment after trimming:
- PATH=<munged>
 adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
-admin user
 try option 'gecos_pattern'
 try option 'gecos_name'
 try option 'unknown_login'
