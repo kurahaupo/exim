@@ -61,10 +61,7 @@ lmdb.o lmdb.so:         $(HDRS) lmdb.c
 json.o json.so:         $(HDRS) json.c
 lsearch.o lsearch.so:   $(HDRS) lsearch.c
 mysql.o mysql.so:       $(HDRS) mysql.c
-nis.o nis.so:           $(HDRS) nis.c
-nisplus.o nisplus.so:   $(HDRS) nisplus.c
 nmh.o nmh.so:		$(HDRS) nmh.c
-oracle.o oracle.so:     $(HDRS) oracle.c
 passwd.o passwd.so:     $(HDRS) passwd.c
 pgsql.o pgsql.so:       $(HDRS) pgsql.c
 psl.o psl.so:       	$(HDRS) psl.c

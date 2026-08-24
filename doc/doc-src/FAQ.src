@@ -1368,7 +1368,7 @@ A0080: Lookups can be used in two different situations, and what they return is
 
            in an ACL tests whether the calling host's name matches ``a'', or
            ``b'', or ``c''. Now, suppose you want to keep the list of names in
-           a database, or cdb file, or NIS map, or...  By writing
+           a database, or cdb file, or...  By writing
 
 ==>           hosts = pgsql;select ....
 
@@ -2650,7 +2650,7 @@ A0406: If you allow your users to run shells in pipes, you cannot control which
 
 
 Q0407: How can I arrange for a default value when using a query-style lookup
-       such as LDAP or NIS+ to handle aliases?
+       such as LDAP to handle aliases?
 
 A0407: Use a second query in the failure part of the original lookup, like
        this:
@@ -2696,7 +2696,8 @@ A0409: One way to do this is
 
 Q0410: How can I make Exim look in the alias NIS map instead of \(/etc/aliases)\?
 
-A0410: The default configuration does not use NIS (many hosts don't run it).
+A0410: As of v4.101 Exim no longer suppors NIS/NISPLUS.
+       The default configuration does not use NIS (many hosts don't run it).
        You need to change this line in the \%system_aliases%\ router:
 
 ==>      data = ${lookup{$local_part}lsearch{/etc/aliases}}
@@ -3235,7 +3236,8 @@ A0431: Add this pre-condition to the relevant router:
 Q0432: I use NIS for my user data. How can I stop Exim rejecting mail when my
        NIS servers are being restarted?
 
-A0432: Exim doesn't know that you are using NIS; it just calls the \^^getpwnam()^^\
+A0432: As of v4.101 Exim no longer suppors NIS/NISPLUS.
+       Exim doesn't know that you are using NIS; it just calls the \^^getpwnam()^^\
        function, which is routed by nsswitch. Unfortunately, \^^getpwnam()^^\
        was never designed to be routed through NIS, and it returns NULL if the
        entry is not found or if the connection to the NIS server fails. This
@@ -6767,7 +6769,7 @@ A9708: You need to rebuild Exim after fiddling with \(OS/os.h-SunOS5)\:
        #define setnetent res_setnetent
 
        Note that \-lnsl-\ is still needed in the Makefile as it
-       contains code used by the NIS lookup and also the \^^inet_addr()^^\ function
+       contains code the definition for the \^^inet_addr()^^\ function
        that Exim uses.
 
 

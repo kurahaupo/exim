@@ -268,15 +268,6 @@ due to conflicts with other common macros. */
 #ifdef LOOKUP_MYSQL
   builtin_macro_create(US"_HAVE_LOOKUP_MYSQL");
 #endif
-#ifdef LOOKUP_NIS
-  builtin_macro_create(US"_HAVE_LOOKUP_NIS");
-#endif
-#ifdef LOOKUP_NISPLUS
-  builtin_macro_create(US"_HAVE_LOOKUP_NISPLUS");
-#endif
-#ifdef LOOKUP_ORACLE
-  builtin_macro_create(US"_HAVE_LOOKUP_ORACLE");
-#endif
 #ifdef LOOKUP_PASSWD
   builtin_macro_create(US"_HAVE_LOOKUP_PASSWD");
 #endif

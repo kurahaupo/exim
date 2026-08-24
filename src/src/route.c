@@ -1111,7 +1111,7 @@ return OK;
 *************************************************/
 
 /* Try several times (if configured) to find a local user, in case delays in
-NIS or NFS whatever cause an incorrect refusal. It's a pity that getpwnam()
+NFS or whatever cause an incorrect refusal. It's a pity that getpwnam()
 doesn't have some kind of indication as to why it has failed. If the string
 given consists entirely of digits, and the third argument is not NULL, assume
 the string is the numerical value of the uid. Otherwise it is looked up using
@@ -1169,7 +1169,7 @@ if (!cache_set)
     lastpw = NULL;
     }
 
-  /* Try a few times if so configured; this handles delays in NIS etc. */
+  /* Try a few times if so configured; this handles delays in NFS etc. */
 
   else for (int i = 0;;)
     {
@@ -1220,7 +1220,7 @@ return TRUE;
 *************************************************/
 
 /* Try several times (if configured) to find a local group, in case delays in
-NIS or NFS whatever cause an incorrect refusal. It's a pity that getgrnam()
+NFS or whatever cause an incorrect refusal. It's a pity that getgrnam()
 doesn't have some kind of indication as to why it has failed.
 
 Arguments:

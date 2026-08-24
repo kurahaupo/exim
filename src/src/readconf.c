@@ -240,9 +240,6 @@ static optionlist optionlist_config[] = {
 #ifndef DISABLE_TLS
   { "openssl_options",          opt_stringptr,   {&openssl_options} },
 #endif
-#ifdef LOOKUP_ORACLE
-  { "oracle_servers",           opt_lookup_module, {US"oracle"} },
-#endif
   { "panic_coredump",           opt_bool,        {&panic_coredump} },
   { "percent_hack_domains",     opt_stringptr,   {&percent_hack_domains} },
 #ifdef EXIM_PERL

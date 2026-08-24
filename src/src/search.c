@@ -363,10 +363,10 @@ is concerned. Fstat() on an open file can normally be expected to succeed,
 but there are some NFS states where it does not.
 
 There are two styles of query: (1) in the "single-key+file" style, a single
-key string and a file name are given, for example, for linear searches, DBM
-files, or for NIS. (2) In the "query" style, no "filename" is given; instead
+key string and a file name are given, for example, for linear searches or
+DBM files. (2) In the "query" style, no "filename" is given; instead
 just a single query string is passed. This applies to multiple-key lookup
-types such as NIS+.
+types.
 
 Before opening, scan the tree of cached files to see if this file is already
 open for the correct search type. If so, return the saved handle. If not, put

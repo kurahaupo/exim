@@ -5181,8 +5181,8 @@ needed when receiving a message, because it is written into the spool file. It
 may also be used to construct a from: or a sender: header, and in this case we
 need the user's full name as well, so save a copy of it, checked for RFC822
 syntax and munged if necessary, if it hasn't previously been set by the -F
-argument. We may try to get the passwd entry more than once, in case NIS or
-other delays are in evidence. Save the home directory for use in filter testing
+argument. We may try to get the passwd entry more than once, in case delays
+are in evidence. Save the home directory for use in filter testing
 (only). */
 
 for (i = 0;;)

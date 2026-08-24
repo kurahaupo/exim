@@ -2218,20 +2218,16 @@ files makes it easy to transfer them to new versions of Exim simply by copying
 the contents of the &_Local_& directory.
 
 
-.cindex "NIS lookup type" "including support for"
-.cindex "NIS+ lookup type" "including support for"
 .cindex "LDAP" "including support for"
 .cindex "lookup" "inclusion in binary"
-Exim contains support for doing LDAP, NIS, NIS+, and other kinds of file
+Exim contains support for doing LDAP and other kinds of file
 lookup, but not all systems have these components installed, so the default is
 not to include the relevant code in the binary. All the different kinds of file
 and database lookup that Exim supports are implemented as separate code modules
 which are included only if the relevant compile-time options are set. In the
-case of LDAP, NIS, and NIS+, the settings for &_Local/Makefile_& are:
+case of LDAP, the settings for &_Local/Makefile_& are:
 .code
 LOOKUP_LDAP=yes
-LOOKUP_NIS=yes
-LOOKUP_NISPLUS=yes
 .endd
 and similar settings apply to the other lookup types. They are all listed in
 &_src/EDITME_&. In many cases the relevant include files and interface
@@ -2388,9 +2384,8 @@ Exim's configuration if necessary.
 The default configuration uses the local host's name as the only local domain,
 and is set up to do local deliveries into the shared directory &_/var/mail_&,
 running as the local user. System aliases and &_.forward_& files in users' home
-directories are supported, but no NIS or NIS+ support is configured. Domains
-other than the name of the local host are routed using the DNS, with delivery
-over SMTP.
+directories are supported. Domains other than the name of the local host are
+routed using the DNS, with delivery over SMTP.
 
 It is possible to install Exim for special purposes (such as building a binary
 distribution) in a private part of the file system. You can do this by a
@@ -7108,16 +7103,6 @@ contents (see section &<<SECTstrings>>&). An optional colon is permitted after
 quoted keys (exactly as for unquoted keys). There is no special handling of
 quotes for the data part of an &(lsearch)& line.
 
-.subsection nis
-.cindex "NIS lookup type"
-.cindex "lookup" "NIS"
-.cindex "binary zero" "in lookup key"
-The given file is the name of a NIS map, and a NIS lookup is done with
-the given key, without a terminating binary zero. There is a variant called
-&(nis0)& which does include the terminating binary zero in the key. This is
-reportedly needed for Sun-style alias files. Exim does not recognize NIS
-aliases; the full map names must be used.
-
 .subsection (n)wildlsearch
 .cindex "wildlsearch lookup type"
 .cindex "lookup" "wildlsearch"
@@ -7249,18 +7234,6 @@ any attribute values. See section &<<SECTldap>>&.
 .cindex "lookup" "MySQL"
 The format of the query is an SQL statement that is passed to a
 MySQL (MariaDB) database. See section &<<SECTsql>>&.
-
-.subsection nisplus
-.cindex "NIS+ lookup type"
-.cindex "lookup" "NIS+"
-This does a NIS+ lookup using a query that can specify the name of
-the field to be returned. See section &<<SECTnisplus>>&.
-
-.subsection oracle
-.cindex "Oracle" "lookup type"
-.cindex "lookup" "Oracle"
-The format of the query is an SQL statement that is passed to an
-Oracle database. See section &<<SECTsql>>&.
 
 .subsection passwd
 .cindex "lookup" "passwd"
@@ -7521,25 +7494,24 @@ complete.
 .cindex "quoting" "in lookups"
 When data from an incoming message is included in a query-style lookup, there
 is the possibility of special characters in the data messing up the syntax of
-the query. For example, a NIS+ query that contains
+the query. For example, an SQLite query that contains
 .code
 [name=$local_part]
 .endd
 will be broken if the local part happens to contain a closing square bracket.
-For NIS+, data can be enclosed in double quotes like this:
+For SQLite, data can be enclosed in double quotes like this:
 .code
 [name="$local_part"]
 .endd
-but this still leaves the problem of a double quote in the data. The rule for
-NIS+ is that double quotes must be doubled. Other lookup types have different
-rules, and to cope with the differing requirements, an expansion operator
-of the following form is provided:
+but this still leaves the problem of a double quote in the data. Rules for
+various lookup types differ, and to cope with the differing requirements
+an expansion operator of the following form is provided:
 .code
 ${quote_<lookup-type>:<string>}
 .endd
-For example, the way to write the NIS+ query is
+For example, the way to write an SQLite query is
 .code
-[name="${quote_nisplus:$local_part}"]
+[name="${quote_sqlite:$local_part}"]
 .endd
 .cindex "tainted data" "in lookups"
 &*All*& tainted data used in a query-style lookup must be quoted
@@ -8132,49 +8104,15 @@ comma separated list (using the "<," syntax for changing the input list separato
 
 
 
-
-.section "More about NIS+" "SECTnisplus"
-.cindex "NIS+ lookup type"
-.cindex "lookup" "NIS+"
-NIS+ queries consist of a NIS+ &'indexed name'& followed by an optional colon
-and field name. If this is given, the result of a successful query is the
-contents of the named field; otherwise the result consists of a concatenation
-of &'field-name=field-value'& pairs, separated by spaces. Empty values and
-values containing spaces are quoted. For example, the query
-.code
-[name=mg1456],passwd.org_dir
-.endd
-might return the string
-.code
-name=mg1456 passwd="" uid=999 gid=999 gcos="Martin Guerre"
-home=/home/mg1456 shell=/bin/bash shadow=""
-.endd
-(split over two lines here to fit on the page), whereas
-.code
-[name=mg1456],passwd.org_dir:gcos
-.endd
-would just return
-.code
-Martin Guerre
-.endd
-with no quotes. A NIS+ lookup fails if NIS+ returns more than one table entry
-for the given indexed key. The effect of the &%quote_nisplus%& expansion
-operator is to double any quote characters within the text.
-
-
-
 .section "SQL lookups" "SECTsql"
 .cindex "SQL lookup types"
 .cindex "MySQL" "lookup type"
 .cindex "PostgreSQL lookup type"
 .cindex "lookup" "MySQL"
 .cindex "lookup" "PostgreSQL"
-.cindex "Oracle" "lookup type"
-.cindex "lookup" "Oracle"
 .cindex "Redis lookup type"
 .cindex lookup Redis
-Exim can support lookups in MySQL (MariaDB), Oracle, PostgreSQL, Redis,
-and SQLite
+Exim can support lookups in MySQL (MariaDB), PostgreSQL, Redis, and SQLite
 databases. Queries for these databases contain SQL statements, so an example
 might be
 .code
@@ -8201,35 +8139,27 @@ If the result of the query yields more than one row, it is all concatenated,
 with a newline between the data for each row.
 
 
-.subsection "More about MySQL, PostgreSQL, Oracle, and Redis" SECID72
+.subsection "More about MySQL, PostgreSQL, and Redis" SECID72
 .cindex "MySQL" "lookup type"
 .cindex "PostgreSQL lookup type"
 .cindex "lookup" "MySQL"
 .cindex "lookup" "PostgreSQL"
-.cindex "Oracle" "lookup type"
-.cindex "lookup" "Oracle"
 .cindex "Redis lookup type"
 .cindex lookup Redis
-If any MySQL, PostgreSQL, Oracle, or Redis lookups are used, the
-&%mysql_servers%&, &%pgsql_servers%&, &%oracle_servers%&,
-or &%redis_servers%&
+If any MySQL, PostgreSQL, or Redis lookups are used, the
+&%mysql_servers%&, &%pgsql_servers%&, or &%redis_servers%&
 option (as appropriate) must be set to a colon-separated list of server
 information.
 .oindex &%mysql_servers%&
 .oindex &%pgsql_servers%&
-.oindex &%oracle_servers%&
 .oindex &%redis_servers%&
 (For MySQL and PostgreSQL, the global option need not be set if all
 queries contain their own server information &-- see section
 &<<SECTspeserque>>&.)
 For all but Redis
 each item in the list is a slash-separated list of four
-items: host name, database name, user name, and password. In the case of
-Oracle, the host name field is used for the &"service name"&, and the database
-name field is not used and should be empty. For example:
-.code
-hide oracle_servers = oracle.plc.example//userx/abcdwxyz
-.endd
+items: host name, database name, user name, and password.
+
 Because password data is sensitive, you should always precede the setting with
 &"hide"&, to prevent non-admin users from obtaining the setting via the &%-bP%&
 option. Here is an example where two MySQL servers are listed:
@@ -8260,7 +8190,7 @@ The database number is optional; if present that number is selected in the backe
 The password is optional; if present it is used to authenticate to the backend
 .endlist
 
-The &%quote_mysql%&, &%quote_pgsql%&, and &%quote_oracle%& expansion operators
+The &%quote_mysql%& and &%quote_pgsql%& expansion operators
 convert newline, tab, carriage return, and backspace to \n, \t, \r, and \b
 respectively, and the characters single-quote, double-quote, and backslash
 itself are escaped with backslashes.
@@ -8269,7 +8199,7 @@ The &%quote_redis%& expansion operator
 escapes whitespace and backslash characters with a backslash.
 
 .subsection "Specifying the server in the query" SECTspeserque
-For MySQL, PostgreSQL and Redis lookups (but not currently for Oracle),
+For MySQL, PostgreSQL and Redis lookups
 it is possible to specify a list of servers with an individual query. This is
 done by appending a comma-separated option to the query type:
 .display
@@ -9014,9 +8944,7 @@ domainlist funny_domains = \
   lib.unseen.edu : \
   *.foundation.fict.example : \
   \N^[1-2]\d{3}\.fict\.example$\N : \
-  partial-dbm;/opt/data/penguin/book : \
-  nis;domains.byname : \
-  nisplus;[name=$domain,status=local],domains.org_dir
+  partial-dbm;/opt/data/penguin/book
 .endd
 There are obvious processing trade-offs among the various matching modes. Using
 an asterisk is faster than a regular expression, and listing a few names
@@ -10551,12 +10479,6 @@ They return to their previous values at the end of the lookup item.
 This example looks up the postmaster alias in the conventional alias file:
 .code
 ${lookup {postmaster} lsearch {/etc/aliases} {$value}}
-.endd
-This example uses NIS+ to look up the full name of the user corresponding to
-the local part of an address, forcing the expansion to fail if it is not found:
-.code
-${lookup nisplus {[name=$local_part],passwd.org_dir:gcos} \
-  {$value}fail}
 .endd
 
 
@@ -14988,7 +14910,6 @@ listed in more than one group.
 .row &%ldap_version%&                "set protocol version"
 .row &%lookup_open_max%&             "lookup files held open"
 .row &%mysql_servers%&               "default MySQL servers"
-.row &%oracle_servers%&              "Oracle servers"
 .row &%pgsql_servers%&               "default PostgreSQL servers"
 .row &%sqlite_lock_timeout%&         "as it says"
 .endtable
@@ -15151,7 +15072,7 @@ listed in more than one group.
 
 .section "Local user handling" "SECID109"
 .table2
-.row &%finduser_retries%&            "useful in NIS environments"
+.row &%finduser_retries%&            "useful in NFS environments"
 .row &%gecos_name%&                  "used when creating &'Sender:'&"
 .row &%gecos_pattern%&               "ditto"
 .row &%max_username_length%&         "for systems that truncate"
@@ -16391,8 +16312,8 @@ addresses.
 
 
 .option finduser_retries main integer 0
-.cindex "NIS, retrying user lookups"
-On systems running NIS or other schemes in which user and group information is
+.cindex "retrying user lookups"
+On systems running schemes in which user and group information is
 distributed from a remote system, there can be times when &[getpwnam()]& and
 related functions fail, even when given valid data, because things time out.
 Unfortunately these failures cannot be distinguished from genuine &"not found"&
@@ -17366,13 +17287,6 @@ to MacOS 10.8.4, including email clients.  If you see old MacOS clients failing
 to negotiate TLS then this option value might help, provided that your OpenSSL
 release is new enough to contain this work-around.  This may be a situation
 where you have to upgrade OpenSSL to get buggy clients working.
-
-
-.option oracle_servers main "string list" unset
-.cindex "Oracle" "server list"
-This option provides a list of Oracle servers and associated connection data,
-to be used in conjunction with &(oracle)& lookups (see section &<<SECID72>>&).
-The option is available only if Exim has been built with Oracle support.
 
 
 .option panic_coredump main boolean false
@@ -19460,7 +19374,7 @@ When this option is true, Exim checks that the local part of the recipient
 address (with affixes removed if relevant) is the name of an account on the
 local system. The check is done by calling the &[getpwnam()]& function rather
 than trying to read &_/etc/passwd_& directly. This means that other methods of
-holding password data (such as NIS) are supported. If the local part is a local
+holding user password data are supported. If the local part is a local
 user,
 .cindex "tainted data" "de-tainting"
 .cindex "de-tainting" "using router check_local_user option"

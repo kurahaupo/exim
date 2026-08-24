@@ -106,9 +106,6 @@ Do not put spaces between # and the 'define'.
 #define LOOKUP_LMDB
 #define LOOKUP_LSEARCH
 #define LOOKUP_MYSQL
-#define LOOKUP_NIS
-#define LOOKUP_NISPLUS
-#define LOOKUP_ORACLE
 #define LOOKUP_PASSWD
 #define LOOKUP_PGSQL
 #define LOOKUP_PSL

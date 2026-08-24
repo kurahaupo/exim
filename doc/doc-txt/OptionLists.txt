@@ -422,7 +422,6 @@ once_repeat                          time            0s            autoreply    
 one_time                             boolean         false         redirect          4.00
 openssl_options                      string          +no_sslv2     main              4.73 default changed in 4.80
 optional                             boolean         false         iplookup          4.00
-oracle_servers                       string          unset         main              4.00
 owners                               string list     unset         redirect          4.00
 owngroups                            string list     unset         redirect          4.00
 panic_coredump			     boolean	     false	   main		     4.96
@@ -977,9 +976,6 @@ LOOKUP_LIBS                  lookup       include libraries for lookups
 LOOKUP_LSEARCH               lookup       include all lsearch lookups
 LOOKUP_MODULE_DIR            optional*    where dynamic lookup modules live
 LOOKUP_MYSQL                 lookup       include mysql lookup
-LOOKUP_NIS                   lookup       include nis lookup
-LOOKUP_NISPLUS               lookup       include nisplus lookup
-LOOKUP_ORACLE                lookup       include oracle lookup
 LOOKUP_PGSQL                 lookup       include pgsql lookup
 LOOKUP_TESTDB                lookup*
 LOOKUP_WHOSON                lookup       include whoson lookup
