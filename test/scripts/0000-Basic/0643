@@ -1,0 +1,92 @@
+# DNS bad expand
+#
+# This is testing Exim's code handling awkward implementations of the
+# resolver library, where issues have turned up in the past.
+# We use a custom psuedo-type for DNS enquries done using dnsdb lookups,
+# which bypass the dn_expand() function. This lets us feed the datastream
+# for our processing after that call, which has to undo the coding of bytes
+# having a topbit set in the wire packet [that coding being done by
+# dn_expand()].
+#
+# We need a working dir for fakens that is both
+# user- and exim-writable.  spool is not user-w and DIR might not be exim-w.
+# The dirname is coded in fakens also.
+sudo rm -fr DIR/tmp
+mkdir DIR/tmp
+sudo chmod 777 DIR/tmp
+#
+#
+dns
+# CNAME baseline \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x05						#	CNAME	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x0b 						#	length	\
+  \x09localhost\x00					# localhost
+# TESTSUITE custom; should behave like CNAME \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x05						#	CNAME	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x09 						#	length	\
+  localhost						# localhost
+# Normal dec-coded byte \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x05						#	CNAME	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x0c 						#	length	\
+  lo\\099alhost						# localhost
+# Last dec-coded byte \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x05						#	CNAME	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x0c 						#	length	\
+  localhos\\116						# localhost
+# \
+# Last 2-code \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x05						#	CNAME	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x0b 						#	length	\
+  localhos\\99						# localhosc
+# Last 1-code \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x05						#	CNAME	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x0a 						#	length	\
+  localhos\\7						# localhos<BEL>
+# Last byte is an orphan backslash \
+\x00\x00\x80\x00\x00\x00\x00\x01\x00\x00\x00\x00	# header: 1 RR \
+  \x04test\x02ex\x00					# RR:	name	\
+  \x00\x05						#	CNAME	\
+  \x00\x01						#	IN	\
+  \x00\x00\x00\xff					#	ttl	\
+  \x00\x09 						#	length	\
+  localhos\\						# localhos
+****
+#
+exim -d+all+dns_rr -be
+good CNAME     ${lookup dnsdb{cname=t1.cname.ex}}
+good TESTSUITE ${lookup dnsdb{testsuite=t2.tsuite.ex}}
+good deccoded  ${lookup dnsdb{testsuite=t3.dec.ex}}
+last deccoded  ${lookup dnsdb{testsuite=t4.last.ex}}
+
+last 2 only    ${lookup dnsdb{testsuite=t5.last2.ex}}
+last 1 only    ${lookup dnsdb{testsuite=t5.last1.ex}}
+slah only      ${lookup dnsdb{testsuite=t5.last_slash.ex}}
+****
+#
+#
+#
+sudo rm -fr DIR/tmp

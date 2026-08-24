@@ -1,0 +1,318 @@
+01:01:01 p1234  Exim version x.yz uid=CALLER_UID gid=CALLER_GID pid=p1234 -d=0xffffffffef1fffff
+01:01:01 p1234  Hints DB:
+01:01:01 p1234  macros_trusted overridden to true by whitelisting
+01:01:01 p1234  changed uid/gid: -C, -D, -be or -bf forces real uid
+01:01:01 p1234     uid ROOT->CALLER_UID gid CALLER_GID->CALLER_GID pid=p1234
+01:01:01 p1234  environment after trimming:
+01:01:01 p1234   PATH=<munged>
+01:01:01 p1234  adding SSLKEYLOGFILE=TESTSUITE/spool/sslkeys
+01:01:01 p1234  configuration file is TESTSUITE/test-config
+01:01:01 p1234  admin user
+01:01:01 p1234  try option 'gecos_pattern'
+01:01:01 p1234  try option 'gecos_name'
+01:01:01 p1234  try option 'unknown_login'
+01:01:01 p1234  originator: uid=CALLER_UID gid=CALLER_GID login=CALLER name=CALLER_NAME
+01:01:01 p1234  sender address = CALLER@the.local.host.name
+01:01:01 p1234  set_process_info: pppp expansion-test
+01:01:01 p1234   ╭considering: good░CNAME░░░░░${lookup░dnsdb{cname=t1.cname.ex}}
+01:01:01 p1234   ├───────text: good░CNAME░░░░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{cname=t1.cname.ex}}
+01:01:01 p1234    ╭considering: cname=t1.cname.ex}}
+01:01:01 p1234    ├───────text: cname=t1.cname.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: cname=t1.cname.ex
+01:01:01 p1234    ╰─────result: cname=t1.cname.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="cname=t1.cname.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="cname=t1.cname.ex" opts=NULL
+01:01:01 p1234   database lookup required for cname=t1.cname.ex
+01:01:01 p1234   dnsdb key: t1.cname.ex
+01:01:01 p1234   DNS lookup of t1.cname.ex (CNAME) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 42
+01:01:01 p1234   DNS lookup of t1.cname.ex (CNAME) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 11 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 11 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: localhost
+01:01:01 p1234   ├───item-res: localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: good░CNAME░░░░░${lookup░dnsdb{cname=t1.cname.ex}}
+01:01:01 p1234   ╰─────result: good░CNAME░░░░░localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: good░TESTSUITE░${lookup░dnsdb{testsuite=t2.tsuite.ex}}
+01:01:01 p1234   ├───────text: good░TESTSUITE░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{testsuite=t2.tsuite.ex}}
+01:01:01 p1234    ╭considering: testsuite=t2.tsuite.ex}}
+01:01:01 p1234    ├───────text: testsuite=t2.tsuite.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: testsuite=t2.tsuite.ex
+01:01:01 p1234    ╰─────result: testsuite=t2.tsuite.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="testsuite=t2.tsuite.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="testsuite=t2.tsuite.ex" opts=NULL
+01:01:01 p1234   database lookup required for testsuite=t2.tsuite.ex
+01:01:01 p1234   dnsdb key: t2.tsuite.ex
+01:01:01 p1234   DNS lookup of t2.tsuite.ex (CNAME) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 40
+01:01:01 p1234   DNS lookup of t2.tsuite.ex (CNAME) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 9 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 9 byte CNAME
+01:01:01 p1234   raw rrdata: 'localhost'
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: localhost
+01:01:01 p1234   ├───item-res: localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: good░TESTSUITE░${lookup░dnsdb{testsuite=t2.tsuite.ex}}
+01:01:01 p1234   ╰─────result: good░TESTSUITE░localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: good░deccoded░░${lookup░dnsdb{testsuite=t3.dec.ex}}
+01:01:01 p1234   ├───────text: good░deccoded░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{testsuite=t3.dec.ex}}
+01:01:01 p1234    ╭considering: testsuite=t3.dec.ex}}
+01:01:01 p1234    ├───────text: testsuite=t3.dec.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: testsuite=t3.dec.ex
+01:01:01 p1234    ╰─────result: testsuite=t3.dec.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="testsuite=t3.dec.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="testsuite=t3.dec.ex" opts=NULL
+01:01:01 p1234   database lookup required for testsuite=t3.dec.ex
+01:01:01 p1234   dnsdb key: t3.dec.ex
+01:01:01 p1234   DNS lookup of t3.dec.ex (CNAME) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 43
+01:01:01 p1234   DNS lookup of t3.dec.ex (CNAME) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 12 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 12 byte CNAME
+01:01:01 p1234   raw rrdata: 'lo\099alhost'
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: localhost
+01:01:01 p1234   ├───item-res: localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: good░deccoded░░${lookup░dnsdb{testsuite=t3.dec.ex}}
+01:01:01 p1234   ╰─────result: good░deccoded░░localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: last░deccoded░░${lookup░dnsdb{testsuite=t4.last.ex}}
+01:01:01 p1234   ├───────text: last░deccoded░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{testsuite=t4.last.ex}}
+01:01:01 p1234    ╭considering: testsuite=t4.last.ex}}
+01:01:01 p1234    ├───────text: testsuite=t4.last.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: testsuite=t4.last.ex
+01:01:01 p1234    ╰─────result: testsuite=t4.last.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="testsuite=t4.last.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="testsuite=t4.last.ex" opts=NULL
+01:01:01 p1234   database lookup required for testsuite=t4.last.ex
+01:01:01 p1234   dnsdb key: t4.last.ex
+01:01:01 p1234   DNS lookup of t4.last.ex (CNAME) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 43
+01:01:01 p1234   DNS lookup of t4.last.ex (CNAME) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 12 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 12 byte CNAME
+01:01:01 p1234   raw rrdata: 'localhos\116'
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: localhost
+01:01:01 p1234   ├───item-res: localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: last░deccoded░░${lookup░dnsdb{testsuite=t4.last.ex}}
+01:01:01 p1234   ╰─────result: last░deccoded░░localhost
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: last░2░only░░░░${lookup░dnsdb{testsuite=t5.last2.ex}}
+01:01:01 p1234   ├───────text: last░2░only░░░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{testsuite=t5.last2.ex}}
+01:01:01 p1234    ╭considering: testsuite=t5.last2.ex}}
+01:01:01 p1234    ├───────text: testsuite=t5.last2.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: testsuite=t5.last2.ex
+01:01:01 p1234    ╰─────result: testsuite=t5.last2.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="testsuite=t5.last2.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="testsuite=t5.last2.ex" opts=NULL
+01:01:01 p1234   database lookup required for testsuite=t5.last2.ex
+01:01:01 p1234   dnsdb key: t5.last2.ex
+01:01:01 p1234   DNS lookup of t5.last2.ex (CNAME) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 42
+01:01:01 p1234   DNS lookup of t5.last2.ex (CNAME) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 11 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 11 byte CNAME
+01:01:01 p1234   raw rrdata: 'localhos\99'
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: localhosc
+01:01:01 p1234   ├───item-res: localhosc
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: last░2░only░░░░${lookup░dnsdb{testsuite=t5.last2.ex}}
+01:01:01 p1234   ╰─────result: last░2░only░░░░localhosc
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: last░1░only░░░░${lookup░dnsdb{testsuite=t5.last1.ex}}
+01:01:01 p1234   ├───────text: last░1░only░░░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{testsuite=t5.last1.ex}}
+01:01:01 p1234    ╭considering: testsuite=t5.last1.ex}}
+01:01:01 p1234    ├───────text: testsuite=t5.last1.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: testsuite=t5.last1.ex
+01:01:01 p1234    ╰─────result: testsuite=t5.last1.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="testsuite=t5.last1.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="testsuite=t5.last1.ex" opts=NULL
+01:01:01 p1234   database lookup required for testsuite=t5.last1.ex
+01:01:01 p1234   dnsdb key: t5.last1.ex
+01:01:01 p1234   DNS lookup of t5.last1.ex (CNAME) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 41
+01:01:01 p1234   DNS lookup of t5.last1.ex (CNAME) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 10 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 10 byte CNAME
+01:01:01 p1234   raw rrdata: 'localhos\7'
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: localhos␇
+01:01:01 p1234   ├───item-res: localhos␇
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: last░1░only░░░░${lookup░dnsdb{testsuite=t5.last1.ex}}
+01:01:01 p1234   ╰─────result: last░1░only░░░░localhos␇
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ╭considering: slah░only░░░░░░${lookup░dnsdb{testsuite=t5.last_slash.ex}}
+01:01:01 p1234   ├───────text: slah░only░░░░░░
+01:01:01 p1234   ├considering: ${lookup░dnsdb{testsuite=t5.last_slash.ex}}
+01:01:01 p1234    ╭considering: testsuite=t5.last_slash.ex}}
+01:01:01 p1234    ├───────text: testsuite=t5.last_slash.ex
+01:01:01 p1234    ├considering: }}
+01:01:01 p1234    ├───expanded: testsuite=t5.last_slash.ex
+01:01:01 p1234    ╰─────result: testsuite=t5.last_slash.ex
+01:01:01 p1234   search_open: dnsdb "NULL"
+01:01:01 p1234   search_find: file="NULL"
+01:01:01 p1234     key="testsuite=t5.last_slash.ex" partial=-1 affix=NULL starflags=0 opts=NULL
+01:01:01 p1234   LRU list:
+01:01:01 p1234   internal_search_find: file=<NULL>
+01:01:01 p1234     type=dnsdb key="testsuite=t5.last_slash.ex" opts=NULL
+01:01:01 p1234   database lookup required for testsuite=t5.last_slash.ex
+01:01:01 p1234   dnsdb key: t5.last_slash.ex
+01:01:01 p1234   DNS lookup of t5.last_slash.ex (CNAME) using fakens
+fakens: scripted mode
+fakens remote: TESTSUITE/aux-var/scriptns
+fakens local: TESTSUITE/tmp/fakens
+fakens: req sent
+fakens: resp received: len 40
+01:01:01 p1234   DNS lookup of t5.last_slash.ex (CNAME) succeeded
+01:01:01 p1234   dns_lookup: scan for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 9 byte CNAME
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   dnsdb_find: search for CNAME RR
+01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
+01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
+01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_next_rr: return 9 byte CNAME
+01:01:01 p1234   raw rrdata: 'localhos\'
+01:01:01 p1234    dns_next_rr: next (0 left)
+01:01:01 p1234   creating new cache entry
+01:01:01 p1234   lookup yielded: localhos
+01:01:01 p1234   ├───item-res: localhos
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234   ├───expanded: slah░only░░░░░░${lookup░dnsdb{testsuite=t5.last_slash.ex}}
+01:01:01 p1234   ╰─────result: slah░only░░░░░░localhos
+01:01:01 p1234              ╰──(tainted)
+01:01:01 p1234  search_tidyup called
+01:01:01 p1234  >>>>>>>>>>>>>>>> Exim pid=p1234 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>

@@ -1411,6 +1411,9 @@ switch (type)
     return DNS_NOMATCH;
     }
 
+  case T_TESTSUITE:
+    return dns_lookup(dnsa, name, T_CNAME, fully_qualified_name);
+
   default:
     if (type >= 0)
       return dns_lookup(dnsa, name, type, fully_qualified_name);

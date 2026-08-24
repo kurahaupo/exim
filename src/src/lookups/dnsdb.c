@@ -11,66 +11,32 @@
 #include "lf_functions.h"
 
 
-
-/* Ancient systems (e.g. SunOS4) don't appear to have T_TXT defined in their
-header files. */
-
-#ifndef T_TXT
-# define T_TXT 16
-#endif
-
-/* Many systems do not have T_SPF. */
-#ifndef T_SPF
-# define T_SPF 99
-#endif
-
-/* New TLSA record for DANE */
-#ifndef T_TLSA
-# define T_TLSA 52
-#endif
-
 /* Table of recognized DNS record types and their integer values. */
 
-static const char *type_names[] = {
-  "a",
+typedef struct {
+  const uschar *	name;
+  int			value;
+} dnsdb_dnstype;
+static const dnsdb_dnstype nametable[] = {
+  { US"a",	T_A },
 #if HAVE_IPV6
-  "a+",
-  "aaaa",
+  { US"a+",	T_ADDRESSES },	/* Private type for AAAA + A */
+  { US"aaaa",	T_AAAA },
 #endif
-  "cname",
-  "csa",
-  "mx",
-  "mxh",
-  "ns",
-  "ptr",
-  "soa",
-  "spf",
-  "srv",
-  "tlsa",
-  "txt",
-  "zns"
+  { US"cname",	T_CNAME },
+  { US"csa",	T_CSA },   /* Private type for "Client SMTP Authorization". */
+  { US"mx",	T_MX },
+  { US"mxh",	T_MXH },	/* Private type for "MX hostnames" */
+  { US"ns",	T_NS },
+  { US"ptr",	T_PTR },
+  { US"soa",	T_SOA },
+  { US"spf",	T_SPF },
+  { US"srv",	T_SRV },
+  { US"testsuite", T_TESTSUITE }, /* Private type for testsuite */
+  { US"tlsa",	T_TLSA },
+  { US"txt",	T_TXT },
+  { US"zns",	T_ZNS }		  /* Private type for "zone nameservers" */
 };
-
-static int type_values[] = {
-  T_A,
-#if HAVE_IPV6
-  T_ADDRESSES,     /* Private type for AAAA + A */
-  T_AAAA,
-#endif
-  T_CNAME,
-  T_CSA,     /* Private type for "Client SMTP Authorization". */
-  T_MX,
-  T_MXH,     /* Private type for "MX hostnames" */
-  T_NS,
-  T_PTR,
-  T_SOA,
-  T_SPF,
-  T_SRV,
-  T_TLSA,
-  T_TXT,
-  T_ZNS      /* Private type for "zone nameservers" */
-};
-
 
 /*************************************************
 *              Open entry point                  *
@@ -252,15 +218,16 @@ if ((equals = Ustrchr(keystring, '=')) != NULL)
   while (tend > keystring && isspace(tend[-1])) tend--;
   len = tend - keystring;
 
-  for (i = 0; i < nelem(type_names); i++)
-    if (len == Ustrlen(type_names[i]) &&
-        strncmpic(keystring, US type_names[i], len) == 0)
+  /*XXX Linear search.  Would a chop_match be worthwhile? */
+  for (i = 0; i < nelem(nametable); i++)
+    if (  len == Ustrlen(nametable[i].name)
+       && strncmpic(keystring, nametable[i].name, len) == 0)
       {
-      type = type_values[i];
+      type = nametable[i].value;
       break;
       }
 
-  if (i >= nelem(type_names))
+  if (i >= nelem(nametable))
     {
     *errmsg = US"unsupported DNS record type";
     rc = DEFER;
@@ -309,6 +276,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
   {
   int searchtype = type == T_CSA ? T_SRV :         /* record type we want */
                    type == T_MXH ? T_MX :
+                   type == T_TESTSUITE ? T_CNAME :
                    type == T_ZNS ? T_NS : type;
 
   /* If the type is PTR or CSA, we have to construct the relevant magic lookup
@@ -317,20 +285,20 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
   Exim's extended CSA can be keyed by domains or IP addresses). This code for
   doing the reversal is now in a separate function. */
 
-  if ((type == T_PTR || type == T_CSA) &&
-      string_is_ip_address(domain, NULL) != 0)
+  if (  (type == T_PTR || type == T_CSA)
+     && string_is_ip_address(domain, NULL) != 0)
     domain = dns_build_reverse(domain);
 
   do
     {
     DEBUG(lookup) debug_printf_indent("dnsdb key: %s\n", domain);
 
-    /* Do the lookup and sort out the result. There are four special types that
-    are handled specially: T_CSA, T_ZNS, T_ADDRESSES and T_MXH.
+    /* Do the lookup and sort out the result. There are five special types that
+    are handled specially: T_CSA, T_ZNS, T_ADDRESSES, T_TESTSUITE and T_MXH.
     The first two are handled in a special lookup function so that the facility
-    could be used from other parts of the Exim code. T_ADDRESSES is handled by looping
-    over the types of A lookup.  T_MXH affects only what happens later on in
-    this function, but for tidiness it is handled by the "special". If the
+    could be used from other parts of the Exim code. T_ADDRESSES is handled by
+    looping over the types of A lookup.  T_MXH affects only what happens later
+    on in this function, but for tidiness it is handled by the "special". If the
     lookup fails, continue with the next domain. In the case of DEFER, adjust
     the final "nothing found" result, but carry on to the next domain. */
 
@@ -380,158 +348,181 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 
       if (type == T_A || type == T_AAAA || type == T_ADDRESSES)
         {
-        for (dns_address * da = dns_address_from_rr(dnsa, rr); da; da = da->next)
+        for (dns_address * da = dns_address_from_rr(dnsa, rr); da;
+	     da = da->next)
 	  yield = string_append_listele(yield, *outsep, da->address);
         continue;
         }
 
-      /* Other kinds of record just have one piece of data each, but there may be
-      several of them, of course.  TXT & SPF can have data in multiple chunks. */
+      /* Other kinds of record just have one piece of data each, but there may
+      be several of them, of course.
+      TXT & SPF can have data in multiple chunks. */
 
       if (yield->ptr) yield = string_catn(yield, outsep, 1);
 
-      if (type == T_TXT || type == T_SPF)
-	for (unsigned data_offset = 0; data_offset + 1 < rr->size; )
-	  {
-	  uschar chunk_len = (rr->data)[data_offset];
-	  int remain;
+      switch (type)
+	{
+	case T_TXT: case T_SPF:
+	  for (unsigned data_offset = 0; data_offset + 1 < rr->size; )
+	    {
+	    uschar chunk_len = (rr->data)[data_offset];
+	    int remain;
 
-	  if (outsep2 && *outsep2 && data_offset != 0)
+	    if (outsep2 && *outsep2 && data_offset != 0)
+	      yield = string_catn(yield, outsep2, 1);
+
+	    /* Apparently there are resolvers that do not check RRs before
+	    passing them on, and glibc fails to do so.  So every application
+	    must...  Check for chunk len exceeding RR */
+
+	    remain = rr->size - ++data_offset;
+	    if (chunk_len > remain)
+	      chunk_len = remain;
+	    yield = string_catn(yield, US ((rr->data) + data_offset), chunk_len);
+	    data_offset += chunk_len;
+
+	    if (!outsep2) break;     /* output only the first chunk of the RR */
+	    }
+	  break;
+
+	case T_TLSA:
+	  if (rr->size < 3)
+	    continue;
+	  else
+	    {
+	    uint16_t payload_length;
+	    const uschar * p = US rr->data;
+	    uint8_t usage, selector, matching_type;
+
+	    usage = *p++;
+	    selector = *p++;
+	    matching_type = *p++;
+	    /* What's left after removing the first 3 bytes above */
+	    payload_length = rr->size - 3;
+
+	    /* Append the cert/identifier, one hex char at a time */
+
+	    if (payload_length > MAX_TLSA_EXPANDED_SIZE)
+	      payload_length = MAX_TLSA_EXPANDED_SIZE;
+	    yield = string_fmt_append(yield, "%d%c%d%c%d%c%.*H",
+					usage, *outsep2,
+					selector, *outsep2,
+					matching_type, *outsep2,
+					(int)payload_length, p);
+	    }
+	  break;
+
+	default:
+	  {    /* T_CNAME T_CSA T_MX T_MXH T_NS T_PTR T_SOA T_SRV T_TESTSUITE */
+	  int priority, weight, port;
+	  uschar * p = US rr->data;
+
+	  /* NB: this memory is released implicitly by the call
+	  gstring_release_unused(yield) below. We used to use a stack-auto, but
+	  I want to track taint wherever possible. */
+#define LCL_BUF_SIZE 264
+	  uschar * buf = store_get(LCL_BUF_SIZE, GET_TAINTED);
+
+	  switch (type)	  /* Handle RRs that have data items before a dnsname */
+	    {
+	    case T_MXH:
+	      if (rr_bad_size(rr, sizeof(uint16_t))) continue;
+	      /* mxh ignores the priority number and includes only the names */
+	      GETSHORT(priority, p);
+	      break;
+
+	    case T_MX:
+	      if (rr_bad_size(rr, sizeof(uint16_t))) continue;
+	      GETSHORT(priority, p);
+	      yield = string_fmt_append(yield, "%d%c", priority, *outsep2);
+	      break;
+
+	    case T_SRV:
+	      if (rr_bad_size(rr, 3*sizeof(uint16_t))) continue;
+	      GETSHORT(priority, p);
+	      GETSHORT(weight, p);
+	      GETSHORT(port, p);
+	      yield = string_fmt_append(yield, "%d%c%d%c%d%c", priority, *outsep2,
+				weight, *outsep2, port, *outsep2);
+	      break;
+
+	    case T_CSA:
+	      if (rr_bad_size(rr, 3*sizeof(uint16_t))) continue;
+	      /* See acl_verify_csa() for more comments about CSA. */
+	      GETSHORT(priority, p);
+	      GETSHORT(weight, p);
+	      GETSHORT(port, p);
+
+	      if (priority != 1) continue;      /* CSA version must be 1 */
+
+	      /* If the CSA record we found is not the one we asked for, analyse
+	      the subdomain assertions in the port field, else analyse the
+	      direct authorization status in the weight field. */
+
+	      if (Ustrcmp(found, domain) != 0)
+		yield = string_catn(yield, port & 1
+				    ? US"X " /* explicit authorization required */
+				    : US"? ", /* no subdomain assertions here */
+				    2);
+	      else if (weight > 3)
+		continue;
+	      else
+		yield = string_catn(yield,
+				      weight < 2  ? US"N "  /* not authorized */
+				    : weight == 2 ? US"Y "  /* authorized */
+				    :		  US"? ",   /* unauthorizable */
+				    2);
+	      break;
+
+	    default:
+	      break;
+	    }
+
+	  /* GETSHORT() has advanced p to the target domain. */
+	   {
+	    const uschar * s;
+	    if (type == T_TESTSUITE && f.running_in_test_harness)
+	      {
+	      DEBUG(dns_rr) debug_printf_indent("raw rrdata: '%.*W'\n",
+						(int)rr->size, rr->data);
+	      s = string_copyn(rr->data, rr->size);	/* the raw data */
+	      }
+	    else
+	      {
+	      if ((rc = exim_dn_expand(dnsa, rr, p, buf, LCL_BUF_SIZE)) < 0)
+		{ gstring_reset(yield); break; }
+	      s = buf;
+	      }
+	    yield = string_cat(yield, string_decode_dnsdomain(s));
+	   }
+
+	  if (type == T_SOA && outsep2 != NULL)
+	    {
+	    unsigned long serial = 0, refresh = 0, retry = 0, expire = 0,
+			  minimum = 0;
+
+	    p += rc;
 	    yield = string_catn(yield, outsep2, 1);
 
-	  /* Apparently there are resolvers that do not check RRs before passing
-	  them on, and glibc fails to do so.  So every application must...
-	  Check for chunk len exceeding RR */
+	    rc = exim_dn_expand(dnsa, rr, p, buf, LCL_BUF_SIZE);
+	    if (rc < 0)
+	      { gstring_reset(yield); break; }
+	    yield = string_cat(yield, string_decode_dnsdomain(buf));
 
-	  remain = rr->size - ++data_offset;
-	  if (chunk_len > remain)
-	    chunk_len = remain;
-	  yield = string_catn(yield, US ((rr->data) + data_offset), chunk_len);
-	  data_offset += chunk_len;
-
-	  if (!outsep2) break;		/* output only the first chunk of the RR */
-	  }
-      else if (type == T_TLSA)
-	if (rr->size < 3)
-	  continue;
-	else
-	  {
-	  uint16_t payload_length;
-	  const uschar * p = US rr->data;
-	  uint8_t usage, selector, matching_type;
-
-	  usage = *p++;
-	  selector = *p++;
-	  matching_type = *p++;
-	  /* What's left after removing the first 3 bytes above */
-	  payload_length = rr->size - 3;
-
-	  /* Append the cert/identifier, one hex char at a time */
-
-	  if (payload_length > MAX_TLSA_EXPANDED_SIZE)
-	    payload_length = MAX_TLSA_EXPANDED_SIZE;
-	  yield = string_fmt_append(yield, "%d%c%d%c%d%c%.*H",
-				      usage, *outsep2,
-				      selector, *outsep2,
-				      matching_type, *outsep2,
-				      (int)payload_length, p);
-	  }
-      else   /* T_CNAME, T_CSA, T_MX, T_MXH, T_NS, T_PTR, T_SOA, T_SRV */
-        {
-        int priority, weight, port;
-        uschar * p = US rr->data;
-
-	/* NB: this memory is released implicitly by the call
-	gstring_release_unused(yield) below. We used to use a stack-auto, but
-	I want to track taint wherever possible. */
-#define LCL_BUF_SIZE 264
-	uschar * buf = store_get(LCL_BUF_SIZE, GET_TAINTED);
-
-	switch (type)
-	  {
-	  case T_MXH:
-	    if (rr_bad_size(rr, sizeof(uint16_t))) continue;
-	    /* mxh ignores the priority number and includes only the hostnames */
-	    GETSHORT(priority, p);
-	    break;
-
-	  case T_MX:
-	    if (rr_bad_size(rr, sizeof(uint16_t))) continue;
-	    GETSHORT(priority, p);
-	    yield = string_fmt_append(yield, "%d%c", priority, *outsep2);
-	    break;
-
-	  case T_SRV:
-	    if (rr_bad_size(rr, 3*sizeof(uint16_t))) continue;
-	    GETSHORT(priority, p);
-	    GETSHORT(weight, p);
-	    GETSHORT(port, p);
-	    yield = string_fmt_append(yield, "%d%c%d%c%d%c", priority, *outsep2,
-			      weight, *outsep2, port, *outsep2);
-	    break;
-
-	  case T_CSA:
-	    if (rr_bad_size(rr, 3*sizeof(uint16_t))) continue;
-	    /* See acl_verify_csa() for more comments about CSA. */
-	    GETSHORT(priority, p);
-	    GETSHORT(weight, p);
-	    GETSHORT(port, p);
-
-	    if (priority != 1) continue;      /* CSA version must be 1 */
-
-	    /* If the CSA record we found is not the one we asked for, analyse
-	    the subdomain assertions in the port field, else analyse the direct
-	    authorization status in the weight field. */
-
-	    if (Ustrcmp(found, domain) != 0)
-	      yield = string_catn(yield, port & 1
-				  ? US"X " /* explicit authorization required */
-				  : US"? ", /* no subdomain assertions here */
-				  2);
-	    else if (weight > 3)
-	      continue;
-	    else
-	      yield = string_catn(yield,
-				    weight < 2  ? US"N "  /* not authorized */
-				  : weight == 2 ? US"Y "  /* authorized */
-				  :		  US"? ", /* unauthorizable */
-				  2);
-	    break;
-
-	  default:
-	    break;
-	  }
-
-        /* GETSHORT() has advanced the pointer to the target domain. */
-
-	if ((rc = exim_dn_expand(dnsa, rr, p, buf, LCL_BUF_SIZE)) < 0)
-	  { gstring_reset(yield); break; }
-	yield = string_cat(yield, string_decode_dnsdomain(buf));
-
-	if (type == T_SOA && outsep2 != NULL)
-	  {
-	  unsigned long serial = 0, refresh = 0, retry = 0, expire = 0, minimum = 0;
-
-	  p += rc;
-	  yield = string_catn(yield, outsep2, 1);
-
-	  rc = exim_dn_expand(dnsa, rr, p, buf, LCL_BUF_SIZE);
-	  if (rc < 0)
-	    { gstring_reset(yield); break; }
-	  yield = string_cat(yield, string_decode_dnsdomain(buf));
-
-	  p += rc;
-	  if (!rr_bad_increment(rr, p, 5 * sizeof(uint32_t)))
-	    {
-	    GETLONG(serial, p); GETLONG(refresh, p);
-	    GETLONG(retry,  p); GETLONG(expire,  p); GETLONG(minimum, p);
+	    p += rc;
+	    if (!rr_bad_increment(rr, p, 5 * sizeof(uint32_t)))
+	      {
+	      GETLONG(serial, p); GETLONG(refresh, p);
+	      GETLONG(retry,  p); GETLONG(expire,  p); GETLONG(minimum, p);
+	      }
+	    yield = string_fmt_append(yield, "%c%lu%c%lu%c%lu%c%lu%c%lu",
+	      *outsep2, serial, *outsep2, refresh,
+	      *outsep2, retry,  *outsep2, expire,  *outsep2, minimum);
 	    }
-	  yield = string_fmt_append(yield, "%c%lu%c%lu%c%lu%c%lu%c%lu",
-	    *outsep2, serial, *outsep2, refresh,
-	    *outsep2, retry,  *outsep2, expire,  *outsep2, minimum);
-	  }
-        }
 #undef LCL_BUF_SIZE
+	  }
+	  break;
+	}
       }    /* Loop for list of returned records */
 
            /* Loop for set of A-lookup types */

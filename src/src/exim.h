@@ -394,12 +394,10 @@ side, put in definitions for all the ones that Exim uses. */
 
 /* We define a few private types for special DNS lookups:
 
+ . T_TESTSUITE looks up a CNAME but does not dn_expand() the result name
  . T_ZNS gets the nameservers of the enclosing zone of a domain
-
  . T_MXH gets the MX hostnames only (without their priorities)
-
  . T_CSA gets the domain's Client SMTP Authorization SRV record
-
  . T_ADDRESSES looks up both AAAA (or A6) and A records
 
 If any of these names appear in the RRtype list at:
@@ -407,10 +405,11 @@ If any of these names appear in the RRtype list at:
 then we should rename Exim's private type away from the conflict.
 */
 
-#define T_ZNS (-1)
-#define T_MXH (-2)
-#define T_CSA (-3)
-#define T_ADDRESSES (-4)
+#define T_TESTSUITE	(-1)
+#define T_ZNS		(-2)
+#define T_MXH		(-3)
+#define T_CSA		(-4)
+#define T_ADDRESSES	(-5)
 
 /* The resolv.h header defines __P(x) on some Solaris 2.5.1 systems (without
 checking that it is already defined, in fact). This conflicts with other

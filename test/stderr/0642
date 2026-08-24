@@ -501,6 +501,7 @@ fakens: resp received: len 50
 01:01:01 p1236    dns_next_rr: return 17 byte MX
 01:01:01 p1236  LOG: MAIN
 01:01:01 p1236    dns name overruns RR size: type=MX for exim.org
+01:01:01 p1236    dns_next_rr: next (0 left)
 01:01:01 p1236   creating new cache entry
 01:01:01 p1236   lookup failed
 01:01:01 p1236   ├───item-res: 
