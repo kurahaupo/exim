@@ -271,12 +271,12 @@ fakens: resp received: len 52
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
-01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno 14 Bad address
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   dnsdb_find: search for MX RR
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
-01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno 14 Bad address
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   creating new cache entry
 01:01:01 p1235   lookup failed
 01:01:01 p1235   ├───item-res: 
@@ -309,12 +309,12 @@ fakens: resp received: len 50
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
-01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno 14 Bad address
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   dnsdb_find: search for MX RR
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
-01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno 14 Bad address
+01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   creating new cache entry
 01:01:01 p1235   lookup failed
 01:01:01 p1235   ├───item-res: 
@@ -692,12 +692,12 @@ fakens: resp received: len 28
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1237    dns_next_rr: 1 RRs to read
-01:01:01 p1237    dns_next_rr: terminate (0 RRs left). Last op: R-namelen; errno 90 Message too long
+01:01:01 p1237    dns_next_rr: terminate (0 RRs left). Last op: R-namelen; errno ZZZ
 01:01:01 p1237   dnsdb_find: search for MX RR
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1237    dns_next_rr: 1 RRs to read
-01:01:01 p1237    dns_next_rr: terminate (0 RRs left). Last op: R-namelen; errno 90 Message too long
+01:01:01 p1237    dns_next_rr: terminate (0 RRs left). Last op: R-namelen; errno ZZZ
 01:01:01 p1237   creating new cache entry
 01:01:01 p1237   lookup failed
 01:01:01 p1237   ├───item-res: 
