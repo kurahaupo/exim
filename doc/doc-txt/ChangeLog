@@ -2,6 +2,15 @@ This document describes *changes* to previous versions, that might
 affect Exim's operation, with an unchanged configuration file.  For new
 options, and new features, see the NewStuff file next to this ChangeLog.
 
+Exim version 4.100.1
+--------------------
+
+This is a security release.
+
+JH/01 Proxy Protocol: fix an OOB read in V1 protocol header parsing
+      (GCVE-25-2026-09-50-1).
+
+
 Exim version 4.100
 ------------------
 

@@ -388,20 +388,15 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
   }
 else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
   {
-  uschar *p;
-  uschar *end;
-  uschar *sp;     /* Utility variables follow */
-  int     tmp_port;
-  int     r2;
-  char   *endc;
+  uschar * p, * end, * sp, * endc;     /* Utility variables follow sp */
+  int tmp_port, r2;
 
   /* get the rest of the line */
   r2 = swallow_until_crlf(smtp_in_fd, US &hdr, ret, sizeof(hdr)-ret);
   if (r2 == -1)
     goto proxyfail;
-  ret += r2;
 
-  p = string_copy(hdr.v1.line);
+  p = string_copyn(hdr.v1.line, ret = Ustrlen(hdr.v1.line));
   end = memchr(p, '\r', ret - 1);
 
   if (!end || (end == US &hdr + ret) || end[1] != '\n')
@@ -436,7 +431,7 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
     goto proxyfail;
     }
 
-  p += Ustrlen(iptype);
+  p += Ustrlen(iptype);	/* the field sizes happen to match our iptype strings */
   if (!isspace(*p++))
     {
     DEBUG(receive) debug_printf("Missing space after TCP4/6 command\n");
@@ -480,7 +475,7 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
     goto proxyfail;
     }
   *sp = '\0';
-  tmp_port = strtol(CCS p, &endc, 10);
+  tmp_port = strtol(CCS p, CSS &endc, 10);
   if (*endc || tmp_port == 0)
     {
     DEBUG(receive)
@@ -495,7 +490,7 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
     DEBUG(receive) debug_printf("Did not find proxy dest port\n");
     goto proxyfail;
     }
-  tmp_port = strtol(CCS p, &endc, 10);
+  tmp_port = strtol(CCS p, CSS &endc, 10);
   if (*endc || tmp_port == 0)
     {
     DEBUG(receive)
