@@ -9,13 +9,17 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-/* Code for matching regular expressions against headers and body.
- Called from acl.c. */
+/* Regular-expression routines.
+
+Also, WITH_CONTENT_SCAN: match routines for REs against headers and body.
+(Called from acl.c)
+*/
 
 #include "exim.h"
+
 #ifdef WITH_CONTENT_SCAN
-#include <unistd.h>
-#include <sys/mman.h>
+# include <unistd.h>
+# include <sys/mman.h>
 
 /* Structure to hold a list of Regular expressions */
 typedef struct pcre_list {
@@ -24,9 +28,161 @@ typedef struct pcre_list {
   struct pcre_list *	next;
 } pcre_list;
 
-extern FILE *mime_stream;
-extern const uschar *mime_current_boundary;
+extern FILE * mime_stream;
+extern const uschar * mime_current_boundary;
+#endif
 
+
+/*************************************************
+*      Function interface to store functions     *
+*************************************************/
+
+/* We need some real functions to pass to the PCRE regular expression library
+for store allocation via Exim's store manager. The normal calls are actually
+macros that pass over location information to make tracing easier. These
+functions just interface to the standard macro calls. A good compiler will
+optimize out the tail recursion and so not make them too expensive. */
+
+static void *
+function_store_malloc(PCRE2_SIZE size, void * tag)
+{
+if (size > INT_MAX)
+  log_write_die(LOG_MAIN, "excessive memory alloc request");
+return store_malloc((int)size);
+}
+
+static void
+function_store_free(void * block, void * tag)
+{
+/* At least some version of pcre2 pass a null pointer */
+if (block) store_free(block);
+}
+
+
+static void *
+function_store_get(PCRE2_SIZE size, void * tag)
+{
+if (size > INT_MAX)
+  log_write_die(LOG_MAIN, "excessive memory alloc request");
+return store_get((int)size, GET_UNTAINTED);	/* loses track of taint */
+}
+
+static void
+function_store_nullfree(void * block, void * tag)
+{
+/* We cannot free memory allocated using store_get() */
+}
+
+
+
+void
+pcre_init(void)
+{
+pcre_mlc_ctx = pcre2_general_context_create(function_store_malloc, function_store_free, NULL);
+pcre_gen_ctx = pcre2_general_context_create(function_store_get, function_store_nullfree, NULL);
+
+pcre_mlc_cmp_ctx = pcre2_compile_context_create(pcre_mlc_ctx);
+pcre_gen_cmp_ctx = pcre2_compile_context_create(pcre_gen_ctx);
+
+pcre_gen_mtc_ctx = pcre2_match_context_create(pcre_gen_ctx);
+}
+
+
+
+
+
+/*************************************************
+*   Execute regular expression and set strings   *
+*************************************************/
+
+/* This function runs a regular expression match, and sets up the pointers to
+the matched substrings.  The matched strings are copied so the lifetime of
+the subject is not a problem.  Matched strings will have the same taint status
+as the subject string (this is not a de-taint method, and must not be made so
+given the support for wildcards in REs).
+
+Arguments:
+  re          the compiled expression
+  subject     the subject string
+  options     additional PCRE options
+  setup       if < 0 do full setup
+              if >= 0 setup from setup+1 onwards,
+                excluding the full matched string
+
+Returns:      TRUE if matched, or FALSE
+*/
+
+BOOL
+regex_match_and_setup(const pcre2_code * re, const uschar * subject,
+  int options, int setup)
+{
+pcre2_match_data * md = pcre2_match_data_create(EXPAND_MAXN + 1, pcre_gen_ctx);
+int res = pcre2_match(re, (PCRE2_SPTR)subject, PCRE2_ZERO_TERMINATED, 0,
+			PCRE_EOPT | options, md, pcre_gen_mtc_ctx);
+BOOL yield;
+
+if ((yield = (res >= 0)))
+  {
+  const PCRE2_SIZE * ovec = pcre2_get_ovector_pointer(md);
+  expand_nmax = setup < 0 ? 0 : setup + 1;
+  for (int matchnum = setup < 0 ? 0 : 1; matchnum < res; matchnum++)
+    {
+    /* Although PCRE2 has a pcre2_substring_get_bynumber() conveneience, it
+    seems to return a bad pointer when a capture group had no data, eg. (.*)
+    matching zero letters.  So use the underlying ovec and hope (!) that the
+    offsets are sane (including that case).  Should we go further and range-
+    check each one vs. the subject string length? */
+    int m_off = matchnum * 2;
+    int len = ovec[m_off + 1] - ovec[m_off];
+    expand_nstring[expand_nmax] = string_copyn(subject + ovec[m_off], len);
+    expand_nlength[expand_nmax++] = len;
+    }
+  expand_nmax--;
+  }
+else if (res != PCRE2_ERROR_NOMATCH) DEBUG(any)
+  {
+  uschar errbuf[128];
+  pcre2_get_error_message(res, errbuf, sizeof(errbuf));
+  debug_printf_indent("pcre2: %s\n", errbuf);
+  }
+/* pcre2_match_data_free(md);	gen ctx needs no free */
+return yield;
+}
+
+
+/* Check just for match with regex.  Uses the common memory-handling.
+
+Arguments:
+	re	compiled regex
+	subject	string to be checked
+	slen	length of subject; -1 for nul-terminated
+	rptr	pointer for matched string, copied, or NULL
+
+Return: TRUE for a match.
+*/
+
+BOOL
+regex_match(const pcre2_code * re, const uschar * subject, int slen, uschar ** rptr)
+{
+pcre2_match_data * md = pcre2_match_data_create(1, pcre_gen_ctx);
+int rc = pcre2_match(re, (PCRE2_SPTR)subject,
+		      slen >= 0 ? slen : PCRE2_ZERO_TERMINATED,
+		      0, PCRE_EOPT, md, pcre_gen_mtc_ctx);
+const PCRE2_SIZE * ovec = pcre2_get_ovector_pointer(md);
+BOOL ret = FALSE;
+
+if (rc >= 0)
+  {
+  if (rptr)
+    *rptr = string_copyn(subject + ovec[0], ovec[1] - ovec[0]);
+  ret = TRUE;
+  }
+/* pcre2_match_data_free(md);	gen ctx needs no free */
+return ret;
+}
+
+
+#ifdef WITH_CONTENT_SCAN
 
 static pcre_list *
 compile(const uschar * list, BOOL cacheable, int * cntp)

@@ -419,6 +419,7 @@ extern const uschar *parse_message_id(const uschar *, uschar **, uschar **);
 extern const uschar *parse_quote_2047(const uschar *, int, const uschar *,
 				      BOOL);
 extern const uschar *parse_date_time(const uschar *str, time_t *t);
+extern void	pcre_init(void);
 #ifdef EXIM_PERL
 const misc_module_info * perl_startup(const uschar *);
 #endif
