@@ -136,7 +136,7 @@ Returns:      TRUE if matched, or FALSE
 BOOL
 regex_match_and_setup(const pcre2_code * re, const uschar * subject, int options, int setup)
 {
-pcre2_match_data * md = pcre2_match_data_create_from_pattern(re, pcre_gen_ctx);
+pcre2_match_data * md = pcre2_match_data_create(EXPAND_MAXN + 1, pcre_gen_ctx);
 int res = pcre2_match(re, (PCRE2_SPTR)subject, PCRE2_ZERO_TERMINATED, 0,
 			PCRE_EOPT | options, md, pcre_gen_mtc_ctx);
 BOOL yield;
@@ -144,7 +144,6 @@ BOOL yield;
 if ((yield = (res >= 0)))
   {
   const PCRE2_SIZE * ovec = pcre2_get_ovector_pointer(md);
-  res = pcre2_get_ovector_count(md);
   expand_nmax = setup < 0 ? 0 : setup + 1;
   for (int matchnum = setup < 0 ? 0 : 1; matchnum < res; matchnum++)
     {
