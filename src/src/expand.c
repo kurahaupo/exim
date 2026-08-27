@@ -469,7 +469,7 @@ static var_entry var_table[] = {
   { "authenticated_fail_id",vtype_stringptr,  &authenticated_fail_id },
   { "authenticated_id",    vtype_stringptr,   &authenticated_id },
   { "authenticated_sender",vtype_stringptr,   &authenticated_sender },
-  { "authentication_failed",vtype_int,        &authentication_failed },
+  { "authentication_failed",vtype_boolint,    &authentication_failed },
 #ifdef WITH_CONTENT_SCAN
   { "av_failed",           vtype_int,         &av_failed },
 #endif
