@@ -309,13 +309,8 @@ switch(PQresultStatus(pg_result))
     break;
 
   default:
-    /* This was the original code:
-    *errmsg = string_sprintf("PGSQL: query failed: %s\n",
-			     PQresultErrorMessage(pg_result));
-    This was suggested by a user:
-    */
-
-    *errmsg = string_sprintf("PGSQL: query failed: %s (%s) (%s)\n",
+    *errmsg = string_sprintf("PGSQL: query failed (%s %d): %s (%s) (%s)\n",
+			   config_filename, config_lineno,
 			   PQresultErrorMessage(pg_result),
 			   PQresStatus(PQresultStatus(pg_result)), query);
     goto PGSQL_EXIT;

@@ -273,8 +273,8 @@ else DEBUG(lookup)
 
 if (mysql_query(mysql_handle, CS query) != 0)
   {
-  *errmsg = string_sprintf("MYSQL: query failed: %s\n",
-    mysql_error(mysql_handle));
+  *errmsg = string_sprintf("MYSQL: query failed (%s %d): %s\n",
+    config_filename, config_lineno, mysql_error(mysql_handle));
   *defer_break = FALSE;
   goto MYSQL_EXIT;
   }

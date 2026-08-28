@@ -2,8 +2,8 @@ This document describes *changes* to previous versions, that might
 affect Exim's operation, with an unchanged configuration file.  For new
 options, and new features, see the NewStuff file next to this ChangeLog.
 
-Exim version 4.100
-------
+Exim version 4.101
+------------------
 
 JH/01 The restriction on expanding the second (list) argument of list-matching
       expansion conditions has been removed. It was introduced in 4.77 on
@@ -12,6 +12,10 @@ JH/01 The restriction on expanding the second (list) argument of list-matching
 
 JH/02 Fix expansion of $authentication_failed. Previously an incorrect value
       was returned.
+
+JH/03 The legacy syntax for specifying a specific server in an individual
+      query-style lookup is now withdrawn.  It was deprecated, with warnings
+      being logged, in 4.98.
 
 
 Exim version 4.100

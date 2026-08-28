@@ -44,12 +44,12 @@ INSERT 0 1
 after" id=newline 
 > name="x	x" id=tab 
 > name='stquot id=quote1 
-> Failed: lookup of "servers=x:localhost; select name from them where id='ph10';" gave DEFER: "PostgreSQL server \"x\" not found in pgsql_servers"
+> Failed: lookup of "select name from them where id='ph10';" gave DEFER: "PostgreSQL server \"x\" not found in pgsql_servers"
 > Philip Hazel
 > name: Philip Hazel
 > ipv4: Philip Hazel
-> oldsyntax ipv6: Philip Hazel
-> newsyntax ipv6: Philip Hazel
+> Failed: lookup of "servers=<!::1.PORT_N/test/CALLER/!x; select name from them where id='ph10';" gave DEFER: "PGSQL: query failed (-be stdin 15): ERROR:  syntax error at or near \"servers\"\nLINE 1: servers=<!::1.PORT_N/test/CALLER/!x; select name from them where ...\n        ^\n (PGRES_FATAL_ERROR) (servers=<!::1.PORT_N/test/CALLER/!x; select name from them where id='ph10';)\n"
+> newsyntax ipv6:,{lookup pgsql,servers=<!::1.PORT_N/test/CALLER/!x {select name from them where id='ph10';}}
 > Philip Hazel
 > x
 > Philip Hazel

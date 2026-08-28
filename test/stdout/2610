@@ -13,10 +13,10 @@
 > 
 > name="\"stquot" id=quote2 
 > 
-> Failed: lookup of "servers=x:127.0.0.1::PORT_N; select name from them where id='ph10';" gave DEFER: "MySQL server \"x\" not found in mysql_servers"
+> Failed: lookup of "select name from them where id='ph10';" gave DEFER: "MySQL server \"x\" not found in mysql_servers"
 > Philip Hazel
 > Philip Hazel
-> oldsyntax ipv6: Philip Hazel
+> Failed: lookup of "servers=<!::1.PORT_N/test/root/pass!x; select name from them where id='ph10';" gave DEFER: "MYSQL: query failed (-be stdin 14): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'servers=<!::1.PORT_N/test/root/pass!x; select name from them where id='ph10'' at line 1\n"
 > newsyntax ipv6: Philip Hazel
 > Philip Hazel
 > Philip Hazel

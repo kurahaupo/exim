@@ -118,43 +118,34 @@ Exim version x.yz ....
  lookup failed
  search_open: mysql "NULL"
  search_find: file="NULL"
-   key="servers=x:127.0.0.1::PORT_N; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=x:127.0.0.1::PORT_N"
  LRU list:
  internal_search_find: file=<NULL>
-   type=mysql key="servers=x:127.0.0.1::PORT_N; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=x:127.0.0.1::PORT_N; select name from them where id='ph10';
- MySQL query: "servers=x:127.0.0.1::PORT_N; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 11 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=mysql key="select name from them where id='ph10';" opts="servers=x:127.0.0.1::PORT_N"
+ database lookup required for select name from them where id='ph10';
+ MySQL query: "select name from them where id='ph10';" opts 'servers=x:127.0.0.1::PORT_N'
  lookup deferred: MySQL server "x" not found in mysql_servers
  search_open: mysql "NULL"
  search_find: file="NULL"
-   key="servers=127.0.0.1::PORT_N:x; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=127.0.0.1::PORT_N:x"
  LRU list:
  internal_search_find: file=<NULL>
-   type=mysql key="servers=127.0.0.1::PORT_N:x; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=127.0.0.1::PORT_N:x; select name from them where id='ph10';
- MySQL query: "servers=127.0.0.1::PORT_N:x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 12 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=mysql key="select name from them where id='ph10';" opts="servers=127.0.0.1::PORT_N:x"
+ database lookup required for select name from them where id='ph10';
+ MySQL query: "select name from them where id='ph10';" opts 'servers=127.0.0.1::PORT_N:x'
  MYSQL using cached connection for 127.0.0.1:PORT_N/test/root
  creating new cache entry
  lookup yielded: Philip░Hazel
  search_open: mysql "NULL"
  search_find: file="NULL"
-   key="servers=127.0.0.1::PORT_N/test/root/:x; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=127.0.0.1::PORT_N/test/root/:x"
  LRU list:
  internal_search_find: file=<NULL>
-   type=mysql key="servers=127.0.0.1::PORT_N/test/root/:x; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=127.0.0.1::PORT_N/test/root/:x; select name from them where id='ph10';
- MySQL query: "servers=127.0.0.1::PORT_N/test/root/:x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 13 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=mysql key="select name from them where id='ph10';" opts="servers=127.0.0.1::PORT_N/test/root/:x"
+ cached data found but wrong opts;  database lookup required for select name from them where id='ph10';
+ MySQL query: "select name from them where id='ph10';" opts 'servers=127.0.0.1::PORT_N/test/root/:x'
  MYSQL using cached connection for 127.0.0.1:PORT_N/test/root
- creating new cache entry
+ replacing old cache entry
  lookup yielded: Philip░Hazel
  search_open: mysql "NULL"
  search_find: file="NULL"
@@ -164,50 +155,43 @@ LOG: MAIN
    type=mysql key="servers=<!::1.PORT_N/test/root/pass!x; select name from them where id='ph10';" opts=NULL
  database lookup required for servers=<!::1.PORT_N/test/root/pass!x; select name from them where id='ph10';
  MySQL query: "servers=<!::1.PORT_N/test/root/pass!x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 14 of -be stdin:
-  WARNING: obsolete syntax used for lookup
- MYSQL new connection: host=::1 port=PORT_N socket=NULL database=test user=root
- creating new cache entry
- lookup yielded: Philip░Hazel
+ MYSQL using cached connection for 127.0.0.1:PORT_N/test/root
+ MYSQL: query failed (-be stdin 14): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'servers=<!::1.PORT_N/test/root/pass!x; select name from them where id='ph10'' at line 1
+ 
+ lookup deferred: MYSQL: query failed (-be stdin 14): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'servers=<!::1.PORT_N/test/root/pass!x; select name from them where id='ph10'' at line 1
+ 
  search_open: mysql "NULL"
  search_find: file="NULL"
    key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=<!::1.PORT_N/test/root/pass!x"
  LRU list:
  internal_search_find: file=<NULL>
    type=mysql key="select name from them where id='ph10';" opts="servers=<!::1.PORT_N/test/root/pass!x"
- database lookup required for select name from them where id='ph10';
+ cached data found but wrong opts;  database lookup required for select name from them where id='ph10';
  MySQL query: "select name from them where id='ph10';" opts 'servers=<!::1.PORT_N/test/root/pass!x'
- MYSQL using cached connection for ::1.PORT_N/test/root
- creating new cache entry
+ MYSQL new connection: host=::1 port=PORT_N socket=NULL database=test user=root
+ replacing old cache entry
  lookup yielded: Philip░Hazel
  search_open: mysql "NULL"
  search_find: file="NULL"
-   key="servers=ip4.ip4.ip4.ip4::PORT_N/test/root/:127.0.0.1::PORT_N; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=ip4.ip4.ip4.ip4::PORT_N/test/root/:127.0.0.1::PORT_N"
  LRU list:
  internal_search_find: file=<NULL>
-   type=mysql key="servers=ip4.ip4.ip4.ip4::PORT_N/test/root/:127.0.0.1::PORT_N; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=ip4.ip4.ip4.ip4::PORT_N/test/root/:127.0.0.1::PORT_N; select name from them where id='ph10';
- MySQL query: "servers=ip4.ip4.ip4.ip4::PORT_N/test/root/:127.0.0.1::PORT_N; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 16 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=mysql key="select name from them where id='ph10';" opts="servers=ip4.ip4.ip4.ip4::PORT_N/test/root/:127.0.0.1::PORT_N"
+ cached data found but wrong opts;  database lookup required for select name from them where id='ph10';
+ MySQL query: "select name from them where id='ph10';" opts 'servers=ip4.ip4.ip4.ip4::PORT_N/test/root/:127.0.0.1::PORT_N'
  MYSQL new connection: host=ip4.ip4.ip4.ip4 port=PORT_N socket=NULL database=test user=root
- creating new cache entry
+ replacing old cache entry
  lookup yielded: Philip░Hazel
  search_open: mysql "NULL"
  search_find: file="NULL"
-   key="servers=localhost(TESTSUITE/mysql/sock)/test/root/pass; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=localhost(TESTSUITE/mysql/sock)/test/root/pass"
  LRU list:
  internal_search_find: file=<NULL>
-   type=mysql key="servers=localhost(TESTSUITE/mysql/sock)/test/root/pass; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=localhost(TESTSUITE/mysql/sock)/test/root/pass; select name from them where id='ph10';
- MySQL query: "servers=localhost(TESTSUITE/mysql/sock)/test/root/pass; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 17 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=mysql key="select name from them where id='ph10';" opts="servers=localhost(TESTSUITE/mysql/sock)/test/root/pass"
+ cached data found but wrong opts;  database lookup required for select name from them where id='ph10';
+ MySQL query: "select name from them where id='ph10';" opts 'servers=localhost(TESTSUITE/mysql/sock)/test/root/pass'
  MYSQL new connection: host=localhost port=0 socket=TESTSUITE/mysql/sock database=test user=root
- creating new cache entry
+ replacing old cache entry
  lookup yielded: Philip░Hazel
  search_open: mysql "NULL"
  search_find: file="NULL"
@@ -480,88 +464,8 @@ search_tidyup called
 01:01:01 p1235   ├───expanded: ok:░░░░${lookup░mysql,servers=127.0.0.1::PORT_N░░░░{select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
 01:01:01 p1235   ╰─────result: ok:░░░░
 01:01:01 p1235                   = ok:    
-01:01:01 p1235  check set acl_m0 = FAIL2: ${lookup mysql     {servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = '${quote_mysql:$local_part}'}}
-01:01:01 p1235   ╭considering: FAIL2:░${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
-01:01:01 p1235   ├───────text: FAIL2:░
-01:01:01 p1235   ├considering: ${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
-01:01:01 p1235    ╭considering: servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'${quote_mysql:$local_part}'}}
-01:01:01 p1235    ├───────text: servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'
-01:01:01 p1235    ├considering: ${quote_mysql:$local_part}'}}
-01:01:01 p1235     ╭considering: $local_part}'}}
-01:01:01 p1235     ├──────value: c
-01:01:01 p1235                ╰──(tainted)
-01:01:01 p1235     ├considering: }'}}
-01:01:01 p1235     ├───expanded: $local_part
-01:01:01 p1235     ╰─────result: c
-01:01:01 p1235                ╰──(tainted)
-01:01:01 p1235    ├─────op-res: c
-01:01:01 p1235               ╰──(tainted, quoted:mysql)
-01:01:01 p1235    ├considering: '}}
-01:01:01 p1235    ├───────text: '
-01:01:01 p1235    ├considering: }}
-01:01:01 p1235    ├───expanded: servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'${quote_mysql:$local_part}'
-01:01:01 p1235    ╰─────result: servers=127.0.0.1::PORT_N/test/root/pass;░select░name░from░them░where░id░=░'c'
-01:01:01 p1235               ╰──(tainted, quoted:mysql)
-01:01:01 p1235   search_open: mysql "NULL"
-01:01:01 p1235   search_find: file="NULL"
-01:01:01 p1235     key="servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1235   LRU list:
-01:01:01 p1235   internal_search_find: file=<NULL>
-01:01:01 p1235     type=mysql key="servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = 'c'" opts=NULL
-01:01:01 p1235   database lookup required for servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = 'c'
-01:01:01 p1235                                (tainted, quoted:mysql)
-01:01:01 p1235   MySQL query: "servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = 'c'" opts 'NULL'
-01:01:01 p1235  LOG: MAIN
-01:01:01 p1235    Exim configuration error in ACL verb at line 31 of TESTSUITE/test-config:
-01:01:01 p1235    WARNING: obsolete syntax used for lookup
-01:01:01 p1235   lookup deferred: MySQL server "127.0.0.1:PORT_N/test" is tainted
-01:01:01 p1235   ├failed to expand: FAIL2: ${lookup mysql     {servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = '${quote_mysql:$local_part}'}}
-01:01:01 p1235   ╰───error message: lookup of "servers=127.0.0.1::PORT_N/test/root/pass; select name from them where id = 'c'" gave DEFER: "MySQL server \"127.0.0.1:PORT_N/test\" is tainted"
-01:01:01 p1235  warn: condition test deferred in ACL check_recipient
-01:01:01 p1235  LOG: MAIN
-01:01:01 p1235    H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 31 of TESTSUITE/test-config): condition test deferred: MySQL server "127.0.0.1:PORT_N/test" is tainted
-01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 39)
-01:01:01 p1235  check set acl_m0 = FAIL3: ${lookup mysql     {servers=127.0.0.1::PORT_N; select name from them where id = '$local_part'}}
-01:01:01 p1235   ╭considering: FAIL3:░${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'}}
-01:01:01 p1235   ├───────text: FAIL3:░
-01:01:01 p1235   ├considering: ${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'}}
-01:01:01 p1235    ╭considering: servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'}}
-01:01:01 p1235    ├───────text: servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'
-01:01:01 p1235    ├considering: $local_part'}}
-01:01:01 p1235    ├──────value: c
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235    ├considering: '}}
-01:01:01 p1235    ├───────text: '
-01:01:01 p1235    ├considering: }}
-01:01:01 p1235    ├───expanded: servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'
-01:01:01 p1235    ╰─────result: servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'c'
-01:01:01 p1235               ╰──(tainted)
-01:01:01 p1235   search_open: mysql "NULL"
-01:01:01 p1235   search_find: file="NULL"
-01:01:01 p1235     key="servers=127.0.0.1::PORT_N; select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
-01:01:01 p1235   LRU list:
-01:01:01 p1235   internal_search_find: file=<NULL>
-01:01:01 p1235     type=mysql key="servers=127.0.0.1::PORT_N; select name from them where id = 'c'" opts=NULL
-01:01:01 p1235   database lookup required for servers=127.0.0.1::PORT_N; select name from them where id = 'c'
-01:01:01 p1235                                (tainted)
-01:01:01 p1235  No quoter name for addr
-01:01:01 p1235  LOG: MAIN PANIC
-01:01:01 p1235    tainted search query is not properly quoted (ACL warn, TESTSUITE/test-config 39): select name from them where id = 'c'
-01:01:01 p1235   required_quoter_id (mysql) quoting -1 (NULL)
-01:01:01 p1235   MySQL query: "servers=127.0.0.1::PORT_N; select name from them where id = 'c'" opts 'NULL'
-01:01:01 p1235  LOG: MAIN
-01:01:01 p1235    Exim configuration error in ACL verb at line 39 of TESTSUITE/test-config:
-01:01:01 p1235    WARNING: obsolete syntax used for lookup
-01:01:01 p1235   MYSQL using cached connection for 127.0.0.1:PORT_N/test/root
-01:01:01 p1235   MYSQL: no data found
-01:01:01 p1235   creating new cache entry
-01:01:01 p1235   lookup failed
-01:01:01 p1235   ├───item-res: 
-01:01:01 p1235   ├───expanded: FAIL3:░${lookup░mysql░░░░░{servers=127.0.0.1::PORT_N;░select░name░from░them░where░id░=░'$local_part'}}
-01:01:01 p1235   ╰─────result: FAIL3:░
-01:01:01 p1235                   = FAIL3: 
 01:01:01 p1235  warn: condition test succeeded in ACL check_recipient
-01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 42)
+01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 39)
 01:01:01 p1235  check set acl_m0 = ok:    hostlist
 01:01:01 p1235  check hosts = net-mysql;select * from them where id='${quote_mysql:$local_part}'
 01:01:01 p1235  expand list text
@@ -599,7 +503,7 @@ search_tidyup called
 01:01:01 p1235   lookup failed
 01:01:01 p1235  host in "net-mysql;select * from them where id='c'"? no (end of list)
 01:01:01 p1235  warn: condition test failed in ACL check_recipient
-01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 46)
+01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 43)
 01:01:01 p1235  check set acl_m0 = FAIL4: hostlist
 01:01:01 p1235  check hosts = <& net-mysql;servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='${quote_mysql:$local_part}'
 01:01:01 p1235  list separator: '&'
@@ -632,15 +536,17 @@ search_tidyup called
 01:01:01 p1235   database lookup required for servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'
 01:01:01 p1235                                (tainted, quoted:mysql)
 01:01:01 p1235   MySQL query: "servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'" opts 'NULL'
-01:01:01 p1235  LOG: MAIN
-01:01:01 p1235    Exim configuration error in ACL verb at line 46 of TESTSUITE/test-config:
-01:01:01 p1235    WARNING: obsolete syntax used for lookup
-01:01:01 p1235   lookup deferred: MySQL server "127.0.0.1:PORT_N/test" is tainted
+01:01:01 p1235   MYSQL using cached connection for 127.0.0.1:PORT_N/test/root
+01:01:01 p1235   MYSQL: query failed (TESTSUITE/test-config 43): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'' at line 1
+01:01:01 p1235   
+01:01:01 p1235   lookup deferred: MYSQL: query failed (TESTSUITE/test-config 43): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'' at line 1
+01:01:01 p1235   
 01:01:01 p1235  host in " net-mysql;servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'"? list match deferred for net-mysql;servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'
 01:01:01 p1235  warn: condition test deferred in ACL check_recipient
 01:01:01 p1235  LOG: MAIN
-01:01:01 p1235    H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 46 of TESTSUITE/test-config): condition test deferred: MySQL server "127.0.0.1:PORT_N/test" is tainted
-01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 51)
+01:01:01 p1235    H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 43 of TESTSUITE/test-config): condition test deferred: MYSQL: query failed (TESTSUITE/test-config 43): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'' at line 1
+01:01:01 p1235  
+01:01:01 p1235  processing ACL check_recipient "warn" (TESTSUITE/test-config 48)
 01:01:01 p1235  check set acl_m0 = FAIL5: hostlist
 01:01:01 p1235  check hosts = <& net-mysql,servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='${quote_mysql:$local_part}'
 01:01:01 p1235  list separator: '&'
@@ -677,8 +583,8 @@ search_tidyup called
 01:01:01 p1235  host in " net-mysql,servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'"? list match deferred for net-mysql,servers=127.0.0.1::PORT_N/test/root/pass; select * from them where id='c'
 01:01:01 p1235  warn: condition test deferred in ACL check_recipient
 01:01:01 p1235  LOG: MAIN
-01:01:01 p1235    H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 51 of TESTSUITE/test-config): condition test deferred: MySQL server "127.0.0.1:PORT_N/test" is tainted
-01:01:01 p1235  processing ACL check_recipient "accept" (TESTSUITE/test-config 54)
+01:01:01 p1235    H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 48 of TESTSUITE/test-config): condition test deferred: MySQL server "127.0.0.1:PORT_N/test" is tainted
+01:01:01 p1235  processing ACL check_recipient "accept" (TESTSUITE/test-config 51)
 01:01:01 p1235  check domains = +local_domains
 01:01:01 p1235  d in "+local_domains"?
 01:01:01 p1235   list element: +local_domains
@@ -689,7 +595,7 @@ search_tidyup called
 01:01:01 p1235    end sublist local_domains
 01:01:01 p1235  d in "+local_domains"? no (end of list)
 01:01:01 p1235  accept: condition test failed in ACL check_recipient
-01:01:01 p1235  processing ACL check_recipient "accept" (TESTSUITE/test-config 57)
+01:01:01 p1235  processing ACL check_recipient "accept" (TESTSUITE/test-config 54)
 01:01:01 p1235  check hosts = +relay_hosts
 01:01:01 p1235  host in "+relay_hosts"?
 01:01:01 p1235   list element: +relay_hosts
@@ -721,7 +627,7 @@ search_tidyup called
 01:01:01 p1235    end sublist relay_hosts
 01:01:01 p1235  host in "+relay_hosts"? no (end of list)
 01:01:01 p1235  accept: condition test failed in ACL check_recipient
-01:01:01 p1235  processing ACL check_recipient "deny" (TESTSUITE/test-config 58)
+01:01:01 p1235  processing ACL check_recipient "deny" (TESTSUITE/test-config 55)
 01:01:01 p1235    message: relay not permitted
 01:01:01 p1235  deny: condition test succeeded in ACL check_recipient
 01:01:01 p1235  end of ACL check_recipient: DENY
@@ -784,7 +690,7 @@ P Received: from CALLER by myhost.test.ex with local (Exim x.yz)
 	for ph10@myhost.test.ex;
 	Tue, 2 Mar 1999 09:44:33 +0000
 using ACL "check_notsmtp"
-processing ACL check_notsmtp "accept" (TESTSUITE/test-config 61)
+processing ACL check_notsmtp "accept" (TESTSUITE/test-config 58)
 check set acl_m_qtest = X${quote_mysql:$recipients}X
                       = Xph10@myhost.test.exX
 accept: condition test succeeded in ACL check_notsmtp
@@ -867,7 +773,7 @@ acl_m_qtest: <Xph10@myhost.test.exX> lkup: <>
                                (tainted)
 No quoter name for addr
 LOG: MAIN PANIC
-  tainted search query is not properly quoted (router r1, TESTSUITE/test-config 69): select name from them where id='Zph10Z' limit 1
+  tainted search query is not properly quoted (router r1, TESTSUITE/test-config 66): select name from them where id='Zph10Z' limit 1
   required_quoter_id (mysql) quoting -1 (NULL)
   MySQL query: "select name from them where id='Zph10Z' limit 1" opts 'NULL'
   MYSQL using cached connection for 127.0.0.1:PORT_N/test/root
@@ -913,7 +819,7 @@ appendfile transport entered
                               (tainted)
 No quoter name for addr
 LOG: MAIN
-  tainted search query is not properly quoted (transport t1, TESTSUITE/test-config 85): select id from them where id='ph10'
+  tainted search query is not properly quoted (transport t1, TESTSUITE/test-config 82): select id from them where id='ph10'
  required_quoter_id (mysql) quoting -1 (NULL)
  MySQL query: "select id from them where id='ph10'" opts 'NULL'
  MYSQL new connection: host=127.0.0.1 port=PORT_N socket=NULL database=test user=root

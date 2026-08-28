@@ -8238,19 +8238,8 @@ option, you can still update it by a query of this form:
 ${lookup pgsql,servers=master/db/name/pw {UPDATE ...} }
 .endd
 
-A now-deprecated syntax places the servers specification before the query,
-semicolon separated:
-.code
-${lookup mysql{servers=master; UPDATE ...} }
-.endd
-The new version avoids issues with tainted
-arguments explicitly expanded as part of the query.
-The entire string within the braces becomes tainted,
-including the server specification - which is not permissible.
-If the older sytax is used, a warning message will be logged.
-This syntax will be removed in a future release.
-
-&*Note*&: server specifications in list-style lookups are still problematic.
+&*Note*&: server specifications in list-style lookups are problematic
+regarding taint.
 
 
 .subsection "Special MySQL features" SECID73

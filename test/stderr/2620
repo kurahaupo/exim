@@ -114,57 +114,45 @@ Exim version x.yz ....
  lookup yielded: name='stquot░id=quote1░
  search_open: pgsql "NULL"
  search_find: file="NULL"
-   key="servers=x:localhost; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=x:localhost"
  LRU list:
  internal_search_find: file=<NULL>
-   type=pgsql key="servers=x:localhost; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=x:localhost; select name from them where id='ph10';
- PostgreSQL query: "servers=x:localhost; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 11 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=pgsql key="select name from them where id='ph10';" opts="servers=x:localhost"
+ database lookup required for select name from them where id='ph10';
+ PostgreSQL query: "select name from them where id='ph10';" opts 'servers=x:localhost'
  lookup deferred: PostgreSQL server "x" not found in pgsql_servers
  search_open: pgsql "NULL"
  search_find: file="NULL"
-   key="servers=localhost::PORT_N:x; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=localhost::PORT_N:x"
  LRU list:
  internal_search_find: file=<NULL>
-   type=pgsql key="servers=localhost::PORT_N:x; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=localhost::PORT_N:x; select name from them where id='ph10';
- PostgreSQL query: "servers=localhost::PORT_N:x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 12 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=pgsql key="select name from them where id='ph10';" opts="servers=localhost::PORT_N:x"
+ database lookup required for select name from them where id='ph10';
+ PostgreSQL query: "select name from them where id='ph10';" opts 'servers=localhost::PORT_N:x'
  PGSQL using cached connection for localhost:PORT_N/test/CALLER
  creating new cache entry
  lookup yielded: Philip░Hazel
  search_open: pgsql "NULL"
  search_find: file="NULL"
-   key="servers=localhost::PORT_N/test/CALLER/:x; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=localhost::PORT_N/test/CALLER/:x"
  LRU list:
  internal_search_find: file=<NULL>
-   type=pgsql key="servers=localhost::PORT_N/test/CALLER/:x; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=localhost::PORT_N/test/CALLER/:x; select name from them where id='ph10';
- PostgreSQL query: "servers=localhost::PORT_N/test/CALLER/:x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 13 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=pgsql key="select name from them where id='ph10';" opts="servers=localhost::PORT_N/test/CALLER/:x"
+ cached data found but wrong opts;  database lookup required for select name from them where id='ph10';
+ PostgreSQL query: "select name from them where id='ph10';" opts 'servers=localhost::PORT_N/test/CALLER/:x'
  PGSQL using cached connection for localhost:PORT_N/test/CALLER
- creating new cache entry
+ replacing old cache entry
  lookup yielded: Philip░Hazel
  search_open: pgsql "NULL"
  search_find: file="NULL"
-   key="servers=127.0.0.1::PORT_N/test/CALLER/:x; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=127.0.0.1::PORT_N/test/CALLER/:x"
  LRU list:
  internal_search_find: file=<NULL>
-   type=pgsql key="servers=127.0.0.1::PORT_N/test/CALLER/:x; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=127.0.0.1::PORT_N/test/CALLER/:x; select name from them where id='ph10';
- PostgreSQL query: "servers=127.0.0.1::PORT_N/test/CALLER/:x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 14 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=pgsql key="select name from them where id='ph10';" opts="servers=127.0.0.1::PORT_N/test/CALLER/:x"
+ cached data found but wrong opts;  database lookup required for select name from them where id='ph10';
+ PostgreSQL query: "select name from them where id='ph10';" opts 'servers=127.0.0.1::PORT_N/test/CALLER/:x'
  PGSQL new connection: host=127.0.0.1 port=PORT_N database=test user=CALLER
- creating new cache entry
+ replacing old cache entry
  lookup yielded: Philip░Hazel
  search_open: pgsql "NULL"
  search_find: file="NULL"
@@ -174,36 +162,27 @@ LOG: MAIN
    type=pgsql key="servers=<!::1.PORT_N/test/CALLER/!x; select name from them where id='ph10';" opts=NULL
  database lookup required for servers=<!::1.PORT_N/test/CALLER/!x; select name from them where id='ph10';
  PostgreSQL query: "servers=<!::1.PORT_N/test/CALLER/!x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 15 of -be stdin:
-  WARNING: obsolete syntax used for lookup
- PGSQL new connection: host=::1 port=PORT_N database=test user=CALLER
- creating new cache entry
- lookup yielded: Philip░Hazel
+ PGSQL using cached connection for localhost:PORT_N/test/CALLER
+ PGSQL: query failed (-be stdin 15): ERROR:  syntax error at or near "servers"
+ LINE 1: servers=<!::1.PORT_N/test/CALLER/!x; select name from them where ...
+         ^
+  (PGRES_FATAL_ERROR) (servers=<!::1.PORT_N/test/CALLER/!x; select name from them where id='ph10';)
+ 
+ lookup deferred: PGSQL: query failed (-be stdin 15): ERROR:  syntax error at or near "servers"
+ LINE 1: servers=<!::1.PORT_N/test/CALLER/!x; select name from them where ...
+         ^
+  (PGRES_FATAL_ERROR) (servers=<!::1.PORT_N/test/CALLER/!x; select name from them where id='ph10';)
+ 
  search_open: pgsql "NULL"
  search_find: file="NULL"
-   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=<!::1.PORT_N/test/CALLER/!x"
+   key="select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts="servers=(TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER/:x"
  LRU list:
  internal_search_find: file=<NULL>
-   type=pgsql key="select name from them where id='ph10';" opts="servers=<!::1.PORT_N/test/CALLER/!x"
- database lookup required for select name from them where id='ph10';
- PostgreSQL query: "select name from them where id='ph10';" opts 'servers=<!::1.PORT_N/test/CALLER/!x'
- PGSQL using cached connection for ::1.PORT_N/test/CALLER
- creating new cache entry
- lookup yielded: Philip░Hazel
- search_open: pgsql "NULL"
- search_find: file="NULL"
-   key="servers=(TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER/:x; select name from them where id='ph10';" partial=-1 affix=NULL starflags=0 opts=NULL
- LRU list:
- internal_search_find: file=<NULL>
-   type=pgsql key="servers=(TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER/:x; select name from them where id='ph10';" opts=NULL
- database lookup required for servers=(TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER/:x; select name from them where id='ph10';
- PostgreSQL query: "servers=(TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER/:x; select name from them where id='ph10';" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in line 17 of -be stdin:
-  WARNING: obsolete syntax used for lookup
+   type=pgsql key="select name from them where id='ph10';" opts="servers=(TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER/:x"
+ cached data found but wrong opts;  database lookup required for select name from them where id='ph10';
+ PostgreSQL query: "select name from them where id='ph10';" opts 'servers=(TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER/:x'
  PGSQL new connection: socket=TESTSUITE/pgsql/.s.PGSQL.PORT_N database=test user=CALLER
- creating new cache entry
+ replacing old cache entry
  lookup yielded: Philip░Hazel
  search_open: pgsql "NULL"
  search_find: file="NULL"
@@ -243,7 +222,6 @@ LOG: MAIN
  lookup yielded: 1
 search_tidyup called
  close PGSQL connection: (TESTSUITE/pgsql/.s.PGSQL.PORT_N)/test/CALLER
- close PGSQL connection: ::1.PORT_N/test/CALLER
  close PGSQL connection: 127.0.0.1:PORT_N/test/CALLER
  close PGSQL connection: localhost:PORT_N/test/CALLER
 >>>>>>>>>>>>>>>> Exim pid=p1235 (fresh-exec) terminating with rc=0 >>>>>>>>>>>>>>>>
@@ -362,24 +340,8 @@ check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N    {select nam
  replacing old cache entry
  lookup failed
                  = ok:   
-check set acl_m0 = FAIL: ${lookup pgsql     {servers=localhost::PORT_N/test/CALLER/; select name from them where id = '${quote_pgsql:$local_part}'}}
- search_open: pgsql "NULL"
- search_find: file="NULL"
-   key="servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
- LRU list:
- internal_search_find: file=<NULL>
-   type=pgsql key="servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" opts=NULL
- database lookup required for servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'
-                              (tainted, quoted:pgsql)
- PostgreSQL query: "servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in ACL verb at line 32 of TESTSUITE/test-config:
-  WARNING: obsolete syntax used for lookup
- lookup deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-warn: condition test deferred in ACL check_recipient
-LOG: MAIN
-  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 32 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-processing ACL check_recipient "warn" (TESTSUITE/test-config 41)
+warn: condition test succeeded in ACL check_recipient
+processing ACL check_recipient "warn" (TESTSUITE/test-config 39)
 check set acl_m0 = ok:   hostlist
 check hosts = net-pgsql;select * from them where id='${quote_pgsql:$local_part}'
 expand list text
@@ -402,30 +364,6 @@ host in "net-pgsql;select * from them where id='c'"? no (end of list)
 warn: condition test failed in ACL check_recipient
 processing ACL check_recipient "warn" (TESTSUITE/test-config 44)
 check set acl_m0 = FAIL: hostlist
-check hosts = <& net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
-list separator: '&'
-expand list text
-host in " net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"?
- list element: net-pgsql;servers=localhost::PORT_N/test/CALLER/;░select░*░from░them░where░id='c'
- search_open: pgsql "NULL"
- search_find: file="NULL"
-   key="servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'" partial=-1 affix=NULL starflags=0 opts=NULL
- LRU list:
- internal_search_find: file=<NULL>
-   type=pgsql key="servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'" opts=NULL
- database lookup required for servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'
-                              (tainted, quoted:pgsql)
- PostgreSQL query: "servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in ACL verb at line 44 of TESTSUITE/test-config:
-  WARNING: obsolete syntax used for lookup
- lookup deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-host in " net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"? list match deferred for net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'
-warn: condition test deferred in ACL check_recipient
-LOG: MAIN
-  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 44 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-processing ACL check_recipient "warn" (TESTSUITE/test-config 49)
-check set acl_m0 = FAIL: hostlist
 check hosts = <& net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
 list separator: '&'
 expand list text
@@ -444,8 +382,8 @@ host in " net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them w
 host in " net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"? list match deferred for net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'
 warn: condition test deferred in ACL check_recipient
 LOG: MAIN
-  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 49 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-processing ACL check_recipient "accept" (TESTSUITE/test-config 52)
+  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 44 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
+processing ACL check_recipient "accept" (TESTSUITE/test-config 47)
 check domains = +local_domains
 d in "+local_domains"?
  list element: +local_domains
@@ -456,7 +394,7 @@ d in "+local_domains"?
   end sublist local_domains
 d in "+local_domains"? no (end of list)
 accept: condition test failed in ACL check_recipient
-processing ACL check_recipient "accept" (TESTSUITE/test-config 53)
+processing ACL check_recipient "accept" (TESTSUITE/test-config 48)
 check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
@@ -480,7 +418,7 @@ host in "+relay_hosts"?
   end sublist relay_hosts
 host in "+relay_hosts"? no (end of list)
 accept: condition test failed in ACL check_recipient
-processing ACL check_recipient "deny" (TESTSUITE/test-config 54)
+processing ACL check_recipient "deny" (TESTSUITE/test-config 49)
   message: relay not permitted
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
@@ -557,24 +495,8 @@ check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N    {select nam
  replacing old cache entry
  lookup failed
                  = ok:   
-check set acl_m0 = FAIL: ${lookup pgsql     {servers=localhost::PORT_N/test/CALLER/; select name from them where id = '${quote_pgsql:$local_part}'}}
- search_open: pgsql "NULL"
- search_find: file="NULL"
-   key="servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" partial=-1 affix=NULL starflags=0 opts=NULL
- LRU list:
- internal_search_find: file=<NULL>
-   type=pgsql key="servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" opts=NULL
- database lookup required for servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'
-                              (tainted, quoted:pgsql)
- PostgreSQL query: "servers=localhost::PORT_N/test/CALLER/; select name from them where id = 'c'" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in ACL verb at line 32 of TESTSUITE/test-config:
-  WARNING: obsolete syntax used for lookup
- lookup deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-warn: condition test deferred in ACL check_recipient
-LOG: MAIN
-  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 32 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-processing ACL check_recipient "warn" (TESTSUITE/test-config 41)
+warn: condition test succeeded in ACL check_recipient
+processing ACL check_recipient "warn" (TESTSUITE/test-config 39)
 check set acl_m0 = ok:   hostlist
 check hosts = net-pgsql;select * from them where id='${quote_pgsql:$local_part}'
 expand list text
@@ -591,30 +513,6 @@ host in "net-pgsql;select * from them where id='c'"?
 host in "net-pgsql;select * from them where id='c'"? no (end of list)
 warn: condition test failed in ACL check_recipient
 processing ACL check_recipient "warn" (TESTSUITE/test-config 44)
-check set acl_m0 = FAIL: hostlist
-check hosts = <& net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
-list separator: '&'
-expand list text
-host in " net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"?
- list element: net-pgsql;servers=localhost::PORT_N/test/CALLER/;░select░*░from░them░where░id='c'
- search_open: pgsql "NULL"
- search_find: file="NULL"
-   key="servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'" partial=-1 affix=NULL starflags=0 opts=NULL
- LRU list:
- internal_search_find: file=<NULL>
-   type=pgsql key="servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'" opts=NULL
- database lookup required for servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'
-                              (tainted, quoted:pgsql)
- PostgreSQL query: "servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'" opts 'NULL'
-LOG: MAIN
-  Exim configuration error in ACL verb at line 44 of TESTSUITE/test-config:
-  WARNING: obsolete syntax used for lookup
- lookup deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-host in " net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"? list match deferred for net-pgsql;servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'
-warn: condition test deferred in ACL check_recipient
-LOG: MAIN
-  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 44 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-processing ACL check_recipient "warn" (TESTSUITE/test-config 49)
 check set acl_m0 = FAIL: hostlist
 check hosts = <& net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='${quote_pgsql:$local_part}'
 list separator: '&'
@@ -634,8 +532,8 @@ host in " net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them w
 host in " net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'"? list match deferred for net-pgsql,servers=localhost::PORT_N/test/CALLER/; select * from them where id='c'
 warn: condition test deferred in ACL check_recipient
 LOG: MAIN
-  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 49 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
-processing ACL check_recipient "accept" (TESTSUITE/test-config 52)
+  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 44 of TESTSUITE/test-config): condition test deferred: PostgreSQL server "localhost:PORT_N/test" is tainted
+processing ACL check_recipient "accept" (TESTSUITE/test-config 47)
 check domains = +local_domains
 d in "+local_domains"?
  list element: +local_domains
@@ -646,7 +544,7 @@ d in "+local_domains"?
   end sublist local_domains
 d in "+local_domains"? no (end of list)
 accept: condition test failed in ACL check_recipient
-processing ACL check_recipient "accept" (TESTSUITE/test-config 53)
+processing ACL check_recipient "accept" (TESTSUITE/test-config 48)
 check hosts = +relay_hosts
 host in "+relay_hosts"?
  list element: +relay_hosts
@@ -666,7 +564,7 @@ host in "+relay_hosts"?
   end sublist relay_hosts
 host in "+relay_hosts"? no (end of list)
 accept: condition test failed in ACL check_recipient
-processing ACL check_recipient "deny" (TESTSUITE/test-config 54)
+processing ACL check_recipient "deny" (TESTSUITE/test-config 49)
   message: relay not permitted
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
