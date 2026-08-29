@@ -885,12 +885,16 @@ int line_off = 0, hlen;
 BOOL coded = FALSE, first_byte = FALSE;
 gstring * g = string_fmt_append(NULL, "=?%s?Q?%n",
 				charset ? charset : US"iso-8859-1", &hlen);
+#define WRAP_POINT 67
+
+if (hlen > WRAP_POINT - 4)	/* We were handed a stupid-size charset str */
+  log_write_die(LOG_PANIC_DIE, "Bad charset name");
 
 for (const uschar * s = string; len > 0; s++, len--)
   {
   int ch = *s;
 
-  if (g->ptr - line_off > 67 && !first_byte)
+  if (g->ptr - line_off > WRAP_POINT && !first_byte)
     {
     g = fold ? string_catn(g, US"?=\n ", 4) : string_catn(g, US"?= ", 3);
     line_off = g->ptr;
@@ -924,6 +928,7 @@ else
 gstring_release_unused(g);
 return string;
 }
+#undef WRAP_POINT
 
 
 
