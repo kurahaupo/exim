@@ -1,0 +1,33 @@
+# Exim test configuration 3902
+
+.include DIR/aux-var/std_conf_prefix
+
+primary_hostname = myhost.test.ex
+
+# ----- Main settings -----
+
+domainlist local_domains = test.ex : *.test.ex
+
+acl_smtp_rcpt = check_recipient
+
+
+# ----- ACL -----
+
+begin acl
+
+check_recipient:
+  deny     message = authentication required
+          !authenticated = *
+  accept
+
+# ----- Authentication -----
+
+begin authenticators
+
+plain:
+  driver =		dovecot
+  public_name =		PLAIN
+  server_socket =	127.0.0.1 PORT_S
+  server_set_id =	$auth1
+
+# End

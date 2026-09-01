@@ -17,6 +17,11 @@ JH/03 The legacy syntax for specifying a specific server in an individual
       query-style lookup is now withdrawn.  It was deprecated, with warnings
       being logged, in 4.98.
 
+BJ/01 Dovecot authenticator now handles new code= field added in dovecot 2.4.3
+      to inform client about internal error like when backing database is
+      unavailable. Previously it was ignored and a 535 was returned by exim to
+      the client, now returns 435.
+
 
 Exim version 4.100
 ------------------

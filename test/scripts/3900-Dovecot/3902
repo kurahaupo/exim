@@ -1,0 +1,82 @@
+# dovecot server, FAIL result codes
+#
+# This uses a script emulating dovecot so has potential to be wrong.
+# See the comment in 3901.
+#
+# Dovecot 2.4.3 and later tag internal (temporary) failures with a
+# "code=temp_fail" field on the FAIL line.  That must give a temporary
+# rejection; a bare FAIL, or any other code, stays permanent.
+#
+### FAIL, no code: permanent failure
+server PORT_S
+>LF>VERSION\x091\x090
+>LF>MECH\x09PLAIN
+>LF>DONE
+<<VERSION\x091\x090
+<CPID
+<AUTH\x091\x09PLAIN\x09service=smtp
+>LF>FAIL\x091\x09user=userx
+*eof
+****
+sudo exim -bs -oMa 10.0.0.1
+EHLO test.host
+AUTH PLAIN AHVzZXJ4AHNlY3JldA==
+QUIT
+****
+#
+### FAIL with code=temp_fail: temporary failure
+server PORT_S
+>LF>VERSION\x091\x090
+>LF>MECH\x09PLAIN
+>LF>DONE
+<<VERSION\x091\x090
+<CPID
+<AUTH\x091\x09PLAIN\x09service=smtp
+>LF>FAIL\x091\x09user=userx\x09code=temp_fail
+*eof
+****
+sudo exim -bs -oMa 10.0.0.1
+EHLO test.host
+AUTH PLAIN AHVzZXJ4AHNlY3JldA==
+QUIT
+****
+#
+### ditto, with code= ahead of user=; no set_id is picked up
+server PORT_S
+>LF>VERSION\x091\x090
+>LF>MECH\x09PLAIN
+>LF>DONE
+<<VERSION\x091\x090
+<CPID
+<AUTH\x091\x09PLAIN\x09service=smtp
+>LF>FAIL\x091\x09code=temp_fail\x09user=userx
+*eof
+****
+sudo exim -bs -oMa 10.0.0.1
+EHLO test.host
+AUTH PLAIN AHVzZXJ4AHNlY3JldA==
+QUIT
+****
+#
+### FAIL with some other code: permanent failure
+server PORT_S
+>LF>VERSION\x091\x090
+>LF>MECH\x09PLAIN
+>LF>DONE
+<<VERSION\x091\x090
+<CPID
+<AUTH\x091\x09PLAIN\x09service=smtp
+>LF>FAIL\x091\x09user=userx\x09code=authz_failed
+*eof
+****
+sudo exim -bs -oMa 10.0.0.1
+EHLO test.host
+AUTH PLAIN AHVzZXJ4AHNlY3JldA==
+QUIT
+****
+#
+# The emulated dovecot sees Exim's pid in the CPID line, so the raw
+# stdout is not reproducible; the logs carry the SMTP responses anyway.
+no_stdout_check
+no_stderr_check
+no_msglog_check

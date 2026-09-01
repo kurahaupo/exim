@@ -498,16 +498,28 @@ while (1)
 
     case 'F':
       CHECK_COMMAND("FAIL", 1, -1);
+      ret = FAIL;
 
-      for (int i = 2; i < nargs && !auth_id_pre; i++)
-	if (Ustrncmp(args[i], US"user=", 5) == 0)
+      for (int i = 2; i < nargs; i++)
+	{
+	if (!auth_id_pre && Ustrncmp(args[i], US"user=", 5) == 0)
 	  {
 	  auth_id_pre = args[i] + 5;
 	  expand_nstring[1] = auth_vars[0] = string_copy(auth_id_pre); /* PH */
 	  expand_nlength[1] = Ustrlen(auth_id_pre);
 	  expand_nmax = 1;
 	  }
-      ret = FAIL;
+	if (Ustrncmp(args[i], US"code=", 5) == 0)
+	  {
+	  /* Dovecot 2.4.3 add code=temp_fail to all internal failures */
+	  if (Ustrncmp(args[i] + 5, "temp_fail", 9) == 0)
+	    {
+	    ret = DEFER;
+	    auth_defer_msg = US"temporary authentication failure";
+	    }
+	  }
+	}
+
       goto out;
 
     case 'O':

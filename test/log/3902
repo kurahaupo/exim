@@ -1,0 +1,4 @@
+1999-03-02 09:44:33 plain authenticator failed for H=(test.host) [10.0.0.1] U=root: 535 Incorrect authentication data (set_id=userx)
+1999-03-02 09:44:33 plain authenticator failed for H=(test.host) [10.0.0.1] U=root: 435 Unable to authenticate at present (set_id=userx): temporary authentication failure
+1999-03-02 09:44:33 plain authenticator failed for H=(test.host) [10.0.0.1] U=root: 435 Unable to authenticate at present (set_id=userx): temporary authentication failure
+1999-03-02 09:44:33 plain authenticator failed for H=(test.host) [10.0.0.1] U=root: 535 Incorrect authentication data (set_id=userx)
