@@ -404,6 +404,7 @@ if (!ob->port)
   ob->port = atrn_mode && *atrn_mode == 'C' ? US"odmr"
 	    : !ob->protocol ? US"25"
 	    : strcmpic(ob->protocol, US"lmtp") == 0 ? US"lmtp"
+	    : strcmpic(ob->protocol, US"lmtps") == 0 ? US"lmtp"
 	    : strcmpic(ob->protocol, US"smtp") == 0 ? US"smtp"
 	    : strcmpic(ob->protocol, US"smtps") == 0 ? US"smtps"
 	    : strcmpic(ob->protocol, US"submissions") == 0 ? US"submissions"
@@ -2258,6 +2259,11 @@ else
       {
       DEBUG(transport)
 	debug_printf(" LMTP required by transport option\n");
+      }
+    else if ((sx->lmtp = sx->smtps = strcmpic(ob->protocol, US"lmtps") == 0))
+      {
+      DEBUG(transport)
+	debug_printf(" LMTP and tls-on-connect required by transport option\n");
       }
     else if (strcmpic(ob->protocol, US"smtp") != 0)
       {

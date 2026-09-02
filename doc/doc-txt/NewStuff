@@ -6,6 +6,12 @@ Before a formal release, there may be quite a lot of detail so that people can
 test from the snapshots or the Git before the documentation is updated. Once
 the documentation is updated, this file is reduced to a short list.
 
+Version 4.101
+-------------
+
+ 1. Smtp transport option "protocol" accepts the value "lmtps", for LMTP with
+    implicit TLS (tls-on-connect) rather than STARTTLS.
+
 Version 4.100
 -------------
  1. Lookups "psl" and "regdom" for, respectively, the public suffix or the

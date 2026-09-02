@@ -26426,6 +26426,10 @@ otherwise it is looked up using &[getservbyname()]&. The default value is
 normally &"25"&,
 but if &%protocol%& is set to one of &"lmtp"&, &"smtp"&, &"smtps"&
 or &"submissions"& then the default becomes that value.
+.new
+For &"lmtps"& the default becomes &"lmtp"&, as no separate port
+is registered for LMTP with implicit TLS.
+.wen
 If the expansion fails, or if a port number cannot be found, delivery
 is deferred.
 
@@ -26454,6 +26458,17 @@ over a pipe to a local process &-- see chapter &<<CHAPLMTP>>&.
 
 &*Note*&: When using LMTP it should be considered whether the default values
 for some other features, such as DANE, are appropriate.
+
+.new
+.cindex "LMTP" "with implicit TLS"
+.cindex "TLS" "SSL-on-connect outbound, LMTP"
+If this option is set to &"lmtps"&, the transport operates the LMTP protocol
+and initiates TLS immediately after connecting, as an outbound
+SSL-on-connect, instead of using STARTTLS to upgrade.
+No port is registered for this mode, so the default for the &%port%& option
+stays &"lmtp"&;
+usually the option must be set to the port the message store listens on.
+.wen
 
 If this option is set to either &"smtps"& or &"submissions"&,
 the default value for the &%port%& option changes to the same value,
@@ -37640,7 +37655,10 @@ For mail delivery, the following are available:
 SMTP over TCP/IP (the &(smtp)& transport);
 .next
 LMTP over TCP/IP (the &(smtp)& transport with the &%protocol%& option set to
-&"lmtp"&);
+&"lmtp"&,
+.new
+or to &"lmtps"& for implicit TLS);
+.wen
 .next
 LMTP over a pipe to a process running in the local host (the &(lmtp)&
 transport);

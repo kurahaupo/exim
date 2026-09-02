@@ -1,0 +1,50 @@
+# LMTP over TCP/IP, tls-on-connect (protocol = lmtps)
+need_ipv4
+#
+# 1: the server talks TLS from the first octet, then LMTP; no STARTTLS
+server -tls DIR/aux-fixed/cert1 DIR/aux-fixed/cert1 PORT_S
+*starttls
+220 ESMTP
+LHLO
+250-OK
+250 HELP
+MAIL FROM:
+250 Sender OK
+RCPT TO:
+250 Receiver OK
+DATA
+354 Send it
+.
+250 OK
+QUIT
+250 OK
+****
+exim -odi userx
+This is a test message.
+****
+#
+# 2: LMTP semantics are kept under TLS: one response per recipient after the
+# data dot
+server -tls DIR/aux-fixed/cert1 DIR/aux-fixed/cert1 PORT_S
+*starttls
+220 ESMTP
+LHLO
+250-OK
+250 HELP
+MAIL FROM:
+250 Sender OK
+RCPT TO:
+250 Receiver OK
+RCPT TO:
+250 Receiver OK
+DATA
+354 Send it
+.
+250 OK
+250 OK
+QUIT
+250 OK
+****
+exim -odi userx usery
+This is a test message.
+****
