@@ -1040,6 +1040,8 @@ input, details of which are given below. A number of options are implemented:
 
   -i <sec> sets an initial pause, to delay before creating the listen sockets
 
+  -tls <certfile> <keyfile>	files for TLS
+
 By default, in an IPv6 environment, both kinds of socket are set up. However,
 the test script knows which interfaces actually exist on the host, and it adds
 -noipv4 or -noipv6 to the server command as required. An error occurs if both
