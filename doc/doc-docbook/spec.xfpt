@@ -28958,9 +28958,9 @@ who authenticated is placed in &$auth1$&.
 
 .new
 Prior to Dovecot 2.4.3, temporary errors always fail authentication and are
-propagated to the client with error &'535 Incorrect authentication data'. Since
+propagated to the client with error &'535 Incorrect authentication data'&. Since
 Dovecot 2.4.3, a temporary error is propagated to the client with error
-&'435 Unable to authenticate at present'.
+&'435 Unable to authenticate at present'&.
 .wen
 
 The Dovecot configuration to match the above will look
