@@ -96,7 +96,7 @@ dmarc.o dmarc_native.o:
 	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) $*.c
 	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) dmarc_common.c
 	$(FE)mv $@ dmarc_tmp.o
-	$(FE)ld -r -o $@ $(LDFLAGS_PARTIAL) dmarc_tmp.o dmarc_common.o
+	$(FE)$(LD) -r -o $@ $(LDFLAGS_PARTIAL) dmarc_tmp.o dmarc_common.o
 
 # dmarc_native is special in the same way as spf_perl
 dmarc.so dmarc_native.so:
@@ -112,7 +112,7 @@ sieve_filter.o:
 	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) sieve_filter_body.c
 	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) sieve_filter_input.c
 	$(FE)mv sieve_filter.o sieve_filter_tmp.o
-	$(FE)ld -r -o sieve_filter.o $(LDFLAGS_PARTIAL) \
+	$(FE)$(LD) -r -o sieve_filter.o $(LDFLAGS_PARTIAL) \
 		sieve_filter_tmp.o sieve_filter_body.o sieve_filter_input.o
 
 sieve_filter.so:
