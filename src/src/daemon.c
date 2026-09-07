@@ -2621,8 +2621,9 @@ set_process_info("daemon(%s): [%d+%d] %s",
 /* Do any work it might be useful to amortize over our children
 (eg: compile regex) */
 
+dns_init(FALSE, FALSE, FALSE);	/* Get resolv.conf read */
 dns_pattern_init();
-smtp_deliver_init();	/* Used for callouts */
+smtp_deliver_init();		/* Used for callouts */
 
 #ifdef WITH_CONTENT_SCAN
 malware_init();
