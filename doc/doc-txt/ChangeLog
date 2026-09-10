@@ -10,6 +10,11 @@ This is a security release.
 JH/01 Proxy Protocol: fix an OOB read in V1 protocol header parsing
       (GCVE-25-2026-09-50-1).
 
+JH/02 Proxy-protocol: account for incomplete V2 protocol header reception.
+      Previously uninitialised data was then used for the length field of the
+      header, giving possible data leakage to an attacker.  This would require
+      a buggy or compromised proxy.  (GCVE-25-2026-09-55-1).
+
 
 Exim version 4.100
 ------------------

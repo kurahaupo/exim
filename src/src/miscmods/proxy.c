@@ -231,7 +231,7 @@ if (ret <= 0)
 DEBUG(receive) proxy_debug(US &hdr, 0, ret);
 
 /* For v2, handle reading the length, and then the rest. */
-if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
+if (ret == PROXY_INITIAL_READ && memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0)
   {
   int retmore;
   uint8_t ver;
@@ -241,13 +241,16 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
   /* First get the length fields. */
   do
     {
-    retmore = read(smtp_in_fd, US &hdr + ret, PROXY_V2_HEADER_SIZE - PROXY_INITIAL_READ);
-    } while (retmore == -1 && errno == EINTR && !had_command_timeout);
-  if (retmore <= 0)
-    goto proxyfail;
-  DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
+    do
+      {
+      retmore = read(smtp_in_fd, US &hdr + ret, PROXY_V2_HEADER_SIZE - ret);
+      } while (retmore == -1 && errno == EINTR && !had_command_timeout);
+    if (retmore <= 0)
+      goto proxyfail;
+    DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
 
-  ret += retmore;
+    ret += retmore;
+    } while (ret < PROXY_V2_HEADER_SIZE);
 
   ver = (hdr.v2.ver_cmd & 0xf0) >> 4;
 
