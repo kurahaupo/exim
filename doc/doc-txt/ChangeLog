@@ -22,6 +22,9 @@ BJ/01 Dovecot authenticator now handles new code= field added in dovecot 2.4.3
       unavailable. Previously it was ignored and a 535 was returned by exim to
       the client, now returns 435.
 
+JH/04 OpenSSL: the recognised names for openssl_options list elements has been
+      updated to OpenSSL 3.5.8.  Also, numeric option values are now acceptable.
+
 
 Exim version 4.100
 ------------------

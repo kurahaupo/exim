@@ -170,7 +170,6 @@ This list is current as of:
 
 XXX could we autobuild this list, as with predefined-macros?
 Seems just parsing ssl.h for SSL_OP_.* would be enough (except to exclude DTLS).
-Also allow a numeric literal?
 */
 static exim_openssl_option exim_openssl_options[] = {
 /* KEEP SORTED ALPHABETICALLY! */
@@ -330,7 +329,6 @@ static exim_openssl_option exim_openssl_options[] = {
 };
 
 #ifndef MACRO_PREDEF
-static int exim_openssl_options_size = nelem(exim_openssl_options);
 static long init_options = 0;
 #endif
 
@@ -5208,13 +5206,10 @@ Returns   success or failure in parsing
 static BOOL
 tls_openssl_one_option_parse(const uschar * name, long * value)
 {
-int first = 0;
-int last = exim_openssl_options_size;
-while (last > first)
+for (int first = 0, last = nelem(exim_openssl_options), c; last > first; )
   {
   int middle = (first + last)/2;
-  int c = Ustrcmp(name, exim_openssl_options[middle].name);
-  if (c == 0)
+  if ((c = Ustrcmp(name, exim_openssl_options[middle].name)) == 0)
     {
     *value = exim_openssl_options[middle].value;
     return TRUE;
@@ -5249,7 +5244,7 @@ tls_openssl_options_parse(const uschar * option_spec, long * results)
 {
 long result, item;
 uschar * exp, * end;
-BOOL adding, item_parsed;
+BOOL adding;
 
 /* Server: send no (<= TLS1.2) session tickets */
 result = SSL_OP_NO_TICKET;
@@ -5291,8 +5286,9 @@ for (uschar * s = exp; *s; /**/)
   adding = *s++ == '+';
   end = s;
   Uskip_nonwhite(&end);
-  item_parsed = tls_openssl_one_option_parse(string_copyn(s, end-s), &item);
-  if (!item_parsed)
+  if (isdigit(*s))		/* accept a numeric */
+    item = Ustrtol(s, NULL, 0);
+  else if (!tls_openssl_one_option_parse(string_copyn(s, end-s), &item))
     {
     DEBUG(tls) debug_printf("openssl option setting unrecognised: %q\n", s);
     return FALSE;

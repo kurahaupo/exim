@@ -17190,6 +17190,11 @@ list the values known on your system and Exim should support all the
 &"bug workaround"& options and many of the &"modifying"& options.  The Exim
 names lose the leading &"SSL_OP_"& and are lower-cased.
 
+.new
+A numeric value for an option is also accepted, as a future-proofing method
+against OpenSSL version changes.
+.wen
+
 Note that adjusting the options can have severe impact upon the security of
 SSL as used by Exim.  It is possible to disable safety checks and shoot
 yourself in the foot in various unpleasant ways.  This option should not be

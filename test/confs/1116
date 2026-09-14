@@ -25,10 +25,11 @@ tls_early_banner_hosts = *
 .ifdef OPTION
 
 .ifdef _HAVE_OPENSSL
+# Check a numeric (for no_sslv3) is not rejected
 .ifdef _OPT_OPENSSL_NO_TLSV1_3_X
-openssl_options = +no_sslv2 +no_sslv3 +single_dh_use +no_tlsv1_3
+openssl_options = +no_sslv2 +0x2000000 +single_dh_use +no_tlsv1_3
 .else
-openssl_options = +no_sslv2 +no_sslv3 +single_dh_use
+openssl_options = +no_sslv2 +0x2000000 +single_dh_use
 .endif
 .endif
 
