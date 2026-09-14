@@ -241,6 +241,6 @@ AHVzZXJ4AHNlY3JldA==
 quit
 ****
 perl
-system("eximdir/exim -C ./test-config -bP macros | grep -E '(AUTHENTICATORS|PLAINTEXT)'");
+system("eximdir/exim -C ./test-config -bP macros | grep -E '(AUTHENTICATORS|PLAINTEXT)' | grep -v OPENSSL");
 ****
 no_msglog_check

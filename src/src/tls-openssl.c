@@ -166,7 +166,7 @@ all options unless explicitly for DTLS, let the administrator choose which
 to apply.
 
 This list is current as of:
-  ==>  1.1.1c  <==
+  ==>  3.5.8  <==
 
 XXX could we autobuild this list, as with predefined-macros?
 Seems just parsing ssl.h for SSL_OP_.* would be enough (except to exclude DTLS).
@@ -177,6 +177,9 @@ static exim_openssl_option exim_openssl_options[] = {
 #ifdef SSL_OP_ALL
   { US"all", (long) SSL_OP_ALL },
 #endif
+#ifdef SSL_OP_ALLOW_CLIENT_RENEGOTIATION
+  { US"allow_client_renegotiation", SSL_OP_ALLOW_CLIENT_RENEGOTIATION },
+#endif
 #ifdef SSL_OP_ALLOW_NO_DHE_KEX
   { US"allow_no_dhe_kex", SSL_OP_ALLOW_NO_DHE_KEX },
 #endif
@@ -186,17 +189,32 @@ static exim_openssl_option exim_openssl_options[] = {
 #ifdef SSL_OP_CIPHER_SERVER_PREFERENCE
   { US"cipher_server_preference", SSL_OP_CIPHER_SERVER_PREFERENCE },
 #endif
+#ifdef SSL_OP_CLEANSE_PLAINTEXT
+  { US"cleanse_plaintext", SSL_OP_CLEANSE_PLAINTEXT },
+#endif
 #ifdef SSL_OP_CRYPTOPRO_TLSEXT_BUG
   { US"cryptopro_tlsext_bug", SSL_OP_CRYPTOPRO_TLSEXT_BUG },
 #endif
+#ifdef SSL_OP_DISABLE_TLSEXT_CA_NAMES
+  { US"disable_tlsext_ca_names", SSL_OP_DISABLE_TLSEXT_CA_NAMES },
+#endif
 #ifdef SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS
   { US"dont_insert_empty_fragments", SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS },
+#endif
+#ifdef SSL_OP_ENABLE_SSL_OP_ENABLE_KTLS
+  { US"enable_ktls", SSL_OP_ENABLE_KTLS },
+#endif
+#ifdef SSL_OP_ENABLE_KTLS_TX_ZEROCOPY_SENDFILE
+  { US"enable_ktls_tx_zerocopy_sendfile", SSL_OP_ENABLE_KTLS_TX_ZEROCOPY_SENDFILE },
 #endif
 #ifdef SSL_OP_ENABLE_MIDDLEBOX_COMPAT
   { US"enable_middlebox_compat", SSL_OP_ENABLE_MIDDLEBOX_COMPAT },
 #endif
 #ifdef SSL_OP_EPHEMERAL_RSA
   { US"ephemeral_rsa", SSL_OP_EPHEMERAL_RSA },
+#endif
+#ifdef SSL_OP_IGNORE_UNEXPECTED_EOF
+  { US"ignore_unexpected_eof", SSL_OP_IGNORE_UNEXPECTED_EOF },
 #endif
 #ifdef SSL_OP_LEGACY_SERVER_CONNECT
   { US"legacy_server_connect", SSL_OP_LEGACY_SERVER_CONNECT },
@@ -225,8 +243,14 @@ static exim_openssl_option exim_openssl_options[] = {
 #ifdef SSL_OP_NO_ENCRYPT_THEN_MAC
   { US"no_encrypt_then_mac", SSL_OP_NO_ENCRYPT_THEN_MAC },
 #endif
+#ifdef SSL_OP_NO_EXTENDED_MASTER_SECRET
+  { US"no_extended_master_secret", SSL_OP_NO_EXTENDED_MASTER_SECRET },
+#endif
 #ifdef SSL_OP_NO_RENEGOTIATION
   { US"no_renegotiation", SSL_OP_NO_RENEGOTIATION },
+#endif
+#ifdef SSL_OP_NO_RX_CERTIFICATE_COMPRESSION
+  { US"no_rx_certificate_compression", SSL_OP_NO_RX_CERTIFICATE_COMPRESSION },
 #endif
 #ifdef SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION
   { US"no_session_resumption_on_renegotiation", SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION },
@@ -261,8 +285,17 @@ static exim_openssl_option exim_openssl_options[] = {
 #ifdef SSL_OP_NO_TLSv1_3
   { US"no_tlsv1_3", SSL_OP_NO_TLSv1_3 },
 #endif
+#ifdef SSL_OP_NO_TX_CERTIFICATE_COMPRESSION
+  { US"no_tx_certificate_compression", SSL_OP_NO_TX_CERTIFICATE_COMPRESSION },
+#endif
+#ifdef SSL_OP_PREFER_NO_DHE_KEX
+  { US"prefer_no_dhe_kex", SSL_OP_PREFER_NO_DHE_KEX },
+#endif
 #ifdef SSL_OP_PRIORITIZE_CHACHA
   { US"prioritize_chacha", SSL_OP_PRIORITIZE_CHACHA },
+#endif
+#ifdef SSL_OP_RH_PERMIT_NOEMS_FIPS
+  { US"rh_permit_noems_fips", SSL_OP_RH_PERMIT_NOEMS_FIPS },
 #endif
 #ifdef SSL_OP_SAFARI_ECDHE_ECDSA_BUG
   { US"safari_ecdhe_ecdsa_bug", SSL_OP_SAFARI_ECDHE_ECDSA_BUG },
@@ -272,6 +305,9 @@ static exim_openssl_option exim_openssl_options[] = {
 #endif
 #ifdef SSL_OP_SINGLE_ECDH_USE
   { US"single_ecdh_use", SSL_OP_SINGLE_ECDH_USE },
+#endif
+#ifdef SSL_OP_SAFARI_ECDHE_ECDSA_BUG
+  { US"safari_ecdhe_ecdsa_bug", SSL_OP_SAFARI_ECDHE_ECDSA_BUG },
 #endif
 #ifdef SSL_OP_SSLEAY_080_CLIENT_DH_BUG
   { US"ssleay_080_client_dh_bug", SSL_OP_SSLEAY_080_CLIENT_DH_BUG },
