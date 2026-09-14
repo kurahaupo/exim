@@ -20,6 +20,7 @@ done <<-END
 	globals.c	header_names
 	expand.c	item_table
 	std-crypto.c	dh_constants
+	tls-openssl.c	exim_openssl_options
 	transport.c	optionlist_transports
 	route.c		optionlist_routers
 	transports/appendfile.c	appendfile_transport_options

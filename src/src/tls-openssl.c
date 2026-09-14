@@ -305,9 +305,6 @@ static exim_openssl_option exim_openssl_options[] = {
 #ifdef SSL_OP_SINGLE_ECDH_USE
   { US"single_ecdh_use", SSL_OP_SINGLE_ECDH_USE },
 #endif
-#ifdef SSL_OP_SAFARI_ECDHE_ECDSA_BUG
-  { US"safari_ecdhe_ecdsa_bug", SSL_OP_SAFARI_ECDHE_ECDSA_BUG },
-#endif
 #ifdef SSL_OP_SSLEAY_080_CLIENT_DH_BUG
   { US"ssleay_080_client_dh_bug", SSL_OP_SSLEAY_080_CLIENT_DH_BUG },
 #endif
