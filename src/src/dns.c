@@ -333,6 +333,7 @@ if ((ret = dn_expand(msg, eom, comp_dn,
 		    (DN_EXPAND_ARG4_TYPE) buf, sizeof(buf))) < 0)
   return ret;
 dnss->srr.name = string_copy_taint(buf, GET_TAINTED);
+DEBUG(dns_rr) debug_printf_indent("%s: %q\n", __FUNCTION__, dnss->srr.name);
 return ret;
 }
 
@@ -1022,17 +1023,29 @@ int rc;
 const uschar * t = rr->data + rr->size, * s;
 
 for (s = cmp_dn; s < t; s++)
-  if (  s == t-1 && s > rr->data+1 && s[-1] >= 0xc0	/* compression */
+  if (  s == t-1 && s > rr->data && s[-1] >= 0xc0	/* compression */
      || !*s)						/* plain */
     { s = NULL;	break; }
 
 if (s)
-  s = US"overruns RR size";
+  s = US"overruns RR size";	/* did not end with either NUL or compression */
 else if ((rc = dn_expand(dnsa->answer, dnsa->answer + dnsa->answerlen, cmp_dn,
 		    (DN_EXPAND_ARG4_TYPE)buf, blen)) < 0)
   s = US"truncated";
 else
   return rc;
+
+DEBUG(dns_rr)
+  {
+  debug_printf("dnsa:\n");
+  for (s = dnsa->answer; s < dnsa->answer + dnsa->answerlen; s++)
+    debug_printf("%02x%c", *s, (s - dnsa->answer + 1) & 15 ? ' ' : '\n');
+
+  debug_printf("\nrr data:\n");
+  for (s = cmp_dn; s < t; s++)
+    debug_printf("%02x%c", *s, (s - cmp_dn + 1) & 15 ? ' ' : '\n');
+  debug_printf("\n");
+  }
 
 log_write(LOG_MAIN,
   "dns name %s: type=%s for %s", s, dns_text_type(rr->type), rr->name);
@@ -1137,7 +1150,11 @@ for (int i = 0; i <= dns_cname_loops; i++)
 	  )
 #endif
        )
+	{
         *fully_qualified_name = string_copy_dnsdomain(rr_name);
+	DEBUG(dns_rr) debug_printf_indent("%s: grab fqdn %q\n",
+					  __FUNCTION__, *fully_qualified_name);
+	}
     }
 
   /* If any data records of the correct type were found, we are done. */

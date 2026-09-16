@@ -41,12 +41,14 @@ fakens: resp received: len 42
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 11 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for CNAME RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 11 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
@@ -83,12 +85,14 @@ fakens: resp received: len 40
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 9 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for CNAME RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 9 byte CNAME
 01:01:01 p1234   raw rrdata: 'localhost'
 01:01:01 p1234    dns_next_rr: next (0 left)
@@ -126,12 +130,14 @@ fakens: resp received: len 43
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 12 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for CNAME RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 12 byte CNAME
 01:01:01 p1234   raw rrdata: 'lo\099alhost'
 01:01:01 p1234    dns_next_rr: next (0 left)
@@ -169,12 +175,14 @@ fakens: resp received: len 43
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 12 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for CNAME RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 12 byte CNAME
 01:01:01 p1234   raw rrdata: 'localhos\116'
 01:01:01 p1234    dns_next_rr: next (0 left)
@@ -212,12 +220,14 @@ fakens: resp received: len 42
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 11 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for CNAME RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 11 byte CNAME
 01:01:01 p1234   raw rrdata: 'localhos\99'
 01:01:01 p1234    dns_next_rr: next (0 left)
@@ -255,12 +265,14 @@ fakens: resp received: len 41
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 10 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for CNAME RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 10 byte CNAME
 01:01:01 p1234   raw rrdata: 'localhos\7'
 01:01:01 p1234    dns_next_rr: next (0 left)
@@ -298,12 +310,14 @@ fakens: resp received: len 40
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 9 byte CNAME
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for CNAME RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 9 byte CNAME
 01:01:01 p1234   raw rrdata: 'localhos\'
 01:01:01 p1234    dns_next_rr: next (0 left)

@@ -42,12 +42,14 @@ fakens: resp received: len 35
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 4 byte A
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for A RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 4 byte A
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
@@ -84,12 +86,14 @@ fakens: resp received: len 36
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 5 byte TXT
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for TXT RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "test.ex"
 01:01:01 p1234    dns_next_rr: return 5 byte TXT
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
@@ -126,12 +130,14 @@ fakens: resp received: len 56
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "8.8.8.8.in_addr.arpa"
 01:01:01 p1234    dns_next_rr: return 12 byte PTR
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for PTR RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "8.8.8.8.in_addr.arpa"
 01:01:01 p1234    dns_next_rr: return 12 byte PTR
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
@@ -168,12 +174,14 @@ fakens: resp received: len 50
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "exim.org"
 01:01:01 p1234    dns_next_rr: return 18 byte MX
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   dnsdb_find: search for MX RR
 01:01:01 p1234    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1234    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1234    dns_next_rr: 1 RRs to read
+01:01:01 p1234    dns_rr_expand_taint: "exim.org"
 01:01:01 p1234    dns_next_rr: return 18 byte MX
 01:01:01 p1234    dns_next_rr: next (0 left)
 01:01:01 p1234   creating new cache entry
@@ -229,12 +237,14 @@ fakens: resp received: len 53
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: return 21 byte MX
 01:01:01 p1235    dns_next_rr: next (0 left)
 01:01:01 p1235   dnsdb_find: search for MX RR
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: return 21 byte MX
 01:01:01 p1235    dns_next_rr: next (0 left)
 01:01:01 p1235   creating new cache entry
@@ -271,11 +281,13 @@ fakens: resp received: len 52
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   dnsdb_find: search for MX RR
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   creating new cache entry
 01:01:01 p1235   lookup failed
@@ -309,11 +321,13 @@ fakens: resp received: len 50
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   dnsdb_find: search for MX RR
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: terminate (0 RRs left). Last op: R-data; errno ZZZ
 01:01:01 p1235   creating new cache entry
 01:01:01 p1235   lookup failed
@@ -347,12 +361,14 @@ fakens: resp received: len 50
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: return 18 byte MX
 01:01:01 p1235    dns_next_rr: next (0 left)
 01:01:01 p1235   dnsdb_find: search for MX RR
 01:01:01 p1235    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1235    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1235    dns_next_rr: 1 RRs to read
+01:01:01 p1235    dns_rr_expand_taint: "exim.org"
 01:01:01 p1235    dns_next_rr: return 18 byte MX
 01:01:01 p1235    dns_next_rr: next (0 left)
 01:01:01 p1235   creating new cache entry
@@ -408,12 +424,14 @@ fakens: resp received: len 51
 01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_rr_expand_taint: "exim.org"
 01:01:01 p1236    dns_next_rr: return 18 byte MX
 01:01:01 p1236    dns_next_rr: next (0 left)
 01:01:01 p1236   dnsdb_find: search for MX RR
 01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_rr_expand_taint: "exim.org"
 01:01:01 p1236    dns_next_rr: return 18 byte MX
 01:01:01 p1236    dns_next_rr: next (0 left)
 01:01:01 p1236   creating new cache entry
@@ -450,12 +468,14 @@ fakens: resp received: len 51
 01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_rr_expand_taint: "exim.org"
 01:01:01 p1236    dns_next_rr: return 19 byte MX
 01:01:01 p1236    dns_next_rr: next (0 left)
 01:01:01 p1236   dnsdb_find: search for MX RR
 01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_rr_expand_taint: "exim.org"
 01:01:01 p1236    dns_next_rr: return 19 byte MX
 01:01:01 p1236    dns_next_rr: next (0 left)
 01:01:01 p1236   creating new cache entry
@@ -492,15 +512,24 @@ fakens: resp received: len 50
 01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_rr_expand_taint: "exim.org"
 01:01:01 p1236    dns_next_rr: return 17 byte MX
 01:01:01 p1236    dns_next_rr: next (0 left)
 01:01:01 p1236   dnsdb_find: search for MX RR
 01:01:01 p1236    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1236    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1236    dns_next_rr: 1 RRs to read
+01:01:01 p1236    dns_rr_expand_taint: "exim.org"
 01:01:01 p1236    dns_next_rr: return 17 byte MX
+01:01:01 p1236  dnsa:
+01:01:01 p1236  00 00 80 00 00 00 00 01 00 00 00 00 04 65 78 69
+01:01:01 p1236  6d 03 6f 72 67 00 00 0f 00 01 00 00 00 fd 00 11
+01:01:01 p1236  00 0a 05 63 75 6d 69 6e 04 65 78 69 6d 03 6f 72
+01:01:01 p1236  67 00 
+01:01:01 p1236  rr data:
+01:01:01 p1236  05 63 75 6d 69 6e 04 65 78 69 6d 03 6f 72 67 
 01:01:01 p1236  LOG: MAIN
-01:01:01 p1236    dns name overruns RR size: type=MX for exim.org
+01:01:01 p1236    dns name : type=MX for exim.org
 01:01:01 p1236    dns_next_rr: next (0 left)
 01:01:01 p1236   creating new cache entry
 01:01:01 p1236   lookup failed
@@ -552,12 +581,14 @@ fakens: resp received: len 42
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1237    dns_next_rr: 1 RRs to read
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 10 byte MX
 01:01:01 p1237    dns_next_rr: next (0 left)
 01:01:01 p1237   dnsdb_find: search for MX RR
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 1)
 01:01:01 p1237    dns_next_rr: 1 RRs to read
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 10 byte MX
 01:01:01 p1237    dns_next_rr: next (0 left)
 01:01:01 p1237   creating new cache entry
@@ -594,16 +625,20 @@ fakens: resp received: len 58
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 2)
 01:01:01 p1237    dns_next_rr: 2 RRs to read
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 10 byte MX
 01:01:01 p1237    dns_next_rr: next (1 left)
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 4 byte MX
 01:01:01 p1237    dns_next_rr: next (0 left)
 01:01:01 p1237   dnsdb_find: search for MX RR
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 2)
 01:01:01 p1237    dns_next_rr: 2 RRs to read
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 10 byte MX
 01:01:01 p1237    dns_next_rr: next (1 left)
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 4 byte MX
 01:01:01 p1237    dns_next_rr: next (0 left)
 01:01:01 p1237   creating new cache entry
@@ -643,16 +678,20 @@ fakens: resp received: len 58
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 2)
 01:01:01 p1237    dns_next_rr: 2 RRs to read
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 4 byte MX
 01:01:01 p1237    dns_next_rr: next (1 left)
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 10 byte MX
 01:01:01 p1237    dns_next_rr: next (0 left)
 01:01:01 p1237   dnsdb_find: search for MX RR
 01:01:01 p1237    dns_next_rr: reset (Q rrcount 0)
 01:01:01 p1237    dns_next_rr: reset (A rrcount 2)
 01:01:01 p1237    dns_next_rr: 2 RRs to read
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 4 byte MX
 01:01:01 p1237    dns_next_rr: next (1 left)
+01:01:01 p1237    dns_rr_expand_taint: "exim.org"
 01:01:01 p1237    dns_next_rr: return 10 byte MX
 01:01:01 p1237    dns_next_rr: next (0 left)
 01:01:01 p1237   creating new cache entry
