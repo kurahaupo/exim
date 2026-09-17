@@ -1213,14 +1213,23 @@ RESET_AFTER_EXTRA_LINE_READ:
     s/Failed to open \K(?:hintsdb|database lock) file (.*\/spool\/db\/[^. ]*)(?:.lockfile)?(?: for reading)?(?=: No such file or directory$)/hintsdb $1/;
 
     # openssl version variances
-  # Error lines on stdout from SSL contain process id values and file names.
-  # They also contain a source file name and line number, which may vary from
-  # release to release.
-
+    if (/^Attempting to start TLS$/) {
+      print MUNGED;
+      while (<IN>) {
+       next if /^SSL info:/;
+       last if (! /ssl3_read_n:unexpected eof while reading/);
+       }
+      goto RESET_AFTER_EXTRA_LINE_READ;
+    }
     next if /^SSL info:/;
     next if /SSL verify error: depth=0 error=certificate not trusted/;
     s/SSL3_READ_BYTES/ssl3_read_bytes/i;
     s/CONNECT_CR_FINISHED/ssl3_read_bytes/i;
+  #
+  # Error lines on stdout from SSL contain process id values and file names.
+  # They also contain a source file name and line number, which may vary from
+  # release to release.
+
     s/^[[:xdigit:]]+:error:[[:xdigit:]]+(?:E[[:xdigit:]]+)?
       (:SSL\ routines:ssl3_read_bytes:)
       ssl(?:v3|\/tls)
@@ -1228,6 +1237,7 @@ RESET_AFTER_EXTRA_LINE_READ:
       .*
       (:SSL\ alert\ number\ \d\d)$
      /pppp:error:dddddddd$1sslv3$2\[...\]$3/x;
+
     s/^error:\K[^:]*:(SSL routines:ssl3_read_bytes:(tls|ssl)v\d+ alert)/dddddddd:$1/;
     s/^error:\K[[:xdigit:]]+:SSL routines::(tlsv13 alert certificate required)$/dddddddd:SSL routines:ssl3_read_bytes:$1/;
     s/^error:\K
@@ -1241,6 +1251,10 @@ RESET_AFTER_EXTRA_LINE_READ:
 
     # GnuTLS version variances
     next if /^Error in the pull function./;
+
+    # Platform variances
+    # FreeBSD
+    s/^ECONNRESET treated as an expected EOF$/Expected EOF read/;
 
     # DISABLE_OCSP
     next if /^_OPT_TRANSPORT_SMTP_HOSTS_REQU(?:EST|IRE)_OCSP=y$/;

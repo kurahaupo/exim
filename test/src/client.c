@@ -649,6 +649,11 @@ nextinput:
 	{
 	if (errno == EINTR && sigalrm_seen && resp_optional)
 	  continue;	/* next scriptline */
+	else if (errno == ECONNRESET && exp_eof)
+	  {
+          printf("ECONNRESET treated as an expected EOF\n");
+	  continue;
+	  }
         printf("Read error: %s\n", strerror(errno));
         exit(81);
 	}
