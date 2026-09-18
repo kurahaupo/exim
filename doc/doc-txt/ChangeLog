@@ -26,6 +26,26 @@ JH/04 OpenSSL: the recognised names for openssl_options list elements has been
       updated to OpenSSL 3.5.8.  Also, numeric option values are now acceptable.
 
 
+Exim version 4.100.1
+--------------------
+
+This is a security release.
+
+JH/01 Proxy Protocol: fix an OOB read in V1 protocol header parsing
+      (GCVE-25-2026-09-50-1).
+
+JH/02 Proxy-protocol: account for incomplete V2 protocol header reception.
+      Previously uninitialised data was then used for the length field of the
+      header, giving possible data leakage to an attacker.  This would require
+      a buggy or compromised proxy.  (GCVE-25-2026-09-55-1).
+
+JH/03 GnuTLS: Account for an early close from a client, during session startup.
+      Previously a use-after-free could occur.  (GCVE-25-2026-09-51-1)
+
+JH/04 Avoid more "SMTP smuggling" attack types.  This extends the fixes for
+      CVE-2023-51766.  (GCVE-25-2026-09-56-1).
+
+
 Exim version 4.100
 ------------------
 

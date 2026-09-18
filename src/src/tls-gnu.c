@@ -607,7 +607,7 @@ else DEBUG(tls)
 
 
 
-static BOOL
+WARN_UNUSED_RESULT static BOOL
 tls_refill(unsigned lim)
 {
 exim_gnutls_state_st * state = &state_server;
@@ -3300,7 +3300,8 @@ if (  gnutls_protocol_get_version(state->session) > GNUTLS_TLS1_2
   gstring_reset(banner);
 
   DEBUG(tls) debug_printf("TLS: wait for handshake complete\n");
-  tls_refill(GETC_BUFFER_UNLIMITED);
+  if (!tls_refill(GETC_BUFFER_UNLIMITED))
+    return FAIL;
   }
 #endif
 

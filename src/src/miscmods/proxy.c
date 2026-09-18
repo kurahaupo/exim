@@ -231,7 +231,7 @@ if (ret <= 0)
 DEBUG(receive) proxy_debug(US &hdr, 0, ret);
 
 /* For v2, handle reading the length, and then the rest. */
-if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
+if (ret == PROXY_INITIAL_READ && memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0)
   {
   int retmore;
   uint8_t ver;
@@ -241,13 +241,16 @@ if ((ret == PROXY_INITIAL_READ) && (memcmp(&hdr.v2, v2sig, sizeof(v2sig)) == 0))
   /* First get the length fields. */
   do
     {
-    retmore = read(smtp_in_fd, US &hdr + ret, PROXY_V2_HEADER_SIZE - PROXY_INITIAL_READ);
-    } while (retmore == -1 && errno == EINTR && !had_command_timeout);
-  if (retmore <= 0)
-    goto proxyfail;
-  DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
+    do
+      {
+      retmore = read(smtp_in_fd, US &hdr + ret, PROXY_V2_HEADER_SIZE - ret);
+      } while (retmore == -1 && errno == EINTR && !had_command_timeout);
+    if (retmore <= 0)
+      goto proxyfail;
+    DEBUG(receive) proxy_debug(US &hdr, ret, ret + retmore);
 
-  ret += retmore;
+    ret += retmore;
+    } while (ret < PROXY_V2_HEADER_SIZE);
 
   ver = (hdr.v2.ver_cmd & 0xf0) >> 4;
 
@@ -388,20 +391,15 @@ if (ret >= 16 && memcmp(&hdr.v2, v2sig, 12) == 0)
   }
 else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
   {
-  uschar *p;
-  uschar *end;
-  uschar *sp;     /* Utility variables follow */
-  int     tmp_port;
-  int     r2;
-  char   *endc;
+  uschar * p, * end, * sp, * endc;     /* Utility variables follow sp */
+  int tmp_port, r2;
 
   /* get the rest of the line */
   r2 = swallow_until_crlf(smtp_in_fd, US &hdr, ret, sizeof(hdr)-ret);
   if (r2 == -1)
     goto proxyfail;
-  ret += r2;
 
-  p = string_copy(hdr.v1.line);
+  p = string_copyn(hdr.v1.line, ret = Ustrlen(hdr.v1.line));
   end = memchr(p, '\r', ret - 1);
 
   if (!end || (end == US &hdr + ret) || end[1] != '\n')
@@ -436,7 +434,7 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
     goto proxyfail;
     }
 
-  p += Ustrlen(iptype);
+  p += Ustrlen(iptype);	/* the field sizes happen to match our iptype strings */
   if (!isspace(*p++))
     {
     DEBUG(receive) debug_printf("Missing space after TCP4/6 command\n");
@@ -480,7 +478,7 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
     goto proxyfail;
     }
   *sp = '\0';
-  tmp_port = strtol(CCS p, &endc, 10);
+  tmp_port = strtol(CCS p, CSS &endc, 10);
   if (*endc || tmp_port == 0)
     {
     DEBUG(receive)
@@ -495,7 +493,7 @@ else if (ret >= 8 && memcmp(hdr.v1.line, "PROXY", 5) == 0)
     DEBUG(receive) debug_printf("Did not find proxy dest port\n");
     goto proxyfail;
     }
-  tmp_port = strtol(CCS p, &endc, 10);
+  tmp_port = strtol(CCS p, CSS &endc, 10);
   if (*endc || tmp_port == 0)
     {
     DEBUG(receive)
