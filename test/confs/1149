@@ -6,8 +6,9 @@ primary_hostname = myhost.test.ex
 
 # ----- Main settings -----
 
-log_selector = +tls_peerdn
+log_selector = +tls_peerdn +millisec
 
+smtp_receive_timeout = 1s
 tls_advertise_hosts = *
 
 tls_certificate = DIR/aux-fixed/cert1

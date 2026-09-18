@@ -1,5 +1,12 @@
 > 1 >>220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
 221 myhost.test.ex closing connection
 <<
-> Failed: socket read timed out
+> 2 >>220 myhost.test.ex ESMTP Exim x.yz Tue, 2 Mar 1999 09:44:33 +0000
+250-myhost.test.ex Hello tester [ip4.ip4.ip4.ip4]
+250-SIZE 52428800
+250-8BITMIME
+250-PIPELINING
+250 HELP
+421 myhost.test.ex: SMTP command timeout - closing connection
+<<
 > 

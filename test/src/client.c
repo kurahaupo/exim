@@ -1365,7 +1365,8 @@ if (tls_on_connect)
   srv.tls_active = rc >= 0;
   alarm(0);
 
-  if (!srv.tls_active) printf("%s\n", gnutls_strerror(rc));
+  if (!srv.tls_active)
+    DEBUG printf("%s\n", rc, gnutls_strerror(rc));
   }
 #endif
 

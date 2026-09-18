@@ -418,6 +418,9 @@ if (smtp_batched_input)
 smtp_notquit_exit(US"command-timeout", US"421",
   US"%s: SMTP command timeout - closing connection",
   smtp_active_hostname);
+#ifndef DISABLE_TLS
+tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
+#endif
 exim_exit(EXIT_FAILURE);
 }
 
@@ -429,6 +432,9 @@ if (smtp_batched_input)
   moan_smtp_batch(NULL, "421 SIGTERM received");  /* Does not return */
 smtp_notquit_exit(US"signal-exit", US"421",
   US"%s: Service not available - closing connection", smtp_active_hostname);
+#ifndef DISABLE_TLS
+tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
+#endif
 exim_exit(EXIT_FAILURE);
 }
 

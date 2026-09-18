@@ -554,6 +554,9 @@ if (!already_bombing_out)
       moan_smtp_batch(NULL, "421 %s - message abandoned", msg);  /* No return */
     smtp_notquit_exit(reason, US"421", US"%s %s - closing connection.",
       smtp_active_hostname, msg);
+#ifndef DISABLE_TLS
+    tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
+#endif
     }
   }
 

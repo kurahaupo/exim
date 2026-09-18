@@ -4125,10 +4125,7 @@ do
 while (inbytes == GNUTLS_E_AGAIN);
 
 if (inbytes > 0) return inbytes;
-if (inbytes == 0)
-  {
-  DEBUG(tls) debug_printf("Got TLS_EOF\n");
-  }
+if (inbytes == 0) { DEBUG(tls) debug_printf("Got TLS_EOF\n"); }
 else
   {
   DEBUG(tls) debug_printf("%s: err from gnutls_record_recv\n", __FUNCTION__);
