@@ -4952,6 +4952,7 @@ Arguments:
   do_shutdown	0 no data-flush or TLS close-alert
 		1 if TLS close-alert is to be sent,
  		2 if also response to be waited for
+		3 only wait for peer's alert
 
 Returns:     nothing
 

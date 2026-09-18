@@ -182,9 +182,9 @@ check verify = header_syntax
 accept: condition test failed in ACL check_data
 end of ACL check_data: implicit DENY
 SMTP>> 550 Administrative prohibition
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   U=CALLER F=<> rejected after DATA: domain missing or malformed: failing address in "To:" header is: abc@xyz.
+SMTP>- ◀flush▶
 receive_msg: tidyup
 smtp_setup_msg entered
 inp: /smtp

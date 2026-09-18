@@ -101,9 +101,9 @@ Considering x@y
 accept: condition test failed in ACL chk_rcpt
 accept: endpass encountered - denying access
 SMTP>> 550 No such user here
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(test) [V4NET.9.8.7] F=<x@y> rejected RCPT <1@b>: No such user here
+SMTP>- ◀flush▶
 SMTP<< rset
 SMTP>> 250 Reset OK
 SMTP<< mail from:<x@y>
@@ -163,9 +163,9 @@ Considering x@y
 accept: condition test failed in ACL chk_rcpt
 accept: endpass encountered - denying access
 SMTP>> 550 No such user here
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(test) [V4NET.9.8.7] F=<x@y> rejected RCPT <1@b>: No such user here
+SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶

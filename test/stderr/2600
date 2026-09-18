@@ -218,9 +218,9 @@ processing ACL check_recipient "deny" (TESTSUITE/test-config 34)
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
 SMTP>> 550 relay not permitted
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(test) [10.0.0.0] F=<a@b> rejected RCPT <c@d>: relay not permitted
+SMTP>- ◀flush▶
 SMTP<< rcpt to:<c@d>
 using ACL "check_recipient"
 processing ACL check_recipient "accept" (TESTSUITE/test-config 32)
@@ -262,9 +262,9 @@ processing ACL check_recipient "deny" (TESTSUITE/test-config 34)
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
 SMTP>> 550 relay not permitted
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(test) [10.0.0.0] F=<a@b> rejected RCPT <c@d>: relay not permitted
+SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶
@@ -356,9 +356,9 @@ processing ACL check_recipient "deny" (TESTSUITE/test-config 34)
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
 SMTP>> 550 relay not permitted
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(test) [10.0.0.0] F=<a@b> rejected RCPT <c@d>: relay not permitted
+SMTP>- ◀flush▶
 SMTP<< rcpt to:<c@d>
 using ACL "check_recipient"
 processing ACL check_recipient "accept" (TESTSUITE/test-config 32)
@@ -400,9 +400,9 @@ processing ACL check_recipient "deny" (TESTSUITE/test-config 34)
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
 SMTP>> 550 relay not permitted
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(test) [10.0.0.0] F=<a@b> rejected RCPT <c@d>: relay not permitted
+SMTP>- ◀flush▶
 SMTP<< quit
 SMTP>| 221 myhost.test.ex closing connection
 SMTP>- ◀flush▶

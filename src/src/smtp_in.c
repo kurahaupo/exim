@@ -3355,8 +3355,6 @@ else
     smtp_respond(smtp_code, codelen, SR_FINAL,
       US"Temporary local problem - please try later");
 
-smtp_fflush(SFF_UNCORK);
-
 /* Log the incident to the logs that are specified by log_reject_target
 (default main, reject). This can be empty to suppress logging of rejections. If
 the connection is not forcibly to be dropped, return 0. Otherwise, log why it
@@ -3375,7 +3373,15 @@ if (  log_reject_target
     rc == FAIL ? US"" : US"temporarily ",
     what, log_msg);
 
-if (!drop) return 0;
+if (!drop)
+  {
+  smtp_fflush(SFF_UNCORK);
+  return 0;
+  }
+
+
+tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
+smtp_fflush(SFF_UNCORK);
 
 log_close_event(US"by DROP in ACL");
 
@@ -3385,7 +3391,7 @@ in that case, *its* custom messages will have been used above. */
 
 smtp_notquit_exit(US"acl-drop", NULL, NULL);
 
-/* An overenthusiastic fail2ban/iptables implimentation has been seen to result
+/* An overenthusiastic fail2ban/iptables implementation has been seen to result
 in the TCP conn staying open, and retrying, despite this process exiting. A
 malicious client could possibly do the same, tying up server networking
 resources. Close the socket explicitly to try to avoid that (there's a note in

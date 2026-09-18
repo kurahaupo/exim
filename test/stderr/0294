@@ -221,33 +221,33 @@ log directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100
 SMTP>> 250 OK
 SMTP<< rcpt to:<reject@z>
 SMTP>> 550 Administrative prohibition
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   U=CALLER F=<x@y> rejected RCPT <reject@z>
+SMTP>- ◀flush▶
 SMTP<< rcpt to:<reject@z>
 rate limit RCPT: delay 0.25 sec
 SMTP>> 550 Administrative prohibition
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   U=CALLER F=<x@y> rejected RCPT <reject@z>
+SMTP>- ◀flush▶
 SMTP<< rcpt to:<reject@z>
 rate limit RCPT: delay 0.263 sec
 SMTP>> 550 Administrative prohibition
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   U=CALLER F=<x@y> rejected RCPT <reject@z>
+SMTP>- ◀flush▶
 SMTP<< rcpt to:<reject@z>
 rate limit RCPT: delay 0.276 sec
 SMTP>> 550 Administrative prohibition
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   U=CALLER F=<x@y> rejected RCPT <reject@z>
+SMTP>- ◀flush▶
 SMTP<< rcpt to:<reject@z>
 rate limit RCPT: delay 0.289 sec
 SMTP>> 550 Administrative prohibition
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   U=CALLER F=<x@y> rejected RCPT <reject@z>
+SMTP>- ◀flush▶
 SMTP<< rset
 SMTP>> 250 Reset OK
 SMTP<< mail from:<x@y>
@@ -257,9 +257,9 @@ log directory space = nnnnnK inodes = nnnnn check_space = 10240K inodes = 100
 SMTP>> 250 OK
 SMTP<< rcpt to:<reject@z>
 SMTP>> 550 Administrative prohibition
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   U=CALLER F=<x@y> rejected RCPT <reject@z>
+SMTP>- ◀flush▶
 SMTP<< rset
 SMTP>> 250 Reset OK
 SMTP<< mail from:<x@y>

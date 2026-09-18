@@ -300,7 +300,7 @@
 1999-03-02 09:44:33 10HmbT-000000005vi-0000 => :blackhole: <resume@test.ex> R=server
 1999-03-02 09:44:33 10HmbT-000000005vi-0000 Completed
 1999-03-02 09:44:33 tls_in_ver	TLS1.2
-1999-03-02 09:44:33 tls_in_resumption	session resumed, also new ticket
+1999-03-02 09:44:33 tls_in_resumption	session resumed
 1999-03-02 09:44:33 our cert subject	CN=server1.example.com
 1999-03-02 09:44:33 peer cert subject	
 1999-03-02 09:44:33 peer cert verified	0

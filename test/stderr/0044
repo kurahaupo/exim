@@ -111,9 +111,9 @@ DNS lookup of 13.12.11.V4NET.rbl.test.ex (TXT) succeeded
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
 SMTP>> 550 host is listed in rbl.test.ex
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(exim.test.ex) [V4NET.11.12.13] F=<postmaster@exim.test.ex> rejected RCPT list@exim.test.ex: host is listed in rbl.test.ex
+SMTP>- ◀flush▶
 SMTP<< rcpt to:list2@exim.test.ex
 using ACL "check_recipient"
 processing ACL check_recipient "accept" (TESTSUITE/test-config 19)
@@ -146,9 +146,9 @@ DNS lookup for 13.12.11.V4NET.rbl.test.ex succeeded (yielding 127.0.0.2)
 deny: condition test succeeded in ACL check_recipient
 end of ACL check_recipient: DENY
 SMTP>> 550 host is listed in rbl.test.ex
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(exim.test.ex) [V4NET.11.12.13] F=<postmaster@exim.test.ex> rejected RCPT list2@exim.test.ex: host is listed in rbl.test.ex
+SMTP>- ◀flush▶
 SMTP<< data
 SMTP>> 354 Enter message, ending with "." on a line by itself
 search_tidyup called
@@ -342,9 +342,9 @@ LOG: MAIN REJECT
 SMTP>| 550-Verification failed for <postmaster@exim.test.ex>
 SMTP>| 550-Unrouteable address
 SMTP>> 550 Sender verify failed
-SMTP>- ◀flush▶
 LOG: MAIN REJECT
   H=(exim.test.ex) [V4NET.99.99.99] F=<postmaster@exim.test.ex> rejected RCPT list@exim.test.ex: Sender verify failed
+SMTP>- ◀flush▶
 SMTP>- ◀flush▶
 SMTP(closed)<<
 SMTP>> 421 the.local.host.name lost input connection

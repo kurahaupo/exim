@@ -632,9 +632,9 @@ search_tidyup called
 01:01:01 p1235  deny: condition test succeeded in ACL check_recipient
 01:01:01 p1235  end of ACL check_recipient: DENY
 01:01:01 p1235  SMTP>> 550 relay not permitted
-01:01:01 p1235  SMTP>- ◀flush▶
 01:01:01 p1235  LOG: MAIN REJECT
 01:01:01 p1235    H=(test) [10.0.0.0] F=<a@b> rejected RCPT <c@d>: relay not permitted
+01:01:01 p1235  SMTP>- ◀flush▶
 01:01:01 p1235  SMTP<< quit
 01:01:01 p1235  try option 'acl_smtp_quit'
 01:01:01 p1235  SMTP>| 221 myhost.test.ex closing connection
