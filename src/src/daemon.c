@@ -701,9 +701,7 @@ if (pid == 0)
         /* Don't ever molest the parent's SSL connection, but do clean up
         the data structures if necessary. */
 
-#ifndef DISABLE_TLS
         tls_close(NULL, TLS_NO_SHUTDOWN);
-#endif
 
         /* Reset SIGHUP and SIGCHLD in the child in both cases. */
 

@@ -892,9 +892,7 @@ tls_retry_connection:
 	    HDEBUG(acl|v)
 	      debug_printf_indent("problem after random/rset/mfrom; reopen conn\n");
 	    random_local_part = NULL;
-#ifndef DISABLE_TLS
 	    tls_close(sx->cctx.tls_ctx, TLS_SHUTDOWN_NOWAIT);
-#endif
 	    HDEBUG(transport|acl|v) debug_printf_indent("  SMTP(close)>>\n");
 	    (void)close(sx->cctx.sock);
 	    sx->cctx.sock = -1;

@@ -4007,7 +4007,7 @@ done:
   testharness_pause_ms(100);	/* let logging complete */
   exim_exit(EXIT_SUCCESS);
 }
-#endif
+#endif	/*!DISABLE_TLS*/
 
 
 /*************************************************
@@ -5266,7 +5266,7 @@ if (sx->send_quit || tcw_done && !tcw)
       tls_close(sx->cctx.tls_ctx, TLS_SHUTDOWN_WONLY);
     sx->cctx.tls_ctx = NULL;
     }
-#endif
+#endif	/*!DISABLE_TLS*/
 
   /* Drain any trailing data from the socket before close, to avoid sending a RST */
 
@@ -6418,7 +6418,7 @@ retry_non_continued:
     else
 #else
       (void) write(fd, US"QUIT\r\n", 6);
-#endif
+#endif	/*!DISABLE_TLS*/
 
     DEBUG(transport) debug_printf("  SMTP(close)>>\n");
     (void) close(fd);

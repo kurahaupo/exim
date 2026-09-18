@@ -5343,10 +5343,8 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 
   if (cutthrough.cctx.sock >= 0 && cutthrough.callout_hold_only)
     {
-#ifndef DISABLE_TLS
     if (cutthrough.is_tls)
       tls_close(cutthrough.cctx.tls_ctx, TLS_NO_SHUTDOWN);
-#endif
     (void) close(cutthrough.cctx.sock);
     release_cutthrough_connection(US"passed to transport proc");
     }

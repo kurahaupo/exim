@@ -551,10 +551,8 @@ while (1)
 
 out:
 /* close the socket used by dovecot */
-#ifndef DISABLE_TLS
 if (cctx.tls_ctx)
   tls_close(cctx.tls_ctx, TRUE);
-#endif
 if (cctx.sock >= 0)
   close(cctx.sock);
 

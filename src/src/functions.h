@@ -19,7 +19,12 @@ are in in fact in separate headers. */
 #include <sys/time.h>
 
 
-#ifndef DISABLE_TLS
+#ifdef DISABLE_TLS
+/* Avoid having to #ifdef calls */
+static inline void tls_close(void *, int) {}
+
+#else
+
 extern const char *	std_dh_prime_default(void);
 extern const char *	std_dh_prime_named(const uschar *);
 

@@ -2836,9 +2836,7 @@ else
       "Expansion of %q (smtp_banner) failed: %s",
       smtp_banner, expand_string_message);
     /* for force-fail */
-  #ifndef DISABLE_TLS
     if (tls_in.on_connect) tls_close(NULL, TLS_SHUTDOWN_WAIT);
-  #endif
     return FALSE;
     }
   }
@@ -3025,9 +3023,7 @@ if (code > 0)
     smtp_notquit_exit(US"bad-command-synprot", string_sprintf("%d", code),
 		      US"Too many syntax or protocol errors");
     DEBUG(any) debug_printf_indent("SMTP(close)>>\n");
-#ifndef DISABLE_TLS
     tls_close(NULL, TLS_SHUTDOWN_WAIT);
-#endif
     smtp_inout_close();
     }
   }
@@ -3803,17 +3799,11 @@ else
   smtp_printf("221 %s closing connection\r\n", SP_MORE, smtp_active_hostname);
 
 #ifdef SERVERSIDE_CLOSE_NOWAIT
-# ifndef DISABLE_TLS
 tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
-# endif
-
 log_close_event(US"by QUIT");
 #else
 
-# ifndef DISABLE_TLS
 tls_close(NULL, TLS_SHUTDOWN_WAIT);
-# endif
-
 log_close_event(US"by QUIT");
 
 /* If there is no pending input, trigger transmit of the
@@ -5729,7 +5719,7 @@ while (done <= 0)
       break;
 
 
-    #ifndef DISABLE_TLS
+#ifndef DISABLE_TLS
 
     case STARTTLS_CMD:
       HAD(SCH_STARTTLS);
@@ -5872,7 +5862,7 @@ while (done <= 0)
 	}
       tls_close(NULL, TLS_SHUTDOWN_NOWAIT);
       break;
-    #endif
+#endif	/*!DISABLE_TLS*/
 
 
     /* The ACL for QUIT is provided for gathering statistical information or

@@ -725,9 +725,7 @@ close_unwanted(void)
 {
 if (smtp_input)
   {
-#ifndef DISABLE_TLS
   tls_close(NULL, TLS_NO_SHUTDOWN);      /* Shut down the TLS library */
-#endif
   (void)close(smtp_in_fd);
   (void)close(smtp_out_fd);
   smtp_out_fd = smtp_in_fd = -1;
