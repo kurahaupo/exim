@@ -1429,14 +1429,14 @@ BOOL taint_checked = FALSE;
 int width, precision, initial_off, lim, need;
 const char * fp = format;	/* Deliberately not unsigned */
 
+string_datestamp_offset = -1;	/* Datestamp not inserted */
+string_datestamp_length = 0;	/* Datestamp not inserted */
+string_datestamp_type = 0;	/* Datestamp not inserted */
+
 #ifdef COMPILE_UTILITY
 assert(!(flags & SVFMT_EXTEND));
 assert(g);
 #else
-
-string_datestamp_offset = -1;	/* Datestamp not inserted */
-string_datestamp_length = 0;	/* Datestamp not inserted */
-string_datestamp_type = 0;	/* Datestamp not inserted */
 
 /* Ensure we have a string, to save on checking later */
 if (!g) g = string_get(Ustrlen(format) + 16);
@@ -1663,7 +1663,6 @@ while (*fp)
       g->s[g->ptr++] = (uschar) va_arg(ap, int);
       break;
 
-#ifndef COMPILE_UTILITY
     case 'D':                   /* Insert daily datestamp for log file names */
       s = CS tod_stamp(tod_log_datestamp_daily);
       string_datestamp_offset = g->ptr;		/* Passed back via global */
@@ -1679,7 +1678,6 @@ while (*fp)
       string_datestamp_type = tod_log_datestamp_monthly;
       slen = string_datestamp_length;
       goto INSERT_STRING;
-#endif
 
     case 'Y':			/* gstring pointer */
       {
@@ -1869,9 +1867,7 @@ while (*fp)
 	else
 	  die_tainted(US"string_vformat", func, line);
 #endif
-#ifndef COMPILE_UTILITY
     INSERT_STRING:              /* Come from %D or %M above */
-#endif
       {
       BOOL truncated = FALSE;
 

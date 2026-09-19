@@ -34,6 +34,10 @@ whose inclusion is controlled by -D on the compilation command. */
 #include "exim.h"
 #include "hintsdb.h"
 
+int     string_datestamp_offset;/* After insertion by string_format */
+int     string_datestamp_length;/* After insertion by string_format */
+int     string_datestamp_type;  /* After insertion by string_format */
+
 
 /* Identifiers for the different database types. */
 
@@ -53,16 +57,13 @@ BOOL utc = FALSE;
 
 /******************************************************************************/
 	/* dummies needed by Solaris build */
-void
-millisleep(int msec)
-{}
-uschar *
-readconf_printtime(int t)
-{ return NULL; }
+void millisleep(int msec) {}
+uschar * readconf_printtime(int t) {return NULL;}
 const uschar * expand_string_2(const uschar * string, BOOL * textonly_p)
-{ return NULL; }
+{return NULL;}
 const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
-{return NULL; }
+{return NULL;}
+uschar * tod_stamp(int x) {return NULL;}
 
 struct global_flags	f;
 bitmask_word_t		log_selector[1];
