@@ -4018,7 +4018,7 @@ Returns:    the next character or EOF
 */
 
 int
-tls_getc(const const in_processing * inp, unsigned lim)
+tls_getc(const in_processing * inp, unsigned lim)
 {
 exim_gnutls_state_st * state = &state_server;
 
