@@ -4380,7 +4380,7 @@ if (!*error)
       {
       int_eximarith_t y = eval_op_mult(&s, decimal, error);
       if (*error) break;
-      if (  (x >=   EXIM_ARITH_MAX/2  && x >=   EXIM_ARITH_MAX/2)
+      if (  (x >=   EXIM_ARITH_MAX/2  && y >=   EXIM_ARITH_MAX/2)
 	 || (x <= -(EXIM_ARITH_MAX/2) && y <= -(EXIM_ARITH_MAX/2)))
 	{			/* over-conservative check */
 	*error = isplus ? US"overflow in sum" : US"overflow in difference";
