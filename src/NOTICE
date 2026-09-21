@@ -1,8 +1,8 @@
 THE EXIM MAIL TRANSFER AGENT
 ----------------------------
 
-Copyright (c) The Exim Maintainers 2026
-Copyright (c) 2004 University of Cambridge
+Copyright © The Exim Maintainers 2026
+Copyright © 2004 University of Cambridge
 SPDX-License-Identifier: GPL-2.0-or-later
 
 This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ A number of pieces of external code are included in the Exim distribution.
      the following statements:
      _________________________________________________________________________
 
-     Copyright (c) 1998 Nigel Metheringham, Planet Online Ltd
+     Copyright © 1998 Nigel Metheringham, Planet Online Ltd
 
      This program is free software; you can redistribute it and/or modify it
      under the terms of the GNU General Public License as published by the
@@ -73,7 +73,7 @@ A number of pieces of external code are included in the Exim distribution.
 
      _________________________________________________________________________
 
-     Copyright (c) 2001 Carnegie Mellon University. All rights reserved.
+     Copyright © 2001 Carnegie Mellon University. All rights reserved.
 
      Redistribution and use in source and binary forms, with or without
      modification, are permitted provided that the following conditions are

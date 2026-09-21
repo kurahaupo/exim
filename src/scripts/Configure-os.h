@@ -1,5 +1,5 @@
 #! /bin/sh
-# Copyright (c) The Exim Maintainers 2022 - 2025
+# Copyright © The Exim Maintainers 2022 - 2025
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 

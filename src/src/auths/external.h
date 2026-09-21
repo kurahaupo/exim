@@ -2,8 +2,8 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2025 */
-/* Copyright (c) Jeremy Harris 2019 */
+/* Copyright © The Exim Maintainers 2025 */
+/* Copyright © Jeremy Harris 2019 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 

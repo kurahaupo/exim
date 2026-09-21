@@ -2,14 +2,14 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2026 */
-/* Copyright (c) University of Cambridge 1995 - 2018 */
+/* Copyright © The Exim Maintainers 2020 - 2026 */
+/* Copyright © University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /* This code was originally contributed by Matthew Byng-Maddick */
 
-/* Copyright (c) A L Digital 2004 */
+/* Copyright © A L Digital 2004 */
 
 /* A generic (mechanism independent) Cyrus SASL authenticator. */
 

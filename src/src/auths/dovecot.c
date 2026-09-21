@@ -1,6 +1,6 @@
 /*
-Copyright (c) The Exim Maintainers 2006 - 2026
-Copyright (c) 2004 Andrey Panin <pazke@donpac.ru>
+Copyright © The Exim Maintainers 2006 - 2026
+Copyright © 2004 Andrey Panin <pazke@donpac.ru>
 SPDX-License-Identifier: GPL-2.0-or-later
 
 This program is free software; you can redistribute it and/or modify

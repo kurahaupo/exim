@@ -3,8 +3,8 @@
 *************************************************/
 
 /* SPF support.
-   Copyright (c) The Exim Maintainers 2016 - 2025
-   Copyright (c) Tom Kistner <tom@duncanthrax.net> 2004
+   Copyright © The Exim Maintainers 2016 - 2025
+   Copyright © Tom Kistner <tom@duncanthrax.net> 2004
    License: GPL
    SPDX-License-Identifier: GPL-2.0-or-later
 */

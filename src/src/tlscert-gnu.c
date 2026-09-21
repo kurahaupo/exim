@@ -2,8 +2,8 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2021 - 2026 */
-/* Copyright (c) Jeremy Harris 2014 - 2018 */
+/* Copyright © The Exim Maintainers 2021 - 2026 */
+/* Copyright © Jeremy Harris 2014 - 2018 */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /* This file provides TLS/SSL support for Exim using the GnuTLS library,

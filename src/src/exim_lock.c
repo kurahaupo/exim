@@ -10,7 +10,7 @@ Default is -fcntl -lockfile.
 
 Argument: the name of the lock file
 
-Copyright (c) The Exim Maintainers 2016 - 2026
+Copyright © The Exim Maintainers 2016 - 2026
 SPDX-License-Identifier: GPL-2.0-or-later
 */
 

@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Copyright (c) The Exim Maintainers 2022
+# Copyright © The Exim Maintainers 2022
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # This script is contributed by Vadim Vygonets to aid in debugging CRAM-MD5
@@ -22,7 +22,7 @@
 # The last line is what you you would send back to the server.
 
 
-# Copyright (c) 2002
+# Copyright © 2002
 #       Vadim Vygonets <vadik-exim@vygo.net>.  All rights reserved.
 # Public domain is OK with me.
 

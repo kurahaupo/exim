@@ -1137,7 +1137,7 @@ A0064: It looks as if Exim isn't being called by \^mail^\; instead it is
        output should be something like this:
 
 ==>      Exim version 4.05 #1 built 13-Jun-2002 10:27:15
-         Copyright (c) University of Cambridge 2002
+         Copyright © University of Cambridge 2002
 
        If you don't see this, your Exim installation isn't fully operational.
        If you are running FreeBSD, see Q9201. For other systems, see Q0114.

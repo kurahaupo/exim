@@ -3,8 +3,8 @@
 *************************************************/
 
 /*
-Copyright (c) The Exim Maintainers 2024 - 2026
-Copyright (c) 2000-2002
+Copyright © The Exim Maintainers 2024 - 2026
+Copyright © 2000-2002
   Chris Adams <cmadams@iruntheinter.net>
   written for HiWAAY Internet Services
 SPDX-License-Identifier: GPL-2.0-or-later

@@ -6,7 +6,7 @@
 Exim - NMH database lookup module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copyright (c) The Exim Maintainers 2025 - 2026
+Copyright © The Exim Maintainers 2025 - 2026
 SPDX-License-Identifier: GPL-2.0-or-later
 
 This program is free software; you can redistribute it and/or

@@ -2,7 +2,7 @@
  *  Author: Viktor Dukhovni
  *  License: THIS CODE IS IN THE PUBLIC DOMAIN.
  *
- * Copyright (c) The Exim Maintainers 2014 - 2026
+ * Copyright © The Exim Maintainers 2014 - 2026
  */
 #include <stdio.h>
 #include <string.h>

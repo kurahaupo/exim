@@ -3,9 +3,9 @@
 *************************************************/
 
 /*
- * Copyright (c) The Exim Maintainers 2016 - 2025
- * Copyright (c) Jeremy Harris 2015 - 2016
- * Copyright (c) Michael Haardt 2015
+ * Copyright © The Exim Maintainers 2016 - 2025
+ * Copyright © Jeremy Harris 2015 - 2016
+ * Copyright © Michael Haardt 2015
  * See the file NOTICE for conditions of use and distribution.
  */
 /* SPDX-License-Identifier: GPL-2.0-or-later */

@@ -2,12 +2,12 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2022 - 2025 */
-/* Copyright (c) University of Cambridge 1995 - 2012 */
+/* Copyright © The Exim Maintainers 2022 - 2025 */
+/* Copyright © University of Cambridge 1995 - 2012 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-/* Copyright (c) A L Digital Ltd 2004 */
+/* Copyright © A L Digital Ltd 2004 */
 
 /* Private structure for the private options. */
 

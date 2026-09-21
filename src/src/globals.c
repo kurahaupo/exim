@@ -2,8 +2,8 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2026 */
-/* Copyright (c) University of Cambridge 1995 - 2018 */
+/* Copyright © The Exim Maintainers 2020 - 2026 */
+/* Copyright © University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -1477,8 +1477,8 @@ uschar *uucp_from_sender       = US"$1";
 
 uschar *verify_mode	       = NULL;
 uschar *version_copyright      =
- US"Copyright (c) The Exim Maintainers and contributors in ACKNOWLEDGMENTS file, 2007 - 2026\n"
- "Copyright (c) University of Cambridge, 1995 - 2018\n";
+ US"Copyright © The Exim Maintainers and contributors in ACKNOWLEDGMENTS file, 2007 - 2026\n"
+   "Copyright © University of Cambridge, 1995 - 2018\n";
 uschar *version_date           = US"?";
 uschar *version_cnumber        = US"????";
 uschar *version_string         = US"?";

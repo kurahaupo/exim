@@ -2,8 +2,8 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 1999 - 2026 */
-/* Copyright (c) 1998 Malcolm Beattie */
+/* Copyright © The Exim Maintainers 1999 - 2026 */
+/* Copyright © 1998 Malcolm Beattie */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /* Modified by PH to get rid of the "na" usage, March 1999.

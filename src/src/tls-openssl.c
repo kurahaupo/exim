@@ -2,12 +2,12 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2026 */
-/* Copyright (c) University of Cambridge 1995 - 2019 */
+/* Copyright © The Exim Maintainers 2020 - 2026 */
+/* Copyright © University of Cambridge 1995 - 2019 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-/* Portions Copyright (c) The OpenSSL Project 1999 */
+/* Portions Copyright © The OpenSSL Project 1999 */
 
 /* This module provides the TLS (aka SSL) support for Exim using the OpenSSL
 library. It is #included into the tls.c file when that library is used. The
@@ -2606,7 +2606,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
 
 /* This section of code reworked from OpenSSL apps source;
    The OpenSSL Project retains copyright:
-   Copyright (c) 1999 The OpenSSL Project.  All rights reserved.
+   Copyright © 1999 The OpenSSL Project.  All rights reserved.
 */
   {
     BIO * bp = NULL;

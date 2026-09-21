@@ -1,5 +1,5 @@
 #! /bin/sh
-# Copyright (c) The Exim Maintainters 2022
+# Copyright © The Exim Maintainters 2022
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # Build the config.h file, using the buildconfig program, first ensuring that

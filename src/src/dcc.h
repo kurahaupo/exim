@@ -3,11 +3,11 @@
 *************************************************/
 
 /*
- * Copyright (c) Wolfgang Breyha 2005
+ * Copyright © Wolfgang Breyha 2005
  * See the file NOTICE for conditions of use and distribution.
  *
  * original dccifd_localscan
- * Copyright (c) Christopher Bodenstein 2003-2005
+ * Copyright © Christopher Bodenstein 2003-2005
  * <cb@physicman.net>
 */
 

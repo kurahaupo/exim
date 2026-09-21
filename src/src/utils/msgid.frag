@@ -1,5 +1,5 @@
 # Start msgid.frag
-# Copyright (c) The Exim Maintainers 2025
+# Copyright © The Exim Maintainers 2025
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
 # Regex patterns for exim message-id

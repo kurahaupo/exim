@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Copyright (C) 2012 Wizards Internet Ltd
+# Copyright © 2012 Wizards Internet Ltd
 # License GPLv2: GNU GPL version 2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
 # SPDX-License-Identifier: GPL-2.0-or-later
 

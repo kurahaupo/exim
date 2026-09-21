@@ -9,7 +9,7 @@
  * All the original code used here was torn by Marc Prud'hommeaux out of the
  * Samba project (by Andrew Tridgell, Jeremy Allison, and others).
  *
- * Copyright (c) The Exim Maintainers 2021 - 2026
+ * Copyright © The Exim Maintainers 2021 - 2026
  * SPDX-License-Identifier: GPL-2.0-or-later
 
  * Tom Kistner provided additional code, adding spa_build_auth_challenge() to
@@ -112,7 +112,7 @@ return 0;
    a partial implementation of DES designed for use in the
    SMB authentication protocol
 
-   Copyright (C) Andrew Tridgell 1998
+   Copyright © Andrew Tridgell 1998
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

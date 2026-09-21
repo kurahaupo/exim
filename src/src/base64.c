@@ -2,9 +2,9 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2026 */
-/* Copyright (c) University of Cambridge 1995 - 2018 */
-/* Copyright (c) Tom Kistner <tom@duncanthrax.net> 2004, 2015 */
+/* Copyright © The Exim Maintainers 2020 - 2026 */
+/* Copyright © University of Cambridge 1995 - 2018 */
+/* Copyright © Tom Kistner <tom@duncanthrax.net> 2004, 2015 */
 /* License: GPL */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 

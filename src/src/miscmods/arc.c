@@ -3,8 +3,8 @@
 *************************************************/
 
 /* Experimental ARC support for Exim
-   Copyright (c) The Exim Maintainers 2021 - 2026
-   Copyright (c) Jeremy Harris 2018 - 2020
+   Copyright © The Exim Maintainers 2021 - 2026
+   Copyright © Jeremy Harris 2018 - 2020
    License: GPL
    SPDX-License-Identifier: GPL-2.0-or-later
 */

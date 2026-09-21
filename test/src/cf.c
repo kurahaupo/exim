@@ -17,7 +17,7 @@ Modified to run under Unix, October 1989.
 
 Translated back into C, March 1990! */
 
-/* Copyright (c) 1986, 1987, 1989, 1990, 1994, 2001 by Philip Hazel */
+/* Copyright © 1986, 1987, 1989, 1990, 1994, 2001 by Philip Hazel */
 
 /* Previously modified: October 1994*/
 /* Last modified: September 2001 - a long-lived bug fixed! */

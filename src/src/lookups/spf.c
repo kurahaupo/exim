@@ -4,8 +4,8 @@
 
 /* Exim - SPF lookup module using Exim's "miscmod" SPF support for ACL
 
-Copyright (c) The Exim Maintainers 2020 - 2026
-Copyright (c) 2005 Chris Webb, Arachsys Internet Services Ltd
+Copyright © The Exim Maintainers 2020 - 2026
+Copyright © 2005 Chris Webb, Arachsys Internet Services Ltd
 SPDX-License-Identifier: GPL-2.0-or-later
 
 This program is free software; you can redistribute it and/or

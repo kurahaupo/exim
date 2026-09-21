@@ -2,8 +2,8 @@
 *                  Exim monitor                  *
 *************************************************/
 
-/* Copyright (c) University of Cambridge 1995 - 2009 */
-/* Copyright (c) The Exim Maintainers 2020 - 2021 */
+/* Copyright © University of Cambridge 1995 - 2009 */
+/* Copyright © The Exim Maintainers 2020 - 2021 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 

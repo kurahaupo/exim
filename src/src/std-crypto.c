@@ -3,11 +3,11 @@
 *************************************************/
 
 /*
-Copyright (c) The Exim Maintainers 2017 - 2026
-Copyright (c) Phil Pennock 2012, 2016
+Copyright © The Exim Maintainers 2017 - 2026
+Copyright © Phil Pennock 2012, 2016
 But almost everything here is fixed published constants from RFCs, so also:
-Copyright (C) The Internet Society (2003)
-Copyright (C) The IETF Trust (2008)
+Copyright © The Internet Society (2003)
+Copyright © The IETF Trust (2008)
 SPDX-License-Identifier: GPL-2.0-or-later
 
 Most of the text in RFC referencing comments is copy/paste from RFC,

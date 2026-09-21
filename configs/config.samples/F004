@@ -7,7 +7,7 @@ Message-Id: and Resent-Message-Id: headers to world-unique values.
 
 # Exim filter
 
-# Copyright (c) 1999
+# Copyright © 1999
 #	Hans Matzen <hans@tm.informatik.uni-frankfurt.de>,
 #	Vadim Vygonets <vadik@vygo.net>.  All rights reserved.
 

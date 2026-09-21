@@ -1,7 +1,7 @@
 /*
  *  Blob - a general pointer/size item for a memory chunk
  *
- *  Copyright (C) 2016  Exim maintainers
+ *  Copyright © 2016  Exim maintainers
  *  SPDX-License-Identifier: GPL-2.0-or-later
  */
 

@@ -2,14 +2,14 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2022 - 2025 */
-/* Copyright (c) University of Cambridge 1995 - 2012 */
+/* Copyright © The Exim Maintainers 2022 - 2025 */
+/* Copyright © University of Cambridge 1995 - 2012 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-/* Copyright (c) Twitter Inc 2012
+/* Copyright © Twitter Inc 2012
    Author: Phil Pennock <pdp@exim.org> */
-/* Copyright (c) Phil Pennock 2012 */
+/* Copyright © Phil Pennock 2012 */
 
 /* Interface to Heimdal library for GSSAPI authentication. */
 

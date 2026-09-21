@@ -3,7 +3,7 @@
 *************************************************/
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-/* Copyright (c) The Exim Maintainers 2026 */
+/* Copyright © The Exim Maintainers 2026 */
 /* Cygwin-specific code. December 2002. Updated Jan 2015.
    This is prefixed to the src/os.c file.
 

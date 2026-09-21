@@ -2,7 +2,7 @@
 # We use env, because in some environments of our build farm
 # the Perl 5.010 interpreter is only reachable via $PATH
 
-# Copyright (c) The Exim Maintainers 2024 - 2026
+# Copyright © The Exim Maintainers 2024 - 2026
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 ###############################################################################

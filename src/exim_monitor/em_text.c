@@ -2,7 +2,7 @@
 *               Exim Monitor                     *
 *************************************************/
 
-/* Copyright (c) University of Cambridge 1995 - 2012 */
+/* Copyright © University of Cambridge 1995 - 2012 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
