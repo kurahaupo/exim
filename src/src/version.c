@@ -38,34 +38,29 @@ sprintf() call is the gcc -Wall warns about a \0 in a format string. */
 
 version_cnumber = cnumber_buffer;
 version_cnumber_format = US"%d\0<<eximcnumber>>";
-sprintf(CS version_cnumber, CS version_cnumber_format, cnumber);
-version_string = US EXIM_VERSION_STR "\0<<eximversion>>";
+sprintf(C(version_cnumber), C(version_cnumber_format), cnumber);
+version_string = U(EXIM_VERSION_STR "\0<<eximversion>>");
 
 #ifdef EXIM_BUILD_DATE_OVERRIDE
-/* Reproducible build support; build tooling should have given us something looking like
- * "25-Feb-2017 20:15:40" in EXIM_BUILD_DATE_OVERRIDE based on $SOURCE_DATE_EPOCH in environ
- * per <https://reproducible-builds.org/specs/source-date-epoch/>
- */
-version_date = date_buffer;
-version_date[0] = 0;
-Ustrncat(version_date, EXIM_BUILD_DATE_OVERRIDE, sizeof(date_buffer));
-
+ {
+  /* Reproducible build support; build tooling should have given us something looking like
+   * "25-Feb-2017 20:15:40" in EXIM_BUILD_DATE_OVERRIDE based on $SOURCE_DATE_EPOCH in environ
+   * per <https://reproducible-builds.org/specs/source-date-epoch/>
+   */
+  Ustrncpy(version_date, EXIM_BUILD_DATE_OVERRIDE, sizeof date_buffer - 1);
+ }
 #else
  {
-  uschar today[20];
-  Ustrcpy(today, US __DATE__);
-  if (today[4] == ' ') today[4] = '0';
-  today[3] = today[6] = '-';
-
-  version_date = date_buffer;
-  version_date[0] = 0;
-  Ustrncat(version_date, today+4, 3);
-  Ustrncat(version_date, today, 4);
-  Ustrncat(version_date, today+7, 4);
-  Ustrcat(version_date, US" ");
-  Ustrcat(version_date, US __TIME__);
+  snprintf (C(date_buffer), sizeof date_buffer,
+	    "%.2s-%.3s-%.4s %.8s",
+	    __DATE__+4, __DATE__, __DATE__+7,
+	    __TIME__);
+  if (date_buffer[0] == ' ')
+    date_buffer[0] = '0';
  }
 #endif
+
+version_date = date_buffer;
 }
 
 /* End of version.c */
