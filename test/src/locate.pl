@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
 
-use 5.010;
+use 5.020;
 use strict;
 use warnings;
-use File::Find;
-use Cwd;
 
-my @dirs = grep { /^\// && -d } split(/:/, $ENV{PATH}), qw(
+use File::Find;
+
+my @dirs = grep { m{^/} && -d } split(/:/, $ENV{PATH}), qw(
   /bin
   /usr/bin
   /usr/sbin
@@ -18,38 +18,33 @@ my @dirs = grep { /^\// && -d } split(/:/, $ENV{PATH}), qw(
   /opt
 );
 
-my %path = map { $_ => locate($_, @dirs) } @ARGV;
 
-mkdir 'bin.sys'
-  or die "bin.sys: $!"
-  if not -d 'bin.sys';
+my %k = map { ( $_ => 1 ) } @ARGV;
+
+my %path;
+find( {
+        no_chdir => 1,
+        wanted => sub {
+                    my $p = $_;
+                    my $r = $p =~ s{.*/}{}r;
+                    $k{$r} && stat($p) && -f -x _
+                    or return;
+                    $path{$r} = $p;
+                },
+      },
+    @dirs
+);
+
+-d $_ or mkdir $_ or die "$_: $!"
+    for 'bin.sys';
 
 foreach my $tool (keys %path) {
-    next if not defined $path{$tool};
+    next if ! exists $path{$tool};
     print "$tool $path{$tool}\n";
 
-    unlink "bin.sys/$tool";
-    symlink $path{$tool}, "bin.sys/$tool"
-      or warn "bin.sys/$tool -> $path{$tool}: $!\n";
-}
+    my $bst = "bin.sys/$tool";
 
-sub locate {
-    my ($tool, @dirs) = @_;
-
-    # use die to break out of the find as soon
-    # as we found it
-    my $cwd = cwd;
-    eval {
-        find(
-            sub {
-                return $File::Find::prune = 1 unless -r -x -r;
-                return unless $tool eq $_ and -x and -f _;
-                die { found => $File::Find::name };
-            },
-            @dirs
-        );
-    };
-    chdir $cwd;
-
-    return (ref $@ eq ref {} and $@->{found}) ? $@->{found} : undef;
+    unlink $bst;
+    symlink $path{$tool}, $bst
+      or warn "$bst -> $path{$tool}: $!\n";
 }

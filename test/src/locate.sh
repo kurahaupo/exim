@@ -19,7 +19,7 @@ do
 	/usr/sbin
 	/usr/libexec
 	/usr/local/bin
-        `find /usr/lib/postgresql -name bin -type d`
+        $( find /usr/lib/postgresql -name bin -type d )
 HERE
   shift
 done
