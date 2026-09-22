@@ -73,15 +73,15 @@ any mixed-case annotation.  This does not really matter for a domain. */
     break;
     }
   }
-if (  (rc = idn2_to_ascii_8z(CS cs, CSS &t, IDN2_NFC_INPUT | IDN2_NO_TR46))
+if (  (rc = idn2_to_ascii_8z(C(cs), C(&t), IDN2_NFC_INPUT | IDN2_NO_TR46))
    != IDN2_OK)
   {
   if (err) *err = US idn2_strerror(rc);
   return NULL;
   }
 #else
-s = US stringprep_utf8_nfkc_normalize(CCS utf8, -1);
-if (  (rc = idna_to_ascii_8z(CCS s, CSS &t, IDNA_ALLOW_UNASSIGNED))
+s = US stringprep_utf8_nfkc_normalize(C(utf8), -1);
+if (  (rc = idna_to_ascii_8z(C(s), C(&t), IDNA_ALLOW_UNASSIGNED))
    != IDNA_SUCCESS)
   {
   free(s);
@@ -119,7 +119,7 @@ return string_from_gstring(g);
 uschar * s1, * s;
 int rc;
 
-if (  (rc = idna_to_unicode_8z8z(CCS alabel, CSS &s1, IDNA_USE_STD3_ASCII_RULES))
+if (  (rc = idna_to_unicode_8z8z(C(alabel), C(&s1), IDNA_USE_STD3_ASCII_RULES))
    != IDNA_SUCCESS)
   {
   if (err) *err = US idna_strerror(rc);
@@ -147,7 +147,7 @@ int rc;
 
 if (!string_is_utf8(utf8)) return utf8;
 
-p = (punycode_uint *) stringprep_utf8_to_ucs4(CCS utf8, -1, &ucs4_len);
+p = (punycode_uint *) stringprep_utf8_to_ucs4(C(utf8), -1, &ucs4_len);
 if (!p || !ucs4_len)
   {
   if (err) *err = US"l_u2a: bad UTF-8 input";
@@ -158,7 +158,7 @@ res = store_get(p_len+5, utf8);
 
 res[0] = 'x'; res[1] = 'n'; res[2] = res[3] = '-';
 
-if ((rc = punycode_encode(ucs4_len, p, NULL, &p_len, CS res+4)) != PUNYCODE_SUCCESS)
+if ((rc = punycode_encode(ucs4_len, p, NULL, &p_len, C(res)+4)) != PUNYCODE_SUCCESS)
   {
   DEBUG(expand) debug_printf("l_u2a: bad '%s'\n", punycode_strerror(rc));
   free(p);
@@ -185,7 +185,7 @@ alabel += 4;
 p_len = Ustrlen(alabel);
 p = store_get((p_len+1) * sizeof(*p), alabel);
 
-if ((rc = punycode_decode(p_len, CCS alabel, &p_len, p, NULL)) != PUNYCODE_SUCCESS)
+if ((rc = punycode_decode(p_len, C(alabel), &p_len, p, NULL)) != PUNYCODE_SUCCESS)
   {
   if (err) *err = US punycode_strerror(rc);
   return NULL;
