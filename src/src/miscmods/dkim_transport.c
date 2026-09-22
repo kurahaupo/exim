@@ -90,9 +90,9 @@ else
 #ifndef DISABLE_TLS
       wwritten = tls_out.active.sock == out_fd
 	? tls_write(tls_out.active.tls_ctx, p, sread, FALSE)
-	: write(out_fd, CS p, sread);
+	: write(out_fd, C(p), sread);
 #else
-      wwritten = write(out_fd, CS p, sread);
+      wwritten = write(out_fd, C(p), sread);
 #endif
       if (wwritten == -1)
 	return FALSE;
@@ -320,7 +320,7 @@ else
 if (dkim->arc_signspec)				/* Prepend ARC headers */
   {
   if (!(dkim_signature = dkt_arc_sign(dkim->arc_signspec, dkim_signature,
-				      USS err)))
+				      U(err))))
     goto CLEANUP;
   dlen = dkim_signature->ptr;
   }
