@@ -47,7 +47,7 @@ else if (Ustrcmp(keep_environment, "*") != 0)
   dbg = debug_disable();		/* quieten this clearout */
   host_checking = FALSE;
 
-  if (environ) for (uschar ** p = USS environ; *p; /* see below */)
+  if (environ) for (uschar ** p = U(environ); *p; /* see below */)
     {
     /* It's considered broken if we do not find the '=', according to
     Florian Weimer. For now we ignore such strings. unsetenv() would complain,
@@ -58,11 +58,11 @@ else if (Ustrcmp(keep_environment, "*") != 0)
       {
       const uschar * name = string_copyn(*p, eqp - *p);
 
-      if (match_isinlist(name, CUSS &keep_environment,
+      if (match_isinlist(name, R(&keep_environment),
           0, NULL, NULL, MCL_NOEXPAND, FALSE, NULL) == OK)
 	p++;			/* next */
       else if (os_unsetenv(name) == 0)
-	p = USS environ;	/* RESTART from the beginning */
+	p = U(environ);	/* RESTART from the beginning */
       else
 	{
 	host_checking = hc;
@@ -78,7 +78,7 @@ else if (Ustrcmp(keep_environment, "*") != 0)
 DEBUG(start)
   {
   debug_printf("environment after trimming:\n");
-  if (environ) for (uschar ** p = USS environ; *p; p++)
+  if (environ) for (uschar ** p = U(environ); *p; p++)
     debug_printf(" %s\n", *p);
   }
 if (add_environment)
@@ -91,7 +91,7 @@ if (add_environment)
   for (const uschar * p; p = string_nextinlist(&envlist, &sep, NULL, 0); )
     {
     DEBUG(start|expand) debug_printf("adding %s\n", p);
-    putenv(CS p);
+    putenv(W(C(p)));
     }
   store_pool = old_pool;
   }
