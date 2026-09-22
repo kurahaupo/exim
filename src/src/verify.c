@@ -734,7 +734,7 @@ tls_retry_connection:
     if (  yield == DEFER
        && addr->basic_errno == ERRNO_TLSFAILURE
        && ob->tls_tempfail_tryclear
-       && verify_check_given_host(CUSS &ob->hosts_require_tls, host) != OK
+       && verify_check_given_host(R(&ob->hosts_require_tls), host) != OK
        )
       {
       log_write(LOG_MAIN,
@@ -1788,7 +1788,7 @@ if (parse_find_at(address) == NULL)
     return FAIL;
     }
   /* deconst ok as address was not const */
-  address = US rewrite_address_qualify(address, options & vopt_is_recipient);
+  address = rewrite_address_qualify(address, options & vopt_is_recipient);
   }
 
 DEBUG(verify)
@@ -2256,7 +2256,7 @@ for (addr_list = addr_local, i = 0; i < 2; addr_list = addr_remote, i++)
 
     addr_list = addr->next;
 
-    dprintf(fd, "%s", CS addr->address);
+    dprintf(fd, "%s", C(addr->address));
 
     /* If the address is a duplicate, show something about it. */
 
@@ -2430,9 +2430,9 @@ for (header_line * h = header_list; h && yield == OK; h = h->next)
         }
 
       /* deconst cast ok as we're passing a non-const to string_printing() */
-      *msgptr = US string_printing(
+      *msgptr = W(string_printing(
         string_sprintf("%s: failing address in \"%.*s:\" header %s: %.*s",
-          errmess, (int)(tt - h->text), h->text, verb, len, s));
+          errmess, (int)(tt - h->text), h->text, verb, len, s)));
 
       yield = FAIL;
       break;          /* Out of address loop */
@@ -2836,7 +2836,7 @@ if (ip_bind(ident_conn_ctx.sock, host_af, interface_address, 0) < 0)
 
 /* Construct and send the query. */
 
-qlen = snprintf(CS buffer, sizeof(buffer), "%d , %d\r\n",
+qlen = snprintf(C(buffer), sizeof(buffer), "%d , %d\r\n",
   sender_host_port, interface_port);
 early_data.data = buffer;
 early_data.len = qlen;
@@ -2903,7 +2903,7 @@ However, the amount of white space may be different to what we sent. In the
 actually want to save follows the third colon. Some systems put leading spaces
 in it - we discard those. */
 
-if (sscanf(CS buffer + qlen, "%d , %d%n", &received_sender_port,
+if (sscanf(C(buffer) + qlen, "%d , %d%n", &received_sender_port,
       &received_interface_port, &n) != 2 ||
     received_sender_port != sender_host_port ||
     received_interface_port != interface_port)
@@ -2927,7 +2927,7 @@ characters when we save it, so that it cannot mess up the format of any logging
 or Received: lines into which it gets inserted. We keep a maximum of 127
 characters. The deconst cast is ok as we fed a nonconst to string_printing() */
 
-sender_ident = US string_printing(string_copyn(p, 127));
+sender_ident = W(string_printing(string_copyn(p, 127)));
 DEBUG(ident) debug_printf("sender_ident = %s\n", sender_ident);
 
 END_OFF:
@@ -2980,7 +2980,8 @@ int maskoffset;
 BOOL iplookup = FALSE, isquery = FALSE;
 BOOL isiponly = cb->host_name && !cb->host_name[0];
 const uschar * t;
-uschar * semicolon, * opts;
+uschar * semicolon;
+const uschar * opts;
 const uschar * endname;
 uschar ** aliases;
 
@@ -3051,7 +3052,7 @@ else
 /* See if there is a semicolon in the pattern, separating a searchtype
 prefix.  If there is one then check for comma-sep options. */
 
-if ((semicolon = Ustrchr(ss, ';')))
+if ((semicolon = Ustrchr(W(ss), ';')))
   if ((opts = Ustrchr(ss, ',')) && opts < semicolon)
     {
     endname = opts++;
@@ -3095,7 +3096,8 @@ if (iplookup)
   {
   const lookup_info * li;
   void * handle;
-  const uschar * filename, * key, * result;
+  const uschar * result;
+  uschar * filename, * key;
   uschar buffer[64];
 
   /* Find the search type */
@@ -3214,7 +3216,7 @@ query does not contain $sender_host_name. From release 4.23, a reference to
 $sender_host_name causes it to be looked up, so we don't need to do the lookup
 on spec. */
 
-if ((semicolon = Ustrchr(ss, ';')))
+if ((semicolon = Ustrchr(W(ss), ';')))
   {
   const uschar * affix, * opts;
   int partial, affixlen, starflags;
@@ -3396,7 +3398,7 @@ Returns:               the yield of verify_check_this_host(),
 int
 verify_check_host(const uschar * const * listptr)
 {
-return verify_check_this_host(CUSS listptr, sender_host_cache, NULL,
+return verify_check_this_host(listptr, sender_host_cache, NULL,
   sender_host_address ? sender_host_address : US"", NULL);
 }
 
@@ -3434,7 +3436,7 @@ if (host_aton(address, bin) == 1)
   int x = bin[0];
   for (int i = 0; i < 4; i++)
     {
-    sprintf(CS bptr, "%d.", x & 255);
+    sprintf(C(bptr), "%d.", x & 255);
     while (*bptr) bptr++;
     x >>= 8;
     }
@@ -3451,7 +3453,7 @@ else
     int x = bin[j];
     for (int i = 0; i < 8; i++)
       {
-      sprintf(CS bptr, "%x.", x & 15);
+      sprintf(C(bptr), "%x.", x & 15);
       while (*bptr) bptr++;
       x >>= 4;
       }
