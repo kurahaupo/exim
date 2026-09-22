@@ -813,7 +813,7 @@ expansion_items(void)
 uschar buf[64];
 for (int i = 0; i < nelem(item_table); i++)
   {
-  spf(buf, sizeof(buf), CUS"_EXP_ITEM_%T", item_table[i]);
+  spf(buf, sizeof(buf), US"_EXP_ITEM_%T", item_table[i]);
   builtin_macro_create(buf);
   }
 }
@@ -823,12 +823,12 @@ expansion_operators(void)
 uschar buf[64];
 for (int i = 0; i < nelem(op_table_underscore); i++)
   {
-  spf(buf, sizeof(buf), CUS"_EXP_OP_%T", op_table_underscore[i]);
+  spf(buf, sizeof(buf), US"_EXP_OP_%T", op_table_underscore[i]);
   builtin_macro_create(buf);
   }
 for (int i = 0; i < nelem(op_table_main); i++)
   {
-  spf(buf, sizeof(buf), CUS"_EXP_OP_%T", op_table_main[i]);
+  spf(buf, sizeof(buf), US"_EXP_OP_%T", op_table_main[i]);
   builtin_macro_create(buf);
   }
 }
@@ -838,7 +838,7 @@ expansion_conditions(void)
 uschar buf[64];
 for (int i = 0; i < nelem(cond_table); i++)
   {
-  spf(buf, sizeof(buf), CUS"_EXP_COND_%T", cond_table[i]);
+  spf(buf, sizeof(buf), US"_EXP_COND_%T", cond_table[i]);
   builtin_macro_create(buf);
   }
 }
@@ -848,7 +848,7 @@ expansion_variables(void)
 uschar buf[64];
 for (int i = 0; i < nelem(var_table); i++)
   {
-  spf(buf, sizeof(buf), CUS"_EXP_VAR_%T", var_table[i].name);
+  spf(buf, sizeof(buf), US"_EXP_VAR_%T", var_table[i].name);
   builtin_macro_create(buf);
   }
 }
@@ -869,7 +869,7 @@ static BOOL malformed_header;
 
 /* For textual hashes */
 
-static const char *hashcodes = "abcdefghijklmnopqrtsuvwxyz"
+static const char hashcodes[] = "abcdefghijklmnopqrtsuvwxyz"
                                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                "0123456789";
 
@@ -1526,7 +1526,7 @@ int sublen = Ustrlen(subject);
 
 if (value2 <= 0)
   value2 = 26;
-else if (value2 > Ustrlen(hashcodes))
+else if (value2 > strlen(hashcodes))
   {
   expand_string_message =
     string_sprintf("hash count \"%d\" too big", value2);
@@ -1688,7 +1688,7 @@ for (header_line * h = header_list; h; h = h->next)
 	that contains an address list, except when asked for raw headers. Only
 	need to do this once. */
 
-	if (name && !comma && Ustrchr("BCFRST", h->type)) comma = TRUE;
+	if (name && !comma && strchr("BCFRST", h->type)) comma = TRUE;
 	}
 
       /* Trim the header roughly if we're approaching limits */
@@ -1865,7 +1865,7 @@ if (send(fd, buf, 1, 0) < 0) { where = US"send"; goto bad; }
 if (poll_one_fd(fd, POLLIN, 2 * 1000) != 1)
   {
   DEBUG(expand) debug_printf("no daemon response; using local evaluation\n");
-  len = snprintf(CS buf, sizeof(buf), "%u", queue_count_cached());
+  len = snprintf(C(buf), sizeof(buf), "%u", queue_count_cached());
   }
 else if ((len = recv(fd, buf, sizeof(buf), 0)) < 0)
   { where = US"recv"; goto bad2; }
@@ -1984,38 +1984,38 @@ switch (vp->type)
     /* Fall through */
     /* VVVVVVVVVVVV */
   case vtype_int:
-    sprintf(CS var_buffer, "%d", *(int *)(val)); /* Integer */
+    sprintf(C(var_buffer), "%d", *(int *)(val)); /* Integer */
     return var_buffer;
 
   case vtype_ino:
-    sprintf(CS var_buffer, "%ld", (long int)(*(ino_t *)(val))); /* Inode */
+    sprintf(C(var_buffer), "%ld", (long int)(*(ino_t *)(val))); /* Inode */
     return var_buffer;
 
   case vtype_gid:
-    sprintf(CS var_buffer, "%ld", (long int)(*(gid_t *)(val))); /* gid */
+    sprintf(C(var_buffer), "%ld", (long int)(*(gid_t *)(val))); /* gid */
     return var_buffer;
 
   case vtype_uid:
-    sprintf(CS var_buffer, "%ld", (long int)(*(uid_t *)(val))); /* uid */
+    sprintf(C(var_buffer), "%ld", (long int)(*(uid_t *)(val))); /* uid */
     return var_buffer;
 
   case vtype_bool:
-    sprintf(CS var_buffer, "%s", *(BOOL *)(val) ? "yes" : "no"); /* bool */
+    sprintf(C(var_buffer), "%s", *(BOOL *)(val) ? "yes" : "no"); /* bool */
     return var_buffer;
 
   case vtype_boolint:	/* a logical bool, presented as an int 1/0 */
-    sprintf(CS var_buffer, "%c", *(BOOL *)(val) ? '1' : '0');    /* bool */
+    sprintf(C(var_buffer), "%c", *(BOOL *)(val) ? '1' : '0');    /* bool */
     return var_buffer;
 
   case vtype_stringptr:                      /* Pointer to string */
     return (s = *((uschar **)(val))) ? s : US"";
 
   case vtype_pid:
-    sprintf(CS var_buffer, PID_T_FMT, getpid()); /* pid */
+    sprintf(C(var_buffer), PID_T_FMT, getpid()); /* pid */
     return var_buffer;
 
   case vtype_load_avg:
-    sprintf(CS var_buffer, "%d", OS_GETLOADAVG()); /* load_average */
+    sprintf(C(var_buffer), "%d", OS_GETLOADAVG()); /* load_average */
     return var_buffer;
 
   case vtype_host_lookup:                    /* Lookup if not done so */
@@ -2148,7 +2148,7 @@ switch (vp->type)
   case vtype_pspace:
     {
     int inodes;
-    sprintf(CS var_buffer, PR_EXIM_ARITH,
+    sprintf(C(var_buffer), PR_EXIM_ARITH,
       receive_statvfs(val == (void *)TRUE, &inodes));
     }
   return var_buffer;
@@ -2157,7 +2157,7 @@ switch (vp->type)
     {
     int inodes;
     (void) receive_statvfs(val == (void *)TRUE, &inodes);
-    sprintf(CS var_buffer, "%d", inodes);
+    sprintf(C(var_buffer), "%d", inodes);
     }
   return var_buffer;
 
@@ -2186,7 +2186,7 @@ switch (vp->type)
       goto sublist;
       }
     log_write(LOG_MAIN|LOG_PANIC,
-      "failed to find %s module for %s: %s", US val, name, errstr);
+      "failed to find %s module for %s: %s", val, name, errstr);
     return US"";
     }
 
@@ -2209,7 +2209,7 @@ switch (vp->type)
       goto sublist;
       }
     log_write(LOG_MAIN|LOG_PANIC,
-      "failed to find %s module for %s%s%s", US val, name,
+      "failed to find %s module for %s%s%s", val, name,
 	errstr ? ": " : "", errstr);
     return US"";
     }
@@ -2334,10 +2334,10 @@ if (Ustrncmp(name, "acl_", 4) == 0)
   expand_string_message = string_sprintf("%s (%s)", expand_string_message,
     (name[4] == 'c' || name[4] == 'm')?
       (isalpha(name[5])?
-        US"6th character of a user-defined ACL variable must be a digit or underscore" :
-        US"strict_acl_vars is set"    /* Syntax is OK, it has to be this */
+        "6th character of a user-defined ACL variable must be a digit or underscore" :
+        "strict_acl_vars is set"    /* Syntax is OK, it has to be this */
       ) :
-      US"user-defined ACL variables must start acl_c or acl_m");
+      "user-defined ACL variables must start acl_c or acl_m");
 }
 
 
@@ -2378,7 +2378,7 @@ while (i < nsub)
 DEBUG(expand)
   debug_printf_indent("expanding: acl: %s  arg: %s%s\n",
     sub[0],
-    acl_narg>0 ? acl_arg[0] : US"<none>",
+    acl_narg>0 ? C(acl_arg[0]) : "<none>",
     acl_narg>1 ? " +more"   : "");
 
 ret = acl_eval(acl_where, sub[0], user_msgp, &dummy_logmsg);
@@ -2476,7 +2476,7 @@ for (item = s;
 if (item == s) return NULL;
 item = string_copyn(item, s - item);
 DEBUG(expand) debug_printf_indent("  json ele: '%s'\n", item);
-return US item;
+return W(item);
 }
 
 
@@ -2938,7 +2938,7 @@ switch(cond_type = identify_operator(&s, &opname))
     Uskip_whitespace(&s);
     if (*s++ != '{') goto COND_FAILED_CURLY_START;	/*}*/
 
-    switch(read_subs(CUSS sub, nelem(sub), 1, &s,
+    switch(read_subs(R(sub), nelem(sub), 1, &s,
 	yield ? ESI_NOFLAGS : ESI_SKIPPING, TRUE, name, resetok, NULL))
       {
       case 1: expand_string_message = US"too few arguments or bracketing "
@@ -3025,17 +3025,17 @@ switch(cond_type = identify_operator(&s, &opname))
       {
       case ECOND_MATCH_ADDRESS:  /* Match in an address list */
 	rc = match_address_list(sub[0], TRUE,
-				TRUE, &sub[1], NULL, -1, 0, CUSS &lookup_value);
+				TRUE, &sub[1], NULL, -1, 0, R(&lookup_value));
 	break;
 
       case ECOND_MATCH_DOMAIN:   /* Match in a domain list */
 	rc = match_isinlist(sub[0], &sub[1], 0, &domainlist_anchor, NULL,
-			    MCL_DOMAIN, TRUE, CUSS &lookup_value);
+			    MCL_DOMAIN, TRUE, R(&lookup_value));
 	break;
 
       case ECOND_MATCH_LOCAL_PART:
 	rc = match_isinlist(sub[0], &sub[1], 0, &localpartlist_anchor, NULL,
-			    MCL_LOCALPART, TRUE, CUSS &lookup_value);
+			    MCL_LOCALPART, TRUE, R(&lookup_value));
 	break;
 
       case ECOND_MATCH_IP:       /* Match IP address in a host list */
@@ -3069,17 +3069,17 @@ switch(cond_type = identify_operator(&s, &opname))
 		&cb,			/* argument for function */
 		MCL_HOST,
 		sub[0],			/* text for debugging */
-		CUSS &lookup_value);	/* where to pass back data */
+		R(&lookup_value));	/* where to pass back data */
 	}
 	break;
 
       case ECOND_INLIST:
 	rc = match_isinlist(sub[0], &sub[1], 0, NULL, NULL,
-			    MCL_STRING, FALSE, CUSS &lookup_value);
+			    MCL_STRING, FALSE, R(&lookup_value));
 	break;
       case ECOND_INLISTI:
 	rc = match_isinlist(sub[0], &sub[1], 0, NULL, NULL,
-			    MCL_STRING, TRUE, CUSS &lookup_value);
+			    MCL_STRING, TRUE, R(&lookup_value));
 	break;
 
       default:	/* impossible; compiler silencing */
@@ -3256,7 +3256,7 @@ switch(cond_type = identify_operator(&s, &opname))
 
 	  if (sublen == 24)
 	    {
-	    uschar *coded = b64encode(CUS digest, 16);
+	    uschar *coded = b64encode(U(digest), 16);
 	    DEBUG(auth) debug_printf("crypteq: using MD5+B64 hashing\n"
 	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
 	    tempcond = (Ustrcmp(coded, sub[1]+5) == 0);
@@ -3264,7 +3264,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	  else if (sublen == 32)
 	    {
 	    uschar coded[36];
-	    for (int i = 0; i < 16; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
+	    for (int i = 0; i < 16; i++) sprintf(C(coded+2*i), "%02X", digest[i]);
 	    coded[32] = 0;
 	    DEBUG(auth) debug_printf("crypteq: using MD5+hex hashing\n"
 	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+5);
@@ -3293,7 +3293,7 @@ switch(cond_type = identify_operator(&s, &opname))
 
 	  if (sublen == 28)
 	    {
-	    uschar *coded = b64encode(CUS digest, 20);
+	    uschar *coded = b64encode(U(digest), 20);
 	    DEBUG(auth) debug_printf("crypteq: using SHA1+B64 hashing\n"
 	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
 	    tempcond = (Ustrcmp(coded, sub[1]+6) == 0);
@@ -3301,7 +3301,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	  else if (sublen == 40)
 	    {
 	    uschar coded[44];
-	    for (int i = 0; i < 20; i++) sprintf(CS (coded+2*i), "%02X", digest[i]);
+	    for (int i = 0; i < 20; i++) sprintf(C(coded+2*i), "%02X", digest[i]);
 	    coded[40] = 0;
 	    DEBUG(auth) debug_printf("crypteq: using SHA1+hex hashing\n"
 	      "  subject=%s\n  crypted=%s\n", coded, sub[1]+6);
@@ -3340,9 +3340,9 @@ switch(cond_type = identify_operator(&s, &opname))
 
 	  switch(which)
 	    {
-	    case 0:  coded = US DEFAULT_CRYPT(CS sub[0], CS sub[1]);	break;
-	    case 1:  coded = US crypt(CS sub[0], CS sub[1]);		break;
-	    default: coded = US crypt16(CS sub[0], CS sub[1]);		break;
+	    case 0:  coded = U(DEFAULT_CRYPT(C(sub[0]), C(sub[1])));	break;
+	    case 1:  coded = U(crypt(C(sub[0]), C(sub[1])));		break;
+	    default: coded = U(crypt16(C(sub[0]), C(sub[1])));		break;
 	    }
 
 	  DEBUG(auth) debug_printf("crypteq: using %s()\n"
@@ -3362,7 +3362,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	  else
 	    {
 	    expand_string_message = string_sprintf("crypt error: %s\n",
-	      US strerror(errno));
+	      strerror(errno));
 	    goto failout;
 	    }
 	  }
@@ -3548,7 +3548,7 @@ switch(cond_type = identify_operator(&s, &opname))
 
     if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
     ourname = cond_type == ECOND_BOOL_LAX ? US"bool_lax" : US"bool";
-    switch(read_subs(CUSS sub_arg, 1, 1, &s,
+    switch(read_subs(R(sub_arg), 1, 1, &s,
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, ourname, resetok, NULL))
       {
       case 1: expand_string_message = string_sprintf(
@@ -3572,7 +3572,7 @@ switch(cond_type = identify_operator(&s, &opname))
         }
       }
     DEBUG(expand)
-      debug_printf_indent("considering %s: %s\n", ourname, len ? t : US"<empty>");
+      debug_printf_indent("considering %s: %s\n", ourname, len ? C(t) : "<empty>");
     /* logic for the lax case from expand_check_condition(), which also does
     expands, and the logic is both short and stable enough that there should
     be no maintenance burden from replicating it. */
@@ -3617,7 +3617,7 @@ switch(cond_type = identify_operator(&s, &opname))
     uschar cksum[4];
     BOOL boolvalue = FALSE;
 
-    switch(read_subs(sub, 2, 2, CUSS &s,
+    switch(read_subs(sub, 2, 2, R(&s),
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, name, resetok, NULL))
       {
       case 1: expand_string_message = US"too few arguments or bracketing "
@@ -3936,7 +3936,7 @@ else if (*s != '}')
   {
   uschar name[256];
   /* deconst cast ok here as source is s anyway */
-  s = US read_name(name, sizeof(name), s, US"_");
+  s = read_name(name, sizeof(name), s, US"_");
   if (Ustrcmp(name, "fail") == 0)
     {
     if (!yes && !(flags & ESI_SKIPPING))
@@ -4224,7 +4224,7 @@ expand_level++;
   if (isdigit((c = Uskip_whitespace(&s))))
     {
     int count;
-    (void)sscanf(CS s, (decimal? SC_EXIM_DEC "%n" : SC_EXIM_ARITH "%n"), &n, &count);
+    (void)sscanf(C(s), (decimal? SC_EXIM_DEC "%n" : SC_EXIM_ARITH "%n"), &n, &count);
     s += count;
     switch (tolower(*s))
       {
@@ -4957,7 +4957,7 @@ while (*s)	/* known to be untainted */
 	yield = g;
 	yield->size = newsize;
 	yield->ptr = len;
-	yield->s = US value; /* known to be in new store i.e. a copy, so deconst safe */
+	yield->s = W(value); /* known to be in new store i.e. a copy, so deconst safe */
 	}
       else
 	yield = string_catn(yield, value, len);
@@ -5044,7 +5044,7 @@ while (*s)	/* known to be untainted */
       uschar * user_msg;
       int rc;
 
-      switch(read_subs(CUSS sub, nelem(sub), 1, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs(R(sub), nelem(sub), 1, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;		/* skipping */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -5197,7 +5197,8 @@ while (*s)	/* known to be untainted */
       int expand_setup = 0, nameptr = 0;
       int partial, affixlen, starflags;
       const lookup_info * li;
-      const uschar * key, * affix, * opts;
+      uschar * key;
+      const uschar * affix, * opts;
       uschar * save_lookup_value = lookup_value, * filename;
       int save_expand_nmax =
         save_expand_strings(save_expand_nstring, save_expand_nlength);
@@ -5445,7 +5446,7 @@ while (*s)	/* known to be untainted */
       uschar * sub_arg[3], * domain;
       const uschar * p;
 
-      switch(read_subs(CUSS sub_arg, 3, 2, &s, flags, TRUE, name, &resetok, NULL))
+      switch(read_subs(R(sub_arg), 3, 2, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;	/* If skipping, we don't actually do anything */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -5568,8 +5569,8 @@ while (*s)	/* known to be untainted */
           const uschar * now = prvs_daystamp(0);
           unsigned int inow = 0, iexpire = 1;
 
-          (void)sscanf(CS now,"%u",&inow);
-          (void)sscanf(CS daystamp,"%u",&iexpire);
+          (void)sscanf(C(now),"%u",&inow);
+          (void)sscanf(C(daystamp),"%u",&iexpire);
 
           /* When "iexpire" is < 7, a "flip" has occurred.
              Adjust "inow" accordingly. */
@@ -5667,7 +5668,7 @@ while (*s)	/* known to be untainted */
     case EITEM_READSOCK:
       {
       const uschar * arg;
-      const uschar * sub_arg[4];
+      uschar * sub_arg[4];
 
       if (expand_forbid & RDO_READSOCK)
         {
@@ -5678,7 +5679,7 @@ while (*s)	/* known to be untainted */
       /* Read up to 4 arguments, but don't do the end of item check afterwards,
       because there may be a string for expansion on failure. */
 
-      switch(read_subs(sub_arg, 4, 2, &s, flags, FALSE, name, &resetok, NULL))
+      switch(read_subs(R(sub_arg), 4, 2, &s, flags, FALSE, name, &resetok, NULL))
         {
         case 1: goto EXPAND_FAILED_CURLY;
         case 2:                             /* Won't occur: no end check */
@@ -5715,7 +5716,7 @@ while (*s)	/* known to be untainted */
 	if (sub_arg[2])
 	  {
 	  const uschar * list = sub_arg[2];
-	  uschar * item;
+	  const uschar * item;
 	  int sep = 0;
 
 	  /* First option has no tag and is timeout */
@@ -5893,7 +5894,7 @@ while (*s)	/* known to be untainted */
 
         /* Create the child process, making it a group leader. */
 
-        if ((pid = child_open(USS argv, NULL, 0077, &fd_in, &fd_out, TRUE,
+        if ((pid = child_open(W(argv), NULL, 0077, &fd_in, &fd_out, TRUE,
 			      US"expand-run")) < 0)
           {
           expand_string_message =
@@ -6009,7 +6010,7 @@ while (*s)	/* known to be untainted */
       Ensure that sub[2] is set in the ${length } case. */
 
       sub[2] = NULL;
-      switch(read_subs(CUSS sub, item_type == EITEM_LENGTH ? 2:3, 2, &s, flags,
+      switch(read_subs(R(sub), item_type == EITEM_LENGTH ? 2:3, 2, &s, flags,
              TRUE, name, &resetok, NULL))
         {
 	case -1: continue;	/* skipping */
@@ -7168,7 +7169,7 @@ while (*s)	/* known to be untainted */
         goto EXPAND_FAILED;
         }
 
-      switch(read_subs(CUSS argv, EXPAND_DLFUNC_MAX_ARGS + 2, 2, &s, flags,
+      switch(read_subs(R(argv), EXPAND_DLFUNC_MAX_ARGS + 2, 2, &s, flags,
            TRUE, name, &resetok, NULL))
         {
 	case -1: continue;	/* skipping */
@@ -7182,7 +7183,7 @@ while (*s)	/* known to be untainted */
 
       if (!(t = tree_search(dlobj_anchor, argv[0])))
         {
-        void * handle = dlopen(CS argv[0], RTLD_LAZY);
+        void * handle = dlopen(C(argv[0]), RTLD_LAZY);
         if (!handle)
           {
           expand_string_message = string_sprintf("dlopen %q failed: %s",
@@ -7199,7 +7200,7 @@ while (*s)	/* known to be untainted */
       /* Having obtained the dynamically loaded object handle, look up the
       function pointer. */
 
-      if (!(func = (exim_dlfunc_t *)dlsym(t->data.ptr, CS argv[1])))
+      if (!(func = (exim_dlfunc_t *)dlsym(t->data.ptr, C(argv[1]))))
         {
         expand_string_message = string_sprintf("dlsym %q in %q failed: "
           "%s", argv[1], argv[0], dlerror());
@@ -7251,7 +7252,7 @@ while (*s)	/* known to be untainted */
 	goto EXPAND_FAILED_CURLY;
 	}
 
-      if ((lookup_value = US getenv(CS key)))
+      if ((lookup_value = U(getenv(C(key)))))
 	lookup_value = string_copy_pool(lookup_value, FALSE, POOL_SEARCH);
 
       switch(process_yesno(
@@ -7278,7 +7279,7 @@ while (*s)	/* known to be untainted */
       gstring * g = NULL;
       BOOL quoted = FALSE;
 
-      switch (read_subs(sub, 3, 3, CUSS &s, flags, TRUE, name, &resetok, NULL))
+      switch (read_subs(sub, 3, 3, &s, flags, TRUE, name, &resetok, NULL))
         {
 	case -1: continue;	/* skipping */
         case 1: goto EXPAND_FAILED_CURLY;
@@ -7696,9 +7697,9 @@ NOT_ITEM: ;
 	  int sep = '_';
 	  if ((t = string_nextinlist(&list, &sep, NULL, 0)))
 	    {
-	    col = atoi(CS t);
+	    col = atoi(C(t));
 	    if ((t = string_nextinlist(&list, &sep, NULL, 0)))
-	      lim = atoi(CS t);
+	      lim = atoi(C(t));
 	    }
 	  }
 	  if ((t =  wrap_header(sub, col, lim, US"\t", 8)))
@@ -7747,7 +7748,7 @@ NOT_ITEM: ;
 	    }
 	  }
 
-	enc = b64encode(CUS sub, out - sub);
+	enc = b64encode(sub, out - sub);
 	yield = string_cat(yield, enc);
 	break;
 	}
@@ -7771,8 +7772,8 @@ NOT_ITEM: ;
 	int cnt = 0, sep;
 	uschar * buf = store_get(2, sub);
 
-	sep = matchlist_parse_sep(CUSS &sub);
-	while (string_nextinlist(CUSS &sub, &sep, buf, 1)) cnt++;
+	sep = matchlist_parse_sep(R(&sub));
+	while (string_nextinlist(R(&sub), &sep, buf, 1)) cnt++;
 	yield = string_fmt_append(yield, "%d", cnt);
 	break;
 	}
@@ -8363,9 +8364,9 @@ NOT_ITEM: ;
 #ifndef DISABLE_TLS
 	const uschar * s = vp && *(void **)vp->value
 	  ? tls_cert_der_b64(*(void **)vp->value)
-	  : b64encode(CUS sub, Ustrlen(sub));
+	  : b64encode(sub, Ustrlen(sub));
 #else
-	uschar * s = b64encode(CUS sub, Ustrlen(sub));
+	uschar * s = b64encode(U(sub), Ustrlen(sub));
 #endif
 	yield = string_cat(yield, s);
 	break;
@@ -8498,7 +8499,7 @@ NOT_ITEM: ;
 	  goto EXPAND_FAILED;
 	  }
 
-	if (stat(CS sub, &st) < 0)
+	if (stat(C(sub), &st) < 0)
 	  {
 	  expand_string_message = string_sprintf("stat(%s) failed: %s",
 	    sub, strerror(errno));
@@ -8639,7 +8640,7 @@ NOT_ITEM: ;
       yield = g;
       yield->size = newsize;
       yield->ptr = len;
-      yield->s = US value; /* known to be in new store i.e. a copy, so deconst safe */
+      yield->s = W(value); /* known to be in new store i.e. a copy, so deconst safe */
       }
     else
       yield = string_catn(yield, value, len);
@@ -8814,7 +8815,7 @@ uschar *
 expand_string_copy(const uschar * string)
 {
 const uschar * yield = expand_string(string);
-return yield == string ? string_copy(string) : US yield;
+return yield == string ? string_copy(string) : W(yield);
 }
 
 
@@ -8891,7 +8892,7 @@ if (isspace(*s))
       return 0;
     }
 
-value = strtoll(CS s, CSS &endptr, 10);
+value = strtoll(C(s), C(&endptr), 10);
 
 if (endptr == s)
   msg = US"integer expected but %q found";
@@ -8925,7 +8926,7 @@ else
     if (Uskip_whitespace(&endptr) == 0) return value;
   }
 
-expand_string_message = string_sprintf(CS msg, s);
+expand_string_message = string_sprintf(C(msg), s);
 return -2;
 }
 
@@ -9027,7 +9028,7 @@ expand_file_big_buffer(const uschar * filename)
 {
 int fd, off = 0, len;
 
-if ((fd = exim_open2(CS filename, O_RDONLY)) < 0)
+if ((fd = exim_open2(C(filename), O_RDONLY)) < 0)
   {
   log_write(LOG_MAIN | LOG_PANIC, "unable to open file '%s' for reading: %s",
 	     filename, strerror(errno));
@@ -9081,7 +9082,7 @@ if (var_data >= e->region_start  &&  var_data < e->region_end)
 void
 assert_no_variables(void * ptr, int len, const char * filename, int linenumber)
 {
-err_ctx e = { .region_start = ptr, .region_end = US ptr + len,
+err_ctx e = { .region_start = ptr, .region_end = (uschar *) ptr + len,
 	      .var_name = NULL, .var_data = NULL };
 
 /* check acl_ variables */
@@ -9091,18 +9092,18 @@ tree_walk(acl_var_m, (twalk_compat) assert_variable_notin, &e);
 /* check auth<n> variables.
 assert_variable_notin() treats as const, so deconst is safe. */
 for (int i = 0; i < AUTH_VARS; i++) if (auth_vars[i])
-  assert_variable_notin(US"auth<n>", US auth_vars[i], &e);
+  assert_variable_notin(US"auth<n>", auth_vars[i], &e);
 
 #ifdef WITH_CONTENT_SCAN
 /* check regex<n> variables. assert_variable_notin() treats as const. */
 for (int i = 0; i < REGEX_VARS; i++) if (regex_vars[i])
-  assert_variable_notin(US"regex<n>", US regex_vars[i], &e);
+  assert_variable_notin(US"regex<n>", U(regex_vars[i]), &e);
 #endif
 
 /* check known-name variables */
 for (var_entry * v = var_table; v < var_table + nelem(var_table); v++)
   if (v->type == vtype_stringptr)
-    assert_variable_notin(US v->name, *(USS v->value), &e);
+    assert_variable_notin(U(v->name), * (uschar **) v->value, &e);
 
 /* check dns and address trees */
 tree_walk(tree_dns_fails,     (twalk_compat) assert_variable_notin, &e);
