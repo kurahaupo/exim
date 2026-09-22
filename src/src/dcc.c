@@ -114,7 +114,7 @@ if (dccifd_address)
   if (dccifd_address[0] == '/')
     Ustrncpy(sockpath, dccifd_address, sizeof(sockpath));
   else
-    if(sscanf(CS dccifd_address, "%" mac_expanded_string(SOCKIP_USE) "s %u",
+    if(sscanf(C(dccifd_address), "%" mac_expanded_string(SOCKIP_USE) "s %u",
 	      sockip, &portnr) != 2)
       {
       log_write(LOG_MAIN,
@@ -167,11 +167,11 @@ dcc_headers = string_catn(dcc_headers, US"\n", 1);
 /* If sockip contains an ip, we use a tcp socket, otherwise a UNIX socket */
 if(Ustrcmp(sockip, ""))
   {
-  struct hostent * ipaddress = gethostbyname(CS sockip);
+  struct hostent * ipaddress = gethostbyname(C(sockip));
 
-  bzero(CS  &serv_addr_in, sizeof(serv_addr_in));
+  bzero(C(&serv_addr_in), sizeof(serv_addr_in));
   serv_addr_in.sin_family = AF_INET;
-  bcopy(CS ipaddress->h_addr, CS &serv_addr_in.sin_addr.s_addr, ipaddress->h_length);
+  bcopy(C(ipaddress->h_addr), C(&serv_addr_in.sin_addr.s_addr), ipaddress->h_length);
   serv_addr_in.sin_port = htons(portnr);
   if ((sockfd = socket(AF_INET, SOCK_STREAM,0)) < 0)
     {
@@ -198,7 +198,7 @@ else
   /* connecting to the dccifd UNIX socket */
   bzero(&serv_addr, sizeof(serv_addr));
   serv_addr.sun_family = AF_UNIX;
-  Ustrncpy(US serv_addr.sun_path, sockpath, sizeof(serv_addr.sun_path));
+  Ustrncpy(U(serv_addr.sun_path), sockpath, sizeof(serv_addr.sun_path));
   if ((sockfd = socket(AF_UNIX, SOCK_STREAM,0)) < 0)
     {
     DEBUG(acl)
