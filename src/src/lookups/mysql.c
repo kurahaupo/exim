@@ -243,11 +243,11 @@ if (!cn)
 
   mysql_handle = store_get(sizeof(MYSQL), GET_UNTAINTED);
   mysql_init(mysql_handle);
-  mysql_options(mysql_handle, MYSQL_READ_DEFAULT_GROUP, CS group);
+  mysql_options(mysql_handle, MYSQL_READ_DEFAULT_GROUP, C(group));
   if (mysql_real_connect(mysql_handle,
       /*  host        user         passwd     database */
-      CS sdata[0], CS sdata[2], CS sdata[3], CS sdata[1],
-      port, CS socket, CLIENT_MULTI_RESULTS) == NULL)
+      C(sdata[0]), C(sdata[2]), C(sdata[3]), C(sdata[1]),
+      port, C(socket), CLIENT_MULTI_RESULTS) == NULL)
     {
     *errmsg = string_sprintf("MYSQL connection failed: %s",
       mysql_error(mysql_handle));
@@ -271,7 +271,7 @@ else DEBUG(lookup)
 
 /* Run the query */
 
-if (mysql_query(mysql_handle, CS query) != 0)
+if (mysql_query(mysql_handle, C(query)) != 0)
   {
   *errmsg = string_sprintf("MYSQL: query failed (%s %d): %s\n",
     config_filename, config_lineno, mysql_error(mysql_handle));
@@ -322,13 +322,13 @@ while ((mysql_row_data = mysql_fetch_row(mysql_result)))
 
   if (num_fields != 1)
     for (int j = 0; j < num_fields; j++)
-      result = lf_quote(US fields[j].name, US mysql_row_data[j], lengths[j],
+      result = lf_quote(U(fields[j].name), U(mysql_row_data[j]), lengths[j],
 			result);
 
   else if (mysql_row_data[0] != NULL)    /* NULL value yields nothing */
       result = lengths[0] == 0 && !result
 	? string_get(1)		/* for 0-len string result ensure non-null gstring */
-        : string_catn(result, US mysql_row_data[0], lengths[0]);
+        : string_catn(result, U(mysql_row_data[0]), lengths[0]);
   }
 
 /* more results? -1 = no, >0 = error, 0 = yes (keep looping)
