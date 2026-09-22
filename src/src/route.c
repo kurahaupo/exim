@@ -470,7 +470,7 @@ route_check_suffix(const uschar * local_part, const uschar * suffixes,
 int sep = 0, alen = Ustrlen(local_part);
 unsigned suffix_len, vlen;
 
-for (uschar * suffix; suffix = string_nextinlist(&suffixes, &sep, NULL, 0); )
+for (const uschar * suffix; suffix = string_nextinlist(&suffixes, &sep, NULL, 0); )
   {
   int slen = Ustrlen(suffix);
   uschar c = suffix[slen-1];
@@ -556,7 +556,7 @@ switch(domloc
   ? match_isinlist(domloc, &list, 0, anchorptr, cache_bits, listtype,
     caseless, ldata)
   : match_address_list(sender_address ? sender_address : US"",
-    TRUE, TRUE, &list, cache_bits, -1, 0, CUSS &sender_data)
+    TRUE, TRUE, &list, cache_bits, -1, 0, (uschar const **) &sender_data)
       )
   {
   case OK:
@@ -611,7 +611,7 @@ static BOOL
 route_check_access(const uschar * path, uid_t uid, gid_t gid, int bits)
 {
 struct stat statbuf;
-uschar * rp = US realpath(CCS path, CS big_buffer);
+uschar * rp = U(realpath(C(path), C(big_buffer)));
 
 DEBUG(route) debug_printf_indent("route_check_access(%s,%u,%u,%#o)\n", path,
   (unsigned)uid, (unsigned)gid, bits);
@@ -980,7 +980,7 @@ if (verify == v_expn && !r->expn)
 /* Skip this router if there's a domain mismatch. */
 
 if ((rc = route_check_dls(rname, US"domains", r->domains, &domainlist_anchor,
-     addr->domain_cache, TRUE, addr->domain, CUSS &deliver_domain_data,
+     addr->domain_cache, TRUE, addr->domain, R(&deliver_domain_data),
      MCL_DOMAIN, perror)) != OK)
   return rc;
 
@@ -1005,7 +1005,7 @@ else
 
 if ((rc = route_check_dls(rname, US"local_parts", r->local_parts,
        &localpartlist_anchor, localpart_cache, MCL_LOCALPART,
-       check_local_part, CUSS &deliver_localpart_data,
+       check_local_part, R(&deliver_localpart_data),
        !r->caseful_local_part, perror)) != OK)
   return rc;
 
@@ -1025,8 +1025,8 @@ if (r->check_local_user)
     return SKIP;
     }
   addr->prop.localpart_data =
-    deliver_localpart_data = string_copy(US (*pw)->pw_name);
-  deliver_home = string_copy(US (*pw)->pw_dir);
+    deliver_localpart_data = string_copy(U((*pw)->pw_name));
+  deliver_home = string_copy(U((*pw)->pw_dir));
   local_user_gid = (*pw)->pw_gid;
   local_user_uid = (*pw)->pw_uid;
   }
@@ -1174,7 +1174,7 @@ if (!cache_set)
   else for (int i = 0;;)
     {
     errno = 0;
-    if ((lastpw = getpwnam(CS s))) break;
+    if ((lastpw = getpwnam(C(s)))) break;
     if (++i > finduser_retries) break;
     sleep(1);
     }
@@ -1186,10 +1186,10 @@ if (!cache_set)
     (void)string_format(lastdir, sizeof(lastdir), "%s", lastpw->pw_dir);
     (void)string_format(lastgecos, sizeof(lastgecos), "%s", lastpw->pw_gecos);
     (void)string_format(lastshell, sizeof(lastshell), "%s", lastpw->pw_shell);
-    pwcache.pw_name = CS lastname;
-    pwcache.pw_dir = CS lastdir;
-    pwcache.pw_gecos = CS lastgecos;
-    pwcache.pw_shell = CS lastshell;
+    pwcache.pw_name = C(lastname);
+    pwcache.pw_dir = C(lastdir);
+    pwcache.pw_gecos = C(lastgecos);
+    pwcache.pw_shell = C(lastshell);
     lastpw = &pwcache;
     }
 
@@ -1244,7 +1244,7 @@ if ((isdigit(*s) || *s == '-') && s[Ustrspn(s+1, "0123456789")+1] == 0)
 
 for (int i = 0;;)
   {
-  if ((gr = getgrnam(CS s)))
+  if ((gr = getgrnam(C(s))))
     {
     *return_gid = gr->gr_gid;
     return TRUE;
@@ -1466,11 +1466,11 @@ if (!varlist) return OK;
 
 /* Walk the varlist, creating variables */
 
-for (uschar * ele; (ele = string_nextinlist(&varlist, &sep, NULL, 0)); )
+for (const uschar * ele; (ele = string_nextinlist(&varlist, &sep, NULL, 0)); )
   {
   const uschar * assignment = ele;
   int esep = '=';
-  uschar * name = string_nextinlist(&assignment, &esep, NULL, 0);
+  const uschar * name = string_nextinlist(&assignment, &esep, NULL, 0);
   uschar * val;
   tree_node * node;
 
@@ -1486,7 +1486,7 @@ for (uschar * ele; (ele = string_nextinlist(&varlist, &sep, NULL, 0)); )
 
   Uskip_whitespace(&assignment);
 
-  if (!(val = expand_string(US assignment)))
+  if (!(val = expand_string(W(assignment))))
     if (f.expand_string_forcedfail)
       {
       int yield;
@@ -1523,7 +1523,7 @@ for (uschar * ele; (ele = string_nextinlist(&varlist, &sep, NULL, 0)); )
     Ustrcpy(node->name, name);
     (void)tree_insertnode(root, node);
     }
-  node->data.ptr = US val;
+  node->data.ptr = U(val);
   DEBUG(route) debug_printf_indent("set r_%s%s = '%s'%s\n",
 		    name, is_tainted(name)?" (tainted)":"",
 		    val, is_tainted(val)?" (tainted)":"");
@@ -1823,12 +1823,12 @@ for (r = addr->start_router ? addr->start_router : routers; r; r = nextr)
 
   if (pw)
     {
-    pwcopy.pw_name = CS string_copy(US pw->pw_name);
+    pwcopy.pw_name = C(string_copy(U(pw->pw_name)));
     pwcopy.pw_uid = pw->pw_uid;
     pwcopy.pw_gid = pw->pw_gid;
-    pwcopy.pw_gecos = CS string_copy(US pw->pw_gecos);
-    pwcopy.pw_dir = CS string_copy(US pw->pw_dir);
-    pwcopy.pw_shell = CS string_copy(US pw->pw_shell);
+    pwcopy.pw_gecos = C(string_copy(U(pw->pw_gecos)));
+    pwcopy.pw_dir = C(string_copy(U(pw->pw_dir)));
+    pwcopy.pw_shell = C(string_copy(U(pw->pw_shell)));
     pw = &pwcopy;
     }
 
