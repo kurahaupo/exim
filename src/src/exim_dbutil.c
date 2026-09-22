@@ -166,7 +166,7 @@ options(int argc, uschar * argv[], uschar * name, const uschar * opts)
 int opt;
 
 opterr = 0;
-while ((opt = getopt(argc, (char * const *)argv, CCS opts)) != -1)
+while ((opt = getopt(argc, (char * const *)argv, C(opts))) != -1)
   switch (opt)
   {
   case 'L':	dbmdb = TRUE; break;
@@ -333,8 +333,8 @@ if (dbmdb)
   {
   filename = string_sprintf("%s.lockfile", name);
   dname = Ustrchr(name, '/')		/* path has dirs */
-    ? US dirname(CS string_copy(name))
-    : US ".";
+    ? U(dirname(C(string_copy(name))))
+    : US".";
   }
 else
   {
@@ -375,7 +375,7 @@ if (exim_lockfile_needed())
       filename,
       errno == ETIMEDOUT ? "timed out" : strerror(errno));
     (void)close(dbblock->lockfd);
-    unlink(CS filename);
+    unlink(C(filename));
     return NULL;
     }
 
@@ -399,7 +399,7 @@ if (!(dbblock->dbptr = dbblock->readonly && !exim_lockfile_needed()
 #endif
     );
   if (dbblock->lockfd >= 0) (void)close(dbblock->lockfd);
-  unlink(CCS lockfile_name);
+  unlink(C(lockfile_name));
   return NULL;
   }
 
@@ -430,7 +430,7 @@ else
 
 if (dbp->lockfd >= 0)
   { (void) close(dbp->lockfd); dbp->lockfd = -1; }
-unlink(CCS lockfile_name);
+unlink(C(lockfile_name));
 lockfile_name = NULL;
 }
 
@@ -610,7 +610,7 @@ exim_datum_init(&key_datum);         /* Some DBM libraries require the datum */
 exim_datum_init(&value_datum);       /* to be cleared before use. */
 
 yield = exim_dbscan(dbblock->dbptr, &key_datum, &value_datum, start, *cursor)
-  ? US exim_datum_data_get(&key_datum) : NULL;
+  ? exim_datum_data_get(&key_datum) : NULL;
 
 /* Some dbm require a termination */
 
@@ -633,7 +633,7 @@ int dbdata_type = 0, yield = 0;
 open_db dbblock;
 open_db * dbm;
 EXIM_CURSOR * cursor;
-uschar ** argv = USS cargv;
+uschar ** argv = U(cargv);
 const uschar * file;
 uschar keybuffer[1024];
 
@@ -693,7 +693,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
   else if (!(value = dbfn_read_with_length(dbm, keybuffer, &length)))
     fprintf(stderr, "**** Entry \"%s\" was in the key scan, but the record "
                     "was not found in the file - something is wrong!\n",
-      CS keybuffer);
+      C(keybuffer));
   else
     /* Note: don't use print_time more than once in one statement, since
     it uses a single buffer. */
@@ -721,7 +721,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
 	  {
 	  fprintf(stderr,
 	    "**** Data for %s corrupted\n  count=%d=%#x max=%d\n",
-	    CS keybuffer, wait->count, wait->count, WAIT_NAME_MAX);
+	    C(keybuffer), wait->count, wait->count, WAIT_NAME_MAX);
 	  wait->count = WAIT_NAME_MAX;
 	  yield = count_bad = 1;
 	  }
@@ -736,7 +736,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
 	    {
 	    fprintf(stderr,
 	      "**** Data for %s corrupted: bad character in message id\n",
-	      CS keybuffer);
+	      C(keybuffer));
 	    for (int j = 0; j < MESSAGE_ID_LENGTH; j++)
 	      fprintf(stderr, "%02x ", name[j]);
 	    fprintf(stderr, "\n");
@@ -752,7 +752,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
       case type_misc:
 	{
 	dbdata_generic * recp = (dbdata_generic *)value;
-	uschar * dp = US (recp + 1);
+	uschar * dp = (void *) (recp + 1);
 	int dlen = length = sizeof(dbdata_generic);
 
 	printf("%s %s\n", print_time(recp->time_stamp), keybuffer);
@@ -852,7 +852,7 @@ for (uschar * key = dbfn_scan(dbm, TRUE, &cursor);
 	break;
 
       case type_dbm:
-	printf("%s\t%.*s\n", keybuffer, length, CS value);
+	printf("%s\t%.*s\n", keybuffer, length, value);
       }
   store_reset(reset_point);
   }
@@ -902,7 +902,7 @@ int
 main(int argc, char **cargv)
 {
 int dbdata_type;
-uschar **argv = USS cargv;
+uschar **argv = U(cargv);
 uschar buffer[256];
 uschar name[256];
 const uschar * file;
@@ -961,12 +961,12 @@ for(; (reset_point = store_mark()); store_reset(reset_point))
       printf("No previous record name is set\n");
       continue;
       }
-    (void)sscanf(CS buffer, "%s %s", field, value);
+    (void)sscanf(C(buffer), "%s %s", field, value);
     }
   else
     {
     *name = '\0';
-    (void)sscanf(CS buffer, "%s %s %s", name, field, value);
+    (void)sscanf(C(buffer), "%s %s %s", name, field, value);
     }
 
   /* Handle an update request */
@@ -1070,9 +1070,9 @@ for(; (reset_point = store_mark()); store_reset(reset_point))
 		      else
 			printf("bad time value\n");
 		      break;
-	      case 1: ratelimit->time_usec = Uatoi(value);
+	      case 1: ratelimit->time_usec = strtol(C(value), NULL, 10);
 		      break;
-	      case 2: ratelimit->rate = Ustrtod(value, NULL);
+	      case 2: ratelimit->rate = strtod(C(value), NULL);
 		      break;
 	      case 3: if (Ustrstr(name, "/unique/") != NULL
 			  && oldlength >= sizeof(dbdata_ratelimit_unique))
@@ -1171,7 +1171,7 @@ for(; (reset_point = store_mark()); store_reset(reset_point))
     int count_bad = 0;
 
     if (dbdata_type != type_dbm)
-      printf("%s\n", CS print_time(((dbdata_generic *)record)->time_stamp));
+      printf("%s\n", print_time(((dbdata_generic *)record)->time_stamp));
 
     switch(dbdata_type)
       {
@@ -1256,7 +1256,7 @@ for(; (reset_point = store_mark()); store_reset(reset_point))
 	break;
 
       case type_dbm:
-	printf("0 value:  %.*s\n", oldlength, CS record);
+	printf("0 value:  %.*s\n", oldlength, record);
       }
     }
 
@@ -1305,7 +1305,7 @@ rmark reset_point;
 open_db dbblock;
 open_db *dbm;
 EXIM_CURSOR *cursor;
-uschar **argv = USS cargv;
+uschar **argv = U(cargv);
 uschar buffer[256];
 uschar *key;
 
@@ -1326,7 +1326,7 @@ for (i = 1; i < argc; i++)
       {
       int value, count;
       if (!isdigit(*s)) usage(US"tidydb", US" [-t <time>]");
-      (void)sscanf(CS s, "%d%n", &value, &count);
+      (void)sscanf(C(s), "%d%n", &value, &count);
       s += count;
       switch (*s)
         {
@@ -1363,7 +1363,7 @@ if (!(dbm = dbfn_open(argv[2], O_RDWR|O_CREAT, &dbblock, FALSE, TRUE)))
 
 /* Prepare for building file names */
 
-sprintf(CS buffer, "%s/input/", argv[1]);
+sprintf(C(buffer), "%s/input/", argv[1]);
 path_len = Ustrlen(buffer);
 
 
@@ -1468,14 +1468,14 @@ for (; keychain && (reset_point = store_mark()); store_reset(reset_point))
            offset >= 0; offset -= MESSAGE_ID_LENGTH)
         {
         Ustrncpy(buffer+path_len, wait->text + offset, MESSAGE_ID_LENGTH);
-        sprintf(CS(buffer+path_len + MESSAGE_ID_LENGTH), "-D");
+        sprintf(C(buffer+path_len + MESSAGE_ID_LENGTH), "-D");
 
         if (Ustat(buffer, &statbuf) != 0)
           {
           buffer[path_len] = wait->text[offset+5];
           buffer[path_len+1] = '/';
           Ustrncpy(buffer+path_len+2, wait->text + offset, MESSAGE_ID_LENGTH);
-          sprintf(CS(buffer+path_len+2 + MESSAGE_ID_LENGTH), "-D");
+          sprintf(C(buffer+path_len+2 + MESSAGE_ID_LENGTH), "-D");
 
           if (Ustat(buffer, &statbuf) != 0)
             {
@@ -1498,7 +1498,7 @@ for (; keychain && (reset_point = store_mark()); store_reset(reset_point))
           {
           uschar newkey[256];
           dbdata_generic *newvalue;
-          sprintf(CS newkey, "%s:%d", key, wait->sequence - 1);
+          sprintf(C(newkey), "%s:%d", key, wait->sequence - 1);
           newvalue = dbfn_read_with_length(dbm, newkey, NULL);
           if (newvalue != NULL)
             {
@@ -1560,11 +1560,11 @@ for (; keychain && (reset_point = store_mark()); store_reset(reset_point))
     if (i < MESSAGE_ID_LENGTH) continue;
 
     Ustrncpy(buffer + path_len, id, MESSAGE_ID_LENGTH);
-    sprintf(CS(buffer + path_len + MESSAGE_ID_LENGTH), "-D");
+    sprintf(C(buffer + path_len + MESSAGE_ID_LENGTH), "-D");
 
     if (Ustat(buffer, &statbuf) != 0)
       {
-      sprintf(CS(buffer + path_len), "%c/%s-D", id[5], id);
+      sprintf(C(buffer + path_len), "%c/%s-D", id[5], id);
       if (Ustat(buffer, &statbuf) != 0)
         {
         dbfn_delete(dbm, key);
