@@ -226,7 +226,7 @@ for (const uschar * s; s = string_nextinlist(&opts, &sep, NULL, 0); )
     table = s+6;
   else if (Ustrncmp(s, "tmo=", 4) == 0)
     {
-    if ((read_timeout = strtol(CS s+4, NULL, 10)) == 0)
+    if ((read_timeout = strtol(C(s)+4, NULL, 10)) == 0)
       {
       errno = ENXIO;
       *errmsg = US"missing value in timeout spec";
@@ -234,7 +234,7 @@ for (const uschar * s; s = string_nextinlist(&opts, &sep, NULL, 0); )
       }
     }
   else if (Ustrncmp(s, "port=", 5) == 0)
-    if ((port = strtol(CS s+5, NULL, 10)) == 0)
+    if ((port = strtol(C(s)+5, NULL, 10)) == 0)
       {
       errno = ENXIO;
       *errmsg = US"missing port in server spec";
