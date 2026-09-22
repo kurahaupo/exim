@@ -133,7 +133,7 @@ if (!(expanded_hostname = expand_string(ob->server_hostname)))
 
 realm_expanded = NULL;
 if (  ob->server_realm
-   && !(realm_expanded = CS expand_string(ob->server_realm)))
+   && !(realm_expanded = C(expand_string(ob->server_realm))))
   log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't expand server_realm [%s]: %s",
       a->name, ob->server_realm, expand_string_message);
@@ -148,12 +148,12 @@ if (sasl_server_init(cbs, "exim") != SASL_OK)
   log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't initialise Cyrus SASL library.", a->name);
 
-if (sasl_server_new(CS ob->server_service, CS expanded_hostname,
+if (sasl_server_new(C(ob->server_service), C(expanded_hostname),
                    realm_expanded, NULL, NULL, NULL, 0, &conn) != SASL_OK)
   log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't initialise Cyrus SASL server connection.", a->name);
 
-if (sasl_listmech(conn, NULL, "", ":", "", CCSS &list, &len, NULL) != SASL_OK)
+if (sasl_listmech(conn, NULL, "", ":", "", C(&list), &len, NULL) != SASL_OK)
   log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
       "couldn't get Cyrus SASL mechanism list.", a->name);
 
@@ -223,7 +223,7 @@ HDEBUG(auth) debug = string_copy(data);
 
 hname = expand_string(ob->server_hostname);
 if (hname && ob->server_realm)
-  realm_expanded = CS expand_string(ob->server_realm);
+  realm_expanded = C(expand_string(ob->server_realm));
 if (!hname  ||  !realm_expanded  && ob->server_realm)
   {
   auth_defer_msg = expand_string_message;
@@ -244,7 +244,7 @@ if ((rc = sasl_server_init(cbs, "exim")) != SASL_OK)
   return DEFER;
   }
 
-rc = sasl_server_new(CS ob->server_service, CS hname, realm_expanded, NULL,
+rc = sasl_server_new(C(ob->server_service), C(hname), realm_expanded, NULL,
   NULL, NULL, 0, &conn);
 
 HDEBUG(auth)
@@ -295,14 +295,14 @@ for (int i = 0; i < 2; ++i)
   if (i)
     {
     propnum = SASL_IPREMOTEPORT;
-    label = CUS"peer";
+    label = US"peer";
     address_port = string_sprintf("%s;%d",
 				  sender_host_address, sender_host_port);
     }
   else
     {
     propnum = SASL_IPLOCALPORT;
-    label = CUS"local";
+    label = US"local";
     address_port = string_sprintf("%s;%d", interface_address, interface_port);
     }
 
@@ -326,8 +326,8 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
     {
     firsttime = 0;
     HDEBUG(auth) debug_printf("Calling sasl_server_start(%s,%q)\n", ob->server_mech, debug);
-    rc = sasl_server_start(conn, CS ob->server_mech, inlen ? CS input : NULL, inlen,
-           CCSS &output, &outlen);
+    rc = sasl_server_start(conn, C(ob->server_mech), inlen ? C(input) : NULL, inlen,
+           C(&output), &outlen);
     }
   else
     {
@@ -358,7 +358,7 @@ for (rc = SASL_CONTINUE; rc == SASL_CONTINUE; )
       }
 
     HDEBUG(auth) debug_printf("Calling sasl_server_step(%q)\n", debug);
-    rc = sasl_server_step(conn, CS input, inlen, CCSS &output, &outlen);
+    rc = sasl_server_step(conn, C(input), inlen, C(&output), &outlen);
     }
 
   if (rc == SASL_BADPROT)
