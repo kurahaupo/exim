@@ -56,7 +56,7 @@ if (!(s = yield = malloc(enc_len)))
   return NULL;
 for(uschar ch; len > 0; len--, clear++)
   if ((ch = *clear) < 33 || ch > 126 || ch == '+' || ch == '=')
-    s += sprintf(CS s, "+%.02X", ch);
+    s += sprintf(C(s), "+%.02X", ch);
   else
     *s++ = ch;
 *s = '\0';
