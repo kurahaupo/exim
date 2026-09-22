@@ -240,7 +240,7 @@ manualroute_router_entry(
   address_item **addr_succeed)    /* put old address here on success */
 {
 int rc, lookup_type;
-uschar *route_item = NULL;
+const uschar *route_item = NULL;
 const uschar * options = NULL, * hostlist = NULL, * domain, * listptr;
 uschar * newhostlist;
 manualroute_router_options_block * ob =
@@ -270,7 +270,7 @@ if (ob->route_list)
     /* Check the current domain; if it matches, break the loop */
 
     if ((rc = match_isinlist(addr->domain, &domain, UCHAR_MAX+1,
-           &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, CUSS &lookup_value)) == OK)
+           &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, R(&lookup_value))) == OK)
       break;
 
     /* If there was a problem doing the check, defer */
@@ -336,7 +336,7 @@ while (*options)
   unsigned n;
   const uschar * s = options;
 
-  Uskip_nonwhite(&options);
+  skip_nonwhite(&options);
   n = options - s;
 
   if (Ustrncmp(s, "randomize", n) == 0) randomize = TRUE;
