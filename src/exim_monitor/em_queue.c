@@ -184,7 +184,7 @@ spool_read_header that is to be preserved is copied into malloc store. */
 reset_point = store_mark();
 message_size = 0;
 message_subdir[0] = dir_char;
-sprintf(CS buffer, "%s-H", name);
+sprintf(C(buffer), "%s-H", name);
 rc =  spool_read_header(buffer, FALSE, TRUE);
 save_errno = errno;
 
@@ -205,7 +205,7 @@ else
   {
   q->update_time = q->input_time = received_time.tv_sec;
   /* deconst ok; strstric is actually safe */
-  if ((p = strstric(US sender_address+1, qualify_domain, FALSE)) != NULL &&
+  if ((p = strstric(U(sender_address)+1, qualify_domain, FALSE)) != NULL &&
     *--p == '@') *p = 0;
   }
 
@@ -220,7 +220,7 @@ if (rc != spool_read_OK)
   if (save_errno == ERRNO_SPOOLFORMAT)
     {
     struct stat statbuf;
-    sprintf(CS big_buffer, "%s/input/%s", spool_directory, buffer);
+    sprintf(C(big_buffer), "%s/input/%s", spool_directory, buffer);
     if (Ustat(big_buffer, &statbuf) == 0)
       msg = string_sprintf("*** Format error in spool file: size = " OFF_T_FMT " ***",
         statbuf.st_size);
@@ -249,13 +249,13 @@ if (f.sender_set_untrusted)
   if (sender_address[0] == 0)
     {
     q->sender = store_malloc(Ustrlen(originator_login) + 6);
-    sprintf(CS q->sender, "<> (%s)", originator_login);
+    sprintf(C(q->sender), "<> (%s)", originator_login);
     }
   else
     {
     q->sender = store_malloc(Ustrlen(sender_address) +
       Ustrlen(originator_login) + 4);
-    sprintf(CS q->sender, "%s (%s)", sender_address, originator_login);
+    sprintf(C(q->sender), "%s (%s)", sender_address, originator_login);
     }
   }
 else
@@ -266,7 +266,7 @@ else
 
 sender_address = NULL;
 
-snprintf(CS buffer, sizeof(buffer), "%s/input/%s/%s/%s-D",
+snprintf(C(buffer), sizeof(buffer), "%s/input/%s/%s/%s-D",
   spool_directory, queue_name, message_subdir, name);
 if (Ustat(buffer, &statdata) == 0)
   q->size = message_size + statdata.st_size - spool_data_start_offset(name) + 1;
@@ -281,7 +281,7 @@ if (recipients_list)
     if (tree_search(tree_nonrecipients, r) == NULL)
       {
       /* deconst ok; strstric is actually safe */
-      if ((p = strstric(US r+1, qualify_domain, FALSE)) != NULL &&
+      if ((p = strstric(U(r)+1, qualify_domain, FALSE)) != NULL &&
         *(--p) == '@') *p = 0;
       (void)find_dest(q, r, dest_add, FALSE);
       }
@@ -479,7 +479,7 @@ uschar subdirs[64];
 subdirs[0] = 0;
 stripchart_total[0] = 0;
 
-sprintf(CS input_dir, "%s/input", spool_directory);
+sprintf(C(input_dir), "%s/input", spool_directory);
 subptr = Ustrlen(input_dir);
 input_dir[subptr+2] = 0;               /* terminator for lengthened name */
 
@@ -503,7 +503,7 @@ for (i = 0; i < subdir_max; i++)
 
   while ((ent = readdir(dd)))
     {
-    uschar *name = US ent->d_name;
+    uschar *name = U(ent->d_name);
     int len = Ustrlen(name);
 
     /* If we find a single alphameric sub-directory on the first
@@ -618,12 +618,12 @@ uschar buffer[1024];
 
 message_subdir[0] = p->dir_char;
 
-snprintf(CS buffer, sizeof(buffer), "%s/input/%s/%s/%s-J",
+snprintf(C(buffer), sizeof(buffer), "%s/input/%s/%s/%s-J",
   spool_directory, queue_name, message_subdir, p->name);
 
-if (!(jread = fopen(CS buffer, "r")))
+if (!(jread = fopen(C(buffer), "r")))
   {
-  snprintf(CS buffer, sizeof(buffer), "%s/input/%s/%s/%s-H",
+  snprintf(C(buffer), sizeof(buffer), "%s/input/%s/%s/%s-H",
     spool_directory, queue_name, message_subdir, p->name);
   if (Ustat(buffer, &statdata) < 0 || p->update_time == statdata.st_mtime)
     return;
@@ -633,7 +633,7 @@ if (!(jread = fopen(CS buffer, "r")))
 Arrange to recover the dynamic store afterwards. */
 
 reset_point = store_mark();
-sprintf(CS buffer, "%s-H", p->name);
+sprintf(C(buffer), "%s-H", p->name);
 if (spool_read_header(buffer, FALSE, TRUE) != spool_read_OK)
   {
   store_reset(reset_point);
@@ -669,7 +669,7 @@ if (recipients_list)
       node = tree_search(tree_nonrecipients, string_copylc(r));
 
     /* deconst ok; strstric is actually safe */
-    if ((pp = strstric(US r+1, qualify_domain, FALSE)) && *(--pp) == '@')
+    if ((pp = strstric(U(r)+1, qualify_domain, FALSE)) && *(--pp) == '@')
        *pp = 0;
     if (!node)
       (void)find_dest(p, r, dest_add, FALSE);
