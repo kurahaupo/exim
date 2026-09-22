@@ -23,8 +23,8 @@
 void
 params_dkim(void)
 {
-builtin_macro_create_var(US"_DKIM_SIGN_HEADERS", US PDKIM_DEFAULT_SIGN_HEADERS);
-builtin_macro_create_var(US"_DKIM_OVERSIGN_HEADERS", US PDKIM_OVERSIGN_HEADERS);
+builtin_macro_create_var(US"_DKIM_SIGN_HEADERS", U(PDKIM_DEFAULT_SIGN_HEADERS));
+builtin_macro_create_var(US"_DKIM_OVERSIGN_HEADERS", U(PDKIM_OVERSIGN_HEADERS));
 }
 # else	/*!MACRO_PREDEF*/
 
@@ -102,7 +102,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
 
       if (rr_offset + len > rr->size)
 	goto bad;
-      g = string_catn(g, US(rr->data + rr_offset), len);
+      g = string_catn(g, rr->data + rr_offset, len);
       if (g->ptr >= PDKIM_DNS_TXT_MAX_RECLEN)
 	goto bad;
 
@@ -110,7 +110,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS);
       }
 
     /* Check if this looks like a DKIM record */
-    if (Ustrncmp(g->s, "v=", 2) != 0 || strncasecmp(CS g->s, "v=dkim", 6) == 0)
+    if (Ustrncmp(g->s, "v=", 2) != 0 || strncasecmp(C(g->s), "v=dkim", 6) == 0)
       {
       store_free_dns_answer(dnsa);
       gstring_release_unused(g);
@@ -502,7 +502,7 @@ and append ths sig status to the status list.
 Args as per dkim_exim_acl_run() below */
 
 static int
-dkim_acl_call(uschar * id, gstring ** res_ptr,
+dkim_acl_call(const uschar * id, gstring ** res_ptr,
   uschar ** user_msgptr, uschar ** log_msgptr)
 {
 int rc;
@@ -537,7 +537,7 @@ Returns:       OK         access is granted by an ACCEPT verb
 */
 
 static int
-dkim_exim_acl_run(uschar * id, gstring ** res_ptr,
+dkim_exim_acl_run(const uschar * id, gstring ** res_ptr,
   uschar ** user_msgptr, uschar ** log_msgptr)
 {
 const uschar * cmp_val;
@@ -545,7 +545,7 @@ int rc = -1;
 
 dkim_verify_status = US"none";
 dkim_verify_reason = US"";
-dkim_cur_signer = id;
+dkim_cur_signer = W(id);
 
 if (f.dkim_disable_verify || !id || !dkim_verify_ctx)
   return OK;
@@ -553,7 +553,7 @@ if (f.dkim_disable_verify || !id || !dkim_verify_ctx)
 /* Find signatures to run ACL on */
 
 for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
-  if (  (cmp_val = Ustrchr(id, '@') != NULL ? US sig->identity : US sig->domain)
+  if (  (cmp_val = Ustrchr(id, '@') != NULL ? sig->identity : sig->domain)
      && strcmpic(cmp_val, id) == 0
      )
     {
@@ -566,8 +566,8 @@ for (pdkim_signature * sig = dkim_signatures; sig; sig = sig->next)
     dkim_exim_expand_query() below). */
 
     dkim_cur_sig = sig;
-    dkim_signing_domain = US sig->domain;
-    dkim_signing_selector = US sig->selector;
+    dkim_signing_domain = sig->domain;
+    dkim_signing_selector = sig->selector;
     dkim_key_length = sig->keybits;
 
     /* These two return static strings, so we can compare the addr
@@ -624,7 +624,7 @@ if (dkim_verify_signers && *dkim_verify_signers)
   when no signers are present.  Each call from here expands to an ACL
   call per matching sig in the message. */
 
-  for (uschar * item;
+  for (const uschar * item;
       item = string_nextinlist(&dkim_verify_signers_expanded,
 				    &signer_sep, NULL, 0); )
     {
@@ -790,7 +790,7 @@ switch (what)
 
   case DKIM_COPIEDHEADERS:
     return dkim_cur_sig->copiedheaders
-      ? US dkim_cur_sig->copiedheaders : dkim_exim_expand_defaults(what);
+      ? dkim_cur_sig->copiedheaders : dkim_exim_expand_defaults(what);
 
   case DKIM_CREATED:
     return dkim_cur_sig->created > 0
@@ -808,26 +808,26 @@ switch (what)
 
   case DKIM_IDENTITY:
     return dkim_cur_sig->identity
-      ? US dkim_cur_sig->identity : dkim_exim_expand_defaults(what);
+      ? dkim_cur_sig->identity : dkim_exim_expand_defaults(what);
 
   case DKIM_KEY_GRANULARITY:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->granularity
-      ? US dkim_cur_sig->pubkey->granularity
+      ? W(dkim_cur_sig->pubkey->granularity)
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
   case DKIM_KEY_SRVTYPE:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->srvtype
-      ? US dkim_cur_sig->pubkey->srvtype
+      ? W(dkim_cur_sig->pubkey->srvtype)
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
   case DKIM_KEY_NOTES:
     return dkim_cur_sig->pubkey
       ? dkim_cur_sig->pubkey->notes
-      ? US dkim_cur_sig->pubkey->notes
+      ? dkim_cur_sig->pubkey->notes
       : dkim_exim_expand_defaults(what)
       : dkim_exim_expand_defaults(what);
 
@@ -937,7 +937,7 @@ if (dkim_domain)
   appears in the expanded list. */
 
   dkim_signing_domain = string_copylc(dkim_signing_domain);
-  if (match_isinlist(dkim_signing_domain, CUSS &seen_doms,
+  if (match_isinlist(dkim_signing_domain, (uschar const*const*) &seen_doms,
       0, NULL, NULL, MCL_STRING, TRUE, NULL) == OK)
     continue;
 
@@ -1022,7 +1022,7 @@ if (dkim_domain)
       else
         {
         tval = (unsigned long) time(NULL);
-        xval = strtoul(CCS dkim_timestamps_expanded, NULL, 10);
+        xval = strtoul(C(dkim_timestamps_expanded), NULL, 10);
         if (xval > 0)
           xval += tval;
         }
@@ -1040,8 +1040,8 @@ if (dkim_domain)
       dkim_private_key_expanded[0] = '\0';
 
     pdkim_set_optional(sig,
-			CCS dkim_sign_headers_expanded,
-			CCS dkim_identity_expanded,
+			C(dkim_sign_headers_expanded),
+			C(dkim_identity_expanded),
 			pdkim_canon,
 			pdkim_canon, -1, tval, xval);
 
@@ -1114,7 +1114,7 @@ else
     sigbuf = string_get(1);	/* return a zero-len string */
     }
   else for (sigbuf = NULL; sig; sig = sig->next)
-    sigbuf = string_append(sigbuf, 2, US sig->signature_header, US"\r\n");
+    sigbuf = string_append(sigbuf, 2, U(sig->signature_header), US"\r\n");
   }
 
 CLEANUP:
