@@ -2631,7 +2631,8 @@ if (options_block)
   {
   if (!(ol->type & opt_public))
     options_block = (void *)(((driver_instance *)options_block)->options_block);
-  value = (void *)(US options_block + (long int)value);
+  value = (void *) ((char *) options_block + (long int) ol->v.value);
+  /* TODO: check whether reinterpreting the bits of v.value as an int is valid; how was it set? */
   }
 
 switch(ol->type & opt_mask)
