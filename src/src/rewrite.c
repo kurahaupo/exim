@@ -33,16 +33,16 @@ typedef struct where_list_block {
 } where_list_block;
 
 static where_list_block where_list[] = {
-  { rewrite_sender,  CUS"sender:" },
-  { rewrite_from,    CUS"from:" },
-  { rewrite_to,      CUS"to:" },
-  { rewrite_cc,      CUS"cc:" },
-  { rewrite_bcc,     CUS"bcc:" },
-  { rewrite_replyto, CUS"reply-to:" },
-  { rewrite_envfrom, CUS"env-from" },
-  { rewrite_envto,   CUS"env-to" },
-  { rewrite_smtp,    CUS"smtp recipient" },
-  { rewrite_smtp|rewrite_smtp_sender, CUS"smtp sender" }
+  { rewrite_sender,  US"sender:" },
+  { rewrite_from,    US"from:" },
+  { rewrite_to,      US"to:" },
+  { rewrite_cc,      US"cc:" },
+  { rewrite_bcc,     US"bcc:" },
+  { rewrite_replyto, US"reply-to:" },
+  { rewrite_envfrom, US"env-from" },
+  { rewrite_envto,   US"env-to" },
+  { rewrite_smtp,    US"smtp recipient" },
+  { rewrite_smtp|rewrite_smtp_sender, US"smtp sender" }
 };
 
 
@@ -156,7 +156,7 @@ for (rewrite_rule * rule = rewrite_rules;
     /* Use the general function for matching an address against a list (here
     just one item, so use the "impossible value" separator UCHAR_MAX+1). */
 
-    if (match_address_list(subject, FALSE, TRUE, CUSS &(rule->key), NULL, 0,
+    if (match_address_list(subject, FALSE, TRUE, R(&rule->key), NULL, 0,
         UCHAR_MAX + 1, NULL) != OK)
       continue;
 
@@ -178,7 +178,7 @@ for (rewrite_rule * rule = rewrite_rules;
     the domain. Split into local part and domain so that it can be set up as
     an expansion variable */
 
-    deliver_localpart = US string_copyn(subject, domain-subject-1);
+    deliver_localpart = string_copyn(subject, domain-subject-1);
     deliver_domain = domain;
 
     new = expand_string(rule->replacement);
@@ -243,7 +243,7 @@ for (rewrite_rule * rule = rewrite_rules;
 
   if (LOGGING(address_rewrite) || IS_DEBUG(rewrite))
     {
-    const uschar * where = CUS"?";
+    const uschar * where = US"?";
 
     for (int i = 0; i < nelem(where_list); i++)
       if (flag == where_list[i].bit)
@@ -543,7 +543,7 @@ while (*s)
     BOOL is_recipient =
       (flag & (rewrite_sender | rewrite_from | rewrite_replyto)) == 0;
     /* deconst ok as recipient was notconst */
-    new = US rewrite_address_qualify(recipient, is_recipient);
+    new = W(rewrite_address_qualify(recipient, is_recipient));
     changed = (new != recipient);
     recipient = new;
 
@@ -567,7 +567,7 @@ while (*s)
     {
     BOOL whole;
     /* deconst ok as recipient was notconst */
-    new = US rewrite_one(recipient, flag, &whole, FALSE, NULL, rewrite_rules);
+    new = W(rewrite_one(recipient, flag, &whole, FALSE, NULL, rewrite_rules));
     if (new != recipient)
       {
       changed = TRUE;
@@ -676,7 +676,7 @@ while (*s)
     /* Set up for scanning the rest of the header */
 
     s = newh->text + remlen;
-    DEBUG(rewrite) debug_printf("remainder: %s", *s ? s : US"\n");
+    DEBUG(rewrite) debug_printf("remainder: %s", *s ? C(s) : "\n");
     }
   }
 
@@ -818,7 +818,7 @@ for (int i = 0, flag; (flag = 1<<i) & rewrite_all; i++)
   if (!*new)
     printf("<>\n");
   else if (whole || !(flag & rewrite_all_headers))
-    printf("%s\n", CS new);
+    printf("%s\n", new);
   else printf("%.*s%s%s\n", start, s, new, s+end);	/* envelope rewrites */
   }
 }
