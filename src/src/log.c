@@ -129,7 +129,7 @@ static const uschar * exim_errstrings[] = {
 const uschar *
 exim_errstr(int err)
 {
-return err < 0 ? exim_errstrings[-err] : CUS strerror(err);
+return err < 0 ? exim_errstrings[-err] : U(strerror(err));
 }
 
 /*************************************************
@@ -170,9 +170,9 @@ len = Ustrlen(s);
 if (!syslog_open && !f.running_in_test_harness)
   {
 # ifdef SYSLOG_LOG_PID
-  openlog(CS syslog_processname, LOG_PID|LOG_CONS, syslog_facility);
+  openlog(C(syslog_processname), LOG_PID|LOG_CONS, syslog_facility);
 # else
-  openlog(CS syslog_processname, LOG_CONS, syslog_facility);
+  openlog(C(syslog_processname), LOG_CONS, syslog_facility);
 # endif
   syslog_open = TRUE;
   }
@@ -187,7 +187,7 @@ for (int pass = 0; pass < 2; pass++)
   for (int i = 1, tlen = len; tlen > 0; i++)
     {
     int plen = tlen;
-    uschar *nlptr = Ustrchr(ss, '\n');
+    const uschar *nlptr = Ustrchr(ss, '\n');
     if (nlptr != NULL) plen = nlptr - ss;
 #ifndef SYSLOG_LONG_LINES
     if (plen > MAX_SYSLOG_LEN) plen = MAX_SYSLOG_LEN;
@@ -490,7 +490,7 @@ non-alphanumeric character as well; otherwise, remove a preceding
 non-alphanumeric character. This is definitely kludgy, but it sort of does what
 people want, I hope. */
 
-ok = string_format(buffer, sizeof(buffer), CS file_path, log_names[type]);
+ok = string_format(buffer, sizeof(buffer), C(file_path), log_names[type]);
 
 switch (type)
   {
@@ -514,7 +514,7 @@ switch (type)
   case lt_debug:
     /* and deal with the debug log (which keeps the datestamp, but does not
     update it) */
-    sprintf(CS debuglog_name, "%.*s", (int) sizeof(debuglog_name)-1, buffer);
+    sprintf(C(debuglog_name), "%.*s", (int) sizeof(debuglog_name)-1, buffer);
     if (tag)
       {
       if (is_tainted(tag))
@@ -525,7 +525,7 @@ switch (type)
       ok2 = string_format(buffer, sizeof(buffer), "%s%s",
         debuglog_name, tag);
       if (ok2)
-	sprintf(CS debuglog_name, "%.*s", (int)sizeof(debuglog_name)-1, buffer);
+	sprintf(C(debuglog_name), "%.*s", (int)sizeof(debuglog_name)-1, buffer);
       }
     break;
 
@@ -584,7 +584,7 @@ errno from it, so get the error from the open attempt above (which is often
 meaningful enough, so leave it). */
 
 if (!panic_save_buffer)
-  if ((panic_save_buffer = US malloc(LOG_BUFFER_SIZE)))
+  if ((panic_save_buffer = malloc(LOG_BUFFER_SIZE)))
     memcpy(panic_save_buffer, log_buffer, LOG_BUFFER_SIZE);
 
 log_write_die(LOG_PANIC_DIE, "Cannot open %s log file %q: %s: "
@@ -596,7 +596,7 @@ log_write_die(LOG_PANIC_DIE, "Cannot open %s log file %q: %s: "
 static void
 unlink_log(int type)
 {
-if (type == lt_debug) unlink(CS debuglog_name);
+if (type == lt_debug) unlink(C(debuglog_name));
 }
 
 
@@ -704,7 +704,7 @@ log_write_failed(uschar *name, int length, int rc)
 int save_errno = errno;
 
 if (!panic_save_buffer)
-  if ((panic_save_buffer = US malloc(LOG_BUFFER_SIZE)))
+  if ((panic_save_buffer = malloc(LOG_BUFFER_SIZE)))
     memcpy(panic_save_buffer, log_buffer, LOG_BUFFER_SIZE);
 
 log_write_die(LOG_PANIC_DIE, "failed to write to %s: length=%d result=%d "
@@ -769,7 +769,7 @@ static void
 set_file_path(void)
 {
 int sep = ':';              /* Fixed separator - outside use */
-const uschar * t, * tt = US LOG_FILE_PATH;
+const uschar * t, * tt = U(LOG_FILE_PATH);
 while ((t = string_nextinlist(&tt, &sep, log_buffer, LOG_BUFFER_SIZE)))
   if (Ustrcmp(t, "syslog") != 0 && *t)
     { file_path = string_copy(t); break; }
@@ -874,7 +874,7 @@ if (panic_recurseflag)
 when running Exim proper, only when running utilities. */
 
 if (!log_buffer)
-  if (!(log_buffer = US malloc(LOG_BUFFER_SIZE)))
+  if (!(log_buffer = malloc(LOG_BUFFER_SIZE)))
     {
     fprintf(stderr, "exim: failed to get store for log buffer\n");
     exim_exit(EXIT_FAILURE);
@@ -1076,9 +1076,9 @@ if (!f.really_exim || f.log_testing_mode)
   if (!ANY_DEBUG && log_stderr)
     if (host_checking)
 /*XXX +20 wrong if logging millisec or with-TZ */
-      fprintf(log_stderr, "LOG: %s", CS log_buffer + 20);  /* no timestamp */
+      fprintf(log_stderr, "LOG: %s", C(log_buffer) + 20);  /* no timestamp */
     else
-      fprintf(log_stderr, "%s", CS log_buffer);
+      fprintf(log_stderr, "%s", C(log_buffer));
 
   if ((flags & LOG_PANIC_DIE) == LOG_PANIC_DIE) exim_exit(EXIT_FAILURE);
   return;
@@ -1254,7 +1254,7 @@ all cases except mua_wrapper, try to write to log_stderr. */
 if (flags & LOG_PANIC)
   {
   if (log_stderr && log_stderr != debug_file && !mua_wrapper)
-    fprintf(log_stderr, "%s", CS string_from_gstring(g));
+    fprintf(log_stderr, "%s", string_from_gstring(g));
 
   if (logging_mode & LOG_MODE_SYSLOG)
     write_syslog(LOG_ALERT, log_buffer);
@@ -1277,7 +1277,7 @@ if (flags & LOG_PANIC)
       {
       int save_errno = errno;
       write_syslog(LOG_CRIT, log_buffer);
-      sprintf(CS log_buffer, "write failed on panic log: length=%d result=%d "
+      sprintf(C(log_buffer), "write failed on panic log: length=%d result=%d "
         "errno=%d (%s)", g->ptr, (int)written_len, save_errno, strerror(save_errno));
       write_syslog(LOG_CRIT, string_from_gstring(g));
       flags |= LOG_PANIC_DIE;
@@ -1435,7 +1435,7 @@ if (*string == '=')
   for (unsigned wordnum = 0;
        wordnum < selsize
        && *s
-       && sscanf(CCS s, SC_EXIM_BITMASK "%n", selector+wordnum, &n) == 1;
+       && sscanf(C(s), SC_EXIM_BITMASK "%n", selector+wordnum, &n) == 1;
        wordnum++)
     {
     s += n;
