@@ -513,7 +513,7 @@ if (oncelog && *oncelog && to)
     if (log_fd >= 0)
       {
       uschar *ptr = log_buffer;
-      sprintf(CS ptr, "%s\n  previously sent to %.200s\n", tod_stamp(tod_log), to);
+      sprintf(C(ptr), "%s\n  previously sent to %.200s\n", tod_stamp(tod_log), to);
       while(*ptr) ptr++;
       if(write(log_fd, log_buffer, ptr - log_buffer) != ptr-log_buffer
         || close(log_fd))
@@ -611,7 +611,7 @@ fprintf(fp, "\n");
 
 if (text)
   {
-  int i = fprintf(fp, "%s", CS text);
+  int i = fprintf(fp, "%s", C(text));
   if (text[Ustrlen(text)-1] != '\n') { fprintf(fp, "\n"); i++; }
   for (const uschar * s = text; *s; s++) if (*s == '\n') i++;
   transport_count += i;
@@ -628,12 +628,12 @@ if (ff)
 	debug_printf("error while expanding line from file:\n  %s\n  %s\n",
 	  big_buffer, expand_string_message);
       if (!s) s = big_buffer;
-      i = fprintf(fp, "%s", CS s);
+      i = fprintf(fp, "%s", C(s));
       for (const uschar * t = s; *t; t++) if (*t == '\n') i++;
       transport_count += i;
       }
     else
-      transport_count += fprintf(fp, "%s", CS big_buffer) + 1;
+      transport_count += fprintf(fp, "%s", C(big_buffer)) + 1;
 
   (void) fclose(ff);
   }
@@ -734,7 +734,7 @@ else if (dbm_file)
   EXIM_DATUM key_datum, value_datum;
   exim_datum_init(&key_datum);          /* Some DBM libraries need to have */
   exim_datum_init(&value_datum);        /* cleared datums. */
-  exim_datum_data_set(&key_datum, US to);   /*XXX rely on dbput not modifying */
+  exim_datum_data_set(&key_datum, W(to));   /*XXX rely on dbput not modifying */
   exim_datum_size_set(&key_datum, Ustrlen(to) + 1);
 
   /* Many OS define the datum value, sensibly, as a void *. However, there
