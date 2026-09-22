@@ -65,8 +65,8 @@ Returns:         OK if lookup succeeded
 */
 
 static int
-one_check_dnsbl(uschar * domain, uschar * domain_txt, uschar * keydomain,
-  uschar * prepend, uschar * iplist, BOOL bitmask, int match_type,
+one_check_dnsbl(const uschar * domain, const uschar * domain_txt, const uschar * keydomain,
+  const uschar * prepend, const uschar * iplist, BOOL bitmask, int match_type,
   int defer_return)
 {
 dns_answer * dnsa = store_get_dns_answer();
@@ -149,20 +149,20 @@ else
       dns_address ** addrp = &cb->rhs;
       dns_address * da;
       for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
-	   rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
-	if (rr->type == T_A && (da = dns_address_from_rr(dnsa, rr)))
-	  {
-	  *addrp = da;
-	  while (da->next) da = da->next;
-	  addrp = &da->next;
-	  if (ttl > rr->ttl) ttl = rr->ttl;
-	  }
+           rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
+        if (rr->type == T_A && (da = dns_address_from_rr(dnsa, rr)))
+          {
+          *addrp = da;
+          while (da->next) da = da->next;
+          addrp = &da->next;
+          if (ttl > rr->ttl) ttl = rr->ttl;
+          }
 
       if (cb->rhs)
-	{
-	cb->expiry = time(NULL) + ttl;
-	break;
-	}
+        {
+        cb->expiry = time(NULL) + ttl;
+        break;
+        }
 
       /* If we didn't find any A records, change the return code. This can
       happen when there is a CNAME record but there are no A records for what
@@ -210,7 +210,7 @@ if (cb->rc == DNS_SUCCEED)
 
   for (dns_address * da = cb->rhs; da; da = da->next)
     addlist = string_append2_listele_n(addlist, US", ",
-					da->address, Ustrlen(da->address));
+                                        da->address, Ustrlen(da->address));
 
   HDEBUG(dnsbl) debug_printf("DNS lookup for %s succeeded (yielding %Y)\n",
     query, addlist);
@@ -241,29 +241,29 @@ if (cb->rc == DNS_SUCCEED)
         We change this only for IPv4 addresses in the list. */
 
         if (host_aton(da->address, address) == 1)
-	  if ((address[0] & 0xff000000) != 0x7f000000)    /* 127.0.0.0/8 */
-	    log_write(LOG_MAIN,
-	      "DNS list lookup for %s at %s returned %s;"
-	      " not in 127.0/8 and discarded",
-	      keydomain, domain, da->address);
+          if ((address[0] & 0xff000000) != 0x7f000000)    /* 127.0.0.0/8 */
+            log_write(LOG_MAIN,
+              "DNS list lookup for %s at %s returned %s;"
+              " not in 127.0/8 and discarded",
+              keydomain, domain, da->address);
 
-	  else
-	    mask = address[0];
+          else
+            mask = address[0];
 
         /* Scan the returned addresses, skipping any that are IPv6 */
 
         while ((res = string_nextinlist(&ptr, &ipsep, NULL, 0)))
           if (host_aton(res, address) == 1)
-	    if ((address[0] & mask) == address[0])
-	      break;
+            if ((address[0] & mask) == address[0])
+              break;
         }
 
       /* Handle exact matching */
 
       else
         while ((res = string_nextinlist(&ptr, &ipsep, NULL, 0)))
-          if (Ustrcmp(CS da->address, res) == 0)
-	    break;
+          if (Ustrcmp(da->address, res) == 0)
+            break;
 
       /* If either
 
@@ -291,13 +291,13 @@ if (cb->rc == DNS_SUCCEED)
         switch(match_type)
           {
           case 0:
-	    res = US"was no match"; break;
+            res = US"was no match"; break;
           case MT_NOT:
-	    res = US"was an exclude match"; break;
+            res = US"was an exclude match"; break;
           case MT_ALL:
-	    res = US"was an IP address that did not match"; break;
+            res = US"was an IP address that did not match"; break;
           case MT_NOT|MT_ALL:
-	    res = US"were no IP addresses that did not match"; break;
+            res = US"were no IP addresses that did not match"; break;
           }
         debug_printf("=> but we are not accepting this block class because\n");
         debug_printf("=> there %s for %s%c%s\n",
@@ -321,14 +321,14 @@ if (cb->rc == DNS_SUCCEED)
       int address[4];
 
       if (  host_aton(da->address, address) == 1		/* ipv4 */
-	 && (address[0] & 0xff000000) == 0x7f000000	/* 127.0.0.0/8 */
-	 )
-	ok = TRUE;
+         && (address[0] & 0xff000000) == 0x7f000000	/* 127.0.0.0/8 */
+         )
+        ok = TRUE;
       else
-	log_write(LOG_MAIN,
-	    "DNS list lookup for %s at %s returned %s;"
-	    " not in 127.0/8 and discarded",
-	    keydomain, domain, da->address);
+        log_write(LOG_MAIN,
+            "DNS list lookup for %s at %s returned %s;"
+            " not in 127.0/8 and discarded",
+            keydomain, domain, da->address);
       }
     if (!ok)
       {
@@ -360,14 +360,14 @@ if (cb->rc == DNS_SUCCEED)
       for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
            rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
         if (rr->type == T_TXT)
-	  {
-	  int len = (rr->data)[0];
-	  if (len > 511) len = 127;
-	  store_pool = POOL_PERM;
-	  cb->text = string_copyn(CUS (rr->data+1), len);
-	  store_pool = old_pool;
-	  break;
-	  }
+          {
+          int len = (rr->data)[0];
+          if (len > 511) len = 127;
+          store_pool = POOL_PERM;
+          cb->text = string_copyn((uschar const *) (rr->data+1), len);
+          store_pool = old_pool;
+          break;
+          }
     }
 
   /* $dnslist_* likely apply to the conn not a message, so we want them not
@@ -387,7 +387,7 @@ if (cb->rc != DNS_NOMATCH && cb->rc != DNS_NODATA)
     "DNS list lookup defer (probably timeout) for %s: %s", query,
     defer_return == OK ?   US"assumed in list" :
     defer_return == FAIL ? US"assumed not in list" :
-                            US"returned DEFER");
+                           US"returned DEFER");
   yield = defer_return;
   goto out;
   }
@@ -462,7 +462,7 @@ Returns:    OK      successful lookup (i.e. the address is on the list), or
             FAIL    name not found, or no data found for the given type, or
                       lookup deferred after +exclude_unknown (default)
             DEFER   lookup failure, if +defer_unknown was set
-	    ERROR   error during expansion
+            ERROR   error during expansion
 */
 
 int
@@ -597,8 +597,8 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
     if (where == ACL_WHERE_NOTSMTP_START || where == ACL_WHERE_NOTSMTP)
       {
       *log_msgptr = string_sprintf
-	("cannot test auto-keyed dnslists condition in %s ACL",
-	  acl_wherenames[where]);
+        ("cannot test auto-keyed dnslists condition in %s ACL",
+          acl_wherenames[where]);
       return ERROR;
       }
     if (!sender_host_address) return FAIL;    /* can never match */
@@ -622,12 +622,12 @@ while ((domain = string_nextinlist(&list, &sep, NULL, 0)))
     {
     int keysep = 0;
     BOOL defer = FALSE;
-    uschar *keydomain;
+    const uschar *keydomain;
     uschar keyrevadd[128];
 
-    while ((keydomain = string_nextinlist(CUSS &key, &keysep, NULL, 0)))
+    while ((keydomain = string_nextinlist(R(&key), &keysep, NULL, 0)))
       {
-      uschar *prepend = keydomain;
+      const uschar *prepend = keydomain;
 
       if (string_is_ip_address(keydomain, NULL) != 0)
         {
