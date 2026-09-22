@@ -12,10 +12,10 @@
 
 
 static int
-internal_readsock_open(client_conn_ctx * cctx, const uschar * sspec,
+internal_readsock_open(client_conn_ctx * cctx, uschar * sspec,
   int timeout, const uschar * do_tls, uschar ** errmsg)
 {
-const uschar * server_name;
+uschar * server_name;
 host_item host;
 
 if (Ustrncmp(sspec, "inet:", 5) == 0)
@@ -45,7 +45,7 @@ if (Ustrncmp(sspec, "inet:", 5) == 0)
 
   if (isdigit(*port_name))
     {
-    uschar *end;
+    typeof(port_name) end;
     port = Ustrtol(port_name, &end, 0);
     if (end != port_name + Ustrlen(port_name))
       {
@@ -56,7 +56,7 @@ if (Ustrncmp(sspec, "inet:", 5) == 0)
     }
   else
     {
-    struct servent *service_info = getservbyname(CS port_name, "tcp");
+    struct servent *service_info = getservbyname(C(port_name), "tcp");
     if (!service_info)
       {
       expand_string_message = string_sprintf("unknown port %q",
@@ -93,7 +93,7 @@ else
   sockun.sun_family = AF_UNIX;
   sprintf(sockun.sun_path, "%.*s", (int)(sizeof(sockun.sun_path)-1),
     sspec);
-  server_name = US sockun.sun_path;
+  server_name = (uschar *) sockun.sun_path;
 
   sigalrm_seen = FALSE;
   ALARM(timeout);
@@ -101,7 +101,7 @@ else
   ALARM_CLR(0);
   if (sigalrm_seen)
     {
-    *errmsg = US "socket connect timed out";
+    *errmsg = US"socket connect timed out";
     goto bad;
     }
   if (rc < 0)
@@ -182,7 +182,7 @@ DEBUG(lookup)
 
 /* Parse options */
 
-if (opts) for (uschar * s; s = string_nextinlist(&opts, &sep, NULL, 0); )
+if (opts) for (const uschar * s; s = string_nextinlist(&opts, &sep, NULL, 0); )
   if (Ustrncmp(s, "timeout=", 8) == 0)
     timeout = readconf_readtime(s + 8, 0, FALSE);
   else if (Ustrncmp(s, "shutdown=", 9) == 0)
@@ -191,10 +191,10 @@ if (opts) for (uschar * s; s = string_nextinlist(&opts, &sep, NULL, 0); )
   else if (Ustrncmp(s, "tls=", 4) == 0 && Ustrcmp(s + 4, US"no") != 0 && !lf.do_tls)
     lf.do_tls = US"";
   else if (Ustrncmp(s, "sni=", 4) == 0)
-    lf.do_tls = s + 4;
+    lf.do_tls = W(s) + 4;
 #endif
   else if (Ustrncmp(s, "eol=", 4) == 0)
-    eol = string_unprinting(s + 4);
+    eol = string_unprinting(W(s) + 4);
   else if (Ustrcmp(s, "cache=yes") == 0)
     lf.cache = TRUE;
   else if (Ustrcmp(s, "send=no") == 0)
@@ -205,7 +205,7 @@ if (!filename) return FAIL;	/* Server spec is required */
 /* Open the socket, if not cached */
 
 if (cctx->sock == -1)
-  if (internal_readsock_open(cctx, filename, timeout, lf.do_tls, errmsg) != OK)
+  if (internal_readsock_open(cctx, W(filename), timeout, lf.do_tls, errmsg) != OK)
     return ret;
 
 testharness_pause_ms(100);	/* Allow sequencing of test actions */
@@ -267,7 +267,7 @@ else
 ALARM_CLR(0);
 
 if (sigalrm_seen)
-  { *errmsg = US "socket read timed out"; goto out; }
+  { *errmsg = US"socket read timed out"; goto out; }
 
 *result = yield ? string_from_gstring(yield) : US"";
 ret = OK;
