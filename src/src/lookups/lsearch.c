@@ -147,7 +147,7 @@ for (BOOL this_is_eol, last_was_eol = TRUE;
     uschar *t = s++;
     while (*s && *s != '\"')
       {
-      *t++ = *s == '\\' ? string_interpret_escape(CUSS &s) : *s;
+      *t++ = *s == '\\' ? string_interpret_escape(R(&s)) : *s;
       s++;
       }
     linekeylength = t - buffer;
