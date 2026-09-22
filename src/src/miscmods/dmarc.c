@@ -92,7 +92,7 @@ if (libdm_status != DMARC_PARSE_OKAY)
 		       opendmarc_policy_status_to_str(libdm_status));
   dmarc_abort = TRUE;
   }
-else if (opendmarc_tld_read_file(CS dmarc_tld_file, NULL, NULL, NULL))
+else if (opendmarc_tld_read_file(C(dmarc_tld_file), NULL, NULL, NULL))
   {
   log_write(LOG_MAIN|LOG_PANIC, "DMARC failure to load tld list '%s': %s",
 		       dmarc_tld_file, strerror(errno));
@@ -130,7 +130,7 @@ if (   dmarc_policy == DMARC_POLICY_REJECT
     && dmarc_action == DMARC_RESULT_QUARANTINE
    )
   if (ruf)
-    dmarc_send_forensic_report(CUSS ruf);
+    dmarc_send_forensic_report(U(ruf));
 }
 
 
@@ -271,7 +271,7 @@ if (!dmarc_abort && !sender_host_authenticated)
 		  vs == PDKIM_VERIFY_FAIL ? DMARC_POLICY_DKIM_OUTCOME_FAIL :
 		  vs == PDKIM_VERIFY_INVALID ? DMARC_POLICY_DKIM_OUTCOME_TMPFAIL :
 		  DMARC_POLICY_DKIM_OUTCOME_NONE;
-    libdm_status = opendmarc_policy_store_dkim(dmarc_pctx, US sig->domain,
+    libdm_status = opendmarc_policy_store_dkim(dmarc_pctx, U(sig->domain),
 
 /* The opendmarc project broke its API in a way we can't detect easily.
 The EDITME provides a DMARC_API variable */
@@ -431,7 +431,7 @@ The EDITME provides a DMARC_API variable */
 			   dmarc_alignment_dkim ? "yes" : "no",
 			   dmarc_status_text);
 
-    dmarc_rua = USS opendmarc_policy_fetch_rua(dmarc_pctx, NULL, 0, 1);
+    dmarc_rua = (uschar **) opendmarc_policy_fetch_rua(dmarc_pctx, NULL, 0, 1);
     opendmarc_policy_fetch_pct(dmarc_pctx, &dmarc_pct);
     opendmarc_policy_fetch_adkim(dmarc_pctx, &dmarc_adkim);
     opendmarc_policy_fetch_aspf(dmarc_pctx, &dmarc_aspf);
