@@ -128,7 +128,7 @@ ablock->server = ob->spa_serverpassword != NULL;
 
 /* For interface, see auths/README */
 
-#define CVAL(buf,pos) ((US (buf))[pos])
+#define CVAL(buf,pos) (((uschar *) (buf))[pos])
 #define PVAL(buf,pos) ((unsigned)CVAL(buf,pos))
 #define SVAL(buf,pos) (PVAL(buf,pos)|PVAL(buf,(pos)+1)<<8)
 #define IVAL(buf,pos) (SVAL(buf,pos)|SVAL(buf,(pos)+2)<<16)
@@ -154,7 +154,7 @@ unless we already have it via an initial response. */
 if (!*data && auth_get_no64_data(&data, US"NTLM supported") != OK)
   return FAIL;
 
-if (spa_base64_to_bits(CS &request, sizeof(request), CCS data) < 0)
+if (spa_base64_to_bits(C(&request), sizeof(request), C(data)) < 0)
   {
   DEBUG(auth) debug_printf("auth_spa_server(): bad base64 data in "
     "request: %s\n", data);
@@ -164,13 +164,13 @@ if (spa_base64_to_bits(CS &request, sizeof(request), CCS data) < 0)
 /* create a challenge and send it back */
 
 spa_build_auth_challenge(&request, &challenge);
-spa_bits_to_base64(msgbuf, US &challenge, spa_request_length(&challenge));
+spa_bits_to_base64(msgbuf, U(&challenge), spa_request_length(&challenge));
 
 if (auth_get_no64_data(&data, msgbuf) != OK)
   return FAIL;
 
 /* dump client response */
-if (spa_base64_to_bits(CS &response, sizeof(response), CCS data) < 0)
+if (spa_base64_to_bits(C(&response), sizeof(response), C(data)) < 0)
   {
   DEBUG(auth) debug_printf("auth_spa_server(): bad base64 data in "
     "response: %s\n", data);
@@ -198,7 +198,7 @@ that causes failure if the size of msgbuf is exceeded. ****/
 
   if (  (off = IVAL(&responseptr->uUser.offset,0)) >= sizeof(SPAAuthResponse)
      || len >= sizeof(responseptr->buf.buffer)/2
-     || (p = (CS responseptr) + off) + len*2 >= CS (responseptr+1)
+     || (p = (char *) responseptr + off) + len*2 >= (char *) (responseptr + 1)
      )
     {
     DEBUG(auth)
@@ -258,7 +258,7 @@ if (off >= sizeof(SPAAuthResponse) - 24)
     debug_printf("auth_spa_server(): bad ntRespData spec in response\n");
   return FAIL;
   }
-s = (US responseptr) + off;
+s = (U(responseptr)) + off;
 
 if (memcmp(ntRespData, s, 24) == 0)
   return auth_check_serv_cond(ablock);	/* success. we have a winner. */
@@ -329,13 +329,13 @@ if (smtp_write_command(sx, SCMD_FLUSH, "AUTH %s\r\n", ablock->public_name) < 0)
   return FAIL_SEND;
 
 /* wait for the 3XX OK message */
-if (!smtp_read_response(sx, US buffer, buffsize, '3', timeout))
+if (!smtp_read_response(sx, U(buffer), buffsize, '3', timeout))
   return FAIL;
 
 DSPA("\n\n%s authenticator: using domain %s\n\n", auname, domain);
 
 spa_build_auth_request(&request, username, domain);
-spa_bits_to_base64(US msgbuf, US &request, spa_request_length(&request));
+spa_bits_to_base64(U(msgbuf), U(&request), spa_request_length(&request));
 
 DSPA("\n\n%s authenticator: sending request (%s)\n\n", auname, msgbuf);
 
@@ -344,15 +344,15 @@ if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", msgbuf) < 0)
   return FAIL_SEND;
 
 /* wait for the auth challenge */
-if (!smtp_read_response(sx, US buffer, buffsize, '3', timeout))
+if (!smtp_read_response(sx, U(buffer), buffsize, '3', timeout))
   return FAIL;
 
 /* convert the challenge into the challenge struct */
 DSPA("\n\n%s authenticator: challenge (%s)\n\n", auname, buffer + 4);
-spa_base64_to_bits(CS (&challenge), sizeof(challenge), CCS (buffer + 4));
+spa_base64_to_bits((char *) (&challenge), sizeof(challenge), (char const *) (buffer + 4));
 
 spa_build_auth_response(&challenge, &response, username, password);
-spa_bits_to_base64(US msgbuf, US &response, spa_request_length(&response));
+spa_bits_to_base64(U(msgbuf), U(&response), spa_request_length(&response));
 DSPA("\n\n%s authenticator: challenge response (%s)\n\n", auname, msgbuf);
 
 /* send the challenge response */
@@ -363,7 +363,7 @@ if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", msgbuf) < 0)
 has succeeded. There may be more data to send, but is there any point
 in provoking an error here? */
 
-if (smtp_read_response(sx, US buffer, buffsize, '2', timeout))
+if (smtp_read_response(sx, U(buffer), buffsize, '2', timeout))
   return OK;
 
 /* Not a success response. If errno != 0 there is some kind of transmission
