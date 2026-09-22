@@ -107,7 +107,7 @@ if (   dmarc_policy == DMARC_POLICY_REJECT
   {
 /* RFC 7489 6.3 - ruf is a comma-sep list */
   /* Convert to NULL-terminated array of pointers */
-  const uschar ** rarray = CUSS dmarc_clist_to_array(ruf);
+  const uschar ** rarray = U(dmarc_clist_to_array(ruf));
   dmarc_send_forensic_report(rarray);
   }
 }
@@ -172,7 +172,7 @@ typedef struct tag {
   unsigned	 offset;
   BOOL		(*verify)(const uschar *);
 } tag;
-#define TAG(field) {.name = US mac_expanded_string(field), \
+#define TAG(field) {.name = U(mac_expanded_string(field)), \
 		    .offset = offsetof(dmarc_policy_record, field), \
 		    .verify = dmarc_tag_vfy_ ## field }
 tag policy_tags[] = {
@@ -224,7 +224,7 @@ for (tag * ptp = policy_tags; ptp < policy_tags + nelem(policy_tags); ptp++)
      && Ustrlen(ptp->name) == s - tagrecord)
 
     {			/* match; copy tag value to policy record struct */
-    const uschar ** vp = CUSS (US prp + ptp->offset);
+    const uschar ** vp = (uschar const **) ((char *) prp + ptp->offset);
 
 // debug_printf_indent("matched %q, off %u\n", tagrecord, ptp->offset);
 
@@ -646,7 +646,7 @@ use the sp.  Otherwise use the p. */
 
     /* History file, for later aggregate reporting. */
 
-    dmarc_pct = atoi(CCS dmarc_parsed.pct);
+    dmarc_pct = atoi(/*CCS*/ dmarc_parsed.pct);
 
     dmarc_adkim = dmarc_parsed.adkim
 		? *dmarc_parsed.adkim : DMARC_RECORD_A_UNSPECIFIED;
