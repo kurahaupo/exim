@@ -138,7 +138,7 @@ if (ipv == 0 || (disable_ipv6 && ipv == 6))
 /* It seems unlikely that ignore_target_hosts will be used with this router,
 but if it is set, it should probably work. */
 
-if (verify_check_this_host(CUSS&rblock->ignore_target_hosts,
+if (verify_check_this_host(RR(&rblock->ignore_target_hosts),
        	NULL, domain, ip, NULL) == OK)
   {
   DEBUG(route)
