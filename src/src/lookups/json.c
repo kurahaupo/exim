@@ -101,8 +101,8 @@ for (int k = 1;  (key = string_nextinlist(&keystring, &sep, NULL, 0)); k++)
   for (uschar * s = key; *s; s++) if (!isdigit(*s)) { numeric = FALSE; break; }
 
   if (!(j = numeric
-	? json_array_get(j, (size_t) strtoul(CS key, NULL, 10))
-	: json_object_get(j, CCS key)
+	? json_array_get(j, (size_t) strtoul(C(key), NULL, 10))
+	: json_object_get(j, C(key))
      ) )
     {
     DEBUG(lookup) debug_printf_indent("%s, for key %d: '%s'\n",
@@ -118,7 +118,7 @@ for (int k = 1;  (key = string_nextinlist(&keystring, &sep, NULL, 0)); k++)
 switch (json_typeof(j))
   {
   case JSON_STRING:
-    *result = string_copyn(CUS json_string_value(j), json_string_length(j));
+    *result = string_copyn(U(json_string_value(j)), json_string_length(j));
     break;
   case JSON_INTEGER:
     *result = string_sprintf("%" JSON_INTEGER_FORMAT, json_integer_value(j));
@@ -129,7 +129,7 @@ switch (json_typeof(j))
   case JSON_TRUE:	*result = US"true";	break;
   case JSON_FALSE:	*result = US"false";	break;
   case JSON_NULL:	*result = NULL;		break;
-  default:		*result = US json_dumps(j, 0); break;
+  default:		*result = U(json_dumps(j, 0)); break;
   }
 json_decref(j0);
 return OK;
