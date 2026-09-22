@@ -365,7 +365,7 @@ features_acl(void)
 for (condition_def * c = conditions; c < conditions + nelem(conditions); c++)
   {
   uschar buf[64], * p, * s;
-  int n = snprintf(CS buf, sizeof(buf)-1,
+  int n = snprintf(C(buf), sizeof(buf)-1,
 		  "_ACL_%s_", c->flags & ACD_MOD ? "MOD" : "COND");
   for (p = buf + n, s = c->name; *s && p < buf + sizeof(buf)-1; s++)
     *p++ = toupper(*s);
@@ -847,7 +847,7 @@ acl_data_to_cond(const uschar * s, acl_condition_block * cond,
 if (*s++ != '=')
   {
   *error = string_sprintf("\"=\" missing after ACL %q %s", name,
-    conditions[cond->type].flags & ACD_MOD ? US"modifier" : US"condition");
+    conditions[cond->type].flags & ACD_MOD ? "modifier" : "condition");
   return FALSE;
   }
 Uskip_whitespace(&s);
@@ -1256,7 +1256,7 @@ if (log_message && log_message != user_message)
     int length = Ustrlen(text) + 1;
     log_write(LOG_MAIN, "%s", text);
     logged = store_malloc(sizeof(string_item) + length);
-    logged->text = US logged + sizeof(string_item);
+    logged->text = (uschar *) (logged) + sizeof(string_item);
     memcpy(logged->text, text, length);
     logged->next = acl_warn_logged;
     acl_warn_logged = logged;
@@ -1795,9 +1795,9 @@ uschar * pm_mailfrom = NULL, * se_mailfrom = NULL;
 an error if options are given for items that don't expect them.
 */
 
-uschar * slash = Ustrchr(arg, '/');
+const uschar * slash = Ustrchr(arg, '/');
 const uschar * list = arg;
-uschar * ss = string_nextinlist(&list, &sep, NULL, 0);
+const uschar * ss = string_nextinlist(&list, &sep, NULL, 0);
 verify_type_t * vp;
 
 acl_level++;
@@ -1806,13 +1806,13 @@ if (!ss) goto BAD_VERIFY;
 /* Handle name/address consistency verification in a separate function. */
 
 for (vp = verify_type_list;
-     CS vp < CS verify_type_list + sizeof(verify_type_list);
+     (char *) vp < (char *) (&verify_type_list)[1];
      vp++
     )
   if (vp->alt_opt_sep ? strncmpic(ss, vp->name, vp->alt_opt_sep) == 0
                       : strcmpic (ss, vp->name) == 0)
    break;
-if (CS vp >= CS verify_type_list + sizeof(verify_type_list))
+if ((char *) vp >= (char *) (&verify_type_list)[1])
   goto BAD_VERIFY;
 
 if (vp->no_options && slash)
@@ -1869,7 +1869,7 @@ switch(vp->value)
     const misc_module_info * mi = misc_mod_findonly(US"arc");
     typedef int (*fn_t)(const uschar *);
     rc = mi ? (((fn_t *) mi->functions)[ARC_VERIFY])
-				(CUS string_nextinlist(&list, &sep, NULL, 0))
+				(U(string_nextinlist)(&list, &sep, NULL, 0))
 	    : DEFER;
     goto OUT;
     }
@@ -1935,7 +1935,7 @@ switch(vp->value)
     /* In the case of a sender, this can optionally be followed by an address to use
     in place of the actual sender (rare special-case requirement). */
     {
-    uschar *s = ss + 6;
+    const uschar *s = ss + 6;
     if (!*s)
       verify_sender_address = sender_address;
     else
@@ -1992,7 +1992,7 @@ while ((ss = string_nextinlist(&list, &sep, NULL, 0)))
         int optsep = ',';
 
 	Uskip_whitespace(&sublist);
-        for (uschar * opt; opt = string_nextinlist(&sublist, &optsep, NULL, 0); )
+        for (const uschar * opt; opt = string_nextinlist(&sublist, &optsep, NULL, 0); )
           {
 	  callout_opt_t * op;
 	  double period = 1.0F;
@@ -2063,7 +2063,7 @@ while ((ss = string_nextinlist(&list, &sep, NULL, 0)))
 	int period;
 
         Uskip_whitespace(&sublist);
-        for (uschar * opt; opt = string_nextinlist(&sublist, &optsep, NULL, 0); )
+        for (const uschar * opt; opt = string_nextinlist(&sublist, &optsep, NULL, 0); )
 	  if (Ustrncmp(opt, "cachepos=", 9) == 0)
 	    if ((period = v_period(opt += 9, arg, log_msgptr)) < 0)
 	      { rc = ERROR; goto OUT; }
@@ -2458,7 +2458,7 @@ static int
 acl_ratelimit(const uschar * arg, int where, uschar ** log_msgptr)
 {
 double limit, period, count;
-uschar * ss, * key = NULL, * unique = NULL;
+const uschar * ss, * key = NULL, * unique = NULL;
 int sep = '/', mode = RATE_PER_WHAT, old_pool, rc;
 BOOL leaky = FALSE, strict = FALSE, readonly = FALSE;
 BOOL noupdate = FALSE, badacl = FALSE;
@@ -2480,7 +2480,7 @@ rate measurement as opposed to rate limiting. */
 if (!(sender_rate_limit = string_nextinlist(&arg, &sep, NULL, 0)))
   return ratelimit_error(log_msgptr, "sender rate limit not set");
 
-limit = Ustrtod(sender_rate_limit, &ss);
+limit = Ustrtod(sender_rate_limit, W(&ss));
 if      (tolower(*ss) == 'k') { limit *= 1024.0; ss++; }
 else if (tolower(*ss) == 'm') { limit *= 1024.0*1024.0; ss++; }
 else if (tolower(*ss) == 'g') { limit *= 1024.0*1024.0*1024.0; ss++; }
@@ -2553,7 +2553,7 @@ while ((ss = string_nextinlist(&arg, &sep, NULL, 0)))
     }
   else if (strncmpic(ss, US"count=", 6) == 0)
     {
-    uschar *e;
+    typeof(ss) e;
     count = Ustrtod(ss+6, &e);
     if (count < 0.0 || *e != '\0')
       return ratelimit_error(log_msgptr, "%q is not a positive number", ss);
@@ -3110,7 +3110,7 @@ static int
 acl_udpsend(const uschar * arg, uschar ** log_msgptr)
 {
 int sep = 0;
-uschar * hostname;
+const uschar * hostname;
 const uschar * portstr, * portend;
 host_item * h;
 int portnum, len, r, s;
@@ -3134,7 +3134,7 @@ if (!arg)
   *log_msgptr = US"missing datagram payload in \"udpsend\" modifier";
   return ERROR;
   }
-portnum = Ustrtol(portstr, &portend, 10);
+portnum = strtol(C(portstr), W(C(&portend)), 10);
 if (*portend != '\0')
   {
   *log_msgptr = US"bad destination port in \"udpsend\" modifier";
@@ -3169,7 +3169,7 @@ len = Ustrlen(arg);
 r = send(s, arg, len, 0);
 if (r < 0)
   {
-  errstr = US strerror(errno);
+  errstr = U(strerror(errno));
   close(s);
   goto defer;
   }
@@ -3378,7 +3378,7 @@ for (; cb; cb = cb->next)
     /* Show expanded condition if it's different */
 
     HDEBUG(acl|expand) if (arg != cb->arg)
-	debug_printf("%*s %s\n", lhswidth+1, "=", CS arg);
+	debug_printf("%*s %s\n", lhswidth+1, "=", C(arg));
    }
 
   /* Check that this condition makes sense at this time */
@@ -3938,7 +3938,7 @@ for (; cb; cb = cb->next)
 
     case ACLC_DOMAINS:
       rc = match_isinlist(addr->domain, &arg, 0, &domainlist_anchor,
-	addr->domain_cache, MCL_DOMAIN, TRUE, CUSS &deliver_domain_data);
+	addr->domain_cache, MCL_DOMAIN, TRUE, R(&deliver_domain_data));
       break;
 
     /* The value in tls_cipher is the full cipher name, for example,
@@ -3957,7 +3957,7 @@ for (; cb; cb = cb->next)
 	if (!cipher) cipher = tls_in.cipher;
 	else
 	  {
-	  endcipher = Ustrchr(++cipher, ':');
+	  endcipher = Ustrchr(W(++cipher), ':');
 	  if (endcipher) *endcipher = 0;
 	  }
 	rc = match_isinlist(cipher, &arg, 0, NULL,NULL, MCL_STRING, TRUE, NULL);
@@ -3974,7 +3974,7 @@ for (; cb; cb = cb->next)
 
     case ACLC_HOSTS:
       rc = verify_check_this_host(&arg, sender_host_cache, NULL,
-	sender_host_address ? sender_host_address : US"", CUSS &host_data);
+	sender_host_address ? sender_host_address : US"", R(&host_data));
       if (rc == DEFER) *log_msgptr = search_error_message;
       if (host_data) host_data = string_copy_perm(host_data, TRUE);
       break;
@@ -3982,7 +3982,7 @@ for (; cb; cb = cb->next)
     case ACLC_LOCAL_PARTS:
       rc = match_isinlist(addr->cc_local_part, &arg, 0,
 	&localpartlist_anchor, addr->localpart_cache, MCL_LOCALPART, TRUE,
-	CUSS &deliver_localpart_data);
+	R(&deliver_localpart_data));
       break;
 
     case ACLC_LOG_REJECT_TARGET:
@@ -3990,7 +3990,7 @@ for (; cb; cb = cb->next)
       int logbits = 0, sep = 0;
       const uschar * s = arg;
 
-      for (uschar * ss; ss = string_nextinlist(&s, &sep, NULL, 0); )
+      for (const uschar * ss; ss = string_nextinlist(&s, &sep, NULL, 0); )
         {
         if (Ustrcmp(ss, "main") == 0) logbits |= LOG_MAIN;
         else if (Ustrcmp(ss, "panic") == 0) logbits |= LOG_PANIC;
@@ -4090,8 +4090,8 @@ for (; cb; cb = cb->next)
       break;
 
     case ACLC_RECIPIENTS:
-      rc = match_address_list(CUS addr->address, TRUE, TRUE, &arg, NULL, -1, 0,
-	CUSS &recipient_data);
+      rc = match_address_list(addr->address, TRUE, TRUE, &arg, NULL, -1, 0,
+	R(&recipient_data));
       break;
 
 #ifdef WITH_CONTENT_SCAN
@@ -4110,7 +4110,7 @@ for (; cb; cb = cb->next)
 
     case ACLC_SENDER_DOMAINS:
       {
-      uschar *sdomain;
+      typeof(sender_address) sdomain;
       sdomain = Ustrrchr(sender_address, '@');
       sdomain = sdomain ? sdomain + 1 : US"";
       rc = match_isinlist(sdomain, &arg, 0, &domainlist_anchor,
@@ -4119,8 +4119,8 @@ for (; cb; cb = cb->next)
       }
 
     case ACLC_SENDERS:
-      rc = match_address_list(CUS sender_address, TRUE, TRUE, &arg,
-	sender_address_cache, -1, 0, CUSS &sender_data);
+      rc = match_address_list(sender_address, TRUE, TRUE, &arg,
+	sender_address_cache, -1, 0, R(&sender_data));
       break;
 
     /* Connection variables must persist forever; message variables not */
@@ -4166,7 +4166,7 @@ for (; cb; cb = cb->next)
       int sep = -'/';
       uschar * ss = string_nextinlist(&list, &sep, NULL, 0);
 
-      rc = spam(CUSS &ss);
+      rc = spam(U(&ss));
       /* Modify return code based upon the existence of options. */
       while ((ss = string_nextinlist(&list, &sep, NULL, 0)))
         if (strcmpic(ss, US"defer_ok") == 0 && rc == DEFER)
