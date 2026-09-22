@@ -278,14 +278,14 @@ if (tls_in.peercert)
   {
   /* -- marks as tainted */
   if (tls_export_cert(big_buffer, big_buffer_size, tls_in.peercert))
-    fprintf(fp, "--tls_peercert %s\n", CS big_buffer);
+    fprintf(fp, "--tls_peercert %s\n", C(big_buffer));
   }
 if (tls_in.peerdn)       spool_var_write(fp, US"tls_peerdn", string_printing(tls_in.peerdn));
 if (tls_in.sni)		 spool_var_write(fp, US"tls_sni",    string_printing(tls_in.sni));
 if (tls_in.ourcert)
   {
   if (tls_export_cert(big_buffer, big_buffer_size, tls_in.ourcert))
-    fprintf(fp, "-tls_ourcert %s\n", CS big_buffer);
+    fprintf(fp, "-tls_ourcert %s\n", C(big_buffer));
   }
 if (tls_in.ocsp)	 fprintf(fp, "-tls_ocsp %d\n",   tls_in.ocsp);
 # ifndef DISABLE_TLS_RESUME
@@ -327,10 +327,10 @@ for (int i = 0; i < recipients_count; i++)
     fprintf(fp, "%s\n", address);
   else
     {
-    const uschar *errors_to = r->errors_to ? zap_newlines(r->errors_to) : CUS"";
+    const uschar *errors_to = r->errors_to ? zap_newlines(r->errors_to) : US"";
     /* for DSN SUPPORT extend exim 4 spool in a compatible way by
     adding new values upfront and add flag 0x02 */
-    const uschar *orcpt = r->orcpt ? zap_newlines(r->orcpt) : CUS"";
+    const uschar *orcpt = r->orcpt ? zap_newlines(r->orcpt) : US"";
 
     fprintf(fp, "%s %s %d,%d %s %d,%d#3\n", address, orcpt, Ustrlen(orcpt),
       r->dsn_flags, errors_to, Ustrlen(errors_to), r->pno);
