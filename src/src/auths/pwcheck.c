@@ -123,7 +123,7 @@ int saslauthd_verify_password(const uschar *userid,
        return PWCHECK_FAIL;
     }
 
-    memset(CS &srvaddr, 0, sizeof(srvaddr));
+    memset(C(&srvaddr), 0, sizeof(srvaddr));
     srvaddr.sun_family = AF_UNIX;
     strncpy(srvaddr.sun_path, CYRUS_SASLAUTHD_SOCKET,
             sizeof(srvaddr.sun_path));
@@ -267,7 +267,7 @@ static int retry_read(int fd, void *inbuf, unsigned nbyte)
 {
     int n;
     int nread = 0;
-    char *buf = CS inbuf;
+    char *buf = C(inbuf);
 
     if (nbyte == 0) return 0;
 
@@ -356,7 +356,7 @@ retry_writev (
 
        for (i = 0; i < iovcnt; i++) {
            if (iov[i].iov_len > (unsigned) n) {
-               iov[i].iov_base = CS iov[i].iov_base + n;
+               iov[i].iov_base = C(iov[i].iov_base) + n;
                iov[i].iov_len -= n;
                break;
            }
