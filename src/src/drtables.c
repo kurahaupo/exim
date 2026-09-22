@@ -130,7 +130,7 @@ mod_open(const uschar * name, const uschar * class, uschar ** errstr)
 const uschar * path = string_sprintf(
   LOOKUP_MODULE_DIR "/%s_%s." DYNLIB_FN_EXT, name, class);
 void * dl;
-if (!(dl = dlopen(CS path, RTLD_NOW)))
+if (!(dl = dlopen(C(path), RTLD_NOW)))
   {
   if (errstr)
     *errstr = string_sprintf("Error loading %s: %s", name, dlerror());
@@ -232,7 +232,7 @@ regex_class = regex_must_compile(
   MCS_NOFLAGS, TRUE);
 
 for (struct dirent * ent; ent = readdir(dd); )
-  if (regex_match_and_setup(regex_class, US ent->d_name, 0, 0))
+  if (regex_match_and_setup(regex_class, U(ent->d_name), 0, 0))
     if (Ustrcmp(expand_nstring[1], "miscmod") == 0)
       (void) misc_mod_find(name, NULL);
     else	/* assume "lookup" */
@@ -270,7 +270,7 @@ else
     void * dl;
     uschar * errstr;
 
-    if (  regex_match_and_setup(regex_islookupmod, US ent->d_name, 0, 0)
+    if (  regex_match_and_setup(regex_islookupmod, U(ent->d_name), 0, 0)
        && (dl = mod_open(expand_nstring[1], US"lookup", &errstr))
        )
       {
@@ -337,7 +337,7 @@ if (!(dl = mod_open(name, US"miscmod", errstr)))
   }
 
 mi = (struct misc_module_info *) dlsym(dl,
-				    CS string_sprintf("%s_module_info", name));
+				    C(string_sprintf("%s_module_info", name)));
 if ((errormsg = dlerror()))
   {
   EARLY_DEBUG(any, "%s does not appear to be a '%s' module (%s)\n",
@@ -504,7 +504,7 @@ else
 
   EARLY_DEBUG(lookup, "Loading lookup modules from %s\n", LOOKUP_MODULE_DIR);
   while ((ent = readdir(dd)))
-    if (regex_match_and_setup(regex_islookupmod, US ent->d_name, 0, 0))
+    if (regex_match_and_setup(regex_islookupmod, U(ent->d_name), 0, 0))
       {
       uschar * errstr;
       if (lookup_mod_load(expand_nstring[1], &errstr))
@@ -630,7 +630,7 @@ const pcre2_code * regex_ismodule = regex_must_compile(
 if ((dd = open_module_dir()))
   {
   for (struct dirent * ent; ent = readdir(dd); )
-    if (regex_match_and_setup(regex_ismodule, US ent->d_name, 0, 0))
+    if (regex_match_and_setup(regex_ismodule, U(ent->d_name), 0, 0))
       list = string_append_listele(list, ' ', expand_nstring[1]);
 
   if (list)
