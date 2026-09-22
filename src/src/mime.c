@@ -110,7 +110,7 @@ mime_decode_asis(FILE * in, FILE * out, const uschar * boundary)
 ssize_t len, size = 0;
 uschar buffer[MIME_MAX_LINE_LENGTH];
 
-while(fgets(CS buffer, MIME_MAX_LINE_LENGTH, mime_stream) != NULL)
+while(fgets(C(buffer), MIME_MAX_LINE_LENGTH, mime_stream) != NULL)
   {
   if (  boundary
      && Ustrncmp(buffer, "--", 2) == 0
@@ -137,7 +137,7 @@ const uschar * ipos;
 uschar * opos;
 ssize_t len, size = 0;
 
-while (fgets(CS ibuf, MIME_MAX_LINE_LENGTH, in) != NULL)
+while (fgets(C(ibuf), MIME_MAX_LINE_LENGTH, in) != NULL)
   {
   if (boundary != NULL
      && Ustrncmp(ibuf, "--", 2) == 0
@@ -207,7 +207,7 @@ else if (!fname)
     /* security break */
     if (file_nr >= 1024)
       break;
-    result = stat(CS mime_decoded_filename, &mystat);
+    result = stat(C(mime_decoded_filename), &mystat);
     } while(result != -1);
   }
 
@@ -252,7 +252,7 @@ if ((option = string_nextinlist(&list, &sep, NULL, 0)))
     memset(&statbuf,0,sizeof(statbuf));
 
     /* assume either path or path+file name */
-    if ( (stat(CS option, &statbuf) == 0) && S_ISDIR(statbuf.st_mode) )
+    if ( (stat(C(option), &statbuf) == 0) && S_ISDIR(statbuf.st_mode) )
       /* is directory, use it as decode_path */
       decode_file = mime_get_decode_file(option, NULL);
     else
@@ -677,7 +677,7 @@ while(1)
    */
   if (context) for (;;)
     {
-    if (!fgets(CS header, MIME_MAX_HEADER_SIZE, f))
+    if (!fgets(C(header), MIME_MAX_HEADER_SIZE, f))
       {
       /* Hit EOF or read error. Ugh. */
       DEBUG(acl) debug_printf_indent("MIME: Hit EOF ...\n");
@@ -795,7 +795,7 @@ while(1)
       /* security break */
       if (file_nr >= 128)
 	goto NO_RFC822;
-      result = stat(CS (filename = string_from_gstring(g)), &mystat);
+      result = stat(C(filename = string_from_gstring(g)), &mystat);
       }
 
     rfc822name = filename;
