@@ -25,6 +25,10 @@ BJ/01 Dovecot authenticator now handles new code= field added in dovecot 2.4.3
 JH/04 OpenSSL: the recognised names for openssl_options list elements has been
       updated to OpenSSL 3.5.8.  Also, numeric option values are now acceptable.
 
+JH/05 Bug 3213: Query-style lookups now require proper quoting of tainted
+      arguments.  From 4.96 onward lack of quoting was merely noted in the
+      panic log; now it causes a defer of the lookup.
+
 
 Exim version 4.100.1
 --------------------

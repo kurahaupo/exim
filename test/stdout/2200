@@ -4,7 +4,7 @@
 > variable m1 set
 > variable m2 set
 > variable m3 set
-> missing quoter:  expected_fail
+> Failed: lookup of "expected_fail" gave DEFER: "tainted search query is not properly quoted: expected_fail"
 > proper quoter:   barbaz
 > missing (but cached): barbaz
 > shared quoter:   foo_2

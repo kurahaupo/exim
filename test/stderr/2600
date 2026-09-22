@@ -867,22 +867,10 @@ try option 'unknown_login'
  database lookup required for insert into tb (key, data1, data1) values ('tainted_username@needsquote.dom', 'should NOT work', 'foo');
                               (tainted)
 No quoter name for addr
-LOG: MAIN PANIC
-  tainted search query is not properly quoted: insert into tb (key, data1, data1) values ('tainted_username@needsquote.dom', 'should NOT work', 'foo');
  required_quoter_id (sqlite) quoting -1 (NULL)
- lookup forced cache cleanup
- lookup failed
-  ╭───scanning: }{C}}
-  ├───expanded: 
-  ├─────result:  ◀skipped▶
-  ╰───skipping: result is not used
-  ╭considering: C}}
-  ├───────text: C
-  ├considering: }}
-  ├───expanded: C
-  ╰─────result: C
- ├───expanded: ${lookup░sqlite{insert░into░tb░(key,░data1,░data1)░values░('$sender_address',░'should░NOT░work',░'foo');}░{}{C}}
- ╰─────result: C
+ lookup deferred: tainted search query is not properly quoted: insert into tb (key, data1, data1) values ('tainted_username@needsquote.dom', 'should NOT work', 'foo');
+ ├failed to expand: ${lookup sqlite{insert into tb (key, data1, data1) values ('$sender_address', 'should NOT work', 'foo');} {}{C}}
+ ╰───error message: lookup of "insert into tb (key, data1, data1) values ('tainted_username@needsquote.dom', 'should NOT work', 'foo');" gave DEFER: "tainted search query is not properly quoted: insert into tb (key, data1, data1) values ('tainted_username@needsquote.dom', 'should NOT work', 'foo');"
  ╭considering: ${lookup░sqlite{insert░into░tb░(key,░data1,░data1)░values░('${quote_sqlite:$sender_address}',░'should░work',░'bar');}░{}{D}}
   ╭considering: insert░into░tb░(key,░data1,░data1)░values░('${quote_sqlite:$sender_address}',░'should░work',░'bar');}░{}{D}}
   ├───────text: insert░into░tb░(key,░data1,░data1)░values░('

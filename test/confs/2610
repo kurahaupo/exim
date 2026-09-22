@@ -68,10 +68,11 @@ r1:
   # this tests that quoting survived being passed via spoolfile
   debug_print =	acl_m_qtest: <$acl_m_qtest> lkup: <${lookup mysql{select name from them where id='$acl_m_qtest'}}>
 
-  # this tests the unquoted case, but will need enhancement when we enforce (vs. just logging), else no transport call
+  # We could use a test of not-quoted in a router
+
   # The Z here vs. the X in $acl_m_qtest just points out which one, if either
   # goes wrong
-  address_data = ${lookup mysql{select name from them where id='Z${local_part}Z' limit 1}}
+  address_data = ${lookup mysql{select name from them where id='Z${quote_mysql:${local_part}}Z' limit 1}}
   transport = t1
 
 

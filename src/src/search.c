@@ -625,19 +625,6 @@ else
       else
 	ks = US"";
 
-#ifdef enforce_quote_protection_notyet
-    search_error_message = string_sprintf(
-      "tainted search query is not properly quoted%s: %s%s",
-      loc, ks);
-    f.search_find_defer = TRUE;
-    goto out;
-#else
-    /* If we're called from a transport, no privs to open the paniclog;
-    the logging punts to using stderr - and that seems to stop the debug
-    stream. */
-    log_write(transport_name ? LOG_MAIN : LOG_MAIN|LOG_PANIC,
-      "tainted search query is not properly quoted%s: %s", loc, ks);
-
     DEBUG(lookup)
       {
       const uschar * quoter_name;
@@ -647,7 +634,11 @@ else
 	li->name,
 	q, quoter_name);
       }
-#endif
+    search_error_message = string_sprintf(
+      "tainted search query is not properly quoted%s: %s",
+      loc, ks);
+    f.search_find_defer = TRUE;
+    goto out;
     }
 
   /* Call the code for the different kinds of search. DEFER is handled

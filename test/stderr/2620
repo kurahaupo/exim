@@ -299,16 +299,11 @@ check set acl_m0 = FAIL: ${lookup pgsql,cache=no_rd        {select name from the
  cached data found but no_rd option set;  database lookup required for select name from them where id = 'c'
                               (tainted)
 No quoter name for addr
-LOG: MAIN PANIC
-  tainted search query is not properly quoted (ACL warn, TESTSUITE/test-config 27): select name from them where id = 'c'
  required_quoter_id (pgsql) quoting -1 (NULL)
- PostgreSQL query: "select name from them where id = 'c'" opts 'NULL'
- PGSQL using cached connection for localhost:PORT_N/test/CALLER
- PGSQL: no data found
- replacing old cache entry
- lookup failed
-                 = FAIL: 
-warn: condition test succeeded in ACL check_recipient
+ lookup deferred: tainted search query is not properly quoted (ACL warn, TESTSUITE/test-config 27): select name from them where id = 'c'
+warn: condition test deferred in ACL check_recipient
+LOG: MAIN
+  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 27 of TESTSUITE/test-config): condition test deferred: tainted search query is not properly quoted (ACL warn, TESTSUITE/test-config 27): select name from them where id = 'c'
 processing ACL check_recipient "warn" (TESTSUITE/test-config 32)
 check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/      {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
@@ -454,16 +449,11 @@ check set acl_m0 = FAIL: ${lookup pgsql,cache=no_rd        {select name from the
  cached data found but no_rd option set;  database lookup required for select name from them where id = 'c'
                               (tainted)
 No quoter name for addr
-LOG: MAIN PANIC
-  tainted search query is not properly quoted (ACL warn, TESTSUITE/test-config 27): select name from them where id = 'c'
  required_quoter_id (pgsql) quoting -1 (NULL)
- PostgreSQL query: "select name from them where id = 'c'" opts 'NULL'
- PGSQL using cached connection for localhost:PORT_N/test/CALLER
- PGSQL: no data found
- replacing old cache entry
- lookup failed
-                 = FAIL: 
-warn: condition test succeeded in ACL check_recipient
+ lookup deferred: tainted search query is not properly quoted (ACL warn, TESTSUITE/test-config 27): select name from them where id = 'c'
+warn: condition test deferred in ACL check_recipient
+LOG: MAIN
+  H=(test) [10.0.0.0] Warning: ACL 'warn' statement skipped (in ACL check_recipient at line 27 of TESTSUITE/test-config): condition test deferred: tainted search query is not properly quoted (ACL warn, TESTSUITE/test-config 27): select name from them where id = 'c'
 processing ACL check_recipient "warn" (TESTSUITE/test-config 32)
 check set acl_m0 = ok:   ${lookup pgsql,servers=localhost::PORT_N/test/CALLER/      {select name from them where id = '${quote_pgsql:$local_part}'}}
  search_open: pgsql "NULL"
