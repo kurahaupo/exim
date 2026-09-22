@@ -46,10 +46,10 @@ const uschar * name;
 
 /*XXX more clever parsing could discard embedded spaces? */
 
-if (sscanf(CCS param, "pri=%u", &spamd->priority))
+if (sscanf(C(param), "pri=%u", &spamd->priority))
   return 0; /* OK */
 
-if (sscanf(CCS param, "weight=%u", &spamd->weight))
+if (sscanf(C(param), "weight=%u", &spamd->weight))
   {
   if (spamd->weight == 0) /* this server disabled: skip it */
     return 1;
@@ -68,8 +68,8 @@ if (Ustrncmp(param, "time=", 5) == 0)
   if ((end_string = Ustrchr(s, '-')))
     {
     end_string++;
-    if (  sscanf(CS end_string, "%u.%u.%u", &end_h,   &end_m,   &end_s)   == 0
-       || sscanf(CS s,          "%u.%u.%u", &start_h, &start_m, &start_s) == 0
+    if (  sscanf(C(end_string), "%u.%u.%u", &end_h,   &end_m,   &end_s)   == 0
+       || sscanf(C(s),          "%u.%u.%u", &start_h, &start_m, &start_s) == 0
        )
       goto badval;
     }
@@ -519,7 +519,7 @@ if (errno != 0)
 if (sd->is_rspamd)
   {				/* rspamd variant of reply */
   int r;
-  if (  (r = sscanf(CS spamd_buffer,
+  if (  (r = sscanf(C(spamd_buffer),
 	  "RSPAMD/%7s 0 EX_OK\r\nMetric: default; %7s %lf / %lf / %lf\r\n%n",
 	  spamd_version, spamd_short_result, &spamd_score, &spamd_threshold,
 	  &spamd_reject_score, &spamd_report_offset)) != 5
@@ -544,12 +544,12 @@ else
   {				/* spamassassin */
   /* dig in the spamd output and put the report in a multiline header,
   if requested */
-  if (sscanf(CS spamd_buffer,
+  if (sscanf(C(spamd_buffer),
        "SPAMD/%7s 0 EX_OK\r\nContent-length: %*u\r\n\r\n%lf/%lf\r\n%n",
        spamd_version,&spamd_score,&spamd_threshold,&spamd_report_offset) != 3)
     {
       /* try to fall back to pre-2.50 spamd output */
-      if (sscanf(CS spamd_buffer,
+      if (sscanf(C(spamd_buffer),
 	   "SPAMD/%7s 0 EX_OK\r\nSpam: %*s ; %lf / %lf\r\n\r\n%n",
 	   spamd_version,&spamd_score,&spamd_threshold,&spamd_report_offset) != 3)
 	{
