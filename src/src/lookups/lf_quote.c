@@ -52,12 +52,12 @@ if (value[0] == 0 || Ustrpbrk(value, " \t\n\r") || value[0] == '\"')
     {
     if (value[j] == '\"' || value[j] == '\\')
       result = string_catn(result, US"\\", 1);
-    result = string_catn(result, US value+j, 1);
+    result = string_catn(result, value+j, 1);
     }
   result = string_catn(result, US"\"", 1);
   }
 else
-  result = string_catn(result, US value, vlength);
+  result = string_catn(result, value, vlength);
 
 return string_catn(result, US" ", 1);
 }
