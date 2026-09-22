@@ -193,7 +193,7 @@ else
 } while (0)
 
 #define OUT(msg) do { \
-       auth_defer_msg = (US msg); \
+       auth_defer_msg = (U(msg)); \
        goto out; \
 } while(0)
 
@@ -371,7 +371,7 @@ for (;;)
     {
     CHECK_COMMAND("MECH", 1, INT_MAX);
     have_mech_line = TRUE;
-    if (strcmpic(US args[1], ablock->public_name) == 0)
+    if (strcmpic(U(args[1]), ablock->public_name) == 0)
       found = TRUE;
     }
   else if (Ustrcmp(args[0], US"SPID") == 0)
@@ -435,7 +435,7 @@ fprintf(f, "VERSION\t%d\t%d\r\nSERVICE\tSMTP\r\nCPID\t%d\r\n"
        "AUTH\t%d\t%s\trip=%s\tlip=%s\tresp=%s\r\n",
        VERSION_MAJOR, VERSION_MINOR, getpid(), cuid,
        ablock->public_name, sender_host_address, interface_address,
-       data ? CS  data : "");
+       data ? C(data) : "");
 
 Subsequently, the command was modified to add "secured" and "valid-client-
 cert" when relevant.
@@ -475,7 +475,7 @@ while (1)
     case 'C':
       CHECK_COMMAND("CONT", 1, 2);
 
-      if ((tmp = auth_get_no64_data(&data, US args[2])) != OK)
+      if ((tmp = auth_get_no64_data(&data, U(args[2]))) != OK)
 	{
 	ret = tmp;
 	goto out;
