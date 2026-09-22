@@ -566,10 +566,10 @@ const uschar * s;
 switch(*errno_value)
   {
   case ETIMEDOUT:		/* Handle response timeout */
-    *message = US string_sprintf("SMTP timeout after %s%s",
+    *message = string_sprintf("SMTP timeout after %s%s",
 	pl, smtp_command);
     if (transport_count > 0)
-      *message = US string_sprintf("%s (%d bytes written)", *message,
+      *message = string_sprintf("%s (%d bytes written)", *message,
 	transport_count);
     return FALSE;
 
@@ -634,11 +634,11 @@ assume the connection is now dead. */
 if (*errno_value == 0 || *errno_value == ECONNRESET)
   {
   *errno_value = ERRNO_SMTPCLOSED;
-  *message = US string_sprintf("Remote host closed connection "
+  *message = string_sprintf("Remote host closed connection "
     "in response to %s%s", pl, smtp_command);
   }
 else
-  *message = US string_sprintf("%s [%s]", host->name, host->address);
+  *message = string_sprintf("%s [%s]", host->name, host->address);
 
 return FALSE;
 }
@@ -738,7 +738,7 @@ deliver_localpart = addr->local_part;
 	? string_sprintf("%s: %s", addr->message, strerror(addr->basic_errno))
 	: string_copy(addr->message)
       : addr->basic_errno > 0
-	? string_copy(US strerror(addr->basic_errno))
+	? string_copy(U(strerror(addr->basic_errno)))
 	: NULL,
       NULL);
 
@@ -781,8 +781,8 @@ BOOL good_response;
   struct pollfd p = {.fd = sock, .events = POLLOUT};
   if (poll(&p, 1, 1000) >= 0)	/* retval test solely for compiler quitening */
     {
-    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &on, sizeof(on));
-    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, U(&on), sizeof(on));
+    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, U(&off), sizeof(off));
     }
   }
 #endif
@@ -867,17 +867,17 @@ if (regex_match(regex_LIMITS, sx->buffer, -1, &match))
 
     if (strncmpic(s, US"MAILMAX=", 8) == 0)
       {
-      continue_limit_mail = sx->peer_limit_mail = atoi(CS (s += 8));
+      continue_limit_mail = sx->peer_limit_mail = atoi(C(s += 8));
       while (isdigit(*s)) s++;
       }
     else if (strncmpic(s, US"RCPTMAX=", 8) == 0)
       {
-      continue_limit_rcpt = sx->peer_limit_rcpt = atoi(CS (s += 8));
+      continue_limit_rcpt = sx->peer_limit_rcpt = atoi(C(s += 8));
       while (isdigit(*s)) s++;
       }
     else if (strncmpic(s, US"RCPTDOMAINMAX=", 14) == 0)
       {
-      continue_limit_rcptdom = sx->peer_limit_rcptdom = atoi(CS (s += 14));
+      continue_limit_rcptdom = sx->peer_limit_rcptdom = atoi(C(s += 14));
       while (isdigit(*s)) s++;
       }
     else
@@ -1676,7 +1676,7 @@ smtp_auth(smtp_context * sx)
 const host_item * host = sx->conn_args.host;		/* host to deliver to */
 smtp_transport_options_block * ob = sx->conn_args.ob;	/* transport options */
 BOOL require_auth =
-      verify_check_given_host(CUSS &ob->hosts_require_auth, host) == OK;
+      verify_check_given_host(R(&ob->hosts_require_auth), host) == OK;
 #ifndef DISABLE_PIPE_CONNECT
 unsigned short authbits = tls_out.active.sock >= 0
       ? sx->ehlo_resp.crypted_auths : sx->ehlo_resp.cleartext_auths;
@@ -1712,7 +1712,7 @@ if (  sx->esmtp
   regex match above as the check could be another RE. */
 
   if (  require_auth
-     || verify_check_given_host(CUSS &ob->hosts_try_auth, host) == OK)
+     || verify_check_given_host(R(&ob->hosts_try_auth), host) == OK)
     {
     DEBUG(transport) debug_printf("scanning authentication mechanisms\n");
     fail_reason = US"no common mechanisms were found";
@@ -2160,7 +2160,7 @@ check_force_dane_conn(smtp_context * sx, smtp_transport_options_block * ob)
 {
 int rc;
 if(  sx->dane_required
-  || verify_check_given_host(CUSS &ob->hosts_try_dane, sx->conn_args.host) == OK
+  || verify_check_given_host(R(&ob->hosts_try_dane), sx->conn_args.host) == OK
   )
   {
   if (!sx->conn_args.tlsa_dnsa)
@@ -2283,7 +2283,7 @@ sx->esmtp = TRUE;
 sx->dsn_all_lasthop = TRUE;
 #ifdef SUPPORT_DANE
 sx->dane_required =
-  verify_check_given_host(CUSS &ob->hosts_require_dane, sx->conn_args.host) == OK;
+  verify_check_given_host(R(&ob->hosts_require_dane), sx->conn_args.host) == OK;
 #endif
 
 if ((sx->max_mail = sx->conn_args.tblock->connection_max_messages) == 0)
@@ -2378,13 +2378,13 @@ if (continue_hostname && continue_proxy_cipher)
   if (  (continue_proxy_sni ? (Ustrcmp(continue_proxy_sni, sni) == 0) : !*sni)
      && continue_proxy_dane == sx->conn_args.dane)
     {
-    tls_out.sni = US sni;
+    tls_out.sni = W(sni);
     if ((tls_out.dane_verified = continue_proxy_dane))
       sx->conn_args.host->dnssec_used = DS_YES;
     }
 # else
   if ((continue_proxy_sni ? (Ustrcmp(continue_proxy_sni, sni) == 0) : !*sni))
-    tls_out.sni = US sni;
+    tls_out.sni = U(sni);
 # endif
   else
     {
@@ -2480,7 +2480,7 @@ if (!continue_hostname || atrn_domains)
   else
     {
 #ifndef DISABLE_PIPE_CONNECT
-    if (  verify_check_given_host(CUSS &ob->hosts_pipe_connect,
+    if (  verify_check_given_host(R(&ob->hosts_pipe_connect),
 					      sx->conn_args.host) == OK)
 
       /* We don't find out the local ip address until the connect, so if
@@ -2547,7 +2547,7 @@ if (!continue_hostname || atrn_domains)
 # endif
 	set_errno_nohost(sx->addrlist,
 	  errno == ETIMEDOUT ? ERRNO_CONNECTTIMEOUT : errno,
-	  sx->verify ? US strerror(errno) : NULL,
+	  sx->verify ? U(strerror(errno)) : NULL,
 	  DEFER, FALSE, &sx->delivery_start);
 	sx->send_quit = FALSE;
 	return DEFER;
@@ -2565,11 +2565,11 @@ is the non-TFO-C case for smtps, where the Client Hello will go on the 3rd-ack.
 	{		/* Doing it here is ok because we do lazy-connect, */
 	int one = 2;	/* One second, max deferral of 3rd-ack */
 	(void) setsockopt(sx->cctx.sock, IPPROTO_TCP, TCP_DEFER_ACCEPT,
-						      US &one, sizeof(one));
+						      U(&one), sizeof(one));
 	}
       else
 #elif defined(TCP_QUICKACK)
-	(void) setsockopt(sx->cctx.sock, IPPROTO_TCP, TCP_QUICKACK, US &off,
+	(void) setsockopt(sx->cctx.sock, IPPROTO_TCP, TCP_QUICKACK, U(&off),
 			  sizeof(off))
 #endif
 	;
@@ -2691,7 +2691,7 @@ goto SEND_QUIT;
   mailers use upper case for some reason (the RFC is quite clear about case
   independence) so, for peace of mind, I gave in. */
 
-  sx->esmtp = verify_check_given_host(CUSS &ob->hosts_avoid_esmtp, sx->conn_args.host) != OK;
+  sx->esmtp = verify_check_given_host(R(&ob->hosts_avoid_esmtp), sx->conn_args.host) != OK;
 
   /* Alas; be careful, since this goto is not an error-out, so conceivably
   we might set data between here and the target which we assume to exist
@@ -2961,9 +2961,9 @@ for error analysis. */
 #ifndef DISABLE_TLS
 if (  smtp_peer_options & OPTION_TLS
    && !suppress_tls
-   && verify_check_given_host(CUSS &ob->hosts_avoid_tls, sx->conn_args.host) != OK
+   && verify_check_given_host(R(&ob->hosts_avoid_tls), sx->conn_args.host) != OK
    && (  !sx->verify
-      || verify_check_given_host(CUSS &ob->hosts_verify_avoid_tls, sx->conn_args.host) != OK
+      || verify_check_given_host(R(&ob->hosts_verify_avoid_tls), sx->conn_args.host) != OK
    )  )
   {
   uschar buffer2[4096];
@@ -3171,7 +3171,7 @@ if (tls_out.active.sock >= 0)
 	"%s %s\r\n", greeting_cmd, sx->helo_data) < 0)
     goto SEND_FAILED;
 
-  smtp_record_protocol_sequence(sx, US(sx->lmtp ? "l" : sx->esmtp ? "e" : "h"));
+  smtp_record_protocol_sequence(sx, U(sx->lmtp ? "l" : sx->esmtp ? "e" : "h"));
 
 #ifndef DISABLE_PIPE_CONNECT
   if (sx->early_pipe_active)
@@ -3212,7 +3212,7 @@ else if (
 	|| sx->conn_args.dane
 # endif
 #endif
-	|| verify_check_given_host(CUSS &ob->hosts_require_tls, sx->conn_args.host) == OK
+	|| verify_check_given_host(R(&ob->hosts_require_tls), sx->conn_args.host) == OK
 	)
   {
   errno = ERRNO_TLSREQUIRED;
@@ -3300,14 +3300,14 @@ if (   !continue_hostname && (!atrn_domains || atrn_mode && *atrn_mode == 'C')
     the current host matches hosts_avoid_pipelining, don't do it. */
 
     if (  sx->peer_offered & OPTION_PIPE
-       && verify_check_given_host(CUSS &ob->hosts_avoid_pipelining, sx->conn_args.host) != OK)
+       && verify_check_given_host(R(&ob->hosts_avoid_pipelining), sx->conn_args.host) != OK)
       smtp_peer_options |= OPTION_PIPE;
 
     DEBUG(transport) debug_printf("%susing PIPELINING\n",
       smtp_peer_options & OPTION_PIPE ? "" : "not ");
 
     if (  sx->peer_offered & OPTION_CHUNKING
-       && verify_check_given_host(CUSS &ob->hosts_try_chunking, sx->conn_args.host) == OK)
+       && verify_check_given_host(R(&ob->hosts_try_chunking), sx->conn_args.host) == OK)
       smtp_peer_options |= OPTION_CHUNKING;
 
     if (smtp_peer_options & OPTION_CHUNKING)
@@ -3315,7 +3315,7 @@ if (   !continue_hostname && (!atrn_domains || atrn_mode && *atrn_mode == 'C')
 
 #ifndef DISABLE_PRDR
     if (  sx->peer_offered & OPTION_PRDR
-       && verify_check_given_host(CUSS &ob->hosts_try_prdr, sx->conn_args.host) == OK)
+       && verify_check_given_host(R(&ob->hosts_try_prdr), sx->conn_args.host) == OK)
       smtp_peer_options |= OPTION_PRDR;
 
     if (smtp_peer_options & OPTION_PRDR)
@@ -3435,7 +3435,7 @@ return OK;
 	errno = ETIMEDOUT;
       set_errno_nohost(sx->addrlist,
 	errno == ETIMEDOUT ? ERRNO_CONNECTTIMEOUT : errno,
-	sx->verify ? US strerror(errno) : NULL,
+	sx->verify ? U(strerror(errno)) : NULL,
 	DEFER, FALSE, &sx->delivery_start);
       sx->send_quit = FALSE;
       return DEFER;
@@ -3450,7 +3450,7 @@ return OK;
 
   SEND_FAILED:
     code = '4';
-    message = US string_sprintf("smtp send to %s [%s] failed: %s",
+    message = string_sprintf("smtp send to %s [%s] failed: %s",
       sx->conn_args.host->name, sx->conn_args.host->address, strerror(errno));
     sx->send_quit = FALSE;
     yield = DEFER;
@@ -3582,7 +3582,7 @@ if (  message_size > 0
 /*XXX problem here under spool_files_wireformat?
 Or just forget about lines?  Or inflate by a fixed proportion? */
 
-  sprintf(CS p, " SIZE=%d", message_size+message_linecount+(SOB sx->conn_args.ob)->size_addition);
+  sprintf(C(p), " SIZE=%d", message_size+message_linecount+(SOB sx->conn_args.ob)->size_addition);
   while (*p) p++;
   }
 
@@ -3599,7 +3599,7 @@ if (smtp_peer_options & OPTION_PRDR)
         if (a->transport_return == PENDING_DEFER)
 	  {			/* at least two recipients to send */
 	  sx->prdr_active = TRUE;
-	  sprintf(CS p, " PRDR"); p += 5;
+	  sprintf(C(p), " PRDR"); p += 5;
 	  break;
 	  }
       break;
@@ -4413,7 +4413,7 @@ else
     tcw =
 #ifndef DISABLE_TLS
 	   (  tls_out.active.sock < 0  &&  !continue_proxy_cipher
-           || verify_check_given_host(CUSS &ob->hosts_nopass_tls, host) != OK
+           || verify_check_given_host(R(&ob->hosts_nopass_tls), host) != OK
 	   )
         &&
 #endif
@@ -4437,7 +4437,7 @@ else
 
     sx->ok = mi
       ? (((fn_t *) mi->functions)[DKIM_TRANSPORT_WRITE])
-				      (&tctx, &ob->dkim, CUSS &message)
+				      (&tctx, &ob->dkim, R(&message))
       : transport_write_message(&tctx, 0);
     }
 #else
@@ -4605,7 +4605,7 @@ else
       {
       const uschar * s = string_printing(sx->buffer);
       /* deconst cast ok here as string_printing was checked to have alloc'n'copied */
-      conf = s == sx->buffer ? US string_copy(s) : US s;
+      conf = s == sx->buffer ? string_copy(s) : W(s);
       }
 
     /* Process all transported addresses - for LMTP or PRDR, read a status for
@@ -4660,7 +4660,7 @@ else
           {
           const uschar *s = string_printing(sx->buffer);
 	  /* deconst cast ok here as string_printing was checked to have alloc'n'copied */
-          conf = (s == sx->buffer) ? US string_copy(s) : US s;
+          conf = (s == sx->buffer) ? string_copy(s) : W(s);
           }
         }
 
@@ -4703,12 +4703,12 @@ else
         write error, as it may prove possible to update the spool file later. */
 
         if (testflag(addr, af_homonym))
-          sprintf(CS sx->buffer, "%.500s/%s\n", addr->unique + 3, trname);
+          sprintf(C(sx->buffer), "%.500s/%s\n", addr->unique + 3, trname);
         else
-          sprintf(CS sx->buffer, "%.500s\n", addr->unique);
+          sprintf(C(sx->buffer), "%.500s\n", addr->unique);
 
         DEBUG(deliver) debug_printf("S:journalling %s", sx->buffer);
-        len = Ustrlen(CS sx->buffer);
+        len = Ustrlen(sx->buffer);
         if (write(journal_fd, sx->buffer, len) != len)
           log_write(LOG_MAIN|LOG_PANIC, "failed to write journal for "
             "%s: %s", sx->buffer, strerror(errno));
@@ -4750,12 +4750,12 @@ else
 	if (addr->transport_return == OK)
 	  {
 	  if (testflag(addr, af_homonym))
-	    sprintf(CS sx->buffer, "%.500s/%s\n", addr->unique + 3, trname);
+	    sprintf(C(sx->buffer), "%.500s/%s\n", addr->unique + 3, trname);
 	  else
-	    sprintf(CS sx->buffer, "%.500s\n", addr->unique);
+	    sprintf(C(sx->buffer), "%.500s\n", addr->unique);
 
 	  DEBUG(deliver) debug_printf("journalling(PRDR) %s\n", sx->buffer);
-	  len = Ustrlen(CS sx->buffer);
+	  len = Ustrlen(sx->buffer);
 	  if (write(journal_fd, sx->buffer, len) != len)
 	    log_write(LOG_MAIN|LOG_PANIC, "failed to write journal for "
 	      "%s: %s", sx->buffer, strerror(errno));
@@ -4803,7 +4803,7 @@ if (!sx->ok)
     save_errno = errno;
     code = '4';
     message = string_sprintf("smtp send to %s [%s] failed: %s",
-      host->name, host->address, message ? message : US strerror(save_errno));
+      host->name, host->address, message ? message : U(strerror(save_errno)));
     sx->send_quit = FALSE;
     goto FAILED;
     }
@@ -4909,7 +4909,7 @@ if (!sx->ok)
         {
 	set_rc = DEFER;
         if (save_errno > 0)
-          message = US string_sprintf("%s: %s", message, strerror(save_errno));
+          message = string_sprintf("%s: %s", message, strerror(save_errno));
 
         write_logs(host, message, sx->first_addr ? sx->first_addr->basic_errno : 0);
 
@@ -5019,7 +5019,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
       send_rst =
 #ifndef DISABLE_TLS
 	     (  tls_out.active.sock < 0  &&  !continue_proxy_cipher
-	     || verify_check_given_host(CUSS &ob->hosts_nopass_tls, host) != OK
+	     || verify_check_given_host(R(&ob->hosts_nopass_tls), host) != OK
 	     )
 	  &&
 #endif
@@ -5039,7 +5039,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
       if (sx->send_rset)
 	if (! (sx->ok = smtp_write_command(sx, SCMD_FLUSH, "RSET\r\n") >= 0))
 	  {
-	  msg = US string_sprintf("smtp send to %s [%s] failed: %s", host->name,
+	  msg = string_sprintf("smtp send to %s [%s] failed: %s", host->name,
 	    host->address, strerror(errno));
 	  sx->send_quit = FALSE;
 	  }
@@ -5098,7 +5098,7 @@ if (sx->completed_addr && sx->ok && sx->send_quit)
 	if (tls_out.active.sock >= 0)
 	  {
 	  if (  (continue_hostname || passback_conn)
-	     && verify_check_given_host(CUSS &ob->hosts_noproxy_tls, host) == OK
+	     && verify_check_given_host(R(&ob->hosts_noproxy_tls), host) == OK
 	     )
 	    {
 	    /* Not all MTAs allow for the continuation of the SMTP session when
@@ -5908,7 +5908,7 @@ retry_non_continued:
     if (  (!f.deliver_force || f.queue_2stage)
        && (  f.queue_smtp
 	  || match_isinlist(addrlist->domain,
-	      CUSS &queue_smtp_domains, 0,
+	      R(&queue_smtp_domains), 0,
 	      &domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK)
        )
       {
@@ -6063,7 +6063,7 @@ retry_non_continued:
     sending the message down a pre-existing connection. */
 
     if (  !continue_hostname
-       && verify_check_given_host(CUSS &ob->serialize_hosts, host) == OK)
+       && verify_check_given_host(R(&ob->serialize_hosts), host) == OK)
       {
       serialize_key = string_sprintf("host-serialize-%s", host->name);
       if (!enq_start(serialize_key, 1))
@@ -6211,7 +6211,7 @@ retry_non_continued:
       if (  rc == DEFER
 	 && first_addr->basic_errno == ERRNO_TLSFAILURE
 	 && ob->tls_tempfail_tryclear
-	 && verify_check_given_host(CUSS &ob->hosts_require_tls, host) != OK
+	 && verify_check_given_host(R(&ob->hosts_require_tls), host) != OK
 	 )
         {
         log_write(LOG_MAIN,
