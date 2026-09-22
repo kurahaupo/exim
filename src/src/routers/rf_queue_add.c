@@ -66,7 +66,7 @@ if (t)
       setflag(addr, af_uid_set);
       setflag(addr, af_gid_set);
       setflag(addr, af_home_expanded);
-      addr->home_dir = string_copy(US pw->pw_dir);
+      addr->home_dir = string_copy(U(pw->pw_dir));
       }
 
     if (!rf_get_ugid(r, addr, &ugid)) return FALSE;
