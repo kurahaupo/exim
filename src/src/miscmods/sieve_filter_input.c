@@ -497,7 +497,7 @@ out = bp->end;
 if ((outbytes = D_BUF_SIZE - (bp->end - bp->ptr)) > lim)
   outbytes = lim;
 
-res = iconv(icd, (ICONV_ARG2_TYPE) &in, &inbytes, CSS &out, &outbytes);
+res = iconv(icd, (ICONV_ARG2_TYPE) &in, &inbytes, C(&out), &outbytes);
 if (res == -1)
   {
   FDEBUG debug_printf_indent("iconv: %s\n", strerror(errno));
@@ -564,7 +564,7 @@ in_processing * new = NULL;
 iconv_t icd;
 in_buf * bp;
 
-if ((icd = iconv_open("utf-8", CCS s_chset)) != (iconv_t)-1)
+if ((icd = iconv_open("utf-8", C(s_chset))) != (iconv_t)-1)
   {
   new = store_get(sizeof(in_processing), GET_UNTAINTED);
 
@@ -628,7 +628,7 @@ if (!src_start)			/* Error or EOF */
 DECODE_LAYER_DEBUG debug_printf_indent("%s: lwr offered %u %.*q\n",
 				      __FUNCTION__, nsrc, (int)nsrc, src_start);
 
-bp->buf = bp->ptr = bp->end = US src_start;
+bp->buf = bp->ptr = bp->end = W(src_start);
 
 if (mc->boundary_distance == 0)
   {
@@ -681,7 +681,7 @@ if (rc > 0)
   /* Our RE had the boundary, so the match returned says where the pre-boundary
   data ends. We want to indicate the pre-boundary data to our caller. */
   const PCRE2_SIZE * ovec = pcre2_get_ovector_pointer(mc->md);
-  bp->end = US src_start + ovec[0];
+  bp->end = W(src_start) + ovec[0];
   mc->matchopt = PCRE2_PARTIAL_SOFT | PCRE2_DFA_SHORTEST | PCRE2_NOTEMPTY;
   mc->boundary_distance = ovec[0];
   DECODE_LAYER_DEBUG debug_printf_indent("set boundary_distance %u\n",
@@ -692,7 +692,7 @@ if (rc > 0)
 switch (rc)
   {
   case PCRE2_ERROR_NOMATCH:
-    bp->end = US src_end;			/* return all the data */
+    bp->end = W(src_end);			/* return all the data */
     mc->matchopt &= ~PCRE2_DFA_RESTART;
     return TRUE;
 
@@ -702,7 +702,7 @@ switch (rc)
     match does not include a lookahead assertion. So it should be safe to
     return that. */
     const PCRE2_SIZE * ovec = pcre2_get_ovector_pointer(mc->md);
-    bp->end = US src_start + ovec[1];
+    bp->end = W(src_start) + ovec[1];
     mc->matchopt |= PCRE2_DFA_RESTART;
     return TRUE;
     }
@@ -743,9 +743,9 @@ DECODE_LAYER_DEBUG debug_printf_indent("%s - refresh buffer pointers\n",
 expand_level++;
  {
   unsigned nsrc = 0;
-  mc->lwr_end = bp->ptr = bp->buf = US inp_getbuf_nr(inp->in_lower, &nsrc);
+  mc->lwr_end = bp->ptr = bp->buf = W(inp_getbuf_nr(inp->in_lower, &nsrc));
   if (!bp->ptr)					/* ensure non-error state */
-    bp->ptr = bp->end = bp->buf = US 1;
+    bp->ptr = bp->end = bp->buf = (void *) 1;
  }
 expand_level--;
 }
@@ -801,7 +801,7 @@ DECODE_LAYER_DEBUG debug_printf_indent("%s\n", __FUNCTION__);
 new->in_private = mc;
 new->in_bufp = bp;
 new->in_lower = inp;
-bp->buf = bp->ptr = bp->end = US 1;			/* non-error status */
+bp->buf = bp->ptr = bp->end = (void *) 1;			/* non-error status */
 mc->re = re;
 mc->mctx = mctx;
 mc->md = md;
