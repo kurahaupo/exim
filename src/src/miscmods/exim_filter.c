@@ -397,7 +397,7 @@ while (*++ptr && *ptr != '\"' && *ptr != '\n')
         }
       }
 
-    *bp++ = string_interpret_escape(CUSS &ptr);
+    *bp++ = string_interpret_escape(&ptr);
     }
   }
 
@@ -430,7 +430,7 @@ get_number(const uschar *s, BOOL *ok)
 {
 int value, count;
 *ok = FALSE;
-if (sscanf(CS s, "%i%n", &value, &count) != 1) return 0;
+if (sscanf(C(s), "%i%n", &value, &count) != 1) return 0;
 if (tolower(s[count]) == 'k') { value *= 1024; count++; }
 if (tolower(s[count]) == 'm') { value *= 1024*1024; count++; }
 while (isspace(s[count])) count++;
@@ -1028,7 +1028,7 @@ switch (command)
 	  if (isdigit(*ptr))
 	    {
 	    ptr = nextword(ptr, buffer, sizeof(buffer), FALSE);
-	    second_argument.i = (int)Ustrtol(buffer, NULL, 8);
+	    second_argument.i = (int)strtol(C(buffer), NULL, 8);
 	    }
 	  else second_argument.i = -1;
 	  }
@@ -1849,7 +1849,7 @@ while (commands)
       for (i = 0; i < 2; i++)
 	{
 	const uschar *ss = expargs[i];
-	uschar *end;
+	const uschar *end;
 
 	if (i == 1 && (*ss++ != 'n' || ss[1] != 0))
 	  {
@@ -1945,7 +1945,7 @@ while (commands)
 	af_ignore_error flag if necessary, and the errors address, which can be
 	set in a system filter and to the local address in user filters. */
 
-	addr = deliver_make_addr(US expargs[0], TRUE);  /* TRUE => copy s, so deconst ok */
+	addr = deliver_make_addr(expargs[0], TRUE);  /* TRUE => copy s, so deconst ok */
 	addr->prop.errors_address = !s ? NULL : string_copy(s); /* Default is NULL */
 	if (commands->noerror) addr->prop.ignore_error = TRUE;
 	addr->next = *generated;
@@ -1987,7 +1987,7 @@ while (commands)
 	af_pfr and af_file flags, the af_ignore_error flag if necessary, and the
 	mode value. */
 
-	addr = deliver_make_addr(US s, TRUE);  /* TRUE => copy s, so deconst ok */
+	addr = deliver_make_addr(s, TRUE);  /* TRUE => copy s, so deconst ok */
 	setflag(addr, af_pfr);
 	setflag(addr, af_file);
 	if (commands->noerror) addr->prop.ignore_error = TRUE;
@@ -2017,7 +2017,7 @@ while (commands)
 	each command argument is expanded in the transport after the command
 	has been split up into separate arguments. */
 
-	addr = deliver_make_addr(US s, TRUE);  /* TRUE => copy s, so deconst ok */
+	addr = deliver_make_addr(s, TRUE);  /* TRUE => copy s, so deconst ok */
 	setflag(addr, af_pfr);
 	setflag(addr, af_expand_pipe);
 	if (commands->noerror) addr->prop.ignore_error = TRUE;
@@ -2148,7 +2148,7 @@ while (commands)
 	  int sep = 0;
 	  const uschar * list = s;
 
-	  for (uschar * ss; ss = string_nextinlist(&list, &sep, NULL, 0); )
+	  for (const uschar * ss; ss = string_nextinlist(&list, &sep, NULL, 0); )
 	    header_remove(0, ss);
 	  }
 
@@ -2179,9 +2179,9 @@ while (commands)
       ff_ret = FF_FREEZE;
 
     DEFERFREEZEFAIL:
-      *error_pointer = fmsg = US string_printing(Ustrlen(expargs[0]) > 1024
+      *error_pointer = fmsg = W(string_printing(Ustrlen(expargs[0]) > 1024
 	? string_sprintf("%.1000s ... (truncated)", expargs[0])
-	: string_copy(expargs[0]));
+	: string_copy(expargs[0])));
       for(uschar * t = fmsg; *t; t++)
 	if (!t[1] && *t == '\n') { *t = '\0'; break; }	/* drop trailing newline */
 
@@ -2333,12 +2333,12 @@ while (commands)
 	    const uschar * arg = commands->args[i].u;
 	    if (arg)
 	      {
-	      int len = Ustrlen(mailargs[i]);
+	      int len = strlen(mailargs[i]);
 	      int indent = ANY_DEBUG ? expand_level : 0;
 	      while (len++ < 7 + indent) printf(" ");
 	      printf("%s: %s%s\n", mailargs[i], string_printing(arg),
 		(  commands->args[mailarg_index_expand].u
-		&& Ustrcmp(mailargs[i], "file") == 0) ? " (expanded)" : "");
+		&& strcmp(mailargs[i], "file") == 0) ? " (expanded)" : "");
 	      }
 	    }
 	  if (commands->args[mailarg_index_return].u)
@@ -2375,13 +2375,13 @@ while (commands)
 	      const uschar *arg = commands->args[i].u;
 	      if (arg)
 		{
-		int len = Ustrlen(mailargs[i]);
+		int len = strlen(mailargs[i]);
 		if (len > 14) len = 14;
 		expand_level += len;
 		debug_printf_indent("%s: %s%s\n", mailargs[i],
 		  string_printing(arg),
 		  (commands->args[mailarg_index_expand].u != NULL &&
-		    Ustrcmp(mailargs[i], "file") == 0)? " (expanded)" : "");
+		    strcmp(mailargs[i], "file") == 0)? " (expanded)" : "");
 		expand_level -= len;
 		}
 	      }
@@ -2432,7 +2432,7 @@ while (commands)
 	    addr = deliver_make_addr(string_from_gstring(log_addr), FALSE);
 	  else
 	    {
-	    addr = deliver_make_addr(US ">**bad-reply**", FALSE);
+	    addr = deliver_make_addr(US">**bad-reply**", FALSE);
 	    setflag(addr, af_bad_reply);
 	    }
 
@@ -2470,7 +2470,8 @@ while (commands)
 	  for (i = 1; i < mailargs_string_passed; i++)
 	    {
 	    const uschar *ss = commands->args[i].u;
-	    *(USS((US addr->reply) + reply_offsets[i])) =
+	    *(const uschar**)((char *)addr->reply + reply_offsets[i]) =
+	    ((const uschar**)addr->reply)[ reply_offsets[i] ] =
 	      ss ? string_copy(ss) : NULL;
 	    }
 	  }
@@ -2593,7 +2594,7 @@ if (filter_test != FTEST_NONE || IS_DEBUG(filter))
       break;
     }
 
-  if (filter_test != FTEST_NONE) printf("%s\n", CS s);
+  if (filter_test != FTEST_NONE) printf("%s\n", C(s));
     else debug_printf_indent("%s\n", s);
   }
 
