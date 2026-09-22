@@ -1121,7 +1121,7 @@ should not be one active. */
 
 # define ALARM(seconds) \
     ANY_DEBUG \
-    ? (sigalarm_setter = CUS __FUNCTION__, alarm(seconds)) : alarm(seconds);
+    ? (sigalarm_setter = U(__FUNCTION__), alarm(seconds)) : alarm(seconds);
 # define ALARM_CLR(seconds) \
     ANY_DEBUG \
     ? (sigalarm_setter = NULL, alarm(seconds)) : alarm(seconds);
