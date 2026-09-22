@@ -1008,12 +1008,12 @@ if (!base || !*base || Ustrchr(base, '/') != NULL) goto cleanup;
 
 cwd_fd = open(".", dir_flags);
 if (cwd_fd < 0 || fstat(cwd_fd, &sb) != 0 || !S_ISDIR(sb.st_mode)) goto cleanup;
-dir_fd = open(CS dir, dir_flags);
+dir_fd = open(C(dir), dir_flags);
 if (dir_fd < 0 || fstat(dir_fd, &sb) != 0 || !S_ISDIR(sb.st_mode)) goto cleanup;
 
 /* emulate openat */
 if (fchdir(dir_fd) != 0) goto cleanup;
-base_fd = open(CS base, O_RDONLY | base_flags);
+base_fd = open(C(base), O_RDONLY | base_flags);
 if (fchdir(cwd_fd) != 0)
   log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
 
@@ -1044,7 +1044,7 @@ if (operation == PID_WRITE)
       int error = -1;
       /* emulate unlinkat */
       if (fchdir(dir_fd) != 0) goto cleanup;
-      error = unlink(CS base);
+      error = unlink(C(base));
       if (fchdir(cwd_fd) != 0)
         log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
       if (error) goto cleanup;
@@ -1053,7 +1053,7 @@ if (operation == PID_WRITE)
      }
     /* emulate openat */
     if (fchdir(dir_fd) != 0) goto cleanup;
-    base_fd = open(CS base, O_WRONLY | O_CREAT | O_EXCL | base_flags, base_mode);
+    base_fd = open(C(base), O_WRONLY | O_CREAT | O_EXCL | base_flags, base_mode);
     if (fchdir(cwd_fd) != 0)
         log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
     if (base_fd < 0) goto cleanup;
@@ -1070,7 +1070,7 @@ else
     int error = -1;
     /* emulate unlinkat */
     if (fchdir(dir_fd) != 0) goto cleanup;
-    error = unlink(CS base);
+    error = unlink(C(base));
     if (fchdir(cwd_fd) != 0)
         log_write_die(LOG_MAIN, "can't return to previous working dir: %s", strerror(errno));
     if (error) goto cleanup;
@@ -1158,7 +1158,7 @@ return offsetof(struct sockaddr_un, sun_path) + 1
 #else
 *sname = string_sprintf("%s/p_" PID_T_FMT, spool_directory, getpid());
 return offsetof(struct sockaddr_un, sun_path)
-  + snprintf(sup->sun_path, sizeof(sup->sun_path), "%s", CS *sname);
+  + snprintf(sup->sun_path, sizeof(sup->sun_path), "%s", C(*sname));
 #endif
 }
 
@@ -1170,12 +1170,12 @@ GET_OPTION("notifier_socket");
 sup->sun_path[0] = 0;  /* Abstract local socket addr - Linux-specific? */
 return offsetof(struct sockaddr_un, sun_path) + 1
   + snprintf(sup->sun_path+1, sizeof(sup->sun_path)-1, "%s",
-              CS expand_string(notifier_socket));
+              C(expand_string(notifier_socket)));
 #else
 notifier_socket_name = expand_string(notifier_socket);
 return offsetof(struct sockaddr_un, sun_path)
   + snprintf(sup->sun_path, sizeof(sup->sun_path), "%s",
-              CS notifier_socket_name);
+              C(notifier_socket_name));
 #endif
 }
 
@@ -1357,7 +1357,7 @@ switch (buf[0])
   case NOTIFY_QUEUE_SIZE_REQ:
     {
     uschar qsbuf[16];
-    int len = snprintf(CS qsbuf, sizeof(qsbuf), "%u", queue_count_cached());
+    int len = snprintf(C(qsbuf), sizeof(qsbuf), "%u", queue_count_cached());
 
     DEBUG(queue_run)
       debug_printf("%s: queue size request: %s\n", __FUNCTION__, qsbuf);
@@ -1741,13 +1741,13 @@ if (is_multiple_qrun())
       {
       queue_name = q->name;
       local_queue_run_max +=
-	(q->run_max = atoi(CS expand_string(queue_run_max)));
+	(q->run_max = atoi(C(expand_string(queue_run_max))));
       }
     queue_name = US"";
     }
   else
     {
-    local_queue_run_max = atoi(CS expand_string(queue_run_max));
+    local_queue_run_max = atoi(C(expand_string(queue_run_max)));
     for (qrunner * q = qrunners; q; q = q->next)
       q->run_max = local_queue_run_max;
     }
@@ -1800,7 +1800,7 @@ if (f.inetd_wait_mode)
   our own buffering; we assume though that inetd set the socket REUSEADDR. */
 
   if (tcp_nodelay)
-    if (setsockopt(3, IPPROTO_TCP, TCP_NODELAY, US &on, sizeof(on)))
+    if (setsockopt(3, IPPROTO_TCP, TCP_NODELAY, U(&on), sizeof(on)))
       log_write_die(LOG_MAIN, "failed to set socket NODELAY: %s",
 	strerror(errno));
   }
@@ -1892,7 +1892,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
   {
   int * default_smtp_port;
   int pct = 0;
-  uschar * s;
+  const uschar * s;
   const uschar * list;
   uschar * local_iface_source = US"local_interfaces";
   ip_address_item * ipa, ** pipa;
@@ -1959,14 +1959,14 @@ if (f.daemon_listen && !f.inetd_wait_mode)
   for (int sep = 0; s = string_nextinlist(&list, &sep, NULL, 0); pct++)
     if (isdigit(*s))
       {
-      uschar * end;
+      typeof(s) end;
       default_smtp_port[pct] = Ustrtol(s, &end, 0);
       if (*end)
         log_write_die(LOG_CONFIG, "invalid SMTP port: %s", s);
       }
     else
       {
-      struct servent * smtp_service = getservbyname(CS s, "tcp");
+      struct servent * smtp_service = getservbyname(C(s), "tcp");
       if (!smtp_service)
         log_write_die(LOG_CONFIG, "TCP port %q not found", s);
       default_smtp_port[pct] = ntohs(smtp_service->s_port);
@@ -1992,7 +1992,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
 	  g = string_append_listele(g, ':', s);
 	else
 	  {
-	  struct servent * smtp_service = getservbyname(CS s, "tcp");
+	  struct servent * smtp_service = getservbyname(C(s), "tcp");
 	  if (!smtp_service)
 	    log_write_die(LOG_CONFIG, "TCP port %q not found", s);
 	  g = string_append_listele_fmt(g, ':', FALSE, "%d",
@@ -2273,7 +2273,7 @@ if (f.daemon_listen && !f.inetd_wait_mode)
         (void)close(fd);
         goto SKIP_SOCKET;
         }
-      msg = US strerror(errno);
+      msg = U(strerror(errno));
       addr = wildcard
         ? af == AF_INET6
 	? US"(any IPv6)"
@@ -2408,7 +2408,7 @@ coming from Exim, not whoever started the daemon. */
 originator_uid = exim_uid;
 originator_gid = exim_gid;
 originator_login = (pw = getpwuid(exim_uid))
-  ? string_copy_perm(US pw->pw_name, FALSE) : US"exim";
+  ? string_copy_perm(U(pw->pw_name), FALSE) : US"exim";
 
 /* Get somewhere to keep the list of queue-runner pids if we are keeping track
 of them (and also if we are doing queue runs). */
@@ -2446,9 +2446,9 @@ if (f.inetd_wait_mode)
   uschar * p = big_buffer;
 
   if (inetd_wait_timeout >= 0)
-    sprintf(CS p, "terminating after %d seconds", inetd_wait_timeout);
+    sprintf(C(p), "terminating after %d seconds", inetd_wait_timeout);
   else
-    sprintf(CS p, "with no wait timeout");
+    sprintf(C(p), "with no wait timeout");
 
   log_write(LOG_MAIN, "exim %s daemon started: pid=" PID_T_FMT
 			  ", launched with listening socket, %s",
@@ -2575,11 +2575,11 @@ else if (f.daemon_listen)
     if (j == 0)
       {
       if (smtp_ports > 0)
-	p += snprintf(CS p, (size_t)bsize, "SMTP on");
+	p += snprintf(C(p), (size_t)bsize, "SMTP on");
       }
     else
       if (smtps_ports > 0)
-	p += snprintf(CS p, (size_t)bsize, "%sSMTPS on",
+	p += snprintf(C(p), (size_t)bsize, "%sSMTPS on",
 	  smtp_ports == 0 ? "" : " and for ");
     bsize -= p - big_buffer;
 
@@ -2589,12 +2589,12 @@ else if (f.daemon_listen)
       if (host_is_tls_on_connect_port(ipa->port) == (j > 0))
 	if (ipa->log)
 	  {
-	  int l = snprintf(CS p, (size_t)bsize, "%s",  ipa->log);
+	  int l = snprintf(C(p), (size_t)bsize, "%s",  ipa->log);
 	  p += l; bsize -= l;
 	  }
 
     if (ipa)
-      { p += snprintf(CS p, (size_t)bsize, " ..."); bsize -= 4; }
+      { p += snprintf(C(p), (size_t)bsize, " ..."); bsize -= 4; }
     }
 
   log_write(LOG_MAIN,
@@ -2874,7 +2874,7 @@ for (;;)
 #ifdef TCP_QUICKACK /* Avoid pure-ACKs while in tls protocol pingpong phase */
 	/* Unfortunately we cannot be certain to do this before a TLS-on-connect
 	Client Hello arrives and is acked. We do it as early as possible. */
-	(void) setsockopt(accept_socket, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+	(void) setsockopt(accept_socket, IPPROTO_TCP, TCP_QUICKACK, U(&off), sizeof(off));
 #endif
         if (inetd_wait_timeout)
           last_connection_time = time(NULL);
@@ -2925,7 +2925,7 @@ for (;;)
     signal(SIGHUP, SIG_IGN);
     sighup_argv[0] = exim_path;
     exim_nullstd();
-    execv(CS exim_path, (char *const *)sighup_argv);
+    execv(C(exim_path), (char *const *)sighup_argv);
     log_write_die(LOG_MAIN, "pid " PID_T_FMT ": exec of %s failed: %s",
       getpid(), exim_path, strerror(errno));
     /*NOTREACHED*/
