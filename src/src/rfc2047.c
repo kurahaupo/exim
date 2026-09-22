@@ -60,8 +60,8 @@ for (len = 0; ch = *string++; len++)
 
     if (!isxdigit(a) || !isxdigit(b))
       return -1;  /* Bad QP string */
-    *ptr++ = ((Ustrchr(hex_digits, tolower(a)) - hex_digits) << 4) +
-               Ustrchr(hex_digits, tolower(b)) - hex_digits;
+    *ptr++ = ((strchr(hex_digits, tolower(a)) - hex_digits) << 4) +
+               strchr(hex_digits, tolower(b)) - hex_digits;
     string += 2;
     }
   else if (ch == ' ' || ch == '\t')
@@ -239,7 +239,7 @@ while (mimeword)
 
     if (strcmpic(target, src_chset) != 0)
 #if HAVE_ICONV
-      if ((icd = iconv_open(CCS target, CCS src_chset)) == (iconv_t)-1)
+      if ((icd = iconv_open(C(target), C(src_chset))) == (iconv_t)-1)
 	*error = string_sprintf("iconv_open(%q, %q) failed: %s%s",
 	  target, src_chset, strerror(errno),
 	  errno == EINVAL ? " (maybe unsupported conversion)" : "");
@@ -262,7 +262,7 @@ while (mimeword)
 
     if (icd != (iconv_t)(-1))
       {
-      (void)iconv(icd, (ICONV_ARG2_TYPE)(&dptr), &dlen, CSS &outptr, &outleft);
+      (void)iconv(icd, (ICONV_ARG2_TYPE)(&dptr), &dlen, C(&outptr), &outleft);
 
       /* If outptr has been adjusted, there is some output. Set up to add it to
       the output buffer. The function will have adjusted (the input) dptr and
@@ -283,7 +283,7 @@ while (mimeword)
         {
 	tlen = (int)(endword + 2 - mimeword);
 
-	*error = US strerror(errno);
+	*error = U(strerror(errno));
         DEBUG(any) debug_printf("iconv error translating \"%.*s\" to %s: %s\n",
 		      tlen, mimeword, target, *error);
 	dlen = 0;
