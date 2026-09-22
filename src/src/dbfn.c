@@ -199,7 +199,7 @@ make the directory as well, just in case. We won't be doing this many times
 unnecessarily, because usually the lock file will be there. If the directory
 exists, there is no error. */
 
-dlen = snprintf(CS dirname, sizeof(dirname), "%s/db", spool_directory);
+dlen = snprintf(C(dirname), sizeof(dirname), "%s/db", spool_directory);
 
 dbblock->readonly = (flags & O_ACCMODE) == O_RDONLY;
 dbblock->lockfd = -1;
@@ -208,7 +208,7 @@ if (!exim_lockfile_needed())
 else
   {
   flen = Ustrlen(name);
-  snprintf(CS filename, sizeof(filename), "%.*s/%.*s.lockfile",
+  snprintf(C(filename), sizeof(filename), "%.*s/%.*s.lockfile",
 	    (int)sizeof(filename) - dlen - flen - 11, dirname,
 	    flen, name);
   if (!lockfile_take(dbblock, filename, flags == O_RDONLY, panic))
@@ -227,7 +227,7 @@ databases - often this is caused by non-matching db.h and the library. To make
 it easy to pin this down, there are now debug statements on either side of the
 open call. */
 
-snprintf(CS filename, sizeof(filename), "%.*s/%s", dlen, dirname, name);
+snprintf(C(filename), sizeof(filename), "%.*s/%s", dlen, dirname, name);
 
 priv_drop_temp(exim_uid, exim_gid);
 dbblock->dbptr = dbblock->readonly && !exim_lockfile_needed()
@@ -255,7 +255,7 @@ if (!dbblock->dbptr)
         filename));
   else
     DEBUG(hints_lookup)
-      debug_printf_indent("%s\n", CS string_open_failed("DB file %s",
+      debug_printf_indent("%s\n", string_open_failed("DB file %s",
           filename));
   (void)close(dbblock->lockfd);
   dbblock->lockfd = -1;
@@ -287,8 +287,8 @@ dbblock->lockfd = -1;
 dbblock->readonly = (flags & O_ACCMODE) == O_RDONLY;
 db_dir_make(TRUE);
 
-dlen = snprintf(CS dirname, sizeof(dirname), "%s/db", spool_directory);
-snprintf(CS filename, sizeof(filename), "%.*s/%s", dlen, dirname, name);
+dlen = snprintf(C(dirname), sizeof(dirname), "%s/db", spool_directory);
+snprintf(C(filename), sizeof(filename), "%.*s/%s", dlen, dirname, name);
 
 priv_drop_temp(exim_uid, exim_gid);
 dbblock->dbptr = exim_dbopen_multi(filename, dirname, flags & O_ACCMODE, EXIMDB_MODE);
@@ -313,7 +313,7 @@ if (!dbblock->dbptr)
         filename));
   else
     DEBUG(hints_lookup)
-      debug_printf_indent("%s\n", CS string_open_failed("DB file %s",
+      debug_printf_indent("%s\n", string_open_failed("DB file %s",
           filename));
   dbblock =  NULL;
   }
@@ -676,7 +676,7 @@ int current = -1;
 int showtime = 0;
 int i;
 dbdata_wait *dbwait = NULL;
-uschar **argv = USS cargv;
+uschar **argv = U(cargv);
 uschar buffer[256];
 uschar structbuffer[1024];
 
@@ -826,7 +826,7 @@ while (Ufgets(buffer, 256, stdin) != NULL)
     while (count-- > 0)
       dbwait = (dbdata_wait *)dbfn_read_with_length(dbblock+ current, key, NULL);
     stop = clock();
-    printf("%s\n", dbwait ? CS dbwait->text : "<not found>");
+    printf("%s\n", dbwait ? C(dbwait->text) : "<not found>");
     }
 
   else if (Ustrncmp(cmd, "delete", 6) == 0)
