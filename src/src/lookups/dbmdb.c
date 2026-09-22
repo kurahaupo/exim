@@ -55,17 +55,17 @@ rc = lf_check_file(-1, filename, S_IFREG, modemask, owners, owngroups,
 #else
   {
   uschar filebuffer[256];
-  (void)sprintf(CS filebuffer, "%.250s.db", filename);
+  (void)sprintf(C(filebuffer), "%.250s.db", filename);
   rc = lf_check_file(-1, filebuffer, S_IFREG, modemask, owners, owngroups,
     "dbm", errmsg);
   if (rc < 0)        /* stat() failed */
     {
-    (void)sprintf(CS filebuffer, "%.250s.dir", filename);
+    (void)sprintf(C(filebuffer), "%.250s.dir", filename);
     rc = lf_check_file(-1, filebuffer, S_IFREG, modemask, owners, owngroups,
       "dbm", errmsg);
     if (rc == 0)     /* x.dir was OK */
       {
-      (void)sprintf(CS filebuffer, "%.250s.pag", filename);
+      (void)sprintf(C(filebuffer), "%.250s.pag", filename);
       rc = lf_check_file(-1, filebuffer, S_IFREG, modemask, owners, owngroups,
         "dbm", errmsg);
       }
