@@ -43,7 +43,7 @@ int ret, sflags = (flags & O_ACCMODE) == O_RDONLY
 		  ? SQLITE_OPEN_READONLY : SQLITE_OPEN_READWRITE;
 
 if (flags & O_CREAT) sflags |= SQLITE_OPEN_CREATE;
-if ((ret = sqlite3_open_v2(CCS name, &dbp, sflags, NULL)) == SQLITE_OK)
+if ((ret = sqlite3_open_v2(C(name), &dbp, sflags, NULL)) == SQLITE_OK)
   {
   sqlite3_busy_timeout(dbp, 5000);
   if (flags & O_CREAT)
@@ -306,7 +306,7 @@ exim_dbclose_multi__(dbp);
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->data; }
+{ return (uschar *) dp->data; }
 
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
