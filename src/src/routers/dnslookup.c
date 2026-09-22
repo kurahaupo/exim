@@ -147,7 +147,7 @@ int whichrrs = HOST_FIND_BY_MX | HOST_FIND_BY_A | HOST_FIND_BY_AAAA;
 dnslookup_router_options_block * ob =
   (dnslookup_router_options_block *)(rblock->drinst.options_block);
 const uschar * srv_service = NULL;
-uschar * widen = NULL;
+const uschar * widen = NULL;
 const uschar * pre_widen = addr->domain, * post_widen = NULL;
 const uschar * fully_qualified_name, * listptr;
 uschar widen_buffer[256];
@@ -282,7 +282,7 @@ for (;;)
   DEBUG(route) debug_printf_indent("main lookup for domain\n");
    {
     expand_level++;
-    rc = host_find_bydns(&h, CUS rblock->ignore_target_hosts, flags,
+    rc = host_find_bydns(&h, RR(rblock->ignore_target_hosts), flags,
       srv_service, ob->srv_fail_domains, ob->mx_fail_domains,
       &rblock->dnssec, &fully_qualified_name, &removed);
     expand_level--;
@@ -297,7 +297,7 @@ for (;;)
   if ((rc == HOST_FOUND || rc == HOST_FOUND_LOCAL) && h.mx < 0 &&
        ob->mx_domains)
     switch(match_isinlist(fully_qualified_name,
-          CUSS &(ob->mx_domains), 0,
+          RR(&ob->mx_domains), 0,
           &domainlist_anchor, addr->domain_cache, MCL_DOMAIN, TRUE, NULL))
       {
       case DEFER:
@@ -337,7 +337,7 @@ for (;;)
 
   if (ob->fail_defer_domains)
     switch(match_isinlist(fully_qualified_name,
-	  CUSS &ob->fail_defer_domains, 0,
+	  RR(&ob->fail_defer_domains), 0,
 	  &domainlist_anchor, addr->domain_cache, MCL_DOMAIN, TRUE, NULL))
       {
       case DEFER:
@@ -408,7 +408,7 @@ if (Ustrcmp(addr->domain, fully_qualified_name) != 0)
   {
   if (strcmpic(addr->domain, fully_qualified_name) == 0)
     {
-    uschar *at = Ustrrchr(addr->address, '@');
+    uschar *at = Ustrrchr(W(addr->address), '@');
     memcpy(at+1, fully_qualified_name, Ustrlen(at+1));
     }
   else
