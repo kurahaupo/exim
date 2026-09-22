@@ -41,7 +41,7 @@ if ((ret = mdb_env_create(&db_env)))
   goto bad;
   }
 
-if ((ret = mdb_env_open(db_env, CS filename, MDB_NOSUBDIR|MDB_RDONLY, 0660)))
+if ((ret = mdb_env_open(db_env, C(filename), MDB_NOSUBDIR|MDB_RDONLY, 0660)))
   {
   errstr = string_sprintf("open environment with %s", filename);
   goto bad;
@@ -84,14 +84,14 @@ int ret;
 MDB_val dbkey, data;
 Lmdbstrct * lmdb_p = handle;
 
-dbkey.mv_data = CS keystring;
+dbkey.mv_data = C(keystring);
 dbkey.mv_size = length;
 
-DEBUG(lookup) debug_printf_indent("LMDB: lookup key: %s\n", CS keystring);
+DEBUG(lookup) debug_printf_indent("LMDB: lookup key: %s\n", C(keystring));
 
 if ((ret = mdb_get(lmdb_p->txn, lmdb_p->db_dbi, &dbkey, &data)) == 0)
   {
-  *result = string_copyn(US data.mv_data, data.mv_size);
+  *result = string_copyn(U(data.mv_data), data.mv_size);
   DEBUG(lookup) debug_printf_indent("LMDB: lookup result: %s\n", *result);
   return OK;
   }
