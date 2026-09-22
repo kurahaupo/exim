@@ -76,7 +76,7 @@ ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
 {
 #ifdef IPV6_USE_INET_PTON
 
-  if (inet_pton(AF_INET6, CCS address, &saddr->sin6_addr) != 1)
+  if (inet_pton(AF_INET6, C(address), &saddr->sin6_addr) != 1)
     log_write_die(LOG_MAIN, "unable to parse %q as an "
       "IP address", address);
   saddr->sin6_family = AF_INET6;
@@ -89,7 +89,7 @@ ip_addrinfo(const uschar *address, struct sockaddr_in6 *saddr)
   hints.ai_family = AF_INET6;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_NUMERICHOST;
-  if ((rc = getaddrinfo(CCS address, NULL, &hints, &res)) != 0 || res == NULL)
+  if ((rc = getaddrinfo(C(address), NULL, &hints, &res)) != 0 || res == NULL)
     log_write_die(LOG_MAIN, "unable to parse %q as an "
       "IP address: %s", address,
       rc == 0 ? "NULL result returned" : gai_strerror(rc));
@@ -137,7 +137,7 @@ else
   sin->v4.sin_port = htons(port);
   sin->v4.sin_addr.s_addr = address[0] == 0
     ? (S_ADDR_TYPE)INADDR_ANY
-    : (S_ADDR_TYPE)inet_addr(CS address);
+    : (S_ADDR_TYPE)inet_addr(C(address));
   return sizeof(sin->v4);
   }
 }
@@ -220,7 +220,7 @@ IPv6 support. */
   memset(&s_in4, 0, sizeof(s_in4));
   s_in4.sin_family = AF_INET;
   s_in4.sin_port = htons(port);
-  s_in4.sin_addr.s_addr = (S_ADDR_TYPE)inet_addr(CCS address);
+  s_in4.sin_addr.s_addr = (S_ADDR_TYPE)inet_addr(C(address));
   s_ptr = (struct sockaddr *)&s_in4;
   s_len = sizeof(s_in4);
   }
@@ -497,7 +497,7 @@ uschar hostname[256];
 unsigned int portlow, porthigh;
 
 /* extract host and port part */
-scan = sscanf(CS hostport, "%255s %u-%u", hostname, &portlow, &porthigh);
+scan = sscanf(C(hostport), "%255s %u-%u", hostname, &portlow, &porthigh);
 if (scan != 3)
   {
   if (scan != 2)
@@ -526,7 +526,7 @@ if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 
 callout_address = string_copy(path);
 server.sun_family = AF_UNIX;
-Ustrncpy(US server.sun_path, path, sizeof(server.sun_path)-1);
+Ustrncpy(U(server.sun_path), path, sizeof(server.sun_path)-1);
 server.sun_path[sizeof(server.sun_path)-1] = '\0';
 if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0)
   {
@@ -570,7 +570,7 @@ Returns:     nothing
 void
 ip_keepalive(int sock, const uschar * address, BOOL torf)
 {
-if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, US (&on), sizeof(on)) != 0)
+if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)) != 0)
   log_write(LOG_MAIN, "setsockopt(SO_KEEPALIVE) on connection %s %s "
     "failed: %s", torf ? "to":"from", address, strerror(errno));
 }
