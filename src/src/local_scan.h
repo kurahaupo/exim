@@ -197,7 +197,7 @@ extern BOOL    is_debug(const uschar *);
 
 extern const uschar * expand_string_2(const uschar *, BOOL *);
 static inline uschar * expand_nc_string(uschar * s)
-{ return US expand_string_2(s, NULL); }
+{ return W(expand_string_2(s, NULL)); }
 static inline const uschar * expand_c_string(const uschar * s)
 { return expand_string_2(s, NULL); }
 
@@ -228,8 +228,8 @@ extern void    smtp_printf(const char *, int, ...) PRINTF_FUNCTION(1,3);
 extern void    smtp_vprintf(const char *, BOOL, va_list);
 
 #define string_sprintf(fmt, ...) \
-	string_sprintf_trc(fmt, US __FUNCTION__, __LINE__, __VA_ARGS__)
-extern uschar *string_sprintf_trc(const char *, const uschar *, unsigned, ...) ALMOST_PRINTF(1,4);
+	string_sprintf_trc(fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
+extern uschar *string_sprintf_trc(const char *, const char *, unsigned, ...) ALMOST_PRINTF(1,4);
 
 #define store_get(size, proto_mem) \
 	store_get_3((size), (proto_mem), __FUNCTION__, __LINE__)
