@@ -122,7 +122,7 @@ if (!minimal)
   DEBUG(any)
     {
     argv[n++] = US"-MCd";
-    argv[n++] = US process_purpose;
+    argv[n++] = process_purpose;
     }
   if (!f.testsuite_delays)	argv[n++] = US"-odd";
   if (f.dont_deliver)		argv[n++] = US"-N";
@@ -160,9 +160,9 @@ if (exec_type == CEE_RETURN_ARGV)
 failure. We know that there will always be at least one extra option in the
 call when exec() is done here, so it can be used to add to the panic data. */
 
-DEBUG(exec) debug_print_argv(CUSS argv);
+DEBUG(exec) debug_print_argv(argv);
 exim_nullstd();                            /* Make sure std{in,out,err} exist */
-execv(CS argv[0], (char *const *)argv);
+execv(C(argv[0]), (char *const *)argv);
 
 log_write(LOG_MAIN | (exec_type == CEE_EXEC_EXIT ? LOG_PANIC : LOG_PANIC_DIE),
   "re-exec of exim (%s) with %s failed: %s", exim_path, argv[first_special],
@@ -253,11 +253,11 @@ if (pid == 0)
     {
     if (sender_authentication)
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 9,
-        US "-odi", US"-t", US"-oem", US"-oi", US"-f", sender, US"-oMas",
+        US"-odi", US"-t", US"-oem", US"-oi", US"-f", sender, US"-oMas",
         sender_authentication, message_id_option);
     else
       child_exec_exim(CEE_EXEC_EXIT, FALSE, NULL, FALSE, 7,
-        US "-odi", US"-t", US"-oem", US"-oi", US"-f", sender,
+        US"-odi", US"-t", US"-oem", US"-oi", US"-f", sender,
         message_id_option);
     /* Control does not return here. */
     }
@@ -396,8 +396,8 @@ if (pid == 0)
 
   /* Now do the exec */
 
-  if (envp) execve(CS argv[0], (char *const *)argv, (char *const *)envp);
-  else execv(CS argv[0], (char *const *)argv);
+  if (envp) execve(C(argv[0]), (char *const *)argv, (char *const *)envp);
+  else execv(C(argv[0]), (char *const *)argv);
 
   /* Failed to execv. Signal this failure using EX_EXECFAILED. We are
   losing the actual errno we got back, because there is no way to return
@@ -496,7 +496,7 @@ pid_t
 child_open_function(uschar **argv, uschar **envp, int newumask, int *infdptr,
   int *outfdptr, BOOL make_leader, const uschar * purpose)
 {
-return child_open_uid(CUSS argv, CUSS envp, newumask, NULL, NULL,
+return child_open_uid(R(argv), R(envp), newumask, NULL, NULL,
   infdptr, outfdptr, NULL, make_leader, purpose);
 }
 
