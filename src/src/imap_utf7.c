@@ -57,7 +57,7 @@ sptr = string;
 slen = Ustrlen(string);
 
 #if HAVE_ICONV
-if ((icd = iconv_open("UTF-16BE", CCS charset)) == (iconv_t)-1)
+if ((icd = iconv_open("UTF-16BE", C(charset))) == (iconv_t)-1)
   {
   *error = string_sprintf(
 	"imapfolder: iconv_open(\"UTF-16BE\", %q) failed: %s%s",
@@ -73,7 +73,7 @@ while (slen > 0)
   size_t left = sizeof(utf16buf);
   utf16ptr = utf16buf;
 
-  if (  iconv(icd, (ICONV_ARG2_TYPE)&sptr, &slen, CSS &utf16ptr, &left)
+  if (  iconv(icd, (ICONV_ARG2_TYPE)&sptr, &slen, C(&utf16ptr), &left)
 		== (size_t)-1
      && errno != E2BIG
 	 )
