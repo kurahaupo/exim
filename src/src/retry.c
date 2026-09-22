@@ -718,11 +718,11 @@ for (int i = 0; i < 3; i++)
         records have a maximum data length, we enforce a limit. There isn't
         much point in keeping a huge message here, anyway. */
 
-        message = rti->basic_errno > 0
-	  ? US strerror(rti->basic_errno)
+        message = W(rti->basic_errno > 0
+	  ? U(strerror(rti->basic_errno))
 	  : rti->message
-	  ? US string_printing(rti->message)
-	  : US"unknown error";
+	  ? string_printing(rti->message)
+	  : US"unknown error");
         message_length = Ustrlen(message);
         if (message_length > EXIM_DB_RLIMIT)
 	  {
