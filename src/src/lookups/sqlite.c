@@ -35,7 +35,7 @@ if (!filename || !*filename)
   }
 if (!filename || *filename != '/')
   *errmsg = US"absolute file name expected for \"sqlite\" lookup";
-else if ((ret = sqlite3_open(CCS filename, &db)) != 0)
+else if ((ret = sqlite3_open(C(filename), &db)) != 0)
   {
   *errmsg = string_copy(US sqlite3_errmsg(db));
   sqlite3_close(db);
@@ -71,12 +71,12 @@ if (argc > 1)
   for (int i = 0; i < argc; i++)
     {
     uschar * value = US(argv[i] ? argv[i] : "<NULL>");
-    res = lf_quote(US azColName[i], value, Ustrlen(value), res);
+    res = lf_quote(U(azColName[i]), value, Ustrlen(value), res);
     }
   }
 
 else
-  res = string_cat(res, argv[0] ? US argv[0] : US "<NULL>");
+  res = string_cat(res, argv[0] ? U(argv[0]) : US "<NULL>");
 
 /* always return a non-null gstring, even for a zero-length string result */
 *(gstring **)arg = res ? res : string_get(1);
@@ -92,7 +92,7 @@ sqlite_find(void * handle, const uschar * filename, const uschar * query,
 int ret;
 gstring * res = NULL;
 
-ret = sqlite3_exec(handle, CS query, sqlite_callback, &res, CSS errmsg);
+ret = sqlite3_exec(handle, C(query), sqlite_callback, &res, C(errmsg));
 if (ret != SQLITE_OK)
   {
   debug_printf_indent("sqlite3_exec failed: %s\n", *errmsg);
