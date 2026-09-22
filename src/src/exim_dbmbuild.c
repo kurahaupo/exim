@@ -40,37 +40,49 @@ uschar * spool_directory = NULL;	/* dummy for hintsdb.h */
 void
 millisleep(int msec)
 {}
+
 uschar *
 readconf_printtime(int t)
 { return NULL; }
+
 const uschar * expand_string_2(const uschar * string, BOOL * textonly_p)
 { return NULL; }
+
 void *
 store_get_3(int size, const void * proto_mem, const char *filename, int linenumber)
 { return NULL; }
+
 void **
 store_reset_3(void **ptr, const char *filename, int linenumber)
 { return NULL; }
+
 void
 store_release_above_3(void *ptr, const char *func, int linenumber)
 { }
+
 gstring *
 string_catn(gstring * g, const uschar * s, int count)
 { return NULL; }
+
 gstring *
-string_vformat_trc(gstring * g, const uschar * func, unsigned line,
-  unsigned size_limit, unsigned flags, const char *format, va_list ap)
+string_vformat_trc(gstring * g, const char * func, unsigned line,
+		   unsigned size_limit, unsigned flags, const char *format,
+		   va_list ap)
 { return NULL; }
+
 uschar *
-string_sprintf_trc(const char * a, const uschar * b, unsigned c, ...)
+string_sprintf_trc(const char * a, const char * b, unsigned c, ...)
 { return NULL; }
+
 BOOL
-string_format_trc(uschar * buf, int len, const uschar * func, unsigned line,
-  const char * fmt, ...)
+string_format_trc(uschar * buf, int len, const char * func, unsigned line,
+		  const char * fmt, ...)
 { return FALSE; }
+
 void
 log_write(int flags, const char *format, ...)
 { }
+
 const uschar * parse_find_address_end_gen(const uschar * s, BOOL b)
 {return NULL; }
 
@@ -91,7 +103,7 @@ BOOL			split_spool_directory;
 /* This is global because it's defined in the headers and compilers grumble
 if it is made static. */
 
-const uschar *hex_digits = CUS"0123456789abcdef";
+const char hex_digits[] = "0123456789abcdef";  /* copied from global.c */
 
 
 /*******************
@@ -140,7 +152,7 @@ return sys_errlist[n];
 
 Arguments:
   pp       points a pointer to the initiating "\" in the string;
-           the pointer gets updated to point to the final character
+	   the pointer gets updated to point to the final character
 Returns:   the value of the character escape
 */
 
@@ -170,10 +182,11 @@ else switch(ch)
   ch = 0;
   if (isxdigit(p[1]))
     {
-    ch = ch * 16 +
-      Ustrchr(hex_digits, tolower(*(++p))) - hex_digits;
-    if (isxdigit(p[1])) ch = ch * 16 +
-      Ustrchr(hex_digits, tolower(*(++p))) - hex_digits;
+    ch <<= 4, ch |=
+      strchr(hex_digits, tolower(*++p)) - hex_digits;
+    if (isxdigit(p[1]))
+      ch <<= 4, ch |=
+	strchr(hex_digits, tolower(*++p)) - hex_digits;
     }
   break;
   }
@@ -218,11 +231,11 @@ if (!buffer || !line)
 
 while (argc > 1)
   {
-  if      (Ustrcmp(argv[arg], "-nolc") == 0)     lowercase = FALSE;
-  else if (Ustrcmp(argv[arg], "-nowarn") == 0)   warn = FALSE;
-  else if (Ustrcmp(argv[arg], "-lastdup") == 0)  lastdup = TRUE;
-  else if (Ustrcmp(argv[arg], "-noduperr") == 0) duperr = FALSE;
-  else if (Ustrcmp(argv[arg], "-nozero") == 0)   add_zero = 0;
+  if      (strcmp(argv[arg], "-nolc") == 0)     lowercase = FALSE;
+  else if (strcmp(argv[arg], "-nowarn") == 0)   warn = FALSE;
+  else if (strcmp(argv[arg], "-lastdup") == 0)  lastdup = TRUE;
+  else if (strcmp(argv[arg], "-noduperr") == 0) duperr = FALSE;
+  else if (strcmp(argv[arg], "-nozero") == 0)   add_zero = 0;
   else break;
   arg++;
   argc--;
@@ -234,7 +247,7 @@ if (argc != 3)
   exit(EXIT_FAILURE);
   }
 
-if (Ustrcmp(argv[arg], "-") == 0)
+if (strcmp(argv[arg], "-") == 0)
   f = stdin;
 else if (!(f = fopen(argv[arg], "rb")))
   {
@@ -246,7 +259,7 @@ else if (!(f = fopen(argv[arg], "rb")))
 can be painful! */
 
 #if defined(USE_DB) || defined(USE_TDB) || defined(USE_GDBM) && !defined(USE_SQLITE)
-if (Ustrcmp(argv[arg], argv[arg+1]) == 0)
+if (strcmp(argv[arg], argv[arg+1]) == 0)
   {
   printf("exim_dbmbuild: input and output filenames are the same\n");
   exit(EXIT_FAILURE);
@@ -262,14 +275,14 @@ if (strlen(argv[arg+1]) > sizeof(temp_dbmname) - 20)
   exit(EXIT_FAILURE);
   }
 
-Ustrcpy(temp_dbmname, US argv[arg+1]);
-Ustrcat(temp_dbmname, US".dbmbuild_temp");
+strcpy(C(temp_dbmname), argv[arg+1]);
+strcat(C(temp_dbmname), ".dbmbuild_temp");
 
-Ustrcpy(dirname, temp_dbmname);
+strcpy(C(dirname), temp_dbmname);
 if ((bptr = Ustrrchr(dirname, '/')))
   *bptr = '\0';
 else
-  Ustrcpy(dirname, US".");
+  strcpy(C(dirname), ".");
 
 /* It is apparently necessary to open with O_RDWR for this to work
 with gdbm-1.7.3, though no reading is actually going to be done. */
@@ -286,7 +299,7 @@ if (!(d = exim_dbopen(temp_dbmname, dirname, O_RDWR|O_CREAT|O_EXCL, 0644)))
 assume .dir & .pag */
 
 #if !defined(USE_DB) && !defined(USE_TDB) && !defined(USE_GDBM) && !defined(USE_SQLITE)
-snprintf(CS real_dbmname, sizeof(real_dbmname), "%s.db", temp_dbmname);
+snprintf(C(real_dbmname), sizeof(real_dbmname), "%s.db", temp_dbmname);
 is_db = Ustat(real_dbmname, &statbuf) == 0;
 #endif
 
@@ -331,7 +344,7 @@ while (Ufgets(line, max_insize, f) != NULL)
     if (bptr - buffer + p - s >= max_outsize - 1)
       {
       printf("Continued set of lines is too long: max permitted length is %d\n",
-        max_outsize -1);
+	max_outsize -1);
       yield = 2;
       goto TIDYUP;
       }
@@ -359,24 +372,24 @@ while (Ufgets(line, max_insize, f) != NULL)
 
       rc = exim_dbputb(d, &key, &content);
       switch(rc)
-        {
-        case EXIM_DBPUTB_OK:
+	{
+	case EXIM_DBPUTB_OK:
 	  count++;
 	  break;
 
-        case EXIM_DBPUTB_DUP:
+	case EXIM_DBPUTB_DUP:
 	  if (warn) fprintf(stderr, "** Duplicate key \"%s\"\n", keybuffer);
 	  dupcount++;
 	  if(duperr) yield = 1;
 	  if (lastdup) exim_dbput(d, &key, &content);
 	  break;
 
-        default:
+	default:
 	  fprintf(stderr, "Error %d while writing key %s: errno=%d\n", rc,
 	    keybuffer, errno);
 	  yield = 2;
 	  goto TIDYUP;
-        }
+	}
 
       bptr = buffer;
       }
@@ -392,12 +405,12 @@ while (Ufgets(line, max_insize, f) != NULL)
       uschar * t = s++;
       keystart = t;
       while (*s && *s != '\"')
-        {
+	{
 	*t++ = *s == '\\'
 	? string_interpret_escape((const uschar **)&s)
 	: *s;
-        s++;
-        }
+	s++;
+	}
       if (*s) s++;               /* Past terminating " */
       exim_datum_size_set(&key, t - keystart + add_zero);
       }
@@ -418,10 +431,10 @@ while (Ufgets(line, max_insize, f) != NULL)
 
     if (lowercase)
       for (i = 0; i < exim_datum_size_get(&key) - add_zero; i++)
-        keybuffer[i] = tolower(keystart[i]);
+	keybuffer[i] = tolower(keystart[i]);
     else
       for (i = 0; i < exim_datum_size_get(&key) - add_zero; i++)
-        keybuffer[i] = keystart[i];
+	keybuffer[i] = keystart[i];
 
     keybuffer[i] = 0;
     started = 1;
@@ -490,7 +503,7 @@ if (yield == 0 || yield == 1)
 
 #if defined(USE_DB) || defined(USE_TDB) || defined(USE_GDBM) || defined(USE_SQLITE)
   Ustrcpy(real_dbmname, temp_dbmname);
-  Ustrcpy(buffer, US argv[arg+1]);
+  Ustrcpy(buffer, U(argv[arg+1]));
   if (Urename(real_dbmname, buffer) != 0)
     {
     printf("Unable to rename %s as %s\n", real_dbmname, buffer);
@@ -502,8 +515,8 @@ if (yield == 0 || yield == 1)
 
   if (is_db)
     {
-    sprintf(CS real_dbmname, "%s.db", temp_dbmname);
-    sprintf(CS buffer, "%s.db", argv[arg+1]);
+    sprintf(C(real_dbmname), "%s.db", temp_dbmname);
+    sprintf(C(buffer,) "%s.db", argv[arg+1]);
     if (Urename(real_dbmname, buffer) != 0)
       {
       printf("Unable to rename %s as %s\n", real_dbmname, buffer);
@@ -515,16 +528,16 @@ if (yield == 0 || yield == 1)
 
   else
     {
-    sprintf(CS real_dbmname, "%s.dir", temp_dbmname);
-    sprintf(CS buffer, "%s.dir", argv[arg+1]);
+    sprintf(C(real_dbmname), "%s.dir", temp_dbmname);
+    sprintf(C(buffer), "%s.dir", argv[arg+1]);
     if (Urename(real_dbmname, buffer) != 0)
       {
       printf("Unable to rename %s as %s\n", real_dbmname, buffer);
       return 1;
       }
 
-    sprintf(CS real_dbmname, "%s.pag", temp_dbmname);
-    sprintf(CS buffer, "%s.pag", argv[arg+1]);
+    sprintf(C(real_dbmname), "%s.pag", temp_dbmname);
+    sprintf(C(buffer), "%s.pag", argv[arg+1]);
     if (Urename(real_dbmname, buffer) != 0)
       {
       printf("Unable to rename %s as %s\n", real_dbmname, buffer);
@@ -547,14 +560,14 @@ else
 #else
   if (is_db)
     {
-    sprintf(CS real_dbmname, "%s.db", temp_dbmname);
+    sprintf(C(real_dbmname), "%s.db", temp_dbmname);
     Uunlink(real_dbmname);
     }
   else
     {
-    sprintf(CS real_dbmname, "%s.dir", temp_dbmname);
+    sprintf(C(real_dbmname), "%s.dir", temp_dbmname);
     Uunlink(real_dbmname);
-    sprintf(CS real_dbmname, "%s.pag", temp_dbmname);
+    sprintf(C(real_dbmname), "%s.pag", temp_dbmname);
     Uunlink(real_dbmname);
     }
 #endif /* USE_DB || USE_TDB || USE_GDBM || USE_SQLITE */
