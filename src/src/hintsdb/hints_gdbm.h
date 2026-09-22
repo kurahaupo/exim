@@ -56,7 +56,7 @@ EXIM_DB * dbp = malloc(sizeof(EXIM_DB));	/*XXX why not exim mem-mgmt? */
 if (dbp)
   {
   dbp->lkey.dptr = NULL;
-  dbp->gdbm = gdbm_open(CS name, 0,
+  dbp->gdbm = gdbm_open(C(name), 0,
     flags & O_CREAT ? GDBM_WRCREAT
     : (flags & O_ACCMODE) == O_RDONLY ? GDBM_READER : GDBM_WRITER,
     mode, 0);
@@ -135,7 +135,7 @@ free(dbp);
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return U(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }
