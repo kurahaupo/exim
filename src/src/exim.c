@@ -153,7 +153,7 @@ if (!panic_coredump)
   }
 if (panic_coredump)
   log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (deliberate trap)");
-else if (US info->si_addr < US 4096)
+else if (((uintptr_t)info->si_addr & ~(uintptr_t)4095) == 0)
   log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (null pointer indirection)");
 else
   log_write(LOG_MAIN|LOG_PANIC, "SIGSEGV (maybe attempt to write to immutable memory)");
@@ -887,7 +887,7 @@ show_string(BOOL is_stdout, gstring * g)
 {
 const uschar * s = string_from_gstring(g);
 if (s)
-  if (is_stdout) fputs(CCS s, stdout);
+  if (is_stdout) fputs(C(s), stdout);
   else debug_printf("%s", s);
 }
 
@@ -1221,7 +1221,7 @@ Currently they are output in misc_mod_add() */
 #endif
 #ifdef HAVE_LOCAL_SCAN
   g = string_cat(g, US"Local-Scan API: "
-		    mac_expanded_string(LOCAL_SCAN_ABI_VERSION) "\n");
+		      mac_expanded_string(LOCAL_SCAN_ABI_VERSION) "\n");
 #endif
   }
 
@@ -1413,7 +1413,7 @@ for (int i = 0;; i++)
     {
     if (!(readline_line = fn_readline((i > 0)? "":"> "))) break;
     if (*readline_line && fn_addhist) fn_addhist(readline_line);
-    p = US readline_line;
+    p = U(readline_line);
     }
   else
 #endif
@@ -1530,7 +1530,7 @@ if ( ! ((real_uid == root_uid)
   }
 
 /* Get a list of macros which are whitelisted */
-whitelisted = string_copy_perm(US WHITELIST_D_MACROS, FALSE);
+whitelisted = string_copy_perm(U(WHITELIST_D_MACROS), FALSE);
 prev_char_item = FALSE;
 white_count = 0;
 for (p = whitelisted; *p != '\0'; ++p)
@@ -1624,7 +1624,7 @@ else if (Ustrncmp(big_buffer, "set,t ", 6) == 0)
 else if (Ustrncmp(big_buffer, "set ", 4) == 0)
   printf("%s\n", acl_standalone_setvar(big_buffer+4, FALSE));
 else
-  if ((s = expand_string(big_buffer))) printf("%s\n", CS s);
+  if ((s = expand_string(big_buffer))) printf("%s\n", C(s));
   else printf("Failed: %s\n", expand_string_message);
 }
 
@@ -1677,7 +1677,7 @@ set_debug_stream();
 static const uschar *
 validate_queue_name(const uschar * offered_qn)
 {
-const uschar * s = US strchrnul(CS offered_qn, '/');
+const uschar * s = U(strchrnul(C(offered_qn), '/'));
 if (*s || s - offered_qn > MAX_QNAME
    || Ustrcmp(offered_qn, "input") == 0 || Ustrcmp(offered_qn, "db") == 0
    || Ustrcmp(offered_qn, "msglog") == 0 || Ustrcmp(offered_qn, "scan") == 0
@@ -1708,7 +1708,7 @@ Returns:    EXIT_SUCCESS if terminated successfully
 int
 main(int argc, char ** cargv)
 {
-const uschar ** argv = CUSS cargv;
+const uschar ** argv = RU(cargv);
 int  arg_receive_timeout = -1, arg_smtp_receive_timeout = -1,
 	arg_error_handling = error_handling, filter_sfd = -1, filter_ufd = -1,
 	group_count, i, rv, list_queue_option = QL_BASIC, msg_action = 0,
@@ -1773,7 +1773,7 @@ defined by ref:name at build time, we must now find the actual uid/gid values.
 This is a feature to make the lives of binary distributors easier. */
 
 #ifdef EXIM_USERNAME
-if (route_finduser(US EXIM_USERNAME, &pw, &exim_uid))
+if (route_finduser(U(EXIM_USERNAME), &pw, &exim_uid))
   {
   if (exim_uid == 0)
     exim_fail("refusing to run with uid 0 for %q", EXIM_USERNAME);
@@ -1794,12 +1794,12 @@ else
 #endif
 
 #ifdef EXIM_GROUPNAME
-if (!route_findgroup(US EXIM_GROUPNAME, &exim_gid))
+if (!route_findgroup(U(EXIM_GROUPNAME), &exim_gid))
   exim_fail("failed to find gid for group name %q", EXIM_GROUPNAME);
 #endif
 
 #ifdef CONFIGURE_OWNERNAME
-if (!route_finduser(US CONFIGURE_OWNERNAME, NULL, &config_uid))
+if (!route_finduser(U(CONFIGURE_OWNERNAME), NULL, &config_uid))
   exim_fail("failed to find uid for user name %q", CONFIGURE_OWNERNAME);
 #endif
 
@@ -1808,7 +1808,7 @@ sane non-root value. */
 system_filter_uid = exim_uid;
 
 #ifdef CONFIGURE_GROUPNAME
-if (!route_findgroup(US CONFIGURE_GROUPNAME, &config_gid))
+if (!route_findgroup(U(CONFIGURE_GROUPNAME), &config_gid))
   exim_fail("failed to find gid for group name %q", CONFIGURE_GROUPNAME);
 #endif
 
@@ -1852,7 +1852,7 @@ os_non_restarting_signal(SIGALRM, sigalrm_handler);
 /* Ensure we have a buffer for constructing log entries. Use malloc directly,
 because store_malloc writes a log entry on failure. */
 
-if (!(log_buffer = US malloc(LOG_BUFFER_SIZE)))
+if (!(log_buffer = malloc(LOG_BUFFER_SIZE)))
   exim_fail("failed to get store for log buffer");
 
 /* Initialize the default log options. */
@@ -2299,17 +2299,17 @@ on the second character (the one after '-'), to save some effort. */
 	    const uschar * p = argrest+1;
 	    info_flag = CMDINFO_HELP;
 	    if (Ustrlen(p))
-	      if (strcmpic(p, CUS"modules") == 0)
+	      if (strcmpic(p, US"modules") == 0)
 		{ info_flag = CMDINFO_MODULES; info_stdout = TRUE; }
 #ifndef DISABLE_SIEVE_FILTER
-	      else if (strcmpic(p, CUS"sieve") == 0)
+	      else if (strcmpic(p, US"sieve") == 0)
 		{ info_flag = CMDINFO_SIEVE; info_stdout = TRUE; }
 #endif
 #ifdef SUPPORT_DSCP
-	      else if (strcmpic(p, CUS"dscp") == 0)
+	      else if (strcmpic(p, US"dscp") == 0)
 		{ info_flag = CMDINFO_DSCP; info_stdout = TRUE; }
 #endif
-	      else if (strcmpic(p, CUS"help") == 0)
+	      else if (strcmpic(p, US"help") == 0)
 		info_stdout = TRUE;
 	    }
 	  else badarg = TRUE;
@@ -2464,7 +2464,7 @@ on the second character (the one after '-'), to save some effort. */
 	    {
 	    printf("Exim version %s #%s built %s\n", version_string,
 	      version_cnumber, version_date);
-	    printf("%s\n", CS version_copyright);
+	    printf("%s\n", C(version_copyright));
 	    version_printed = TRUE;
 	    show_whats_supported(TRUE);
 	    f.log_testing_mode = TRUE;
@@ -2671,7 +2671,7 @@ on the second character (the one after '-'), to save some effort. */
     /* -dt: Set a debug trigger selector */
 
     else if (Ustrncmp(argrest, "t=", 2) == 0)
-      dtrigger_selector = (unsigned int) Ustrtol(argrest + 2, NULL, 0);
+      dtrigger_selector = (unsigned int) strtol(C(argrest) + 2, NULL, 0);
 
     /* -d: Set debug level (see also -v below).
     If -dd is used, debugging subprocesses of the daemon is disabled. */
@@ -4123,8 +4123,8 @@ initial_cwd = os_getcwd(NULL, 0);
 if (!initial_cwd && errno)
   exim_fail("getting initial cwd failed: %s", strerror(errno));
 
-if (initial_cwd && (strlen(CCS initial_cwd) >= BIG_BUFFER_SIZE))
-  exim_fail("initial cwd is far too long (%d)", Ustrlen(CCS initial_cwd));
+if (initial_cwd && (strlen(C(initial_cwd)) >= BIG_BUFFER_SIZE))
+  exim_fail("initial cwd is far too long (%d)", Ustrlen(initial_cwd));
 
 /* checking:
     -be[m] expansion test        -
@@ -4247,7 +4247,7 @@ if (cmdline_syslog_name)
   if (f.admin_user)
     {
     syslog_processname = cmdline_syslog_name;
-    log_file_path = string_copy(CUS"syslog");
+    log_file_path = string_copy(US"syslog");
     }
   else
     /* not a panic, non-privileged users should not be able to spam paniclog */
@@ -4295,11 +4295,11 @@ EXIM_TMPDIR by the build scripts.
 */
 
 #ifdef EXIM_TMPDIR
-  if (environ) for (uschar ** p = USS environ; *p; p++)
+  if (environ) for (uschar ** p = U(environ); *p; p++)
     if (Ustrncmp(*p, "TMPDIR=", 7) == 0 && Ustrcmp(*p+7, EXIM_TMPDIR) != 0)
       {
-      uschar * newp = store_malloc(Ustrlen(EXIM_TMPDIR) + 8);
-      sprintf(CS newp, "TMPDIR=%s", EXIM_TMPDIR);
+      uschar * newp = store_malloc(strlen(EXIM_TMPDIR) + 8);
+      sprintf(C(newp), "TMPDIR=%s", EXIM_TMPDIR);
       *p = newp;
       DEBUG(any) debug_printf("reset TMPDIR=%s in environment\n", EXIM_TMPDIR);
       }
@@ -4319,28 +4319,28 @@ if (timezone_string && strcmpic(timezone_string, US"UTC") == 0)
   f.timestamps_utc = TRUE;
 else
   {
-  const uschar * envtz = US getenv("TZ");
+  const uschar * envtz = U(getenv("TZ"));
   if (envtz
       ? !timezone_string || Ustrcmp(timezone_string, envtz) != 0
       : timezone_string != NULL
      )
     {
-    uschar **p = USS environ;
+    uschar **p = U(environ);
     uschar **new;
     uschar **newp;
     int count = 0;
     if (environ) while (*p++) count++;
     if (!envtz) count++;
     newp = new = store_malloc(sizeof(uschar *) * (count + 1));
-    if (environ) for (p = USS environ; *p; p++)
+    if (environ) for (p = U(environ); *p; p++)
       if (Ustrncmp(*p, "TZ=", 3) != 0) *newp++ = *p;
     if (timezone_string)
       {
       *newp = store_malloc(Ustrlen(timezone_string) + 4);
-      sprintf(CS *newp++, "TZ=%s", timezone_string);
+      sprintf(C(*newp++), "TZ=%s", timezone_string);
       }
     *newp = NULL;
-    environ = CSS new;
+    environ = C(new);
     tzset();
     DEBUG(any) debug_printf("Reset TZ to %s: time is %s\n", timezone_string,
       tod_stamp(tod_log));
@@ -4407,8 +4407,8 @@ if (  (IS_DEBUG(any) || LOGGING(arguments))
   else
     {
     p += 4;
-    snprintf(CS p, big_buffer_size - (p - big_buffer), "%s", CCS initial_cwd);
-    p += Ustrlen(CCS p);
+    snprintf(C(p), big_buffer_size - (p - big_buffer), "%s", C(initial_cwd));
+    p += Ustrlen(p);
     }
 
   (void)string_format(p, big_buffer_size - (p - big_buffer), " %d args:", argc);
@@ -4433,7 +4433,7 @@ if (  (IS_DEBUG(any) || LOGGING(arguments))
       quote = US"";
       while (*pp) if (isspace(*pp++)) { quote = US"\""; break; }
       }
-    p += sprintf(CS p, " %s%.*s%s", quote, (int)(big_buffer_size -
+    p += sprintf(C(p), " %s%.*s%s", quote, (int)(big_buffer_size -
       (p - big_buffer) - 4), printing, quote);
     }
 
@@ -4482,7 +4482,7 @@ if (bi_option)
       bi_argv[1] ? bi_argv[1] : US"",
       bi_argv[1] ? "'" : "");
 
-    execv(CS bi_argv[0], (char *const *)bi_argv);
+    execv(C(bi_argv[0]), (char *const *)bi_argv);
     exim_fail("exec '%s' failed: %s", bi_argv[0], strerror(errno));
     }
   else
@@ -4800,7 +4800,7 @@ if (rcpt_verify_quota)
     exim_fail("missing recipient for quota check");
   else
     {
-    verify_quota(US argv[recipients_arg]);	/*XXX we lose track of const here */
+    verify_quota(W(argv[recipients_arg]));	/*XXX we lose track of const here */
     exim_exit(EXIT_SUCCESS);
     }
 
@@ -4848,7 +4848,7 @@ if (test_retry_arg >= 0)
       readconf_retry_error(ss, ss + Ustrlen(ss), &basic_errno, &more_errno);
     if (error)
       {
-      printf("%s\n", CS error);
+      printf("%s\n", C(error));
       return EXIT_FAILURE;
       }
 
@@ -5037,8 +5037,8 @@ for (i = 0;;)
   {
   if ((pw = getpwuid(real_uid)) != NULL)
     {
-    originator_login = string_copy(US pw->pw_name);
-    originator_home = string_copy(US pw->pw_dir);
+    originator_login = string_copy(U(pw->pw_name));
+    originator_home = string_copy(U(pw->pw_dir));
 
     /* If user name has not been set by -F, set it from the passwd entry
     unless -f has been used to set the sender address by a trusted user. */
@@ -5047,7 +5047,7 @@ for (i = 0;;)
       {
       if (!sender_address || (!f.trusted_caller && filter_test == FTEST_NONE))
         {
-        uschar *name = US pw->pw_gecos;
+        uschar *name = U(pw->pw_gecos);
         uschar *amp = Ustrchr(name, '&');
         uschar buffer[256];
 
@@ -5130,7 +5130,7 @@ if (!originator_login || f.running_in_test_harness)
 /* Ensure that the user name is in a suitable form for use as a "phrase" in an
 RFC822 address.*/
 
-originator_name = US parse_fix_phrase(originator_name, Ustrlen(originator_name));
+originator_name = W(parse_fix_phrase(originator_name, Ustrlen(originator_name)));
 
 /* If a message is created by this call of Exim, the uid/gid of its originator
 are those of the caller. These values are overridden if an existing message is
@@ -5330,7 +5330,7 @@ if (f.expansion_test)
     uschar * spoolname;
     if (!f.admin_user)
       exim_fail("permission denied");
-    message_id = US exim_str_fail_toolong(argv[msg_action_arg], MESSAGE_ID_LENGTH, "message-id");
+    message_id = W(exim_str_fail_toolong(argv[msg_action_arg], MESSAGE_ID_LENGTH, "message-id"));
     /* Checking the length of the ID is sufficient to validate it.
     Get an untainted version so file opens can be done. */
     message_id = string_copy_taint(message_id, GET_UNTAINTED);
@@ -5356,7 +5356,7 @@ if (f.expansion_test)
     (void) dup2(fd, 0);
     filter_test = FTEST_USER;      /* Fudge to make it look like filter test */
     message_ended = END_NOTENDED;
-    recipients_max_expanded = atoi(CCS rme);
+    recipients_max_expanded = atoi(C(rme));
     read_message_body(receive_msg(extract_recipients, rf_notify_unset));
     message_linecount += body_linecount;
     (void)dup2(save_stdin, 0);
@@ -5827,7 +5827,7 @@ for (BOOL more = TRUE; more; )
     int rcount = 0, count = argc - recipients_arg;
     const uschar ** list = argv + recipients_arg;
 
-    recipients_max_expanded = atoi(CCS rme);
+    recipients_max_expanded = atoi(C(rme));
 
     /* These options cannot be changed dynamically for non-SMTP messages */
 
@@ -5995,10 +5995,10 @@ for (BOOL more = TRUE; more; )
     {
     deliver_domain = ftest_domain ? ftest_domain : qualify_domain_recipient;
     deliver_domain_orig = deliver_domain;
-    deliver_localpart = ftest_localpart ? US ftest_localpart : originator_login;
+    deliver_localpart = ftest_localpart ? ftest_localpart : originator_login;
     deliver_localpart_orig = deliver_localpart;
-    deliver_localpart_prefix = US ftest_prefix;
-    deliver_localpart_suffix = US ftest_suffix;
+    deliver_localpart_prefix = ftest_prefix;
+    deliver_localpart_suffix = ftest_suffix;
     deliver_home = originator_home;
 
     if (!return_path)
