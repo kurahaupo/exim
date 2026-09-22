@@ -3771,7 +3771,7 @@ qualify_recipient(uschar ** recipient, uschar * smtp_cmd_data, uschar * tag)
 {
 if (f.allow_unqualified_recipient || strcmpic(*recipient, US"postmaster") == 0)
   {
-  int rd = Ustrlen(recipient) + 1;
+  int rd = Ustrlen(*recipient) + 1;
   DEBUG(receive) debug_printf("unqualified address %s accepted\n",
     *recipient);
   /* deconst ok as *recipient was not const */
