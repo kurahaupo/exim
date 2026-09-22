@@ -118,7 +118,7 @@ switch (rc = gnutls_privkey_get_pk_algorithm(sign_ctx->key, NULL))
   case GNUTLS_PK_EDDSA_ED25519:	sign_ctx->keytype = KEYTYPE_ED25519; break;
 #endif
   default: return rc < 0
-    ? CUS gnutls_strerror(rc)
+    ? U(gnutls_strerror(rc))
     : string_sprintf("Unhandled key type: %d '%s'", rc, gnutls_pk_get_name(rc));
   }
 
@@ -155,7 +155,7 @@ switch (hash)
   }
 
 if ((rc = gnutls_privkey_sign_data(sign_ctx->key, dig, 0, &k_data, &k_sig)))
-  return CUS gnutls_strerror(rc);
+  return U(gnutls_strerror(rc));
 
 /* Don't care about deinit for the key; shortlived process */
 
@@ -185,13 +185,13 @@ switch(fmt)
   {
   case KEYFMT_DER:
     if ((rc = gnutls_pubkey_import(verify_ctx->key, &k, GNUTLS_X509_FMT_DER)))
-      ret = US gnutls_strerror(rc);
+      ret = U(gnutls_strerror(rc));
     break;
 #ifdef SIGN_HAVE_ED25519
   case KEYFMT_ED25519_BARE:
     if ((rc = gnutls_pubkey_import_ecc_raw(verify_ctx->key,
 					  GNUTLS_ECC_CURVE_ED25519, &k, NULL)))
-      ret = US gnutls_strerror(rc);
+      ret = U(gnutls_strerror(rc));
     break;
 #endif
   default:
@@ -238,7 +238,7 @@ else
 gnutls_pubkey_deinit(verify_ctx->key);
 
 return rc < 0
-  ? rc == GNUTLS_E_PK_SIG_VERIFY_FAILED ? US"" : US gnutls_strerror(rc)
+  ? rc == GNUTLS_E_PK_SIG_VERIFY_FAILED ? US"" : U(gnutls_strerror(rc))
   : NULL;
 }
 
@@ -296,11 +296,11 @@ debug_printf_indent("%s\n", __FUNCTION__);
 
 /* integer; move past the header */
 if ((rc = as_tag(der, 0, ASN1_TAG_INTEGER, &alen)) != ASN1_SUCCESS)
-  return US asn1_strerror(rc);
+  return U(asn1_strerror(rc));
 
 /* read to an MPI */
 if ((gerr = gcry_mpi_scan(mpi, GCRYMPI_FMT_STD, der->data, alen, NULL)))
-  return US gcry_strerror(gerr);
+  return U(gcry_strerror(gerr));
 
 /* move over the data */
 der->data += alen; der->len -= alen;
@@ -421,8 +421,8 @@ Useful cmds:
 
  */
 
-if (  !(s1 = Ustrstr(CS privkey_pem, "-----BEGIN RSA PRIVATE KEY-----"))
-   || !(s2 = Ustrstr(CS (s1+=31),    "-----END RSA PRIVATE KEY-----" ))
+if (  !(s1 = Ustrstr(C(privkey_pem), "-----BEGIN RSA PRIVATE KEY-----"))
+   || !(s2 = Ustrstr(C(s1+=31),      "-----END RSA PRIVATE KEY-----" ))
    )
   return US"Bad PEM wrapper";
 
@@ -482,7 +482,7 @@ DEBUG(acl) debug_printf_indent("rsa_signing_init:\n");
 sign_ctx->keytype = KEYTYPE_RSA;
 return NULL;
 
-asn_err: return US asn1_strerror(rc);
+asn_err: return U(asn1_strerror(rc));
 }
 
 
@@ -530,10 +530,10 @@ if (  (gerr = gcry_sexp_build (&s_key, NULL,
 		sign_ctx->d, sign_ctx->p,
 		sign_ctx->q, sign_ctx->qp))
    || (gerr = gcry_sexp_build (&s_hash, NULL, sexp_hash,
-		(int) data->len, CS data->data))
+		(int) data->len, C(data->data)))
    ||  (gerr = gcry_pk_sign (&s_sig, s_hash, s_key))
    )
-  return US gcry_strerror(gerr);
+  return U(gcry_strerror(gerr));
 
 /* gcry_sexp_dump(s_sig); */
 
@@ -556,7 +556,7 @@ gerr = gcry_mpi_print(GCRYMPI_FMT_USG, sig->data, SIGSPACE, &sig->len, m_sig);
 if (gerr)
   {
   debug_printf_indent("signature conversion from MPI to buffer failed\n");
-  return US gcry_strerror(gerr);
+  return U(gcry_strerror(gerr));
   }
 #undef SIGSPACE
 
@@ -647,7 +647,7 @@ return NULL;
 
 asn_err:
 DEBUG(acl) return string_sprintf("%s: %s", stage, asn1_strerror(rc));
-	     return US asn1_strerror(rc);
+	     return U(asn1_strerror(rc));
 }
 
 
@@ -682,7 +682,7 @@ if (  (stage = US"pkey sexp build",
 		        verify_ctx->n, verify_ctx->e))
    || (stage = US"data sexp build",
        gerr = gcry_sexp_build(&s_hash, NULL, sexp_hash,
-		(int) data_hash->len, CS data_hash->data))
+		(int) data_hash->len, C(data_hash->data)))
    || (stage = US"sig mpi scan",
        gerr = gcry_mpi_scan(&m_sig, GCRYMPI_FMT_USG, sig->data, sig->len, NULL))
    || (stage = US"sig sexp build",
@@ -692,7 +692,7 @@ if (  (stage = US"pkey sexp build",
    )
   {
   DEBUG(acl) debug_printf_indent("verify: error in stage '%s'\n", stage);
-  return gerr == GCRY_ERR_BAD_SIGNATURE ? US"" : US gcry_strerror(gerr);
+  return gerr == GCRY_ERR_BAD_SIGNATURE ? US"" : U(gcry_strerror(gerr));
   }
 
 if (s_sig) gcry_sexp_release (s_sig);
@@ -805,7 +805,7 @@ if (  (ctx = EVP_MD_CTX_create())
 #endif
 
 if (ctx) EVP_MD_CTX_destroy(ctx);
-return US ERR_error_string(ERR_get_error(), NULL);
+return U(ERR_error_string(ERR_get_error(), NULL));
 }
 
 
@@ -832,7 +832,7 @@ switch(fmt)
   case KEYFMT_ED25519_BARE:
     if (!(verify_ctx->key = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL,
 							s, pubkey->len)))
-      ret = US ERR_error_string(ERR_get_error(), NULL);
+      ret = U(ERR_error_string(ERR_get_error(), NULL));
     break;
 #endif
   default:
@@ -898,7 +898,7 @@ else
     EVP_PKEY_CTX_free(ctx);
 
     DEBUG(tls)
-      if (Ustrcmp(ERR_reason_error_string(ERR_peek_error()), "wrong signature length") == 0)
+      if (strcmp(ERR_reason_error_string(ERR_peek_error()), "wrong signature length") == 0)
 	debug_printf("sig len (from msg hdr): %d, expected (from dns pubkey) %d\n",
 	 (int) sig->len, EVP_PKEY_size(verify_ctx->key));
     }
@@ -906,7 +906,7 @@ else
 
 /* Several error codes indicate "bad sig" (eg. RSA vs. EC). Check the string. */
 
-res = US ERR_error_string(ERR_get_error(), NULL);
+res = U(ERR_error_string(ERR_get_error(), NULL));
 return Ustrcmp(res, "bad signature") == 0 ? US"" : res;
 }
 
