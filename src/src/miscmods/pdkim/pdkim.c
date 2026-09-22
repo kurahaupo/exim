@@ -272,8 +272,9 @@ header_name_match(const uschar * header, uschar * tick)
 const uschar * ticklist = tick;
 int sep = ':';
 BOOL multisign;
-uschar * hname, * p, * ele;
-uschar * hcolon = Ustrchr(header, ':');		/* Get header name */
+uschar * p;
+const uschar * hname, * ele;
+const uschar * hcolon = Ustrchr(header, ':');		/* Get header name */
 
 if (!hcolon)
   return PDKIM_FAIL; /* This isn't a header */
@@ -281,7 +282,7 @@ if (!hcolon)
 /* if we had strncmpic() we wouldn't need this copy */
 hname = string_copyn(header, hcolon-header);
 
-while (p = US ticklist, ele = string_nextinlist(&ticklist, &sep, NULL, 0))
+while (p = W(ticklist), ele = string_nextinlist(&ticklist, &sep, NULL, 0))
   {
   switch (*ele)
   {
@@ -508,7 +509,7 @@ for (uschar * p = raw_hdr; ; p++)
     if (c == '=')
       {
       if (Ustrcmp(string_from_gstring(cur_tag), "b") == 0)
-        {
+	{
 	*q++ = '=';
 	in_b_val = TRUE;
 	}
@@ -532,7 +533,7 @@ for (uschar * p = raw_hdr; ; p++)
       if (  cur_tag && cur_val
 	 && (cur_tag->ptr == 1 || *cur_tag->s == 'b')
 	 )
-        {
+	{
 	(void) string_from_gstring(cur_val);
 	pdkim_strtrim(cur_val);
 
@@ -560,7 +561,7 @@ for (uschar * p = raw_hdr; ; p++)
 	    {
 	    const uschar * list = cur_val->s;
 	    int sep = '-';
-	    uschar * elem;
+	    const uschar * elem;
 
 	    if ((elem = string_nextinlist(&list, &sep, NULL, 0)))
 	      sig->keytype = pdkim_keyname_to_keytype(elem);
@@ -590,11 +591,11 @@ for (uschar * p = raw_hdr; ; p++)
 	  case 'i':					/* AUID */
 	    sig->identity = pdkim_decode_qp(cur_val->s); break;
 	  case 't':					/* Timestamp */
-	    sig->created = strtoul(CS cur_val->s, NULL, 10); break;
+	    sig->created = strtoul(C(cur_val->s), NULL, 10); break;
 	  case 'x':					/* Expiration */
-	    sig->expires = strtoul(CS cur_val->s, NULL, 10); break;
+	    sig->expires = strtoul(C(cur_val->s), NULL, 10); break;
 	  case 'l':					/* Body length count */
-	    sig->bodylength = strtol(CS cur_val->s, NULL, 10); break;
+	    sig->bodylength = strtol(C(cur_val->s), NULL, 10); break;
 	  case 'h':					/* signed header fields */
 	    sig->headernames = string_copy_from_gstring(cur_val); break;
 	  case 'z':					/* Copied headfields */
@@ -636,7 +637,7 @@ DEBUG(acl)
   {
   debug_printf(
 	  "DKIM >> Raw signature w/o b= tag value >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-  debug_printf("%Z\n", US sig->rawsig_no_b_val);
+  debug_printf("%Z\n", U(sig->rawsig_no_b_val));
   debug_printf(
 	  "DKIM >> Sig size: %4u bits\n", (unsigned) sig->sighash.len*8);
   debug_printf(
@@ -756,7 +757,7 @@ if (b->canon_method == PDKIM_CANON_RELAXED)
     do, not safe to use store_get()/store_reset(). */
 
     relaxed_data = store_malloc(sizeof(blob) + orig_data->len+1);
-    relaxed_data->data = US (relaxed_data+1);
+    relaxed_data->data = (uschar *) (relaxed_data+1);
 
     for (const uschar * p = orig_data->data, * r = p + orig_data->len; p < r; p++)
       {
@@ -792,7 +793,7 @@ if (  b->bodylength >= 0
 
 if (left > 0)
   {
-  exim_sha_update(&b->body_hash_ctx, CUS canon_data->data, left);
+  exim_sha_update(&b->body_hash_ctx, canon_data->data, left);
   b->signed_body_bytes += left;
   DEBUG(acl) debug_printf("%.*Z\n", left, canon_data->data);
   }
@@ -825,7 +826,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 		 "DKIM [%s]%s Body %s computed: ",
 	sig->domain, sig->selector, pdkim_canons[b->canon_method], b->signed_body_bytes,
 	sig->domain, sig->selector, pdkim_hashes[b->hashtype].dkim_hashname);
-    debug_printf("%.*H\n", b->bh.len, CUS b->bh.data);
+    debug_printf("%.*H\n", b->bh.len, U(b->bh.data));
     }
 
   /* SIGNING -------------------------------------------------------------- */
@@ -849,7 +850,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     else
       {
       DEBUG(acl)
-        {
+	{
 	debug_printf("DKIM [%s] Body hash signature from headers: ", sig->domain);
 	debug_printf("%.*H\n", sig->bodyhash.len, sig->bodyhash.data);
 	debug_printf("DKIM [%s] Body hash did NOT verify\n", sig->domain);
@@ -1002,11 +1003,11 @@ else
   {
 #ifdef notdef
   DEBUG(acl) debug_printf("DKIM >> raw hdr: %.*Z\n",
-			    ctx->cur_head->ptr, CUS g->s);
+			    ctx->cur_head->ptr, U(g->s));
 #endif
-  if (strncasecmp(CCS g->s,
+  if (strncasecmp(C(g->s),
 		  DKIM_SIGNATURE_HEADERNAME,
-		  Ustrlen(DKIM_SIGNATURE_HEADERNAME)) == 0)
+		  strlen(DKIM_SIGNATURE_HEADERNAME)) == 0)
     {
     pdkim_signature * sig, * last_sig;
     /* Create and chain new signature block.  We could error-check for all
@@ -1092,7 +1093,7 @@ else for (unsigned p = 0; p < len; p++)
     else if (c == '\n')
       {
       if (!(ctx->flags & PDKIM_SEEN_CR))		/* emulate the CR */
-	ctx->cur_header = string_catn(ctx->cur_header, CUS "\r", 1);
+	ctx->cur_header = string_catn(ctx->cur_header, US"\r", 1);
 
       if (ctx->flags & PDKIM_SEEN_LF)		/* Seen last header line */
 	{
@@ -1116,7 +1117,7 @@ else for (unsigned p = 0; p < len; p++)
       }
 
     if (!ctx->cur_header || ctx->cur_header->ptr < PDKIM_MAX_HEADER_LEN)
-      ctx->cur_header = string_catn(ctx->cur_header, CUS &data[p], 1);
+      ctx->cur_header = string_catn(ctx->cur_header, &data[p], 1);
     }
   }
 return PDKIM_OK;
@@ -1288,7 +1289,7 @@ if (sig->created > 0)
   {
   uschar minibuf[21];
 
-  snprintf(CS minibuf, sizeof(minibuf), "%lu", sig->created);
+  snprintf(C(minibuf), sizeof(minibuf), "%lu", sig->created);
   hdr = pdkim_headcat(&col, hdr, US";", US"t=", minibuf);
 }
 
@@ -1296,7 +1297,7 @@ if (sig->expires > 0)
   {
   uschar minibuf[21];
 
-  snprintf(CS minibuf, sizeof(minibuf), "%lu", sig->expires);
+  snprintf(C(minibuf), sizeof(minibuf), "%lu", sig->expires);
   hdr = pdkim_headcat(&col, hdr, US";", US"x=", minibuf);
   }
 
@@ -1304,7 +1305,7 @@ if (sig->bodylength >= 0)
   {
   uschar minibuf[21];
 
-  snprintf(CS minibuf, sizeof(minibuf), "%lu", sig->bodylength);
+  snprintf(C(minibuf), sizeof(minibuf), "%lu", sig->bodylength);
   hdr = pdkim_headcat(&col, hdr, US";", US"l=", minibuf);
   }
 
@@ -1383,10 +1384,10 @@ DEBUG(acl)
     " %s\n"
     " Raw record: %Z\n",
     dns_txt_name,
-    CUS dns_txt_reply);
+    U(dns_txt_reply));
   }
 
-if (  !(p = pdkim_parse_pubkey_record(CUS dns_txt_reply))
+if (  !(p = pdkim_parse_pubkey_record(dns_txt_reply))
    || (Ustrcmp(p->srvtype, "*") != 0 && Ustrcmp(p->srvtype, "email") != 0)
    )
   {
@@ -1450,7 +1451,7 @@ sort_sig_methods(pdkim_signature * siglist)
 {
 pdkim_signature * yield, ** ss;
 const uschar * prefs;
-uschar * ele;
+const uschar * ele;
 int sep;
 
 if (!siglist) return NULL;
@@ -1460,7 +1461,7 @@ DEBUG(acl) debug_printf("DKIM: dkim_verify_hashes   '%s'\n", dkim_verify_hashes)
 for (prefs = dkim_verify_hashes, sep = 0, yield = NULL, ss = &yield;
      ele = string_nextinlist(&prefs, &sep, NULL, 0); )
   {
-  int i = pdkim_hashname_to_hashtype(CUS ele, 0);
+  int i = pdkim_hashname_to_hashtype(ele, 0);
   for (pdkim_signature * s = siglist, * next, ** prev = &siglist; s;
        s = next)
     {
@@ -1478,7 +1479,7 @@ DEBUG(acl) debug_printf("DKIM: dkim_verify_keytypes '%s'\n", dkim_verify_keytype
 for (prefs = dkim_verify_keytypes, sep = 0, yield = NULL, ss = &yield;
      ele = string_nextinlist(&prefs, &sep, NULL, 0); )
   {
-  int i = pdkim_keyname_to_keytype(CUS ele);
+  int i = pdkim_keyname_to_keytype(ele);
   for (pdkim_signature * s = siglist, * next, ** prev = &siglist; s;
        s = next)
     {
@@ -1606,13 +1607,13 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     {
     gstring * g = NULL;
     const uschar * l;
-    uschar * s;
+    const uschar * s;
     int sep = 0;
 
     /* Import private key, including the keytype which we need for building
     the signature header  */
 
-    if ((*err = exim_dkim_signing_init(CUS sig->privkey, &sctx)))
+    if ((*err = exim_dkim_signing_init(sig->privkey, &sctx)))
       {
       log_write(LOG_MAIN|LOG_PANIC, "signing_init: %s", *err);
       return PDKIM_ERR_RSA_PRIVKEY;
@@ -1633,7 +1634,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 	  rh = pdkim_relax_header(rh, TRUE);	/* cook header for relaxed canon */
 
 	/* Feed header to the hash algorithm */
-	exim_sha_update_string(&hhash_ctx, CUS rh);
+	exim_sha_update_string(&hhash_ctx, rh);
 
 	/* Remember headers block for signing (when the library cannot do incremental)  */
 	/*XXX we could avoid doing this for all but the GnuTLS/RSA case */
@@ -1650,7 +1651,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     while((s = string_nextinlist(&l, &sep, NULL, 0)))
       {
       if (*s == '+')			/* skip oversigning marker */
-        s++;
+	s++;
       if (*s != '_' && *s != '=')
 	g = string_append_listele(g, ':', s);
       }
@@ -1683,7 +1684,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   /*XXX walk the list of headers in same order as received. */
 	for (pdkim_stringlist * hdrs = ctx->headers; hdrs; hdrs = hdrs->next)
 	  if (  hdrs->tag == 0
-	     && strncasecmp(CCS hdrs->value, CCS p, Ustrlen(p)) == 0
+	     && strncasecmp(C(hdrs->value), C(p), Ustrlen(p)) == 0
 	     && (hdrs->value)[Ustrlen(p)] == ':'
 	     )
 	    {
@@ -1691,10 +1692,10 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
 
 	    uschar * rh = sig->canon_headers == PDKIM_CANON_RELAXED
 	      ? pdkim_relax_header(hdrs->value, TRUE)
-	      : string_copy(CUS hdrs->value);
+	      : string_copy(hdrs->value);
 
 	    /* Feed header to the hash algorithm */
-	    exim_sha_update_string(&hhash_ctx, CUS rh);
+	    exim_sha_update_string(&hhash_ctx, rh);
 
 	    DEBUG(acl) debug_printf("%Z\n", rh);
 	    hdrs->tag = 1;
@@ -1716,7 +1717,7 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     {
     debug_printf(
 	    "DKIM >> Signed DKIM-Signature header, pre-canonicalized >>>>>>>>>>>>>\n");
-    debug_printf("%Z\n", CUS sig_hdr);
+    debug_printf("%Z\n", U(sig_hdr));
     debug_printf(
 	    "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
     }
@@ -1729,13 +1730,13 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     {
     debug_printf("DKIM >> Signed DKIM-Signature header, canonicalized (%-7s) >>>>>>>\n",
 	    pdkim_canons[sig->canon_headers]);
-    debug_printf("%Z\n", CUS sig_hdr);
+    debug_printf("%Z\n", U(sig_hdr));
     debug_printf(
 	    "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
     }
 
   /* Finalize header hash */
-  exim_sha_update_string(&hhash_ctx, CUS sig_hdr);
+  exim_sha_update_string(&hhash_ctx, sig_hdr);
   exim_sha_finish(&hhash_ctx, &hhash);
 
   DEBUG(acl)
@@ -1748,16 +1749,17 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
   /* Remember headers block for signing (when the signing library cannot do
   incremental)  */
   if (ctx->flags & PDKIM_MODE_SIGN)
-    hdata = exim_dkim_data_append(hdata, US sig_hdr);
+    hdata = exim_dkim_data_append(hdata, sig_hdr);
 
   /* SIGNING ---------------------------------------------------------------- */
   if (ctx->flags & PDKIM_MODE_SIGN)
     {
     hashmethod hm = sig->keytype == KEYTYPE_ED25519
+      ?
 #if defined(SIGN_OPENSSL)
-      ? HASH_NULL
+	HASH_NULL
 #else
-      ? HASH_SHA2_512
+	HASH_SHA2_512
 #endif
       : pdkim_hashes[sig->hashtype].exim_hashmethod;
 
@@ -1828,8 +1830,8 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
       sig->verify_ext_status = PDKIM_VERIFY_INVALID_DKIM_VERSION;
 
       DEBUG(acl) debug_printf(
-          " Error in DKIM-Signature header: unsupported DKIM version\n"
-          "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+	  " Error in DKIM-Signature header: unsupported DKIM version\n"
+	  "DKIM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
       goto NEXT_VERIFY;
       }
 
@@ -1889,9 +1891,9 @@ for (pdkim_signature * sig = ctx->sig; sig; sig = sig->next)
     if (*dkim_verify_min_keysizes)
       {
       unsigned minbits;
-      const uschar * ss = expand_getkeyed(US pdkim_keytypes[sig->keytype],
+      const uschar * ss = expand_getkeyed(pdkim_keytypes[sig->keytype],
 				    dkim_verify_min_keysizes);
-      if (ss &&  (minbits = atoi(CCS ss)) > sig->keybits)
+      if (ss &&  (minbits = atoi(C(ss))) > sig->keybits)
 	{
 	DEBUG(acl) debug_printf("Key too short: Actual: %s %u  Minima '%s'\n",
 	  pdkim_keytypes[sig->keytype], sig->keybits, dkim_verify_min_keysizes);
@@ -1984,9 +1986,9 @@ memset(sig, 0, sizeof(pdkim_signature));
 
 sig->bodylength = -1;
 
-sig->domain = string_copy(US domain);
-sig->selector = string_copy(US selector);
-sig->privkey = string_copy(US privkey);
+sig->domain = string_copy(domain);
+sig->selector = string_copy(selector);
+sig->privkey = string_copy(privkey);
 sig->keytype = -1;
 
 for (hashtype = 0; hashtype < nelem(pdkim_hashes); hashtype++)
@@ -2017,19 +2019,19 @@ return sig;
 
 DLLEXPORT void
 pdkim_set_optional(pdkim_signature * sig,
-                       const char * sign_headers,
-                       const char * identity,
-                       int canon_headers,
-                       int canon_body,
-                       long bodylength,
-                       unsigned long created,
-                       unsigned long expires)
+		       const char * sign_headers,
+		       const char * identity,
+		       int canon_headers,
+		       int canon_body,
+		       long bodylength,
+		       unsigned long created,
+		       unsigned long expires)
 {
 if (identity)
-  sig->identity = string_copy(US identity);
+  sig->identity = string_copy(U(identity));
 
 sig->sign_headers = string_copy(sign_headers
-	? US sign_headers : US PDKIM_DEFAULT_SIGN_HEADERS);
+	? U(sign_headers) : U(PDKIM_DEFAULT_SIGN_HEADERS));
 
 sig->canon_headers = canon_headers;
 sig->canon_body = canon_body;
