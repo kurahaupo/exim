@@ -637,8 +637,8 @@ parse_extract_address(const uschar * mailbox, uschar ** errorptr,
 {
 uschar * yield = store_get(Ustrlen(mailbox) + 1, mailbox);
 const uschar *startptr, *endptr;
-const uschar *s = US mailbox;
-uschar *t = US yield;
+const uschar *s = mailbox;
+uschar *t = yield;
 
 *domain = 0;
 
@@ -762,7 +762,7 @@ if (*s == '<')
     *errorptr = s[-1] == 0
       ? US"'>' missing at end of address"
       : string_sprintf("malformed address: %.32s may not follow %.*s",
-	  s-1, (int)(s - US mailbox - 1), mailbox);
+	  s-1, (int)(s - mailbox - 1), mailbox);
     goto PARSE_FAILED;
     }
 
@@ -814,13 +814,13 @@ if (*s)
   else
     {
     *errorptr = string_sprintf("malformed address: %.32s may not follow %.*s",
-      s, (int)(s - US mailbox), mailbox);
+      s, (int)(s - mailbox), mailbox);
     goto PARSE_FAILED;
     }
 
-*start = startptr - US mailbox;      /* Return offsets */
+*start = startptr - mailbox;      /* Return offsets */
 while (isspace(endptr[-1])) endptr--;
-*end = endptr - US mailbox;
+*end = endptr - mailbox;
 
 /* Although this code has no limitation on the length of address extracted,
 other parts of Exim may have limits, and in any case, RFC 5321 limits email
@@ -902,7 +902,7 @@ for (const uschar * s = string; len > 0; s++, len--)
     }
 
   if (  ch < 33 || ch > 126
-     || Ustrchr("?=()<>@,;:\\\".[]_", ch) != NULL)
+     || strchr("?=()<>@,;:\\\".[]_", ch) != NULL)
     {
     if (ch == ' ')
       {
@@ -1001,7 +1001,7 @@ if (i < len)
 /* No non-printers; use the RFC 822 quoting rules */
 
 if (len <= 0 || len >= INT_MAX/4)
-  return string_copy_taint(CUS"", phrase);
+  return string_copy_taint(US"", phrase);
 
 buffer = store_get((len+1)*4, phrase);
 
@@ -1053,7 +1053,7 @@ while (s < end)
 
   /* Handle special characters that need to be quoted */
 
-  else if (Ustrchr(")<>@,;:\\.[]", ch) != NULL)
+  else if (strchr(")<>@,;:\\.[]", ch) != NULL)
     {
     /* If hit previous quotes just make one quoted "word" */
 
@@ -1356,7 +1356,7 @@ for (;;)
 
   if (special)
     {
-    uschar * p = Ustrchr(s+1, ':') + 1; /* line after the special... */
+    uschar * p = Ustrchr(W(s)+1, ':') + 1; /* line after the special... */
     if ((options & specopt) == specbit)
       {
       *error = string_sprintf("\"%.*s\" is not permitted", len, s);
@@ -1447,7 +1447,7 @@ for (;;)
       with a flag that fails symlinks. */
 
       {
-      int fd = exim_open2(CCS directory, O_RDONLY);
+      int fd = exim_open2(C(directory), O_RDONLY);
       if (fd < 0)
 	{
 	*error = string_sprintf("failed to open directory %s", directory);
@@ -1464,7 +1464,7 @@ for (;;)
 	temp = *p;
 	*p = '\0';
 
-	fd2 = exim_openat(fd, CS q, O_RDONLY|O_NOFOLLOW);
+	fd2 = exim_openat(fd, C(q), O_RDONLY|O_NOFOLLOW);
 	close(fd);
 	*p = temp;
 	if (fd2 < 0)
@@ -1691,7 +1691,7 @@ for (;;)
 	? rewrite_address(recipient, TRUE, FALSE, global_rewrite_rules,
 			  rewrite_existflags)
 	: rewrite_address_qualify(recipient, TRUE);	/*XXX loses track of const */
-      addr = deliver_make_addr(US recipient, TRUE);  /* TRUE => copy recipient, so deconst ok */
+      addr = deliver_make_addr(recipient, TRUE);  /* TRUE => copy recipient, so deconst ok */
       }
 
     /* Add the original data to the output chain. */
@@ -2105,7 +2105,7 @@ while (Ufgets(buffer, sizeof(buffer), stdin) != NULL)
   {
   buffer[Ustrlen(buffer)-1] = 0;
   if (buffer[0] == 0) break;
-  printf("%s\n", CS parse_fix_phrase(buffer, Ustrlen(buffer)));
+  printf("%s\n", parse_fix_phrase(buffer, Ustrlen(buffer)));
   }
 
 printf("Testing parse_extract_address without group syntax and without UTF-8\n");
