@@ -137,7 +137,7 @@ menu_is_up = FALSE;
 static void
 msglogAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-Widget text = text_create(US client_data, text_depth);
+Widget text = text_create(U(client_data), text_depth);
 uschar * fname = NULL;
 FILE * f = NULL;
 
@@ -145,9 +145,9 @@ FILE * f = NULL;
 
 for (int i = 0; i < (spool_is_split ? 2:1); i++)
   {
-  message_subdir[0] = i != 0 ? (US client_data)[5] : 0;
-  fname = spool_fname(US"msglog", message_subdir, US client_data, US"");
-  if ((f = fopen(CS fname, "r")))
+  message_subdir[0] = i != 0 ? (U(client_data))[5] : 0;
+  fname = spool_fname(US"msglog", message_subdir, U(client_data), US"");
+  if ((f = fopen(C(fname), "r")))
     break;
   }
 
@@ -170,15 +170,15 @@ else
 static void
 bodyAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-Widget text = text_create(US client_data, text_depth);
+Widget text = text_create(U(client_data), text_depth);
 FILE *f = NULL;
 
 for (int i = 0; i < (spool_is_split? 2:1); i++)
   {
   uschar * fname;
-  message_subdir[0] = i != 0 ? (US client_data)[5] : 0;
-  fname = spool_fname(US"input", message_subdir, US client_data, US"-D");
-  if ((f = fopen(CS fname, "r")))
+  message_subdir[0] = i != 0 ? (U(client_data))[5] : 0;
+  fname = spool_fname(US"input", message_subdir, U(client_data), US"-D");
+  if ((f = fopen(C(fname), "r")))
     break;
   }
 
@@ -242,7 +242,7 @@ if (address_arg[0] != 0)
     qualify = qualify_domain;
     }
   }
-sprintf(CS buffer, "%s %s %s %s %s %s%s%s%s%s", exim_path,
+sprintf(C(buffer), "%s %s %s %s %s %s%s%s%s%s", exim_path,
   (alternate_config == NULL)? US"" : US"-C",
   (alternate_config == NULL)? US"" : alternate_config,
   action, id, quote, address_arg, at, qualify, quote);
@@ -296,7 +296,7 @@ if (!delivery)
   dup2(pipe_fd[1], 2);
   close(pipe_fd[1]);
 
-  rc = system(CS buffer);
+  rc = system(C(buffer));
 
   close(1);
   close(2);
@@ -364,7 +364,7 @@ if ((pid = fork()) == 0)
   dup2(pipe_fd[1], 2);
   close(pipe_fd[1]);
 
-  if (system(CS buffer)) ;
+  if (system(C(buffer))) ;
 
   close(1);
   close(2);
@@ -404,7 +404,7 @@ if (pid < 0) text_showf(text, "Failed to fork: %s\n", strerror(errno)); else
 static void
 deliverAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-v -M", US"");
+ActOnMessage(U(client_data), US"-v -M", US"");
 }
 
 /*************************************************
@@ -414,7 +414,7 @@ ActOnMessage(US client_data, US"-v -M", US"");
 static void
 freezeAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mf", US"");
+ActOnMessage(U(client_data), US"-Mf", US"");
 }
 
 /*************************************************
@@ -424,7 +424,7 @@ ActOnMessage(US client_data, US"-Mf", US"");
 static void
 thawAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mt", US"");
+ActOnMessage(U(client_data), US"-Mt", US"");
 }
 
 /*************************************************
@@ -562,7 +562,7 @@ create_dialog(US"Recipient address to mark delivered?", US"");
 static void
 markalldelAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mmad", US"");
+ActOnMessage(U(client_data), US"-Mmad", US"");
 }
 
 /*************************************************
@@ -591,7 +591,7 @@ create_dialog(US"New sender address?", sender);
 static void
 giveupAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-v -Mg", US"");
+ActOnMessage(U(client_data), US"-v -Mg", US"");
 }
 
 /*************************************************
@@ -601,7 +601,7 @@ ActOnMessage(US client_data, US"-v -Mg", US"");
 static void
 removeAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
-ActOnMessage(US client_data, US"-Mrm", US"");
+ActOnMessage(U(client_data), US"-Mrm", US"");
 }
 
 /*************************************************
@@ -612,7 +612,7 @@ static void
 headersAction(Widget w, XtPointer client_data, XtPointer call_data)
 {
 uschar buffer[256];
-Widget text = text_create(US client_data, text_depth);
+Widget text = text_create(U(client_data), text_depth);
 rmark reset_point;
 
 /* Remember the point in the dynamic store so we can recover to it afterwards.
@@ -620,13 +620,13 @@ Then use Exim's function to read the header. */
 
 reset_point = store_mark();
 
-sprintf(CS buffer, "%s-H", US client_data);
+sprintf(C(buffer), "%s-H", U(client_data));
 if (spool_read_header(buffer, TRUE, FALSE) != spool_read_OK)
   {
   if (errno == ERRNO_SPOOLFORMAT)
     {
     struct stat statbuf;
-    sprintf(CS big_buffer, "%s/input/%s", spool_directory, buffer);
+    sprintf(C(big_buffer), "%s/input/%s", spool_directory, buffer);
     if (Ustat(big_buffer, &statbuf) == 0)
       text_showf(text, "Format error in spool file %s: size=%lu\n", buffer,
         (unsigned long)statbuf.st_size);
@@ -724,7 +724,7 @@ XawTextDisplayCaret(text, TRUE);
 
 if (queue_font != NULL)
   {
-  XFontStruct *f = XLoadQueryFont(X_display, CS queue_font);
+  XFontStruct *f = XLoadQueryFont(X_display, C(queue_font));
   if (f != NULL) xs_SetValues(text, 1, "font", f);
   }
 
