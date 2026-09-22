@@ -118,7 +118,7 @@ if (!s)
   f.expand_string_forcedfail = FALSE;
   *result = NULL;
   }
-else if (  !(*result = expand_string(US s)) /*XXX need to clean up const more */
+else if (  !(*result = expand_string(W(s))) /*XXX need to clean up const more */
 	&& !f.expand_string_forcedfail
 	)
   {
@@ -154,13 +154,13 @@ tls_set_one_watch(const uschar * filename)
 {
 uschar buf[PATH_MAX];
 ssize_t len;
-uschar * s;
+typeof(filename) s;
 
 if (Ustrcmp(filename, "system,cache") == 0) return TRUE;
 if (!(s = Ustrrchr(filename, '/'))) return FALSE;
 
 for (unsigned loop = 20;
-     (len = readlink(CCS filename, CS buf, sizeof(buf))) >= 0; )
+     (len = readlink(C(filename), C(buf), sizeof(buf))) >= 0; )
   {						/* a symlink */
   if (--loop == 0) { errno = ELOOP; return FALSE; }
   filename = buf[0] == '/'
@@ -176,7 +176,7 @@ s = string_copyn(filename, s - filename);	/* mem released by tls_set_watch */
 
 DEBUG(tls) debug_printf("watch dir '%s'\n", s);
 
-if (inotify_add_watch(tls_watch_fd, CCS s,
+if (inotify_add_watch(tls_watch_fd, C(s),
       IN_ONESHOT | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF
       | IN_MOVED_FROM | IN_MOVED_TO | IN_MOVE_SELF) >= 0)
   return TRUE;
@@ -206,12 +206,12 @@ for (;;)
   /* The dir open will fail if there is a symlink on the path. Fine; it's too
   much effort to handle all possible cases; just refuse the preload. */
 
-  if ((fd2 = open(CCS s, O_RDONLY | O_NOFOLLOW)) < 0) { s = US"open dir"; goto bad; }
+  if ((fd2 = open(C(s), O_RDONLY | O_NOFOLLOW)) < 0) { s = US"open dir"; goto bad; }
 
-  if ((lstat(CCS filename, &sb)) < 0) { s = US"lstat"; goto bad; }
+  if ((lstat(C(filename), &sb)) < 0) { s = US"lstat"; goto bad; }
   if (!S_ISLNK(sb.st_mode))
     {
-    if ((fd1 = open(CCS filename, O_RDONLY | O_NOFOLLOW)) < 0)
+    if ((fd1 = open(C(filename), O_RDONLY | O_NOFOLLOW)) < 0)
       { s = US"open file"; goto bad; }
     DEBUG(tls) debug_printf("watch file '%s':\t%d\n", filename, fd1);
     EV_SET(&kev[kev_used++],
@@ -241,7 +241,7 @@ for (;;)
   Ustrncpy(t, s, 1022);
   j = Ustrlen(s);
   t[j++] = '/';
-  if ((i = readlink(CCS filename, (void *)(t+j), 1023-j)) < 0) { s = US"readlink"; goto bad; }
+  if ((i = readlink(C(filename), (void *)(t+j), 1023-j)) < 0) { s = US"readlink"; goto bad; }
   filename = t;
   *(t += i+j) = '\0';
   store_release_above(t+1);
@@ -452,8 +452,8 @@ tls_per_lib_daemon_init();
 static uschar *
 to_tz(uschar * tz)
 {
-uschar * old = US getenv("TZ");
-(void) setenv("TZ", CCS tz, 1);
+uschar * old = U(getenv("TZ"));
+(void) setenv("TZ", C(tz), 1);
 tzset();
 return old;
 }
@@ -462,7 +462,7 @@ static void
 restore_tz(uschar * tz)
 {
 if (tz)
-  (void) setenv("TZ", CCS tz, 1);
+  (void) setenv("TZ", C(tz), 1);
 else
   (void) os_unsetenv(US"TZ");
 tzset();
@@ -478,7 +478,7 @@ static void tls_client_resmption_key(tls_support *, const smtp_connect_args *,
 #endif
 
 
-#ifdef USE_GNUTLS
+//#ifdef USE_GNUTLS
 # include "tls-gnu.c"
 # include "tlscert-gnu.c"
 # define ssl_xfer_buffer (state_server.xfer_buffer)
@@ -486,9 +486,9 @@ static void tls_client_resmption_key(tls_support *, const smtp_connect_args *,
 # define ssl_xfer_buffer_hwm (state_server.xfer_buffer_hwm)
 # define ssl_xfer_eof (state_server.xfer_eof)
 # define ssl_xfer_error (state_server.xfer_error)
-#endif
+//#endif
 
-#ifdef USE_OPENSSL
+#ifdef xxUSE_OPENSSL
 # include "tls-openssl.c"
 # include "tlscert-openssl.c"
 #endif
@@ -705,7 +705,7 @@ while ((ele = string_nextinlist(&mod, &insep, NULL, 0)))
 dn_to_list(dn);
 insep = ',';
 len = match ? Ustrlen(match) : -1;
-while ((ele = string_nextinlist(CUSS &dn, &insep, NULL, 0)))
+while ((ele = string_nextinlist(R(&dn), &insep, NULL, 0)))
   if (  !match
      || Ustrncmp(ele, match, len) == 0 && ele[len] == '='
      )
@@ -755,11 +755,11 @@ if ((altnames = tls_cert_subject_altname(cert, US"dns")))
   {
   int alt_sep = '\n';
   DEBUG(tls|lookup) debug_printf_indent("cert has SAN\n");
-  while ((cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0)))
+  while (cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0))
     {
     const uschar * an = altnames;
     DEBUG(tls|lookup) debug_printf_indent(" %s in SANs?", cmpname);
-    while ((certname = string_nextinlist(&an, &alt_sep, NULL, 0)))
+    while (certname = string_nextinlist(&an, &alt_sep, NULL, 0))
       if (is_name_match(cmpname, certname))
 	{
 	DEBUG(tls|lookup) debug_printf_indent("  yes (matched %s)\n", certname);
@@ -774,11 +774,11 @@ else if ((subjdn = tls_cert_subject(cert, NULL)))
   int sn_sep = ',';
 
   dn_to_list(subjdn);
-  while ((cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0)))
+  while (cmpname = string_nextinlist(&namelist, &cmp_sep, NULL, 0))
     {
     const uschar * sn = subjdn;
     DEBUG(tls|lookup) debug_printf_indent(" %s in SN?", cmpname);
-    while ((certname = string_nextinlist(&sn, &sn_sep, NULL, 0)))
+    while (certname = string_nextinlist(&sn, &sn_sep, NULL, 0))
       if (  *certname++ == 'C'
 	 && *certname++ == 'N'
 	 && *certname++ == '='
@@ -809,7 +809,7 @@ the env variable.  If relative, prefix the spooldir.
 void
 tls_clean_env(void)
 {
-uschar * path = US getenv("SSLKEYLOGFILE");
+uschar * path = U(getenv("SSLKEYLOGFILE"));
 if (path)
   if (!*path)
     unsetenv("SSLKEYLOGFILE");
@@ -817,7 +817,7 @@ if (path)
     {
     DEBUG(tls)
       debug_printf("prepending spooldir to  env SSLKEYLOGFILE\n");
-    setenv("SSLKEYLOGFILE", CCS string_sprintf("%s/%s", spool_directory, path), 1);
+    setenv("SSLKEYLOGFILE", C(string_sprintf("%s/%s", spool_directory, path)), 1);
     }
   else if (Ustrncmp(path, spool_directory, Ustrlen(spool_directory)) != 0)
     {
@@ -917,10 +917,10 @@ exim_sha_init(h, HASH_SHA1);
 exim_sha_update_string(h, conn_args->host_lbserver);
 # ifdef SUPPORT_DANE
 if (conn_args->dane)
-  exim_sha_update(h,  CUS conn_args->tlsa_dnsa, sizeof(dns_answer));
+  exim_sha_update(h, (uschar *) conn_args->tlsa_dnsa, sizeof(dns_answer));
 # endif
 exim_sha_update_string(h, conn_args->host->address);
-exim_sha_update(h,   CUS &conn_args->host->port, sizeof(conn_args->host->port));
+exim_sha_update(h, (uschar *) &conn_args->host->port, sizeof(conn_args->host->port));
 exim_sha_update_string(h, conn_args->sending_ip_address);
 exim_sha_update_string(h, openssl_options);
 exim_sha_update_string(h, ob->tls_require_ciphers);
