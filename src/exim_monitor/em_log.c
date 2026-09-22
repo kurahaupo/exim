@@ -74,7 +74,7 @@ if (log_widget == NULL) return;
 /* Initialize the text block structure */
 
 b.firstPos = 0;
-b.ptr = CS buffer;
+b.ptr = C(buffer);
 b.format = FMT8BIT;
 
 /* We want to know whether the window has been scrolled back or not,
@@ -99,7 +99,7 @@ if (newtop != top)
 /* Format the text that is to be written. */
 
 va_start(ap, s);
-vsprintf(CS buffer, s, ap);
+vsprintf(C(buffer), s, ap);
 va_end(ap);
 length = Ustrlen(buffer);
 
@@ -368,7 +368,7 @@ if (log_datestamping)
   /* Do *not* use "%s" here, we need the %D datestamp in the log_file string to
   be expanded.  The trailing NULL arg is to quieten preprocessors that need at
   least one arg for a variadic set in a macro. */
-  string_format(log_file_wanted, sizeof(log_file_wanted), CS log_file, NULL);
+  string_format(log_file_wanted, sizeof(log_file_wanted), C(log_file), NULL);
   if (Ustrcmp(log_file_wanted, log_file_open) != 0)
     {
     if (LOG != NULL)
@@ -391,7 +391,7 @@ if (LOG == NULL ||
   is renamed and before the new one exists. Therefore do a
   trial open first to be sure. */
 
-  if ((TEST = fopen(CS log_file_open, "r")) != NULL)
+  if ((TEST = fopen(C(log_file_open), "r")) != NULL)
     {
     if (LOG != NULL) fclose(LOG);
     LOG = TEST;
