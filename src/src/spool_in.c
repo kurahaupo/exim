@@ -464,7 +464,7 @@ if (n < 3 || big_buffer[0] != '<' || big_buffer[n-2] != '>')
 
 where = US"time";
 if (Ufgets(big_buffer, big_buffer_size, fp) == NULL) goto SPOOL_READ_ERROR;
-if (sscanf(CS big_buffer, TIME_T_FMT " %d", &received_time.tv_sec, &warning_count) != 2)
+if (sscanf(C(big_buffer), TIME_T_FMT " %d", &received_time.tv_sec, &warning_count) != 2)
   goto SPOOL_FORMAT_ERROR;
 received_time.tv_usec = 0;
 received_time_complete = received_time;
@@ -553,7 +553,7 @@ for (;;)
       if (!endptr) goto SPOOL_FORMAT_ERROR;
       vname = string_sprintf("%c%.*s", var[3],
         (int)(endptr - var - 5), var + 5);
-      if (sscanf(CS endptr, " %d", &count) != 1) goto SPOOL_FORMAT_ERROR;
+      if (sscanf(C(endptr), " %d", &count) != 1) goto SPOOL_FORMAT_ERROR;
       node = acl_var_create(vname);
       node->data.ptr = store_get(count + 1, proto_mem);
       if (fread(node->data.ptr, 1, count+1, fp) < count) goto SPOOL_READ_ERROR;
@@ -585,7 +585,7 @@ for (;;)
       uschar vname[20];   /* Need plenty of space for %u format */
       tree_node * node;
       where = US"-acl (old)";
-      if (  sscanf(CS var + 4, "%u %u", &index, &count) != 2
+      if (  sscanf(C(var) + 4, "%u %u", &index, &count) != 2
 	 || index >= 20
 	 || count > 16384	/* arbitrary limit on variable size */
          )
@@ -599,7 +599,7 @@ for (;;)
       /* We sanity-checked the count, so disable the Coverity error */
       /* coverity[tainted_data] */
       if (fread(node->data.ptr, 1, count+1, fp) < count) goto SPOOL_READ_ERROR;
-      (US node->data.ptr)[count] = '\0';
+      ((char *) node->data.ptr)[count] = '\0';
       }
     break;
 
@@ -614,7 +614,7 @@ for (;;)
     if (Ustrcmp(p, "eliver_firsttime") == 0)
       f.deliver_firsttime = TRUE;
     else if (Ustrncmp(p, "sn_ret", 6) == 0)
-      dsn_ret= atoi(CS var + 7);
+      dsn_ret= atoi(C(var) + 7);
     else if (Ustrncmp(p, "sn_envid", 8) == 0)
       dsn_envid = string_copy_taint(var + 10, proto_mem);
 #ifndef COMPILE_UTILITY
@@ -622,9 +622,9 @@ for (;;)
       {
       const uschar * s = var + 15;
       int n;
-      sscanf(CS s, SC_EXIM_BITMASK "%n", &debug_selector[0], &n);
+      sscanf(C(s), SC_EXIM_BITMASK "%n", &debug_selector[0], &n);
       for (int i = 1; i < DEBUG_SELECTOR_SIZE && *(s += n) == ','; i++)
-	sscanf(CS ++s, SC_EXIM_BITMASK "%n", &debug_selector[i], &n);
+	sscanf(C(++s), SC_EXIM_BITMASK "%n", &debug_selector[i], &n);
       }
     else if (Ustrncmp(p, "ebuglog_name ", 13) == 0)
       debug_logging_from_spool(var + 14);
@@ -635,7 +635,7 @@ for (;;)
     if (Ustrncmp(p, "rozen", 5) == 0)
       {
       f.deliver_freeze = TRUE;
-      if (sscanf(CS var+6, TIME_T_FMT, &deliver_frozen_at) != 1)
+      if (sscanf(C(var)+6, TIME_T_FMT, &deliver_frozen_at) != 1)
 	goto SPOOL_READ_ERROR;
       }
     break;
@@ -709,7 +709,7 @@ for (;;)
     else if (Ustrncmp(p, "eceived_time_usec", 17) == 0)
       {
       unsigned usec;
-      if (sscanf(CS var + 20, "%u", &usec) == 1)
+      if (sscanf(C(var) + 20, "%u", &usec) == 1)
 	{
 	received_time.tv_usec = usec;
 	if (!received_time_complete.tv_sec) received_time_complete.tv_usec = usec;
@@ -718,7 +718,7 @@ for (;;)
     else if (Ustrncmp(p, "eceived_time_complete", 21) == 0)
       {
       unsigned sec, usec;
-      if (sscanf(CS var + 23, "%u.%u", &sec, &usec) == 2)
+      if (sscanf(C(var) + 23, "%u.%u", &sec, &usec) == 2)
 	{
 	received_time_complete.tv_sec = sec;
 	received_time_complete.tv_usec = usec;
@@ -820,7 +820,7 @@ Apply an arbitrary sanity check.*/
 
 where = US"rcpt cnt";
 if (Ufgets(big_buffer, big_buffer_size, fp) == NULL) goto SPOOL_READ_ERROR;
-if (sscanf(CS big_buffer, "%d", &rcount) != 1 || rcount > 16384)
+if (sscanf(C(big_buffer), "%d", &rcount) != 1 || rcount > 16384)
   goto SPOOL_FORMAT_ERROR;
 
 #ifndef COMPILE_UTILITY
@@ -904,13 +904,13 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
     DEBUG(deliver) debug_printf_indent("**** SPOOL_IN - Exim standard format spoolfile\n");
 #endif
 
-    (void)sscanf(CS p+1, "%d", &flags);
+    (void)sscanf(C(p)+1, "%d", &flags);
 
     if (flags & 0x01)      /* one_time data exists */
       {
       int len;
       while (p > big_buffer && (isdigit(*(--p)) || *p == ',' || *p == '-')) ;
-      (void)sscanf(CS p+1, "%d,%d", &len, &pno);
+      (void)sscanf(C(p)+1, "%d,%d", &len, &pno);
       *p = 0;
       if (len > 0 && p > big_buffer + len)
         {
@@ -924,7 +924,7 @@ for (recipients_count = 0; recipients_count < rcount; recipients_count++)
       {
       int len;
       while (p > big_buffer && (isdigit(*(--p)) || *p == ',' || *p == '-')) ;
-      (void)sscanf(CS p+1, "%d,%d", &len, &dsn_flags);
+      (void)sscanf(C(p)+1, "%d,%d", &len, &dsn_flags);
       *p = 0;
       if (len > 0 && p > big_buffer + len)
         {
