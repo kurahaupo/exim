@@ -40,7 +40,7 @@ static inline EXIM_DB *
 exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
   unsigned mode)
 {
-EXIM_DB * db = tdb_open(CS name, 0, TDB_DEFAULT, flags, mode);
+EXIM_DB * db = tdb_open(C(name), 0, TDB_DEFAULT, flags, mode);
 int e;
 
 DEBUG(hints_lookup) if (!db)
@@ -59,7 +59,7 @@ static inline EXIM_DB *
 exim_dbopen_multi__(const uschar * name, const uschar * dirname, int flags,
   unsigned mode)
 {
-EXIM_DB * db = tdb_open(CS name, 0, TDB_DEFAULT, flags, mode);
+EXIM_DB * db = tdb_open(C(name), 0, TDB_DEFAULT, flags, mode);
 DEBUG(hints_lookup) if (!db)
   debug_printf_indent("tdb_open(flags %#x mode %04o) %s\n",
 	      flags, mode, strerror(errno));
@@ -182,7 +182,7 @@ DEBUG(hints_lookup) if (rc != 0)
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return U(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }
