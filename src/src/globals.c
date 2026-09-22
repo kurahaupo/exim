@@ -144,26 +144,27 @@ when verifying one address while routing/verifying another. We have to have
 the size explicit, because it is referenced from more than one module. */
 
 const uschar **address_expansions[ADDRESS_EXPANSIONS_COUNT] = {
-  CUSS &address_file,
-  CUSS &address_pipe,
-  CUSS &deliver_address_data,
-  CUSS &deliver_domain,
-  CUSS &deliver_domain_data,
-  CUSS &deliver_domain_orig,
-  CUSS &deliver_domain_parent,
-  CUSS &deliver_localpart,
-  CUSS &deliver_localpart_data,
-  CUSS &deliver_localpart_orig,
-  CUSS &deliver_localpart_parent,
-  CUSS &deliver_localpart_prefix,
-  CUSS &deliver_localpart_prefix_v,
-  CUSS &deliver_localpart_suffix,
-  CUSS &deliver_localpart_suffix_v,
-  CUSS (uschar **)(&deliver_recipients),
-  CUSS &deliver_host,
-  CUSS &deliver_host_address,
-  CUSS &deliver_home,
-  CUSS &self_hostname,
+  &address_file,
+  &address_pipe,
+  R(&deliver_address_data),
+  &deliver_domain,
+  R(&deliver_domain_data),
+  &deliver_domain_orig,
+  &deliver_domain_parent,
+  &deliver_localpart,
+  R(&deliver_localpart_data),
+  &deliver_localpart_orig,
+  &deliver_localpart_parent,
+  &deliver_localpart_prefix,
+  &deliver_localpart_prefix_v,
+  &deliver_localpart_suffix,
+  &deliver_localpart_suffix_v,
+  /*R(&deliver_recipients), */
+  (const uschar **)&deliver_recipients,
+  &deliver_host,
+  &deliver_host_address,
+  R(&deliver_home),
+  R(&self_hostname),
   NULL };
 
 int address_expansions_count = nelem(address_expansions);
@@ -591,8 +592,8 @@ gid_t   config_gid             = CONFIGURE_GROUP;
 #else
 gid_t   config_gid             = 0;
 #endif
-const uschar * config_main_filelist = US CONFIGURE_FILE
-                         "\0<-----------Space to patch configure_filename->";
+const uschar * config_main_filelist = U(CONFIGURE_FILE
+                         "\0<-----------Space to patch configure_filename->");
 uschar *config_main_filename   = NULL;
 uschar *config_main_directory  = NULL;
 
@@ -649,7 +650,7 @@ FILE   *debug_file             = NULL;
 /* List of names for debug channels.
 Must be in alphabetical order, preferably on consecutive lines. */
 
-#define DEBUG_CHAN(chan) {.name = US #chan, .logchan_bit = __LINE__ - D_iota}
+#define DEBUG_CHAN(chan) {.name = U(#chan), .logchan_bit = __LINE__ - D_iota}
 
 enum { D_iota = __LINE__ + 2 - BIT_TABLE_IDX_USABLE };
 bit_table debug_channels[] = {
@@ -697,7 +698,7 @@ int      debug_chan_count	= nelem(debug_channels);
 /* Channel settings for "default" debug (just a "-d" used) */
 
 const uschar * debug_defaults =
-  US  "+all"
+   U( "+all"
       "-expand"
       "-filter"
       "-interface"
@@ -707,7 +708,7 @@ const uschar * debug_defaults =
       "-noutf8"
       "-pid"
       "-timestamp"
-      "-resolver";
+      "-resolver" );
 
 /* Lists of debug channels that we exclude from "all" and "any" */
 
@@ -778,7 +779,7 @@ tree_node *domainlist_anchor   = NULL;
 int     domainlist_count       = 0;
 const uschar *driver_srcfile   = NULL;
 int     driver_srcline	       = 0;
-uschar *dsn_from               = US DEFAULT_DSN_FROM;
+uschar *dsn_from               = U(DEFAULT_DSN_FROM);
 unsigned int dtrigger_selector = 0;
 
 int     errno_quota            = ERRNO_QUOTA;
@@ -795,8 +796,8 @@ const uschar *event_name       = NULL;	/* event name variable */
 
 
 gid_t   exim_gid               = EXIM_GID;
-uschar *exim_path              = US BIN_DIRECTORY "/exim"
-                        "\0<---------------Space to patch exim_path->";
+uschar *exim_path              = U(BIN_DIRECTORY "/exim"
+                        "\0<---------------Space to patch exim_path->");
 uid_t   exim_uid               = EXIM_UID;
 int     expand_level	       = 0;		/* Nesting depth, indent for debug */
 int     expand_forbid          = 0;
@@ -831,7 +832,7 @@ volatile sig_atomic_t had_command_timeout = 0;
 volatile sig_atomic_t had_command_sigterm = 0;
 volatile sig_atomic_t had_data_timeout    = 0;
 volatile sig_atomic_t had_data_sigint     = 0;
-const uschar *headers_charset  = US HEADERS_CHARSET;
+const uschar *headers_charset  = U(HEADERS_CHARSET);
 const uschar *header_from      = NULL;		/* mainly for dmarc */
 int     header_insert_maxlen   = 64 * 1024;
 header_line  *header_last      = NULL;
@@ -863,7 +864,7 @@ uschar *helo_allow_chars       = US"";
 uschar *helo_lookup_domains    = US"@ : @[]";
 const uschar *helo_try_verify_hosts  = NULL;
 const uschar *helo_verify_hosts      = NULL;
-const uschar *hex_digits       = CUS"0123456789abcdef";
+const char hex_digits[]        = "0123456789abcdef";
 uschar *hold_domains           = NULL;
 uschar *host_data              = NULL;
 const uschar *host_lookup      = NULL;
@@ -951,15 +952,15 @@ const uschar * log_default_names[] = {	/* for initializing log_selector */
 };
 int     log_default_count      = nelem(log_default_names);
 
-uschar *log_file_path          = US LOG_FILE_PATH
-                           "\0<--------------Space to patch log_file_path->";
+uschar *log_file_path          = U(LOG_FILE_PATH
+                           "\0<--------------Space to patch log_file_path->");
 
 const uschar * const log_notall_names[] = { NULL };
 
 /* List of names for logging channels.  Must be in alphabetical order.
 Must match enum logging_test_bit (macros.h). */
 
-#define LOG_CHAN(chan) {.name = US #chan, .logchan_bit = Lt_##chan}
+#define LOG_CHAN(chan) {.name = U(#chan), .logchan_bit = Lt_##chan}
 
 bit_table log_channels[] = {
   LOG_CHAN(8bitmime),
@@ -1099,7 +1100,7 @@ DIR *	module_dir	       = NULL;
 #endif
 
 uid_t  *never_users            = NULL;
-uschar *notifier_socket        = US"$spool_directory/" NOTIFIER_SOCKET_NAME ;
+uschar *notifier_socket        = US"$spool_directory/" NOTIFIER_SOCKET_NAME;
 
 const int on                   = 1;	/* for setsockopt */
 const int off                  = 0;
@@ -1120,8 +1121,8 @@ pcre2_general_context * pcre_mlc_ctx = NULL;
 pcre2_compile_context * pcre_mlc_cmp_ctx = NULL;
 
 uschar *percent_hack_domains   = NULL;
-const uschar *pid_file_path    = US PID_FILE_PATH
-                           "\0<--------------Space to patch pid_file_path->";
+const uschar *pid_file_path    = U(PID_FILE_PATH
+                           "\0<--------------Space to patch pid_file_path->");
 #ifndef DISABLE_PIPE_CONNECT
 const uschar *pipe_connect_advertise_hosts = US"*";
 #endif
@@ -1185,7 +1186,7 @@ const uschar *received_for     = NULL;
 /*  This is the default text for Received headers generated by Exim. The
 date  will be automatically added on the end. */
 
-uschar *received_header_text   = US
+uschar *received_header_text   = U(
      "Received: "
      "${if def:sender_rcvhost {from $sender_rcvhost\n\t}"
        "{${if def:sender_ident {from ${quote_local_part:$sender_ident} }}"
@@ -1200,7 +1201,7 @@ uschar *received_header_text   = US
      "${if def:sender_address {(envelope-from <$sender_address>)\n\t}}"
      "id $message_exim_id"
      "${if def:received_for {\n\tfor $received_for}}"
-     "\0<---------------Space to patch received_header_text->";
+     "\0<---------------Space to patch received_header_text->");
 
 int     received_headers_max   = 30;
 uschar *received_protocol      = NULL;
@@ -1381,8 +1382,8 @@ uschar *spam_score_int         = NULL;
 #endif
 
 FILE   *spool_data_file	       = NULL;
-uschar *spool_directory        = US SPOOL_DIRECTORY
-                           "\0<--------------Space to patch spool_directory->";
+uschar *spool_directory        = U(SPOOL_DIRECTORY
+                           "\0<--------------Space to patch spool_directory->");
 #ifdef SUPPORT_SRS
 uschar *srs_recipient          = NULL;
 #endif
@@ -1443,7 +1444,7 @@ tree_node  *tree_unusable      = NULL;
 
 gid_t  *trusted_groups         = NULL;
 uid_t  *trusted_users          = NULL;
-uschar *timezone_string        = US TIMEZONE_DEFAULT;
+uschar *timezone_string        = TIMEZONE_DEFAULT;
 
 uschar *unknown_login          = NULL;
 uschar *unknown_username       = NULL;
@@ -1464,13 +1465,13 @@ should  be sufficient. Examples have been seen of time fields like 12:1:03,
 so  just require one digit for hours and minutes. The weekday is also absent
 in  some forms. */
 
-uschar *uucp_from_pattern      = US
+uschar *uucp_from_pattern      = U(
    "^From\\s+(\\S+)\\s+(?:[a-zA-Z]{3},?\\s+)?"    /* Common start */
    "(?:"                                          /* Non-extracting bracket */
    "[a-zA-Z]{3}\\s+\\d?\\d|"                      /* First form */
    "\\d?\\d\\s+[a-zA-Z]{3}\\s+\\d\\d(?:\\d\\d)?"  /* Second form */
    ")"                                            /* End alternation */
-   "\\s+\\d\\d?:\\d\\d?";                         /* Start of time */
+   "\\s+\\d\\d?:\\d\\d?");                        /* Start of time */
 
 uschar *uucp_from_sender       = US"$1";
 
