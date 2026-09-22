@@ -44,6 +44,8 @@ typedef struct line {
   uschar line[1];
 } line;
 
+const uschar * sockname = NULL;
+const uschar * pidfilename = NULL;
 int debug = 0;
 
 extern const uschar * scriptns_sock_name(const uschar *);
@@ -101,6 +103,21 @@ for(const uschar * s = buf; s < buf+len; s++)
 fputc('\n', f);
 }
 
+
+void
+exit_tidyup(void)
+{
+if (sockname) unlink(CCS sockname);
+if (pidfilename) unlink(CCS pidfilename);
+}
+
+void
+sig_tidyup(int sig)
+{
+exit_tidyup();
+kill(getpid(), sig);
+}
+
 /*************************************************
 *           Entry point and main program         *
 *************************************************/
@@ -110,8 +127,8 @@ main(int argc, char ** argv)
 {
 FILE * f;
 line * script = NULL;
-const uschar * sockname;
 uschar buffer[10240], * p;
+const uschar * s;
 int fakens_fd, rc = EXIT_FAILURE;
 
 if (argc != 3)
@@ -119,12 +136,16 @@ if (argc != 3)
   fprintf(stderr, "scriptns: expected 2 arguments, received %d\n", argc-1);
   return EXIT_FAILURE;
   }
+atexit(exit_tidyup);
+signal(SIGTERM, sig_tidyup);
+signal(SIGSEGV, sig_tidyup);
 
 /* Create the comms socket first, while our caller is waiting on our pidfile */
 
-sockname = scriptns_sock_name(argv[1]);
-if ((fakens_fd = make_unix_socket(sockname)) < 0)
+s = scriptns_sock_name(argv[1]);
+if ((fakens_fd = make_unix_socket(s)) < 0)
   return EXIT_FAILURE;
+sockname = s;
 
 /* Write a pidfile, to interlock startup with our caller */
 
@@ -133,6 +154,7 @@ if (!(f = fopen(argv[2], "w")))
   fprintf(stderr, "scriptns: pidfile create: %s\n", strerror(errno));
   return EXIT_FAILURE;
   }
+pidfilename = argv[2];
 fprintf(f, "scriptns: %ld\n", (long)getpid());
 fclose(f);
 f = NULL;
