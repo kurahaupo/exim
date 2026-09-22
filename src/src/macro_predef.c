@@ -40,7 +40,7 @@ else
 
 printf(" .command_line=FALSE, .namelen=%d, .replen=%d,"
 	" .name=US\"%s\", .replacement=US\"%s\" };\n",
-	Ustrlen(name), Ustrlen(val), CS name, CS val);
+	Ustrlen(name), Ustrlen(val), C(name), C(val));
 mp_index++;
 }
 
@@ -89,12 +89,12 @@ of the macros list is in reverse-alpha (we prepend them) - so longer
 macros that have substrings are always discovered first during
 expansion. */
 
-for (int i = 0; i < nopt; i++)  if (*(s = US opts[i].name) && *s != '*')
+for (int i = 0; i < nopt; i++)  if (*(s = U(opts[i].name)) && *s != '*')
   {
   if (group)
-    spf(buf, sizeof(buf), CUS"_OPT_%T_%T_%T", section, group, s);
+    spf(buf, sizeof(buf), US"_OPT_%T_%T_%T", section, group, s);
   else
-    spf(buf, sizeof(buf), CUS"_OPT_%T_%T", section, s);
+    spf(buf, sizeof(buf), US"_OPT_%T_%T", section, s);
   builtin_macro_create(buf);
   }
 }
