@@ -171,7 +171,7 @@ arc_instance_from_hdr(const arc_line * al)
 {
 const uschar * s = al->i.data;
 if (!s || !al->i.len) return 0;
-return (unsigned) atoi(CCS s);
+return (unsigned) atoi(C(s));
 }
 
 
@@ -233,7 +233,7 @@ static uschar *
 arc_insert_tagvalue(arc_line * al, unsigned loff, uschar ** ss)
 {
 uschar * s = *ss, c;
-blob * b = (blob *)(US al + loff);
+blob * b = (blob *)(U(al) + loff);
 size_t len = 0;
 
 /* [FWS] tag-value [FWS] */
@@ -489,7 +489,7 @@ if ((e = arc_parse_line(al, h, off, l_ext)))
 if (!(i = arc_instance_from_hdr(al)))	return US"instance find";
 if (i > 50)				return US"overlarge instance number";
 if (!(as = arc_find_set(ctx, i)))	return US"set find";
-if (*(alp = (arc_line **)(US as + hoff))) return US"dup hdr";
+if (*(alp = (arc_line **)(U(as) + hoff))) return US"dup hdr";
 
 *alp = al;
 if (alp_ret) *alp_ret = al;
@@ -788,7 +788,7 @@ arc_ams_setup_vfy_bodyhash(arc_line * ams)
 {
 blob * c = &ams->c;
 long bodylen = ams->l.data
-	? strtol(CS string_copyn(ams->l.data, ams->l.len), NULL, 10)
+	? strtol(C(string_copyn(ams->l.data, ams->l.len)), NULL, 10)
 	: -1;
 
 if (!c->data)
@@ -1293,7 +1293,7 @@ r->used = FALSE;
 h->next = NULL;
 h->type = 0;
 h->slen = len;
-h->text = US s;
+h->text = U(s);
 
 return r;
 }
@@ -1519,7 +1519,7 @@ for(col = 3; rheaders; rheaders = rheaders->prev)
   while ((name = string_nextinlist(&hnames, &sep, NULL, 0)))
     {
     int len = Ustrlen(name);
-    if (strncasecmp(CCS htext, CCS name, len) == 0)
+    if (strncasecmp(C(htext), C(name), len) == 0)
       {
       /* If too long, fold line in h= field */
 
@@ -1825,13 +1825,13 @@ if ((opts = string_nextinlist(&signspec, &sep, NULL, 0)))
       if (*(s += 6) == '=')
 	if (*++s == '+')
 	  {
-	  if (!(expire = (time_t)atoi(CS ++s)))
+	  if (!(expire = (time_t)atoi(C(++s))))
 	    expire = ARC_SIGN_DEFAULT_EXPIRE_DELTA;
 	  if (!now) now = time(NULL);
 	  expire += now;
 	  }
 	else
-	  expire = (time_t)atol(CS s);
+	  expire = (time_t)atol(C(s));
       else
 	{
 	if (!now) now = time(NULL);
