@@ -106,7 +106,7 @@ out as prompts, and get a data item back. If the data item is "*", abandon the
 authentication attempt. Otherwise, split it into items as above. */
 
 if (expand_nmax == 0) 	/* skip if rxd data */
-  if ((rc = auth_prompt(CUS"")) != OK)
+  if ((rc = auth_prompt(US"")) != OK)
     return rc;
 
 if (ob->server_param2)
