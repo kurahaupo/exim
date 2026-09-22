@@ -46,7 +46,7 @@ struct stat statbuf;
 uschar * path;
 
 if (is_tainted(name))
-  { p = US"create"; path = US name; errno = ERRNO_TAINT; goto bad; }
+  { p = US"create"; path = W(name); errno = ERRNO_TAINT; goto bad; }
 
 if (parent)
   {
@@ -68,7 +68,7 @@ while (c && *p)
   *p = '\0';
   if (Ustat(path, &statbuf) != 0)
     {
-    if (mkdir(CS path, mode) < 0 && errno != EEXIST)
+    if (mkdir(C(path), mode) < 0 && errno != EEXIST)
       { p = US"create"; goto bad; }
 
     /* Set the ownership if necessary. */
