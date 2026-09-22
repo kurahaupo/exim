@@ -128,7 +128,7 @@ else if (rc_read_dictionary(h, rc_conf_str(h, "dictionary")) != 0)
 else if (!rc_avpair_add(h, &send, PW_USER_NAME, user, Ustrlen(user), 0))
   *errptr = US"RADIUS: add user name failed";
 
-else if (!rc_avpair_add(h, &send, PW_USER_PASSWORD, CS radius_args,
+else if (!rc_avpair_add(h, &send, PW_USER_PASSWORD, C(radius_args),
     Ustrlen(radius_args), 0))
   *errptr = US"RADIUS: add password failed";
 
@@ -181,10 +181,10 @@ if (!(h = rad_auth_open()))
   }
 if (rad_config(h, RADIUS_CONFIG_FILE) != 0 ||
     rad_create_request(h, RAD_ACCESS_REQUEST) != 0 ||
-    rad_put_string(h, RAD_USER_NAME, CS user) != 0 ||
-    rad_put_string(h, RAD_USER_PASSWORD, CS radius_args) != 0 ||
+    rad_put_string(h, RAD_USER_NAME, C(user)) != 0 ||
+    rad_put_string(h, RAD_USER_PASSWORD, C(radius_args)) != 0 ||
     rad_put_int(h, RAD_SERVICE_TYPE, RAD_AUTHENTICATE_ONLY) != 0 ||
-    rad_put_string(h, RAD_NAS_IDENTIFIER, CS primary_hostname) != 0)
+    rad_put_string(h, RAD_NAS_IDENTIFIER, C(primary_hostname)) != 0)
   {
   *errptr = string_sprintf("RADIUS: %s", rad_strerror(h));
   result = ERROR;
