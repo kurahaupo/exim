@@ -111,7 +111,7 @@ if (h || message_id)
 	if (reference_count > 1)
 	  {
 	  /* drop position 1 and shuffle down */
-	  use -= Ustrlen(referenced_ids + 1);
+	  use -= Ustrlen(*referenced_ids + 1);
 	  memmove(referenced_ids + 1, referenced_ids + 2,
 	     sizeof(referenced_ids) - 2*sizeof(*referenced_ids));
 
