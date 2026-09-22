@@ -470,7 +470,7 @@ smtp_buf_init(void)
 call the local functions instead of the standard C ones.  Place a NUL at the
 end of the buffer to safety-stop C-string reads from it. */
 
-if (!(smtp_inbuffer = US malloc(IN_BUFFER_SIZE)))
+if (!(smtp_inbuffer = malloc(IN_BUFFER_SIZE)))
   log_write_die(LOG_MAIN, "malloc() failed for SMTP input buffer");
 smtp_inbuffer[IN_BUFFER_SIZE-1] = '\0';
 
@@ -880,7 +880,7 @@ next_cmd:
       {
       int n;
 
-      if (sscanf(CS smtp_cmd_data, "%u %n", &chunking_datasize, &n) < 1)
+      if (sscanf(C(smtp_cmd_data), "%u %n", &chunking_datasize, &n) < 1)
 	{
 	(void) synprot_error(TRUE, 501, NULL,
 	  US"missing size for BDAT command");
@@ -1395,7 +1395,7 @@ for (smtp_cmd_list * p = cmd_list; p < cmd_list + nelem(cmd_list); p++)
     continue;
 #endif
   if (  p->len
-     && strncmpic(smtp_cmd_buffer, US p->name, p->len) == 0
+     && strncmpic(smtp_cmd_buffer, U(p->name), p->len) == 0
      && (  smtp_cmd_buffer[p->len-1] == ':'    /* "mail from:" or "rcpt to:" */
         || smtp_cmd_buffer[p->len] == 0
 	|| smtp_cmd_buffer[p->len] == ' '
@@ -2044,7 +2044,7 @@ while (done <= 0)
 
       raw_sender = rewrite_existflags & rewrite_smtp
 	/* deconst ok as smtp_cmd_data was not const */
-        ? US rewrite_one(smtp_cmd_data, rewrite_smtp|rewrite_smtp_sender, NULL,
+        ? rewrite_one(smtp_cmd_data, rewrite_smtp|rewrite_smtp_sender, NULL,
 		      FALSE, US"", global_rewrite_rules)
 	: smtp_cmd_data;
 
@@ -2067,7 +2067,7 @@ while (done <= 0)
 	if (f.allow_unqualified_sender)
 	  {
 	  /* deconst ok as sender_address was not const */
-	  sender_address = US rewrite_address_qualify(sender_address, FALSE);
+	  sender_address = rewrite_address_qualify(sender_address, FALSE);
 	  DEBUG(receive) debug_printf("unqualified address %s accepted "
 	    "and rewritten\n", raw_sender);
 	  }
@@ -2110,8 +2110,8 @@ while (done <= 0)
 
       recipient = rewrite_existflags & rewrite_smtp
 	/* deconst ok as smtp_cmd_data was not const */
-	? US rewrite_one(smtp_cmd_data, rewrite_smtp, NULL, FALSE, US"",
-		      global_rewrite_rules)
+	? W(rewrite_one(smtp_cmd_data, rewrite_smtp, NULL, FALSE, US"",
+		      global_rewrite_rules))
 	: smtp_cmd_data;
 
       recipient = parse_extract_address(recipient, &errmess, &start, &end,
@@ -2130,7 +2130,7 @@ while (done <= 0)
 	  DEBUG(receive) debug_printf("unqualified address %s accepted\n",
 	    recipient);
 	  /* deconst ok as recipient was not const */
-	  recipient = US rewrite_address_qualify(recipient, TRUE);
+	  recipient = W(rewrite_address_qualify(recipient, TRUE));
 	  }
 	/* The function moan_smtp_batch() does not return. */
 	else
@@ -2335,13 +2335,13 @@ drop the detailed parsing and logging. */
 
 # if OPTSTYLE == 1
 #  define EXIM_IP_OPT_T	struct ip_options
-#  define OPTSTART	(ipopt->__data)
+#  define OPTSTART	(uschar *) (ipopt->__data)
 # elif OPTSTYLE == 2
 #  define EXIM_IP_OPT_T	struct ip_opts
-#  define OPTSTART	(ipopt->ip_opts);
+#  define OPTSTART	(uschar *) (ipopt->ip_opts)
 # else
 #  define EXIM_IP_OPT_T	struct ipoption
-#  define OPTSTART	(ipopt->ipopt_list);
+#  define OPTSTART	(uschar *) (ipopt->ipopt_list)
 # endif
 
 static BOOL
@@ -2351,13 +2351,13 @@ uschar * p, * pend = big_buffer + big_buffer_size;
 uschar * adptr;
 int optcount, sprint_len;
 struct in_addr addr;
-uschar * optstart = US OPTSTART;
+uschar * optstart = OPTSTART;
 
 DEBUG(receive) debug_printf("IP options exist\n");
 
 p = Ustpcpy(big_buffer, "IP options on incoming call:");
 
-for (uschar * opt = optstart; opt && opt < US (ipopt) + optlen; )
+for (uschar * opt = optstart; opt && opt < (uschar *) ipopt + optlen; )
   switch (*opt)
     {
     case IPOPT_EOL:
@@ -2415,7 +2415,7 @@ bad_srr:    break;
 	{
 	p = Ustpcpy(p, "[ ");
 	for (int i = 0; i < opt[1]; i++)
-	  p += sprintf(CS p, "%2.2x ", opt[i]);
+	  p += sprintf(C(p), "%2.2x ", opt[i]);
 	*p++ = ']';
 	opt += opt[1];
 	}
@@ -2601,7 +2601,7 @@ if (!f.sender_host_unknown)
     DEBUG(receive) debug_printf("checking for IP options\n");
 
     if (  smtp_out_fd < 0
-       || getsockopt(smtp_out_fd, IPPROTO_IP, IP_OPTIONS, US ipopt,
+       || getsockopt(smtp_out_fd, IPPROTO_IP, IP_OPTIONS, U(ipopt),
 		    &optlen) < 0)
       {
       if (errno != ENOPROTOOPT)
@@ -2772,7 +2772,7 @@ Failure will not allow any SMTP function other than QUIT. */
 /* Expand recipients_max, if needed */
  {
   const uschar * rme = expand_string(recipients_max);
-  recipients_max_expanded = atoi(CCS rme);
+  recipients_max_expanded = atoi(C(rme));
  }
 
 /* Set up the message size limit; this may be host-specific */
@@ -3478,7 +3478,7 @@ if (code && defaultrespond)
     va_list ap;
 
     va_start(ap, defaultrespond);
-    g = string_vformat(NULL, SVFMT_EXTEND|SVFMT_REBUFFER, CCS defaultrespond, ap);
+    g = string_vformat(NULL, SVFMT_EXTEND|SVFMT_REBUFFER, C(defaultrespond), ap);
     va_end(ap);
     smtp_printf("%s %Y\r\n", SP_NO_MORE, code, g);
     }
@@ -3775,7 +3775,7 @@ if (f.allow_unqualified_recipient || strcmpic(*recipient, US"postmaster") == 0)
   DEBUG(receive) debug_printf("unqualified address %s accepted\n",
     *recipient);
   /* deconst ok as *recipient was not const */
-  *recipient = US rewrite_address_qualify(*recipient, TRUE);
+  *recipient = W(rewrite_address_qualify(*recipient, TRUE));
   return rd;
   }
 smtp_printf("501 %s: recipient address must contain a domain\r\n", SP_NO_MORE,
@@ -3959,7 +3959,7 @@ else
       US"argument must begin with #");
 
   etrn_command = US"exim -R";
-  argv = CUSS child_exec_exim(CEE_RETURN_ARGV, TRUE, NULL, TRUE,
+  argv = child_exec_exim(CEE_RETURN_ARGV, TRUE, NULL, TRUE,
     *queue_name ? 4 : 2,
     US"-R", smtp_cmd_data,
     US"-MCG", queue_name);
@@ -4016,7 +4016,7 @@ if ((pid = exim_fork(US"etrn-command")) == 0)
     DEBUG(exec) debug_print_argv(argv);
     exim_nullstd();                   /* Ensure std{in,out,err} exist */
     /* argv[0] should be untainted, from child_exec_exim() */
-    execv(CS argv[0], (char *const *)argv);
+    execv(C(argv[0]), (char *const *)argv);
     log_write_die(LOG_MAIN, "exec of %q (ETRN) failed: %s",
       etrn_command, strerror(errno));
     _exit(EXIT_FAILURE);         /* paranoia */
@@ -4134,7 +4134,7 @@ if (smtp_batched_input) return smtp_setup_batch_msg();
 #ifdef TCP_QUICKACK
 if (smtp_in_fd >= 0)	/* Avoid pure-ACKs while in cmd pingpong phase */
   (void) setsockopt(smtp_in_fd, IPPROTO_TCP, TCP_QUICKACK,
-	  US &off, sizeof(off));
+	  U(&off), sizeof(off));
 #endif
 
 /* Deal with SMTP commands. This loop is exited by setting done to a POSITIVE
@@ -4391,7 +4391,7 @@ while (done <= 0)
 	because otherwise the log can be confusing. */
 
 	if (  !sender_host_name
-	   && match_isinlist(sender_helo_name, CUSS &helo_lookup_domains, 0,
+	   && match_isinlist(sender_helo_name, R(&helo_lookup_domains), 0,
 		&domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL) == OK)
 	  (void)host_name_lookup();
 
@@ -4510,7 +4510,7 @@ while (done <= 0)
 	int codelen = 4;
 	smtp_message_code(&smtp_code, &codelen, &user_msg, NULL, TRUE);
 	s = string_sprintf("%.*s%s", codelen, smtp_code, user_msg);
-	if ((t= strpbrk(CS s, "\r\n")) != NULL)
+	if ((t= strpbrk(C(s), "\r\n")) != NULL)
 	  {
 	  log_write(LOG_MAIN|LOG_PANIC, "EHLO/HELO response must not contain "
 	    "newlines: message truncated: %s", string_printing(s));
@@ -4903,7 +4903,7 @@ while (done <= 0)
 	  case ENV_MAIL_OPT_SIZE:
 	    {
 	    const uschar * s_end;
-	    unsigned long int size = Ustrtoul(value, &s_end, 10);
+	    unsigned long int size = Ustrtoul(value, W(&s_end), 10);
 	    if (!*s_end)
 	      {
 	      if ((size == ULONG_MAX && errno == ERANGE) || size > INT_MAX)
@@ -5118,7 +5118,7 @@ while (done <= 0)
 
       raw_sender = rewrite_existflags & rewrite_smtp
 	/* deconst ok as smtp_cmd_data was not const */
-	? US rewrite_one(smtp_cmd_data, rewrite_smtp, NULL, FALSE, US"",
+	? rewrite_one(smtp_cmd_data, rewrite_smtp, NULL, FALSE, US"",
 		      global_rewrite_rules)
 	: smtp_cmd_data;
 
@@ -5179,7 +5179,7 @@ while (done <= 0)
 	  {
 	  sender_domain = Ustrlen(sender_address) + 1;
 	  /* deconst ok as sender_address was not const */
-	  sender_address = US rewrite_address_qualify(sender_address, FALSE);
+	  sender_address = rewrite_address_qualify(sender_address, FALSE);
 	  DEBUG(receive) debug_printf("unqualified address %s accepted\n",
 	    raw_sender);
 	  }
@@ -5375,8 +5375,8 @@ while (done <= 0)
 
       recipient = rewrite_existflags & rewrite_smtp
 	/* deconst ok as smtp_cmd_data was not const */
-	? US rewrite_one(smtp_cmd_data, rewrite_smtp, NULL, FALSE, US"",
-	    global_rewrite_rules)
+	? W(rewrite_one(smtp_cmd_data, rewrite_smtp, NULL, FALSE, US"",
+	    global_rewrite_rules))
 	: smtp_cmd_data;
 
       if (!(recipient = parse_extract_address(recipient, &errmess, &start, &end,
@@ -5537,7 +5537,7 @@ while (done <= 0)
 
       /* grab size, endmarker */
 
-      if (sscanf(CS smtp_cmd_data, "%u %n", &chunking_datasize, &n) < 1)
+      if (sscanf(C(smtp_cmd_data), "%u %n", &chunking_datasize, &n) < 1)
 	{
 	done = synprot_error(TRUE, 501, NULL,
 	  US"missing size for BDAT command");
@@ -5649,7 +5649,7 @@ while (done <= 0)
 #ifdef TCP_QUICKACK
       /* all ACKs needed to ramp window up for bulk data */
       (void) setsockopt(smtp_in_fd, IPPROTO_TCP, TCP_QUICKACK,
-		US &on, sizeof(on));
+		U(&on), sizeof(on));
 #endif
       done = 3;
       message_ended = END_NOTENDED;   /* Indicate in middle of data */
