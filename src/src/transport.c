@@ -647,7 +647,7 @@ Returns:            a string
 const uschar *
 transport_rcpt_address(address_item *addr, BOOL include_affixes)
 {
-uschar *at;
+typeof(addr->address) at;
 int plen, slen;
 
 if (include_affixes)
@@ -790,7 +790,7 @@ for (header_line * h = header_list; h; h = h->next) if (h->type != htype_old)
     if (list)
       {
       int sep = ':';         /* This is specified as a colon-separated list */
-      uschar *s, *ss;
+      const uschar *s, *ss;
       while ((s = string_nextinlist(&list, &sep, NULL, 0)))
 	{
 	int len;
@@ -901,10 +901,10 @@ up any other headers. An empty string or a forced expansion failure are
 noops. An added header string from a transport may not end with a newline;
 add one if it does not. */
 
-if (tblock && (list = CUS tblock->add_headers))
+if (tblock && (list = tblock->add_headers))
   {
   int sep = '\n';
-  uschar * s;
+  const uschar * s;
 
   while ((s = string_nextinlist(&list, &sep, NULL, 0)))
     if ((s = expand_string(s)))
@@ -1320,7 +1320,7 @@ write_pid = (pid_t)(-1);
   {
   int bits = fcntl(tctx->u.fd, F_GETFD);
   (void) fcntl(tctx->u.fd, F_SETFD, bits | FD_CLOEXEC);
-  filter_pid = child_open(USS transport_filter_argv, NULL, 077,
+  filter_pid = child_open(W(transport_filter_argv), NULL, 077,
 			  &fd_write, &fd_read, FALSE, US"transport-filter");
   (void) fcntl(tctx->u.fd, F_SETFD, bits & ~FD_CLOEXEC);
   }
@@ -1641,7 +1641,7 @@ for (host_item * host = hostlist; host; host = host->next)
       (void) dbfn_delete(dbp, host->name);
       for (int i = host_record->sequence - 1; i >= 0; i--)
 	(void) dbfn_delete(dbp,
-		    (sprintf(CS buffer, "%.200s:%d", host->name, i), buffer));
+		    (sprintf(C(buffer), "%.200s:%d", host->name, i), buffer));
 
       host_record->count = host_record->sequence = 0;
       break;
@@ -1656,7 +1656,7 @@ for (host_item * host = hostlist; host; host = host->next)
   for (int i = host_record->sequence - 1; i >= 0 && !already; i--)
     {
     dbdata_wait *cont;
-    sprintf(CS buffer, "%.200s:%d", host->name, i);
+    sprintf(C(buffer), "%.200s:%d", host->name, i);
     if ((cont = dbfn_read(dbp, buffer)))
       {
       int clen = cont->count * MESSAGE_ID_LENGTH;
@@ -1682,7 +1682,7 @@ for (host_item * host = hostlist; host; host = host->next)
 
   if (host_record->count >= WAIT_NAME_MAX)
     {
-    sprintf(CS buffer, "%.200s:%d", host->name, host_record->sequence);
+    sprintf(C(buffer), "%.200s:%d", host->name, host_record->sequence);
     dbfn_write(dbp, buffer, host_record, sizeof(dbdata_wait) + host_length);
 #ifndef DISABLE_QUEUE_RAMP
     if (f.queue_2stage && queue_fast_ramp && !queue_run_in_order)
@@ -1866,7 +1866,7 @@ while (1)
       (void) dbfn_delete(dbp, hostname);
       for (int j = host_record->sequence - 1; j >= 0; j--)
 	(void) dbfn_delete(dbp,
-		    (sprintf(CS buffer, "%.200s:%d", hostname, j), buffer));
+		    (sprintf(C(buffer), "%.200s:%d", hostname, j), buffer));
       goto dbclose_false;
       }
     msgq[i].bKeep = TRUE;
@@ -1951,7 +1951,7 @@ while (1)
 
     for (int j = host_record->sequence - 1; j >= 0 && !newr; j--)
       {
-      sprintf(CS buffer, "%.200s:%d", hostname, j);
+      sprintf(C(buffer), "%.200s:%d", hostname, j);
       newr = dbfn_read(dbp, buffer);
       }
 
@@ -2060,7 +2060,7 @@ if (proxy_session)		    i += 5;
 /* Set up the calling arguments; use the standard function for the basics,
 but we have a number of extras that may be added. */
 
-argv = CUSS child_exec_exim(CEE_RETURN_ARGV, TRUE, &i, FALSE, 0);
+argv = child_exec_exim(CEE_RETURN_ARGV, TRUE, &i, FALSE, 0);
 
 if (f.smtp_authenticated)			argv[i++] = US"-MCA";
 if (cutthrough.peer_options & OPTION_CHUNKING)	argv[i++] = US"-MCK";
@@ -2119,9 +2119,9 @@ if (proxy_session)
 #endif
 
 argv[i++] = US"-MC";
-argv[i++] = US cutthrough.transport;
-argv[i++] = US cutthrough.host.name;
-argv[i++] = US cutthrough.host.address;
+argv[i++] = cutthrough.transport;
+argv[i++] = cutthrough.host.name;
+argv[i++] = cutthrough.host.address;
 argv[i++] = string_sprintf("%d", cutthrough.host.port);
 argv[i++] = string_sprintf("%d", continue_sequence + 1); /*XXX always 0+1 */
 argv[i++] = id;
@@ -2138,7 +2138,7 @@ if (socket_fd != 0)
 DEBUG(exec) debug_print_argv(argv);
 exim_nullstd();                          /* Ensure std{out,err} exist */
 /* argv[0] should be untainted, from child_exec_exim() */
-execv(CS argv[0], (char *const *)argv);
+execv(C(argv[0]), (char *const *)argv);
 
 DEBUG(any) debug_printf("execv failed: %s\n", strerror(errno));
 _exit(errno);         /* Note: must be _exit(), NOT exit() */
@@ -2232,7 +2232,7 @@ for (; *s && argcount < max_args; argcount++)
     if (*(s += n) == '\'') s++;
     }
   else
-    argv[argcount] = string_dequote(CUSS &s);
+    argv[argcount] = string_dequote(&s);
   Uskip_whitespace(&s);
   }
 
@@ -2379,7 +2379,7 @@ if (flags & TSUC_EXPAND_ARGS)
 	  if (*(s += n) == '\'') s++;
 	  }
         else
-	  address_pipe_argv[address_pipe_argcount++] = string_dequote(CUSS &s);
+	  address_pipe_argv[address_pipe_argcount++] = string_dequote(&s);
 	Uskip_whitespace(&s);			/* strip space after arg */
         }
 
