@@ -118,7 +118,7 @@ while (next < end)
   /* I'm not sure if there are signals that can interrupt us,
   for now I assume the worst */
   if (got == -1 && errno == EINTR) continue;
-  if (got <= 0) return next - US buffer;
+  if (got <= 0) return next - (uschar *) buffer;
   next += got;
   }
 
@@ -1022,7 +1022,7 @@ if (  testflag(addr, af_pfr)
    )  )
   {
   if (testflag(addr, af_file) && addr->local_part[0] != '/')
-    g = string_catn(g, CUS"save ", 5);
+    g = string_catn(g, US"save ", 5);
   g = string_get_localpart(addr, g);
   }
 
@@ -1043,7 +1043,7 @@ else
     s = addr->domain;
 #ifdef SUPPORT_I18N
     if (testflag(addr, af_utf8_downcvt))
-      s = string_domain_utf8_to_alabel(US s, NULL);
+      s = string_domain_utf8_to_alabel(U(s), NULL);
 #endif
     g = string_cat(g, s);
     }
@@ -1520,7 +1520,7 @@ if (addr->message)
 
   /* deconst cast ok IF string_printing known to have alloc'n'copied */
 
-  t = s == addr->message ? string_copy(s) : US s;
+  t = s == addr->message ? string_copy(s) : W(s);
   addr->message = expand_hide_passwords(t);
   }
 
@@ -1788,7 +1788,7 @@ if (format)
   gstring * g;
 
   va_start(ap, format);
-  g = string_vformat(NULL, SVFMT_EXTEND|SVFMT_REBUFFER, CS format, ap);
+  g = string_vformat(NULL, SVFMT_EXTEND|SVFMT_REBUFFER, C(format), ap);
   va_end(ap);
   addr->message = string_from_gstring(g);
   }
@@ -2569,9 +2569,9 @@ if (!shadowing)
     if (addr2->transport_return == OK)
       {
       if (testflag(addr2, af_homonym))
-	sprintf(CS big_buffer, "%.500s/%s\n", addr2->unique + 3, trname);
+	sprintf(C(big_buffer), "%.500s/%s\n", addr2->unique + 3, trname);
       else
-	sprintf(CS big_buffer, "%.500s\n", addr2->unique);
+	sprintf(C(big_buffer), "%.500s\n", addr2->unique);
 
       /* In the test harness, wait just a bit to let the subprocess finish off
       any debug output etc first. */
@@ -2650,7 +2650,7 @@ if (addr->special_action == SPECIAL_WARN)
       fprintf(f, "Auto-Submitted: auto-replied\n");
       if (!contains_header(US"From", warn_message))
 	moan_write_from(f);
-      fprintf(f, "%s", CS warn_message);
+      fprintf(f, "%s", C(warn_message));
 
       /* Close and wait for child process to complete, without a timeout. */
 
@@ -3085,7 +3085,7 @@ while (addr_local)
 	addr3 = store_get(sizeof(address_item), GET_UNTAINTED);
 	*addr3 = *addr2;
 	addr3->next = NULL;
-	addr3->shadow_message = US &addr2->shadow_message;
+	addr3->shadow_message = (uschar *) (&addr2->shadow_message);
 	addr3->transport = stp;
 	addr3->transport_return = DEFER;
 	addr3->return_filename = NULL;
@@ -3115,7 +3115,7 @@ while (addr_local)
 	  : string_sprintf(" ST=%s (%s%s%s)", s_trname,
 	      shadow_addr->basic_errno <= 0
 	      ? US""
-	      : US strerror(shadow_addr->basic_errno),
+	      : U(strerror(shadow_addr->basic_errno)),
 	      shadow_addr->basic_errno <= 0 || !shadow_addr->message
 	      ? US""
 	      : US": ",
@@ -3399,7 +3399,7 @@ while (!done)
   {
   /* If we can't decode the pipeheader, the subprocess seems to have a
   problem, we do not expect any furher information from it. */
-  char *endc;
+  uschar *endc;
   required = Ustrtol(pipeheader+2, &endc, 10);
   if (*endc)
     {
@@ -3601,7 +3601,7 @@ while (!done)
       break;
 
     case 'B':		/* smtp session protocol startup sequence */
-      addr->protocol_sequence = string_cat(NULL, US ptr);
+      addr->protocol_sequence = string_cat((gstring *) NULL, ptr);
       break;
 
     case 'D':		/* DSN */
@@ -3722,7 +3722,7 @@ while (!done)
     case 'I':
       if (*ptr) sending_ip_address = string_copy_perm(ptr, FALSE);
       while (*ptr++) ;
-      if (*ptr) sending_port = atoi(CS ptr);
+      if (*ptr) sending_port = atoi(C(ptr));
       while (*ptr++) ;
       break;
 
@@ -3748,7 +3748,7 @@ while (!done)
 	  break;
 	case '1':			/* Suggested continuation message */
 	  Ustrncpy(continue_next_id, ptr, MESSAGE_ID_LENGTH);
-	  continue_sequence = atoi(CS ptr + MESSAGE_ID_LENGTH + 1);
+	  continue_sequence = atoi(C(ptr) + MESSAGE_ID_LENGTH + 1);
 	  DEBUG(deliver) debug_printf("continue_next_id: %s seq %d\n",
 					continue_next_id, continue_sequence);
 	  break;
@@ -3762,7 +3762,7 @@ while (!done)
 	  continue_transport = string_copy(ptr);	while (*ptr++) ;
 	  continue_hostname = string_copy(ptr);		while (*ptr++) ;
 	  continue_host_address = string_copy(ptr);	while (*ptr++) ;
-	  continue_sequence = atoi(CS ptr);
+	  continue_sequence = atoi(C(ptr));
 
 	  dup2((recvd_fd = recv_fd_from_sock(fd)), 0);
 	  close(recvd_fd);
@@ -3794,7 +3794,7 @@ while (!done)
 #endif
 #ifndef DISABLE_ESMTP_LIMITS
 	case '7':				/* Continued peer limits */
-	  sscanf(CS ptr, "%u %u %u",
+	  sscanf(C(ptr), "%u %u %u",
 		  &continue_limit_mail, &continue_limit_rcpt,
 		  &continue_limit_rcptdom);
 	  break;
@@ -3802,9 +3802,9 @@ while (!done)
 #ifdef SUPPORT_SOCKS
 	case '8':				/* Continued proxy info */
 	  proxy_local_address = string_copy(ptr);	while (*ptr++) ;
-	  proxy_local_port = atoi(CS ptr);		while (*ptr++) ;
+	  proxy_local_port = atoi(C(ptr));		while (*ptr++) ;
 	  proxy_external_address = string_copy(ptr);	while (*ptr++) ;
-	  proxy_external_port = atoi(CS ptr);
+	  proxy_external_port = atoi(C(ptr));
 	  break;
 #endif
 	}
@@ -4319,7 +4319,7 @@ if (size > BIG_BUFFER_SIZE-1)
 that help? */
 
 /* convert size to human readable string prepended by id and subid */
-if (PIPE_HEADER_SIZE != snprintf(CS pipe_header, PIPE_HEADER_SIZE+1, "%c%c%05ld",
+if (PIPE_HEADER_SIZE != snprintf(C(pipe_header), PIPE_HEADER_SIZE+1, "%c%c%05ld",
     id, subid, (long)size))
   log_write_die(LOG_MAIN, "header snprintf failed\n");
 
@@ -4633,7 +4633,7 @@ Does that also apply to address_data?
     else if (!f.expand_string_forcedfail)
       {
       common_error(FALSE, addr, ERRNO_EXPANDFAIL,
-		    US "Failed to expand return path %q: %s",
+		    US"Failed to expand return path %q: %s",
 		    tp->return_path, expand_string_message);
       panicmsg = addr->message;
       goto enq_continue;
@@ -5013,7 +5013,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
     for (h = addr->host_list; h; h = h->next)
       {
       if (!h->address || h->status < hstatus_unusable) continue;
-      sprintf(CS big_buffer, "%c%c%s", h->status, h->why, h->address);
+      sprintf(C(big_buffer), "%c%c%s", h->status, h->why, h->address);
       rmt_dlv_checked_write(fd, 'H','0', big_buffer, Ustrlen(big_buffer+2) + 3);
       }
 
@@ -5048,17 +5048,17 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
       /* Use an X item only if there's something to send */
       if (addr->cipher)
         {
-        ptr = big_buffer + sprintf(CS big_buffer, "%.128s", addr->cipher) + 1;
+        ptr = big_buffer + sprintf(C(big_buffer), "%.128s", addr->cipher) + 1;
         if (!addr->peerdn)
 	  *ptr++ = 0;
 	else
-          ptr += sprintf(CS ptr, "%.512s", addr->peerdn) + 1;
+          ptr += sprintf(C(ptr), "%.512s", addr->peerdn) + 1;
 
         rmt_dlv_checked_write(fd, 'X', '1', big_buffer, ptr - big_buffer);
         }
       else if (continue_proxy_cipher)
 	{
-        ptr = big_buffer + sprintf(CS big_buffer, "%.128s", continue_proxy_cipher) + 1;
+        ptr = big_buffer + sprintf(C(big_buffer), "%.128s", continue_proxy_cipher) + 1;
 	*ptr++ = 0;
         rmt_dlv_checked_write(fd, 'X', '1', big_buffer, ptr - big_buffer);
 	}
@@ -5084,7 +5084,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 # ifndef DISABLE_OCSP
       if (addr->ocsp > OCSP_NOT_REQ)
 	{
-	ptr = big_buffer + sprintf(CS big_buffer, "%c", addr->ocsp + '0') + 1;
+	ptr = big_buffer + sprintf(C(big_buffer), "%c", addr->ocsp + '0') + 1;
         rmt_dlv_checked_write(fd, 'X', '4', big_buffer, ptr - big_buffer);
 	}
 # endif
@@ -5092,17 +5092,17 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 
       if (client_authenticator)
         {
-	ptr = big_buffer + sprintf(CS big_buffer, "%.64s", client_authenticator) + 1;
+	ptr = big_buffer + sprintf(C(big_buffer), "%.64s", client_authenticator) + 1;
         rmt_dlv_checked_write(fd, 'C', '1', big_buffer, ptr - big_buffer);
 	}
       if (client_authenticated_id)
         {
-        ptr = big_buffer + sprintf(CS big_buffer, "%.64s", client_authenticated_id) + 1;
+        ptr = big_buffer + sprintf(C(big_buffer), "%.64s", client_authenticated_id) + 1;
         rmt_dlv_checked_write(fd, 'C', '2', big_buffer, ptr - big_buffer);
 	}
       if (client_authenticated_sender)
         {
-        ptr = big_buffer + sprintf(CS big_buffer, "%.64s", client_authenticated_sender) + 1;
+        ptr = big_buffer + sprintf(C(big_buffer), "%.64s", client_authenticated_sender) + 1;
         rmt_dlv_checked_write(fd, 'C', '3', big_buffer, ptr - big_buffer);
 	}
 
@@ -5140,7 +5140,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 
       for (retry_item * r = addr->retries; r; r = r->next)
         {
-        sprintf(CS big_buffer, "%c%.500s", r->flags, r->key);
+        sprintf(C(big_buffer), "%c%.500s", r->flags, r->key);
         ptr = big_buffer + Ustrlen(big_buffer+2) + 3;
         memcpy(ptr, &r->basic_errno, sizeof(r->basic_errno));
         ptr += sizeof(r->basic_errno);
@@ -5148,7 +5148,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
         ptr += sizeof(r->more_errno);
         if (!r->message) *ptr++ = 0; else
           {
-          sprintf(CS ptr, "%.512s", r->message);
+          sprintf(C(ptr), "%.512s", r->message);
           while(*ptr++);
           }
         rmt_dlv_checked_write(fd, 'R', '0', big_buffer, ptr - big_buffer);
@@ -5158,7 +5158,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
       if (addr->dkim_used && LOGGING(dkim_verbose))
 	{
 	DEBUG(deliver) debug_printf("dkim used: %s\n", addr->dkim_used);
-	ptr = big_buffer + sprintf(CS big_buffer, "%.128s", addr->dkim_used) + 1;
+	ptr = big_buffer + sprintf(C(big_buffer), "%.128s", addr->dkim_used) + 1;
         rmt_dlv_checked_write(fd, 'A', '4', big_buffer, ptr - big_buffer);
 	}
 #endif
@@ -5178,7 +5178,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 	if (proxy_local_address)
 	  {
 	  DEBUG(deliver) debug_printf("proxy_local_address '%s'\n", proxy_local_address);
-	  ptr = big_buffer + sprintf(CS ptr, "%.128s", proxy_local_address) + 1;
+	  ptr = big_buffer + sprintf(C(ptr), "%.128s", proxy_local_address) + 1;
 	  DEBUG(deliver) debug_printf("proxy_local_port %d\n", proxy_local_port);
 	  memcpy(ptr, &proxy_local_port, sizeof(proxy_local_port));
 	  ptr += sizeof(proxy_local_port);
@@ -5194,11 +5194,11 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
       if (addr->smtp_greeting)
 	{
 	DEBUG(deliver) debug_printf("smtp_greeting '%s'\n", addr->smtp_greeting);
-	ptr = big_buffer + sprintf(CS big_buffer, "%.128s", addr->smtp_greeting) + 1;
+	ptr = big_buffer + sprintf(C(big_buffer), "%.128s", addr->smtp_greeting) + 1;
 	if (addr->helo_response)
 	  {
 	  DEBUG(deliver) debug_printf("helo_response '%s'\n", addr->helo_response);
-	  ptr += sprintf(CS ptr, "%.128s", addr->helo_response) + 1;
+	  ptr += sprintf(C(ptr), "%.128s", addr->helo_response) + 1;
 	  }
 	else
 	  *ptr++ = '\0';
@@ -5214,7 +5214,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 	  : addr->special_action == '-' ? "additional RCPT" : "?",
 	  addr->address);
 #endif
-      sprintf(CS big_buffer, "%c%c", addr->transport_return, addr->special_action);
+      sprintf(C(big_buffer), "%c%c", addr->transport_return, addr->special_action);
       ptr = big_buffer + 2;
       memcpy(ptr, &addr->basic_errno, sizeof(addr->basic_errno));
       ptr += sizeof(addr->basic_errno);
@@ -5226,15 +5226,15 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
       ptr += sizeof(addr->flags);
 
       if (!addr->message) *ptr++ = 0; else
-        ptr += sprintf(CS ptr, "%.1024s", addr->message) + 1;
+        ptr += sprintf(C(ptr), "%.1024s", addr->message) + 1;
 
       if (!addr->user_message) *ptr++ = 0; else
-        ptr += sprintf(CS ptr, "%.1024s", addr->user_message) + 1;
+        ptr += sprintf(C(ptr), "%.1024s", addr->user_message) + 1;
 
       if (!addr->host_used) *ptr++ = 0; else
         {
-        ptr += sprintf(CS ptr, "%.256s", addr->host_used->name) + 1;
-        ptr += sprintf(CS ptr, "%.64s", addr->host_used->address) + 1;
+        ptr += sprintf(C(ptr), "%.256s", addr->host_used->name) + 1;
+        ptr += sprintf(C(ptr), "%.64s", addr->host_used->address) + 1;
         memcpy(ptr, &addr->host_used->port, sizeof(addr->host_used->port));
         ptr += sizeof(addr->host_used->port);
 
@@ -5255,8 +5255,8 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
        )
       {
       uschar * ptr = big_buffer
-		    + sprintf(CS big_buffer, "%.128s", sending_ip_address) + 1;
-      ptr += sprintf(CS ptr, "%d", sending_port) + 1;
+		    + sprintf(C(big_buffer), "%.128s", sending_ip_address) + 1;
+      ptr += sprintf(C(ptr), "%d", sending_port) + 1;
       rmt_dlv_checked_write(fd, 'I', '0', big_buffer, ptr - big_buffer);
       }
 
@@ -5265,7 +5265,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 
     if (*continue_next_id)
       rmt_dlv_checked_write(fd, 'Z', '1', big_buffer,
-	  sprintf(CS big_buffer, "%.*s %u",
+	  sprintf(C(big_buffer), "%.*s %u",
 	      MESSAGE_ID_LENGTH, continue_next_id, continue_sequence+1) + 1);
 
     /* Connection details, only on the first suggested continuation for
@@ -5276,10 +5276,10 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
       {
        {
 	uschar * ptr = big_buffer;
-	ptr += sprintf(CS ptr, "%.128s", continue_transport) + 1;
-	ptr += sprintf(CS ptr, "%.128s", continue_hostname) + 1;
-	ptr += sprintf(CS ptr, "%.128s", continue_host_address) + 1;
-	ptr += sprintf(CS ptr, "%u", continue_sequence+1) + 1;
+	ptr += sprintf(C(ptr), "%.128s", continue_transport) + 1;
+	ptr += sprintf(C(ptr), "%.128s", continue_hostname) + 1;
+	ptr += sprintf(C(ptr), "%.128s", continue_host_address) + 1;
+	ptr += sprintf(C(ptr), "%u", continue_sequence+1) + 1;
 	rmt_dlv_checked_write(fd, 'Z', '2', big_buffer, ptr - big_buffer);
 	send_fd_over_socket(fd, continue_fd);
        }
@@ -5290,7 +5290,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 
       if (tls_out.active.sock >= 0 || continue_proxy_cipher)
 	rmt_dlv_checked_write(fd, 'Z', '4', big_buffer,
-	      sprintf(CS big_buffer, "%.128s", continue_proxy_cipher) + 1);
+	      sprintf(C(big_buffer), "%.128s", continue_proxy_cipher) + 1);
 
       if (tls_out.sni)
 	rmt_dlv_checked_write(fd, 'Z',
@@ -5304,7 +5304,7 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
 #ifndef DISABLE_ESMTP_LIMITS
       if (continue_limit_mail || continue_limit_rcpt || continue_limit_rcptdom)
 	rmt_dlv_checked_write(fd, 'Z', '7', big_buffer,
-	      sprintf(CS big_buffer, "%u %u %u",
+	      sprintf(C(big_buffer), "%u %u %u",
 		  continue_limit_mail, continue_limit_rcpt,
 		  continue_limit_rcptdom) + 1);
 #endif
@@ -5313,10 +5313,10 @@ do_remote_deliveries par_reduce par_wait par_read_pipe
       if (proxy_session)
 	{
 	uschar * ptr = big_buffer;
-	ptr += sprintf(CS ptr, "%.128s", proxy_local_address) + 1;
-	ptr += sprintf(CS ptr, "%u", proxy_local_port) + 1;
-	ptr += sprintf(CS ptr, "%.128s", proxy_external_address) + 1;
-	ptr += sprintf(CS ptr, "%u", proxy_external_port) + 1;
+	ptr += sprintf(C(ptr), "%.128s", proxy_local_address) + 1;
+	ptr += sprintf(C(ptr), "%u", proxy_local_port) + 1;
+	ptr += sprintf(C(ptr), "%.128s", proxy_external_address) + 1;
+	ptr += sprintf(C(ptr), "%u", proxy_external_port) + 1;
 	rmt_dlv_checked_write(fd, 'Z', '8', big_buffer, ptr - big_buffer);
 	}
 #endif
@@ -5478,7 +5478,7 @@ if (percent_hack_domains)
   {
   int rc;
   uschar * new_address = NULL;
-  const uschar * local_part = addr->cc_local_part;
+  const uschar * local_part = addr->cc_local_part, * t;
 
   deliver_domain = addr->domain;  /* set $domain */
 
@@ -5633,7 +5633,7 @@ const uschar * printed = US"";
 address_item * ancestor = addr;
 while (ancestor->parent) ancestor = ancestor->parent;
 
-fprintf(f, "%s", CS si);
+fprintf(f, "%s", C(si));
 
 if (addr->parent && testflag(addr, af_hide_child))
   {
@@ -5656,7 +5656,7 @@ else
   printed = addr->parent->address;
   }
 
-fprintf(f, "%s", CS string_printing(printed));
+fprintf(f, "%s", string_printing(printed));
 
 if (ancestor != addr)
   {
@@ -5672,7 +5672,7 @@ if (addr->host_used)
   fprintf(f, "\n    host %s [%s]",
 	  addr->host_used->name, addr->host_used->address);
 
-fprintf(f, "%s", CS se);
+fprintf(f, "%s", C(se));
 return yield;
 }
 
@@ -6082,7 +6082,7 @@ else
     bound, get_bounce_charset());
 
   if ((emf_text = next_emf(emf, US"intro")))
-    fprintf(fp, "%s", CS emf_text);
+    fprintf(fp, "%s", C(emf_text));
   else
     {
     fprintf(fp,
@@ -6092,7 +6092,7 @@ wording. */
 "This message was created automatically by mail delivery software.\n");
 
     if (bounce_message_text)
-      fprintf(fp, "%s", CS bounce_message_text);
+      fprintf(fp, "%s", C(bounce_message_text));
     if (to_sender)
       fprintf(fp,
 "\nA message that you sent could not be delivered to one or more of its\n"
@@ -6159,7 +6159,7 @@ wording. */
     address_item * nextaddr;
 
     if (emf_text)
-      fprintf(fp, "%s", CS emf_text);
+      fprintf(fp, "%s", C(emf_text));
     else
       fprintf(fp,
 	"The following text was generated during the delivery "
@@ -6454,7 +6454,7 @@ fprintf(f, "--%s\n"
   bound, get_bounce_charset());
 
 if ((wmf_text = next_emf(wmf, US"intro")))
-  fprintf(f, "%s", CS wmf_text);
+  fprintf(f, "%s", C(wmf_text));
 else
   {
   fprintf(f,
@@ -6504,7 +6504,7 @@ fputc('\n', f);
 if (wmf)
   {
   if ((wmf_text = next_emf(wmf, US"final")))
-    fprintf(f, "%s", CS wmf_text);
+    fprintf(f, "%s", C(wmf_text));
   (void)fclose(wmf);
   }
 else
@@ -7097,7 +7097,7 @@ if (give_up)
   {
   struct passwd *pw = getpwuid(real_uid);
   log_write(LOG_MAIN, "cancelled by %s",
-      pw ? US pw->pw_name : string_sprintf("uid %ld", (long int)real_uid));
+      pw ? U(pw->pw_name) : string_sprintf("uid %ld", (long int)real_uid));
   process_recipients = RECIP_FAIL;
   }
 
@@ -7417,7 +7417,7 @@ if (process_recipients != RECIP_IGNORE)
   for (i = 0; i < recipients_count; i++)
     {
     recipient_item * r = recipients_list + i;
-    uschar * s;
+    const uschar * s;
 
     if (  !tree_search(tree_nonrecipients, r->address)
        && (  !atrn_domains				/* normal case */
@@ -7539,7 +7539,7 @@ if (process_recipients != RECIP_IGNORE)
 	  {
 	  deliver_localpart =
 	    string_copyn(addr+start, dom ? (dom-1) - start : end - start);
-	  deliver_domain = dom ? CUS string_copyn(addr+dom, end - dom) : CUS"";
+	  deliver_domain = dom ? string_copyn(addr+dom, end - dom) : US"";
 
 	  (void) event_raise(event_action, US"msg:fail:internal", new->message, NULL);
 
@@ -8071,7 +8071,7 @@ while (addr_new)           /* Loop until all addresses dealt with */
       addr_route = addr_r->next;
 
       deliver_domain = addr_r->domain;  /* set $domain */
-      if ((rc = match_isinlist(addr_r->domain, CUSS &queue_domains, 0,
+      if ((rc = match_isinlist(addr_r->domain, RR(&queue_domains), 0,
             &domainlist_anchor, addr_r->domain_cache, MCL_DOMAIN, TRUE, NULL))
               != OK)
         if (rc == DEFER)
@@ -8577,7 +8577,7 @@ if (mua_wrapper)
     if ((host = addr_failed->host_used))
       fprintf(stderr, "H=%s [%s]: ", host->name, host->address);
     if (s)
-      fprintf(stderr, "%s", CS s);
+      fprintf(stderr, "%s", C(s));
     else if (addr_failed->basic_errno <= 0)
       fprintf(stderr, "unknown error");
     fprintf(stderr, "\n");
@@ -9090,7 +9090,7 @@ if (has_continue)
     cutthrough.cipher = continue_proxy_cipher;
     cutthrough.sni = continue_proxy_sni;
     cutthrough.is_dane = continue_proxy_dane;
-    cutthrough.transport = US continue_transport;
+    cutthrough.transport = W(continue_transport);
     cutthrough.host.name = continue_hostname;
     cutthrough.host.address = continue_host_address;
     cutthrough.host.port = continue_host_port;
@@ -9208,7 +9208,7 @@ check_addr_list(const uschar * name, const address_item * a,
 {
 while (a)
   {
-  f(name, CUS a, ctx);	/* We lie about the data type */
+  f(name, (uschar *) a, ctx);	/* We lie about the data type */
   a = a->next;
   }
 }
