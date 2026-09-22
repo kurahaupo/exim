@@ -254,13 +254,13 @@ if (debug_ptr == debug_buffer)
     gettimeofday(&now, NULL);
     tmp = now.tv_sec;
     t = f.timestamps_utc ? gmtime(&tmp) : localtime(&tmp);
-    debug_ptr += sprintf(CS debug_ptr,
+    debug_ptr += sprintf(C(debug_ptr),
       LOGGING(millisec) ? "%02d:%02d:%02d.%03d " : "%02d:%02d:%02d ",
       t->tm_hour, t->tm_min, t->tm_sec, (int)(now.tv_usec/1000));
     }
 
   DEBUG(pid)
-    debug_ptr += sprintf(CS debug_ptr, PID_T_FMT " ", getpid());
+    debug_ptr += sprintf(C(debug_ptr), PID_T_FMT " ", getpid());
 
   /* Set up prefix if outputting for host checking and not debugging */
 
@@ -284,7 +284,7 @@ if (indent > 0)
       debug_prefix_length += 6;
       }
 
-  debug_ptr += sprintf(CS debug_ptr, "%.*s", indent &= 3, "   ");
+  debug_ptr += sprintf(C(debug_ptr), "%.*s", indent &= 3, "   ");
   debug_prefix_length += indent;
   }
 
@@ -368,7 +368,7 @@ if (debug_ptr[-1] == '\n')
       }
     }
   else
-    fprintf(debug_file, "%s", CS debug_buffer);
+    fprintf(debug_file, "%s", C(debug_buffer));
 
   debug_ptr = debug_buffer;
   debug_prefix_length = 0;
@@ -412,12 +412,12 @@ if (fstat(fd, &s) == 0 && (s.st_mode & S_IFMT) == S_IFSOCK)
 	uschar buf[46];
 	g = string_cat(g, US"domain AF_INET6");
 	g = string_fmt_append(g, " lcl [%s]:%u",
-	  inet_ntop(AF_INET6, &sin6p->sin6_addr, CS buf, sizeof(buf)),
+	  inet_ntop(AF_INET6, &sin6p->sin6_addr, C(buf), sizeof(buf)),
 	  ntohs(sin6p->sin6_port));
 	alen = sizeof(*sin6p);
 	if (getpeername(fd, (struct sockaddr *)sin6p, &alen) == 0)
 	  g = string_fmt_append(g, " rmt [%s]:%u",
-	    inet_ntop(AF_INET6, &sin6p->sin6_addr, CS buf, sizeof(buf)),
+	    inet_ntop(AF_INET6, &sin6p->sin6_addr, C(buf), sizeof(buf)),
 	    ntohs(sin6p->sin6_port));
 	break;
 	}
@@ -481,7 +481,7 @@ if (debug_pretrigger_buf)
 void
 debug_pretrigger_setup(const uschar * size_string)
 {
-long size = Ustrtol(size_string, NULL, 0);
+long size = strtol(C(size_string), NULL, 0);
 if (size > 0)
   {
   unsigned bufsize = MIN(size, 16384);
