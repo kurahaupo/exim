@@ -236,7 +236,7 @@ va_list ap;
 big_buffer */
 
 va_start(ap, format);
-if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS format, ap))
+if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, C(format), ap))
   {
   va_end(ap);
   errno = ERRNO_SMTPFORMAT;
@@ -492,7 +492,7 @@ argument list and expanding the items. */
 if (ob->cmd)
   {
   DEBUG(transport) debug_printf("using command %s\n", ob->cmd);
-  sprintf(CS buffer, "%.50s transport", trname);
+  sprintf(C(buffer), "%.50s transport", trname);
   if (!transport_set_up_command(&argv, ob->cmd, TSUC_EXPAND_ARGS, PANIC,
 	addrlist, buffer, NULL))
     return FALSE;
@@ -505,7 +505,7 @@ if (ob->cmd)
 uid/gid and current directory. Request that the new process be a process group
 leader, so we can kill it and all its children on an error. */
 
-  if ((pid = child_open(USS argv, NULL, 0, &fd_in, &fd_out, TRUE,
+  if ((pid = child_open(U(argv), NULL, 0, &fd_in, &fd_out, TRUE,
 			US"lmtp-tpt-cmd")) < 0)
     {
     addrlist->message = string_sprintf(
@@ -683,7 +683,7 @@ if (send_data)
         {
         const uschar *s = string_printing(buffer);
 	/* de-const safe here as string_printing known to have alloc'n'copied */
-        addr->message = (s == buffer)? US string_copy(s) : US s;
+        addr->message = (s == buffer)? US string_copy(s) : U(s);
         }
       }
     /* If the response has failed badly, use it for all the remaining pending
