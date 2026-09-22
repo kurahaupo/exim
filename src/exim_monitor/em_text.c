@@ -28,7 +28,7 @@ void text_empty(Widget w)
 {
 XawTextBlock b;
 b.firstPos = 0;
-b.ptr = CS &b;
+b.ptr = C(&b);
 b.format = FMT8BIT;
 b.length = 0;
 XawTextReplace(w, 0, text_count, &b);
@@ -46,7 +46,7 @@ void text_show(Widget w, uschar *s)
 {
 XawTextBlock b;
 b.firstPos = 0;
-b.ptr = CS s;
+b.ptr = C(s);
 b.format = FMT8BIT;
 b.length = Ustrlen(s);
 XawTextReplace(w, text_count, text_count, &b);
@@ -66,7 +66,7 @@ void text_showf(Widget w, char *s, ...)
 va_list ap;
 uschar buffer[1024];
 va_start(ap, s);
-vsprintf(CS buffer, s, ap);
+vsprintf(C(buffer), s, ap);
 va_end(ap);
 text_show(w, buffer);
 }
