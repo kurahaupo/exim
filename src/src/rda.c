@@ -62,8 +62,8 @@ int
 rda_is_filter(const uschar *s)
 {
 Uskip_whitespace(&s);			/* Skips initial blank lines */
-if (match_tag(s, CUS"# exim filter"))		return FILTER_EXIM;
-else if (match_tag(s, CUS"# sieve filter"))	return FILTER_SIEVE;
+if (match_tag(s, US"# exim filter"))		return FILTER_EXIM;
+else if (match_tag(s, US"# sieve filter"))	return FILTER_SIEVE;
 else						return FILTER_FORWARD;
 }
 
