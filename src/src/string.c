@@ -49,7 +49,7 @@ The legacy string_is_ip_address() function follows below.
 int
 string_is_ip_addressX(const uschar * ip_addr, int * maskptr, const uschar ** errp)
 {
-uschar * slash, * percent;
+typeof(ip_addr) slash, percent;
 long int mask = 0;
 const uschar * endp = NULL, * addr = NULL;
 int af;
@@ -65,7 +65,7 @@ the address family. */
 
 if (slash = Ustrchr(ip_addr, '/'))
   {
-  uschar * rest;
+  typeof(slash) rest;
 
   if (!maskptr)
     {
@@ -99,7 +99,7 @@ if (percent = Ustrchr(ip_addr, '%'))
     if (errp) *errp = US"interface-ID and netmask are mutually exclusive";
     return 0;
     }
-  for (uschar *p = percent+1; *p; p++)
+  for (typeof(percent) p = percent+1; *p; p++)
     if (!isalnum(*p) && !ispunct(*p))
       {
       if (errp) *errp = US"interface-ID must match [[:alnum:][:punct:]]";
@@ -125,7 +125,7 @@ else
   addr = ip_addr;
 
 af = Ustrchr(addr, ':') ? AF_INET6 : AF_INET;
-if (!inet_pton(af, CCS addr, &sa))
+if (!inet_pton(af, C(addr), &sa))
   {
   if (errp) *errp = af == AF_INET6 ? US"IP address string not parsable as IPv6"
 				   : US"IP address string not parsable IPv4";
@@ -194,15 +194,15 @@ uschar *
 string_format_size(int size, uschar * buffer, size_t bsize)
 {
 if (size == 0) Ustrcpy(buffer, US"     ");
-else if (size < 1024) snprintf(CS buffer, bsize, "%5d", size);
+else if (size < 1024) snprintf(C(buffer), bsize, "%5d", size);
 else if (size < 10*1024)
-  snprintf(CS buffer, bsize, "%4.1fK", (double)size / 1024.0);
+  snprintf(C(buffer), bsize, "%4.1fK", (double)size / 1024.0);
 else if (size < 1024*1024)
-  snprintf(CS buffer, bsize, "%4dK", (size + 512)/1024);
+  snprintf(C(buffer), bsize, "%4dK", (size + 512)/1024);
 else if (size < 10*1024*1024)
-  snprintf(CS buffer, bsize, "%4.1fM", (double)size / (1024.0 * 1024.0));
+  snprintf(C(buffer), bsize, "%4.1fM", (double)size / (1024.0 * 1024.0));
 else
-  snprintf(CS buffer, bsize, "%4dM", (size + 512 * 1024)/(1024*1024));
+  snprintf(C(buffer), bsize, "%4dM", (size + 512 * 1024)/(1024*1024));
 return buffer;
 }
 
@@ -275,7 +275,7 @@ int
 string_interpret_escape(const uschar **pp)
 {
 #ifdef COMPILE_UTILITY
-const uschar * hex_digits= CUS"0123456789abcdef";
+const char hex_digits[] = "0123456789abcdef";
 #endif
 int ch;
 const uschar *p = *pp;
@@ -304,9 +304,9 @@ else switch(ch)
   if (isxdigit(p[1]))
     {
     ch = ch * 16 +
-      Ustrchr(hex_digits, tolower(*(++p))) - hex_digits;
+      strchr(hex_digits, tolower(*(++p))) - hex_digits;
     if (isxdigit(p[1])) ch = ch * 16 +
-      Ustrchr(hex_digits, tolower(*(++p))) - hex_digits;
+      strchr(hex_digits, tolower(*(++p))) - hex_digits;
     }
   break;
   }
@@ -386,7 +386,7 @@ for (t = s; *t && (len < 0 || len-- > 0); )
       case '\f': *tt++ = 'f'; break;
       case '\t': *tt++ = 't'; break;
       case '"':  *tt++ = '"'; break;
-      default: snprintf(CS tt, (size_t)4, "%03o", *t); tt += 3; break;
+      default: snprintf(C(tt), (size_t)4, "%03o", *t); tt += 3; break;
       }
     t++;
     }
@@ -417,7 +417,7 @@ Returns:        string with printing escapes parsed back
 */
 
 uschar *
-string_unprinting(uschar * s)
+Rstring_unprinting(uschar * s)
 {
 uschar * p, * q, * r, * ss;
 int len, offset;
@@ -728,7 +728,7 @@ Returns:    pointer to fresh piece of store containing sprintf'ed string
 */
 
 uschar *
-string_sprintf_trc(const char * format, const uschar * func, unsigned line, ...)
+string_sprintf_trc(const char * format, const char * func, unsigned line, ...)
 {
 #ifdef COMPILE_UTILITY
 uschar buffer[STRING_SPRINTF_BUFFER_SIZE];
@@ -861,9 +861,9 @@ return NULL;
 }
 
 uschar *
-strstric_nc(const uschar * s, const uschar * t, BOOL space_follows)
+strstric_nc(uschar * s, const uschar * t, BOOL space_follows)
 {
-return US strstric_c(s, t, space_follows);
+return W(strstric_c(s, t, space_follows));
 }
 
 
@@ -927,7 +927,7 @@ Returns:     pointer to buffer, containing the next substring,
 
 uschar *
 string_nextinlist_trc(const uschar ** listptr, int * separator, uschar * buffer,
-  int buflen, const uschar * func, int line)
+  int buflen, const char * func, int line)
 {
 int sep = *separator;
 const uschar * s = *listptr;
@@ -1023,7 +1023,7 @@ else
 	&& (g->ptr == 1 || g->s[g->ptr-2] != '\\') )
     g->ptr--;
   buffer = string_from_gstring(g);
-  gstring_release_unused_trc(g, CCS func, line);
+  gstring_release_unused_trc(g, (char const *) func, line);
   }
 
 /* Update the current pointer and return the new string */
@@ -1074,7 +1074,7 @@ Returns:  pointer to the start of the list, changed if copied for expansion.
 gstring *
 string_append_listele(gstring * list, uschar sep, const uschar * ele)
 {
-uschar * sp;
+typeof(ele) sp;
 
 if (list && list->ptr)
   list = string_catn(list, &sep, 1);
@@ -1140,7 +1140,7 @@ else
   start = 0;
 
 va_start(ap, fmt);
-list = string_vformat_trc(list, US __FUNCTION__, __LINE__,
+list = string_vformat_trc(list, __FUNCTION__, __LINE__,
 	  STRING_SPRINTF_BUFFER_SIZE, SVFMT_REBUFFER|SVFMT_EXTEND, fmt, ap);
 va_end(ap);
 
@@ -1153,7 +1153,7 @@ if (!check || !Ustrchr(&list->s[start], sep))
   return list;
 
 va_start(ap, fmt);
-g = string_vformat_trc(NULL, US __FUNCTION__, __LINE__,
+g = string_vformat_trc(NULL, __FUNCTION__, __LINE__,
 	STRING_SPRINTF_BUFFER_SIZE, SVFMT_REBUFFER|SVFMT_EXTEND, fmt, ap);
 va_end(ap);
 
@@ -1367,7 +1367,7 @@ Returns:       TRUE if the result fitted in the buffer
 
 BOOL
 string_format_trc(uschar * buffer, int buflen,
-  const uschar * func, unsigned line, const char * format, ...)
+  const char * func, unsigned line, const char * format, ...)
 {
 gstring g = { .size = buflen, .ptr = 0, .s = buffer }, * gp;
 va_list ap;
@@ -1420,7 +1420,7 @@ string, not nul-terminated.
 */
 
 gstring *
-string_vformat_trc(gstring * g, const uschar * func, unsigned line,
+string_vformat_trc(gstring * g, const char * func, unsigned line,
   unsigned size_limit, unsigned flags, const char * format, va_list ap)
 {
 enum ltypes { L_NORMAL=1, L_SHORT=2, L_LONG=3, L_LONGLONG=4, L_LONGDOUBLE=5, L_SIZE=6 };
@@ -1439,7 +1439,7 @@ assert(g);
 #else
 
 /* Ensure we have a string, to save on checking later */
-if (!g) g = string_get(Ustrlen(format) + 16);
+if (!g) g = string_get(strlen(format) + 16);
 
 if (!(flags & SVFMT_TAINT_NOCHK) && is_incompatible(g->s, format))
   {
@@ -1464,7 +1464,7 @@ while (*fp)
   const char * null = "NULL";		/* ) These variables */
   const char * item_start, * s;		/* ) are deliberately */
   char newformat[16];			/* ) not unsigned */
-  char * gp = CS g->s + g->ptr;		/* ) */
+  char * gp = C(g->s) + g->ptr;		/* ) */
 
   /* Non-% characters just get copied verbatim */
 
@@ -1558,7 +1558,7 @@ while (*fp)
 	if (!(flags & SVFMT_EXTEND) || need >= size_limit) return NULL;
 	gstring_grow(g, width);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = C(g->s) + g->ptr;
 	}
       strncpy(newformat, item_start, fp - item_start);
       newformat[fp - item_start] = '\0';
@@ -1588,7 +1588,7 @@ while (*fp)
 	if (!(flags & SVFMT_EXTEND || need >= size_limit)) return NULL;
 	gstring_grow(g, 24);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = C(g->s) + g->ptr;
 	}
       /* sprintf() saying "(nil)" for a null pointer seems unreliable.
       Handle it explicitly. */
@@ -1633,7 +1633,7 @@ while (*fp)
 	if (!(flags & SVFMT_EXTEND || nsize >= size_limit)) return NULL;
 	gstring_grow(g, need);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = C(g->s) + g->ptr;
 	}
       g->ptr += length == L_LONGDOUBLE
 		? sprintf(gp, newformat, u.ld)
@@ -1664,17 +1664,17 @@ while (*fp)
       break;
 
     case 'D':                   /* Insert daily datestamp for log file names */
-      s = CS tod_stamp(tod_log_datestamp_daily);
+      s = C(tod_stamp(tod_log_datestamp_daily));
       string_datestamp_offset = g->ptr;		/* Passed back via global */
-      string_datestamp_length = Ustrlen(s);	/* Passed back via global */
+      string_datestamp_length = strlen(s);	/* Passed back via global */
       string_datestamp_type = tod_log_datestamp_daily;
       slen = string_datestamp_length;
       goto INSERT_STRING;
 
     case 'M':                   /* Insert monthly datestamp for log file names */
-      s = CS tod_stamp(tod_log_datestamp_monthly);
+      s = C(tod_stamp(tod_log_datestamp_monthly));
       string_datestamp_offset = g->ptr;		/* Passed back via global */
-      string_datestamp_length = Ustrlen(s);	/* Passed back via global */
+      string_datestamp_length = strlen(s);	/* Passed back via global */
       string_datestamp_type = tod_log_datestamp_monthly;
       slen = string_datestamp_length;
       goto INSERT_STRING;
@@ -1682,16 +1682,16 @@ while (*fp)
     case 'Y':			/* gstring pointer */
       {
       gstring * zg = va_arg(ap, gstring *);
-      if (zg) { s = CS zg->s; slen = gstring_length(zg); }
-      else    { s = null;     slen = Ustrlen(s); }
+      if (zg) { s = C(zg->s); slen = gstring_length(zg); }
+      else    { s = null;     slen = strlen(s); }
       goto INSERT_GSTRING;
       }
 #ifndef COMPILE_UTILITY
     case 'b':			/* blob pointer, carrying a string */
       {
       blob * b = va_arg(ap, blob *);
-      if (b) { s = CS b->data; slen = b->len; }
-      else   { s = null;       slen = Ustrlen(s); }
+      if (b) { s = C(b->data); slen = b->len; }
+      else   { s = null;       slen = strlen(s); }
       goto INSERT_GSTRING;
       }
 
@@ -1701,7 +1701,7 @@ while (*fp)
       s = va_arg(ap, char *);
       if (IS_DEBUG(noutf8))
 	for ( ; *s; s++)
-	  zg = string_catn(zg, CUS (*s == 'K' ? "|" : s), 1);
+	  zg = string_catn(zg, U(*s == 'K' ? "|" : s), 1);
       else
 	for ( ; *s; s++) switch (*s)
 	  {
@@ -1713,12 +1713,12 @@ while (*fp)
 	  case 'K':  zg = string_catn(zg, US UTF8_VERT_RIGHT,	  3); break;
 	  case '<':  zg = string_catn(zg, US UTF8_LEFT_TRIANGLE,  3); break;
 	  case '>':  zg = string_catn(zg, US UTF8_RIGHT_TRIANGLE, 3); break;
-	  default:   zg = string_catn(zg, CUS s, 1);		      break;
+	  default:   zg = string_catn(zg, U(s), 1);		      break;
 	  }
 
       if (!zg)
 	break;
-      s = CS zg->s;
+      s = C(zg->s);
       slen = gstring_length(zg);
       goto INSERT_GSTRING;
       }
@@ -1732,7 +1732,7 @@ while (*fp)
 
 	if (!*s)	/* output something distinctive for an empty input */
 	  {
-	  zg = string_catn(zg, CUS "e" UTF8_COMB_BRIDGE_BELOW
+	  zg = string_catn(zg, US "e" UTF8_COMB_BRIDGE_BELOW
 				  "m" UTF8_COMB_BRIDGE_BELOW
 				  "p" UTF8_COMB_BRIDGE_BELOW
 				  "t" UTF8_COMB_BRIDGE_BELOW
@@ -1749,32 +1749,32 @@ while (*fp)
 	  else switch (*s)
 	    {
 	    case ' ':
-	      zg = string_catn(zg, CUS UTF8_LIGHT_SHADE, 3);
+	      zg = string_catn(zg, US UTF8_LIGHT_SHADE, 3);
 	      if (precision >= 0) precision += 2;
 	      break;
 	    case '\n':
-	      zg = string_catn(zg, CUS UTF8_L_ARROW_HOOK "\n", 4);
+	      zg = string_catn(zg, US UTF8_L_ARROW_HOOK "\n", 4);
 	      if (precision >= 0) precision += 3;
 	      break;
 	    default:
-	      if (* US s <= ' ')
+	      if ((uschar) *s <= ' ')
 		{	/* base of UTF8 symbols for ASCII control chars */
 		uschar ctrl_symbol[3] = {[0]=0xe2, [1]=0x90, [2]=0x80};
-		ctrl_symbol[2] |= * US s;
+		ctrl_symbol[2] |= * U(s);
 		zg = string_catn(zg, ctrl_symbol, 3);
 		if (precision >= 0) precision += 2;
 		}
 	      else
-		zg = string_catn(zg, CUS s, 1);
+		zg = string_catn(zg, U(s), 1);
 	      break;
 	    }
-	if (zg) { s = CS zg->s; slen = gstring_length(zg); }
+	if (zg) { s = C(zg->s); slen = gstring_length(zg); }
 	else    { s = "";	slen = 0; }
 	}
       else
 	{
 	if (!s) s = null;
-	slen = Ustrlen(s);
+	slen = strlen(s);
 	}
       goto INSERT_GSTRING;
 
@@ -1801,11 +1801,11 @@ while (*fp)
 	    if ( (u < 32) || (u > 127) )
 	      zg = string_fmt_append(zg, "{%02x}", u);
 	    else
-	      zg = string_catn(zg, US s, 1);
+	      zg = string_catn(zg, U(s), 1);
 	    break;
 	    }
 	  }
-      if (zg) { s = CS zg->s; precision = slen = gstring_length(zg); }
+      if (zg) { s = C(zg->s); precision = slen = gstring_length(zg); }
       else    { s = "";	slen = 0; }
       goto INSERT_GSTRING;
       }
@@ -1821,10 +1821,10 @@ while (*fp)
 	for (int p = precision; p > 0; p--)
 	  {
 	  for (int w = width; w > 0; w--) zg = string_catn(zg, US" ", 1);
-	  zg = string_fmt_append(zg, *null ? "%02x" : "%02X", * US s++);
+	  zg = string_fmt_append(zg, *null ? "%02x" : "%02X", * U(s++));
 	  }
 
-	if (zg) { s = CS zg->s; precision = slen = gstring_length(zg); }
+	if (zg) { s = C(zg->s); precision = slen = gstring_length(zg); }
 	else    { s = "";	slen = 0; }
 	}
       else
@@ -1838,9 +1838,9 @@ while (*fp)
 	{
 	gstring * zg = string_catn(NULL, US"\"", 1);
 	zg = string_cat(zg,
-			string_printing3(US s, SP_TAB | SP_DQUOTES, precision));
+			string_printing3(U(s), SP_TAB | SP_DQUOTES, precision));
 	zg = string_catn(zg, US"\"", 1);
-	s = CS zg->s; precision = slen = gstring_length(zg);
+	s = C(zg->s); precision = slen = gstring_length(zg);
 	}
       else
 	{ s = "<NULL>"; precision = slen = 6; }
@@ -1852,7 +1852,7 @@ while (*fp)
       s = va_arg(ap, char *);
 
       if (!s) s = null;
-      slen = precision < 0 ? Ustrlen(s) : strnlen(CCS s, precision);
+      slen = precision < 0 ? strlen(s) : strnlen(s, precision);
 
     INSERT_GSTRING:		/* Come to from %Y above */
 
@@ -1861,7 +1861,7 @@ while (*fp)
 	  {
 /* debug_printf("%s %d: untainted workarea, tainted %%s :- rebuffer\n", __FUNCTION__, __LINE__); */
 	  gstring_rebuffer(g, s);
-	  gp = CS g->s + g->ptr;
+	  gp = C(g->s) + g->ptr;
 	  }
 #ifndef MACRO_PREDEF
 	else
@@ -1906,7 +1906,7 @@ while (*fp)
 	{
 	gstring_grow(g, width);
 	lim = g->size - 1;
-	gp = CS g->s + g->ptr;
+	gp = C(g->s) + g->ptr;
 	}
 
       g->ptr += sprintf(gp, l_align ? "%-*.*s" : "%*.*s",
@@ -1958,7 +1958,7 @@ Returns:        a message, in dynamic store
 */
 
 uschar *
-string_open_failed_trc(const uschar * func, unsigned line,
+string_open_failed_trc(const char * func, unsigned line,
   const char * format, ...)
 {
 va_list ap;
@@ -1977,7 +1977,7 @@ va_start(ap, format);
 va_end(ap);
 
 g = string_catn(g, US": ", 2);
-g = string_cat(g, US strerror(errno));
+g = string_cat(g, U(strerror(errno)));
 
 if (errno == EACCES)
   {
@@ -2001,7 +2001,7 @@ pointers. Here it is. */
 int
 string_compare_by_pointer(const void *a, const void *b)
 {
-return Ustrcmp(* CUSS a, * CUSS b);
+return strcmp(* (char **) a, * (char **) b);
 }
 #endif /* COMPILE_UTILITY */
 
@@ -2022,7 +2022,7 @@ uschar buffer[256];
 printf("Testing is_ip_address\n");
 store_init();
 
-while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
+while (fgets(C(buffer), sizeof(buffer), stdin) != NULL)
   {
   int offset;
   buffer[Ustrlen(buffer) - 1] = 0;
@@ -2032,7 +2032,7 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
 
 printf("Testing string_nextinlist\n");
 
-while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
+while (fgets(C(buffer), sizeof(buffer), stdin) != NULL)
   {
   uschar *list = buffer;
   uschar *lp1, *lp2;
@@ -2056,11 +2056,11 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
     if (item == NULL || item2 == NULL || Ustrcmp(item1, item2) != 0)
       {
       printf("***ERROR\nitem1=\"%s\"\nitem2=\"%s\"\n",
-        (item1 == NULL)? "NULL" : CS item1,
-        (item2 == NULL)? "NULL" : CS item2);
+        item1 == NULL ? "NULL" : C(item1),
+        item2 == NULL ? "NULL" : C(item2));
       break;
       }
-    else printf("  \"%s\"\n", CS item1);
+    else printf("  \"%s\"\n", C(item1));
     }
   }
 
@@ -2068,7 +2068,7 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
 
 printf("Testing string_format\n");
 
-while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
+while (fgets(C(buffer), sizeof(buffer), stdin) != NULL)
   {
   void *args[3];
   long long llargs[3];
@@ -2108,7 +2108,7 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
       else if (Ustrstr(outbuf, "ll") != NULL)
         {
         llflag = 1;
-        llargs[n++] = strtoull(CS outbuf, NULL, 10);
+        llargs[n++] = strtoull(C(outbuf), NULL, 10);
         }
       else
         {
@@ -2134,17 +2134,17 @@ while (fgets(CS buffer, sizeof(buffer), stdin) != NULL)
     }
 
   if (!dflag && !llflag)
-    printf("%s\n", string_format(outbuf, sizeof(outbuf), CS format,
+    printf("%s\n", string_format(outbuf, sizeof(outbuf), C(format),
       args[0], args[1], args[2])? "True" : "False");
 
   else if (dflag)
-    printf("%s\n", string_format(outbuf, sizeof(outbuf), CS format,
+    printf("%s\n", string_format(outbuf, sizeof(outbuf), C(format),
       dargs[0], dargs[1], dargs[2])? "True" : "False");
 
-  else printf("%s\n", string_format(outbuf, sizeof(outbuf), CS format,
+  else printf("%s\n", string_format(outbuf, sizeof(outbuf), C(format),
     llargs[0], llargs[1], llargs[2])? "True" : "False");
 
-  printf("%s\n", CS outbuf);
+  printf("%s\n", C(outbuf));
   if (countset) printf("count=%d\n", count);
   }
 
