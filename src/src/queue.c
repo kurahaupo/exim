@@ -191,7 +191,7 @@ for (; i <= *subcount; i++)
 
   for (struct dirent * ent; ent = readdir(dd); )
     {
-    uschar * name = US ent->d_name;
+    uschar * name = U(ent->d_name);
     int len = Ustrlen(name);
 
     /* Count entries */
@@ -290,9 +290,9 @@ for (; i <= *subcount; i++)
       {
       uschar subdir[2];
 
-      rmdir(CS buffer);
+      rmdir(C(buffer));
       subdir[0] = subdirchar; subdir[1] = 0;
-      rmdir(CS spool_dname(US"msglog", subdir));
+      rmdir(C(spool_dname(US"msglog", subdir)));
       }
     if (subdiroffset > 0) break;    /* Single sub-directory */
     }
@@ -420,18 +420,18 @@ if (!recurse)
   *p = '\0';
 
   p = big_buffer;
-  p += sprintf(CS p, "pid=" PID_T_FMT, queue_run_pid);
+  p += sprintf(C(p), "pid=" PID_T_FMT, queue_run_pid);
 
   if (*extras)
-    p += sprintf(CS p, " -q%s", extras);
+    p += sprintf(C(p), " -q%s", extras);
 
   if (deliver_selectstring)
-    p += snprintf(CS p, big_buffer_size - (p - big_buffer), " -R%s %s",
+    p += snprintf(C(p), big_buffer_size - (p - big_buffer), " -R%s %s",
       f.deliver_selectstring_regex ? "r" : "", deliver_selectstring);
 
   if (deliver_selectstring_sender)
     /* p +=	finished with p */
-    snprintf(CS p, big_buffer_size - (p - big_buffer), " -S%s %s",
+    snprintf(C(p), big_buffer_size - (p - big_buffer), " -S%s %s",
       f.deliver_selectstring_sender_regex ? "r" : "",
       deliver_selectstring_sender);
 
@@ -1057,7 +1057,7 @@ if (count > 0)
     {
     queue_filename * next =
       store_get(sizeof(queue_filename) + Ustrlen(list[i]) + 2, list[i]);
-    sprintf(CS next->text, "%s-H", list[i]);
+    sprintf(C(next->text), "%s-H", list[i]);
     next->dir_uschar = '*';
     next->next = NULL;
     if (i == 0) qf = next; else last->next = next;
@@ -1319,7 +1319,7 @@ argument false causes it to look both in the main spool directory and in
 the appropriate subdirectory, and set message_subdir according to where it
 found the message. */
 
-sprintf(CS spoolname, "%s-H", id);
+sprintf(C(spoolname), "%s-H", id);
 if (spool_read_header(spoolname, TRUE, FALSE) != spool_read_OK)
   {
   yield = FALSE;
@@ -1353,7 +1353,7 @@ if (!f.admin_user && (action != MSG_REMOVE || real_uid != originator_uid))
 
 pw = getpwuid(real_uid);
 username = pw
-  ? US pw->pw_name : string_sprintf("uid %ld", (long int)real_uid);
+  ? U(pw->pw_name) : string_sprintf("uid %ld", (long int)real_uid);
 
 /* Take the necessary action. */
 
@@ -1504,7 +1504,7 @@ switch(action)
 	    deliver_localpart =
 	      string_copyn(addr+start, dom ? (dom-1) - start : end - start);
 	    deliver_domain = dom
-	      ? CUS string_copyn(addr+dom, end - dom) : CUS"";
+	      ? R(string_copyn(addr+dom, end - dom)) : US"";
 
 	    (void) event_raise(event_action, US"msg:fail:internal",
 	      string_sprintf("message removed by %s", username), NULL);
