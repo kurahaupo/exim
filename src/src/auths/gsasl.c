@@ -212,7 +212,7 @@ HDEBUG(auth) if (!once)
   debug_printf("GNU SASL supports: %s\n", once);
   }
 
-if (!gsasl_client_support_p(gsasl_ctx, CCS ob->server_mech))
+if (!gsasl_client_support_p(gsasl_ctx, C(ob->server_mech)))
   log_write_die(LOG_CONFIG_FOR, "%s authenticator:  "
 	    "GNU SASL does not support mechanism %q",
 	    a->name, ob->server_mech);
@@ -274,7 +274,7 @@ if (!cb_state)
     if ((s = gsasl_callback_hook_get(ctx)))	/* Gross hack for early lib vers */
       {
       HDEBUG(auth) debug_printf("GSASL_CB_TLS_UNIQUE from ctx hook\n");
-      gsasl_property_set(sctx, GSASL_CB_TLS_UNIQUE, CS s);
+      gsasl_property_set(sctx, GSASL_CB_TLS_UNIQUE, C(s));
       }
     else
       {
@@ -364,7 +364,7 @@ switch (prop)
   case GSASL_VALIDATE_SAML20:		return US"VALIDATE_SAML20";
   case GSASL_VALIDATE_OPENID20:		return US"VALIDATE_OPENID20";
   }
-return CUS string_sprintf("(unknown prop: %d)", (int)prop);
+return string_sprintf("(unknown prop: %d)", (int)prop);
 }
 
 static void
@@ -372,7 +372,7 @@ preload_prop(Gsasl_session * sctx, Gsasl_property propcode, const uschar * val)
 {
 DEBUG(auth) debug_printf("preloading prop %s val %s\n",
   gsasl_prop_code_to_name(propcode), val);
-gsasl_property_set(sctx, propcode, CCS val);
+gsasl_property_set(sctx, propcode, C(val));
 }
 
 /*************************************************
@@ -417,7 +417,7 @@ b) caching a b64'd version of the binding then which it never updates. */
   }
 #endif
 
-if ((rc = gsasl_server_start(gsasl_ctx, CCS ob->server_mech, &sctx)) != GSASL_OK)
+if ((rc = gsasl_server_start(gsasl_ctx, C(ob->server_mech), &sctx)) != GSASL_OK)
   {
   auth_defer_msg = string_sprintf("GNU SASL: session start failure: %s (%s)",
       gsasl_strerror_name(rc), gsasl_strerror(rc));
@@ -495,7 +495,7 @@ else
 
 checked_server_condition = FALSE;
 
-received = CS initial_data;
+received = C(initial_data);
 to_send = NULL;
 exim_error = exim_error_override = OK;
 
@@ -539,7 +539,7 @@ do {
 
   /*XXX having our caller send the final smtp "235" is unfortunate; wastes a roundtrip */
   if ((rc == GSASL_NEEDS_MORE) || (to_send && *to_send))
-    exim_error = auth_get_no64_data(USS &received, US to_send);
+    exim_error = auth_get_no64_data(U(&received), U(to_send));
 
   if (to_send)
     {
@@ -558,14 +558,14 @@ auth_result = rc;
 HDEBUG(auth)
   {
   const uschar * s;
-  if ((s = CUS gsasl_property_fast(sctx, GSASL_SCRAM_ITER)))
+  if ((s = U(gsasl_property_fast(sctx, GSASL_SCRAM_ITER))))
     debug_printf(" - itercnt:   '%s'\n", s);
-  if ((s = CUS gsasl_property_fast(sctx, GSASL_SCRAM_SALT)))
+  if ((s = U(gsasl_property_fast(sctx, GSASL_SCRAM_SALT))))
     debug_printf(" - salt:      '%s'\n", s);
 #ifdef EXIM_GSASL_SCRAM_S_KEY
-  if ((s = CUS gsasl_property_fast(sctx, GSASL_SCRAM_SERVERKEY)))
+  if ((s = U(gsasl_property_fast(sctx, GSASL_SCRAM_SERVERKEY))))
     debug_printf(" - ServerKey: '%s'\n", s);
-  if ((s = CUS gsasl_property_fast(sctx, GSASL_SCRAM_STOREDKEY)))
+  if ((s = U(gsasl_property_fast(sctx, GSASL_SCRAM_STOREDKEY))))
     debug_printf(" - StoredKey: '%s'\n", s);
 #endif
   }
@@ -619,7 +619,7 @@ return GSASL_AUTHENTICATION_ERROR;
 static void
 set_exim_authvar_from_prop(Gsasl_session * sctx, Gsasl_property prop)
 {
-uschar * propval = US gsasl_property_fast(sctx, prop);
+uschar * propval = U(gsasl_property_fast(sctx, prop));
 int i = expand_nmax, j = i + 1;
 propval = propval ? string_copy(propval) : US"";
 HDEBUG(auth) debug_printf("auth[%d] <=  %s'%s'\n",
@@ -659,7 +659,7 @@ if (option)
   option = expand_string(option);
   HDEBUG(auth) debug_printf("  '%s'\n", option);
   if (*option)
-    gsasl_property_set(sctx, prop, CCS option);
+    gsasl_property_set(sctx, prop, C(option));
   return GSASL_OK;
   }
 HDEBUG(auth) debug_printf("  option not set\n");
@@ -774,7 +774,7 @@ switch (prop)
       HDEBUG(auth) debug_printf("option not set\n");
       break;
       }
-    if (!(tmps = CS expand_string(s)))
+    if (!(tmps = C(expand_string(s))))
       {
       sasl_error_should_defer = !f.expand_string_forcedfail;
       HDEBUG(auth) debug_printf("server_password expansion failed, so "
@@ -788,7 +788,7 @@ switch (prop)
     for memory wiping, so expanding strings will leave stuff laying around.
     But no need to compound the problem, so get rid of the one we can. */
 
-    if (US tmps != s) memset(tmps, '\0', strlen(tmps));
+    if (U(tmps) != s) memset(tmps, '\0', strlen(tmps));
     cbrc = GSASL_OK;
     break;
 
@@ -824,7 +824,7 @@ if (*s)
   {
   HDEBUG(auth) debug_printf("%s: set %s = '%s'\n", __FUNCTION__,
     gsasl_prop_code_to_name(prop), s);
-  gsasl_property_set(sctx, prop, CS s);
+  gsasl_property_set(sctx, prop, C(s));
   }
 
 return TRUE;
@@ -880,7 +880,7 @@ if (tls_out.channelbinding && ob->client_channelbinding)
   }
 #endif
 
-if ((rc = gsasl_client_start(gsasl_ctx, CCS ob->server_mech, &sctx)) != GSASL_OK)
+if ((rc = gsasl_client_start(gsasl_ctx, C(ob->server_mech), &sctx)) != GSASL_OK)
   {
   string_format(buffer, buffsize, "GNU SASL: session start failure: %s (%s)",
       gsasl_strerror_name(rc), gsasl_strerror(rc));
@@ -931,7 +931,7 @@ for(s = NULL; ;)
   uschar * outstr;
   BOOL fail = TRUE;
 
-  rc = gsasl_step64(sctx, CS s, CSS &outstr);
+  rc = gsasl_step64(sctx, C(s), C(&outstr));
 
   if (rc == GSASL_NEEDS_MORE || rc == GSASL_OK)
     {
@@ -1004,7 +1004,7 @@ switch (prop)
   case GSASL_CB_TLS_EXPORTER:	/* Should never get called for this, as pre-set */
     if (!tls_out.channelbind_exporter) break;
     HDEBUG(auth) debug_printf(" filling in\n");
-    gsasl_property_set(sctx, GSASL_CB_TLS_EXPORTER, CCS tls_out.channelbinding);
+    gsasl_property_set(sctx, GSASL_CB_TLS_EXPORTER, C(tls_out.channelbinding));
     return GSASL_OK;
 #endif
   case GSASL_CB_TLS_UNIQUE:	/* Should never get called for this, as pre-set */
@@ -1012,7 +1012,7 @@ switch (prop)
     if (tls_out.channelbind_exporter) break;
 #endif
     HDEBUG(auth) debug_printf(" filling in\n");
-    gsasl_property_set(sctx, GSASL_CB_TLS_UNIQUE, CCS tls_out.channelbinding);
+    gsasl_property_set(sctx, GSASL_CB_TLS_UNIQUE, C(tls_out.channelbinding));
     return GSASL_OK;
   case GSASL_SCRAM_SALTED_PASSWORD:
     {
