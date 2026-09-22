@@ -438,7 +438,7 @@ struct cdb_state * cdbp = handle;
 #ifdef HAVE_MMAP
 if (cdbp->cdb_map)
   {
-  munmap(CS cdbp->cdb_map, cdbp->filelen);
+  munmap(C(cdbp->cdb_map), cdbp->filelen);
   if (cdbp->cdb_map == cdbp->cdb_offsets)
      cdbp->cdb_offsets = NULL;
   }
