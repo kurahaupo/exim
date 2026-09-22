@@ -290,7 +290,7 @@ for (int i = 0; i < 5; i++)
 
     case 3:
       if (d >= 2.0*1024.0*1024.0*1024.0 && sizeof(off_t) <= 4)
-	which = US"mailbox_size";;
+	which = US"mailbox_size";
       ob->mailbox_size_value = (off_t)d;
       GET_OPTION("mailbox_filecount");
       q = ob->mailbox_filecount_string;
@@ -615,7 +615,7 @@ while ((s = string_nextinlist(&format, &sep, big_buffer, big_buffer_size)))
   {
   int slen = Ustrlen(s);
   BOOL match = len >= slen && Ustrncmp(data, s, slen) == 0;
-  uschar *tp = string_nextinlist(&format, &sep, big_buffer, big_buffer_size);
+  const uschar *tp = string_nextinlist(&format, &sep, big_buffer, big_buffer_size);
 
   if (match && tp)
     {
@@ -682,7 +682,7 @@ if (!(dir = exim_opendir(dirname))) return 0;
 
 for (struct dirent * ent; ent = readdir(dir); )
   {
-  uschar * path, * name = US ent->d_name;
+  uschar * path, * name = U(ent->d_name);
   struct stat statbuf;
 
   if (Ustrcmp(name, ".") == 0 || Ustrcmp(name, "..") == 0) continue;
@@ -859,10 +859,10 @@ if (saved_size == 0)
   {
   uschar *s;
   memset (deliver_out_buffer, '\0', MBX_HDRSIZE);
-  sprintf(CS(s = deliver_out_buffer), "*mbx*\015\012%08lx00000000\015\012",
+  sprintf(C(s = deliver_out_buffer), "*mbx*\015\012%08lx00000000\015\012",
     (long int)time(NULL));
   for (int i = 0; i < MBX_NUSERFLAGS; i++)
-    sprintf (CS(s += Ustrlen(s)), "\015\012");
+    sprintf (C(s += Ustrlen(s)), "\015\012");
   if (!transport_write_block (&tctx, deliver_out_buffer, MBX_HDRSIZE, FALSE))
     return DEFER;
   }
@@ -875,7 +875,7 @@ size, including CRLFs, which is the size of the input (temporary) file. */
 if (fstat(from_fd, &statbuf) < 0) return DEFER;
 size = statbuf.st_size;
 
-sprintf (CS deliver_out_buffer, "%s," OFF_T_FMT ";%08lx%04x-%08x\015\012",
+sprintf (C(deliver_out_buffer), "%s," OFF_T_FMT ";%08lx%04x-%08x\015\012",
   tod_stamp(tod_mbx), size, 0L, 0, 0);
 used = Ustrlen(deliver_out_buffer);
 
@@ -959,7 +959,7 @@ if (deliver_dir  &&  create_file != create_anywhere)
          slash = next)
       {
       *slash = 0;
-      rp = US realpath(CS file, CS big_buffer);
+      rp = U(realpath(C(file), C(big_buffer)));
       next = Ustrrchr(file, '/');
       *slash = '/';
       }
@@ -977,7 +977,7 @@ if (deliver_dir  &&  create_file != create_anywhere)
       const uschar * rph = deliver_dir;
       int rlen = Ustrlen(big_buffer);
 
-      if (realpath(CS deliver_dir, CS hdbuffer))
+      if (realpath(C(deliver_dir), C(hdbuffer)))
         {
         rph = hdbuffer;
         len = Ustrlen(rph);
@@ -1258,7 +1258,7 @@ if ((ob->maildir_format || ob->mailstore_format) && !isdirectory)
       expand_string_message);
     goto ret_panic;
     }
-  path = not_dynamic ? string_copy(p) : US p;
+  path = not_dynamic ? string_copy(p) : W(p);
  }
 
 if (path[0] != '/')
@@ -1966,7 +1966,7 @@ if (!isdirectory)
            ob->use_flock, ob->lock_flock_timeout) >= 0 &&
            fstat(fd, &statbuf) >= 0)
         {
-        sprintf(CS mbx_lockname, "/tmp/.%lx.%lx", (long)statbuf.st_dev,
+        sprintf(C(mbx_lockname), "/tmp/.%lx.%lx", (long)statbuf.st_dev,
           (long)statbuf.st_ino);
 
         /*
@@ -2379,7 +2379,7 @@ else
 /*  else
  *    {
  *    time_t old_latest;
- *    (void)unlink(CS string_sprintf("%s/maildirsize", check_path));
+ *    (void)unlink(C(string_sprintf("%s/maildirsize", check_path)));
  *    if (THRESHOLD_CHECK)
  *      mailbox_size = maildir_compute_size(check_path, &mailbox_filecount, &old_latest,
  *         re, dir_regex, FALSE);
@@ -2606,7 +2606,7 @@ else
       else
         {
         int n = Ustrlen(s);
-        fprintf(env_file, "%s", CS s);
+        fprintf(env_file, "%s", C(s));
         if (n == 0 || s[n-1] != '\n') fprintf(env_file, "\n");
         }
       }
@@ -2635,7 +2635,7 @@ else
       else
         {
         int n = Ustrlen(s);
-        fprintf(env_file, "%s", CS s);
+        fprintf(env_file, "%s", C(s));
         if (n == 0 || s[n-1] != '\n') fprintf(env_file, "\n");
         }
       }
@@ -3253,7 +3253,7 @@ else
 /* For a file, restore the last access time (atime), and set the modification
 time as required - changed if write succeeded, unchanged if not. */
 
-if (!isdirectory) utime(CS filename, &times);
+if (!isdirectory) utime(C(filename), &times);
 
 /* Notify comsat if configured to do so. It only makes sense if the configured
 file is the one that the comsat daemon knows about. */
