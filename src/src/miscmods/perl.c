@@ -67,7 +67,7 @@ uschar * s = NULL;
 expand_level++;
 /* debug_printf_indent("%s %d: %.20s...\n", __FUNCTION__, __LINE__, code); */
 
-sv = newSVpv(CCS code, 0);
+sv = newSVpv(C(code), 0);
 PUSHMARK(SP);
 perl_eval_sv(sv, G_SCALAR|G_DISCARD|G_KEEPERR);
 SvREFCNT_dec(sv);
@@ -75,7 +75,7 @@ SvREFCNT_dec(sv);
 if (SvTRUE(ERRSV))
   {				/* error return */
   STRLEN len;
-  s = US SvPV(ERRSV, len);
+  s = U(SvPV(ERRSV, len));
   s = string_copyn(s, (unsigned)len);
   debug_printf_indent("adding perl codeblock: %s\n", s);
   }
@@ -98,13 +98,13 @@ STRLEN len;
 if (items != 1)
   croak("Usage: Exim::expand_string(string)");
 
-str = CUS SvPV(ST(0), len);
+str = U(SvPV(ST(0), len));
 str = string_copyn(str, len);
 str = expand_string(str);
 
 ST(0) = sv_newmortal();
 if (str)
-  sv_setpv(ST(0), CCS  str);
+  sv_setpv(ST(0), C(str));
 else if (!f.expand_string_forcedfail)
   croak("syntax error in Exim::expand_string argument: %s",
     expand_string_message);
@@ -117,7 +117,7 @@ STRLEN len;
 const uschar * s;
 if (items != 1)
   croak("Usage: Exim::debug_write(string)");
-s = US SvPV(ST(0), len);
+s = U(SvPV(ST(0), len));
 debug_printf_indent("%.*s", (int)len, s);
 }
 
@@ -128,7 +128,7 @@ STRLEN len;
 const uschar * s;
 if (items != 1)
   croak("Usage: Exim::log_write(string)");
-s = US SvPV(ST(0), len);
+s = U(SvPV(ST(0), len));
 log_write(LOG_MAIN, "%.*s", (int)len, s);
 }
 
@@ -145,7 +145,7 @@ dns_answer * dnsa = store_get_dns_answer();
 
 if (items != 2)
   croak("Usage: Exim_dns_lookup(name, rrtype)");
-domain = CUS SvPV(ST(0), len);
+domain = U(SvPV(ST(0), len));
 domain = string_copyn(domain, (unsigned)len);
 rrtype_int = (int) SvIV(ST(1));
 
@@ -161,7 +161,7 @@ if (dns_res != DNS_SUCCEED)
 else if (dnsa->answerlen == -1 && !fake_dnsa_len_for_fail(dnsa, rrtype_int))
   sv_setsv(ST(0), &PL_sv_undef);
 else
-  sv_setpvn(ST(0), CCS dnsa->answer, (STRLEN) dnsa->answerlen);
+  sv_setpvn(ST(0), C(dnsa->answer), (STRLEN) dnsa->answerlen);
 XSRETURN(1);	/* ? needed because there are 2 arg, but 1 res? */
 
 store_free_dns_answer(dnsa);
@@ -292,16 +292,16 @@ if (!interp_perl)
 ENTER;
 SAVETMPS;
 PUSHMARK(SP);
-while (*arg) XPUSHs(newSVpv(CCS (*arg++), 0));
+while (*arg) XPUSHs(newSVpv(C(*arg++), 0));
 PUTBACK;
-items = perl_call_pv(CS string_copy(name), G_SCALAR|G_EVAL);
+items = perl_call_pv(C(string_copy(name)), G_SCALAR|G_EVAL);
 items = items;	/* stupid compiler quietening */
 SPAGAIN;
 sv = POPs;
 PUTBACK;
 if (SvTRUE(ERRSV))
   {
-  *errstrp = US SvPV(ERRSV, len);
+  *errstrp = U(SvPV(ERRSV, len));
   *errstrp = string_copyn(*errstrp, (unsigned)len);
   return NULL;
   }
@@ -310,7 +310,7 @@ if (!SvOK(sv))
   *errstrp = NULL;
   return NULL;
   }
-str = US SvPV(sv, len);
+str = U(SvPV(sv, len));
 yield = string_catn(yield, str, (int)len);
 FREETMPS;
 LEAVE;
