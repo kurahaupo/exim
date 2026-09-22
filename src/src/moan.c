@@ -36,7 +36,7 @@ if (!(s = expand_string(dsn_from)))
   {
   log_write(LOG_MAIN|LOG_PANIC,
     "Failed to expand dsn_from (using default): %s", expand_string_message);
-  s = expand_string(US DEFAULT_DSN_FROM);
+  s = expand_string(U(DEFAULT_DSN_FROM));
   }
 fprintf(f, "From: %s\n", s);
 }
@@ -384,7 +384,7 @@ if (bounce_return_message)
 
   while (headers)
     {
-    if (headers->text) fprintf(fp, "%s", CS headers->text);
+    if (headers->text) fprintf(fp, "%s", C(headers->text));
     headers = headers->next;
     }
 
@@ -400,9 +400,9 @@ if (bounce_return_message)
     BOOL enddot = f.dot_ends && message_file == stdin;
     uschar * buf = store_get(bounce_return_linesize_limit+2, GET_TAINTED);
 
-    if (firstline) fprintf(fp, "%s", CS firstline);
+    if (firstline) fprintf(fp, "%s", C(firstline));
 
-    while (fgets(CS buf, bounce_return_linesize_limit+2, message_file))
+    while (fgets(C(buf), bounce_return_linesize_limit+2, message_file))
       {
       int len;
 
@@ -422,11 +422,11 @@ if (bounce_return_message)
       if (size_limit > 0 && len > size_limit - written)
 	{
 	buf[size_limit - written] = '\0';
-	fputs(CS buf, fp);
+	fputs(C(buf), fp);
 	break;
 	}
 
-      fputs(CS buf, fp);
+      fputs(C(buf), fp);
       }
     }
 #ifdef EXIM_HAVE_DMARC
