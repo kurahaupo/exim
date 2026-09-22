@@ -48,26 +48,26 @@ List *MUST* end with a NULL.  Which at least makes ifdef-vs-comma easier. */
 
 static const uschar * exim_sieve_extension_list[] = {
 #ifdef BODY
-  CUS"body",
+  US"body",
 #endif
-  CUS"comparator-i;ascii-numeric",
-  CUS"copy",
+  US"comparator-i;ascii-numeric",
+  US"copy",
 #ifdef ENCODED_CHARACTER
-  CUS"encoded-character",
+  US"encoded-character",
 #endif
 #ifdef ENOTIFY
-  CUS"enotify",
+  US"enotify",
 #endif
-  CUS"envelope",
+  US"envelope",
 #ifdef ENVELOPE_AUTH
-  CUS"envelope-auth",
+  US"envelope-auth",
 #endif
-  CUS"fileinto",
+  US"fileinto",
 #ifdef SUBADDRESS
-  CUS"subaddress",
+  US"subaddress",
 #endif
 #ifdef VACATION
-  CUS"vacation",
+  US"vacation",
 #endif
   NULL
 };
@@ -343,7 +343,7 @@ const uschar * start;
 
 if (Ustrncmp(uri, "mailto:", 7))
   {
-  filter->errmsg = US "Unknown URI scheme";
+  filter->errmsg = US"Unknown URI scheme";
   return 0;
   }
 
@@ -1317,7 +1317,7 @@ while (src < end)
   uschar * brace;
 
   if (
-      strncmpic(src, US "${hex:", 6) == 0
+      strncmpic(src, US"${hex:", 6) == 0
       && (brace = Ustrchr(src+6, '}')) != (uschar*)0
       && (hex_decode(src+6, brace, (uschar*)0))>= 0
      )
@@ -1326,7 +1326,7 @@ while (src < end)
     src = brace+1;
     }
   else if (
-           strncmpic(src, US "${unicode:", 10) == 0
+           strncmpic(src, US"${unicode:", 10) == 0
            && (brace = Ustrchr(src+10, '}')) != (uschar*)0
           )
     {
@@ -1556,7 +1556,7 @@ parse_identifier(struct Sieve * filter, const uschar * id, const uschar * why)
 {
 size_t idlen = Ustrlen(id);
 
-if (strncmpic(US filter->pc, US id, idlen) == 0)
+if (strncmpic(filter->pc, id, idlen) == 0)
   {
   uschar next = filter->pc[idlen];
 
@@ -1598,7 +1598,7 @@ parse_number(struct Sieve *filter, unsigned long *data)
 if (*filter->pc>= '0' && *filter->pc<= '9')
   {
   unsigned long d, u;
-  uschar * e;
+  typeof(filter->pc) e;
 
   errno = 0;
   d = Ustrtoul(filter->pc, &e, 10);
@@ -2408,7 +2408,7 @@ else if (parse_identifier(filter, US"envelope", US"test type"))
     if (exec && envelopeExpr)
       {
       uschar * envelope;
-      if (!(envelope = expand_string(US envelopeExpr)))
+      if (!(envelope = W(expand_string(envelopeExpr))))
         {
         filter->errmsg = US"header string expansion failed";
         goto bad;
@@ -2799,7 +2799,7 @@ while (*filter->pc)
       goto bad;
     if (parse_string(filter, &recipient, US"missing redirect recipient string") != 1)
       goto bad;
-    if (strchr(CCS recipient.s, '@') == NULL)
+    if (strchr(C(recipient.s), '@') == NULL)
       {
       filter->errmsg = US"unqualified recipient address";
       goto bad;
@@ -2906,7 +2906,7 @@ while (*filter->pc)
       goto bad;
       }
     envelope_from = sender_address && sender_address[0]
-     ? expand_string(US"$local_part_prefix$local_part$local_part_suffix@$domain") : US "";
+     ? expand_string(US"$local_part_prefix$local_part$local_part_suffix@$domain") : US"";
     if (!envelope_from)
       {
       filter->errmsg = US"expansion failure for envelope from";
@@ -3208,7 +3208,7 @@ while (*filter->pc)
 	  md5_end(&base, handle.s, handle.ptr, digest);
 
         for (int i = 0; i < 16; i++)
-	  sprintf(CS (hexdigest+2*i), "%02X", digest[i]);
+	  sprintf(C(hexdigest+2*i), "%02X", digest[i]);
 
 	if ((filter_test != FTEST_NONE && ANY_DEBUG) || IS_FDEBUG)
           debug_printf_indent("Sieve: mail was personal, vacation file basename: %s\n", hexdigest);
@@ -3255,7 +3255,7 @@ while (*filter->pc)
           else
             addr->reply->from = from.s;
 	  /* deconst cast safe as we pass in a non-const item */
-          addr->reply->subject = US parse_quote_2047(subject.s, subject.ptr, US"utf-8", TRUE);
+          addr->reply->subject = W(parse_quote_2047(subject.s, subject.ptr, US"utf-8", TRUE));
           addr->reply->oncelog = string_from_gstring(once);
           addr->reply->once_repeat = days*86400;
 
