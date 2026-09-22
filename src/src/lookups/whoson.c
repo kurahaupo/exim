@@ -40,7 +40,7 @@ whoson_find(void * handle, const uschar * filename, uschar * query, int length,
 {
 uschar buffer[80];
 
-switch (wso_query(CS query, CS buffer, sizeof(buffer)))
+switch (wso_query(C(query), C(buffer), sizeof(buffer)))
   {
   case 0:
   *result = string_copy(buffer);    /* IP in database; return name of user */
