@@ -445,7 +445,7 @@ return TRUE;
 void
 exim_sha_update(hctx * h, const uschar * data, int len)
 {
-native_sha1_mid(&h->sha1, US data);	/* implicit size always 64 */
+native_sha1_mid(&h->sha1, W(data));	/* implicit size always 64 */
 }
 
 
@@ -817,7 +817,7 @@ int main(void)
 sha1 base;
 int j;
 int i = 0x01020304;
-uschar *ctest = US (&i);
+uschar *ctest = (uschar *) &i;
 uschar buffer[256];
 uschar digest[20];
 uschar s[41];
