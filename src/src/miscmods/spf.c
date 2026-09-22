@@ -73,7 +73,7 @@ SPF_dns_rr_t * spfrr;
 unsigned found = 0;
 
 SPF_dns_rr_t srr = {
-  .domain = CS domain,			/* query information */
+  .domain = C(domain),			/* query information */
   .domain_buf_len = 0,
   .rr_type = rr_type,
 
@@ -99,7 +99,7 @@ if (rr_type == T_SPF)
   goto out;
   }
 
-switch (dns_lookup(dnsa, US domain, rr_type, NULL))
+switch (dns_lookup(dnsa, U(domain), rr_type, NULL))
   {
   case DNS_AGAIN:	srr.herrno = TRY_AGAIN;		break;
   case DNS_NOMATCH:	srr.herrno = HOST_NOT_FOUND;	break;
@@ -154,7 +154,7 @@ for (dns_record * rr = dns_next_rr(dnsa, &dnss, RESET_ANSWERS); rr;
 	uschar chunk_len;
 
 	if (rr->size < 1+6) continue;		/* min for version str */
-	if (strncmpic(rr->data+1, US SPF_VER_STR, 6) != 0)
+	if (strncmpic(rr->data+1, U(SPF_VER_STR), 6) != 0)
 	  {
 	  HDEBUG(host_lookup) debug_printf_indent("not an spf record: %.*s\n",
 						    (int) s[0], s+1);
@@ -284,7 +284,7 @@ GET_OPTION("spf_smtp_comment_template");
 if (!(s = expand_string(spf_smtp_comment_template)))
   log_write_die(LOG_MAIN, "expansion of spf_smtp_comment_template failed");
 
-SPF_server_set_explanation(spf_server, CCS s, &spf_response);
+SPF_server_set_explanation(spf_server, C(s), &spf_response);
 if (SPF_response_errcode(spf_response) != SPF_E_SUCCESS)
   log_write_die(LOG_MAIN, "%s", SPF_strerror(SPF_response_errcode(spf_response)));
 
@@ -312,7 +312,7 @@ if (!spf_server && !spf_init(NULL))
   return FAIL;
   }
 
-if (SPF_server_set_rec_dom(spf_server, CS primary_hostname))
+if (SPF_server_set_rec_dom(spf_server, C(primary_hostname)))
   {
   DEBUG(receive) debug_printf_indent("SPF_server_set_rec_dom(%q) failed.\n",
 					primary_hostname);
@@ -323,8 +323,8 @@ if (SPF_server_set_rec_dom(spf_server, CS primary_hostname))
 
 spf_request = SPF_request_new(spf_server);
 
-if (  SPF_request_set_ipv4_str(spf_request, CCS spf_remote_addr)
-   && SPF_request_set_ipv6_str(spf_request, CCS spf_remote_addr)
+if (  SPF_request_set_ipv4_str(spf_request, C(spf_remote_addr))
+   && SPF_request_set_ipv6_str(spf_request, C(spf_remote_addr))
    )
   {
   DEBUG(receive)
@@ -336,7 +336,7 @@ if (  SPF_request_set_ipv4_str(spf_request, CCS spf_remote_addr)
   return FAIL;
   }
 
-if (SPF_request_set_helo_dom(spf_request, CCS spf_helo_domain))
+if (SPF_request_set_helo_dom(spf_request, C(spf_helo_domain)))
   {
   DEBUG(receive) debug_printf_indent("SPF_set_helo_dom(%q) failed.\n",
 				      spf_helo_domain);
@@ -391,7 +391,7 @@ if (!(spf_server && spf_request))
   /* no global context, assume temp error and skip to evaluation */
   rc = SPF_RESULT_PERMERROR;
 
-else if (SPF_request_set_env_from(spf_request, CS spf_envelope_sender))
+else if (SPF_request_set_env_from(spf_request, C(spf_envelope_sender)))
   /* Invalid sender address. This should be a real rare occurrence */
   rc = SPF_RESULT_PERMERROR;
 
@@ -400,7 +400,7 @@ else
   /* get SPF result */
   if (action == SPF_PROCESS_FALLBACK)
     {
-    SPF_request_query_fallback(spf_request, &spf_response, CS spf_guess);
+    SPF_request_query_fallback(spf_request, &spf_response, C(spf_guess));
     spf_result_guessed = TRUE;
     }
   else
@@ -481,7 +481,7 @@ int res = SPF_RESULT_INVALID;
 if (spf_response)
   {
   res = spf_response->result;
-  s = US spf_response->header_comment;
+  s = U(spf_response->header_comment);
   }
 *human_readable_p = s ? string_copy(s) : US"";
 DEBUG(acl) debug_printf_indent(" SPF: %d '%s'\n", res, s);
@@ -541,14 +541,14 @@ switch (4)
 #endif
   {
   case 4:
-    if (!SPF_request_set_ipv4_str(spf_request, CS filename))
+    if (!SPF_request_set_ipv4_str(spf_request, C(filename)))
       break;
     *errmsg = string_sprintf("invalid IPv4 address '%s'", filename);
     return FAIL;
 #if HAVE_IPV6
 
   case 6:
-    if (!SPF_request_set_ipv6_str(spf_request, CS filename))
+    if (!SPF_request_set_ipv6_str(spf_request, C(filename)))
       break;
     *errmsg = string_sprintf("invalid IPv6 address '%s'", filename);
     return FAIL;
@@ -559,7 +559,7 @@ switch (4)
 #endif
   }
 
-if (SPF_request_set_env_from(spf_request, CS keystring))
+if (SPF_request_set_env_from(spf_request, C(keystring)))
     {
   *errmsg = string_sprintf("invalid envelope from address '%s'", keystring);
   return FAIL;
