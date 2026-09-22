@@ -106,13 +106,13 @@ EXIM_DB * dbp;
 DB * b;
 if (  db_env_create(&dbp, 0) != 0
    || (dbp->set_errcall(dbp, dbfn_bdb_error_callback), 0)
-   || dbp->open(dbp, CS dirname, DB_CREATE|DB_INIT_MPOOL|DB_PRIVATE, 0) != 0
+   || dbp->open(dbp, C(dirname), DB_CREATE|DB_INIT_MPOOL|DB_PRIVATE, 0) != 0
    )
   return NULL;
 if (db_create(&b, dbp, 0) == 0)
   {
   dbp->app_private = b;
-  if (b->open(b, NULL, CS name, NULL,
+  if (b->open(b, NULL, C(name), NULL,
 	      flags & O_CREAT ? DB_HASH : DB_UNKNOWN,
 	      flags & O_CREAT ? DB_CREATE
 	      : (flags & O_ACCMODE) == O_RDONLY ? DB_RDONLY : 0,
@@ -263,7 +263,7 @@ exim_dbopen__(const uschar * name, const uschar * dirname, int flags,
 EXIM_DB * dbp;
 return db_create(&dbp, NULL, 0) == 0
   && (  dbp->set_errcall(dbp, dbfn_bdb_error_callback),
-	dbp->open(dbp, CS name, NULL,
+	dbp->open(dbp, C(name), NULL,
 	  flags & O_CREAT ? DB_HASH : DB_UNKNOWN,
 	  flags & O_CREAT ? DB_CREATE
 	  : (flags & O_ACCMODE) == O_RDONLY ? DB_RDONLY : 0,
@@ -329,17 +329,17 @@ exim_dbclose__(EXIM_DB * dbp)
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return U(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }
 
 static inline uschar *
 exim_datum_size_get(EXIM_DATUM * dp)
-{ return US dp->size; }
+{ return U(dp->size); }
 static inline void
 exim_datum_size_set(EXIM_DATUM * dp, uschar * s)
-{ dp->size = CS s; }
+{ dp->size = C(s); }
 
 /* The whole datum structure contains other fields that must be cleared
 before use, but we don't have to free anything after reading data. */
