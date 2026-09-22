@@ -250,7 +250,7 @@ if (!cn)
 
   pg_conn=PQsetdbLogin(
     /*  host      port  options tty   database       user       passwd */
-    CS server, CS port,  NULL, NULL, CS sdata[0], CS sdata[1], CS sdata[2]);
+    C(server), C(port),  NULL, NULL, C(sdata[0]), C(sdata[1]), C(sdata[2]));
 
   if(PQstatus(pg_conn) == CONNECTION_BAD)
     {
@@ -289,7 +289,7 @@ else DEBUG(lookup)
 
 /* Run the query */
 
-pg_result = PQexec(pg_conn, CS query);
+pg_result = PQexec(pg_conn, C(query));
 switch(PQresultStatus(pg_result))
   {
   case PGRES_EMPTY_QUERY:
