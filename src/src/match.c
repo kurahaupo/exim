@@ -269,7 +269,7 @@ NOT_AT_SPECIAL:
 
 /* This is an exact string match if there is no semicolon in the pattern. */
 
-if ((semicolon = Ustrchr(pattern, ';')) == NULL)
+if ((semicolon = Ustrchr(W(pattern), ';')) == NULL)
   {
   if (cb->flags & MCS_CASELESS ? strcmpic(s, pattern) != 0 : Ustrcmp(s, pattern) != 0)
     return FAIL;
@@ -591,7 +591,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
     if (Ustrcmp(ss, "+caseful") == 0)
       {
       check_address_block * cb = (check_address_block *)arg;
-      uschar * at;
+      typeof(cb->origaddress) at;
 
       if (is_tainted_metadata(ss)) goto BAD_TAINT;
 
@@ -610,7 +610,7 @@ while ((sss = string_nextinlist(&list, &sep, NULL, 0)))
       {
       check_string_block * cb = (check_string_block *)arg;
       if (is_tainted_metadata(ss)) goto BAD_TAINT;
-      Ustrcpy(US cb->subject, cb->origsubject);
+      Ustrcpy(W(cb->subject), cb->origsubject);
       cb->flags &= ~MCS_CASELESS;
       continue;
       }
@@ -1123,7 +1123,8 @@ unsigned int * null = NULL;
 const uschar * listptr;
 uschar * subject = cb->address;
 const uschar * s;
-uschar * pdomain, * sdomain;
+typeof(pattern) pdomain;
+typeof(subject) sdomain;
 uschar * value = NULL;
 
 DEBUG(lists) debug_printf_indent("address match test: subject=%s pattern=%s\n",
@@ -1194,7 +1195,7 @@ if (pattern[0] == '@' && pattern[1] == '@')
     {
     int sep = 0;
 
-    if ((rc = match_check_string(key, pattern + 2, -1, MCS_PARTIAL, CUSS &list))
+    if ((rc = match_check_string(key, pattern + 2, -1, MCS_PARTIAL, R(&list)))
 	!= OK)
       return rc;
 
@@ -1214,7 +1215,7 @@ if (pattern[0] == '@' && pattern[1] == '@')
     /* Look up the local parts provided by the list; negation is permitted.
     If a local part has to begin with !, a regex can be used. */
 
-    while ((ss = string_nextinlist(CUSS &list, &sep, NULL, 0)))
+    while ((ss = string_nextinlist(R(&list), &sep, NULL, 0)))
       {
       int local_yield;
 
