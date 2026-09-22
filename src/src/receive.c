@@ -300,7 +300,7 @@ if (f.trusted_caller) return TRUE;
 if (!newsender || !untrusted_set_sender) return FALSE;
 qnewsender = Ustrchr(newsender, '@')
   ? newsender : string_sprintf("%s@%s", newsender, qualify_domain_sender);
-return match_address_list_basic(qnewsender, CUSS &untrusted_set_sender, 0) == OK;
+return match_address_list_basic(qnewsender, R(&untrusted_set_sender), 0) == OK;
 }
 
 
@@ -379,7 +379,7 @@ else
 
   if (path[0] == 0)
     {
-    sprintf(CS buffer, CS"%s/log", CS spool_directory);
+    sprintf(C(buffer), "%s/log", C(spool_directory));
     path = buffer;
     }
   else
@@ -393,8 +393,8 @@ else
 
 memset(&statbuf, 0, sizeof(statbuf));
 
-if (STATVFS(CS path, &statbuf) != 0)
-  if (stat(CS path, &dummy) == -1 && errno == ENOENT)
+if (STATVFS(C(path), &statbuf) != 0)
+  if (stat(C(path), &dummy) == -1 && errno == ENOENT)
     {				/* Can happen on first run after installation */
     *inodeptr = -1;
     return -1;
@@ -960,7 +960,7 @@ were saved up while testing for an ending dot. */
 if (ch_state != 1)
   {
   static const uschar * ends[] = { US"\n", NULL, US"\n", US".\n", US".\n" };
-  if (fputs(CS ends[ch_state], fout) == EOF) return END_WERROR;
+  if (fputs(C(ends[ch_state]), fout) == EOF) return END_WERROR;
   message_size += Ustrlen(ends[ch_state]);
   body_linecount++;
   }
@@ -1555,10 +1555,10 @@ add_spf_info_for_log(gstring * g)
 #ifdef EXIM_HAVE_SPF
 if (LOGGING(spf_verbose))
   {
-  const uschar * s = expand_string(CUS"$spf_result");
+  const uschar * s = expand_string(US"$spf_result");
   if (*s) g = string_append(g, 2, US" SPF=", s);
   }
-else if (LOGGING(spf) && Ustrcmp(expand_string(CUS"$spf_result"), "pass") == 0)
+else if (LOGGING(spf) && Ustrcmp(expand_string(US"$spf_result"), "pass") == 0)
   g = string_catn(g, US" SPF", 4);
 #endif
 return g;
@@ -1570,10 +1570,10 @@ add_dmarc_info_for_log(gstring * g)
 #ifdef EXIM_HAVE_DMARC
 if (LOGGING(dmarc_verbose))
   {
-  const uschar * s = expand_string(CUS"$dmarc_status");
+  const uschar * s = expand_string(US"$dmarc_status");
   if (*s) g = string_append(g, 2, US" DMARC=", s);
   }
-else if (LOGGING(dmarc) && Ustrcmp(expand_string(CUS"$dmarc_status"), "accept") == 0)
+else if (LOGGING(dmarc) && Ustrcmp(expand_string(US"$dmarc_status"), "accept") == 0)
   g = string_catn(g, US" DMARC", 6);
 #endif
 return g;
@@ -1706,7 +1706,7 @@ if (rfc822_file_path)
   {
   mime_part_count = mime_part_count_buffer;
 
-  if (unlink(CS rfc822_file_path) == -1)
+  if (unlink(C(rfc822_file_path)) == -1)
     {
     log_write(LOG_PANIC,
          "acl_smtp_mime: can't unlink RFC822 spool file, skipping.");
@@ -1724,7 +1724,7 @@ if (rc == OK)
   DIR * tempdir;
 
   for (tempdir = exim_opendir(scandir); entry = readdir(tempdir); )
-    if (strncmpic(US entry->d_name, US"__rfc822_", 9) == 0)
+    if (strncmpic(U(entry->d_name), US"__rfc822_", 9) == 0)
       {
       rfc822_file_path = string_sprintf("%s/%s", scandir, entry->d_name);
       DEBUG(receive)
@@ -1745,7 +1745,7 @@ if (rc == OK)
       }
     log_write(LOG_PANIC,
        "acl_smtp_mime: can't open RFC822 spool file, skipping.");
-    unlink(CS rfc822_file_path);
+    unlink(C(rfc822_file_path));
     }
   }
 
@@ -2418,7 +2418,7 @@ OVERSIZE:
           {
           if (domain == 0 && newsender[0] != 0)
 	    /* deconst ok as newsender was not const */
-            newsender = US rewrite_address_qualify(newsender, FALSE);
+            newsender = W(rewrite_address_qualify(newsender, FALSE));
 
           if (filter_test != FTEST_NONE || receive_check_set_sender(newsender))
             {
@@ -2993,7 +2993,7 @@ Ustrncpy(message_id + MESSAGE_ID_TIME_LEN + 1,
 checked when it was read, to ensure it isn't too big. */
 
 if (host_number_string)
-  sprintf(CS(message_id + MESSAGE_ID_TIME_LEN + 1 + MESSAGE_ID_PID_LEN),
+  sprintf(C(message_id) + MESSAGE_ID_TIME_LEN + 1 + MESSAGE_ID_PID_LEN,
 	"-%" str(MESSAGE_ID_SUBTIME_LEN) "s",
 	string_base62_32((long int)(
 	  host_number * (1000000/id_resolution)
@@ -3005,7 +3005,7 @@ if (host_number_string)
 appropriate resolution. */
 
 else
-  sprintf(CS(message_id + MESSAGE_ID_TIME_LEN + 1 + MESSAGE_ID_PID_LEN),
+  sprintf(C(message_id) + MESSAGE_ID_TIME_LEN + 1 + MESSAGE_ID_PID_LEN,
     "-%" str(MESSAGE_ID_SUBTIME_LEN) "s",
 	string_base62_32((long int)(message_id_tv.tv_usec/id_resolution))
 	+ (6 - MESSAGE_ID_SUBTIME_LEN));
@@ -3050,7 +3050,7 @@ if (  !msgid_header
     else if (*new_id_domain)
       {
       /* deconst safe due to the t_only check */
-      id_domain = t_only ? string_copy(new_id_domain) : US new_id_domain;
+      id_domain = t_only ? string_copy(new_id_domain) : W(new_id_domain);
       for (uschar * p = id_domain; *p; p++)
         if (!isalnum(*p) && *p != '.') *p = '-';  /* No need to test '-' ! */
       }
@@ -3074,7 +3074,7 @@ if (  !msgid_header
     else if (*new_id_text)
       {
       /* deconst safe due to the t_only check */
-      id_text = t_only ? string_copy(new_id_text) : US new_id_text;
+      id_text = t_only ? string_copy(new_id_text) : W(new_id_text);
       for (uschar * p = id_text; *p; p++)
 	if (mac_iscntrl_or_special(*p)) *p = '-';
       }
@@ -3117,7 +3117,7 @@ DEBUG(rewrite)
   { debug_printf_indent("qualify & rewrite recipients list\n"); acl_level++; }
 for (int i = 0; i < recipients_count; i++)
   recipients_list[i].address =	/* deconst ok as src was not cont */
-    US rewrite_address(recipients_list[i].address, TRUE, TRUE,
+    rewrite_address(recipients_list[i].address, TRUE, TRUE,
       global_rewrite_rules, rewrite_existflags);
 DEBUG(rewrite) acl_level--;
 
@@ -3297,7 +3297,7 @@ DEBUG(rewrite)
 if (global_rewrite_rules && !sender_address_unrewritten && *sender_address)
   {
   /* deconst ok as src was not const */
-  sender_address = US rewrite_address(sender_address, FALSE, TRUE,
+  sender_address = rewrite_address(sender_address, FALSE, TRUE,
     global_rewrite_rules, rewrite_existflags);
   DEBUG(receive|rewrite)
     debug_printf("rewritten sender = %s\n", sender_address);
@@ -3569,7 +3569,7 @@ anything until the terminating dot line is sent. */
 if (fflush(spool_data_file) == EOF || ferror(spool_data_file) ||
     EXIMfsync(fileno(spool_data_file)) < 0 || receive_ferror())
   {
-  uschar *msg_errno = US strerror(errno);
+  uschar *msg_errno = U(strerror(errno));
   BOOL input_error = receive_ferror() != 0;
   uschar *msg = string_sprintf("%s error (%s) while receiving message from %s",
     input_error? "Input read" : "Spool write",
@@ -3833,17 +3833,17 @@ else
 	    switch (rc)
 	      {
 	      case OK: case DISCARD:
-		msg = string_sprintf(CS msg, addr, "acceptance");        break;
+		msg = string_sprintf(C(msg), addr, "acceptance");        break;
 	      case DEFER:
-		msg = string_sprintf(CS msg, addr, "temporary refusal"); break;
+		msg = string_sprintf(C(msg), addr, "temporary refusal"); break;
 	      default:
-		msg = string_sprintf(CS msg, addr, "refusal");           break;
+		msg = string_sprintf(C(msg), addr, "refusal");           break;
 	      }
 	    smtp_user_msg(code, msg);
 	    }
 	  if (log_msg)       log_write(LOG_MAIN, "PRDR %s %s", addr, log_msg);
 	  else if (user_msg) log_write(LOG_MAIN, "PRDR %s %s", addr, user_msg);
-	  else               log_write(LOG_MAIN, "%s", CS msg);
+	  else               log_write(LOG_MAIN, "%s", C(msg));
 
 	  if (rc != OK) { receive_remove_recipient(addr); c--; }
 	  }
@@ -4445,7 +4445,7 @@ if (message_logs && !blackholed_by)
         frozen_by);
       if (f.queue_only_policy) fprintf(message_log,
         "%s no immediate delivery: queued%s%s by %s\n", now,
-        *queue_name ? " in " : "", *queue_name ? CS queue_name : "",
+        *queue_name ? " in " : "", *queue_name ? C(queue_name) : "",
 	queued_by);
       (void)fclose(message_log);
       }
@@ -4566,7 +4566,7 @@ if(!smtp_reply)
   if (f.deliver_freeze) log_write(LOG_MAIN, "frozen by %s", frozen_by);
   if (f.queue_only_policy && LOGGING(delay_delivery))
     log_write(LOG_MAIN, "no immediate delivery: queued%s%s by %s",
-		    *queue_name ? " in " : "", *queue_name ? CS queue_name : "",
+		    *queue_name ? " in " : "", *queue_name ? C(queue_name) : "",
 		    queued_by);
   }
 f.receive_call_bombout = FALSE;
