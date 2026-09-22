@@ -146,7 +146,7 @@ if ((s = US getenv("EXIMON_EXIM_CONFIG")))
 if ((s = US getenv("LOG_BUFFER")))
   {
   uschar c[1];
-  if (sscanf(CS s, "%d%c", &x, c) > 0)
+  if (sscanf(C(s), "%d%c", &x, c) > 0)
     {
     if (c[0] == 'K' || c[0] == 'k') x *= 1024;
     if (x < 1024) x = 1024;
