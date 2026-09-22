@@ -55,10 +55,10 @@ EXIM_DB * res;
 struct stat st;
 
 if (  (flags & O_CREAT)
-   && (lstat(CCS name, &st) == 0 || errno != ENOENT))
+   && (lstat(C(name), &st) == 0 || errno != ENOENT))
   errno = (st.st_mode & S_IFMT) == S_IFDIR ? EISDIR : EEXIST;
 
-else if ((res = dbm_open(CS name, flags, mode)))
+else if ((res = dbm_open(C(name), flags, mode)))
   return res;
 
 else
@@ -124,7 +124,7 @@ exim_dbclose__(EXIM_DB * dbp)
 
 static inline uschar *
 exim_datum_data_get(EXIM_DATUM * dp)
-{ return US dp->dptr; }
+{ return U(dp->dptr); }
 static inline void
 exim_datum_data_set(EXIM_DATUM * dp, void * s)
 { dp->dptr = s; }
