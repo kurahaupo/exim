@@ -58,7 +58,7 @@ gstring * rg = string_fmt_append(NULL, "(?sn)(\\n|^)--%s(--)?[ \\t]*\\n", s);
 
 DEBUG(sieve) debug_printf_indent("%s: re %Y\n", __FUNCTION__, rg);
 return regex_compile(string_from_gstring(rg), 0,
-		    USS &filter->errmsg, pcre_gen_cmp_ctx);
+		    U(&filter->errmsg), pcre_gen_cmp_ctx);
 }
 
 #endif
@@ -195,7 +195,7 @@ g = string_catn(g, US")", 1);
 DEBUG(sieve) debug_printf_indent("regex %.*q\n", g->ptr, g->s);
 
 return regex_compile(string_from_gstring(g), 0,
-		    USS &filter->errmsg, pcre_gen_cmp_ctx);
+		    W(&filter->errmsg), pcre_gen_cmp_ctx);
 }
 
 
