@@ -22,7 +22,7 @@
 static void *
 psl_open(const uschar * filename, uschar ** errmsg)
 {
-FILE * f = fopen(CCS filename, "r");
+FILE * f = fopen(C(filename), "r");
 if (f) return (void *) f;
 *errmsg = US strerror(errno);
 return NULL;
@@ -64,7 +64,7 @@ else
   for (k = keystring; *k; k++)
     if (isupper(*k)) { keystring = string_copylc(keystring); break; }
 
-while ((s = US fgets(CS rulebuf, sizeof(rulebuf), handle)))
+while ((s = US fgets(C(rulebuf), sizeof(rulebuf), handle)))
   {
   const uschar * r;
 
@@ -72,7 +72,7 @@ while ((s = US fgets(CS rulebuf, sizeof(rulebuf), handle)))
   if (s[0] == '/' && s[1] == '/') continue;	/* comment line */
 
   nlabels = 1;
-  if ((r = US strsep(CSS &s, " \n\t")))
+  if ((r = US strsep(C(&s), " \n\t")))
     {
     BOOL exception = *r == '!';
     const uschar * t;
