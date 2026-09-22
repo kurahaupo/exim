@@ -160,7 +160,7 @@ if (!cn)
   /* Get store for a new handle, initialize it, and connect to the server */
   /* XXX: Use timeouts ? */
   redis_handle =
-    socket ? redisConnectUnix(CCS socket) : redisConnect(CCS server, port);
+    socket ? redisConnectUnix(C(socket)) : redisConnect(C(server), port);
   if (!redis_handle)
     {
     *errmsg = US"REDIS connection failed";
@@ -224,7 +224,7 @@ if(sdata[1])
   /* Run the command. We use the argv form rather than plain as that parses
   into args by whitespace yet has no escaping mechanism. */
 
-  if (!(redis_reply = redisCommandArgv(redis_handle, i, CCSS argv, NULL)))
+  if (!(redis_reply = redisCommandArgv(redis_handle, i, C(argv), NULL)))
     {
     *errmsg = string_sprintf("REDIS: query failed: %s\n", redis_handle->errstr);
     *defer_break = FALSE;
@@ -268,7 +268,7 @@ switch (redis_reply->type)
 
   case REDIS_REPLY_STRING:
   case REDIS_REPLY_STATUS:
-    result = string_catn(result, US redis_reply->str, redis_reply->len);
+    result = string_catn(result, U(redis_reply->str), redis_reply->len);
     break;
 
   case REDIS_REPLY_ARRAY:
@@ -289,7 +289,7 @@ switch (redis_reply->type)
 	  result = string_fmt_append(result, "%d", entry->integer);
 	  break;
 	case REDIS_REPLY_STRING:
-	  result = string_catn(result, US entry->str, entry->len);
+	  result = string_catn(result, U(entry->str), entry->len);
 	  break;
 	case REDIS_REPLY_ARRAY:
 	  for (int n = 0; n < entry->elements; n++)
@@ -305,7 +305,7 @@ switch (redis_reply->type)
 		result = string_fmt_append(result, "%d", tentry->integer);
 		break;
 	      case REDIS_REPLY_STRING:
-		result = string_catn(result, US tentry->str, tentry->len);
+		result = string_catn(result, U(tentry->str), tentry->len);
 		break;
 	      case REDIS_REPLY_ARRAY:
 		DEBUG(lookup)
