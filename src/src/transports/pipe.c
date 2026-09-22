@@ -377,7 +377,7 @@ if (argv[0][0] != '/')
       p = string_nextinlist(&listptr, &sep, NULL, 0); )
     {
     struct stat statbuf;
-    sprintf(CS big_buffer, "%.256s/%.256s", p, argv[0]);
+    sprintf(C(big_buffer), "%.256s/%.256s", p, argv[0]);
     if (Ustat(big_buffer, &statbuf) == 0)
       {
       argv[0] = string_copy(big_buffer);
@@ -433,7 +433,7 @@ $pipe_addresses, which is not recognized by the normal expansion function. */
 
 if (expand_arguments)
   {
-  uschar * p = Ustrstr(cmd, "pipe_addresses");
+  uschar * p = W(Ustrstr(cmd, "pipe_addresses"));
   gstring * g = NULL;
 
   DEBUG(transport)
@@ -492,7 +492,7 @@ else
   argv[2] = cmd;
   }
 
-argv[3] = US 0;
+argv[3] = NULL;
 return TRUE;
 }
 
@@ -708,7 +708,7 @@ reading of the output pipe. */
 uid/gid and current directory. Request that the new process be a process group
 leader, so we can kill it and all its children on a timeout. */
 
-if ((pid = child_open(USS argv, envp, ob->umask, &fd_in, &fd_out, TRUE,
+if ((pid = child_open(W(argv), envp, ob->umask, &fd_in, &fd_out, TRUE,
 			US"pipe-tpt-cmd")) < 0)
   {
   addr->transport_return = DEFER;
@@ -1051,7 +1051,7 @@ if ((rc = child_close(pid, timeout)) != 0)
       else
         {
         const uschar *s = ob->temp_errors;
-        uschar *p;
+        const uschar *p;
         int sep = 0;
 
         addr->transport_return = FAIL;
@@ -1072,7 +1072,7 @@ if ((rc = child_close(pid, timeout)) != 0)
       ss = rc > 128
         ? string_sprintf("(could mean shell command ended by signal %d (%s))",
 			  rc-128, os_strsignal(rc-128))
-        : US os_strexit(rc);
+        : U(os_strexit(rc));
 
       if (*ss)
         {
