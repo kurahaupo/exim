@@ -192,7 +192,7 @@ DEBUG(lookup) debug_printf_indent("perform_ldap_search:"
 /* Check if LDAP thinks the URL is a valid LDAP URL. We assume that if the LDAP
 library that is in use doesn't recognize, say, "ldapi", it will barf here. */
 
-if (!ldap_is_ldap_url(CS ldap_url))
+if (!ldap_is_ldap_url(C(ldap_url)))
   {
   *errmsg = string_sprintf("ldap_is_ldap_url: not an LDAP url %q\n",
     ldap_url);
@@ -201,7 +201,7 @@ if (!ldap_is_ldap_url(CS ldap_url))
 
 /* Parse the URL */
 
-if ((rc = ldap_url_parse(CS ldap_url, &ludp)) != 0)
+if ((rc = ldap_url_parse(C(ldap_url), &ludp)) != 0)
   {
   *errmsg = string_sprintf("ldap_url_parse: (error %d) parsing %q\n", rc,
     ldap_url);
@@ -220,7 +220,7 @@ if ((!ludp->lud_host || !ludp->lud_host[0]) && server)
   }
 else
   {
-  host = US ludp->lud_host;
+  host = U(ludp->lud_host);
   if (host && !host[0]) host = NULL;
   port = ludp->lud_port;
   }
@@ -229,7 +229,7 @@ DEBUG(lookup) debug_printf_indent("after ldap_url_parse: host=%s port=%d\n",
   host, port);
 
 if (port == 0) port = LDAP_PORT;      /* Default if none given */
-sprintf(CS porttext, ":%d", port);    /* For messages */
+sprintf(C(porttext), ":%d", port);    /* For messages */
 
 /* If the "host name" is actually a path, we are going to connect using a Unix
 socket, regardless of whether "ldapi" was actually specified or not. This means
@@ -261,7 +261,7 @@ if (host)
 
 /* Count the attributes; we need this later to tell us how to format results */
 
-for (uschar ** attrp = USS ludp->lud_attrs; attrp && *attrp; attrp++)
+for (uschar ** attrp = U(ludp->lud_attrs); attrp && *attrp; attrp++)
   attrs_requested++;
 
 /* See if we can find a cached connection to this host. The port is not
@@ -348,7 +348,7 @@ if (!lcp)
     const uschar * s = string_from_gstring(g);
 
     DEBUG(lookup) debug_printf_indent("ldap_initialize with URL %s\n", s);
-    if ((rc = ldap_initialize(&ld, CS s)) != LDAP_SUCCESS)
+    if ((rc = ldap_initialize(&ld, C(s))) != LDAP_SUCCESS)
       {
       *errmsg = string_sprintf("ldap_initialize: (error %d) URL %q\n",
 	rc, s);
@@ -363,7 +363,7 @@ if (!lcp)
   /* For libraries other than OpenLDAP, use ldap_init(). */
 
 #else   /* LDAP_LIB_OPENLDAP2 */
-  ld = ldap_init(CS host, port);
+  ld = ldap_init(C(host), port);
 #endif  /* LDAP_LIB_OPENLDAP2 */
 
   /* -------------------------------------------------------------- */
@@ -569,7 +569,7 @@ if (  !lcp->bound
       " and your LDAP library.\n");
 #endif
     }
-  if ((msgid = ldap_bind(lcp->ld, CS user, CS password, LDAP_AUTH_SIMPLE))
+  if ((msgid = ldap_bind(lcp->ld, C(user), C(password), LDAP_AUTH_SIMPLE))
        == -1)
     {
     *errmsg = string_sprintf("failed to bind the LDAP connection to server "
@@ -707,7 +707,7 @@ while ((rc = ldap_result(lcp->ld, msgid, 0, timeoutptr, &result)) ==
 
     /* Get the DN from the last result. */
 
-    if ((new_dn = US ldap_get_dn(lcp->ld, e)))
+    if ((new_dn = U(ldap_get_dn(lcp->ld, e))))
       {
       if (dn)
         {
@@ -743,8 +743,8 @@ while ((rc = ldap_result(lcp->ld, msgid, 0, timeoutptr, &result)) ==
     sequence of name=value pairs, separated by (space), with the value always in quotes.
     If there are multiple values, they are given within the quotes, comma separated. */
 
-    else for (uschar * attr = US ldap_first_attribute(lcp->ld, e, &ber);
-              attr; attr = US ldap_next_attribute(lcp->ld, e, ber))
+    else for (uschar * attr = U(ldap_first_attribute(lcp->ld, e, &ber));
+              attr; attr = U(ldap_next_attribute(lcp->ld, e, ber)))
       {
       DEBUG(lookup) debug_printf_indent("LDAP attr loop\n");
 
@@ -756,7 +756,7 @@ while ((rc = ldap_result(lcp->ld, msgid, 0, timeoutptr, &result)) ==
         {
         /* Get array of values for this attribute. */
 
-        if ((firstval = values = USS ldap_get_values(lcp->ld, e, CS attr)))
+        if ((firstval = values = U(ldap_get_values(lcp->ld, e, C(attr)))))
           {
           if (attrs_requested != 1)
             {
@@ -826,7 +826,7 @@ while ((rc = ldap_result(lcp->ld, msgid, 0, timeoutptr, &result)) ==
 
           /* Free the values */
 
-          ldap_value_free(CSS firstval);
+          ldap_value_free(C(firstval));
           }
         }
 
@@ -930,8 +930,8 @@ We need to parse the message to find out exactly what's happened. */
 
 #if defined LDAP_LIB_SOLARIS || defined LDAP_LIB_OPENLDAP2
   ldap_rc = rc;
-  ldap_parse_rc = ldap_parse_result(lcp->ld, result, &rc, CSS &matched,
-    CSS &error2, NULL, NULL, 0);
+  ldap_parse_rc = ldap_parse_result(lcp->ld, result, &rc, C(&matched),
+    C(&error2), NULL, NULL, 0);
   DEBUG(lookup) debug_printf_indent("ldap_parse_result: %d\n", ldap_parse_rc);
   if (ldap_parse_rc < 0 &&
       (ldap_parse_rc != LDAP_NO_RESULTS_RETURNED
@@ -943,7 +943,7 @@ We need to parse the message to find out exactly what's happened. */
     *errmsg = string_sprintf("ldap_parse_result failed %d", ldap_parse_rc);
     goto RETURN_ERROR;
     }
-  error1 = US ldap_err2string(rc);
+  error1 = U(ldap_err2string(rc));
 
 #elif defined LDAP_LIB_NETSCAPE
   /* Dubious (it doesn't reference 'result' at all!) */
@@ -1492,13 +1492,13 @@ if (!dn)
       {
       if (Ustrchr(LDAP_QUOTE, c) != NULL)
         {
-        sprintf(CS t, "%%5C%02X", c);        /* e.g. * => %5C2A */
+        sprintf(C(t), "%%5C%02X", c);        /* e.g. * => %5C2A */
         t += 5;
         continue;
         }
       if (Ustrchr(URL_NONQUOTE, c) == NULL)  /* e.g. ] => %5D */
         {
-        sprintf(CS t, "%%%02X", c);
+        sprintf(C(t), "%%%02X", c);
         t += 3;
         continue;
         }
@@ -1522,7 +1522,7 @@ else
   for (; s < ss; s++)
     {
     if (*s != ' ' && *s != '#') break;
-    sprintf(CS t, "%%5C%%%02X", *s);
+    sprintf(C(t), "%%5C%%%02X", *s);
     t += 6;
     }
 
@@ -1540,7 +1540,7 @@ else
         }
       if (Ustrchr(URL_NONQUOTE, c) == NULL)  /* e.g. ] => %5D */
         {
-        sprintf(CS t, "%%%02X", c);
+        sprintf(C(t), "%%%02X", c);
         t += 3;
         continue;
         }
