@@ -123,7 +123,7 @@ if (!pstring)
 
 if (isdigit(*pstring))
   {
-  uschar * end;
+  typeof(pstring) end;
   port = Ustrtol(pstring, &end, 0);
   if (end != pstring + Ustrlen(pstring))
     {
@@ -135,7 +135,7 @@ if (isdigit(*pstring))
 
 else
   {
-  struct servent * smtp_service = getservbyname(CCS pstring, "tcp");
+  struct servent * smtp_service = getservbyname(C(pstring), "tcp");
   if (!smtp_service)
     {
     addr->message = string_sprintf("TCP port %q is not defined for %s",
@@ -284,7 +284,7 @@ if ((sock = ip_socket(SOCK_STREAM, sc->host_af)) < 0)
 
 /* Set TCP_NODELAY; Exim does its own buffering. */
 
-if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, US &on, sizeof(on)))
+if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, U(&on), sizeof(on)))
   HDEBUG(transport|acl|v)
     debug_printf_indent("failed to set NODELAY: %s ", strerror(errno));
 
@@ -372,7 +372,7 @@ if (!save_errno)
 #ifdef TCP_FASTOPEN
   /* See if TCP Fast Open usable.  Default is a traditional 3WHS connect */
   expand_level++;
-  if (verify_check_given_host(CUSS &ob->hosts_try_fastopen, sc->host) == OK)
+  if (verify_check_given_host(RR(&ob->hosts_try_fastopen), sc->host) == OK)
     {
     if (!early_data)
       fastopen_blob = &tcp_fastopen_nodata;	/* TFO, with no data */
@@ -382,7 +382,7 @@ if (!save_errno)
     else
       {						/* expecting client data */
       DEBUG(transport|acl|v) debug_printf(" set up lazy-connect\n");
-      setsockopt(sock, IPPROTO_TCP, TCP_FASTOPEN_CONNECT, US &on, sizeof(on));
+      setsockopt(sock, IPPROTO_TCP, TCP_FASTOPEN_CONNECT, U(&on), sizeof(on));
       /* fastopen_blob = NULL;		 lazy TFO, triggered by data write */
       tcp_out_fastopen = TFO_ATTEMPTED_DATA;
       }
@@ -400,7 +400,7 @@ if (!save_errno)
       debug_printf("sending %ld nonTFO early-data\n", (long)early_data->len);
 
 #ifdef TCP_QUICKACK_notdef
-    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+    (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, U(&off), sizeof(off));
 #endif
     if (send(sock, early_data->data, early_data->len, 0) < 0)
       save_errno = errno;
@@ -410,7 +410,7 @@ if (!save_errno)
   5.10.8-100.fc32.x86_64) this seems to be inop.
   Perhaps overwritten when we (client) go -> ESTABLISHED on seeing the 3rd-ACK?
   For that case, added at smtp_reap_banner(). */
-  (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, US &off, sizeof(off));
+  (void) setsockopt(sock, IPPROTO_TCP, TCP_QUICKACK, U(&off), sizeof(off));
 #endif
   }
 
@@ -665,7 +665,7 @@ if (format)
   alloc rather than big_buffer, and another global for the data-for-error. */
 
   va_start(ap, format);
-  if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, CS format, ap))
+  if (!string_vformat(&gs, SVFMT_TAINT_NOCHK, format, ap))
     log_write_die(LOG_MAIN, "overlong write_command in outgoing "
       "SMTP");
   va_end(ap);
