@@ -162,7 +162,7 @@ if (Ustrncmp(name, "partial", 7) == 0)
     }
   else if (*ss++ == '-')
     {
-    *ptypeaff = US "*.";
+    *ptypeaff = US"*.";
     *afflen = 2;
     }
   else
@@ -424,7 +424,7 @@ pass back the tree block as the handle. The key for the tree node is the search
 type plus '0' concatenated with the file name. There may be entries in the tree
 with closed files if a lot of files have been opened. */
 
-snprintf(CS keybuffer, sizeof(keybuffer), "%c%.254s", li->acq_num + '0',
+snprintf(C(keybuffer), sizeof(keybuffer), "%c%.254s", li->acq_num + '0',
   filename ? filename : US"");
 
 if ((t = tree_search(search_tree, keybuffer)))
@@ -738,7 +738,7 @@ Returns:         a pointer to a dynamic string containing the answer,
 */
 
 uschar *
-search_find(void * handle, const uschar * filename, const uschar * keystring,
+search_find(void * handle, const uschar * filename, uschar * keystring,
   int partial, const uschar * affix, int affixlen, int starflags,
   int * expand_setup, const uschar * opts)
 {
@@ -853,7 +853,7 @@ else if (partial >= 0)
     Ustrncpy(keystring2, affix, affixlen);
     Ustrcpy(keystring2 + affixlen, keystring);
     DEBUG(lookup) debug_printf_indent("trying partial match %s\n", keystring2);
-    yield = internal_search_find(handle, filename, CUS keystring2, cache, opts);
+    yield = internal_search_find(handle, filename, keystring2, cache, opts);
     if (f.search_find_defer) return NULL;
     }
 
@@ -891,7 +891,7 @@ else if (partial >= 0)
         }
 
       DEBUG(lookup) debug_printf_indent("trying partial match %s\n", keystring3);
-      yield = internal_search_find(handle, filename, CUS keystring3,
+      yield = internal_search_find(handle, filename, keystring3,
 		cache, opts);
       if (f.search_find_defer) return NULL;
       if (yield)
@@ -928,7 +928,7 @@ is set to the string to the left of the @. */
 
 if (!yield  &&  starflags & SEARCH_STARAT)
   {
-  uschar *atat = Ustrrchr(keystring, '@');
+  typeof(keystring) atat = Ustrrchr(keystring, '@');
   if (atat && atat > keystring)
     {
     int savechar;
