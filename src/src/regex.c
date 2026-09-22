@@ -305,7 +305,7 @@ else
     rmark reset_point = store_mark();
 
     /* match each line against all regexes */
-    while (fgets(CS big_buffer, big_buffer_size, mbox_file))
+    while (fgets(C(big_buffer), big_buffer_size, mbox_file))
       {
       if (  mime_stream && mime_current_boundary		/* check boundary */
 	 && Ustrncmp(big_buffer, "--", 2) == 0
@@ -368,7 +368,7 @@ if (!mime_decoded_filename)
   }
 
 /* open file */
-if (!(f = fopen(CS mime_decoded_filename, "rb")))
+if (!(f = fopen(C(mime_decoded_filename), "rb")))
   {
   log_write(LOG_MAIN,
        "mime_regex acl condition warning - can't open '%s' for reading",
