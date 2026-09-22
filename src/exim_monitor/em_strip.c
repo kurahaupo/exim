@@ -95,7 +95,7 @@ else if (size_stripchart != NULL && num == 1)
   {
 #ifdef HAVE_STATFS
   struct statvfs statbuf;
-  if (statvfs(CS size_stripchart, &statbuf) == 0)
+  if (statvfs(C(size_stripchart), &statbuf) == 0)
     {
     int used = statbuf.f_blocks - statbuf.f_bfree;
     int max = used + statbuf.f_bavail;
@@ -140,8 +140,8 @@ while (thresholds[i] > 0)
       uschar buffer[128];
       newmax = (thresh > stripchart_midmax[num])?
         thresh : stripchart_midmax[num];
-      if (newmax == 10) sprintf(CS buffer, "%s", stripchart_name[num]);
-        else sprintf(CS buffer, "%s x%d", stripchart_name[num], newmax/10);
+      if (newmax == 10) sprintf(C(buffer), "%s", stripchart_name[num]);
+        else sprintf(C(buffer), "%s x%d", stripchart_name[num], newmax/10);
       if (size_stripchart != NULL && num == 1) Ustrcat(buffer, US"%");
       xs_SetValues(stripchart_label[num], 1, "label", buffer);
       oldmax = stripchart_max[num];
