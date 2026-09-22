@@ -56,7 +56,7 @@ name = string_copyn(domain, len);
 (void)string_format(utilname, sizeof(utilname), "%s/bin/fakens",
   config_main_directory);
 
-if (stat(CS utilname, &statbuf) >= 0)
+if (stat(C(utilname), &statbuf) >= 0)
   {
   pid_t pid;
   int infd, outfd, rc, i = 1;
@@ -72,7 +72,7 @@ if (stat(CS utilname, &statbuf) >= 0)
   argv[i++] = dns_text_type(type);
   argv[i++] = NULL;
 
-  pid = child_open_uid_3(CUSS argv, NULL, 0000, NULL, NULL, &infd, &outfd,
+  pid = child_open_uid_3(R(argv), NULL, 0000, NULL, NULL, &infd, &outfd,
 			NULL, FALSE, TRUE, US"fakens-search");
   if (pid < 0)
     log_write_die(LOG_MAIN, "failed to run fakens: %s",
@@ -119,7 +119,7 @@ else
 
 DEBUG(dns) debug_printf_indent("passing %s on to res_search()\n", domain);
 
-return res_search(CS domain, C_IN, type, answerptr, size);
+return res_search(C(domain), C_IN, type, answerptr, size);
 }
 
 
@@ -650,7 +650,7 @@ res_state resp = os_get_dns_resolver_res();
 /*XX buf needs to be 255 +1 + (max(typetext) == 5) +1 + max(chars_for_long-max) +1
 We truncate the name here for safety... could use a dynamic string. */
 
-sprintf(CS buf, "%.255s-%s-%lx", name, dns_text_type(dns_type),
+sprintf(C(buf), "%.255s-%s-%lx", name, dns_text_type(dns_type),
   (unsigned long) resp->options);
 }
 
@@ -929,7 +929,7 @@ domains, and interfaces to a fake nameserver for certain special zones. */
 h_errno = 0;
 dnsa->answerlen = f.running_in_test_harness
   ? fakens_search(name, type, dnsa->answer, sizeof(dnsa->answer))
-  : res_search(CCS name, C_IN, type, dnsa->answer, sizeof(dnsa->answer));
+  : res_search(C(name), C_IN, type, dnsa->answer, sizeof(dnsa->answer));
 
 if (dnsa->answerlen > (int) sizeof(dnsa->answer))
   {
@@ -971,7 +971,7 @@ if (dnsa->answerlen < 0) switch (h_errno)
       try_again_recursion = TRUE;
       save_domain = deliver_domain;
       deliver_domain = string_copy(name);  /* set $domain */
-      rc = match_isinlist(name, CUSS &dns_again_means_nonexist, 0,
+      rc = match_isinlist(name, RR(&dns_again_means_nonexist), 0,
 	&domainlist_anchor, NULL, MCL_DOMAIN, TRUE, NULL);
       deliver_domain = save_domain;
       try_again_recursion = FALSE;
@@ -1320,7 +1320,7 @@ switch (type)
   case T_CSA:
     {
     const uschar * srvname;
-    uschar * namesuff, * tld;
+    const uschar * namesuff, * tld;
     int priority, dummy_weight, port, limit, rc, i;
     BOOL ipv6;
     dns_record * rr;
@@ -1466,12 +1466,12 @@ const uschar * dnsa_lim = dnsa->answer + dnsa->answerlen;
 
 if (rr->type == T_A)
   {
-  const uschar * p = CUS rr->data;
+  const uschar * p = rr->data;
   if (p + 4 <= dnsa_lim)
     {
     /* the IP is not regarded as tainted */
     yield = store_get(sizeof(dns_address) + 20, GET_UNTAINTED);
-    (void)sprintf(CS yield->address, "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
+    (void)sprintf(C(yield->address), "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
     yield->next = NULL;
     }
   }
@@ -1485,7 +1485,7 @@ else
     struct in6_addr in6;
     for (int i = 0; i < 16; i++) in6.s6_addr[i] = rr->data[i];
     yield = store_get(sizeof(dns_address) + 50, GET_UNTAINTED);
-    inet_ntop(AF_INET6, &in6, CS yield->address, 50);
+    inet_ntop(AF_INET6, &in6, C(yield->address), 50);
     yield->next = NULL;
     }
   }
