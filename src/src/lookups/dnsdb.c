@@ -2,8 +2,8 @@
 *     Exim - an Internet mail transport agent    *
 *************************************************/
 
-/* Copyright (c) The Exim Maintainers 2020 - 2026 */
-/* Copyright (c) University of Cambridge 1995 - 2018 */
+/* Copyright © The Exim Maintainers 2020 - 2026 */
+/* Copyright © University of Cambridge 1995 - 2018 */
 /* See the file NOTICE for conditions of use and distribution. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -103,8 +103,8 @@ dnsdb_find(void * handle, const uschar * filename, const uschar * keystring,
 int defer_mode = PASS, dnssec_mode = PASS;
 int save_retrans = dns_retrans, save_retry = dns_retry;
 int sep = 0, rc, type, failrc = FAIL;
-const uschar * outsep = CUS"\n", * outsep2 = NULL;
-uschar * equals, * domain, * found;
+const uschar * outsep = US"\n", * outsep2 = NULL;
+const uschar * equals, * domain, * found;
 
 dns_answer * dnsa = store_get_dns_answer();
 dns_scan dnss = {0};
@@ -185,7 +185,7 @@ for (;;)
   else if (strncmpic(keystring, US"retry_", 6) == 0)
     {
     int retries;
-    if ((retries = (int)strtol(CCS keystring + 6, CSS &keystring, 0)) < 0)
+    if ((retries = (int)strtol(C(keystring) + 6, W(C(&keystring)), 0)) < 0)
       {
       *errmsg = US"unsupported dnsdb retry count";
       rc = DEFER;
@@ -213,7 +213,7 @@ type = T_TXT;
 if ((equals = Ustrchr(keystring, '=')) != NULL)
   {
   int i, len;
-  uschar *tend = equals;
+  const uschar *tend = equals;
 
   while (tend > keystring && isspace(tend[-1])) tend--;
   len = tend - keystring;
@@ -313,7 +313,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
     else
 #endif
       rc = dns_special_lookup(dnsa, domain, type,
-			      type == T_CSA ? CUSS &found : NULL);
+			      type == T_CSA ? &found : NULL);
 
     lookup_dnssec_authenticated = dnssec_mode==OK ? NULL
       : dns_is_secure(dnsa) ? US"yes" : US"no";
@@ -378,7 +378,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	    remain = rr->size - ++data_offset;
 	    if (chunk_len > remain)
 	      chunk_len = remain;
-	    yield = string_catn(yield, US ((rr->data) + data_offset), chunk_len);
+	    yield = string_catn(yield, (uschar *) rr->data + data_offset, chunk_len);
 	    data_offset += chunk_len;
 
 	    if (!outsep2) break;     /* output only the first chunk of the RR */
@@ -391,7 +391,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	  else
 	    {
 	    uint16_t payload_length;
-	    const uschar * p = US rr->data;
+	    const uschar * p = rr->data;
 	    uint8_t usage, selector, matching_type;
 
 	    usage = *p++;
@@ -415,7 +415,7 @@ while ((domain = string_nextinlist(&keystring, &sep, NULL, 0)))
 	default:
 	  {    /* T_CNAME T_CSA T_MX T_MXH T_NS T_PTR T_SOA T_SRV T_TESTSUITE */
 	  int priority, weight, port;
-	  uschar * p = US rr->data;
+	  uschar * p = W(rr->data);
 
 	  /* NB: this memory is released implicitly by the call
 	  gstring_release_unused(yield) below. We used to use a stack-auto, but
