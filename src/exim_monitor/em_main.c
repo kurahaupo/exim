@@ -531,7 +531,7 @@ for (i = 3; i < 8; i++)
     if (XKeycodeToKeysym(display, m->modifiermap [i*m->max_keypermod + j], 0)
         == XK_Num_Lock)
       {
-      sprintf(CS(buf+Ustrlen(buf)), " Mod%d", i-2);
+      sprintf(C(buf+Ustrlen(buf)), " Mod%d", i-2);
       ret = buf;
       }
     }
@@ -580,7 +580,7 @@ printf("\nExim Monitor version %s (compiled %s) initializing\n",
 
 /* Initialize various things from the environment and arguments. */
 
-init(argc, USS argv);
+init(argc, U(argv));
 
 /* Set up the SIGCHLD handler */
 
@@ -612,10 +612,10 @@ if (log_file[0] != 0)
   {
   /* Do *not* use "%s" here, we need the %D datestamp in the log_file to
   be expanded! */
-  (void)string_format(log_file_open, sizeof(log_file_open), CS log_file, NULL);
+  (void)string_format(log_file_open, sizeof(log_file_open), C(log_file), NULL);
   log_datestamping = string_datestamp_offset >= 0;
 
-  LOG = fopen(CS log_file_open, "r");
+  LOG = fopen(C(log_file_open), "r");
 
   if (LOG == NULL)
     {
@@ -682,19 +682,19 @@ state of other modifiers. Thanks to Kevin Ryde for this information, and for
 the function above that discovers which modifier is Num Lock, because it turns
 out that it varies from server to server. */
 
-sprintf(CS big_buffer,
+sprintf(C(big_buffer),
   "!%s:            menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
    !Lock %s:       menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
   ", menu_event, menu_event);
 
 numlock = numlock_modifiers(X_display, modbuf); /* Get Num Lock modifier(s) */
 
-if (numlock != NULL) sprintf(CS big_buffer + Ustrlen(big_buffer),
+if (numlock != NULL) sprintf(C(big_buffer) + Ustrlen(big_buffer),
   "!%s %s:         menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
    !Lock %s %s:    menu-create() XawPositionSimpleMenu(menu) MenuPopup(menu)\n\
   ", numlock, menu_event, numlock, menu_event);
 
-sprintf(CS big_buffer + Ustrlen(big_buffer),
+sprintf(C(big_buffer) + Ustrlen(big_buffer),
   "<Btn1Down>:     select-start()\n\
    <Btn1Motion>:   extend-adjust()\n\
    <Btn1Up>:       extend-end(PRIMARY,CUT_BUFFER0)\n\
@@ -707,7 +707,7 @@ sprintf(CS big_buffer + Ustrlen(big_buffer),
    Ctrl<Key>S:     search(forward)\n\
   ");
 
-queue_trans = XtParseTranslationTable(CS big_buffer);
+queue_trans = XtParseTranslationTable(C(big_buffer));
 
 text_trans = XtParseTranslationTable(
   "<Btn1Down>:     select-start()\n\
@@ -806,7 +806,7 @@ if (log_file[0] != 0)
 
   if (log_font != NULL)
     {
-    XFontStruct *f = XLoadQueryFont(X_display, CS log_font);
+    XFontStruct *f = XLoadQueryFont(X_display, C(log_font));
     if (f != NULL) xs_SetValues(log_widget, 1, "font", f);
     }
 
@@ -843,7 +843,7 @@ xs_SetValues(queue_widget, 4,
 
 if (queue_font != NULL)
   {
-  XFontStruct *f = XLoadQueryFont(X_display, CS queue_font);
+  XFontStruct *f = XLoadQueryFont(X_display, C(queue_font));
   if (f != NULL) xs_SetValues(queue_widget, 1, "font", f);
   }
 
