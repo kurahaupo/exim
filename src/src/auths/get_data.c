@@ -157,7 +157,7 @@ if (!ss)
   if (!(flags & AUTH_ITEM_FIRST))
     {
     if (smtp_write_command(sx, SCMD_FLUSH, "*\r\n") >= 0)
-      (void) smtp_read_response(sx, US buffer, buffsize, '2', timeout);
+      (void) smtp_read_response(sx, buffer, buffsize, '2', timeout);
     }
   if (f.expand_string_forcedfail)
     {
@@ -193,11 +193,11 @@ unembellished. */
 if (flags & AUTH_ITEM_FIRST)
   {
   if (smtp_write_command(sx, SCMD_FLUSH, "AUTH %s%s%s\r\n",
-       ablock->public_name, len == 0 ? "" : " ", b64encode(CUS ss, len)) < 0)
+       ablock->public_name, len == 0 ? "" : " ", b64encode(ss, len)) < 0)
     return FAIL_SEND;
   }
 else
-  if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", b64encode(CUS ss, len)) < 0)
+  if (smtp_write_command(sx, SCMD_FLUSH, "%s\r\n", b64encode(ss, len)) < 0)
     return FAIL_SEND;
 
 /* If we receive a success response from the server, authentication
@@ -222,7 +222,7 @@ exchange and return ERROR. */
 if (flags & AUTH_ITEM_LAST)
   {
   if (smtp_write_command(sx, SCMD_FLUSH, "*\r\n") >= 0)
-    (void)smtp_read_response(sx, US buffer, buffsize, '2', timeout);
+    (void)smtp_read_response(sx, buffer, buffsize, '2', timeout);
   string_format(buffer, buffsize, "Too few items in client_send in %s "
     "authenticator", ablock->drinst.name);
   return ERROR;
@@ -244,7 +244,7 @@ if (clear_len < 0)
   if (!(flags & AUTH_ITEM_IGN64))
     {
     if (smtp_write_command(sx, SCMD_FLUSH, "*\r\n") >= 0)
-      (void)smtp_read_response(sx, US buffer, buffsize, '2', timeout);
+      (void)smtp_read_response(sx, buffer, buffsize, '2', timeout);
     string_format(buffer, buffsize, "Invalid base64 string in server "
       "response %q", save_bad);
     return CANCELLED;
