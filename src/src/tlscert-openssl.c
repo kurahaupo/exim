@@ -49,7 +49,7 @@ if ((fail = PEM_write_bio_X509(bp, (X509 *)cert) ? 0 : 1))
     ERR_error_string(ERR_get_error(), NULL));
 else
   {
-  char * cp = CS buf;
+  char * cp = C(buf);
   buflen -= 2;
   for(;;)
     {
@@ -71,13 +71,13 @@ BOOL
 tls_import_cert(const uschar * buf, void ** cert)
 {
 rmark reset_point = store_mark();
-const uschar * cp = string_unprinting(US buf);
+const uschar * cp = string_unprinting(W(buf));
 BIO * bp;
 X509 * x = *(X509 **)cert;
 
 if (x) X509_free(x);
 
-bp = BIO_new_mem_buf(US cp, -1);
+bp = BIO_new_mem_buf(U(cp), -1);
 if (!(x = PEM_read_bio_X509(bp, NULL, 0, NULL)))
   log_write(LOG_MAIN, "TLS error in certificate import: %s",
     ERR_error_string(ERR_get_error(), NULL));
@@ -133,7 +133,7 @@ int len;
 if (!bp)
   return badalloc();
 len = ASN1_TIME_print(bp, asntime);
-len = len > 0 ? (int) BIO_get_mem_data(bp, CSS &s) : 0;
+len = len > 0 ? (int) BIO_get_mem_data(bp, C(&s)) : 0;
 
 if (mod && Ustrcmp(mod, "raw") == 0)		/* native ASN */
   s = string_copyn(s, len);
@@ -150,7 +150,7 @@ else
   /*XXX %Z might be glibc-specific?  Solaris has it, at least*/
   /*XXX should we switch to POSIX locale for this? */
   tm.tm_isdst = 0;
-  if (!len || !strptime(CCS s, "%b %e %T %Y %Z", &tm))
+  if (!len || !strptime(C(s), "%b %e %T %Y %Z", &tm))
     expand_string_message = US"failed time conversion";
 
   else
@@ -174,7 +174,7 @@ else
       /* convert to string in our format */
       len = 32;
       s = store_get(len, GET_UNTAINTED);
-      strftime(CS s, (size_t)len, "%b %e %T %Y %z", tm_p);
+      strftime(C(s), (size_t)len, "%b %e %T %Y %z", tm_p);
       }
     }
 
@@ -328,7 +328,7 @@ return string_sprintf("%ld", X509_get_version((X509 *)cert));
 uschar *
 tls_cert_ext_by_oid(void * cert, uschar * oid, int idx)
 {
-int nid = OBJ_create(CS oid, "", "");
+int nid = OBJ_create(C(oid), "", "");
 int nidx = X509_get_ext_by_NID((X509 *)cert, nid, idx);
 X509_EXTENSION * ex = X509_get_ext((X509 *)cert, nidx);
 ASN1_OCTET_STRING * adata = X509_EXTENSION_get_data(ex);
@@ -354,7 +354,7 @@ cp3 = cp2 = store_get(len*3+1, GET_TAINTED);
 
 while(len)
   {
-  cp2 += sprintf(CS cp2, "%.2x ", *cp1++);
+  cp2 += sprintf(C(cp2), "%.2x ", *cp1++);
   len--;
   }
 cp2[-1] = '\0';
@@ -395,17 +395,17 @@ while (sk_GENERAL_NAME_num(san) > 0)
     {
     case GEN_DNS:
       tag = US"DNS";
-      ele = US ASN1_STRING_get0_data(namePart->d.dNSName);
+      ele = W(ASN1_STRING_get0_data(namePart->d.dNSName));
       len = ASN1_STRING_length(namePart->d.dNSName);
       break;
     case GEN_URI:
       tag = US"URI";
-      ele = US ASN1_STRING_get0_data(namePart->d.uniformResourceIdentifier);
+      ele = W(ASN1_STRING_get0_data(namePart->d.uniformResourceIdentifier));
       len = ASN1_STRING_length(namePart->d.uniformResourceIdentifier);
       break;
     case GEN_EMAIL:
       tag = US"MAIL";
-      ele = US ASN1_STRING_get0_data(namePart->d.rfc822Name);
+      ele = W(ASN1_STRING_get0_data(namePart->d.rfc822Name));
       len = ASN1_STRING_length(namePart->d.rfc822Name);
       break;
     default:
@@ -443,7 +443,7 @@ for (int i = 0; i < adsnum; i++)
 
   if (ad && OBJ_obj2nid(ad->method) == NID_ad_OCSP)
     list = string_append_listele_n(list, sep,
-      US ASN1_STRING_get0_data(ad->location->d.ia5),
+      W(ASN1_STRING_get0_data(ad->location->d.ia5)),
       ASN1_STRING_length(ad->location->d.ia5));
   }
 sk_ACCESS_DESCRIPTION_free(ads);
@@ -475,7 +475,7 @@ if (dps) for (int i = 0, dpsnum = sk_DIST_POINT_num(dps); i < dpsnum; i++)
 	 && np->type == GEN_URI
 	 )
 	list = string_append_listele_n(list, sep,
-	  US ASN1_STRING_get0_data(np->d.uniformResourceIdentifier),
+	  W(ASN1_STRING_get0_data(np->d.uniformResourceIdentifier)),
 	  ASN1_STRING_length(np->d.uniformResourceIdentifier));
     }
 sk_DIST_POINT_free(dps);
@@ -499,7 +499,7 @@ if (!i2d_X509_bio(bp, (X509 *)cert))
 else
   {
   long len = BIO_get_mem_data(bp, &cp);
-  cp = b64encode(CUS cp, (int)len);
+  cp = b64encode(U(cp), (int)len);
   }
 
 BIO_free(bp);
@@ -520,7 +520,7 @@ if (!X509_digest(cert,fdig,md,&n))
   return NULL;
   }
 cp = store_get(n*2+1, GET_TAINTED);
-for (int j = 0; j < (int)n; j++) sprintf(CS cp+2*j, "%02X", md[j]);
+for (int j = 0; j < (int)n; j++) sprintf(C(cp)+2*j, "%02X", md[j]);
 return(cp);
 }
 
