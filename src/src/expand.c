@@ -8494,19 +8494,20 @@ NOT_ITEM: ;
 	  goto EXPAND_FAILED;
 	  }
 	mode = st.st_mode;
-	switch (mode & S_IFMT)
-	  {
-	  case S_IFIFO: smode[0] = 'p'; break;
-	  case S_IFCHR: smode[0] = 'c'; break;
-	  case S_IFDIR: smode[0] = 'd'; break;
-	  case S_IFBLK: smode[0] = 'b'; break;
-	  case S_IFLNK: smode[0] = 'l'; break;
-	  case S_IFREG: smode[0] = '-'; break;
-	  case S_IFSOCK: smode[0] = 's'; break;
-	  default: smode[0] = '?'; break;
-	  }
 
 	/* For printing modes in symbolic form */
+	#define xfmt (S_IFMT & - S_IFMT)	/* all but low bit */
+	#define mfmt (S_IFMT/xfmt)
+	static const char smodes[mfmt + 1] = {
+	  [S_IFREG/xfmt] = '-', [S_IFBLK/xfmt] = 'b', [S_IFCHR/xfmt] = 'c',
+	  [S_IFDIR/xfmt] = 'd', [S_IFLNK/xfmt] = 'l', [S_IFIFO/xfmt] = 'p',
+	  [S_IFSOCK/xfmt] = 's',
+	};
+	smode[0] = smodes[mode/xfmt & mfmt];
+	if (! smodes[0])
+	  smode[0] = '?';
+	#undef mfmt
+	#undef xfmt
 
 	static uschar *mtable_normal[] =
 	  { US"---", US"--x", US"-w-", US"-wx", US"r--", US"r-x", US"rw-", US"rwx" };
