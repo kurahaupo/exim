@@ -8477,7 +8477,6 @@ NOT_ITEM: ;
       case EOP_STAT:
 	{
 	uschar smode[12];
-	uschar **modetable[3];
 	mode_t mode;
 	struct stat st;
 
@@ -8509,24 +8508,14 @@ NOT_ITEM: ;
 	#undef mfmt
 	#undef xfmt
 
-	static uschar *mtable_normal[] =
-	  { US"---", US"--x", US"-w-", US"-wx", US"r--", US"r-x", US"rw-", US"rwx" };
-
-	static uschar *mtable_setid[] =
-	  { US"--S", US"--s", US"-wS", US"-ws", US"r-S", US"r-s", US"rwS", US"rws" };
-
-	static uschar *mtable_sticky[] =
-	  { US"--T", US"--t", US"-wT", US"-wt", US"r-T", US"r-t", US"rwT", US"rwt" };
-
-	modetable[0] = ((mode & 01000) == 0)? mtable_normal : mtable_sticky;
-	modetable[1] = ((mode & 02000) == 0)? mtable_normal : mtable_setid;
-	modetable[2] = ((mode & 04000) == 0)? mtable_normal : mtable_setid;
-
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 9; i += 3)
 	  {
-	  memcpy(CS(smode + 7 - i*3), CS(modetable[i][mode & 7]), 3);
-	  mode >>= 3;
+	  smode[i+1] = mode & (00400 >> i) ? 'r' : '-';
+	  smode[i+2] = mode & (00200 >> i) ? 'w' : '-';
 	  }
+	smode[3] = "-xSs"[(mode & 04100) + 01100 >> 10];
+	smode[6] = "-xSs"[(mode & 02010) + 00770 >> 9];
+	smode[9] = "-xTt"[(mode & 01001) + 00377 >> 8];
 
 	smode[10] = 0;
 	yield = string_fmt_append(yield,
