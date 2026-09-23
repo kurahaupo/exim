@@ -8511,7 +8511,9 @@ NOT_ITEM: ;
 	  case S_IFCHR: smode[0] = 'c'; break;
 	  case S_IFDIR: smode[0] = 'd'; break;
 	  case S_IFBLK: smode[0] = 'b'; break;
+	  case S_IFLNK: smode[0] = 'l'; break;
 	  case S_IFREG: smode[0] = '-'; break;
+	  case S_IFSOCK: smode[0] = 's'; break;
 	  default: smode[0] = '?'; break;
 	  }
 
