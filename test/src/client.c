@@ -4,6 +4,10 @@ messy with the addition of support for either OpenSSL or GnuTLS. The code for
 those was hacked out of Exim itself, then code for OpenSSL OCSP stapling was
 ripped from the openssl ocsp and s_client utilities. */
 
+#ifndef IPV6_USE_INET_PTON
+# define __USE_GNU 1    /* AI_NUMERICHOST is a GNU extension */
+#endif
+
 /* ANSI C standard includes */
 
 #include <ctype.h>
@@ -1215,7 +1219,7 @@ if (interface != NULL)
 #if HAVE_IPV6
 if (host_af == AF_INET6)
   {
-# ifdef HAVE_GETADDRINFO
+# ifndef IPV6_USE_INET_PTON
   struct addrinfo hints, *res;
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_INET6;
