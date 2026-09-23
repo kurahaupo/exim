@@ -882,17 +882,6 @@ static unsigned int prime[] = {
  31,  37,  41,  43,  47,  53,  59,  61,  67,  71,
  73,  79,  83,  89,  97, 101, 103, 107, 109, 113};
 
-/* For printing modes in symbolic form */
-
-static uschar *mtable_normal[] =
-  { US"---", US"--x", US"-w-", US"-wx", US"r--", US"r-x", US"rw-", US"rwx" };
-
-static uschar *mtable_setid[] =
-  { US"--S", US"--s", US"-wS", US"-ws", US"r-S", US"r-s", US"rwS", US"rws" };
-
-static uschar *mtable_sticky[] =
-  { US"--T", US"--t", US"-wT", US"-wt", US"r-T", US"r-t", US"rwT", US"rwt" };
-
 /* flags for find_header() */
 #define FH_EXISTS_ONLY	BIT(0)
 #define FH_WANT_RAW	BIT(1)
@@ -8516,6 +8505,17 @@ NOT_ITEM: ;
 	  case S_IFSOCK: smode[0] = 's'; break;
 	  default: smode[0] = '?'; break;
 	  }
+
+	/* For printing modes in symbolic form */
+
+	static uschar *mtable_normal[] =
+	  { US"---", US"--x", US"-w-", US"-wx", US"r--", US"r-x", US"rw-", US"rwx" };
+
+	static uschar *mtable_setid[] =
+	  { US"--S", US"--s", US"-wS", US"-ws", US"r-S", US"r-s", US"rwS", US"rws" };
+
+	static uschar *mtable_sticky[] =
+	  { US"--T", US"--t", US"-wT", US"-wt", US"r-T", US"r-t", US"rwT", US"rwt" };
 
 	modetable[0] = ((mode & 01000) == 0)? mtable_normal : mtable_sticky;
 	modetable[1] = ((mode & 02000) == 0)? mtable_normal : mtable_setid;
