@@ -157,8 +157,8 @@ change this guard and punt the issue for a while longer. */
 *************************************************/
 
 typedef struct exim_openssl_option {
-  uschar *name;
-  long    value;
+  uschar * name;
+  uint64_t value;
 } exim_openssl_option;
 /* We could use a macro to expand, but we need the ifdef and not all the
 options document which version they were introduced in.  Policylet: include
@@ -326,7 +326,7 @@ static exim_openssl_option exim_openssl_options[] = {
 };
 
 #ifndef MACRO_PREDEF
-static long init_options = 0;
+static uint64_t init_options = 0;
 #endif
 
 #ifdef MACRO_PREDEF
@@ -2980,7 +2980,8 @@ if (init_options)
 #ifdef OPENSSL_MIN_PROTO_VERSION
   SSL_CTX_set_min_proto_version(ctx, SSL3_VERSION);
 #endif
-  DEBUG(tls) debug_printf("setting  SSL CTX options: %016lx\n", init_options);
+  DEBUG(tls)
+    debug_printf("setting  SSL CTX options: %0" PRIx64 "\n", init_options);
   SSL_CTX_set_options(ctx, init_options);
    {
     uint64_t readback = SSL_CTX_clear_options(ctx, ~init_options);
@@ -5202,7 +5203,7 @@ Returns   success or failure in parsing
 
 
 static BOOL
-tls_openssl_one_option_parse(const uschar * name, long * value)
+tls_openssl_one_option_parse(const uschar * name, uint64_t * value)
 {
 for (int first = 0, last = nelem(exim_openssl_options), c; last > first; )
   {
@@ -5238,9 +5239,9 @@ Returns        success or failure
 */
 
 BOOL
-tls_openssl_options_parse(const uschar * option_spec, long * results)
+tls_openssl_options_parse(const uschar * option_spec, uint64_t * results)
 {
-long result, item;
+uint64_t result, item;
 uschar * exp, * end;
 BOOL adding;
 

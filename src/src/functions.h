@@ -71,7 +71,7 @@ extern void    tls_state_in_to_out(int, const uschar *, int);
 extern void    tls_state_out_to_in(int, const uschar *, int);
 extern BOOL    tls_is_name_for_cert(const uschar *, void *);
 #  ifdef USE_OPENSSL
-extern BOOL    tls_openssl_options_parse(const uschar *, long *);
+extern BOOL    tls_openssl_options_parse(const uschar *, uint64_t *);
 #  endif
 extern int     tls_read(void *, uschar *, size_t);
 extern void    tls_receive_done(void);

@@ -3771,7 +3771,7 @@ if (openssl_options)
   log_write_die(LOG_CONFIG,
     "openssl_options is set but we're using GnuTLS");
 # else
-  long dummy;
+  uint64_t dummy;
   if (!tls_openssl_options_parse(openssl_options, &dummy))
     log_write_die(LOG_CONFIG,
       "openssl_options parse error: %s", openssl_options);
