@@ -9,3 +9,5 @@
 .gdb_history
 .xauth*
 cscope.out
+src/src/buildconfig
+src/src/config.h
