@@ -1381,7 +1381,7 @@ static void
 failure_log(address_item * addr, uschar * driver_kind, uschar * now)
 {
 rmark reset_point = store_mark();
-gstring * g = string_get_tainted(256, GET_TAINTED);	
+gstring * g = string_get_tainted(256, GET_TAINTED);
 
 #ifndef DISABLE_EVENT
 /* Message failures for which we will send a DSN get their event raised

@@ -618,7 +618,7 @@ rr_expanded_bool(rblock, &ob->forbid_pipe,
 rr_expanded_bool(rblock, &ob->forbid_smtp_code,
 		ob->expand_forbid_smtp_code,	US"forbid_smtp_code");
 
- 
+
 
 /* Call the function that interprets redirection data, either inline or from a
 file. This is a separate function so that the system filter can use it. It will

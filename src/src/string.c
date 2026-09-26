@@ -950,7 +950,7 @@ if (sep <= 0)
     {
     if (!is_tainted(s))
       sep = s[1];
-    else DEBUG(any) 
+    else DEBUG(any)
       debug_printf("attempt to use tainted change-of-seperator spec (%s %d)\n",
 		    config_filename, config_lineno);
     if (*++s) ++s;

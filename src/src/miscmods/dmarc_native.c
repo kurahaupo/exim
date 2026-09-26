@@ -636,7 +636,7 @@ use the sp.  Otherwise use the p. */
 
   if (has_dmarc_record && !dmarc_abort)
     {
-    DEBUG(receive) 
+    DEBUG(receive)
       debug_printf_indent("DMARC results: spf_domain=%s dmarc_domain=%s "
 			   "spf_align=%s dkim_align=%s enforcement='%s'",
 			   spf_sender_domain, dmarc_used_domain,
@@ -650,7 +650,7 @@ use the sp.  Otherwise use the p. */
 
     dmarc_adkim = dmarc_parsed.adkim
 		? *dmarc_parsed.adkim : DMARC_RECORD_A_UNSPECIFIED;
-    dmarc_aspf = dmarc_parsed.aspf 
+    dmarc_aspf = dmarc_parsed.aspf
 		? *dmarc_parsed.aspf : DMARC_RECORD_A_UNSPECIFIED;
     dmarc_dom_policy = dmarc_parsed.p
 		? *dmarc_parsed.p : DMARC_RECORD_P_UNSPECIFIED;

@@ -1540,8 +1540,8 @@ HDEBUG(transport|acl|v) debug_printf_indent("  SMTP%c> %s\n",
   int len = Ustrcspn(buf, " \n"), old_pool = store_pool;
   store_pool = POOL_PERM;	/* Main pool ACL allocations eg. callouts get released */
   client_cmd_log = string_append_listele_n(client_cmd_log, ':', buf, MIN(len, 8));
-  if (mode == SCMD_BUFFER) 
-    client_cmd_log = string_catn(client_cmd_log, US"|", 1); 
+  if (mode == SCMD_BUFFER)
+    client_cmd_log = string_catn(client_cmd_log, US"|", 1);
   else if (mode == SCMD_MORE)
     client_cmd_log = string_catn(client_cmd_log, US"+", 1);
   store_pool = old_pool;

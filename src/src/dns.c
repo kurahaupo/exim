@@ -1016,7 +1016,7 @@ return DNS_SUCCEED;
 
 
 int
-exim_dn_expand(const dns_answer * dnsa, const dns_record * rr, 
+exim_dn_expand(const dns_answer * dnsa, const dns_record * rr,
   const uschar * cmp_dn, uschar * buf, size_t blen)
 {
 int rc;

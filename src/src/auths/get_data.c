@@ -257,6 +257,6 @@ if (clear_len < 0)
 *inout = clear;
 return DEFER;
 }
-  
-  
+
+
 /* End of get_data.c */

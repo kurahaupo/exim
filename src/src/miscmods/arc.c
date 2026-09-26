@@ -804,7 +804,7 @@ return arc_set_bodyhash(FALSE, c, &ams->a_hash, bodylen);
 
 static void
 arc_decode_base64(const uschar * str, blob * b)
-{ 
+{
 int dlen = b64decode(str, &b->data, str);
 if (dlen < 0) b->data = NULL;
 b->len = dlen;

@@ -759,7 +759,7 @@ while(1)
   if (rc != OK) break;
 
   /* If we have a multipart entity and a boundary, go recursive */
-  if (  mime_content_type && nested_context.boundary 
+  if (  mime_content_type && nested_context.boundary
      && Ustrncmp(mime_content_type,"multipart",9) == 0)
     {
     DEBUG(acl)

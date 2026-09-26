@@ -336,7 +336,7 @@ static optionlist spf_options[] = {
 static void * spf_functions[] = {
   [SPF_PROCESS] =	(void *) spf_process,
   [SPF_GET_RESULTS] =	(void *) spf_get_results,	/* for dmarc */
-  
+
   [SPF_OPEN] =		(void *) spf_lookup_open,
   [SPF_CLOSE] =		(void *) spf_lookup_close,
   [SPF_FIND] =		(void *) spf_lookup_find,

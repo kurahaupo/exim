@@ -219,7 +219,7 @@ return re_list_head;
 
 
 /* Check list of REs against buffer, returning OK for (first) match,
-else FAIL.  On match return allocated result strings in regex_vars[]. 
+else FAIL.  On match return allocated result strings in regex_vars[].
 
 We use the perm-pool for that, so that our caller can release
 other allocations.

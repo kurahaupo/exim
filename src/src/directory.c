@@ -45,7 +45,7 @@ uschar c = 1;
 struct stat statbuf;
 uschar * path;
 
-if (is_tainted(name)) 
+if (is_tainted(name))
   { p = US"create"; path = US name; errno = ERRNO_TAINT; goto bad; }
 
 if (parent)

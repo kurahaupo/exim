@@ -324,7 +324,7 @@ else
   log_write(LOG_MAIN|LOG_REJECT, "rejected XCLIENT from %s: %s",
     host_and_ident(FALSE), errmsg);
   }
-  
+
 return FALSE;
 }
 

@@ -320,7 +320,7 @@ return rc;
 /*************************************************
 *             Debug service function             *
 *************************************************/
-static const uschar * 
+static const uschar *
 gsasl_prop_code_to_name(Gsasl_property prop)
 {
 switch (prop)

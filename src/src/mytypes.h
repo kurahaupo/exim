@@ -113,7 +113,7 @@ functions that are called quite often; for other calls to external libraries
 # define Uopen2(s,n)        exim_open2(CCS(s),(n)|O_BINARY)
 #else								/* be opened as binary  */
 # define Uopen(s,n,m)       exim_open(CCS(s),n,m)		/* to avoid problems    */
-# define Uopen2(s,n)        exim_open2(CCS(s),n)	
+# define Uopen2(s,n)        exim_open2(CCS(s),n)
 #endif								/* with CRLF endings.   */
 #define Uread(f,b,l)       read(f,CS(b),l)
 #define Urename(s,t)       rename(CCS(s),CCS(t))

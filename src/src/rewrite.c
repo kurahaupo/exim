@@ -175,7 +175,7 @@ for (rewrite_rule * rule = rewrite_rules;
     save_domain = deliver_domain;
 
     /* We have subject pointing to "localpart@domain" and domain pointing to
-    the domain. Split into local part and domain so that it can be set up as 
+    the domain. Split into local part and domain so that it can be set up as
     an expansion variable */
 
     deliver_localpart = US string_copyn(subject, domain-subject-1);

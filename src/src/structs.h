@@ -1073,7 +1073,7 @@ typedef struct in_processing {
   int	(*in_getc)(const struct in_processing *, unsigned);
 
   /* predicate: byte avail for reading (without refill) */
-  BOOL	(*in_hasc)(const struct in_processing *);	
+  BOOL	(*in_hasc)(const struct in_processing *);
 
   /* push one byte back into buffer */
   int	(*in_ungetc)(const struct in_processing *, int);

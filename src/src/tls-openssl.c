@@ -3725,7 +3725,7 @@ if (  tls_in.on_connect			/* Not usable for STARTTLS */
 	return tls_error(US"SSL_write_early_data", NULL, NULL, errstr);
 	}
 
-      DEBUG(receive) 
+      DEBUG(receive)
 	{ gstring_trim(banner, 2); debug_printf("SMTP>> %Y\n", banner); }
 
       /* Ensure smtp_start_session does not repeat the banner */

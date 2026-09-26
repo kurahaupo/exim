@@ -69,7 +69,7 @@ single server.
     host:port. This string is in a nextinlist temporary buffer, so can be
     overwritten.
 
-    Returns:       OK, FAIL, or DEFER 
+    Returns:       OK, FAIL, or DEFER
 */
 
 static int
@@ -272,7 +272,7 @@ switch (redis_reply->type)
     break;
 
   case REDIS_REPLY_ARRAY:
- 
+
     /* NOTE: For now support 1 nested array result. If needed a limitless
     result can be parsed */
 

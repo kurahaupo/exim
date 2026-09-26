@@ -2441,7 +2441,7 @@ old_pool = store_pool;
       if ((c = *s) && *++s == '-') g = string_catn(g, US"__", 2);
       /* now on _ between groups */
       }
-    g = string_fmt_append(g, ":%d", 
+    g = string_fmt_append(g, ":%d",
 		      (int) gnutls_cipher_get_key_size(cipher) * 8);
 
 # ifdef EXIM_TLS_KEX_GROUP

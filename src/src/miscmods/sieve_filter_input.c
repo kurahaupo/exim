@@ -849,7 +849,7 @@ else
     ?  SIEVE_MIME_BOUNDARY_LAST : SIEVE_MIME_BOUNDARY_NONLAST;
   }
 
-DECODE_LAYER_DEBUG 
+DECODE_LAYER_DEBUG
   {
   debug_printf_indent("%s: consume %u\n", __FUNCTION__, consumed);
 

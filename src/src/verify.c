@@ -3477,7 +3477,7 @@ same format string, "%s.%s" */
 down to the transport for the quota check.
 
 Route and transport (in recipient-verify mode) the
-given recipient. 
+given recipient.
 
 A routing result indicating any transport type other than appendfile
 results in a fail.

@@ -1208,7 +1208,7 @@ spa_bytes_add(SPAbuf * buffer, size_t off, SPAStrHeader * header,
 {
 off += buffer->bufIndex;
 if (  src && count != 0			/* we hate -Wint-in-bool-contex */
-   && buffer->bufIndex + count < sizeof(buffer->buffer)	
+   && buffer->bufIndex + count < sizeof(buffer->buffer)
    )
   {
   SSVAL(&header->len, 0, count);

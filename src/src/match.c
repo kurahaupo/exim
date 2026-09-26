@@ -995,7 +995,7 @@ HDEBUG(lists)
   debug_printf_indent("%s %s (end of list)\n", ot, yield == OK ? "no":"yes");
   }
 return yield == OK ? FAIL : OK;
- 
+
 /* Something deferred */
 
 BAD_TAINT:

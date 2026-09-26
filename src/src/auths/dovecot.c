@@ -362,7 +362,7 @@ for (;;)
 
     version_command = string_sprintf("VERSION\t%d\t%d\n",
 	   VERSION_MAJOR, VERSION_MINOR);
-    
+
     if (dc_write(&cctx, version_command) < 0)
       HDEBUG(auth) debug_printf("error sending version_command: %s\n",
 	strerror(errno));

@@ -195,7 +195,7 @@ static condition_def conditions[] = {
 # if SUPPORT_DKIM==2
 				  ACD_LOAD |
 # endif
-				  ACD_EXP, 
+				  ACD_EXP,
 				  PERMITTED(ACL_BIT_DKIM) },
   [ACLC_DKIM_STATUS] =		{ US"dkim_status",
 # if SUPPORT_DKIM==2
@@ -4147,7 +4147,7 @@ for (; cb; cb = cb->next)
 	  {
 	  misc_module_info * mi = misc_mod_findonly(US"dkim");
 	  typedef void (*fn_t)(const uschar *, void *);
-	  
+
 	  if (mi)
 	    (((fn_t *) mi->functions)[DKIM_SETVAR]) (cb->u.varname, s);
 	  }

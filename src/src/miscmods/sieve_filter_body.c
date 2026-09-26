@@ -122,7 +122,7 @@ for (const gstring * subkey = key; ; g = string_catn(g, US"|", 1))
     case MATCH_CONTAINS:
       /* rfc5228 2.7.1 "The empty key ("") is contained in all values".
       Handle this by matching any single char. */
-      
+
       g = gstring_length(subkey) == 0
 	    ? string_catn(g, US".", 1)
 	    : string_fmt_append(g, "\\Q%Y\\E", subkey);
@@ -141,7 +141,7 @@ for (const gstring * subkey = key; ; g = string_catn(g, US"|", 1))
 	s++;				/* drop leading "*", do not anchor */
       else
 	g = string_catn(g, US"^", 1);	/* start-anchor */
-      
+
       for (; s < t; s++)
 	switch (*s)
 	  {

@@ -4432,7 +4432,7 @@ while (done <= 0)
 	}
 
       /* For any misc-module having a connection-init routine, call it. */
-      
+
       {
       const uschar * errstr = NULL;
       if (misc_mod_conn_init(sender_helo_name, sender_host_address, &errstr)

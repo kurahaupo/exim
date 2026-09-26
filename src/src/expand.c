@@ -5731,7 +5731,7 @@ while (*s)	/* known to be untainted */
 	  options is the readsock expansion. */
 
 	  if (sub_arg[3] && *sub_arg[3])
-	    g = string_append_listele_fmt(g, ',', TRUE, 
+	    g = string_append_listele_fmt(g, ',', TRUE,
 		  "eol=%s", string_printing2(sub_arg[3], SP_TAB|SP_SPACE));
 	  }
 
@@ -8151,7 +8151,7 @@ NOT_ITEM: ;
 		  /* A UTF-16 surrogate (which should be one of a pair that
 		  encode a Unicode codepoint that is outside the Basic
 		  Multilingual Plane).  Error, not UTF8.
-		  RFC2279.2 is slightly unclear on this, but 
+		  RFC2279.2 is slightly unclear on this, but
 		  https://unicodebook.readthedocs.io/issues.html#strict-utf8-decoder
 		  says "Surrogates characters are also invalid in UTF-8:
 		  characters in U+D800—U+DFFF have to be rejected." */

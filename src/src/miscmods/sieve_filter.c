@@ -2071,7 +2071,7 @@ if (parse_identifier(filter, US"address", US"test type"))
 
   if (!parse_a_c_m(filter, &addressPart, &comparator, &matchType, NULL))
     goto bad;
-    
+
   if (parse_white(filter) == -1)
     goto bad;
   if ((m = parse_stringlist(filter, &hdr, US"header")) != 1)
@@ -2236,7 +2236,7 @@ else if (parse_identifier(filter, US"header", US"test type"))
 
   if (!parse_a_c_m(filter, NULL, &comparator, &matchType, NULL))
     goto bad;
-    
+
   if (parse_white(filter) == -1)
     goto bad;
   if ((m = parse_stringlist(filter, &hdr, US"header")) != 1)
@@ -2341,7 +2341,7 @@ else if (parse_identifier(filter, US"envelope", US"test type"))
 
   if (!parse_a_c_m(filter, &addressPart, &comparator, &matchType, NULL))
     goto bad;
-    
+
   if (parse_white(filter) == -1)
     goto bad;
   if ((m = parse_stringlist(filter, &env, US"envelope")) != 1)
@@ -2486,7 +2486,7 @@ else if (parse_identifier(filter, US"notify_method_capability", US"test type"))
     }
   if (!parse_a_c_m(filter, NULL, &comparator, &matchType, NULL))
     goto bad;
-    
+
   if (parse_string(filter, &uri, US"missing notification URI string") != 1)
     goto bad;
   if (parse_white(filter) == -1)

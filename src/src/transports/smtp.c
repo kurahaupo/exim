@@ -2473,7 +2473,7 @@ if (!continue_hostname || atrn_domains)
     /* If already TLS, do not do a STARTTLS,EHLO sequence */
     if (tls_out.active.sock >= 0)
       sx->smtps = TRUE;
-    
+
     /* Record the port that was used */
     smtp_port_for_connect(sx->conn_args.host, sx->port);
     }

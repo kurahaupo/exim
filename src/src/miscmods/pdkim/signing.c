@@ -793,7 +793,7 @@ if (  (ctx = EVP_MD_CTX_create())
    && EVP_DigestSignUpdate(ctx, data->data, data->len) > 0
    && EVP_DigestSignFinal(ctx, NULL, &siglen) > 0
    && (sig->data = store_get(siglen, GET_UNTAINTED))
- 
+
    /* Obtain the signature (slen could change here!) */
    && EVP_DigestSignFinal(ctx, sig->data, &siglen) > 0
    )

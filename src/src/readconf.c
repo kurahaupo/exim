@@ -4008,7 +4008,7 @@ while ((buffer = get_config_line()))
     p = (driver_instance **)&d->next;
     d->name = string_copy(name);
     d->srcfile = config_filename;
-    d->srcline = config_lineno; 
+    d->srcline = config_lineno;
 
     /* Clear out the "set" bits in the generic options */
 
@@ -4303,7 +4303,7 @@ while ((p = get_config_line()))
   next->next = NULL;
   *chain = next;
   chain = &(next->next);
-  next->srcline = config_lineno; 
+  next->srcline = config_lineno;
   next->srcfile = config_filename;
   next->basic_errno = next->more_errno = 0;
   next->senders = NULL;

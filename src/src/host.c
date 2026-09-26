@@ -2615,7 +2615,7 @@ if (whichrrs & HOST_FIND_BY_SRV)
 
     if (temp_fully_qualified_name != s && fully_qualified_name)
       *fully_qualified_name = temp_fully_qualified_name + prefix_length;
-      
+
     /* On DNS failures, we give the "try again" error unless the domain is
     listed as one for which we continue. */
 

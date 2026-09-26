@@ -41,7 +41,7 @@ if (!environ)
 
 for (end = name; *end != '=' && *end; ) end++;
 len = end - name;
-  
+
 /* Find name in environment and move remaining variables down.
 Do not early-out in case there are duplicate names. */
 

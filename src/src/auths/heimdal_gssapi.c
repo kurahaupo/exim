@@ -265,7 +265,7 @@ if (GSS_ERROR(maj_stat))
       "gss_import_name(%s)", CS gbufdesc.value);
 
 /* Use a specific keytab, if specified */
-if (ob->server_keytab) 
+if (ob->server_keytab)
   {
   keytab = expand_string(ob->server_keytab);
   maj_stat = gsskrb5_register_acceptor_identity(CCS keytab);
