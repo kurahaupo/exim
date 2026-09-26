@@ -172,6 +172,16 @@ else
   fprintf(new, "# define TIME_T_FMT  \"%%ld\"\n");
 fprintf(new, "#endif\n\n");
 
+ {
+  struct timeval t;
+  if (sizeof(t.tv_usec) == sizeof(int))
+    fprintf(new, "# define TV_USEC_FMT  \"%%d\"\n\n");
+  else if (sizeof(t.tv_usec) == sizeof(long))
+    fprintf(new, "# define TV_USEC_FMT  \"%%ld\"\n\n");
+  else if (sizeof(t.tv_usec) > sizeof(long))
+    fprintf(new, "# define TV_USEC_FMT  \"%%lld\"\n\n");
+ }
+
 fprintf(new, "#ifndef INO_T_FMT\n");
 if (sizeof(ino_t) > sizeof(long))
   fprintf(new, "# define INO_T_FMT  \"%%llu\"\n");

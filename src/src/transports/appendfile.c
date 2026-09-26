@@ -2472,7 +2472,7 @@ else
       uschar * basename;
 
       (void)gettimeofday(&msg_tv, NULL);
-      basename = string_sprintf(TIME_T_FMT ".M%luP" PID_T_FMT ".%s",
+      basename = string_sprintf(TIME_T_FMT ".M" TV_USEC_FMT "P" PID_T_FMT ".%s",
        	msg_tv.tv_sec, msg_tv.tv_usec, getpid(), primary_hostname);
 
       filename = dataname = string_sprintf("tmp/%s", basename);

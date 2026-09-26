@@ -527,7 +527,8 @@ else
     FALSE);
 
   (void)gettimeofday(&tv, NULL);
-  tempname = string_sprintf("%s/tmp/" TIME_T_FMT ".H%luP" PID_T_FMT ".%s",
+  tempname = string_sprintf(
+    "%s/tmp/" TIME_T_FMT ".H" TV_USEC_FMT "P" PID_T_FMT ".%s",
     path, tv.tv_sec, tv.tv_usec, getpid(), primary_hostname);
 
   fd = Uopen(tempname, O_RDWR|O_CREAT|O_EXCL, ob->mode ? ob->mode : 0600);

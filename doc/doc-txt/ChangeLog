@@ -29,6 +29,12 @@ JH/05 Bug 3213: Query-style lookups now require proper quoting of tainted
       arguments.  From 4.96 onward lack of quoting was merely noted in the
       panic log; now it causes a defer of the lookup.
 
+JH/06 Bug 4251: Fix maildir delivery on armhf platform. The size of the
+      sub-second portion of a time did not match a print format being used for
+      it; this led to a crash of the transport process.  Potentially this could
+      be so on other (mainly, 32b) platforms.  Fix by investigating the size
+      at build time and creating a suitable format.
+
 
 Exim version 4.100.1
 --------------------
