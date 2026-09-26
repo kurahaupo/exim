@@ -125,7 +125,7 @@ if (isdigit(*pstring))
   {
   typeof(pstring) end;
   port = Ustrtol(pstring, &end, 0);
-  if (end != pstring + Ustrlen(pstring))
+  if (*end)
     {
     addr->message = string_sprintf("invalid port number for %s: %s", msg,
       pstring);
