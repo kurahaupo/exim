@@ -210,7 +210,7 @@ extern void    deliver_succeeded(address_item *);
 
 extern void    delivery_re_exec(int);
 
-extern void    die_tainted(const uschar *, const uschar *, int);
+extern void    die_tainted(const char *callee, const char *caller, int lineno);
 extern BOOL    directory_make(const uschar *, const uschar *, int, BOOL);
 extern dns_address *dns_address_from_rr(const dns_answer *, dns_record *);
 extern int     dns_basic_lookup(dns_answer *, const uschar *, int);

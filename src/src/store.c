@@ -342,7 +342,7 @@ return is_tainted_dnsa(p);
 
 
 void
-die_tainted(const uschar * msg, const uschar * func, int line)
+die_tainted(const char * msg, const char * func, int line)
 {
 log_write_die(LOG_MAIN, "Taint mismatch, %s: %s %d\n",
 	msg, func, line);
