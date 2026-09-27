@@ -156,42 +156,76 @@ Arguments:
 Returns:   the value of the character escape
 */
 
+static inline bool
+isodigit(int x) { return isdigit(x) && x < '8'; }
+
 int
-string_interpret_escape(const uschar **pp)
+escape_to_byte(const uschar **pp)
 {
-int ch;
-const uschar *p = *pp;
-ch = *(++p);
-if (ch == '\0') return **pp;
-if (isdigit(ch) && ch != '8' && ch != '9')
-  {
-  ch -= '0';
-  if (isdigit(p[1]) && p[1] != '8' && p[1] != '9')
-    {
-    ch = ch * 8 + *(++p) - '0';
-    if (isdigit(p[1]) && p[1] != '8' && p[1] != '9')
-      ch = ch * 8 + *(++p) - '0';
-    }
-  }
-else switch(ch)
-  {
-  case 'n':  ch = '\n'; break;
-  case 'r':  ch = '\r'; break;
-  case 't':  ch = '\t'; break;
-  case 'x':
-  ch = 0;
-  if (isxdigit(p[1]))
-    {
-    ch <<= 4, ch |=
-      strchr(hex_digits, tolower(*++p)) - hex_digits;
-    if (isxdigit(p[1]))
-      ch <<= 4, ch |=
-	strchr(hex_digits, tolower(*++p)) - hex_digits;
-    }
-  break;
-  }
+if (!pp || !*pp)
+  return EOF;
+
+typeof(*(pp)) p = *pp;
+
+if (!*p)
+  return EOF;
+
+if (*p++ != '\\')
+  return *(*pp)++;
+
+int ch = *p++;
 *pp = p;
-return ch;
+int r = 0;
+
+switch(ch)
+  {
+  case 'a': return '\a';
+  case 'b': return '\b';
+  case 'e': return 27;
+  case 'f': return '\f';
+  case 'n': return '\n';
+  case 'r': return '\r';
+  case 't': return '\t';
+  case 'v': return '\v';
+
+  default:
+    /* Treat '\' + any non-alphanumberic as the second character literally;
+     * treat all alphanumeric as reserved for future expansions. */
+    if (isalnum(ch))
+      {
+  case 0:
+      --*pp;
+      return EOF;
+      }
+    return ch;
+
+  case 'o':
+    /* "\o" followed by 0~3 octal digits */
+    ch = *p++;
+    if (!isodigit(ch))
+      return 0;
+    /*FALLTHRU*/
+
+  case '0': case '1': case '2': case '3':
+  case '4': case '5': case '6': case '7':
+    /* "\" followed by 1~3 octal digits */
+    r = ch - '0';
+    if (isodigit(*p))
+      r <<= 3, r |= *p++ - '0';
+    if (r < 040 && isodigit(*p))
+      r <<= 3, r |= *p++ - '0';
+    *pp = p;
+    return r;
+
+  case 'x':
+    ++p;
+    if (isxdigit(*p))
+      r <<= 4, r |= isdigit(*p) ? *p++ - '0' : toupper(*p++) - 'A' + 10;
+    if (isxdigit(*p))
+      r <<= 4, r |= isdigit(*p) ? *p++ - '0' : toupper(*p++) - 'A' + 10;
+    *pp = p;
+    return r;
+  }
 }
 
 
@@ -407,9 +441,8 @@ while (Ufgets(line, max_insize, f) != NULL)
       while (*s && *s != '\"')
 	{
 	*t++ = *s == '\\'
-	? string_interpret_escape((const uschar **)&s)
-	: *s;
-	s++;
+	  ? escape_to_byte((const uschar **)&s)
+	  : *s++;
 	}
       if (*s) s++;               /* Past terminating " */
       exim_datum_size_set(&key, t - keystart + add_zero);

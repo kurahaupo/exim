@@ -373,7 +373,8 @@ nextitem(const uschar *ptr, uschar *buffer, int size, BOOL bracket)
 uschar *bp = buffer;
 if (*ptr != '\"') return nextword(ptr, buffer, size, bracket);
 
-while (*++ptr && *ptr != '\"' && *ptr != '\n')
+++ptr;
+while (*ptr && *ptr != '\"' && *ptr != '\n')
   {
   if (bp - buffer >= size - 1)
     {
@@ -382,7 +383,7 @@ while (*++ptr && *ptr != '\"' && *ptr != '\n')
     break;
     }
 
-  if (*ptr != '\\') *bp++ = *ptr; else
+  if (*ptr != '\\') *bp++ = *ptr++; else
     {
     if (isspace(ptr[1]))    /* \<whitespace>NL<whitespace> ignored */
       {
@@ -397,7 +398,7 @@ while (*++ptr && *ptr != '\"' && *ptr != '\n')
         }
       }
 
-    *bp++ = string_interpret_escape(&ptr);
+    *bp++ = escape_to_byte(&ptr);
     }
   }
 

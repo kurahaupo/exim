@@ -146,10 +146,7 @@ for (BOOL this_is_eol, last_was_eol = TRUE;
     {
     uschar *t = s++;
     while (*s && *s != '\"')
-      {
-      *t++ = *s == '\\' ? string_interpret_escape(R(&s)) : *s;
-      s++;
-      }
+      *t++ = *s == '\\' ? escape_to_byte(R(&s)) : *s++;
     linekeylength = t - buffer;
     if (*s) s++;			/* Past terminating " */
     if (ret_full)

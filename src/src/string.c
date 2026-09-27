@@ -271,50 +271,77 @@ Arguments:
 Returns:   the value of the character escape
 */
 
+static inline bool
+isodigit(int x) { return isdigit(x) && x < '8'; }
+
 int
-string_interpret_escape(const uschar **pp)
+escape_to_byte(const uschar **pp)
 {
-#ifdef COMPILE_UTILITY
-const char hex_digits[] = "0123456789abcdef";
-#endif
-int ch;
-const uschar *p = *pp;
-ch = *(++p);
-if (ch == '\0') return **pp;
-if (isdigit(ch) && ch != '8' && ch != '9')
-  {
-  ch -= '0';
-  if (isdigit(p[1]) && p[1] != '8' && p[1] != '9')
-    {
-    ch = ch * 8 + *(++p) - '0';
-    if (isdigit(p[1]) && p[1] != '8' && p[1] != '9')
-      ch = ch * 8 + *(++p) - '0';
-    }
-  }
-else switch(ch)
-  {
-  case 'b':  ch = '\b'; break;
-  case 'f':  ch = '\f'; break;
-  case 'n':  ch = '\n'; break;
-  case 'r':  ch = '\r'; break;
-  case 't':  ch = '\t'; break;
-  case 'v':  ch = '\v'; break;
-  case 'x':
-  ch = 0;
-  if (isxdigit(p[1]))
-    {
-    ch = ch * 16 +
-      strchr(hex_digits, tolower(*(++p))) - hex_digits;
-    if (isxdigit(p[1])) ch = ch * 16 +
-      strchr(hex_digits, tolower(*(++p))) - hex_digits;
-    }
-  break;
-  }
+if (!pp || !*pp)
+  return EOF;
+
+typeof(*(pp)) p = *pp;
+
+if (!*p)
+  return EOF;
+
+if (*p++ != '\\')
+  return *(*pp)++;
+
+int ch = *p++;
 *pp = p;
-return ch;
+int r = 0;
+
+switch(ch)
+  {
+  case 'a': return '\a';
+  case 'b': return '\b';
+  case 'e': return 27;
+  case 'f': return '\f';
+  case 'n': return '\n';
+  case 'r': return '\r';
+  case 't': return '\t';
+  case 'v': return '\v';
+
+  default:
+    /* Treat '\' + any non-alphanumberic as the second character literally;
+     * treat all alphanumeric as reserved for future expansions. */
+    if (isalnum(ch))
+      {
+  case 0:
+      --*pp;
+      return EOF;
+      }
+    return ch;
+
+  case 'o':
+    /* "\o" followed by 0~3 octal digits */
+    ch = *p++;
+    if (!isodigit(ch))
+      return 0;
+    /*FALLTHRU*/
+
+  case '0': case '1': case '2': case '3':
+  case '4': case '5': case '6': case '7':
+    /* "\" followed by 1~3 octal digits */
+    r = ch - '0';
+    if (isodigit(*p))
+      r <<= 3, r |= *p++ - '0';
+    if (r < 040 && isodigit(*p))
+      r <<= 3, r |= *p++ - '0';
+    *pp = p;
+    return r;
+
+  case 'x':
+    ++p;
+    if (isxdigit(*p))
+      r <<= 4, r |= isdigit(*p) ? *p++ - '0' : toupper(*p++) - 'A' + 10;
+    if (isxdigit(*p))
+      r <<= 4, r |= isdigit(*p) ? *p++ - '0' : toupper(*p++) - 'A' + 10;
+    *pp = p;
+    return r;
+  }
 }
-
-
 
 /*************************************************
 *          Ensure string is printable            *
@@ -416,58 +443,30 @@ Arguments:
 Returns:        string with printing escapes parsed back
 */
 
-uschar *
-Rstring_unprinting(uschar * s)
+const uschar *
+Rstring_unprinting(const uschar * s, bool always_copy)
 {
-uschar * p, * q, * r, * ss;
-int len, offset;
+typeof(s) p = Ustrchr(s, '\\');
+if (!p && !always_copy) return s;
 
-p = Ustrchr(s, '\\');
-if (!p) return s;
+typeof(s) e = Ustrchr(s, 0) + 1;
+uschar * ss = store_get(e - s, s);
 
-len = Ustrlen(s) + 1;
-ss = store_get(len, s);
+typeof(ss) q = ss;
 
-q = ss;
-if ((offset = p - s))
+while (p)
   {
-  memcpy(q, s, offset);
-  q += offset;
-  }
+  if (p != s)
+    memcpy(q, s, p - s);
+  q += p - s;
+  s = p;
 
-while (*p)
-  {
-  if (*p == '\\')
-    {
-    *q++ = string_interpret_escape((const uschar **)&p);
-    p++;
-    }
-  else
-    {
-    r = Ustrchr(p, '\\');
-    if (!r)
-      {
-      offset = Ustrlen(p);
-      memcpy(q, p, offset);
-      p += offset;
-      q += offset;
-      break;
-      }
-    else
-      {
-      offset = r - p;
-      memcpy(q, p, offset);
-      q += offset;
-      p = r;
-      }
-    }
+  *q++ = escape_to_byte(&s);
+  p = Ustrchr(s, '\\');
   }
-*q = '\0';
-
+memcpy(q, s, e - s);
 return ss;
 }
-
-
 
 
 #if (defined(HAVE_LOCAL_SCAN) || defined(EXPAND_DLFUNC)) \
@@ -674,7 +673,8 @@ else
   s++;
   while (*s && *s != '\"')
     {
-    if (*s == '\\') (void)string_interpret_escape(&s);
+    if (*s == '\\' && s[1] != 0)
+      s++; /* skip over \\ and \" */
     s++;
     }
   if (*s) s++;
@@ -693,10 +693,7 @@ else
   {
   s++;
   while (*s && *s != '\"')
-    {
-    *t++ = *s == '\\' ? string_interpret_escape(&s) : *s;
-    s++;
-    }
+    *t++ = *s == '\\' ? escape_to_byte(&s) : *s++;
   if (*s) s++;
   }
 

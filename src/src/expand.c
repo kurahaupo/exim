@@ -4837,10 +4837,9 @@ while (*s)	/* known to be untainted */
       uschar ch[1];
       DEBUG(expand)
 	debug_printf_indent("%Vbackslashed: '\\%c'\n", "K", s[1]);
-      ch[0] = string_interpret_escape(&s);
+      ch[0] = escape_to_byte(&s);
       if (!(flags & ESI_SKIPPING))
 	yield = string_catn(yield, ch, 1);
-      s++;
       }
     continue;
     }

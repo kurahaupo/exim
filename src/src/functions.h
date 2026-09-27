@@ -616,7 +616,17 @@ sdd_nc(uschar * s)
 extern uschar *string_copy_malloc(const uschar *);
 extern uschar *string_dequote(const uschar **);
 extern uschar *string_format_size(int, uschar *, size_t);
-extern int     string_interpret_escape(const uschar **);
+extern int     escape_to_byte(const uschar **);
+
+static inline int __attribute__((__deprecated__))
+string_interpret_escape(const uschar **pp)
+{
+int result = escape_to_byte(pp);
+if (result != EOF)
+  --*pp; /* historical behaviour, wtf ??? */
+return result;
+}
+
 extern int     string_is_ip_address(const uschar *, int *);
 extern int     string_is_ip_addressX(const uschar *, int *, const uschar **);
 #ifdef SUPPORT_I18N
@@ -624,8 +634,8 @@ extern BOOL    string_is_utf8(const uschar *);
 #endif
 extern const uschar *string_printing2(const uschar *, int);
 extern uschar *string_split_message(uschar *);
-extern const uschar *Rstring_unprinting(const uschar *);
-#define string_unprinting(s) ((typeof(*(s))*) Rstring_unprinting(s))
+extern const uschar *Rstring_unprinting(const uschar *, bool force_copy);
+#define string_unprinting(s) ((typeof(*(s))*) Rstring_unprinting(s, false))
 #ifdef SUPPORT_I18N
 extern const uschar *string_address_utf8_to_alabel(const uschar *, uschar **);
 extern uschar *string_domain_alabel_to_utf8(const uschar *, uschar **);

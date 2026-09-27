@@ -399,15 +399,15 @@ const uschar * list = *listp;
 if (Uskip_whitespace(&list) == '<')
   {
   const uschar * s = list+1;
-  uschar c = *s == '\\' ? string_interpret_escape(&s) : *s;
+  uschar c = *s == '\\' ? escape_to_byte(&s) : *s++;
   if (ispunct(c) || iscntrl(c))
     {
     DEBUG(lists)
       {
-      uschar s[2] = {0}; *s = c;
+      uschar s[2] = {c, 0};
       debug_printf_indent("list separator: '%W'\n", s);
       }
-    *listp = s+1;	/* next char after the change-of-separator */
+    *listp = s;	/* next char after the change-of-separator */
     return c;
     }
   }
