@@ -607,7 +607,7 @@ extern uschar *helo_allow_chars;       /* Rogue chars to allow in HELO/EHLO */
 extern uschar *helo_lookup_domains;    /* If these given, lookup host name */
 extern const uschar *helo_try_verify_hosts; /* Soft check HELO argument for these */
 extern const uschar *helo_verify_hosts; /* Hard check HELO argument for these */
-extern const uschar *hex_digits;             /* Used in several places */
+extern const char hex_digits[];        /* Used in several places */
 extern uschar *hold_domains;           /* Hold up deliveries to these */
 extern uschar *host_data;              /* Obtained from lookup in ACL */
 extern const uschar *host_lookup;      /* For which IP addresses are always looked up */
