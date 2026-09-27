@@ -42,6 +42,8 @@ local_scan.h includes it and exim.h includes them both (to get this earlier). */
 # endif
 #endif
 
+#define DEPRECATE_UCHAR_MACROS 3
+
 /* We gave up on trying to get compilers to check on printf-like functions
 because they are both whiney about value sizes where they cannot do decent
 static analysis, and incapable of handling extensions to printf formats.
