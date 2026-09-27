@@ -3372,7 +3372,7 @@ return rc;
 *      Check the given host item matches a list  *
 *************************************************/
 int
-verify_check_given_host(const uschar ** listptr, const host_item * host)
+verify_check_given_host(const uschar * const * listptr, const host_item * host)
 {
 return verify_check_this_host(listptr, NULL, host->name, host->address, NULL);
 }
