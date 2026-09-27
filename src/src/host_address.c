@@ -36,7 +36,6 @@ int
 host_address_extract_port(uschar * address)
 {
 int port = 0;
-uschar *endptr;
 
 /* Handle the "bracketed with colon on the end" format */
 
@@ -47,6 +46,7 @@ if (*address == '[')
   if (*rb++ == 0) return 0;        /* Missing ]; leave invalid address */
   if (*rb == ':')
     {
+    typeof(rb) endptr;
     port = Ustrtol(rb + 1, &endptr, 10);
     if (*endptr != 0) return 0;    /* Invalid port; leave invalid address */
     }
@@ -60,6 +60,7 @@ if (*address == '[')
 else
   {
   int skip = -3;                   /* Skip 3 dots in IPv4 addresses */
+  typeof(address) endptr;
   address--;
   while (*(++address) != 0)
     {
