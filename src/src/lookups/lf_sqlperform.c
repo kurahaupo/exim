@@ -52,7 +52,7 @@ lf_sqlperform(const uschar *name, const uschar *optionname,
   int(*fn)(const uschar *, uschar *, uschar **, uschar **, BOOL *, uint *, const uschar *))
 {
 const uschar * serverlist = NULL;
-uschar * server;
+const uschar * server;
 BOOL defer_break = FALSE;
 int rc;
 
@@ -63,7 +63,7 @@ the "optserverlist" srgument. */
 
 if (opts)
   {
-  uschar * ele;
+  const uschar * ele;
   for (int sep = ','; ele = string_nextinlist(&opts, &sep, NULL, 0); )
     if (Ustrncmp(ele, "servers=", 8) == 0)
       { serverlist = ele + 8; break; }
@@ -84,7 +84,7 @@ else
       {
       int len = Ustrlen(server);
       const uschar * slist = optserverlist;
-      uschar * ele;
+      const uschar * ele;
       for (int sep = 0; ele = string_nextinlist(&slist, &sep, NULL, 0); )
 	if (Ustrncmp(ele, server, len) == 0 && ele[len] == '/')
 	  break;
@@ -104,7 +104,7 @@ else
       return DEFER;
       }
 
-    rc = (*fn)(query, server, result, errmsg, &defer_break, do_cache, opts);
+    rc = (*fn)(query, W(server), result, errmsg, &defer_break, do_cache, opts);
     if (rc != DEFER || defer_break) return rc;
     }
 
