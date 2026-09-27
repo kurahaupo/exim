@@ -2283,7 +2283,7 @@ for (int i = 0; i < n; i++)
   if (*s++ != '}') return 1;
   if (textonly_p && textonly) textonly_l |= BIT(i);
   Uskip_whitespace(&s);
-  }						/*{*/
+  }						/*'{'*/
 if (check_end && *s++ != '}')
   {
   if (s[-1] == '{')
@@ -2710,7 +2710,7 @@ switch(cond_type = identify_operator(&s, &opname))
        )
       {
       s = read_header_name(name, sizeof(name), s);
-      /* {-for-text-editors */
+      /* '{'-for-text-editors */
       if (Ustrchr(name, '}') != NULL) malformed_header = TRUE;
       if (yield) *yield =
 	(find_header(name, NULL, FH_EXISTS_ONLY, NULL) != NULL) == testfor;
@@ -2768,7 +2768,7 @@ switch(cond_type = identify_operator(&s, &opname))
   case ECOND_RADIUS:
   case ECOND_LDAPAUTH:
 
-    if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START; /* }-for-text-editors */
+    if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START; /* '}'-for-text-editors */
 
      {
       BOOL textonly;
@@ -2778,7 +2778,7 @@ switch(cond_type = identify_operator(&s, &opname))
       if (!sub[0]) goto failout;
       if (textonly) sub_textonly |= BIT(0);
      }
-    /* {-for-text-editors */
+    /* '{'-for-text-editors */
     if (*s++ != '}') goto COND_FAILED_CURLY_END;
 
     if (!yield) { next = s; goto out; }  /* No need to run the test if skipping */
@@ -2885,7 +2885,7 @@ switch(cond_type = identify_operator(&s, &opname))
     {
     const uschar * sub[4];
     Uskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
     switch(read_subs(sub, nelem(sub), 2, &s,
 	yield ? ESI_NOFLAGS : ESI_SKIPPING, TRUE, name, resetok, NULL))
       {
@@ -3223,7 +3223,7 @@ switch(cond_type = identify_operator(&s, &opname))
       /* Various "encrypted" comparisons. If the second string starts with
       "{" then an encryption type is given. Default to crypt() or crypt16()
       (build-time choice). */
-      /* }-for-text-editors */
+      /* '}'-for-text-editors */
 
       case ECOND_CRYPTEQ:
   #ifndef SUPPORT_CRYPTEQ
@@ -3305,7 +3305,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	  }
 
 	else   /* {crypt} or {crypt16} and non-{ at start */
-	       /* }-for-text-editors */
+	       /* '}'-for-text-editors */
 	  {
 	  int which = 0;
 	  uschar *coded;
@@ -3320,7 +3320,7 @@ switch(cond_type = identify_operator(&s, &opname))
 	    sub[1] += 9;
 	    which = 2;
 	    }
-	  else if (sub[1][0] == '{')		/* }-for-text-editors */
+	  else if (sub[1][0] == '{')		/* '}'-for-text-editors */
 	    {
 	    expand_string_message = string_sprintf("unknown encryption mechanism "
 	      "in %q", sub[1]);
@@ -3373,13 +3373,13 @@ switch(cond_type = identify_operator(&s, &opname))
     combined_cond = cond_type == ECOND_AND;
 
     Uskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
 
     for (;;)
       {
-      /* {-for-text-editors */
+      /* '{'-for-text-editors */
       if (Uskip_whitespace(&s) == '}') break;
-      if (*s != '{')					/* }-for-text-editors */
+      if (*s != '{')					/* '}'-for-text-editors */
 	{
 	expand_string_message = string_sprintf("each subcondition "
 	  "inside an \"%s{...}\" condition must be in its own {}", opname);
@@ -3394,10 +3394,10 @@ switch(cond_type = identify_operator(&s, &opname))
 	}
       Uskip_whitespace(&s);
 
-      /* {-for-text-editors */
+      /* '{'-for-text-editors */
       if (*s++ != '}')
 	{
-	/* {-for-text-editors */
+	/* '{'-for-text-editors */
 	expand_string_message = string_sprintf("missing } at end of condition "
 	  "inside %q group", opname);
 	goto failout;
@@ -3441,7 +3441,7 @@ switch(cond_type = identify_operator(&s, &opname))
     on non-json lists */
 
     Uskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
 
     sep = is_json ? 0 : matchlist_parse_sep(&s);
 
@@ -3449,11 +3449,11 @@ switch(cond_type = identify_operator(&s, &opname))
       ESI_BRACE_ENDS | ESI_HONOR_DOLLAR | (yield ? ESI_NOFLAGS : ESI_SKIPPING),
       &s, resetok, NULL)))
       goto failout;
-    /* {-for-text-editors */
+    /* '{'-for-text-editors */
     if (*s++ != '}') goto COND_FAILED_CURLY_END;
 
     Uskip_whitespace(&s);
-    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    if (*s++ != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
 
     sub[1] = s;
 
@@ -3469,10 +3469,10 @@ switch(cond_type = identify_operator(&s, &opname))
       }
     Uskip_whitespace(&s);
 
-    /* {-for-text-editors */
+    /* '{'-for-text-editors */
     if (*s++ != '}')
       {
-      /* {-for-text-editors */
+      /* '{'-for-text-editors */
       expand_string_message = string_sprintf("missing } at end of condition "
         "inside %q", opname);
       goto failout;
@@ -3535,7 +3535,7 @@ switch(cond_type = identify_operator(&s, &opname))
     size_t len;
     BOOL boolvalue = FALSE;
 
-    if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* }-for-text-editors */
+    if (Uskip_whitespace(&s) != '{') goto COND_FAILED_CURLY_START;	/* '}'-for-text-editors */
     ourname = cond_type == ECOND_BOOL_LAX ? US"bool_lax" : US"bool";
     switch(read_subs(R(sub_arg), 1, 1, &s,
 	    yield ? ESI_NOFLAGS : ESI_SKIPPING, FALSE, ourname, resetok, NULL))
