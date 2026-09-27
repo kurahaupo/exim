@@ -1089,27 +1089,11 @@ enum { FILTER_UNSET, FILTER_FORWARD, FILTER_EXIM, FILTER_SIEVE };
 
 #define GETC_BUFFER_UNLIMITED	UINT_MAX
 
-/* UTF-8 chars for line-drawing */
-
-#define UTF8_DOWN_RIGHT		"\xE2\x95\xAD"
-#define UTF8_VERT		"\xE2\x94\x82"
-#define UTF8_HORIZ		"\xE2\x94\x80"
-#define UTF8_VERT_RIGHT		"\xE2\x94\x9C"
-#define UTF8_UP_RIGHT		"\xE2\x95\xB0"
-#define UTF8_VERT_2DASH		"\xE2\x95\x8E"
-#define UTF8_LEFT_TRIANGLE	"\xE2\x97\x80"
-#define UTF8_RIGHT_TRIANGLE	"\xE2\x96\xB6"
-#define UTF8_LIGHT_SHADE	"\xE2\x96\x91"
-#define UTF8_L_ARROW_HOOK	"\xE2\x86\xA9"
-#define UTF8_COMB_BRIDGE_BELOW	"\xCC\xAA"
-
-
 /* Options on tls_close */
 #define TLS_NO_SHUTDOWN		0	/* Just forget the context */
 #define TLS_SHUTDOWN_NOWAIT	1	/* Send alert; do not wait */
 #define TLS_SHUTDOWN_WAIT	2	/* Send alert & wait for peer's alert */
 #define TLS_SHUTDOWN_WONLY	3	/* only wait for peer's alert */
-
 
 #ifdef COMPILE_UTILITY
 # define ALARM(seconds) alarm(seconds);

@@ -280,7 +280,7 @@ if (indent > 0)
       }
     else
       {
-      debug_ptr = Ustpcpy(debug_ptr, US"   " UTF8_VERT_2DASH);
+      debug_ptr = Ustpcpy(debug_ptr, US u8"   ╎" /* U+254e e2 95 8e */);
       debug_prefix_length += 6;
       }
 

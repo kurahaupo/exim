@@ -1702,15 +1702,15 @@ while (*fp)
       else
 	for ( ; *s; s++) switch (*s)
 	  {
-	  case '\\': zg = string_catn(zg, US UTF8_UP_RIGHT,	  3); break;
-	  case '/':  zg = string_catn(zg, US UTF8_DOWN_RIGHT,	  3); break;
+	  case '\\': zg = string_catn(zg, US u8"╰", /* U+2570 e2 95 b0 */ 3); break;
+	  case '/':  zg = string_catn(zg, US u8"╭", /* U+256d e2 95 ad */ 3); break;
 	  case '-':
-	  case '_':  zg = string_catn(zg, US UTF8_HORIZ,	  3); break;
-	  case '|':  zg = string_catn(zg, US UTF8_VERT,		  3); break;
-	  case 'K':  zg = string_catn(zg, US UTF8_VERT_RIGHT,	  3); break;
-	  case '<':  zg = string_catn(zg, US UTF8_LEFT_TRIANGLE,  3); break;
-	  case '>':  zg = string_catn(zg, US UTF8_RIGHT_TRIANGLE, 3); break;
-	  default:   zg = string_catn(zg, U(s), 1);		      break;
+	  case '_':  zg = string_catn(zg, US u8"─", /* U+2500 e2 94 80 */ 3); break;
+	  case '|':  zg = string_catn(zg, US u8"│", /* U+2502 e2 94 82 */ 3); break;
+	  case 'K':  zg = string_catn(zg, US u8"├", /* U+251c e2 94 9c */ 3); break;
+	  case '<':  zg = string_catn(zg, US u8"◀", /* U+25c0 e2 97 80 */ 3); break;
+	  case '>':  zg = string_catn(zg, US u8"▶", /* U+25b6 e2 96 b6 */ 3); break;
+	  default:   zg = string_catn(zg, U(s), 1);		     break;
 	  }
 
       if (!zg)
@@ -1729,11 +1729,7 @@ while (*fp)
 
 	if (!*s)	/* output something distinctive for an empty input */
 	  {
-	  zg = string_catn(zg, US "e" UTF8_COMB_BRIDGE_BELOW
-				  "m" UTF8_COMB_BRIDGE_BELOW
-				  "p" UTF8_COMB_BRIDGE_BELOW
-				  "t" UTF8_COMB_BRIDGE_BELOW
-				  "y" UTF8_COMB_BRIDGE_BELOW, 15);
+	  zg = string_catn(zg, U(u8"e\u032am\u032ap\u032at\u032ay\u032a"), 15);
 	  if (precision >= 0) precision += 15;
 	  }
 
@@ -1746,11 +1742,11 @@ while (*fp)
 	  else switch (*s)
 	    {
 	    case ' ':
-	      zg = string_catn(zg, US UTF8_LIGHT_SHADE, 3);
+	      zg = string_catn(zg, US u8"░", /*  U+2591 e2 96 91 */ 3);
 	      if (precision >= 0) precision += 2;
 	      break;
 	    case '\n':
-	      zg = string_catn(zg, US UTF8_L_ARROW_HOOK "\n", 4);
+	      zg = string_catn(zg, US u8"↩\n", /* U+21a9 e2 86 a9 */  4);
 	      if (precision >= 0) precision += 3;
 	      break;
 	    default:
