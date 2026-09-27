@@ -405,7 +405,7 @@ extern int     parse_forward_list(const uschar *, int, address_item **, uschar *
 
 extern const uschar * parse_find_address_end_gen(const uschar *, BOOL);
 static inline uschar * parse_find_address_end_nc(uschar * s, BOOL b)
-{ return US parse_find_address_end_gen(s, b); }
+{ return W(parse_find_address_end_gen(s, b)); }
 static inline const uschar * parse_find_address_end_c(const uschar * s, BOOL b)
 { return    parse_find_address_end_gen(s, b); }
 #define parse_find_address_end(X, B) _Generic((X),     \
@@ -511,7 +511,7 @@ extern uschar *router_current_name(void);
 
 extern uschar *search_args(const lookup_info *, uschar *, uschar *, uschar **,
 		const uschar *);
-extern uschar *search_find(void *, const uschar *, const uschar *, int,
+extern uschar *search_find(void *, const uschar *, uschar *, int,
 		 const uschar *, int, int, int *, const uschar *);
 extern const lookup_info * search_findtype(const uschar *, int);
 extern const lookup_info * search_findtype_partial(const uschar *, int *,
@@ -606,7 +606,7 @@ sdd_c(const uschar * s)
 { return Ustrchr(s, '\\') ? string_copy_dnsdomain(s) : s; }
 static inline uschar *
 sdd_nc(uschar * s)
-{ return US sdd_c(s); }
+{ return W(sdd_c(s)); }
 #define string_decode_dnsdomain(S) _Generic((S),     \
 	      uschar *:		sdd_nc, \
 	      const uschar *:	sdd_c \
@@ -624,7 +624,8 @@ extern BOOL    string_is_utf8(const uschar *);
 #endif
 extern const uschar *string_printing2(const uschar *, int);
 extern uschar *string_split_message(uschar *);
-extern uschar *string_unprinting(uschar *);
+extern const uschar *Rstring_unprinting(const uschar *);
+#define string_unprinting(s) ((typeof(*(s))*) Rstring_unprinting(s))
 #ifdef SUPPORT_I18N
 extern const uschar *string_address_utf8_to_alabel(const uschar *, uschar **);
 extern uschar *string_domain_alabel_to_utf8(const uschar *, uschar **);
@@ -634,29 +635,29 @@ extern const uschar *string_localpart_utf8_to_alabel(const uschar *, uschar **);
 #endif
 
 #define string_format(buf, siz, fmt, ...) \
-	string_format_trc(buf, siz, US __FUNCTION__, __LINE__, fmt, __VA_ARGS__)
-extern BOOL    string_format_trc(uschar *, int, const uschar *, unsigned,
+	string_format_trc(buf, siz, __FUNCTION__, __LINE__, fmt, __VA_ARGS__)
+extern BOOL    string_format_trc(uschar *, int, const char *, unsigned,
 			const char *, ...) ALMOST_PRINTF(5,6);
 
 #define string_vformat(g, flgs, fmt, ap) \
-	string_vformat_trc(g, US __FUNCTION__, __LINE__, \
+	string_vformat_trc(g, __FUNCTION__, __LINE__, \
 			 STRING_SPRINTF_BUFFER_SIZE, flgs, fmt, ap)
-extern gstring *string_vformat_trc(gstring *, const uschar *, unsigned,
+extern gstring *string_vformat_trc(gstring *, const char *, unsigned,
 			unsigned, unsigned, const char *, va_list);
 
 #define string_open_failed(fmt, ...) \
-	string_open_failed_trc(US __FUNCTION__, __LINE__, fmt, __VA_ARGS__)
-extern uschar *string_open_failed_trc(const uschar *, unsigned,
+	string_open_failed_trc(__FUNCTION__, __LINE__, fmt, __VA_ARGS__)
+extern uschar *string_open_failed_trc(const char *, unsigned,
 			const char *, ...) PRINTF_FUNCTION(3,4);
 
 #define string_nextinlist(lp, sp, b, l) \
-	string_nextinlist_trc((lp), (sp), (b), (l), US __FUNCTION__, __LINE__)
+	string_nextinlist_trc((lp), (sp), (b), (l), __FUNCTION__, __LINE__)
 extern uschar *string_nextinlist_trc(const uschar **listptr, int *separator, uschar *buffer, int buflen,
-			const uschar * func, int line);
+			const char * func, int line);
 
 extern int     strcmpic(const uschar *, const uschar *);
 extern int     strncmpic(const uschar *, const uschar *, int);
-extern uschar *       strstric_nc(const uschar *, const uschar *, BOOL);
+extern uschar *       strstric_nc(uschar *, const uschar *, BOOL);
 extern const uschar * strstric_c(const uschar *, const uschar *, BOOL);
 #define strstric(X, Y, B) _Generic((X),     \
 	      uschar *:		strstric_nc, \
@@ -786,36 +787,36 @@ return is_incompatible_fn(old, new);
 static inline uschar * __Ustrcat(uschar * dst, const uschar * src, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrcat", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted("Ustrcat", func, line);
 #endif
-return US strcat(CS dst, CCS src);
+return U(strcat(C(dst), C(src)));
 }
 static inline uschar * __Ustrcpy(uschar * dst, const uschar * src, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrcpy", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted("Ustrcpy", func, line);
 #endif
-return US strcpy(CS dst, CCS src);
+return U(strcpy(C(dst), C(src)));
 }
 static inline uschar * __Ustrncat(uschar * dst, const uschar * src, size_t n, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrncat", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted("Ustrncat", func, line);
 #endif
-return US strncat(CS dst, CCS src, n);
+return U(strncat(C(dst), C(src), n));
 }
 static inline uschar * __Ustrncpy(uschar * dst, const uschar * src, size_t n, const char * func, int line)
 {
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustrncpy", CUS func, line);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted("Ustrncpy", func, line);
 #endif
-return US strncpy(CS dst, CCS src, n);
+return U(strncpy(C(dst), C(src), n));
 }
 #if !defined(COMPILE_UTILITY) && !defined(MACRO_PREDEF)
 static inline uschar * __Ustpcpy(uschar * dst, const uschar * src, const char * func, int line)
 {
-if (!is_tainted(dst) && is_tainted(src)) die_tainted(US"Ustpcpy", CUS func, line);
-return US stpcpy(CS dst, CCS src);
+if (!is_tainted(dst) && is_tainted(src)) die_tainted("Ustpcpy", func, line);
+return U(stpcpy(C(dst), C(src)));
 }
 #endif
 /*XXX will likely need unchecked copy also */
@@ -825,15 +826,17 @@ return US stpcpy(CS dst, CCS src);
 /* Advance the string pointer given over any whitespace.
 Return the next char as there's enough places using it to be useful. */
 
-#define Uskip_whitespace(sp) skip_whitespace(CUSS sp)
+#define skip_whitespace(sp) Uskip_whitespace(opt_U(sp))
+#define Uskip_whitespace(sp) RUskip_whitespace(opt_R(sp))
 
-static inline uschar skip_whitespace(const uschar ** sp)
+static inline int RUskip_whitespace(const uschar ** sp)
 { while (isspace(**sp)) (*sp)++; return **sp; }
 
 /* Ditto, non-whitespace */
 
-#define Uskip_nonwhite(sp) skip_nonwhite(CUSS sp)
-static inline uschar skip_nonwhite(const uschar ** sp)
+#define skip_nonwhite(sp) Uskip_nonwhite(opt_U(sp))
+#define Uskip_nonwhite(sp) RUskip_nonwhite(opt_R(sp))
+static inline uschar RUskip_nonwhite(const uschar ** sp)
 { while (**sp && !isspace(**sp)) (*sp)++; return **sp; }
 
 
@@ -868,7 +871,7 @@ return fchown(fd, owner, group)
 static inline int
 exim_chown(const uschar *name, uid_t owner, gid_t group)
 {
-return chown(CCS name, owner, group)
+return chown(C(name), owner, group)
   ? exim_chown_failure(-1, name, owner, group) : 0;
 }
 #endif	/* !MACRO_PREDEF && !COMPILE_UTILITY */
@@ -1032,7 +1035,7 @@ string_get_tainted_trc(unsigned size, const void * proto_mem, const char * func,
 gstring * g = store_get_3(sizeof(gstring) + size, proto_mem, func, line);
 g->size = size;		/*XXX would be good if we could see the actual alloc size */
 g->ptr = 0;
-g->s = US(g + 1);
+g->s = (uschar *)(g + 1);
 return g;
 }
 
@@ -1139,11 +1142,11 @@ return string_catn(g, s, Ustrlen(s));
 /* sprintf-append to a growable-string */
 
 #define string_fmt_append(g, fmt, ...) \
-	string_fmt_append_f_trc(g, US __FUNCTION__, __LINE__, \
+	string_fmt_append_f_trc(g, __FUNCTION__, __LINE__, \
 	SVFMT_EXTEND|SVFMT_REBUFFER, fmt, __VA_ARGS__)
 
 #define string_fmt_append_f(g, flgs, fmt, ...) \
-	string_fmt_append_f_trc(g, US __FUNCTION__, __LINE__, \
+	string_fmt_append_f_trc(g, __FUNCTION__, __LINE__, \
 	flgs,         fmt, __VA_ARGS__)
 
 static inline gstring *
@@ -1188,11 +1191,11 @@ for them as the strings we proceed to copy from them meant they could not be
 released, hence blowing 64k for every DNS lookup. That mounted up. With malloc
 we do have to special-case taint checking (see store.c). */
 
-extern dns_answer * store_get_dns_answer_trc(const uschar *, unsigned);
-#define store_get_dns_answer() store_get_dns_answer_trc(CUS __FUNCTION__, __LINE__)
+extern dns_answer * store_get_dns_answer_trc(const char *, unsigned);
+#define store_get_dns_answer() store_get_dns_answer_trc(__FUNCTION__, __LINE__)
 
-extern void store_free_dns_answer_trc(dns_answer *, const uschar *, unsigned);
-#define store_free_dns_answer(dnsa) store_free_dns_answer_trc(dnsa, CUS __FUNCTION__, __LINE__)
+extern void store_free_dns_answer_trc(dns_answer *, const char *, unsigned);
+#define store_free_dns_answer(dnsa) store_free_dns_answer_trc(dnsa, __FUNCTION__, __LINE__)
 
 
 /* Check for an RR being large enough.  Return TRUE iff bad. */
@@ -1216,7 +1219,7 @@ return rr_bad_size(rr, ptr - rr->data + minbytes);
 static inline void
 spool_pname_buf(uschar * buf, int len)
 {
-snprintf(CS buf, len, "%s/%s/input", spool_directory, queue_name);
+snprintf(C(buf), len, "%s/%s/input", spool_directory, queue_name);
 }
 
 static inline uschar *
@@ -1327,7 +1330,7 @@ static uschar buf[16];
 if (diff->tv_sec >= 5 || !LOGGING(millisec))
   return readconf_printtime((int)diff->tv_sec);
 
-snprintf(CS buf, sizeof(buf), "%u.%03us",
+snprintf(C(buf), sizeof(buf), "%u.%03us",
 	  (uint)diff->tv_sec, (uint)diff->tv_usec/1000);
 return buf;
 }
@@ -1411,7 +1414,7 @@ return NULL;
 static inline DIR *
 exim_opendir(const uschar * name)
 {
-if (!is_tainted(name)) return opendir(CCS name);
+if (!is_tainted(name)) return opendir(C(name));
 log_write(LOG_MAIN|LOG_PANIC, "Tainted dirname '%s'", name);
 errno = EACCES;
 return NULL;
@@ -1424,7 +1427,7 @@ open_module_dir(void)
 if (module_dir)
   rewinddir(module_dir);
 else
-  module_dir = exim_opendir(CUS LOOKUP_MODULE_DIR);
+  module_dir = exim_opendir(U(LOOKUP_MODULE_DIR));
 return module_dir;
 }
 #endif
@@ -1497,7 +1500,7 @@ static inline int
 cork_fd(int fd)
 {
 #ifdef EXIM_TCP_CORK
-return setsockopt(fd, IPPROTO_TCP, EXIM_TCP_CORK, US &on, sizeof(on));
+return setsockopt(fd, IPPROTO_TCP, EXIM_TCP_CORK, U(&on), sizeof(on));
 #else
 return 0;
 #endif
@@ -1507,7 +1510,7 @@ static inline int
 uncork_fd(int fd)
 {
 #ifdef EXIM_TCP_CORK
-return setsockopt(fd, IPPROTO_TCP, EXIM_TCP_CORK, US &off, sizeof(off));
+return setsockopt(fd, IPPROTO_TCP, EXIM_TCP_CORK, U(&off), sizeof(off));
 #else
 return 0;
 #endif
