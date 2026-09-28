@@ -29,48 +29,77 @@ local_scan.h includes it and exim.h includes them both (to get this earlier). */
 # define TRUE_UNSET    2
 #endif
 
+/*
+ *  Deprecation levels for the CUS, US, CUSS, USS, CCS, CS, CCSS, & CSS macros:
+ *      0 - Support old usage
+ *      1 - Make these macros empty when `char` is already unsigned; stop using
+ *          these macros for converting between types other than char & unsigned char,
+ *          or changing signedness.
+ *      2 - With the exception of «US», change these into function-like macros
+ *          that only flip signedness; must use R or W to flip constancy.
+ *          Change «US» so that it's only usable with string literals.
+ *      3 - Change these macros to external functions that lack definitions (and thus
+ *          cause linkage errors).
+ *      4 - Remove these macros entirely
+ */
+#define DEPRECATE_UCHAR_MACROS 4
+
+/* Declare `uschar` as `unsigned char` even when `char` is already unsigned */
+#define FORCE_USCHAR_TYPE 1
 
 /* DEPRECATED - warn when marked functions and objects are referenced */
 
-#if __STDC_VERSION__ >= 202300L
-# define DEPRECATED  [[deprecated]]
-#else
-# if defined(__GNUC__) || defined(__clang__)
-#  define DEPRECATED  __attribute__((__deprecated__))
+#if __STDC_VERSION__ >= 202311L /* ISO/IEC 9899:2024 or draft n3020 */
+
+
+# define ALLOC			[[malloc]]
+# define ARG_UNUSED		[[maybe_unused]]
+# define DEPRECATED		[[deprecated]]
+# define FUNC_MAYBE_UNUSED	[[maybe_unused]]
+# define NORETURN		[[noreturn]]
+# define UNREACHABLE		__builtin_unreachable()
+# define WARN_UNUSED_RESULT	[[maybe_unused]]
+# ifndef __clang__
+#  define ALLOC_SIZE(A)		[[clang::alloc_size(A)]]
 # else
-#  define DEPRECATED
+#  define ALLOC_SIZE(A)		/**/
 # endif
-#endif
 
-#define DEPRECATE_UCHAR_MACROS 3
+#elif defined(__GNUC__) || defined(__clang__)
 
-/* We gave up on trying to get compilers to check on printf-like functions
-because they are both whiney about value sizes where they cannot do decent
-static analysis, and incapable of handling extensions to printf formats.
-The annotation on functions is still in place but does nothing. */
+# define DEPRECATED  __attribute__((__deprecated__))
 
-#if defined(__GNUC__) || defined(__clang__)
 /* #  define PRINTF_FUNCTION(A,B)	__attribute__((format(printf,A,B))) */
+# define ALLOC			__attribute__((malloc))
 # define ARG_UNUSED		__attribute__((__unused__))
 # define FUNC_MAYBE_UNUSED	__attribute__((__unused__))
-# define WARN_UNUSED_RESULT	__attribute__((__warn_unused_result__))
-# define ALLOC			__attribute__((malloc))
 # define NORETURN		__attribute__((noreturn))
 # define UNREACHABLE		__builtin_unreachable()
+# define WARN_UNUSED_RESULT	__attribute__((__warn_unused_result__))
 # ifndef __clang__
 #  define ALLOC_SIZE(A)		__attribute__((alloc_size(A)))
 # else
 #  define ALLOC_SIZE(A)		/**/
 # endif
+
 #else
-# define ARG_UNUSED		/**/
-# define FUNC_MAYBE_UNUSED	/**/
-# define WARN_UNUSED_RESULT	/**/
+
 # define ALLOC			/**/
 # define ALLOC_SIZE(A)		/**/
+# define ARG_UNUSED		/**/
+# define DEPRECATED		/**/
+# define FUNC_MAYBE_UNUSED	/**/
 # define NORETURN		/**/
 # define UNREACHABLE		/**/
+# define WARN_UNUSED_RESULT	/**/
+
 #endif
+
+
+/* We gave up on trying to get compilers to check on printf-like functions
+because they are both whiney about value sizes where they cannot do decent
+static analysis, and incapable of handling extensions to printf formats.
+The annotation on functions is still in place but does nothing. */
 
 #ifndef PRINTF_FUNCTION
 # define PRINTF_FUNCTION(A,B)	/**/
@@ -87,7 +116,17 @@ The annotation on functions is still in place but does nothing. */
 the standard header files, so we use "uschar". Solaris has u_char in
 sys/types.h. This is just a typing convenience, of course. */
 
+#if CHAR_MIN < 0 || FORCE_USCHAR_TYPE
 typedef unsigned char uschar;
+typedef char G_xc;                /* matches char unless uschar in _Generic discriminators */
+# define USCHAR_IS_CHAR 0
+#else
+typedef char uschar;
+typedef struct { char g; } G_xc;  /* matches char unless uschar in _Generic discriminators */
+# define USCHAR_IS_CHAR 1
+#endif
+typedef unsigned char G_uc;       /* matches uschar unless char in _Generic discriminators */
+
 typedef unsigned char BOOL;
 /* We also have SIGNAL_BOOL, which requires signal.h be included, so is defined
 elsewhere */
@@ -99,153 +138,226 @@ systems where "char" is actually signed, I've converted Exim to use entirely
 unsigned chars, except in a few special places such as arguments that are
 almost always literal strings. */
 
-#define BadType(X) (*(struct BadRef_##X *)(NULL))
+#define BadType(Tag) (*(struct Tag *)(NULL))
 
-#if CHAR_MIN < 0 || FORCE_CHAR_CASTS
 /* convert char to uschar but keep all other type info */
-# define C(X) _Generic(X, \
+#define C(X) _Generic(X, \
 		uschar       *         : (char       *)(X), \
 		uschar const *         : (char const *)(X), \
-                \
+		\
 		uschar       *       * : (char       **)(X), \
 		uschar const *       * : (char const **)(X), \
-                \
-		default                : &BadType(C))
+		\
+		G_xc         *         : &BadType(delete_vacuous_C), \
+		G_xc   const *         : &BadType(delete_vacuous_C), \
+		\
+		G_xc         *       * : &BadType(delete_vacuous_C), \
+		G_xc   const *       * : &BadType(delete_vacuous_C), \
+		\
+		default                : &BadType(C_wrong_arg_type))
+
 /* convert uschar to char but keep all other type info */
-# define U(X) _Generic(X, \
-		  char       *         : (uschar       *)(X), \
-		  char const *         : (uschar const *)(X), \
-                  \
-		  char       *       * : (uschar       **)(X), \
-		  char const *       * : (uschar const **)(X), \
-                \
-		default                : &BadType(U))
+#define U(X) _Generic(X, \
+		char         *         : (uschar       *)(X), \
+		char   const *         : (uschar const *)(X), \
+		\
+		char         *       * : (uschar       **)(X), \
+		char   const *       * : (uschar const **)(X), \
+		\
+		G_uc         *         : &BadType(delete_vacuous_U), \
+		G_uc   const *         : &BadType(delete_vacuous_U), \
+		\
+		G_uc         *       * : &BadType(delete_vacuous_U), \
+		G_uc   const *       * : &BadType(delete_vacuous_U), \
+		\
+		default                : &BadType(U_wrong_arg_type))
 /* Only use opt_* macros in type-covariant macro definitions */
 #define opt_C(X) _Generic(X, \
-		  char       *         :                  (X), \
-		  char const *         :                  (X), \
-		uschar       *         : (char       * )  (X), \
-		uschar const *         : (char const * )  (X), \
+		char         *         :                  (X), \
+		char   const *         :                  (X), \
+		G_uc         *         : (char       * )  (X), \
+		G_uc   const *         : (char const * )  (X), \
 		\
-		  char       *       * :                  (X), \
-		  char const *       * :                  (X), \
-		uschar       *       * : (char       **)  (X), \
-		uschar const *       * : (char const **)  (X), \
+		char         *       * :                  (X), \
+		char   const *       * :                  (X), \
+		G_uc         *       * : (char       **)  (X), \
+		G_uc   const *       * : (char const **)  (X), \
 		\
-		default                : &BadType(opt_C))
+		default                : &BadType(opt_C_wrong_arg_type))
 
 #define opt_U(X) _Generic(X, \
-		  char       *         : (uschar      * ) (X), \
-		  char const *         : (uschar const* ) (X), \
+		G_xc         *         : (uschar      * ) (X), \
+		G_xc   const *         : (uschar const* ) (X), \
 		uschar       *         :                  (X), \
 		uschar const *         :                  (X), \
 		\
-		  char       *       * : (uschar      **) (X), \
-		  char const *       * : (uschar const**) (X), \
+		G_xc         *       * : (uschar      **) (X), \
+		G_xc   const *       * : (uschar const**) (X), \
 		uschar       *       * :                  (X), \
 		uschar const *       * :                  (X), \
 		\
-		default                : &BadType(opt_U))
-
-
-#else
-
-# define C(X) (X)
-# define U(X) (X)
-# define opt_C(X) (X)
-# define opt_U(X) (X)
-#endif
+		default                : &BadType(opt_U_wrong_arg_type))
 
 /* Apply constancy ([R]eadonly) to the target but keep all other type info */
 #define R(X) _Generic(X, \
-		  char       *         : (char   const *)(X), \
-		  void       *         : (void   const *)(X), \
-		uschar       *         : (uschar const *)(X), \
-                \
-		  char       *       * : (char   const **)(X), \
-		  void       *       * : (void   const **)(X), \
-		uschar       *       * : (uschar const **)(X), \
-                \
-		default                : &BadType(R))
+		char         *         : (char   const *)(X), \
+		G_uc         *         : (uschar const *)(X), \
+		void         *         : (void   const *)(X), \
+		\
+		char         *       * : (char   const **)(X), \
+		G_uc         *       * : (uschar const **)(X), \
+		void         *       * : (void   const **)(X), \
+		\
+		char   const *         : &BadType(delete_vacuous_R), \
+		G_uc   const *         : &BadType(delete_vacuous_R), \
+		void   const *         : &BadType(delete_vacuous_R), \
+		\
+		char   const *       * : &BadType(delete_vacuous_R), \
+		G_uc   const *       * : &BadType(delete_vacuous_R), \
+		void   const *       * : &BadType(delete_vacuous_R), \
+		\
+		char         * const * : &BadType(use_RR_instead_of_R), \
+		G_uc         * const * : &BadType(use_RR_instead_of_R), \
+		void         * const * : &BadType(use_RR_instead_of_R), \
+		\
+		default                : &BadType(R_wrong_arg_type))
 
 /* Deeply apply constancy ([R]ecursive [R]eadonly) to the target but keep all other type info */
 #define RR(X) _Generic(X, \
-		  char       *         : (char   const *)(X), \
-		  void       *         : (void   const *)(X), \
-		uschar       *         : (uschar const *)(X), \
-                \
-		  char       *       * : (char   const * const *)(X), \
-		  char       * const * : (char   const * const *)(X), \
-		  char const *       * : (char   const * const *)(X), \
-		  void       *       * : (void   const * const *)(X), \
-		uschar       *       * : (uschar const * const *)(X), \
-		uschar       * const * : (uschar const * const *)(X), \
-		uschar const *       * : (uschar const * const *)(X), \
-                \
-		default                : &BadType(RR))
+		char         *         : (char   const *)(X), \
+		G_uc         *         : (uschar const *)(X), \
+		void         *         : (void   const *)(X), \
+		\
+		char         *       * : (char   const * const *)(X), \
+		char         * const * : (char   const * const *)(X), \
+		char   const *       * : (char   const * const *)(X), \
+		G_uc         *       * : (uschar const * const *)(X), \
+		G_uc         * const * : (uschar const * const *)(X), \
+		G_uc   const *       * : (uschar const * const *)(X), \
+		void         *       * : (void   const * const *)(X), \
+		\
+		char   const *         : &BadType(delete_vacuous_RR), \
+		G_uc   const *         : &BadType(delete_vacuous_RR), \
+		void   const *         : &BadType(delete_vacuous_RR), \
+		\
+		char   const * const * : &BadType(delete_vacuous_RR), \
+		G_uc   const * const * : &BadType(delete_vacuous_RR), \
+		void   const * const * : &BadType(delete_vacuous_RR), \
+		\
+		default                : &BadType(RR_wrong_arg_type))
 
 /* Remove constancy ([W]ritable) to the target but keep all other type info */
 #define W(X) _Generic(X, \
-		  char const *         : (char   * ) (X), \
-		  void const *         : (void   * ) (X), \
-		uschar const *         : (uschar * ) (X), \
-                \
-		  char       * const * : (char   **) (X), \
-		  char const *       * : (char   **) (X), \
-		  char const * const * : (char   **) (X), \
-		  void       * const * : (void   **) (X), \
-		  void const *       * : (void   **) (X), \
-		  void const * const * : (void   **) (X), \
-		uschar       * const * : (uschar **) (X), \
-		uschar const *       * : (uschar **) (X), \
-		uschar const * const * : (uschar **) (X), \
-                \
-		default                : &BadType(W))
+		char   const *         : (char   * ) (X), \
+		G_uc   const *         : (uschar * ) (X), \
+		void   const *         : (void   * ) (X), \
+		\
+		char         * const * : (char   **) (X), \
+		char   const *       * : (char   **) (X), \
+		char   const * const * : (char   **) (X), \
+		G_uc         * const * : (uschar **) (X), \
+		G_uc   const *       * : (uschar **) (X), \
+		G_uc   const * const * : (uschar **) (X), \
+		void         * const * : (void   **) (X), \
+		void   const *       * : (void   **) (X), \
+		void   const * const * : (void   **) (X), \
+		\
+		char         *         : &BadType(delete_vacuous_W), \
+		G_uc         *         : &BadType(delete_vacuous_W), \
+		void         *         : &BadType(delete_vacuous_W), \
+		\
+		char         *       * : &BadType(delete_vacuous_W), \
+		G_uc         *       * : &BadType(delete_vacuous_W), \
+		void         *       * : &BadType(delete_vacuous_W), \
+		\
+		default                : &BadType(W_wrong_arg_type))
 
 /* convert char to uschar and apply constancy but keep all other type info */
 #define RC(X) R(C(X))
 /* convert uschar to char and apply constancy but keep all other type info */
 #define RU(X) R(U(X))
 
-/* cause these to error if used not as functions */
-#if ! DEPRECATE_UCHAR_MACROS
-
-# define CS   (char *)
-# define CCS  (const char *)
-# define CSS  (char **)
-# define US   (unsigned char *)
-# define CUS  (const unsigned char *)
-# define USS  (unsigned char **)
-# define CUSS (const unsigned char **)
-# define CCSS (const char **)
+#if DEPRECATE_UCHAR_MACROS < 2
+/*  Deprecation levels 0 & 1
+ *      0 - Support old usage
+ *      1 - Make these macros empty when `char` is already unsigned; stop using
+ *          these macros for converting between types other than char &
+ *          unsigned char, or changing signedness.
+ */
+# if ! USCHAR_IS_CHAR || DEPRECATE_UCHAR_MACROS < 1
+#  define CS   (char *)
+#  define CCS  (const char *)
+#  define CSS  (char **)
+#  define CCSS (const char **)
+#  define US   (unsigned char *)
+#  define CUS  (const unsigned char *)
+#  define USS  (unsigned char **)
+#  define CUSS (const unsigned char **)
+# else
+#  define CS   /**/
+#  define CCS  /**/
+#  define CSS  /**/
+#  define US   /**/
+#  define CUS  /**/
+#  define USS  /**/
+#  define CUSS /**/
+#  define CCSS /**/
+# endif
 
 #else
+# if DEPRECATE_UCHAR_MACROS < 3
+/*  Deprecation levels 2
+ *      2 - With the exception of «US», change these macros into functions
+ *          that only flip signedness; must use R or W to flip constancy.
+ */
 
-# if CHAR_MIN < 0 || FORCE_CHAR_CASTS
-#  define US      (uschar*)""	/* must be used like US"quoted string" */
-# else
-#  define US               ""	/* must be used like US"quoted string" */
-# endif
-
-# if DEPRECATE_UCHAR_MACROS < 1
-
-static inline          char       DEPRECATED *   CS (unsigned char       *  X) { return C(X); }
-static inline          char const DEPRECATED *  CCS (unsigned char const *  X) { return C(X); }
-static inline          char       DEPRECATED **  CSS(unsigned char       ** X) { return C(X); }
-static inline          char const DEPRECATED ** CCSS(unsigned char const ** X) { return C(X); }
+static inline char         *  DEPRECATED  CS (uschar       *  X) { return C(X); }
+static inline char   const *  DEPRECATED CCS (uschar const *  X) { return C(X); }
+static inline char         ** DEPRECATED  CSS(uschar       ** X) { return C(X); }
+static inline char   const ** DEPRECATED CCSS(uschar const ** X) { return C(X); }
 
 #  ifndef US
-static inline unsigned char       DEPRECATED *   US (         char       *  X) { return U(X); }
+static inline uschar       *  DEPRECATED  US (char         *  X) { return U(X); }
 #  endif
-static inline unsigned char const DEPRECATED *  CUS (         char const *  X) { return U(X); }
-static inline unsigned char       DEPRECATED **  USS(         char       ** X) { return U(X); }
-static inline unsigned char const DEPRECATED ** CUSS(         char const ** X) { return U(X); }
+static inline uschar const *  DEPRECATED CUS (char   const *  X) { return U(X); }
+static inline uschar       ** DEPRECATED  USS(char         ** X) { return U(X); }
+static inline uschar const ** DEPRECATED CUSS(char   const ** X) { return U(X); }
 
-# elif DEPRECATE_UCHAR_MACROS < 2
+# elif DEPRECATE_UCHAR_MACROS < 4
+/*  Deprecation levels 3
+ *      3 - Change these macros to external functions that lack definitions (and thus
+ *          cause linkage errors).
+ */
 
-void (*(*CS)())(), (*(*CCS)())(), (*(*CSS)())(), (*(*CCSS)())(), (*(*CUS)())(), (*(*USS)())(), (*(*CUSS)())();
+extern char         *  DEPRECATED  CS (uschar       *  X);
+extern char   const *  DEPRECATED CCS (uschar const *  X);
+extern char         ** DEPRECATED  CSS(uschar       ** X);
+extern char   const ** DEPRECATED CCSS(uschar const ** X);
+
+#  ifndef US
+extern uschar       *  DEPRECATED  US (char         *  X);
+#  endif
+extern uschar const *  DEPRECATED CUS (char   const *  X);
+extern uschar       ** DEPRECATED  USS(char         ** X);
+extern uschar const ** DEPRECATED CUSS(char   const ** X);
+
+# else
+/*  Deprecation levels 4
+ *      4 - Remove them entirely
+ */
 
 # endif
+
+/*  Deprecation levels 2+
+ *          Change «US» so that it's only usable with string literals.
+ */
+
+# if ! USCHAR_IS_CHAR
+#  define US    (uschar*)""	/* must be used like US"quoted string" */
+# else
+#  define US             ""	/* must be used like US"quoted string" */
+# endif
+
 #endif
 
 /* Only use opt_* macros in type-covariant macro definitions */
@@ -264,7 +376,7 @@ void (*(*CS)())(), (*(*CCS)())(), (*(*CSS)())(), (*(*CCSS)())(), (*(*CUS)())(), 
 		uschar const *       * :                  (X), \
 		uschar const * const * : (uschar const**) (X), \
 		\
-		default                : &BadType(opt_R))
+		default                : &BadType(opt_R_wrong_arg_type))
 
 #define opt_RR(X) _Generic(X, \
 		  char       *       * :   (char const* const*) (X), \
@@ -275,22 +387,22 @@ void (*(*CS)())(), (*(*CCS)())(), (*(*CSS)())(), (*(*CCSS)())(), (*(*CUS)())(), 
 		uschar       * const * : (uschar const* const*) (X), \
 		uschar const *       * : (uschar const* const*) (X), \
 		uschar const * const * :                  (X), \
-		default                : &BadType(opt_RR))
+		default                : &BadType(opt_RR_wrong_arg_type))
 
 #define opt_W(X) _Generic(X, \
 		  char       *         :                  (X), \
 		  char const *         :   (char*)        (X), \
 		uschar       *         :                  (X), \
 		uschar const *         : (uschar*)        (X), \
-                \
+		\
 		  char       **        :                  (X), \
 		  char const **        :   (char**)       (X), \
 		uschar       *       * :                  (X), \
 		uschar       * const * :                  (X), \
 		uschar const *       * : (uschar**)       (X), \
 		uschar const * const * : (uschar**)       (X), \
-                \
-		default                : &BadType(opt_W))
+		\
+		default                : &BadType(opt_W_wrong_arg_type))
 
 /* The C library string functions expect "char *" arguments. Use macros to
 avoid having to write a cast each time. We do this for string and file
@@ -333,14 +445,14 @@ functions that are called quite often; for other calls to external libraries
 #define Ustrstr(s,t)       ((typeof(*(s))*) strstr(C(s),opt_C(t)))
 #define CUstrstr(s,t)      ((const typeof(*(s))*) strstr(C(s),opt_C(t)))
 #define Ustrtod(s,t)       _Generic(t, typeof(*(s))** : strtod(C(s), (char **)(t)), \
-                                     /*typeof(NULL)   : strtod(C(s),t),*/ \
-                                       default        : BadType(Ustrtod_args_1_and_2_mismatch))
+				     /*typeof(NULL)   : strtod(C(s),t),*/ \
+				       default        : BadType(Ustrtod_args_1_and_2_mismatch))
 #define Ustrtol(s,t,b)     _Generic(t, typeof(*(s))** : strtol(C(s), (char **)(t),b), \
-                                     /*typeof(NULL)   : strtol(C(s),t,b),*/ \
-                                       default        : BadType(Ustrtol_args_1_and_2_mismatch))
+				     /*typeof(NULL)   : strtol(C(s),t,b),*/ \
+				       default        : BadType(Ustrtol_args_1_and_2_mismatch))
 #define Ustrtoul(s,t,b)    _Generic(t, typeof(*(s))** : strtoul(C(s), (char **)(t),b), \
-                                     /*typeof(NULL)   : strtoul(C(s),t,b),*/ \
-                                       default        : BadType(Ustrtoul_args_1_and_2_mismatch))
+				     /*typeof(NULL)   : strtoul(C(s),t,b),*/ \
+				       default        : BadType(Ustrtoul_args_1_and_2_mismatch))
 #define Uunlink(s)         unlink(C(s))
 
 #if defined(EM_VERSION_C) || defined(LOCAL_SCAN) || defined(DLFUNC_IMPL)
